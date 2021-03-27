@@ -6,10 +6,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.RepledgeDetailDAO;
 import com.pennant.backend.model.finance.RepledgeDetail;
@@ -53,7 +53,7 @@ public class RepledgeDetailDAOImpl extends BasicDao<RepledgeDetail> implements R
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repledgeDetail);
-		RowMapper<RepledgeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RepledgeDetail.class);
+		RowMapper<RepledgeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(RepledgeDetail.class);
 
 		try {
 			repledgeDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

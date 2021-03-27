@@ -462,7 +462,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
 				&& StringUtils.equals(code, MandateConstants.TYPE_NACH)) {
 			this.space_LoanType.setSclass("");
-		} 
+		}
 		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
 			this.emandateSource.setValue("");
 			this.emandateSource.setDescColumn("");

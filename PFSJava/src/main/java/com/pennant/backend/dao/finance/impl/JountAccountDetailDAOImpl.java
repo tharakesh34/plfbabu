@@ -56,13 +56,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -149,8 +149,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
 			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -301,8 +300,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
 			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -454,7 +452,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -476,8 +474,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		paramSource.addValue("CUSTCIF", listCIF);
 		paramSource.addValue("ACTIVE", true);
 
-		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceExposure.class);
+		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 		;
 		StringBuilder query = new StringBuilder();
 		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
@@ -536,7 +533,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -558,8 +555,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CUSTCIF", listCIF);
 		paramSource.addValue("ACTIVE", true);
-		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceExposure.class);
+		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 		;
 
 		StringBuilder query = null;
@@ -621,7 +617,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -651,7 +647,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(exposer);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		FinanceExposure exposure = null;
@@ -688,8 +684,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
 			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -719,8 +714,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 				" Where F.FinReference =:FinReference and C.CustCtgCode !=:CustCtgCode and IncludeIncome =:IncludeIncome");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		logger.debug("Leaving");
 		try {

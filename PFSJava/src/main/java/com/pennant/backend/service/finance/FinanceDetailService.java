@@ -356,4 +356,5 @@ public interface FinanceDetailService {
 	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
 			FinanceDetail financeDetail);
 
+	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail financeDetail);
 }

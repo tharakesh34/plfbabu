@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.EmpStsCodeDAO;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
@@ -100,7 +100,7 @@ public class EmpStsCodeDAOImpl extends BasicDao<EmpStsCode> implements EmpStsCod
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(empStsCode);
-		RowMapper<EmpStsCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmpStsCode.class);
+		RowMapper<EmpStsCode> typeRowMapper = BeanPropertyRowMapper.newInstance(EmpStsCode.class);
 
 		try {
 			empStsCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

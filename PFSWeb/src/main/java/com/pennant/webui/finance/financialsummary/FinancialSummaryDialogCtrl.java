@@ -2037,7 +2037,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doFillRemarks(FinanceMainExt financeMainExt) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public FinanceMainExtService getFinanceMainExtService() {

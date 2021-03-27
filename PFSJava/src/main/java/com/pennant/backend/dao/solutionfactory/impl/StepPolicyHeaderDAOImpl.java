@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
@@ -94,8 +94,7 @@ public class StepPolicyHeaderDAOImpl extends BasicDao<StepPolicyHeader> implemen
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyHeader);
-		RowMapper<StepPolicyHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(StepPolicyHeader.class);
+		RowMapper<StepPolicyHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(StepPolicyHeader.class);
 
 		try {
 			stepPolicyHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

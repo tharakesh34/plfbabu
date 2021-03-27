@@ -53,11 +53,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.model.administration.SecurityOperation;
@@ -118,7 +118,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		selectSql.append(" where UsrID=:UsrID");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
-		RowMapper<SecurityUserOperations> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityUserOperations> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityUserOperations.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -146,7 +146,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		selectSql.append("FROM SecUserOperations where UsrID=:UsrID and RoleID=:RoleID");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUserOperations);
-		RowMapper<SecurityUserOperations> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityUserOperations> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityUserOperations.class);
 
 		try {
@@ -342,8 +342,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		user.setUsrID(userId);
 		StringBuilder selectSql = new StringBuilder();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(user);
-		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityOperation.class);
+		RowMapper<SecurityOperation> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityOperation.class);
 
 		if (isAssigned) {
 			selectSql.append("select * from SecOperations_View where OprID in");

@@ -51,10 +51,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -101,7 +101,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
-		RowMapper<Beneficiary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Beneficiary.class);
+		RowMapper<Beneficiary> typeRowMapper = BeanPropertyRowMapper.newInstance(Beneficiary.class);
 
 		try {
 			beneficiary = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -308,7 +308,7 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(beneficiary);
-		RowMapper<Beneficiary> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Beneficiary.class);
+		RowMapper<Beneficiary> typeRowMapper = BeanPropertyRowMapper.newInstance(Beneficiary.class);
 
 		List<Beneficiary> beneficiaryList = new ArrayList<>();
 		try {

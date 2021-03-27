@@ -51,10 +51,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
@@ -109,8 +109,7 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		RowMapper<ProvisionMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProvisionMovement.class);
+		RowMapper<ProvisionMovement> typeRowMapper = BeanPropertyRowMapper.newInstance(ProvisionMovement.class);
 		try {
 			provisionMovement = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -151,8 +150,7 @@ public class ProvisionMovementDAOImpl extends BasicDao<ProvisionMovement> implem
 
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provisionMovement);
-		RowMapper<ProvisionMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProvisionMovement.class);
+		RowMapper<ProvisionMovement> typeRowMapper = BeanPropertyRowMapper.newInstance(ProvisionMovement.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

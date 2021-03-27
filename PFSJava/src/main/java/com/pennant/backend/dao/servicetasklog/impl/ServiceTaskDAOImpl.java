@@ -7,11 +7,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -90,8 +90,7 @@ public class ServiceTaskDAOImpl extends SequenceDao<ServiceTaskDetail> implement
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug(Literal.LEAVING);
 		try {
-			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(ServiceTaskDetail.class);
+			RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(dae);

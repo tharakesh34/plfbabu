@@ -4,11 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dda.DDAProcessDAO;
 import com.pennant.backend.model.finance.DDAProcessData;
@@ -118,7 +118,7 @@ public class DDAProcessDAOImpl extends SequenceDao<FinanceLimitProcess> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<DDAProcessData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DDAProcessData.class);
+		RowMapper<DDAProcessData> typeRowMapper = BeanPropertyRowMapper.newInstance(DDAProcessData.class);
 
 		try {
 			ddaProcessData = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -151,7 +151,7 @@ public class DDAProcessDAOImpl extends SequenceDao<FinanceLimitProcess> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
 			aFinanceType = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -187,7 +187,7 @@ public class DDAProcessDAOImpl extends SequenceDao<FinanceLimitProcess> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<DDAProcessData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DDAProcessData.class);
+		RowMapper<DDAProcessData> typeRowMapper = BeanPropertyRowMapper.newInstance(DDAProcessData.class);
 
 		try {
 			ddaProcessData = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);

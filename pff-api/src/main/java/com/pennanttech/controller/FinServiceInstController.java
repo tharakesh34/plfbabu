@@ -3832,7 +3832,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 			} else {
-				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
 					AEEvent aeEvent = new AEEvent();
 					aeEvent.setLinkedTranId(instruction.getLinkedTranId());
 					List<ReturnDataSet> list = postingsPreparationUtil

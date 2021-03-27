@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
 import com.pennant.backend.model.customermasters.CustomerGST;
@@ -300,7 +300,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
-		RowMapper<CustomerGST> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGST.class);
+		RowMapper<CustomerGST> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGST.class);
 		try {
 			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -325,7 +325,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
-		RowMapper<CustomerGST> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGST.class);
+		RowMapper<CustomerGST> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGST.class);
 		try {
 			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -352,7 +352,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
-		RowMapper<CustomerGST> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGST.class);
+		RowMapper<CustomerGST> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGST.class);
 		try {
 			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -434,8 +434,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGSTDetails);
-		RowMapper<CustomerGSTDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerGSTDetails.class);
+		RowMapper<CustomerGSTDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGSTDetails.class);
 
 		List<CustomerGSTDetails> customerGstInfoDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);

@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
@@ -98,7 +98,7 @@ public class LoanPurposeDAOImpl extends BasicDao<LoanPurpose> implements LoanPur
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(loanPurpose);
-		RowMapper<LoanPurpose> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LoanPurpose.class);
+		RowMapper<LoanPurpose> typeRowMapper = BeanPropertyRowMapper.newInstance(LoanPurpose.class);
 
 		try {
 			loanPurpose = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

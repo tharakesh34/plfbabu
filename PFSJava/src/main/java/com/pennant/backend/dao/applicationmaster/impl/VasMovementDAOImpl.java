@@ -47,11 +47,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.VasMovementDAO;
 import com.pennant.backend.model.finance.VasMovement;
@@ -99,7 +99,7 @@ public class VasMovementDAOImpl extends SequenceDao<VasMovement> implements VasM
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vasMovement);
-		RowMapper<VasMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VasMovement.class);
+		RowMapper<VasMovement> typeRowMapper = BeanPropertyRowMapper.newInstance(VasMovement.class);
 
 		try {
 			vasMovement = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CheckListDAO;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -99,7 +99,7 @@ public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckLis
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkList);
-		RowMapper<CheckList> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckList.class);
+		RowMapper<CheckList> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckList.class);
 
 		try {
 			checkList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

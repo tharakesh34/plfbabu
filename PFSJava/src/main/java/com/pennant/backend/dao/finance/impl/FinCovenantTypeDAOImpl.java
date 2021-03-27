@@ -10,11 +10,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -76,8 +76,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCovenantType.class);
+		RowMapper<FinCovenantType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCovenantType.class);
 
 		try {
 			finCovenantType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -450,8 +449,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCovenantType.class);
+		RowMapper<FinCovenantType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCovenantType.class);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -488,7 +486,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("DocTypeCode", covenantType);
 
-		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		RowMapper<DocumentType> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentType.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
@@ -514,7 +512,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		paramSource.addValue("RoleCd", Arrays.asList(allowedRoles));
 		paramSource.addValue("mandRole", mandRole);
 
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
@@ -535,7 +533,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		sql.append(" Where Pdd=1 OR Otc = 1");
 
 		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		RowMapper<DocumentType> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentType.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), typeRowMapper);
@@ -561,7 +559,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("mandRole", mandRole);
 
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);

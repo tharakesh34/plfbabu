@@ -57,13 +57,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -132,7 +132,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMain);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
 			finMain = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -169,8 +169,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSchdDetail);
-		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceScheduleDetail.class);
+		RowMapper<FinanceScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScheduleDetail.class);
 
 		try {
 			finSchdDetailsList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -205,8 +204,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvPayment);
-		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinAdvancePayments.class);
+		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
 
 		try {
 			FinAdvancePaymentslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -245,8 +243,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 		logger.trace(Literal.SQL + selectSql.toString());
 
-		RowMapper<PaymentInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PaymentInstruction.class);
+		RowMapper<PaymentInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentInstruction.class);
 
 		try {
 			paymentInstructionsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -317,7 +314,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(manualAdvise);
-		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		RowMapper<ManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdvise.class);
 
 		try {
 			manualAdviseList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -373,8 +370,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ManualAdviseMovements.class);
+		RowMapper<ManualAdviseMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdviseMovements.class);
 
 		try {
 			manualAdviseMovementsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -410,7 +406,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		RowMapper<FinFeeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 
 		try {
 			finFeeDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -443,7 +439,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<ReceiptAllocationDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(ReceiptAllocationDetail.class);
 
 		try {
@@ -530,8 +526,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 
-		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptDetail.class);
+		RowMapper<FinReceiptDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinReceiptDetail.class);
 
 		try {
 			list = jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);
@@ -586,8 +581,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("FinReference", finReference);
 
-		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(StatementOfAccount.class);
+		RowMapper<StatementOfAccount> typeRowMapper = BeanPropertyRowMapper.newInstance(StatementOfAccount.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
@@ -620,8 +614,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetail);
-		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceProfitDetail.class);
+		RowMapper<FinanceProfitDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceProfitDetail.class);
 
 		try {
 			financeProfitDetail = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -701,8 +694,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(statementOfAccount);
-		RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(StatementOfAccount.class);
+		RowMapper<StatementOfAccount> typeRowMapper = BeanPropertyRowMapper.newInstance(StatementOfAccount.class);
 
 		try {
 			statementOfAccount = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -737,8 +729,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		try {
-			RowMapper<StatementOfAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(StatementOfAccount.class);
+			RowMapper<StatementOfAccount> typeRowMapper = BeanPropertyRowMapper.newInstance(StatementOfAccount.class);
 			statementOfAccount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			statementOfAccount = null;
@@ -797,7 +788,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<FinRepayHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayHeader.class);
+		RowMapper<FinRepayHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinRepayHeader.class);
 
 		try {
 			finRepayHeadersList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -866,8 +857,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 
 		try {
 			presentmentDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -901,8 +891,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RepayScheduleDetail.class);
+		RowMapper<RepayScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
 
 		try {
 			finRepayScheduleDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -937,7 +926,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+		RowMapper<VASRecording> typeRowMapper = BeanPropertyRowMapper.newInstance(VASRecording.class);
 
 		try {
 			vasRecordingsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -979,8 +968,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeScheduleDetail.class);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 
 		try {
 			finFeeScheduleDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1011,8 +999,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			RowMapper<EventProperties> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(EventProperties.class);
+			RowMapper<EventProperties> typeRowMapper = BeanPropertyRowMapper.newInstance(EventProperties.class);
 			statementOfAccount = this.jdbcTemplate.queryForObject(sql.toString(), parameterMap, typeRowMapper);
 		} catch (Exception e) {
 			statementOfAccount = null;
@@ -1072,8 +1059,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<ApplicantDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ApplicantDetail.class);
+		RowMapper<ApplicantDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ApplicantDetail.class);
 
 		try {
 			applicantDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1112,8 +1098,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<OtherFinanceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OtherFinanceDetail.class);
+		RowMapper<OtherFinanceDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(OtherFinanceDetail.class);
 
 		try {
 			otherFinanceDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1144,8 +1129,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<FeeWaiverDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FeeWaiverDetail.class);
+		RowMapper<FeeWaiverDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeWaiverDetail.class);
 
 		try {
 			feeWaiverDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1195,8 +1179,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDisbursement.class);
+		RowMapper<FinanceDisbursement> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceDisbursement.class);
 
 		try {
 			financeDisbursements = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -1285,8 +1268,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvPayment);
-		RowMapper<FinAdvancePayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinAdvancePayments.class);
+		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
 
 		try {
 			FinAdvancePaymentslist = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1314,8 +1296,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeRefundHeader);
-		RowMapper<FinFeeRefundHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeRefundHeader.class);
+		RowMapper<FinFeeRefundHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundHeader.class);
 
 		try {
 			list = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1345,8 +1326,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 
-		RowMapper<FinFeeRefundDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeRefundDetails.class);
+		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
 
 		try {
 			list = jdbcTemplate.query(selectSql.toString(), paramMap, typeRowMapper);

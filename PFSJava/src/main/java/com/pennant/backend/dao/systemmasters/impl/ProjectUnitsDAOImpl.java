@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.ProjectUnitsDAO;
 import com.pennant.backend.model.systemmasters.ProjectUnits;
@@ -199,7 +198,7 @@ public class ProjectUnitsDAOImpl extends SequenceDao<ProjectUnits> implements Pr
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(projectUnit);
 		List<ProjectUnits> projectUnits = null;
-		RowMapper<ProjectUnits> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectUnits.class);
+		RowMapper<ProjectUnits> rowMapper = BeanPropertyRowMapper.newInstance(ProjectUnits.class);
 		try {
 			projectUnits = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

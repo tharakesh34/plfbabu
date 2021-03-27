@@ -174,6 +174,30 @@ public class LatePayMarkingService extends ServiceHelper {
 		return fodList;
 	}
 
+	public void resetMaxODAmount(List<FinanceRepayments> repayments, FinODDetails fod, FinanceScheduleDetail curSchd) {
+		fod.setFinMaxODPri(curSchd.getPrincipalSchd());
+		fod.setFinMaxODPft(curSchd.getProfitSchd());
+
+		if (repayments == null) {
+			fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
+			return;
+		}
+
+		for (FinanceRepayments repayment : repayments) {
+			// Check the payment made against the actual schedule date
+			if (repayment.getFinSchdDate().compareTo(fod.getFinODSchdDate()) != 0) {
+				continue;
+			}
+
+			// MAx OD amounts is same as repayments balance amounts
+			if (repayment.getFinValueDate().compareTo(repayment.getFinSchdDate()) <= 0) {
+				fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(repayment.getFinSchdPriPaid()));
+				fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(repayment.getFinSchdPftPaid()));
+			}
+		}
+		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
+	}
+
 	private void resetLPPToZero(FinODDetails fod, FinanceScheduleDetail schd, List<FinanceRepayments> rpdList,
 			boolean reset, Date valueDate) {
 		logger.debug(Literal.ENTERING);
@@ -365,7 +389,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 	}
 
-	private void latePayMarking(FinanceMain fm, FinODDetails fod, List<FinanceScheduleDetail> schedules,
+	public void latePayMarking(FinanceMain fm, FinODDetails fod, List<FinanceScheduleDetail> schedules,
 			List<FinanceRepayments> repayments, FinanceScheduleDetail curSchd, Date penaltyCalDate,
 			boolean isEODprocess) {
 

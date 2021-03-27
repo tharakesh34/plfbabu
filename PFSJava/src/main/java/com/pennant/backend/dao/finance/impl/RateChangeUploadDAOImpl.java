@@ -1,29 +1,29 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
-import java.sql.Connection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.finance.RateChangeUploadDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.model.ratechangeupload.RateChangeUpload;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> implements RateChangeUploadDAO {
@@ -32,15 +32,16 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 	@Override
 	public List<RateChangeUpload> getRateChangeUploadDetails(long batchId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT Id, BatchId, FINREFERENCE, BaseRateCode, Margin, ActualRate, ReCalculationType, RecalFromDate, RecalToDate, SpecialRate");
+		sql.append(
+				"SELECT Id, BatchId, FINREFERENCE, BaseRateCode, Margin, ActualRate, ReCalculationType, RecalFromDate, RecalToDate, SpecialRate");
 		sql.append(" FROM RATECHANGE_UPLOAD_DETAILS");
 		sql.append(" WHERE BATCHID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		return this.jdbcOperations.query(sql.toString(), new Object[] { batchId }, (rs, rowNum) -> {
 			RateChangeUpload rateChange = new RateChangeUpload();
-	
+
 			rateChange.setId(rs.getLong("Id"));
 			rateChange.setBatchId(rs.getLong("BatchId"));
 			rateChange.setFinReference(rs.getString("FINREFERENCE"));
@@ -51,7 +52,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			rateChange.setRecalToDate(rs.getDate("RecalToDate"));
 			rateChange.setRecalType(rs.getString("ReCalculationType"));
 			rateChange.setSpecialRate(rs.getString("SpecialRate"));
-			
+
 			return rateChange;
 		});
 	}
@@ -76,7 +77,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" values(?, ?, ?, ?, ?) ");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		try {
 			KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -110,8 +111,8 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		StringBuilder sql = new StringBuilder("Insert Into RATECHANGE_UPLOAD_LOG");
 		sql.append(" (DetailId, ErrorCode, ErrorDescription)");
 		sql.append(" Values( ? , ?, ?)");
-		
-		logger.trace(Literal.SQL+ sql.toString());
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
@@ -137,8 +138,8 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" TotalRecords = ?, SucessRecords = ?, FailureRecords = ?, Status = ? ");
 		sql.append(" WHERE Id = ?");
 
-		logger.trace(Literal.SQL+sql.toString());
-		
+		logger.trace(Literal.SQL + sql.toString());
+
 		try {
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
@@ -162,8 +163,8 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" values");
 		sql.append(" ( ?, ?, ?, ?, ?,?)");
 
-		logger.trace(Literal.SQL+sql.toString());
-		
+		logger.trace(Literal.SQL + sql.toString());
+
 		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 			public void setValues(PreparedStatement ps, int index) throws SQLException {
@@ -189,7 +190,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT count(*) FROM RMTBaseRateCodes");
 		sql.append(" WHERE BRType = ?");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { brCode }, Integer.class) > 0 ? true
@@ -235,7 +236,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			fm.setCustID(rs.getLong("CustID"));
 			fm.setFinCcy(rs.getString("FinCcy"));
 			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-			
+
 			return fm;
 		};
 	}
@@ -248,7 +249,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" Where Id = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		try {
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
@@ -276,7 +277,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		StringBuffer sql = new StringBuffer();
 		sql.append(" UPDATE DATA_ENGINE_STATUS set EndTime = ?, Remarks = ?, Status = ?");
 		sql.append(" WHERE Name = ?");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {

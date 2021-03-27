@@ -1,5 +1,16 @@
 package com.pennant.pff.service.RateChangeupload;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jaxen.JaxenException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -24,26 +35,12 @@ import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.model.ratechangeupload.RateChangeUpload;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jaxen.JaxenException;
-import org.apache.commons.collections.CollectionUtils;
-
 import com.pennanttech.pennapps.core.App.Type;
 import com.pennanttech.pennapps.core.InterfaceException;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.math.BigDecimal;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 	private RateChangeUploadDAO rateChangeUploadDAO;
@@ -385,15 +382,11 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			}
 
 			/*
-			 * if (rateChange.getSpecialRate() != null ||
-			 * StringUtils.isNotEmpty(rateChange.getSpecialRate())) { error =
+			 * if (rateChange.getSpecialRate() != null || StringUtils.isNotEmpty(rateChange.getSpecialRate())) { error =
 			 * "SpecialRate Code is not valid"; boolean splRate =
-			 * rateChangeUploadDAO.getSplRateCodes(rateChange.getSpecialRate());
-			 * if (!splRate) { if (remarks.length() > 0) { remarks.append(", ");
-			 * } remarks.append(error);
-			 * rateChange.setRemarks(remarks.toString());
-			 * rateChange.setStatus("F");
-			 * rateChange.setErrorDetail(getErrorDetail("RCU001", error));
+			 * rateChangeUploadDAO.getSplRateCodes(rateChange.getSpecialRate()); if (!splRate) { if (remarks.length() >
+			 * 0) { remarks.append(", "); } remarks.append(error); rateChange.setRemarks(remarks.toString());
+			 * rateChange.setStatus("F"); rateChange.setErrorDetail(getErrorDetail("RCU001", error));
 			 * rateChange.setRemarks(remarks.toString()); continue; } }
 			 */
 			error = "Margin should be greater/Equal to -9999 and lesser/Equal to 9999 ";

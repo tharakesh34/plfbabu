@@ -5,11 +5,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.model.finance.CreditReviewData;
@@ -48,8 +48,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetail);
-		RowMapper<CreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewDetails.class);
+		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
 
 		try {
 			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -80,8 +79,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		selectSql.append(" Where FinReference = :FinReference AND TemplateName = :TemplateName ");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<CreditReviewData> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewData.class);
+		RowMapper<CreditReviewData> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewData.class);
 
 		try {
 			creditReviewData = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -205,8 +203,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetail);
-		RowMapper<CreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewDetails.class);
+		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
 
 		try {
 			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -230,8 +227,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extCreditReviewConfig);
-		RowMapper<ExtCreditReviewConfig> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtCreditReviewConfig.class);
+		RowMapper<ExtCreditReviewConfig> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtCreditReviewConfig.class);
 
 		try {
 			extCreditReviewConfig = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -251,7 +247,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		selectSql.append(" Where finReference = :finReference");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("finReference", finReference);
-		RowMapper<ExtBreDetails> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtBreDetails.class);
+		RowMapper<ExtBreDetails> rowMapper = BeanPropertyRowMapper.newInstance(ExtBreDetails.class);
 		try {
 			return jdbcTemplate.queryForObject(selectSql.toString(), source, rowMapper);
 		} catch (Exception e) {

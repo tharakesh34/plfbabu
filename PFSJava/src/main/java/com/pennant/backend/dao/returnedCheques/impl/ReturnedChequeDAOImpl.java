@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.returnedCheques.ReturnedChequeDAO;
 import com.pennant.backend.model.returnedcheques.ReturnedChequeDetails;
@@ -63,8 +63,7 @@ public class ReturnedChequeDAOImpl extends BasicDao<ReturnedChequeDetails> imple
 		logger.debug("selectSql:" + selectSql.toString());
 
 		SqlParameterSource beanparameters = new BeanPropertySqlParameterSource(returnCheque);
-		RowMapper<ReturnedChequeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ReturnedChequeDetails.class);
+		RowMapper<ReturnedChequeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnedChequeDetails.class);
 
 		try {
 			returnCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanparameters, typeRowMapper);
@@ -128,8 +127,7 @@ public class ReturnedChequeDAOImpl extends BasicDao<ReturnedChequeDetails> imple
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(returnedCheque);
-		RowMapper<ReturnedCheques> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ReturnedCheques.class);
+		RowMapper<ReturnedCheques> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnedCheques.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SukukBrokerDAO;
 import com.pennant.backend.model.applicationmasters.SukukBroker;
@@ -98,7 +98,7 @@ public class SukukBrokerDAOImpl extends BasicDao<SukukBroker> implements SukukBr
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBroker);
-		RowMapper<SukukBroker> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SukukBroker.class);
+		RowMapper<SukukBroker> typeRowMapper = BeanPropertyRowMapper.newInstance(SukukBroker.class);
 
 		try {
 			sukukBroker = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

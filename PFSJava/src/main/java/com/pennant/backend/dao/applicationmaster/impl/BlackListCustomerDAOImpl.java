@@ -56,7 +56,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
@@ -122,8 +121,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blacklistCustomer);
-		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BlackListCustomers.class);
+		RowMapper<BlackListCustomers> typeRowMapper = BeanPropertyRowMapper.newInstance(BlackListCustomers.class);
 
 		try {
 			blacklistCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -192,8 +190,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blackListCustomer);
-		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinBlacklistCustomer.class);
+		RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -214,8 +211,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finBlacklistCustomer);
-		RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinBlacklistCustomer.class);
+		RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(FinBlacklistCustomer.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -251,8 +247,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blCustData);
-		RowMapper<BlackListCustomers> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BlackListCustomers.class);
+		RowMapper<BlackListCustomers> typeRowMapper = BeanPropertyRowMapper.newInstance(BlackListCustomers.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -427,7 +422,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 			selectSql.append(" SELECT * FROM FinBlackListDetail");
 			selectSql.append(" WHERE FinReference = :FinReference ");
 
-			RowMapper<FinBlacklistCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+			RowMapper<FinBlacklistCustomer> typeRowMapper = BeanPropertyRowMapper
 					.newInstance(FinBlacklistCustomer.class);
 			List<FinBlacklistCustomer> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
 

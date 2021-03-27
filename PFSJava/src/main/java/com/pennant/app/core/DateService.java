@@ -78,7 +78,7 @@ public class DateService extends ServiceHelper {
 
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_LAST, prevBussDate);
-	
+
 		Date appDate = eventProperties.getAppDate();
 		Date montEndDate = eventProperties.getMonthEndDate();
 		boolean updatevalueDate = true;

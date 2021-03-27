@@ -7,11 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralThirdPartyDAO;
 import com.pennant.backend.model.collateral.CollateralThirdParty;
@@ -44,8 +44,7 @@ public class CollateralThirdPartyDAOImpl extends BasicDao<CollateralThirdParty> 
 		source.addValue("CollateralRef", collateralRef);
 		source.addValue("CustomerId", customerId);
 
-		RowMapper<CollateralThirdParty> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralThirdParty.class);
+		RowMapper<CollateralThirdParty> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralThirdParty.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

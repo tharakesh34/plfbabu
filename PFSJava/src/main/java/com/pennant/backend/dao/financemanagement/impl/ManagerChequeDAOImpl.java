@@ -50,10 +50,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.ManagerChequeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -147,7 +147,7 @@ public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
-		RowMapper<ManagerCheque> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManagerCheque.class);
+		RowMapper<ManagerCheque> typeRowMapper = BeanPropertyRowMapper.newInstance(ManagerCheque.class);
 
 		try {
 			managerCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -190,7 +190,7 @@ public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
-		RowMapper<ManagerCheque> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManagerCheque.class);
+		RowMapper<ManagerCheque> typeRowMapper = BeanPropertyRowMapper.newInstance(ManagerCheque.class);
 
 		try {
 			managerCheque = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -379,7 +379,7 @@ public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
 		try {
-			count = this.jdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;
@@ -413,7 +413,7 @@ public class ManagerChequeDAOImpl extends SequenceDao<ManagerCheque> implements 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(managerCheque);
 		try {
-			count = this.jdbcTemplate.queryForInt(selectSql.toString(), beanParameters);
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			count = 0;

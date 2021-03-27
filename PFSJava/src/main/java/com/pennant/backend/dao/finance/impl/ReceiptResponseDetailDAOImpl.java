@@ -50,11 +50,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -121,8 +121,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptUploadDetail);
-		RowMapper<ReceiptUploadDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ReceiptUploadDetail.class);
+		RowMapper<ReceiptUploadDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ReceiptUploadDetail.class);
 
 		List<ReceiptUploadDetail> detailsList = new ArrayList<>();
 
@@ -154,8 +153,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<UploadAlloctionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(UploadAlloctionDetail.class);
+		RowMapper<UploadAlloctionDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadAlloctionDetail.class);
 
 		List<UploadAlloctionDetail> uploadAlloctionDetailsList = new ArrayList<>();
 
@@ -213,10 +211,10 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		source.addValue("PICKUPFLAG", 1);
 		source.addValue("PICKUPBATCHID", jobid);
-		source.addValue("RESPONSESTATUS", receiptresponseDetail.getUploadStatus());
+		source.addValue("RESPONSESTATUS", receiptresponseDetail.getProcessingStatus());
 
 		source.addValue("ERRORMESSAGE", receiptresponseDetail.getReason());
-		source.addValue("PICKUPDATE", DateUtility.getAppDate());
+		source.addValue("PICKUPDATE", SysParamUtil.getAppDate());
 		source.addValue("Id", receiptresponseDetail.getId());
 
 		try {

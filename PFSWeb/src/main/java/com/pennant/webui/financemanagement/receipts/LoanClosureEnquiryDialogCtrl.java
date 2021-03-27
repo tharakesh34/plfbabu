@@ -84,6 +84,7 @@ import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -92,6 +93,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -121,6 +123,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -141,6 +144,7 @@ import com.pennant.document.generator.TemplateEngine;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -159,6 +163,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.rits.cloning.Cloner;
 
 public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
@@ -272,7 +278,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected ReceiptListCtrl receiptListCtrl = null; // over handed per
 	// parameters
 	protected ExtendedFieldCtrl extendedFieldCtrl = null;
-
+	private FinScheduleData finSchedData = null;
 	private FinReceiptData receiptData = null;
 	private FinReceiptData orgReceiptData = null;
 	private FinanceDetail financeDetail;
@@ -307,6 +313,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	@Autowired
 	protected CollateralAssignmentDAO collateralAssignmentDAO;
+	protected boolean isModelWindow = false;
+	private boolean isMatured = false;
+	private boolean isWIF = false;
 
 	/**
 	 * default constructor.<br>
@@ -343,6 +352,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			isEnquiry = (Boolean) arguments.get("enquiryModule");
 		}
 
+		if (arguments.containsKey("isWIF")) {
+			isWIF = (Boolean) arguments.get("isWIF");
+		}
+
+		if (arguments.containsKey("isModelWindow")) {
+			isModelWindow = (Boolean) arguments.get("isModelWindow");
+		}
+
 		doFillData(finReference.getValue(), SysParamUtil.getAppDate());
 
 		// FinReceiptData receiptData = new FinReceiptData();
@@ -373,8 +390,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			this.receiptDetailsTab.setSelected(true);
 			this.btnCalcReceipts.setDisabled(false);
 			this.btnChangeReceipt.setDisabled(false);
-			setDialog(DialogType.EMBEDDED);
 			this.gb_Payable.setVisible(true);
+			if (isModelWindow) {
+				this.window_LoanClosureEnquiryDialog.setWidth("90%");
+				this.window_LoanClosureEnquiryDialog.setHeight("90%");
+				this.window_LoanClosureEnquiryDialog.doModal();
+			} else {
+				setDialog(DialogType.EMBEDDED);
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_LoanClosureEnquiryDialog.onClose();
@@ -424,6 +447,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
+
+		if (arguments.containsKey("isMatured")) {
+			isMatured = (Boolean) arguments.get("isMatured");
+		}
+
+		if (isMatured) {
+			windowTitle.setValue(App.getLabel("window_MaturedLoanClosureEnquiryDialog.title"));
+		}
 
 		this.btnReceipt.setVisible(false);
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
@@ -649,8 +680,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		setOrgReceiptData(tempReceiptData);
 
 		boolean isCalcCompleted = recalEarlyPaySchd(true);
-		if (isCalcCompleted) {
+		if (isCalcCompleted && !isMatured) {
 			this.effectiveScheduleTab.setVisible(true);
+			this.btnPrintSchedule.setVisible(true);
 		}
 		Date valueDate = this.receiptDate.getValue();
 		if (this.receiptMode.getSelectedItem().getValue().equals(RepayConstants.RECEIPTMODE_CHEQUE)
@@ -830,8 +862,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 
 			// Fill Effective Schedule Details
-			this.effectiveScheduleTab.setVisible(true);
-
+			if (!isMatured) {
+				this.effectiveScheduleTab.setVisible(true);
+			}
+			setFinSchedData(fsd);
 			/*
 			 * // Dashboard Details Report doLoadTabsData(); doShowReportChart(fsd);
 			 */
@@ -1115,7 +1149,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		this.recordStatus.setValue(receiptHeader.getRecordStatus());
-
 		logger.debug("Leaving");
 	}
 
@@ -3231,7 +3264,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		// Finance Should not allow for Partial Settlement & Early settlement
 		// when Maturity Date reaches Current application Date
-		if (receiptPurposeCtg == 1 || receiptPurposeCtg == 2) {
+		if (receiptPurposeCtg == 1 || receiptPurposeCtg == 2 && !isMatured) {
 
 			if (financeMain.getMaturityDate().compareTo(receiptValueDate) < 0) {
 				MessageUtil.showError(
@@ -4009,6 +4042,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			arg.put("reportName", reportName.replace(".docx", ".pdf"));
 			arg.put("isAgreement", false);
 			arg.put("docFormat", format);
+			arg.put("isModelWindow", this.isModelWindow);
 
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", window, arg);
 		}
@@ -4105,6 +4139,140 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		notes.setRoleCode(getRole());
 		logger.debug("Leaving ");
 		return notes;
+	}
+
+	/**
+	 * when the "btnPrintSchedule" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnPrintSchedule(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+
+		List<Object> list = new ArrayList<Object>();
+		FinScheduleListItemRenderer finRender;
+		if (getFinSchedData() != null) {
+
+			// Fee Charges List Render For First Disbursement only/Existing
+			List<FeeRule> feeRuleList = getFinSchedData().getFeeRules();
+			FinanceMain financeMain = getFinSchedData().getFinanceMain();
+
+			// Get Finance Fee Details For Schedule Render Purpose In
+			// maintenance Stage
+			List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
+			if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
+					&& !isWIF) {
+				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), "",
+						isWIF);
+			}
+			approvedFeeRules.addAll(feeRuleList);
+
+			Map<Date, ArrayList<FeeRule>> feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
+			for (FeeRule fee : approvedFeeRules) {
+				if (feeChargesMap.containsKey(fee.getSchDate())) {
+					ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
+					int seqNo = 0;
+					for (FeeRule feeRule : feeChargeList) {
+						if (feeRule.getFeeCode().equals(fee.getFeeCode())) {
+							if (seqNo < feeRule.getSeqNo() && fee.getSchDate().compareTo(feeRule.getSchDate()) == 0) {
+								seqNo = feeRule.getSeqNo();
+							}
+						}
+					}
+					fee.setSeqNo(seqNo + 1);
+					feeChargeList.add(fee);
+					feeChargesMap.put(fee.getSchDate(), feeChargeList);
+
+				} else {
+					ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
+					feeChargeList.add(fee);
+					feeChargesMap.put(fee.getSchDate(), feeChargeList);
+				}
+			}
+
+			finRender = new FinScheduleListItemRenderer();
+			list.add(finRender.getScheduleGraphData(getFinSchedData()));
+			list.add(finRender.getPrintScheduleData(getFinSchedData(), null, null, true, false, false));
+
+			boolean isSchdFee = false;
+			List<FinFeeDetail> finFeeList = getFinSchedData().getFinFeeDetailList();
+			for (int i = 0; i < finFeeList.size(); i++) {
+				FinFeeDetail finFeeDetail = finFeeList.get(i);
+				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+						|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+						|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+					isSchdFee = true;
+					break;
+				}
+			}
+
+			list.add(isSchdFee);
+			Map<Object, Object> map = new HashMap<>();
+			map.put("isModelWindow", isModelWindow);
+			list.add(map);
+
+			// To get Parent Window i.e Finance main based on product
+			Component component = this.window_LoanClosureEnquiryDialog;
+			Window window = null;
+			if (component instanceof Window) {
+				window = (Window) component;
+			} else {
+				window = (Window) this.window_LoanClosureEnquiryDialog.getParent().getParent().getParent().getParent()
+						.getParent().getParent().getParent().getParent();
+			}
+			String reportName = "FINENQ_ScheduleDetail";
+
+			if (StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_CONVENTIONAL)) {
+				reportName = "CFINENQ_ScheduleDetail";
+			} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+				reportName = "ODFINENQ_ScheduleDetail";
+			}
+
+			// Customer CIF && Customer Name Setting
+			CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
+			if (customerDetails != null) {
+				Customer customer = customerDetails.getCustomer();
+				financeMain.setLovDescCustCIF(customer.getCustCIF());
+				financeMain.setLovDescCustShrtName(customer.getCustShrtName());
+			} else {
+				financeMain.setLovDescCustCIF("");
+			}
+
+			if (isWIF) {
+				reportName = "WIFENQ_ScheduleDetail";
+				WIFCustomer customerDetailsData = getFinanceDetail().getCustomer();
+				if (customerDetailsData != null) {
+					financeMain.setLovDescCustCIF(String.valueOf(customerDetailsData.getCustID()));
+					financeMain.setLovDescCustShrtName(customerDetailsData.getCustShrtName());
+				} else {
+					financeMain.setLovDescCustCIF("");
+				}
+			}
+
+			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
+					true);
+
+			int advTerms = 0;
+			if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
+					&& AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
+				advTerms = financeMain.getAdvTerms();
+			}
+
+			String noOfTerms = String.valueOf(financeMain.getCalTerms() + financeMain.getGraceTerms());
+			financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
+					+ (StringUtils.isEmpty(noOfTerms) ? "0" : noOfTerms) + advTerms + " Payments");
+
+			SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
+			String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),
+					securityUser.getUsrLName());
+
+			ReportGenerationUtil.generateReport(reportName, financeMain, list, true, 1, usrName, window);
+		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// ******************************************************//
@@ -4314,6 +4482,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			map.put("profitDaysBasisList", PennantStaticListUtil.getProfitDaysBasis());
 			map.put("isEnquiry", true);
 			map.put("financeDetail", orgFinanceDetail);
+			map.put("isModelWindow", isModelWindow);
 
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ScheduleDetailDialog.zul", tabpanel, map);
 
@@ -4454,5 +4623,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
+	}
+
+	public FinScheduleData getFinSchedData() {
+		return finSchedData;
+	}
+
+	public void setFinSchedData(FinScheduleData finSchedData) {
+		this.finSchedData = finSchedData;
 	}
 }

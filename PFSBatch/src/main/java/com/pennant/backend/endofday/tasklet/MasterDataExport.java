@@ -12,8 +12,8 @@ import com.pennanttech.pff.external.DataExportProcess;
 
 public class MasterDataExport implements Tasklet {
 	private Logger logger = LogManager.getLogger(MasterDataExport.class);
-	
-	@Autowired(required=false)
+
+	@Autowired(required = false)
 	private DataExportProcess dataExportProcess;
 
 	@Override

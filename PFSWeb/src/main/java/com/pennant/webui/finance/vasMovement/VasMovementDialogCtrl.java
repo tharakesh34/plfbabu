@@ -117,7 +117,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 
 	// Button controller for the CRUD buttons
 	private transient boolean isEditable = false;
-	
+
 	protected Label lbl_LoanReference;
 	protected Label lbl_LoanType;
 	protected Label lbl_CustCIF;
@@ -181,7 +181,8 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 				setVasMovementListCtrl(null);
 			}
 
-			doLoadWorkFlow(this.vasMovement.isWorkflow(), this.vasMovement.getWorkflowId(), this.vasMovement.getNextTaskId());
+			doLoadWorkFlow(this.vasMovement.isWorkflow(), this.vasMovement.getWorkflowId(),
+					this.vasMovement.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
@@ -226,7 +227,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -357,11 +358,13 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		this.lbl_LoanReference.setValue(aVasMovement.getFinReference());
 		this.lbl_CustCIF.setValue(String.valueOf(aVasMovement.getCustCif()));
 		this.lbl_LoanType.setValue(aVasMovement.getFinType());
-		this.lbl_FinAmount.setValue(PennantAppUtil.amountFormate(aVasMovement.getFinAmount(), PennantConstants.defaultCCYDecPos));
-		this.lbl_startDate.setValue(DateUtility.format(aVasMovement.getFinStartdate(), DateFormat.LONG_DATE.getPattern()));
-		this.lbl_MaturityDate.setValue(DateUtility.format(aVasMovement.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
-		
-		
+		this.lbl_FinAmount
+				.setValue(PennantAppUtil.amountFormate(aVasMovement.getFinAmount(), PennantConstants.defaultCCYDecPos));
+		this.lbl_startDate
+				.setValue(DateUtility.format(aVasMovement.getFinStartdate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_MaturityDate
+				.setValue(DateUtility.format(aVasMovement.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+
 		logger.debug("Leaving");
 	}
 
@@ -480,7 +483,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 */
 	private void doSetLOVValidation() {
 		logger.debug("Entering");
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -553,7 +556,6 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 			this.btnCancel.setVisible(true);
 		}
 
-
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -578,7 +580,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -894,8 +896,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		map.put("vasMovementDetail", vasMovementDetail);
 		map.put("roleCode", getRole());
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/VasMovement/VasMovementDetailDialog.zul", null,
-					map);
+			Executions.createComponents("/WEB-INF/pages/Finance/VasMovement/VasMovementDetailDialog.zul", null, map);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -917,9 +918,9 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		if (item != null) {
 			final VasMovementDetail vasMovementDetail = (VasMovementDetail) item.getAttribute("data");
 
-			if (vasMovementDetail.getRecordType() != null
-					&& (vasMovementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-							|| (vasMovementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)))) {
+			if (vasMovementDetail.getRecordType() != null && (vasMovementDetail.getRecordType()
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+					|| (vasMovementDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)))) {
 				MessageUtil.showError(Labels.getLabel("RECORD_NO_MAINTAIN"));
 			} else {
 				vasMovementDetail.setNewRecord(false);
@@ -930,11 +931,12 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 				map.put("roleCode", getRole());
 				map.put("isEditable", isEditable);
 				map.put("isNewRecord", getVasMovement().isNew());
-				map.put("isAccessRights", getUserWorkspace().isAllowed("button_VasMovementDialog_btnNew_VasMovementDetail"));
+				map.put("isAccessRights",
+						getUserWorkspace().isAllowed("button_VasMovementDialog_btnNew_VasMovementDetail"));
 
 				try {
-					Executions.createComponents("/WEB-INF/pages/Finance/VasMovement/VasMovementDetailDialog.zul",
-							null, map);
+					Executions.createComponents("/WEB-INF/pages/Finance/VasMovement/VasMovementDetailDialog.zul", null,
+							map);
 
 				} catch (Exception e) {
 					MessageUtil.showError(e);
@@ -960,12 +962,12 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		getChkListDetailPagedListWrapper().initList(vasMovementDetailList, this.listbox_VasMovementDetails,
 				pagingVasMvmtDetailsList);
 		this.listbox_VasMovementDetails
-		.setModel(new GroupsModelArray(vasMovementDetailList.toArray(), new VasMovementComparator()));
+				.setModel(new GroupsModelArray(vasMovementDetailList.toArray(), new VasMovementComparator()));
 		this.listbox_VasMovementDetails.setItemRenderer(new VasMovementDetailListModelItemRenderer());
 		if (this.listbox_VasMovementDetails.getVisibleItemCount() != 0) {
 			Clients.clearWrongValue(this.btnNew_VasMovementDetail);
 		}
-		
+
 		int vasMovementCnt = 0;
 
 		for (VasMovementDetail checkDetail : vasMovementDetailList) {
@@ -995,7 +997,6 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 
 		}
 	}
-
 
 	@Override
 	protected String getReference() {

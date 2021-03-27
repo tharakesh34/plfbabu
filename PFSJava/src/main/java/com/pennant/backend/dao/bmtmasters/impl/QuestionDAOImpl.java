@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.QuestionDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -131,7 +131,7 @@ public class QuestionDAOImpl extends SequenceDao<Question> implements QuestionDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(question);
-		RowMapper<Question> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Question.class);
+		RowMapper<Question> typeRowMapper = BeanPropertyRowMapper.newInstance(Question.class);
 
 		try {
 			question = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

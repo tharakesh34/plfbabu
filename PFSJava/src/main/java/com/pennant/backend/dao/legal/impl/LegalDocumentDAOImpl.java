@@ -54,11 +54,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.legal.LegalDocumentDAO;
 import com.pennant.backend.model.legal.LegalDocument;
@@ -104,7 +104,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		legalDocument.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalDocument);
-		RowMapper<LegalDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalDocument.class);
+		RowMapper<LegalDocument> rowMapper = BeanPropertyRowMapper.newInstance(LegalDocument.class);
 
 		try {
 			legalDocument = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

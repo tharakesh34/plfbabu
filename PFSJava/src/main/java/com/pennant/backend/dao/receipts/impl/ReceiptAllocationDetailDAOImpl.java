@@ -53,10 +53,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
@@ -242,7 +242,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		List<ReceiptAllocationDetail> allocations = null;
 
 		try {
-			RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+			RowMapper<ReceiptAllocationDetail> typeRowMapper = BeanPropertyRowMapper
 					.newInstance(ReceiptAllocationDetail.class);
 			allocations = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {

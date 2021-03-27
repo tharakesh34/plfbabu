@@ -8,11 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -41,7 +41,7 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<RolledoverFinanceHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<RolledoverFinanceHeader> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(RolledoverFinanceHeader.class);
 
 		try {
@@ -70,7 +70,7 @@ public class RolledoverFinanceDAOImpl extends BasicDao<RolledoverFinanceHeader> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<RolledoverFinanceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<RolledoverFinanceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(RolledoverFinanceDetail.class);
 
 		logger.debug("Leaving");

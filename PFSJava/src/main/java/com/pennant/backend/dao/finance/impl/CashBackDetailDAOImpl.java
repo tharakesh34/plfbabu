@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.CashBackDetailDAO;
 import com.pennant.backend.model.finance.CashBackDetail;
@@ -72,7 +72,7 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 		logger.debug("selectSql: " + sql.toString());
 		List<CashBackDetail> cashBackDetailList = new ArrayList<CashBackDetail>();
 
-		RowMapper<CashBackDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CashBackDetail.class);
+		RowMapper<CashBackDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CashBackDetail.class);
 		try {
 			cashBackDetailList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -97,7 +97,7 @@ public class CashBackDetailDAOImpl extends BasicDao<CashBackDetail> implements C
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashBackDetail);
 		logger.debug("Leaving");
-		RowMapper<CashBackDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CashBackDetail.class);
+		RowMapper<CashBackDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CashBackDetail.class);
 		try {
 			cashBackDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

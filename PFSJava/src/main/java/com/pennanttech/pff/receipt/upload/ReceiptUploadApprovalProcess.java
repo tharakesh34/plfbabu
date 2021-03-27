@@ -1,67 +1,45 @@
 package com.pennanttech.pff.receipt.upload;
 
 import java.util.List;
-
-import javax.sql.DataSource;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
-import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
-import com.pennant.backend.dao.receiptUpload.ProjectedRUDAO;
-import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReceiptUploadApprovalProcess {
 	private static final Logger logger = LogManager.getLogger(ReceiptUploadApprovalProcess.class);
 
-	private DataSource dataSource;
-	private ProjectedRUDAO projectedRUDAO;
-	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
-	private ReceiptService receiptService;
-	private UploadAllocationDetailDAO uploadAllocationDetailDAO;
-	private transient ReceiptUploadHeaderService receiptUploadHeaderService;
+	private ReceiptUploadHeaderService receiptUploadHeaderService;
 
-	public void approveReceipts(List<Long> receiptIds, LoggedInUser loggedInUser) {
-		logger.debug(Literal.ENTERING);
+	public void approveReceipts(List<Long> headerIdList, LoggedInUser loggedInUser,
+			Map<Long, ReceiptUploadLog> attemptMap) {
+		int maxThreadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.RECEIPT_UPLOAD_THREAD_SIZE);
 
-		ReceiptUploadThreadProcess threadProcess = new ReceiptUploadThreadProcess(dataSource, projectedRUDAO,
-				receiptUploadDetailDAO, receiptService, uploadAllocationDetailDAO, loggedInUser);
-		threadProcess.processesThread(receiptIds);
+		logger.info("Started Thread allocation process for the HeaderId's{}..", headerIdList);
+		int threadCount = receiptUploadHeaderService.updateThread(headerIdList);
+		logger.info("Thread allocation process for the HeaderId's{} completed..", headerIdList);
 
-		logger.debug(Literal.LEAVING);
+		if (maxThreadCount >= threadCount) {
+			receiptUploadHeaderService.executeThreads(headerIdList, loggedInUser, 0, threadCount, attemptMap);
+			return;
+		}
 
-	}
+		for (int i = 0; i < threadCount; i = i + maxThreadCount) {
+			int endThread = i + maxThreadCount;
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+			if (threadCount < endThread) {
+				endThread = threadCount;
+			}
 
-	public void setProjectedRUDAO(ProjectedRUDAO projectedRUDAO) {
-		this.projectedRUDAO = projectedRUDAO;
-	}
+			receiptUploadHeaderService.executeThreads(headerIdList, loggedInUser, i, endThread, attemptMap);
+		}
 
-	public void setReceiptUploadDetailDAO(ReceiptUploadDetailDAO receiptUploadDetailDAO) {
-		this.receiptUploadDetailDAO = receiptUploadDetailDAO;
-	}
-
-	public void setReceiptService(ReceiptService receiptService) {
-		this.receiptService = receiptService;
-	}
-
-	public UploadAllocationDetailDAO getUploadAllocationDetailDAO() {
-		return uploadAllocationDetailDAO;
-	}
-
-	public void setUploadAllocationDetailDAO(UploadAllocationDetailDAO uploadAllocationDetailDAO) {
-		this.uploadAllocationDetailDAO = uploadAllocationDetailDAO;
-	}
-
-	public ReceiptUploadHeaderService getReceiptUploadHeaderService() {
-		return receiptUploadHeaderService;
 	}
 
 	public void setReceiptUploadHeaderService(ReceiptUploadHeaderService receiptUploadHeaderService) {

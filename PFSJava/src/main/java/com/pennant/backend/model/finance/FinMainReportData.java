@@ -1026,7 +1026,7 @@ public class FinMainReportData implements Serializable {
 				reportData.setFinStatus("Matured");
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())) {
 				reportData.setFinStatus("Cancelled");
-			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(financeMain.getClosingStatus())) {
+			} else if (financeMain.isWriteoffLoan()) {
 				reportData.setFinStatus("Written-Off");
 			}
 		}

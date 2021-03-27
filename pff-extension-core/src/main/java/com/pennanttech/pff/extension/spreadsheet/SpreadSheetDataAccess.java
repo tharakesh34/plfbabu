@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.CreditReviewData;
@@ -62,8 +61,7 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(crd);
-		RowMapper<CreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewDetails.class);
+		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
 
 		try {
 			crd = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -96,8 +94,7 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 		selectSql.append(" Where FinReference = :FinReference AND TemplateName = :TemplateName ");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<CreditReviewData> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewData.class);
+		RowMapper<CreditReviewData> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewData.class);
 
 		try {
 			crdata = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -204,7 +201,7 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 		selectSql.append(" Where CustCIF = :CustCIF");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

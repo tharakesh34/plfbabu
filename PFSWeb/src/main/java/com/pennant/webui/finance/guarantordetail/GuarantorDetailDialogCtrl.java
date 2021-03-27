@@ -1739,8 +1739,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			 */
 			if (!this.mobileNo.isReadonly()) {
 				this.mobileNo.setConstraint(
-						new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"),
-								true, PennantRegularExpressions.REGEX_MOBILE));
+						new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true,
+								PennantRegularExpressions.REGEX_MOBILE));
 			}
 			// Email Id
 			if (!this.emailId.isReadonly()) {

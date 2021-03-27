@@ -51,12 +51,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
@@ -112,8 +112,7 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName.toUpperCase());
 
-		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceWorkFlow.class);
+		RowMapper<FinanceWorkFlow> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -197,8 +196,7 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWorkFlow);
-		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceWorkFlow.class);
+		RowMapper<FinanceWorkFlow> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
 
 		List<FinanceWorkFlow> returnList = null;
 		try {
@@ -414,8 +412,7 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		source.addValue("FinEvent", finEvent);
 		source.addValue("ModuleName", moduleName.toUpperCase());
 
-		RowMapper<FinanceWorkFlow> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceWorkFlow.class);
+		RowMapper<FinanceWorkFlow> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceWorkFlow.class);
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

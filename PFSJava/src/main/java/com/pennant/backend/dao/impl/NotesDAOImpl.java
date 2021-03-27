@@ -48,11 +48,11 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.model.FinServicingEvent;
@@ -84,7 +84,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		RowMapper<Notes> typeRowMapper = BeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -101,7 +101,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		RowMapper<Notes> typeRowMapper = BeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -123,7 +123,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
-		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		RowMapper<Notes> typeRowMapper = BeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -179,7 +179,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 		}
 		paramSource.addValue("RemarkType", "N");
 
-		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		RowMapper<Notes> typeRowMapper = BeanPropertyRowMapper.newInstance(Notes.class);
 
 		logger.debug(Literal.LEAVING);
 		return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
@@ -207,7 +207,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 		source.addValue("RemarkType", "R");
 		source.addValue("ModuleName", moduleNames.get(0));
 
-		RowMapper<Notes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notes.class);
+		RowMapper<Notes> typeRowMapper = BeanPropertyRowMapper.newInstance(Notes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}

@@ -25,10 +25,10 @@ public class DataExtractProcessImpl implements DataExportProcess {
 	private ExtractDataDAO extractDataDAO;
 
 	public void export(String exportType) {
-		
-		if("CUSROMER".equals(exportType)) {
+
+		if ("CUSROMER".equals(exportType)) {
 			exportCustomerData();
-		} else if("MASTER".equals(exportType)) {
+		} else if ("MASTER".equals(exportType)) {
 			exportMasterData();
 		}
 	}
@@ -70,7 +70,7 @@ public class DataExtractProcessImpl implements DataExportProcess {
 		}
 		logger.debug("COMPLETE: Customer Data preparation :" + currentTime);
 	}
-	
+
 	private void exportMasterData() {
 		//current date starting from midnight
 		Calendar cal = Calendar.getInstance();
@@ -106,12 +106,12 @@ public class DataExtractProcessImpl implements DataExportProcess {
 				extractDataDAO.extractDetails(currentTime, ProjectUnits.class, "projectunits");
 			}
 			logger.debug(Literal.LEAVING);
-		
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + " While executing master data extraction");
 		}
 		logger.debug("COMPLETE: Master Data preparation :" + currentTime);
-	
+
 	}
 
 	private static Timestamp getTimestamp(java.util.Date date) {

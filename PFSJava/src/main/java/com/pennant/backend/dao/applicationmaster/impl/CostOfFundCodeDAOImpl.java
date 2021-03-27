@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CostOfFundCodeDAO;
 import com.pennant.backend.model.applicationmaster.CostOfFundCode;
@@ -98,7 +98,7 @@ public class CostOfFundCodeDAOImpl extends BasicDao<CostOfFundCode> implements C
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFundCode);
-		RowMapper<CostOfFundCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFundCode.class);
+		RowMapper<CostOfFundCode> typeRowMapper = BeanPropertyRowMapper.newInstance(CostOfFundCode.class);
 
 		try {
 			costOfFundCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

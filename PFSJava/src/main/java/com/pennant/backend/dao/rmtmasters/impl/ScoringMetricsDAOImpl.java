@@ -50,11 +50,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
@@ -101,7 +101,7 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
+		RowMapper<ScoringMetrics> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
 		try {
 			scoringMetrics = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -133,7 +133,7 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		selectSql.append(" Where ScoreGroupId =:ScoreGroupId AND CategoryType =:CategoryType ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
+		RowMapper<ScoringMetrics> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -305,7 +305,7 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("scoreGrooupCode", scoreRleCode);
 
-		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
+		RowMapper<ScoringMetrics> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -74,7 +74,6 @@ public class VasMovementDetailListModelItemRenderer implements ListitemRenderer<
 	@Override
 	public void render(Listitem item, VasMovementDetail vasMovementDetail, int count) throws Exception {
 
-		
 		if (item instanceof Listgroup) {
 			Listcell cell = new Listcell(vasMovementDetail.getVasReference());
 			cell.setStyle("font-weight:bold;color:##FF4500;");
@@ -84,35 +83,37 @@ public class VasMovementDetailListModelItemRenderer implements ListitemRenderer<
 			cell.setSpan(9);
 			item.appendChild(cell);
 		} else {
-		
-		Listcell lc;
-		lc = new Listcell(String.valueOf(vasMovementDetail.getVasMovementDetailId()));
-		lc.setParent(item);
-		
-		lc = new Listcell(String.valueOf(vasMovementDetail.getVasProduct()));
-		lc.setParent(item);
-		
-		lc = new Listcell(String.valueOf(vasMovementDetail.getVasProvider()));
-		lc.setParent(item);
-		
-		lc = new Listcell(PennantAppUtil.amountFormate(vasMovementDetail.getVasAmount(), PennantConstants.defaultCCYDecPos));
-		lc.setParent(item);
-		
-		lc = new Listcell(DateUtility.format(vasMovementDetail.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
-		lc.setParent(item);
-		
-		lc = new Listcell(PennantAppUtil.amountFormate(vasMovementDetail.getMovementAmt(), PennantConstants.defaultCCYDecPos));
-		lc.setParent(item);
-		
-		lc = new Listcell(vasMovementDetail.getRecordStatus());
-		lc.setParent(item);
 
-		lc = new Listcell(PennantJavaUtil.getLabel(vasMovementDetail.getRecordType()));
-		lc.setParent(item);
-		
+			Listcell lc;
+			lc = new Listcell(String.valueOf(vasMovementDetail.getVasMovementDetailId()));
+			lc.setParent(item);
 
-		item.setAttribute("data", vasMovementDetail);
-		ComponentsCtrl.applyForward(item, "onDoubleClick=onVasMovementDetailItemDoubleClicked");
+			lc = new Listcell(String.valueOf(vasMovementDetail.getVasProduct()));
+			lc.setParent(item);
+
+			lc = new Listcell(String.valueOf(vasMovementDetail.getVasProvider()));
+			lc.setParent(item);
+
+			lc = new Listcell(
+					PennantAppUtil.amountFormate(vasMovementDetail.getVasAmount(), PennantConstants.defaultCCYDecPos));
+			lc.setParent(item);
+
+			lc = new Listcell(
+					DateUtility.format(vasMovementDetail.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
+			lc.setParent(item);
+
+			lc = new Listcell(PennantAppUtil.amountFormate(vasMovementDetail.getMovementAmt(),
+					PennantConstants.defaultCCYDecPos));
+			lc.setParent(item);
+
+			lc = new Listcell(vasMovementDetail.getRecordStatus());
+			lc.setParent(item);
+
+			lc = new Listcell(PennantJavaUtil.getLabel(vasMovementDetail.getRecordType()));
+			lc.setParent(item);
+
+			item.setAttribute("data", vasMovementDetail);
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onVasMovementDetailItemDoubleClicked");
 		}
 	}
 }

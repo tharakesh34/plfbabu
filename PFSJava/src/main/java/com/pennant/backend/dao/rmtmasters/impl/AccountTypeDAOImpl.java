@@ -51,10 +51,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -106,7 +106,7 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
-		RowMapper<AccountType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountType.class);
+		RowMapper<AccountType> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountType.class);
 
 		try {
 			accountType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -258,7 +258,7 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		params.put("acTypeList", acTypeList);
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+		RowMapper<ValueLabel> typeRowMapper = BeanPropertyRowMapper.newInstance(ValueLabel.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), params, typeRowMapper);

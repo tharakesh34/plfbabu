@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
 import com.pennant.backend.model.finance.FinAssetTypes;
@@ -163,7 +163,7 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetTypes);
-		RowMapper<FinAssetTypes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAssetTypes.class);
+		RowMapper<FinAssetTypes> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAssetTypes.class);
 
 		try {
 			finAssetType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

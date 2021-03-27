@@ -410,6 +410,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
+	protected ExtendedCombobox closureType;
 	ReasonCode reasonCodeData;
 	private List<ValueLabel> sourceofFundList = PennantAppUtil.getFieldCodeList("SOURCE");
 
@@ -701,6 +702,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.earlySettlementReason.setValueType(DataType.LONG);
 		this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
 		readOnlyComponent(true, this.earlySettlementReason);
+
+		this.closureType.setMandatoryStyle(false);
+		this.closureType.setModuleName("ClosureType");
+		this.closureType.setValueColumn("Code");
+		this.closureType.setDescColumn("Description");
+		this.closureType.setDisplayStyle(2);
+		this.closureType.setValidateColumns(new String[] { "Code" });
+		readOnlyComponent(true, this.closureType);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1212,7 +1221,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
 		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
 		this.valueDate.setValue(rch.getValueDate());
-
+		if (rch.getClosureTypeId() != null) {
+			this.closureType.setValue(String.valueOf(rch.getClosureTypeId()));
+			this.closureType.setDescription(rch.getClosureTypeDesc());
+		}
 		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
 			this.knockOffType.setValue("Auto");
 		} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {

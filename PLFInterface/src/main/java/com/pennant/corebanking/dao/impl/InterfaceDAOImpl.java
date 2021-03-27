@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,7 +26,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.pennant.corebanking.dao.InterfaceDAO;
@@ -96,8 +96,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		try {
 			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(coreAcct);
-			RowMapper<CoreBankAccountDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CoreBankAccountDetail.class);
+			RowMapper<CoreBankAccountDetail> rowMapper = BeanPropertyRowMapper.newInstance(CoreBankAccountDetail.class);
 
 			list = this.namedParameterJdbcTemplate.query(selectQuery.toString(), paramSource, rowMapper);
 
@@ -139,7 +138,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 			executeAccountForFin(reqRefId, "Y");
 
 			SqlParameterSource beanParameters = null;
-			RowMapper<CoreBankAccountPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper
+			RowMapper<CoreBankAccountPosting> typeRowMapper = BeanPropertyRowMapper
 					.newInstance(CoreBankAccountPosting.class);
 
 			for (CoreBankAccountPosting item : accountPostings) {
@@ -175,8 +174,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		selectSql.append(" from SCPF where AccountNumber = :AccountNumber ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CoreBankAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CoreBankAccountDetail.class);
+		RowMapper<CoreBankAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CoreBankAccountDetail.class);
 
 		List<CoreBankAccountDetail> list = null;
 		try {
@@ -202,8 +200,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		selectSql.append(" from SCPF  where AccountNumber IN(:AccNumberList) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CoreBankAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CoreBankAccountDetail.class);
+		RowMapper<CoreBankAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CoreBankAccountDetail.class);
 
 		List<CoreBankAccountDetail> list = null;
 		try {
@@ -226,8 +223,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountDetail);
-		RowMapper<CoreBankAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CoreBankAccountDetail.class);
+		RowMapper<CoreBankAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CoreBankAccountDetail.class);
 
 		logger.debug("Leaving");
 
@@ -376,7 +372,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = null;
-		RowMapper<CoreBankAccountPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<CoreBankAccountPosting> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(CoreBankAccountPosting.class);
 		try {
 			for (CoreBankAccountPosting item : list) {
@@ -411,8 +407,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = null;
-		RowMapper<CoreBankAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CoreBankAccountDetail.class);
+		RowMapper<CoreBankAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CoreBankAccountDetail.class);
 		try {
 			for (CoreBankAccountDetail detail : list) {
 				beanParameters = new BeanPropertySqlParameterSource(detail);
@@ -545,8 +540,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerInterfaceData);
-		RowMapper<InterfaceCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InterfaceCustomer.class);
+		RowMapper<InterfaceCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(InterfaceCustomer.class);
 
 		logger.debug("Leaving");
 
@@ -580,7 +574,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<InterfaceCustomerIdentity> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<InterfaceCustomerIdentity> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(InterfaceCustomerIdentity.class);
 
 		List<InterfaceCustomerIdentity> list = this.namedParameterJdbcTemplate.query(selectSql.toString(),
@@ -602,7 +596,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<InterfaceCustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<InterfaceCustomerRating> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(InterfaceCustomerRating.class);
 
 		List<InterfaceCustomerRating> list = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters,
@@ -684,8 +678,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		StringBuilder selectSql = new StringBuilder("select * from CustomerLimitDetails  Where LimitRef=:LimitRef ");
 
-		RowMapper<CustomerLimitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerLimitDetail.class);
+		RowMapper<CustomerLimitDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerLimitDetail.class);
 		try {
 			return this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException ex) {
@@ -712,8 +705,7 @@ public class InterfaceDAOImpl implements InterfaceDAO {
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<CoreDocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CoreDocumentDetails.class);
+		RowMapper<CoreDocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CoreDocumentDetails.class);
 
 		logger.debug("Leaving");
 

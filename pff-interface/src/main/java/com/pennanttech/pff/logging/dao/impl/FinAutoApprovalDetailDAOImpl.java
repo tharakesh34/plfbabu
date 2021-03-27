@@ -18,7 +18,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.finance.FinAutoApprovalDetails;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -277,7 +276,7 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 
 		parmSource.addValue("FinReference", finReference);
 		parmSource.addValue("quickDisb", true);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
 			financeType = this.jdbcTemplate.queryForObject(sql.toString(), parmSource, typeRowMapper);

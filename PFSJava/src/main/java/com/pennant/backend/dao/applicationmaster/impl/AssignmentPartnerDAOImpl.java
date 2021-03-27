@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AssignmentPartnerDAO;
 import com.pennant.backend.model.applicationmaster.AssignmentPartner;
@@ -97,8 +97,7 @@ public class AssignmentPartnerDAOImpl extends SequenceDao<AssignmentPartner> imp
 		assignmentPartner.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assignmentPartner);
-		RowMapper<AssignmentPartner> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AssignmentPartner.class);
+		RowMapper<AssignmentPartner> rowMapper = BeanPropertyRowMapper.newInstance(AssignmentPartner.class);
 
 		try {
 			assignmentPartner = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

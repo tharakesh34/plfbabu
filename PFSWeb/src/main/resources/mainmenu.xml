@@ -722,6 +722,8 @@
 				rightName="menuItem_FinanceManagement_BulkRateChange" /> -->
 			<menuItem id="menu_Item_FeeWaivers" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menu_Item_FeeWaiverHeader" />
+			<menuItem id="menu_Item_Restructure" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+				rightName="menuItem_FinanceManagement_RestructureDetail" />	
 		</menu>
 		<menu id="menu_Category_LmsPostDisbursementEdit">
 			<menuItem id="menu_Item_BasicDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
@@ -1016,6 +1018,8 @@
 			<!-- Loan Closure Enquiry -->
 			<menuItem id="menu_Item_LoanClosureEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/SelectLoanClosureEnquiryList.zul"
 				rightName="menuItem_LoanClosureEnquiry" />
+			<menuItem id="menu_Item_MaturedLoanClosureEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/SelectLoanClosureEnquiryList.zul?module=Matured"
+				rightName="menuItem_MaturedLoanClosureEnquiry" />
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry" zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul?module=ENQ"

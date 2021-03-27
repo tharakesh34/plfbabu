@@ -44,7 +44,6 @@ package com.pennant.webui.finance.vasMovement;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -65,8 +64,6 @@ import com.pennant.backend.model.finance.VasMovement;
 import com.pennant.backend.service.applicationmaster.VasMovementService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
@@ -100,7 +97,7 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 	protected Listheader listheader_FinCcy;
 	protected Listheader listheader_CustCIF;
 	protected Listheader listheader_NumberOfTerms;
-	
+
 	protected Textbox finReference;
 	protected Textbox custCIF;
 	protected Textbox finType;
@@ -116,8 +113,6 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 	private transient VasMovementService vasMovementService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private int oldVar_sortOperator_finReference;
-
-	
 
 	/**
 	 * default constructor.<br>
@@ -142,7 +137,8 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 	 */
 	public void onCreate$window_VasMovementList(Event event) {
 		// Set the page level components.
-		setPageComponents(window_VasMovementList, borderLayout_VasMovementList, listBoxVasMovement, pagingVasMovementList);
+		setPageComponents(window_VasMovementList, borderLayout_VasMovementList, listBoxVasMovement,
+				pagingVasMovementList);
 		setItemRender(new VasMovementListModelItemRenderer());
 
 		// Register buttons and fields.
@@ -192,7 +188,6 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 		search();
 	}
 
-	
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -214,14 +209,14 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
+
 		if (vasMovement.getVasMovementId() <= 0) {
 			vasMovement.setNewRecord(true);
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND VasMovementId=" + vasMovement.getVasMovementId() + " AND version=" + vasMovement.getVersion()
-				+ " ";
+		String whereCond = " AND VasMovementId=" + vasMovement.getVasMovementId() + " AND version="
+				+ vasMovement.getVersion() + " ";
 
 		if (doCheckAuthority(vasMovement, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -235,7 +230,7 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$btnSearchCustBranch(Event event) {
 		logger.debug("Entering  " + event.toString());
 
@@ -385,7 +380,7 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	public VasMovementService getVasMovementService() {
 		return vasMovementService;
 	}

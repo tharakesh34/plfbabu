@@ -48,11 +48,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitStructureDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -131,7 +131,7 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitStructure);
-		RowMapper<LimitStructure> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitStructure.class);
+		RowMapper<LimitStructure> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructure.class);
 
 		try {
 			limitStructure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

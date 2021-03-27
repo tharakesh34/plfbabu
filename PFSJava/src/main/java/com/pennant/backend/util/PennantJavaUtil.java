@@ -87,6 +87,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.BusinessVertical;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.applicationmaster.ChequePurpose;
+import com.pennant.backend.model.applicationmaster.ClosureType;
 import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
 import com.pennant.backend.model.applicationmaster.CorpRelationCode;
@@ -286,6 +287,7 @@ import com.pennant.backend.model.finance.PMAY;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.finance.ReinstateFinance;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.model.finance.VasMovement;
@@ -3770,6 +3772,17 @@ public class PennantJavaUtil {
 		ModuleUtil.register("LoanMasterReport",
 				new ModuleMapping("LoanMasterReport", LoanReport.class, new String[] { "LoanMasterReport_MVIEW" },
 						masterWF, new String[] { "FinReference", "FinType" }, null, 500));
+
+		ModuleUtil.register("RestructureDetail",
+				new ModuleMapping("RestructureDetail", RestructureDetail.class,
+						new String[] { "Restructure_Details", "Restructure_Details_AView" }, finMaintainWF,
+						new String[] { "FinReference", "Id" }, null, 300));
+
+		ModuleUtil.register("ClosureType",
+				new ModuleMapping("ClosureType", ClosureType.class, new String[] { "Closure_Types", "Closure_Types" },
+						masterWF, new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 } },
+						300));
+
 		registerCustomModules();
 	}
 

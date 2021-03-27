@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
@@ -97,8 +97,7 @@ public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implem
 		mandateCheckDigit.setCheckDigitValue(checkDigitValue);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(mandateCheckDigit);
-		RowMapper<MandateCheckDigit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(MandateCheckDigit.class);
+		RowMapper<MandateCheckDigit> rowMapper = BeanPropertyRowMapper.newInstance(MandateCheckDigit.class);
 
 		try {
 			mandateCheckDigit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

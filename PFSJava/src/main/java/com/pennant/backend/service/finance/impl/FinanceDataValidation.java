@@ -1628,7 +1628,8 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			} else {
 				finMain.setConnector(vehicleDealer.getDealerId());
-			}}
+			}
+		}
 		// validate finance branch
 		if (isCreateLoan || StringUtils.isNotBlank(finMain.getFinBranch())) {
 			Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
@@ -2074,7 +2075,7 @@ public class FinanceDataValidation {
 
 						BigDecimal totAssignedPerc = collateralSetupService
 								.getAssignedPerc(collateralSetup.getCollateralRef(), "");// TODO:Add
-																																			// reference
+																																	// reference
 						curAssignValue = curAssignValue.add(collateralSetup.getBankValuation()
 								.multiply(collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
 										: collateralAssignment.getAssignPerc())

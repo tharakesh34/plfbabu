@@ -29,9 +29,9 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ChangeTDSDAO;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -67,7 +67,7 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<FinanceMain> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> rowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

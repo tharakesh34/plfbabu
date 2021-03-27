@@ -128,6 +128,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setdAmz(amountCodes.getAmz().subtract(pfd.getAmzTillLBD()));
 		amountCodes.setdGapAmz(pfd.getGapIntAmz().subtract(pfd.getGapIntAmzLbd()));
 		amountCodes.setPrvMthAcr(pfd.getPrvMthAcr());
+		amountCodes.setPrvMntAmz(pfd.getPrvMthAmz());
 
 		// LPI Amortization calculation
 		if (pfd.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -176,6 +177,13 @@ public class AEAmounts implements Serializable {
 		amountCodes.setPenaltyDue(pfd.getPenaltyDue());
 		amountCodes.setPenaltyPaid(pfd.getPenaltyPaid());
 		amountCodes.setPenaltyWaived(pfd.getPenaltyWaived());
+		amountCodes.setOdPri(pfd.getODPrincipal());
+		amountCodes.setOdPft(pfd.getODProfit());
+
+		if (pfd.isWriteoffLoan()) {
+			amountCodes.setWriteOff(true);
+		}
+
 		//others
 		amountCodes.setPaidInst(pfd.getNOPaidInst());
 		//amountCodes.setDisburse(pftDetail.getDisburse());

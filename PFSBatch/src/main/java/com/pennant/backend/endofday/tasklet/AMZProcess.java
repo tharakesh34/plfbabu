@@ -58,8 +58,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -117,7 +117,7 @@ public class AMZProcess implements Tasklet {
 
 		cursorItemReader.setSql(financeSQL);
 		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setRowMapper(ParameterizedBeanPropertyRowMapper.newInstance(AmortizationQueuing.class));
+		cursorItemReader.setRowMapper(BeanPropertyRowMapper.newInstance(AmortizationQueuing.class));
 
 		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
 			@Override

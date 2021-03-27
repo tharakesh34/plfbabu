@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.SectorDAO;
 import com.pennant.backend.model.systemmasters.Sector;
@@ -99,7 +99,7 @@ public class SectorDAOImpl extends BasicDao<Sector> implements SectorDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sector);
-		RowMapper<Sector> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Sector.class);
+		RowMapper<Sector> typeRowMapper = BeanPropertyRowMapper.newInstance(Sector.class);
 		try {
 			sector = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

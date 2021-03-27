@@ -47,11 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
@@ -98,8 +98,7 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		vASProviderAccDetail.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(vASProviderAccDetail);
-		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VASProviderAccDetail.class);
+		RowMapper<VASProviderAccDetail> rowMapper = BeanPropertyRowMapper.newInstance(VASProviderAccDetail.class);
 
 		try {
 			vASProviderAccDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -272,8 +271,7 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		source.addValue("ProviderId", providerId);
 		source.addValue("EntityCode", entityCode);
 
-		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VASProviderAccDetail.class);
+		RowMapper<VASProviderAccDetail> rowMapper = BeanPropertyRowMapper.newInstance(VASProviderAccDetail.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -305,8 +303,7 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		source.addValue("ProviderId", providerId);
 
 		VASProviderAccDetail vASProviderAccDetail = new VASProviderAccDetail();
-		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VASProviderAccDetail.class);
+		RowMapper<VASProviderAccDetail> rowMapper = BeanPropertyRowMapper.newInstance(VASProviderAccDetail.class);
 		try {
 			vASProviderAccDetail = jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

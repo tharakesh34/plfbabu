@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.TransactionCodeDAO;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
@@ -99,8 +99,7 @@ public class TransactionCodeDAOImpl extends BasicDao<TransactionCode> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(transactionCode);
-		RowMapper<TransactionCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionCode.class);
+		RowMapper<TransactionCode> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionCode.class);
 
 		try {
 			transactionCode = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, typeRowMapper);

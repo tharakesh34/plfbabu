@@ -47,7 +47,7 @@ import java.util.List;
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.FinFeeConfig;
 
-public interface FinFeeConfigDAO extends BasicCrudDao<FinFeeConfig>{
+public interface FinFeeConfigDAO extends BasicCrudDao<FinFeeConfig> {
 
 	void saveList(List<FinFeeConfig> finFeeDetailConfig, String type);
 

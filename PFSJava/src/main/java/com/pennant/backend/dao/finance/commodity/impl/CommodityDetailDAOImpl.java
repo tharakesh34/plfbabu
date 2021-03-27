@@ -50,10 +50,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.commodity.CommodityDetailDAO;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
@@ -103,8 +103,7 @@ public class CommodityDetailDAOImpl extends BasicDao<CommodityDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityDetail);
-		RowMapper<CommodityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CommodityDetail.class);
+		RowMapper<CommodityDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CommodityDetail.class);
 
 		try {
 			commodityDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -247,8 +246,7 @@ public class CommodityDetailDAOImpl extends BasicDao<CommodityDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(brokerCommodityDetail);
-		RowMapper<BrokerCommodityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BrokerCommodityDetail.class);
+		RowMapper<BrokerCommodityDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BrokerCommodityDetail.class);
 
 		logger.debug("Leaving");
 		List<BrokerCommodityDetail> commList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,

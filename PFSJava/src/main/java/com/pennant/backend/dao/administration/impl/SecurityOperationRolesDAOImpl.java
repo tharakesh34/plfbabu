@@ -51,11 +51,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityOperationRolesDAO;
 import com.pennant.backend.model.administration.SecurityOperation;
@@ -101,7 +101,7 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		selectSql.append(" where OprID=:OprID");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secOperation);
-		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityOperationRoles> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityOperationRoles.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -195,7 +195,7 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		SecurityOperation operations = new SecurityOperation();
 		String selectSql = "";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(operations);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 		if (isAssigned) {
 			selectSql = "select * from secRoles_View where roleid in (select oprid from SecOperationRoles where roleID = :roleID)";
 		} else {
@@ -227,7 +227,7 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		selectSql.append("FROM SecOperationRoles where OprID=:OprID and RoleID=:RoleID");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secOperationRoles);
-		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityOperationRoles> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityOperationRoles.class);
 
 		try {
@@ -355,7 +355,7 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		selectSql.append(",LovDescRoleCode   FROM SecOperationRoles_Aview where RoleID =:RoleID and OprID=:OprID");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperationRoles);
-		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityOperationRoles> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityOperationRoles.class);
 
 		try {
@@ -415,7 +415,7 @@ public class SecurityOperationRolesDAOImpl extends SequenceDao<SecurityOperation
 		selectSql.append(" where OprID=:OprID");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUserOpr);
-		RowMapper<SecurityOperationRoles> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityOperationRoles> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityOperationRoles.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

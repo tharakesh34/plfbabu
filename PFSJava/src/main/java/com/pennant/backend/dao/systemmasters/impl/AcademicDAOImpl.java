@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.AcademicDAO;
 import com.pennant.backend.model.systemmasters.Academic;
@@ -99,7 +99,7 @@ public class AcademicDAOImpl extends SequenceDao<Academic> implements AcademicDA
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(academic);
-		RowMapper<Academic> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Academic.class);
+		RowMapper<Academic> typeRowMapper = BeanPropertyRowMapper.newInstance(Academic.class);
 
 		try {
 			academic = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

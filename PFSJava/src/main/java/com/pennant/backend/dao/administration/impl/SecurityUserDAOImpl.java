@@ -55,13 +55,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -125,7 +125,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", UsrAcExp, UsrAcExpDt, UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode");
 		sql.append(", UsrToken, UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType, UsrDftAppCode");
 		sql.append(", PwdExpDt, UserType, BusinessVertical, LdapDomainName");
-		
+
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescUsrDftAppCode, LovDescUsrDftAppCodeName, LovDescUsrDeptCodeName");
 			sql.append(", LovDescUsrBranchCodeName, LovDescUsrLanguage, LovDescUsrDesg");
@@ -371,8 +371,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		logger.debug("selectSql:" + sql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
-		RowMapper<SecurityUserDivBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityUserDivBranch.class);
+		RowMapper<SecurityUserDivBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
 
 		try {
 			securityUserDivBranch = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -539,8 +538,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		parameterSource.addValue("UsrID", usrID);
 
-		RowMapper<SecurityUserDivBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityUserDivBranch.class);
+		RowMapper<SecurityUserDivBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
@@ -606,7 +604,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("entitycode", entity);
 
-		RowMapper<Entity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Entity.class);
+		RowMapper<Entity> rowMapper = BeanPropertyRowMapper.newInstance(Entity.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -631,7 +629,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+		RowMapper<SecurityUser> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try {
 			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -665,7 +663,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("Rolecd", Arrays.asList(roles));
 
-		RowMapper<SecurityUser> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+		RowMapper<SecurityUser> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -689,7 +687,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
-		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+		RowMapper<SecurityUser> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try {
 			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

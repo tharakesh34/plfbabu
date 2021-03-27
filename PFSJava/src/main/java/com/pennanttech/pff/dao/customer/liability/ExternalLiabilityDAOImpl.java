@@ -9,11 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -166,8 +166,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custId);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -263,8 +262,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkid", linkId);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
 
 		logger.debug(Literal.LEAVING);
 

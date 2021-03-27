@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.model.applicationmaster.BounceReason;
@@ -97,7 +97,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		bounceReason.setBounceID(bounceID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(bounceReason);
-		RowMapper<BounceReason> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BounceReason.class);
+		RowMapper<BounceReason> rowMapper = BeanPropertyRowMapper.newInstance(BounceReason.class);
 
 		try {
 			bounceReason = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -264,7 +264,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		source = new MapSqlParameterSource();
 		source.addValue("ReturnCode", returnCode);
 
-		RowMapper<BounceReason> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BounceReason.class);
+		RowMapper<BounceReason> rowMapper = BeanPropertyRowMapper.newInstance(BounceReason.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

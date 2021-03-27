@@ -14,13 +14,13 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -693,7 +693,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		sql.append(" BankRefNo, BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode ");
 		sql.append(" From RMTBranches ");
 
-		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
+		RowMapper<Branch> typeRowMapper = BeanPropertyRowMapper.newInstance(Branch.class);
 
 		List<Branch> branches = this.parameterJdbcTemplate.query(sql.toString(), typeRowMapper);
 		for (Branch branch : branches) {
@@ -721,7 +721,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<Province> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Province.class);
+		RowMapper<Province> typeRowMapper = BeanPropertyRowMapper.newInstance(Province.class);
 
 		List<Province> provinces = this.parameterJdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		for (Province province : provinces) {
@@ -747,7 +747,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		sql.append(" addressLine2, addressLine3, addressLine4, pinCode, cityCode ");
 		sql.append(" From TaxDetail ");
 
-		RowMapper<TaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDetail.class);
+		RowMapper<TaxDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(TaxDetail.class);
 
 		List<TaxDetail> taxDetails = this.parameterJdbcTemplate.query(sql.toString(), typeRowMapper);
 		for (TaxDetail taxDetail : taxDetails) {
@@ -1177,7 +1177,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		source.addValue("TRANSACTION_DATE_FROM", fromDate);
 		source.addValue("TRANSACTION_DATE_TO", toDate);
 
-		mapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDownload.class);
+		mapper = BeanPropertyRowMapper.newInstance(TaxDownload.class);
 		try {
 			return this.parameterJdbcTemplate.query(sql.toString(), source, mapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -1216,7 +1216,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		source.addValue("TRANSACTION_DATE_FROM", fromDate);
 		source.addValue("TRANSACTION_DATE_TO", toDate);
 
-		mapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxDownload.class);
+		mapper = BeanPropertyRowMapper.newInstance(TaxDownload.class);
 		try {
 			return this.parameterJdbcTemplate.query(sql.toString(), source, mapper);
 		} catch (EmptyResultDataAccessException e) {

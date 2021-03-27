@@ -49,10 +49,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.InsuranceTypeDAO;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
@@ -101,7 +101,7 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 
 		logger.debug("sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insuranceType);
-		RowMapper<InsuranceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InsuranceType.class);
+		RowMapper<InsuranceType> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceType.class);
 
 		try {
 			insuranceType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -130,8 +130,7 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provider);
-		RowMapper<InsuranceTypeProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InsuranceTypeProvider.class);
+		RowMapper<InsuranceTypeProvider> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceTypeProvider.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -265,8 +264,7 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provider);
-		RowMapper<InsuranceTypeProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InsuranceTypeProvider.class);
+		RowMapper<InsuranceTypeProvider> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceTypeProvider.class);
 
 		try {
 			provider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -375,8 +373,7 @@ public class InsuranceTypeDAOImpl extends BasicDao<InsuranceType> implements Ins
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provider);
-		RowMapper<InsuranceTypeProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InsuranceTypeProvider.class);
+		RowMapper<InsuranceTypeProvider> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceTypeProvider.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -47,11 +47,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.fees.FeePostingsDAO;
 import com.pennant.backend.model.fees.FeePostings;
@@ -103,7 +103,7 @@ public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeeP
 		sql.append(" Where PostId =:PostId");
 		logger.debug("selectSql: " + sql.toString());
 
-		RowMapper<FeePostings> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeePostings.class);
+		RowMapper<FeePostings> typeRowMapper = BeanPropertyRowMapper.newInstance(FeePostings.class);
 
 		source = new MapSqlParameterSource();
 		source.addValue("PostId", postId);

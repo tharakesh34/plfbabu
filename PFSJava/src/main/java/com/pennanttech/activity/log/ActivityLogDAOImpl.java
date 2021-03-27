@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -35,7 +35,7 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("keyValue", keyValue);
 
-		RowMapper<Activity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Activity.class);
+		RowMapper<Activity> typeRowMapper = BeanPropertyRowMapper.newInstance(Activity.class);
 
 		logger.debug(Literal.LEAVING);
 		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -57,7 +57,7 @@ public class ActivityLogDAOImpl extends BasicDao<Activity> implements ActivityLo
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("keyValue", keyValue);
 
-		RowMapper<Activity> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Activity.class);
+		RowMapper<Activity> typeRowMapper = BeanPropertyRowMapper.newInstance(Activity.class);
 
 		logger.debug(Literal.LEAVING);
 		return jdbcTemplate.query(sql.toString(), source, typeRowMapper);

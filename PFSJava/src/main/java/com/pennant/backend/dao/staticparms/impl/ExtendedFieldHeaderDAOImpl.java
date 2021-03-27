@@ -54,12 +54,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -111,8 +111,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldHeader.class);
+		RowMapper<ExtendedFieldHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try {
 			extendedFieldHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -595,8 +594,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		selectSql.append(" Where ModuleName = :ModuleName AND Event = :Event");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldHeader.class);
+		RowMapper<ExtendedFieldHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), parameterSource, typeRowMapper);

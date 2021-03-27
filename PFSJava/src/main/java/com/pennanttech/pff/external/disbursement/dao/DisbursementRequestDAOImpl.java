@@ -633,23 +633,27 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", AMTTOBERELEASED, DISBURSEMENT_TYPE, PAYABLELOC, PRINTINGLOC");
 		sql.append(", BANKNAME, MICR_CODE, IFSC_CODE, DISBDATE");
 		sql.append(", BENEFICIARYACCNO , BENEFICIARYNAME, BENFICIRY_EMAIL, PAYMENTTYPE, PARTNERBANK_CODE, CHANNEL");
-		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW");
-		sql.append(" WHERE FINTYPE = ? AND  ENTITYCODE = ? AND PARTNERBANK_CODE = ?");
+		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW WHERE");
+
+		if (!DisbursementConstants.CHANNEL_INSURANCE.equals(req.getChannel())) {
+			sql.append(" FINTYPE = ? AND");
+		}
+		sql.append(" ENTITYCODE = ? AND PARTNERBANK_CODE = ?");
 
 		if (StringUtils.isNotBlank(req.getPaymentType())) {
-			sql.append("AND PAYMENTTYPE = ? ");
+			sql.append(" AND PAYMENTTYPE = ?");
 		}
 
 		if (StringUtils.isNotBlank(req.getChannel())) {
-			sql.append("AND channel= ? ");
+			sql.append(" AND channel= ?");
 		}
 
 		if (req.getFromDate() != null) {
-			sql.append("AND LLDATE >= ? ");
+			sql.append(" AND LLDATE >= ?");
 		}
 
 		if (req.getToDate() != null) {
-			sql.append("AND LLDATE <= ? ");
+			sql.append(" AND LLDATE <= ?");
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -658,7 +662,10 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, req.getFinType());
+
+			if (!DisbursementConstants.CHANNEL_INSURANCE.equals(req.getChannel())) {
+				ps.setString(index++, req.getFinType());
+			}
 			ps.setString(index++, req.getEntityCode());
 			ps.setString(index++, req.getPartnerBankCode());
 
@@ -691,7 +698,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			dr.setBenficiryEmail(rs.getString("BENFICIRY_EMAIL"));
 			dr.setIfscCode(rs.getString("IFSC_CODE"));
 			dr.setMicrCode(rs.getString("MICR_CODE"));
-			
+
 			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(dr.getPaymentType())
 					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(dr.getPaymentType())) {
 				dr.setDraweeLocation(rs.getString("PAYABLELOC"));
@@ -865,14 +872,14 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT PI.LINKEDTRANID, PI.ID, VPA.BANKBRANCHID, VPA.ACCOUNTNUMBER");
 		sql.append(", AVD.DEALERNAME, PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS");
-		sql.append(", DR.REJECT_REASON REJECTREASON, PI.PROVIDERID,");
-		sql.append(", DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF, PI.FINREFERENCE");
+		sql.append(", DR.REJECT_REASON REJECTREASON, PI.PROVIDERID, DR.DISBURSEMENT_TYPE");
+		sql.append(", DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF, DR.FINREFERENCE");
 		sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 		sql.append(" INNER JOIN INSURANCEPAYMENTINSTRUCTIONS PI ON PI.ID = DR.DISBURSEMENT_ID");
 		sql.append(" INNER JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID");
 		sql.append(" INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID");
 		sql.append(" INNER JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID");
-		sql.append(" WHERE ID = ?");
+		sql.append(" WHERE DR.ID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 

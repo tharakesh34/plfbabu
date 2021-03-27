@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.VehicleVersionDAO;
 import com.pennant.backend.model.amtmasters.VehicleVersion;
@@ -97,7 +97,7 @@ public class VehicleVersionDAOImpl extends SequenceDao<VehicleVersion> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleVersion);
-		RowMapper<VehicleVersion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleVersion.class);
+		RowMapper<VehicleVersion> typeRowMapper = BeanPropertyRowMapper.newInstance(VehicleVersion.class);
 
 		try {
 			vehicleVersion = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -256,7 +256,7 @@ public class VehicleVersionDAOImpl extends SequenceDao<VehicleVersion> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleVersion);
-		RowMapper<VehicleVersion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VehicleVersion.class);
+		RowMapper<VehicleVersion> typeRowMapper = BeanPropertyRowMapper.newInstance(VehicleVersion.class);
 
 		try {
 			vehicleVersion = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

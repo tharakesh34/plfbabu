@@ -8,10 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -141,7 +141,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("custid", custId);
 
-		RowMapper<CustomerIncome> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> rowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 		try {
 			return this.jdbcTemplate.query(query.toString(), parameterSource, rowMapper);
 		} catch (Exception e) {
@@ -160,7 +160,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 		parameterSource.addValue("custid", custId);
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		logger.debug(Literal.LEAVING);
 		try {
@@ -181,7 +181,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkid", linkId);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
@@ -204,7 +204,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("id", samplingId);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (Exception e) {
@@ -232,7 +232,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("keyReference", keyReference);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
@@ -254,7 +254,7 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkid", linkId);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		logger.debug(Literal.LEAVING);
 

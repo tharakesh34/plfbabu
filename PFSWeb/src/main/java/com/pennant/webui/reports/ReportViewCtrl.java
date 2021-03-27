@@ -35,6 +35,7 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	// For customer360 Report should displayed as  modal  
 	private boolean isCustomer360 = false;
 	private boolean fromFinance = false;
+	private boolean isModelWindow = false;
 
 	public ReportViewCtrl() {
 		super();
@@ -102,6 +103,10 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 			fromFinance = (boolean) arguments.containsKey("fromFinance");
 		}
 
+		if (arguments.containsKey("isModelWindow")) {
+			isModelWindow = (Boolean) arguments.get("isModelWindow");
+		}
+
 		AMedia amedia = null;
 		if (isAgreement) {
 
@@ -128,14 +133,16 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 				if (parentWindow != null) {
 					this.parentWindow.onClose();
 				}
-				this.dialogWindow.setVisible(false);
+				if (!isModelWindow) {
+					this.dialogWindow.setVisible(false);
+				}
 				this.report.setHeight(getBorderLayoutHeight());
 			}
 
 			buf = null;
 			amedia = null;
 			setDialog(DialogType.EMBEDDED);
-			if (isCustomer360) {
+			if (isCustomer360 || isModelWindow) {
 				window_Report.setHeight("80%");
 				window_Report.setWidth("90%");
 				this.report.setHeight("739px");

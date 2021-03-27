@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.vasproducttype.VASProductTypeDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
@@ -123,7 +123,7 @@ public class VASProductTypeDAOImpl extends BasicDao<VASProductType> implements V
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductType);
-		RowMapper<VASProductType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASProductType.class);
+		RowMapper<VASProductType> typeRowMapper = BeanPropertyRowMapper.newInstance(VASProductType.class);
 
 		try {
 			vASProductType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -55,12 +55,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -391,8 +391,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		selectSql.append(" Where PartnerBankId =:PartnerBankId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<PartnerBankModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PartnerBankModes.class);
+		RowMapper<PartnerBankModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBankModes.class);
 		List<PartnerBankModes> PartnerBankModeList = new ArrayList<PartnerBankModes>();
 		try {
 			PartnerBankModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -441,8 +440,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		selectSql.append(" Where PartnerBankId =:PartnerBankId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<PartnerBranchModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PartnerBranchModes.class);
+		RowMapper<PartnerBranchModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBranchModes.class);
 		List<PartnerBranchModes> PartnerBranchModeList = new ArrayList<PartnerBranchModes>();
 		try {
 			PartnerBranchModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -592,7 +590,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBank);
-		RowMapper<PartnerBank> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PartnerBank.class);
+		RowMapper<PartnerBank> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBank.class);
 
 		try {
 			partnerBank = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

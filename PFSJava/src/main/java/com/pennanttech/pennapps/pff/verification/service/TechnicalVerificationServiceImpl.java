@@ -1014,6 +1014,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
+
 	@Override
 	public List<Verification> getTvValuation(List<Long> verificationIDs, String type) {
 		return technicalVerificationDAO.getTvValuation(verificationIDs, type);

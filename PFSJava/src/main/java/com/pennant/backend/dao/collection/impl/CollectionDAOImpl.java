@@ -46,9 +46,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collection.CollectionDAO;
 import com.pennant.backend.model.collection.Collection;
@@ -78,7 +78,7 @@ public class CollectionDAOImpl extends BasicDao<Collection> implements Collectio
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<Collection> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Collection.class);
+		RowMapper<Collection> typeRowMapper = BeanPropertyRowMapper.newInstance(Collection.class);
 		List<Collection> collections = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");

@@ -110,7 +110,6 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		return vASConfiguration;
 	}
 
-	
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode, String type) {
 		StringBuilder sql = new StringBuilder("Select");

@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.mandate.MandateStatus;
@@ -97,7 +97,7 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 
 		logger.debug("sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-		RowMapper<MandateStatus> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MandateStatus.class);
+		RowMapper<MandateStatus> typeRowMapper = BeanPropertyRowMapper.newInstance(MandateStatus.class);
 
 		try {
 			mandateStatus = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

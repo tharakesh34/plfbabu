@@ -27,7 +27,7 @@ public class PMAYListModelItemRenderer implements ListitemRenderer<PMAY>, Serial
 		lc.setParent(item);
 		lc = new Listcell(pmay.getCustShrtName());
 		lc.setParent(item);
-		
+
 		lc = new Listcell(pmay.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(pmay.getRecordType()));

@@ -55,13 +55,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
@@ -120,8 +120,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerBankInfo.class);
+		RowMapper<CustomerBankInfo> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerBankInfo.class);
 
 		try {
 			customerBankInfo = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -540,8 +539,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cbi);
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerBankInfo.class);
+		RowMapper<CustomerBankInfo> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerBankInfo.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -592,8 +590,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		sql.append(" Where CustID in (:CustID)");
 
 		logger.debug("selectSql: " + sql.toString());
-		RowMapper<CustomerBankInfo> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerBankInfo.class);
+		RowMapper<CustomerBankInfo> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerBankInfo.class);
 
 		return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 	}

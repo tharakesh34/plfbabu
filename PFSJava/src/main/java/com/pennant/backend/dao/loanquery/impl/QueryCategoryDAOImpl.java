@@ -47,11 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.loanquery.QueryCategoryDAO;
 import com.pennant.backend.model.loanquery.QueryCategory;
@@ -93,7 +93,7 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		queryCategory.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryCategory);
-		RowMapper<QueryCategory> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryCategory.class);
+		RowMapper<QueryCategory> rowMapper = BeanPropertyRowMapper.newInstance(QueryCategory.class);
 
 		try {
 			queryCategory = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -256,7 +256,7 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryCategory);
-		RowMapper<QueryCategory> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryCategory.class);
+		RowMapper<QueryCategory> rowMapper = BeanPropertyRowMapper.newInstance(QueryCategory.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

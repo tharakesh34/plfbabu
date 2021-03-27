@@ -55,11 +55,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
@@ -336,7 +336,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append(" Where RuleCode IN(:RuleCode) AND RuleModule =:RuleModule AND RuleEvent =:RuleEvent");
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 		try {
 			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -560,8 +560,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		source.addValue("RBModule", module);
 		source.addValue("RBEvent", event);
 
-		RowMapper<BMTRBFldDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BMTRBFldDetails.class);
+		RowMapper<BMTRBFldDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BMTRBFldDetails.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -588,8 +587,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<BMTRBFldCriterias> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BMTRBFldCriterias.class);
+		RowMapper<BMTRBFldCriterias> typeRowMapper = BeanPropertyRowMapper.newInstance(BMTRBFldCriterias.class);
 
 		try {
 			logger.debug(Literal.LEAVING);
@@ -619,7 +617,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		source.addValue("RBMModule", module);
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<RuleModule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RuleModule.class);
+		RowMapper<RuleModule> typeRowMapper = BeanPropertyRowMapper.newInstance(RuleModule.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -647,7 +645,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
@@ -676,7 +674,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		source.addValue("ScoreGroupId", groupId);
 		source.addValue("CategoryType", categoryType);
 
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -700,7 +698,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		parameterMap.put("GroupIds", groupIds);
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), parameterMap, typeRowMapper);
@@ -724,8 +722,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		parameterMap.put("GroupIds", groupIds);
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NFScoreRuleDetail.class);
+		RowMapper<NFScoreRuleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(NFScoreRuleDetail.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), parameterMap, typeRowMapper);
@@ -754,8 +751,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		source.addValue("ScoreGroupId", groupId);
 		source.addValue("CategoryType", categoryType);
 
-		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NFScoreRuleDetail.class);
+		RowMapper<NFScoreRuleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(NFScoreRuleDetail.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -780,8 +776,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<NFScoreRuleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NFScoreRuleDetail.class);
+		RowMapper<NFScoreRuleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(NFScoreRuleDetail.class);
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
@@ -813,7 +808,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 			source.addValue("RuleCode", null);
 		}
 
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1012,7 +1007,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		map.put("RuleModule", "ELGRULE");
 		map.put("RuleCode", ruleCodes);
 
-		RowMapper<Rule> ruleMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> ruleMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 		logger.debug(Literal.LEAVING);
 		return jdbcTemplate.query(sql.toString(), map, ruleMapper);
 	}

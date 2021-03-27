@@ -91,6 +91,7 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -141,6 +142,7 @@ public class ScheduleCalculator {
 	public static final String PROC_ADDDATEDSCHEDULE = "procAddDatedSchedule";
 	public static final String PROC_CALDREMIHOLIDAYS = "procCalDREMIHolidays";
 	public static final String PROC_INSTBASEDSCHEDULE = "procInstBasedSchedule";
+	public static final String PROC_RESTRUCTURE = "procRestructure";
 
 	public ScheduleCalculator() {
 		super();
@@ -283,6 +285,10 @@ public class ScheduleCalculator {
 				isLoanNotApproved, finDisb, feeAmtInclude).getFinScheduleData();
 	}
 
+	public static FinScheduleData procRestructure(FinScheduleData finScheduleData) {
+		return (new ScheduleCalculator(PROC_RESTRUCTURE, finScheduleData)).getFinScheduleData();
+	}
+
 	// Constructors
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData) {
 		logger.debug("Entering");
@@ -311,6 +317,10 @@ public class ScheduleCalculator {
 
 		if (StringUtils.equals(method, PROC_CALDREMIHOLIDAYS)) {
 			this.setFinScheduleData(procCalDREMIHolidays(finScheduleData));
+		}
+
+		if (StringUtils.equals(method, PROC_RESTRUCTURE)) {
+			this.setFinScheduleData(buildRestructure(finScheduleData));
 		}
 
 		logger.debug("Leaving");
@@ -377,6 +387,10 @@ public class ScheduleCalculator {
 
 		if (StringUtils.equals(method, PROC_ADDDATEDSCHEDULE)) {
 			setFinScheduleData(procAddDatedSchedule(finScheduleData));
+		}
+
+		if (StringUtils.equals(method, PROC_RESTRUCTURE)) {
+			this.setFinScheduleData(buildRestructure(finScheduleData));
 		}
 
 		logger.debug("Leaving");
@@ -3489,6 +3503,11 @@ public class ScheduleCalculator {
 		if (iRepay > 0) {
 			schdMethod = finScheduleData.getRepayInstructions().get(iRepay - 1).getRepaySchdMethod();
 		}
+
+		if (StringUtils.isBlank(finScheduleData.getFinanceMain().getRecalSchdMethod())) {
+			finScheduleData.getFinanceMain().setRecalSchdMethod(schdMethod);
+		}
+
 		sd.setSchdMethod(schdMethod);
 		sd.setPftDaysBasis(lastSchd.getPftDaysBasis());
 		sd.setAdvBaseRate(lastSchd.getAdvBaseRate());
@@ -7871,6 +7890,15 @@ public class ScheduleCalculator {
 				&& PennantConstants.TDS_AUTO.equalsIgnoreCase(finScheduleData.getFinanceMain().getTdsType())) {
 			openSchd.setTDSApplicable(finScheduleData.getFinanceScheduleDetails().get(prvIndex + 2).isTDSApplicable());
 		}
+
+		Date maturityDate = finScheduleData.getFinanceMain().getMaturityDate();
+
+		if (maturityDate.compareTo(SysParamUtil.getAppDate()) < 0) {
+			openSchd.setTDSApplicable(finScheduleData.getFinanceScheduleDetails().get(prvIndex + 1).isTDSApplicable());
+		} else {
+			openSchd.setTDSApplicable(finScheduleData.getFinanceScheduleDetails().get(prvIndex + 2).isTDSApplicable());
+		}
+
 		finScheduleData.getFinanceMain().setRecalSchdMethod(recalSchdMethod);
 		finScheduleData.getFinanceMain().setRecalFromDate(recalFromDate);
 
@@ -9747,6 +9775,388 @@ public class ScheduleCalculator {
 		}
 		logger.debug(Literal.LEAVING);
 		return emi;
+	}
+
+	private FinScheduleData buildRestructure(FinScheduleData fsData) {
+		fsData.getFinanceMain().setEqualRepay(false);
+		fsData.getFinanceMain().setCalculateRepay(false);
+		// fsData.getFinanceMain().setChgDropLineSchd(false);
+
+		RestructureDetail rstDetail = fsData.getRestructureDetail();
+
+		if (!rstDetail.isTenorChange()) {
+			fsData = restructureEMIRecal(fsData, true);
+			return fsData;
+		}
+
+		if (rstDetail.isEmiRecal()) {
+			fsData = setRestutureTenor(fsData, false);
+
+			if (fsData.getErrorDetails().size() > 0) {
+				return fsData;
+			}
+			fsData = restructureEMIRecal(fsData, true);
+		} else {
+			fsData = setRestutureTenor(fsData, true);
+			if (fsData.getErrorDetails().size() > 0) {
+				return fsData;
+			}
+			fsData = restructureEMIRecal(fsData, false);
+			fsData = restructureTenorAdjust(fsData);
+		}
+		return fsData;
+	}
+
+	private FinScheduleData restructureEMIRecal(FinScheduleData fsData, boolean isEqualRepay) {
+		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+		RestructureDetail rstDetail = fsData.getRestructureDetail();
+		FinanceMain fm = fsData.getFinanceMain();
+		int idxHldEnd = -1;
+		Date HldStart = rstDetail.getRestructureDate();
+
+		if (rstDetail.getEmiHldPeriod() > 0) {
+			idxHldEnd = buildRestructureEMIHLD(fsData, HldStart);
+			HldStart = fsdList.get(idxHldEnd + 1).getSchDate();
+		}
+
+		if (idxHldEnd < 0) {
+			idxHldEnd = 1;
+		}
+
+		// HldStart = fsdList.get(idxHldEnd).getSchDate();
+
+		if (rstDetail.getPriHldPeriod() > 0) {
+			idxHldEnd = buildRestructurePRIHLD(fsData, HldStart, idxHldEnd);
+		}
+
+		if (fm.getEventFromDate() == null) {
+			fm.setEventFromDate(rstDetail.getRestructureDate());
+			fm.setRecalFromDate(rstDetail.getRestructureDate());
+		}
+
+		fm.setEventToDate(fm.getMaturityDate());
+		fm.setRecalToDate(fm.getMaturityDate());
+
+		if (idxHldEnd <= 1) {
+			setRpyInstructDetails(fsData, rstDetail.getRestructureDate(), fm.getMaturityDate(), BigDecimal.ZERO,
+					fm.getRecalSchdMethod());
+		}
+
+		if (isEqualRepay) {
+			fm.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+		} else {
+			fm.setRecalType(CalculationConstants.RPYCHG_ADJTERMS);
+		}
+
+		fm.setEqualRepay(isEqualRepay);
+		fm.setCalculateRepay(isEqualRepay);
+
+		fsData = calSchdProcess(fsData, false, false);
+
+		return fsData;
+	}
+
+	private FinScheduleData setRestutureTenor(FinScheduleData fsData, boolean isTenorAdjust) {
+		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+		RestructureDetail rstDetail = fsData.getRestructureDetail();
+
+		FinanceMain fm = fsData.getFinanceMain();
+		Date grcEndDate = fm.getGrcPeriodEndDate();
+		Date rstDate = rstDetail.getRestructureDate();
+		// Date mdtCurrent = fsData.getFinanceMain().getMaturityDate();
+		// Date mdtLimit = DateUtility.addMonths(mdtCurrent, 24); // FEB leap
+		// year
+		// to be
+		// checked..
+
+		int reqTerms = 0;
+
+		if (isTenorAdjust) {
+			reqTerms = rstDetail.getEmiHldPeriod() + rstDetail.getPriHldPeriod() + 1;
+		} else {
+			reqTerms = rstDetail.getEmiHldPeriod() + rstDetail.getPriHldPeriod();
+		}
+
+		int availableTerms = 0;
+
+		for (FinanceScheduleDetail fsd : fsdList) {
+			if (fsd.getSchDate().compareTo(grcEndDate) <= 0) {
+				continue;
+			}
+
+			if (fsd.getSchDate().compareTo(rstDate) < 0) {
+				continue;
+			}
+
+			// If exsitng periods are more than newly required periods remove
+			// excee periods
+			if (availableTerms < reqTerms) {
+				availableTerms = availableTerms + 1;
+				continue;
+			} else {
+				/*
+				 * if (!isTenorAdjust) { fsdList.remove(iFsd); }
+				 */
+			}
+		}
+
+		// if existing periods are less than required periods then add new
+		// periods
+		reqTerms = reqTerms - availableTerms + rstDetail.getTotNoOfRestructure();
+
+		if (reqTerms <= 0) {
+			return fsData;
+		}
+
+		// Set the limits based on system values table
+		int maxFinYears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS");
+		Date lastDateLimit = new Date();
+		lastDateLimit = DateUtility.addYears(fm.getFinStartDate(), maxFinYears);
+
+		for (int i = 0; i < reqTerms; i++) {
+			fsData = addOneTerm(fsData, lastDateLimit, true);
+			if (fsData.getErrorDetails().size() > 0) {
+				return fsData;
+			}
+		}
+
+		fsData.getFinanceScheduleDetails().get(fsData.getFinanceScheduleDetails().size() - 1)
+				.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
+
+		return fsData;
+	}
+
+	private FinScheduleData restructureTenorAdjust(FinScheduleData fsData) {
+		FinanceMain fm = fsData.getFinanceMain();
+
+		// Date mdtCurrent = fm.getMaturityDate();
+		// Date mdtLimit = DateUtility.addMonths(mdtCurrent, 24); // FEB leap
+		// year
+		// to be
+		// checked..
+
+		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+
+		// Get Adjustment Limits parameters from system values table
+		BigDecimal lastTermPercent = new BigDecimal(SysParamUtil.getValueAsString("ADJTERM_LASTTERM_PERCENT"));
+
+		// Set the limits based on system values table
+		BigDecimal lastTermLimit = BigDecimal.valueOf(0.0);
+
+		String schdMethod = "";
+		int iLast = fsdList.size() - 2;
+		lastTermLimit = fsdList.get(iLast).getRepayAmount();
+		lastTermLimit = lastTermLimit.multiply(lastTermPercent);
+		lastTermLimit = round(lastTermLimit);
+		lastTermLimit = fsdList.get(iLast).getRepayAmount().add(lastTermLimit);
+		schdMethod = fsData.getRepayInstructions().get(fsData.getRepayInstructions().size() - 1).getRepaySchdMethod();
+		schdMethod = CalculationConstants.SCHMTHD_EQUAL;
+		// Calculate Schedule
+		fsData = calSchdProcess(fsData, false, false);
+
+		iLast = fsdList.size() - 1;
+
+		// If The calculated schedule last repayment is under limit then no need
+		// to adjust terms
+		if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
+			if (fsdList.get(iLast).getRepayAmount().compareTo(lastTermLimit) <= 0) {
+				return fsData;
+			}
+		} else {
+			if (fsdList.get(iLast).getPrincipalSchd().compareTo(lastTermLimit) <= 0) {
+				return fsData;
+			}
+		}
+
+		boolean isError = false;
+
+		// Set the limits based on system values table
+		int maxFinYears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS");
+		Date lastDateLimit = new Date();
+		lastDateLimit = DateUtility.addYears(fm.getFinStartDate(), maxFinYears);
+
+		// Adjust Terms
+		while (true) {
+
+			if (fsData.getFinanceMain().getRemBalForAdj().compareTo(fsData.getFinanceMain().getAdjOrgBal()) < 0) {
+				fsData.getFinanceMain().setAdjOrgBal(fsData.getFinanceMain().getRemBalForAdj());
+			}
+
+			fsData = addOneTerm(fsData, lastDateLimit, true);
+			fsData.getFinanceMain().setRemBalForAdj(
+					fsData.getFinanceMain().getRemBalForAdj().subtract(fsData.getFinanceMain().getAdjOrgBal()));
+
+			if (fsData.getErrorDetails().size() > 0) {
+				isError = true;
+				break;
+			}
+
+			// Calculate Schedule
+			fsData = calSchdProcess(fsData, false, false);
+			System.out.println("But Last EMI " + fsdList.get(iLast - 1).getRepayAmount() + " Closing Bal "
+					+ fsdList.get(iLast - 1).getClosingBalance() + " Last EMI " + fsdList.get(iLast).getRepayAmount()
+					+ " Closing Bal " + fsdList.get(iLast).getClosingBalance());
+			iLast = iLast + 1;
+			if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
+				if (fsdList.get(iLast).getRepayAmount().compareTo(lastTermLimit) <= 0) {
+					break;
+				}
+			} else {
+				if (fsdList.get(iLast).getPrincipalSchd().compareTo(lastTermLimit) <= 0) {
+					break;
+				}
+			}
+		}
+
+		// Go back to the allowed date and recalculate
+		if (isError) {
+			fsdList.remove(fsdList.size() - 1);
+			fsdList.get(fsdList.size() - 1).setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
+
+			fsData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+			fsData.getFinanceMain().setEqualRepay(true);
+			fsData.getFinanceMain().setCalculateRepay(true);
+
+			fsData = calSchdProcess(fsData, false, false);
+
+		}
+
+		fsdList.get(fsdList.size() - 1).setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
+
+		return fsData;
+	}
+
+	private int buildRestructureEMIHLD(FinScheduleData fsData, Date HldStart) {
+		// Date grcEndDate = fsData.getFinanceMain().getGrcPeriodEndDate();
+
+		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+		RestructureDetail rstDetail = fsData.getRestructureDetail();
+		int fsdSize = fsdList.size();
+		int idxHldStart = -1;
+		int idxHldEnd = -1;
+		int hldPeriods = 0;
+
+		for (int iFsd = 0; iFsd < fsdSize; iFsd++) {
+			FinanceScheduleDetail fsd = fsdList.get(iFsd);
+
+			/*
+			 * if (fsd.getSchDate().compareTo(grcEndDate) <= 0) { continue; }
+			 */
+
+			if (fsd.getSchDate().compareTo(HldStart) < 0) {
+				continue;
+			}
+
+			// Mark Capitalize
+			fsd.setCpzOnSchDate(true);
+			fsd.setBpiOrHoliday(FinanceConstants.FLAG_RESTRUCTURE);
+
+			if (fsd.isFrqDate() && (fsd.isRepayOnSchDate() || fsd.isPftOnSchDate())) {
+				hldPeriods = hldPeriods + 1;
+
+				if (idxHldStart < 0) {
+					idxHldStart = iFsd;
+				}
+
+				idxHldEnd = iFsd;
+			}
+
+			if (hldPeriods == rstDetail.getEmiHldPeriod()) {
+				break;
+			}
+		}
+
+		Date evtFromDate = fsdList.get(idxHldStart).getSchDate();
+		Date evtToDate = fsdList.get(idxHldEnd).getSchDate();
+
+		rstDetail.setEmiHldStartDate(evtFromDate);
+		rstDetail.setEmiHldEndDate(evtToDate);
+
+		setRpyInstructDetails(fsData, evtFromDate, evtToDate, BigDecimal.ZERO, CalculationConstants.SCHMTHD_NOPAY);
+
+		fsData.getFinanceMain().setRecalIdx(idxHldStart);
+		fsData.getFinanceMain().setEventFromDate(evtFromDate);
+
+		for (int iFsd = (idxHldEnd + 1); iFsd < fsdSize; iFsd++) {
+			FinanceScheduleDetail fsd = fsdList.get(iFsd);
+
+			if (fsd.isFrqDate() && fsd.isRepayOnSchDate()) {
+				fsData.getFinanceMain().setRecalFromDate(fsd.getSchDate());
+				break;
+			}
+		}
+
+		return idxHldEnd;
+	}
+
+	private int buildRestructurePRIHLD(FinScheduleData fsData, Date HldStart, int idxRef) {
+		Date grcEndDate = fsData.getFinanceMain().getGrcPeriodEndDate();
+
+		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+		RestructureDetail rstDetail = fsData.getRestructureDetail();
+		int fsdSize = fsdList.size();
+		int idxHldStart = -1;
+		int idxHldEnd = -1;
+		int hldPeriods = 0;
+
+		for (int iFsd = idxRef; iFsd < fsdSize; iFsd++) {
+			FinanceScheduleDetail fsd = fsdList.get(iFsd);
+
+			if (fsd.getSchDate().compareTo(grcEndDate) <= 0) {
+				continue;
+			}
+
+			if (fsd.getSchDate().compareTo(HldStart) < 0) {
+				continue;
+			}
+
+			// Mark Capitalize
+			fsd.setCpzOnSchDate(true);
+			fsd.setBpiOrHoliday(FinanceConstants.FLAG_RESTRUCTURE);
+
+			if (fsd.isFrqDate() && (fsd.isRepayOnSchDate() || fsd.isPftOnSchDate())) {
+				hldPeriods = hldPeriods + 1;
+
+				if (idxHldStart < 0) {
+					idxHldStart = iFsd;
+				}
+
+				idxHldEnd = iFsd;
+			}
+
+			if (hldPeriods == rstDetail.getPriHldPeriod()) {
+				break;
+			}
+		}
+
+		Date evtFromDate = fsdList.get(idxHldStart).getSchDate();
+		Date evtToDate = fsdList.get(idxHldEnd).getSchDate();
+
+		rstDetail.setPriHldStartDate(evtFromDate);
+		rstDetail.setPriHldEndDate(evtToDate);
+
+		if (rstDetail.getGrcMaxAmount() != null && rstDetail.getGrcMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
+			setRpyInstructDetails(fsData, evtFromDate, evtToDate, rstDetail.getGrcMaxAmount(),
+					CalculationConstants.SCHMTHD_PFTCAP);
+		} else {
+			setRpyInstructDetails(fsData, evtFromDate, evtToDate, BigDecimal.ZERO, CalculationConstants.SCHMTHD_PFT);
+		}
+
+		if (rstDetail.getEmiHldPeriod() <= 0) {
+			fsData.getFinanceMain().setRecalIdx(idxHldStart);
+			fsData.getFinanceMain().setEventFromDate(evtFromDate);
+		}
+
+		for (int iFsd = (idxHldEnd + 1); iFsd < fsdSize; iFsd++) {
+			FinanceScheduleDetail fsd = fsdList.get(iFsd);
+
+			if (fsd.isFrqDate() && fsd.isRepayOnSchDate()) {
+				fsData.getFinanceMain().setRecalFromDate(fsd.getSchDate());
+				break;
+			}
+		}
+
+		return idxHldEnd;
 	}
 
 	// ******************************************************//

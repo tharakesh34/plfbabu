@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
@@ -105,7 +105,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 
 		logger.debug("sql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMaintainInstruction);
-		RowMapper<FinMaintainInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinMaintainInstruction> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinMaintainInstruction.class);
 
 		try {
@@ -149,7 +149,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 
 		logger.debug("sql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMaintainInstruction);
-		RowMapper<FinMaintainInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinMaintainInstruction> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinMaintainInstruction.class);
 
 		try {

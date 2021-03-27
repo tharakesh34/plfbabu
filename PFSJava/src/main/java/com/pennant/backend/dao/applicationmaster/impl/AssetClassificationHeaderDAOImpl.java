@@ -55,7 +55,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AssetClassificationHeaderDAO;
 import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
@@ -94,7 +93,7 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		header.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(header);
-		RowMapper<AssetClassificationHeader> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AssetClassificationHeader> rowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationHeader.class);
 
 		try {
@@ -466,7 +465,7 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		detail.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
-		RowMapper<AssetClassificationDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AssetClassificationDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
 
 		try {
@@ -551,7 +550,7 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 		;
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<AssetClassificationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AssetClassificationDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationDetail.class);
 		List<AssetClassificationDetail> query = null;
 		try {

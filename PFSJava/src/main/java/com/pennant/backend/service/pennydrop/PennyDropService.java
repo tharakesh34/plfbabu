@@ -1,6 +1,7 @@
 package com.pennant.backend.service.pennydrop;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
+
 public interface PennyDropService {
 
 	void savePennyDropSts(BankAccountValidation bankAccountValidations);

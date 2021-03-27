@@ -144,6 +144,7 @@ public class ReportGenerationUtil implements Serializable {
 			auditMap.put("reportBuffer", buf);
 			String genReportName = Labels.getLabel(reportName);
 			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
+			auditMap.put("isModelWindow", isModelWindow(listData));
 			if (dialogWindow != null) {
 				auditMap.put("dialogWindow", dialogWindow);
 			}
@@ -154,6 +155,23 @@ public class ReportGenerationUtil implements Serializable {
 			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
 		}
 		logger.debug("Leaving");
+	}
+
+	private static boolean isModelWindow(List<Object> listData) {
+		for (int i = 0; i < listData.size(); i++) {
+			Object obj = listData.get(i);
+			if (obj instanceof Map) {
+
+				@SuppressWarnings("unchecked")
+				Map<Object, Object> map = (Map<Object, Object>) obj;
+				if (map.containsKey("isModelWindow")) {
+
+					return (boolean) map.get("isModelWindow");
+				}
+
+			}
+		}
+		return false;
 	}
 
 	/**

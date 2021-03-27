@@ -15,12 +15,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
@@ -144,13 +144,11 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			filterMap.put("JOB_ID", presentmentId);
 			dataEngine.setFilterMap(filterMap);
 
+			Map<String, Object> parameterMap = new HashMap<>();
 			if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK) {
-				Map<String, Object> parameterMap = new HashMap<>();
 				parameterMap.put("SEQ_FILE", partnerBankCode);
-				dataEngine.setParameterMap(parameterMap);
 			}
 
-			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 			parameterMap.put("DepositeDate", DateUtil.format(getScheduleDate(presentmentId), "dd-MMM-yy"));
 			parameterMap.put("despositslipid", presentmentRef);
@@ -201,7 +199,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("ID", presentmentId);
 
-		RowMapper<Presentment> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Presentment.class);
+		RowMapper<Presentment> rowMapper = BeanPropertyRowMapper.newInstance(Presentment.class);
 		Presentment presentment = new Presentment();
 		try {
 			presentment = this.namedJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

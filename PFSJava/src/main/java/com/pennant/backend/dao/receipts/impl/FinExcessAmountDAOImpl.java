@@ -55,13 +55,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -893,8 +893,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("MovementType", "I");
 		source.addValue("TranType", "I");
 
-		RowMapper<FinExcessMovement> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinExcessMovement.class);
+		RowMapper<FinExcessMovement> rowMapper = BeanPropertyRowMapper.newInstance(FinExcessMovement.class);
 		return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
 	}
 
@@ -909,7 +908,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExcessID", excessID);
 
-		RowMapper<FinExcessAmount> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
+		RowMapper<FinExcessAmount> rowMapper = BeanPropertyRowMapper.newInstance(FinExcessAmount.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -1016,5 +1015,21 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			return fear;
 		}
 
+	}
+
+	@Override
+	public List<FinExcessAmount> getFinExcessDetailsByRef(String finReference) {
+		StringBuilder sql = new StringBuilder("Select ExcessID, AmountType, Amount");
+		sql.append(", UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
+		sql.append(" Where FinReference = ? and BalanceAmt > 0");
+
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(), new Object[] { finReference },
+					new ExcessAmountRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in FinExcessAmount table for the specified FinReference >> {}", finReference);
+		}
+		return null;
 	}
 }

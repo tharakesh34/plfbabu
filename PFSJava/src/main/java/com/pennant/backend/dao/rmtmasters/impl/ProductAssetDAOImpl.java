@@ -51,11 +51,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -137,7 +137,7 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
-		RowMapper<ProductAsset> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
+		RowMapper<ProductAsset> typeRowMapper = BeanPropertyRowMapper.newInstance(ProductAsset.class);
 
 		try {
 			productAsset = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -177,7 +177,7 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productAsset);
-		RowMapper<ProductAsset> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
+		RowMapper<ProductAsset> typeRowMapper = BeanPropertyRowMapper.newInstance(ProductAsset.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -203,7 +203,7 @@ public class ProductAssetDAOImpl extends SequenceDao<ProductAsset> implements Pr
 		selectSql.append(" where AssetID IN (:paramValue)");
 		logger.debug("selectSql: " + selectSql.toString());
 		List<ProductAsset> finPurposeList = null;
-		RowMapper<ProductAsset> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductAsset.class);
+		RowMapper<ProductAsset> rowMapper = BeanPropertyRowMapper.newInstance(ProductAsset.class);
 		finPurposeList = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, rowMapper);
 		logger.debug("Leaving");
 		return finPurposeList;

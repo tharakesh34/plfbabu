@@ -16,9 +16,12 @@ public class PTPhoneNumberValidator implements Constraint {
 	private boolean mandatory = false;
 	private String REGEX_PHONE = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PHONE);
 	private int maxLength = 11;
-	private final String REGEX_PHONE_COUNTRY = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_COUNTRY);
-	private final String REGEX_PHONE_AREA = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_AREA);
-	private final String REGEX_PHONE_NUMBER = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_NUMBER);
+	private final String REGEX_PHONE_COUNTRY = PennantRegularExpressions
+			.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_COUNTRY);
+	private final String REGEX_PHONE_AREA = PennantRegularExpressions
+			.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_AREA);
+	private final String REGEX_PHONE_NUMBER = PennantRegularExpressions
+			.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_NUMBER);
 
 	public static final int VALIDATE_COUNTRY = 1;
 	public static final int VALIDATE_AREACODE = 2;

@@ -83,6 +83,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -842,7 +843,22 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				path = "/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul";
 			}
+		} else if ("RSTENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RestructureEnquiry.value"));
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail = getFinanceDetailService().getServicingFinance(finReference, null,
+					FinanceConstants.FINSER_EVENT_RESTRUCTURE, SessionUserDetails.getLogiedInUser().getUsername());
 
+			if (financeDetail.getFinScheduleData().getRestructureDetail() == null) {
+				closeDialog();
+				MessageUtil.showMessage("Restructure Details are not available");
+				return;
+			}
+
+			map.put("finReference", this.finReference);
+			map.put("enquirymode", true);
+			map.put("financeDetail", financeDetail);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/RestructureEnquiryDialog.zul";
 		}
 
 		if (StringUtils.isNotEmpty(path)) {

@@ -42,4 +42,6 @@ public interface FinServiceInstrutionDAO {
 
 	List<FinServiceInstruction> getOrgFinServiceInstructions(String finReference, String type);
 
+	boolean isFinServiceInstExists(String finReference, String table);
+
 }

@@ -51,11 +51,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -135,8 +135,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CheckListDetail.class);
+		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
 
 		try {
 			checkListDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -171,8 +170,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 				" in (select FinRefId from LMTFinRefDetail where FinRefType=:FinRefType and  FinType=:FinType )");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CheckListDetail.class);
+		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -201,8 +199,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CheckListDetail.class);
+		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -225,8 +222,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource beanParameters = new MapSqlParameterSource(checkListIdMap);
-		RowMapper<CheckListDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CheckListDetail.class);
+		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
 
 		try {
 			chkListDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -32,7 +32,6 @@ import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.service.incomeamortization.impl.AmortizationProcess;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;

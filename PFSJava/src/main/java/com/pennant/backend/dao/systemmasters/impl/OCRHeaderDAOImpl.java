@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.OCRHeaderDAO;
 import com.pennant.backend.model.ocrmaster.OCRHeader;
@@ -157,7 +157,7 @@ public class OCRHeaderDAOImpl extends SequenceDao<OCRHeader> implements OCRHeade
 		ocrHeader.setHeaderID(headerID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(ocrHeader);
-		RowMapper<OCRHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(OCRHeader.class);
+		RowMapper<OCRHeader> rowMapper = BeanPropertyRowMapper.newInstance(OCRHeader.class);
 
 		try {
 			logger.debug(Literal.LEAVING);
@@ -182,7 +182,7 @@ public class OCRHeaderDAOImpl extends SequenceDao<OCRHeader> implements OCRHeade
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("OcrID", ocrID);
 
-		RowMapper<OCRHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(OCRHeader.class);
+		RowMapper<OCRHeader> rowMapper = BeanPropertyRowMapper.newInstance(OCRHeader.class);
 
 		try {
 			logger.debug(Literal.LEAVING);

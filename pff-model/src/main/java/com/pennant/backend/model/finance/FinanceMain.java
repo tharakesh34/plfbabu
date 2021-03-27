@@ -866,6 +866,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	//Accounting related
 	private String partnerBankAcType;
 	private String partnerBankAc;
+	private boolean writeoffLoan = false;
+	// Restructure Loan
+	private boolean restructure = false;
 
 	private EventProperties eventProperties = new EventProperties();
 	private String tdsType;
@@ -5630,13 +5633,29 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setPartnerBankAc(String partnerBankAc) {
 		this.partnerBankAc = partnerBankAc;
 	}
-	
+
 	public String getTdsType() {
 		return tdsType;
 	}
 
 	public void setTdsType(String tdsType) {
 		this.tdsType = tdsType;
+	}
+
+	public boolean isWriteoffLoan() {
+		return writeoffLoan;
+	}
+
+	public void setWriteoffLoan(boolean writeoffLoan) {
+		this.writeoffLoan = writeoffLoan;
+	}
+
+	public boolean isRestructure() {
+		return restructure;
+	}
+
+	public void setRestructure(boolean restructure) {
+		this.restructure = restructure;
 	}
 
 }

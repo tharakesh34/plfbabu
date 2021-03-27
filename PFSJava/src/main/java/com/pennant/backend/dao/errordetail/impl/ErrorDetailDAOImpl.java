@@ -51,10 +51,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -240,7 +240,7 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
 		namedParameters.put("Code", code);
 
-		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
+		RowMapper<ErrorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ErrorDetail.class);
 		List<ErrorDetail> errorList = jdbcTemplate.query(sql.toString(), namedParameters, typeRowMapper);
 		if (errorList == null || errorList.isEmpty()) {
 			return null;

@@ -54,8 +54,7 @@ public class PaymentProcessImpl implements PaymentProcess {
 			}
 			//In case of IMD or excess amount processing there is a chance of LAN in temp queue.
 			if (fm == null) {
-				fm = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(),
-						TableType.TEMP_TAB);
+				fm = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(), TableType.TEMP_TAB);
 			}
 
 			String paymentType = paymentInstruction.getPaymentType();

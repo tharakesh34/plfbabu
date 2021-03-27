@@ -555,7 +555,8 @@ public class GSTCalculator {
 		return gstAmount;
 	}
 
-	public static void calculateActualGST(FeeWaiverDetail detail, TaxAmountSplit taxSplit, Map<String, BigDecimal> gstPercentages) {
+	public static void calculateActualGST(FeeWaiverDetail detail, TaxAmountSplit taxSplit,
+			Map<String, BigDecimal> gstPercentages) {
 		if (taxSplit == null) {
 			return;
 		}

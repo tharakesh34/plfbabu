@@ -47,11 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ReasonTypesDAO;
 import com.pennant.backend.model.applicationmaster.ReasonTypes;
@@ -91,7 +91,7 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 		reasonTypes.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonTypes);
-		RowMapper<ReasonTypes> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonTypes.class);
+		RowMapper<ReasonTypes> rowMapper = BeanPropertyRowMapper.newInstance(ReasonTypes.class);
 
 		try {
 			reasonTypes = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

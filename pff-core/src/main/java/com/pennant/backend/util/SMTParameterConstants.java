@@ -375,4 +375,8 @@ public class SMTParameterConstants {
 	public static final String DPD_CALC_INCLUDE_EXCESS = "DPD_CALC_INCLUDE_EXCESS";
 	public static final String ALW_PROV_EOD = "ALW_PROV_EOD";
 	public static final String ENTITY_CODE = "ENTITYCODE";
+
+	public static final String RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE = "RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE";
+	public static final String RECEIPT_UPLOAD_THREAD_SIZE = "RECEIPT_UPLOAD_THREAD_SIZE";
+	public static final String RECEIPT_UPLOAD_THREAD_BATCH_SIZE = "RECEIPT_UPLOAD_THREAD_BATCH_SIZE";
 }

@@ -55,13 +55,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -141,8 +141,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CovenantId", covenantId);
 
-		RowMapper<CovenantDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CovenantDocument.class);
+		RowMapper<CovenantDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CovenantDocument.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -475,7 +474,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		RowMapper<Covenant> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Covenant.class);
+		RowMapper<Covenant> typeRowMapper = BeanPropertyRowMapper.newInstance(Covenant.class);
 
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 

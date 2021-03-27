@@ -13,12 +13,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -286,8 +286,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		selectSql.append(" Where FinReference =:FinReference order by ServiceSeqId");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinServiceInstruction.class);
+		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -323,8 +322,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinServiceInstruction.class);
+		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -395,8 +393,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinServiceInstruction.class);
+		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -421,8 +418,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinServiceInstruction.class);
+		RowMapper<FinServiceInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(FinServiceInstruction.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -440,7 +436,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		source.addValue("NotificationFlag", notificationFlag);
 
-		RowMapper<LMSServiceLog> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LMSServiceLog.class);
+		RowMapper<LMSServiceLog> typeRowMapper = BeanPropertyRowMapper.newInstance(LMSServiceLog.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -641,6 +637,23 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public boolean isFinServiceInstExists(String finReference, String table) {
+		StringBuilder sql = new StringBuilder(" Select Count(1) ");
+		sql.append(" from FinServiceInstruction");
+		sql.append(table);
+		sql.append(" where Finreference = ?");
+
+		try {
+			Object[] object = new Object[] { finReference };
+			return this.jdbcOperations.queryForObject(sql.toString(), object, Integer.class) == 0 ? false : true;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in FinServiceInstruction {} table for the specified FinReference >> {}",
+					table, finReference);
+		}
+		return false;
 	}
 
 }

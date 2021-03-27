@@ -26,7 +26,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -101,14 +100,14 @@ public class PennantApplicationUtil {
 		return CurrencyUtil.parse(amount, decimals);
 	}
 
-	public static String amountFormate(BigDecimal amount, int dec) {		
+	public static String amountFormate(BigDecimal amount, int dec) {
 		return CurrencyUtil.format(amount, dec);
 	}
-	
+
 	public static String formatAmount(BigDecimal value, int decPos) {
 		return formatAmount(value, decPos, false);
 	}
-	
+
 	private static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
 		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
 			DecimalFormat df = new DecimalFormat();

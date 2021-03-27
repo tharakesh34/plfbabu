@@ -47,10 +47,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.masters.LocalityDAO;
 import com.pennant.backend.model.masters.Locality;
@@ -95,7 +95,7 @@ public class LocalityDAOImpl extends SequenceDao<Locality> implements LocalityDA
 		locality.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(locality);
-		RowMapper<Locality> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Locality.class);
+		RowMapper<Locality> rowMapper = BeanPropertyRowMapper.newInstance(Locality.class);
 
 		try {
 			locality = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

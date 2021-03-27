@@ -597,7 +597,7 @@ public class CalculationUtil implements Serializable {
 
 		String fromCcyCode = fromCcy;
 		String toCcyCode = toCcy;
-		
+
 		String localCcy = "";
 		if (ImplementationConstants.ALLOW_MULTI_CCY) {
 			localCcy = SysParamUtil.getAppCurrency();
@@ -868,7 +868,7 @@ public class CalculationUtil implements Serializable {
 		}
 		return frqequency;
 	}
-	
+
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		CalculationUtil.currencyDAO = currencyDAO;
 	}

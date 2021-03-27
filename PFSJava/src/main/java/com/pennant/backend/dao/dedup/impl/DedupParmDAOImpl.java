@@ -51,11 +51,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -108,7 +108,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<DedupParm> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupParm.class);
+		RowMapper<DedupParm> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupParm.class);
 
 		try {
 			dedupParm = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -150,7 +150,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<DedupParm> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupParm.class);
+		RowMapper<DedupParm> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupParm.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -305,8 +305,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		ParameterizedBeanPropertyRowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDedup.class);
+		BeanPropertyRowMapper<CustomerDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDedup.class);
 
 		try {
 			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -333,8 +332,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		ParameterizedBeanPropertyRowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDedup.class);
+		BeanPropertyRowMapper<FinanceDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceDedup.class);
 
 		try {
 			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -413,7 +411,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		try {
 			collateralSetups = this.jdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource,
-					ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class));
+					BeanPropertyRowMapper.newInstance(CollateralSetup.class));
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

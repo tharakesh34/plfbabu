@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDAO;
@@ -219,8 +219,7 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
-		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BulkRateChangeHeader.class);
+		RowMapper<BulkRateChangeHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(BulkRateChangeHeader.class);
 
 		try {
 			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -256,8 +255,7 @@ public class BulkRateChangeProcessDAOImpl extends SequenceDao<BulkRateChangeHead
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeHeader);
-		RowMapper<BulkRateChangeHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BulkRateChangeHeader.class);
+		RowMapper<BulkRateChangeHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(BulkRateChangeHeader.class);
 
 		try {
 			bulkRateChangeHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,

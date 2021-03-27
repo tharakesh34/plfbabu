@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.DPDBucketDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucket;
@@ -95,7 +95,7 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		dPDBucket.setBucketID(bucketID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucket);
-		RowMapper<DPDBucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DPDBucket.class);
+		RowMapper<DPDBucket> rowMapper = BeanPropertyRowMapper.newInstance(DPDBucket.class);
 
 		try {
 			dPDBucket = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -126,7 +126,7 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		dPDBucket.setBucketCode(bucketCode);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucket);
-		RowMapper<DPDBucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DPDBucket.class);
+		RowMapper<DPDBucket> rowMapper = BeanPropertyRowMapper.newInstance(DPDBucket.class);
 
 		try {
 			dPDBucket = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -151,7 +151,7 @@ public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucke
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<DPDBucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DPDBucket.class);
+		RowMapper<DPDBucket> rowMapper = BeanPropertyRowMapper.newInstance(DPDBucket.class);
 		List<DPDBucket> dPDBucket = jdbcTemplate.query(sql.toString(), rowMapper);
 		logger.debug(Literal.LEAVING);
 		return dPDBucket;

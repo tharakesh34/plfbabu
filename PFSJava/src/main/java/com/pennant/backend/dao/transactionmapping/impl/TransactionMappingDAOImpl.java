@@ -7,11 +7,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.transactionmapping.TransactionMappingDAO;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -132,8 +132,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 			logger.trace(Literal.SQL + sql.toString());
 			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(mapping);
 
-			RowMapper<TransactionMapping> rowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(TransactionMapping.class);
+			RowMapper<TransactionMapping> rowMapper = BeanPropertyRowMapper.newInstance(TransactionMapping.class);
 
 			mapping = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (DataAccessException e) {

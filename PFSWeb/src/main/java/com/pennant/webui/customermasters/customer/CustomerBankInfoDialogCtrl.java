@@ -3324,9 +3324,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 		}
 		if (!this.phoneNumber.isReadonly()) {
-			this.phoneNumber.setConstraint(new PTMobileNumberValidator(
-					Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"), false,
-					PennantRegularExpressions.REGEX_MOBILE, this.phoneNumber.getMaxlength()));
+			this.phoneNumber.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneNumber.value"),
+							false, PennantRegularExpressions.REGEX_MOBILE, this.phoneNumber.getMaxlength()));
 
 		}
 

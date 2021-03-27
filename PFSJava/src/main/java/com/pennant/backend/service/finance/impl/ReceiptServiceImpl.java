@@ -61,6 +61,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -200,6 +201,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -245,6 +247,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FeeWaiverHeaderDAO feeWaiverHeaderDAO;
 	private FeeReceiptService feeReceiptService;
 	private FinFeeConfigService finFeeConfigService;
+
+	@Autowired(required = false)
+	@Qualifier("receiptDetailPostValidationHook")
+	private PostValidationHook postValidationHook;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -2579,11 +2585,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		if (StringUtils.equals(repayData.getReceiptHeader().getRoleCode(), FinanceConstants.CLOSURE_MAKER)) {
+			doPostHookValidation(auditHeader);
+		}
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
 		// String usrLanguage = auditHeader.getUsrLanguage();
 		// Need to check with kranthi
@@ -3870,7 +3879,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return receiptData;
 			}
 		}
-		
+
 		receiptData = validateDual(receiptData, methodCtg);
 
 		return receiptData;
@@ -4428,8 +4437,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String parm1 = null;
 
 		// validating closing status
-		String closingStaus = finScheduleData.getFinanceMain().getClosingStatus();
-		if (StringUtils.isBlank(closingStaus)) {
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		String closingStaus = fm.getClosingStatus();
+		if (StringUtils.isEmpty(closingStaus) || fm.isWriteoffLoan()) {
 			return receiptData;
 		}
 
@@ -5026,7 +5036,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Override
-	public String getClosingStatus(String finReference, TableType tempTab, boolean wif) {
+	public FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif) {
 		return financeMainDAO.getClosingStatus(finReference, tempTab, wif);
 	}
 
@@ -5672,6 +5682,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 		}
 
+		//Set WriteOffAccounting
+		FinanceMain finmain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(finmain.getClosingStatus())) {
+			eventCode = AccountEventConstants.ACCEVENT_WRITEBK;
+		}
+
 		// FIXME Bharat Only get finschedule details and finprofitdetails
 		FinReceiptData recData = null;
 		if (rch.getReceiptID() <= 0 || receiptData.isPresentment()) {
@@ -5681,8 +5697,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					"");
 		}
 
-		FinanceMain finmain = recData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		Date maturityDate = finmain.getMaturityDate();
+		FinanceMain fm = recData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		Date maturityDate = fm.getMaturityDate();
 
 		rch = recData.getReceiptHeader();
 		recData.setValueDate(rch.getValueDate());
@@ -7420,6 +7436,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public String getLoanReferenc(String finreference, String fileName) {
 		String isInitiated = finReceiptHeaderDAO.getLoanReferenc(finreference, fileName);
 		return isInitiated;
+	}
+
+	private void doPostHookValidation(AuditHeader auditHeader) {
+		if (postValidationHook != null) {
+			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
+
+			if (errorDetails != null) {
+				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+				auditHeader.setErrorList(errorDetails);
+			}
+		}
 	}
 
 	@Override

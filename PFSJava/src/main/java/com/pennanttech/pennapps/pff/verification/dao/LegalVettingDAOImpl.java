@@ -12,12 +12,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -145,7 +145,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", id);
 
-		RowMapper<LVDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -257,7 +257,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
 
-		RowMapper<LegalVetting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalVetting.class);
+		RowMapper<LegalVetting> typeRowMapper = BeanPropertyRowMapper.newInstance(LegalVetting.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -277,7 +277,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
 
-		RowMapper<LVDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -302,7 +302,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyRef);
 
-		RowMapper<LegalVetting> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalVetting.class);
+		RowMapper<LegalVetting> rowMapper = BeanPropertyRowMapper.newInstance(LegalVetting.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -451,7 +451,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		paramSource.addValue("keyReference", keyReference);
 		paramSource.addValue("documentType", DocumentType.COLLATRL.getKey());
 
-		RowMapper<LVDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -529,7 +529,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		paramSource.addValue("keyReference", keyReference);
 		paramSource.addValue("documentType", documentType.getKey());
 
-		RowMapper<LVDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -547,7 +547,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select v.id, v.verificationDate, coalesce(v.status, 0) status,");
@@ -647,7 +647,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		RowMapper<LegalVetting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalVetting.class);
+		RowMapper<LegalVetting> typeRowMapper = BeanPropertyRowMapper.newInstance(LegalVetting.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

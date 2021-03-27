@@ -7,11 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.channeldetails.APIChannel;
 import com.pennant.backend.model.channeldetails.APIChannelIP;
@@ -80,7 +80,7 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 		source = new MapSqlParameterSource();
 		source.addValue("Id", id);
 
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APIChannel.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(APIChannel.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -253,7 +253,7 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 		source.addValue("Id", id);
 		source.addValue("ChannelId", channelId);
 
-		RowMapper<APIChannelIP> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APIChannelIP.class);
+		RowMapper<APIChannelIP> typeRowMapper = BeanPropertyRowMapper.newInstance(APIChannelIP.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -412,7 +412,7 @@ public class APIChannelDAOImpl extends SequenceDao<APIChannel> implements APICha
 		logger.debug("selectSql: " + selectSql.toString());
 		source = new MapSqlParameterSource();
 		source.addValue("ChannelId", id);
-		RowMapper<APIChannelIP> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(APIChannelIP.class);
+		RowMapper<APIChannelIP> typeRowMapper = BeanPropertyRowMapper.newInstance(APIChannelIP.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}

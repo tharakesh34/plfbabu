@@ -7,11 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CoOwnerDetailDAO;
 import com.pennant.backend.model.collateral.CoOwnerDetail;
@@ -223,7 +223,7 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		source.addValue("CollateralRef", collateralReference);
 		source.addValue("CoOwnerId", coOwnerId);
 
-		RowMapper<CoOwnerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CoOwnerDetail.class);
+		RowMapper<CoOwnerDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CoOwnerDetail.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

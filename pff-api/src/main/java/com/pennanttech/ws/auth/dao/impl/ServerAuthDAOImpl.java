@@ -45,10 +45,10 @@ package com.pennanttech.ws.auth.dao.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.ws.auth.dao.ServerAuthDAO;
@@ -87,8 +87,7 @@ public class ServerAuthDAOImpl extends BasicDao<ServerAuthentication> implements
 		selectSql.append(" where TokenId =:TokenId AND IpAddress =:IpAddress");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceServerSecurity);
-		RowMapper<ServerAuthentication> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ServerAuthentication.class);
+		RowMapper<ServerAuthentication> typeRowMapper = BeanPropertyRowMapper.newInstance(ServerAuthentication.class);
 
 		try {
 			webServiceServerSecurity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,

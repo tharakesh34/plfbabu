@@ -4551,7 +4551,7 @@ public class ReceiptCalculator implements Serializable {
 				pftNow = balPft;
 				pftPaid = pftPaid.subtract(pftNow);
 			}
-			
+
 			if (curSchd.isTDSApplicable()) {
 				tdsNow = getTDS(fsd.getFinanceMain(), pftNow);
 			}

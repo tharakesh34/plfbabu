@@ -8,9 +8,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -57,8 +57,7 @@ public class ExtendedFieldRendererDAOImpl extends BasicDao<ExtendedFieldRender> 
 		selectSql.append(" where  Reference = :Reference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ExtendedFieldRender> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldRender.class);
+		RowMapper<ExtendedFieldRender> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldRender.class);
 
 		try {
 			//renderMap = this.jdbcTemplate.query(selectSql, source, typeRowMapper);

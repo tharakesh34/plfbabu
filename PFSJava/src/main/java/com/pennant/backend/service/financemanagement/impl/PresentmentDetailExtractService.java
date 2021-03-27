@@ -58,12 +58,16 @@ public class PresentmentDetailExtractService {
 		for (PresentmentDetail pd : presentments) {
 			Long headerId = null;
 			String key = null;
-			if (MandateConstants.TYPE_PDC.equals(ph.getMandateType()) && ph.isGroupByBank()) {
-				key = getBankGroupKey(pd);
-			} else if (ph.isGroupByPartnerBank()) {
-				key = getPartnerBankGroupKey(pd);
+			if (ph.isGroupByBank() && isGroupByPartnerBank(ph)) {
+				key = getKeyByPBAndBank(pd);
+			} else if (ph.isGroupByBank() && !isGroupByPartnerBank(ph)) {
+				key = getKeyByPB(pd);
+			} else if (isGroupByPartnerBank(ph)) {
+				key = getKeyByPBAndBank(pd);
+			} else if (ph.isGroupByBank()) {
+				key = getKeyByBank(pd);
 			} else {
-				key = DateUtil.formatToShortDate(pd.getSchDate());
+				key = getDefaultGroupKey(pd);
 			}
 
 			headerId = getHeaderId(key, ph);
@@ -117,6 +121,13 @@ public class PresentmentDetailExtractService {
 		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
 			chequeDetailDAO.updateChequeStatus(includeList);
 		}
+	}
+
+	private boolean isGroupByPartnerBank(PresentmentHeader ph) {
+		if (ph.isGroupByPartnerBank() && !MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+			return true;
+		}
+		return false;
 	}
 
 	public void processPresentment(PresentmentHeader ph, ResultSet rs) throws SQLException {
@@ -271,7 +282,7 @@ public class PresentmentDetailExtractService {
 
 	}
 
-	private String getBankGroupKey(PresentmentDetail ph) {
+	private String getKeyByBank(PresentmentDetail ph) {
 		Date defSchDate = ph.getDefSchdDate();
 		String bankCode = ph.getBankCode();
 		String entity = ph.getEntityCode();
@@ -284,7 +295,44 @@ public class PresentmentDetailExtractService {
 		return key.toString();
 	}
 
-	private String getPartnerBankGroupKey(PresentmentDetail ph) {
+	private String getKeyByPB(PresentmentDetail ph) {
+		long partnerBankId = ph.getPartnerBankId();
+		Date defSchDate = ph.getDefSchdDate();
+		String entity = ph.getEntityCode();
+
+		StringBuilder key = new StringBuilder();
+
+		key.append(DateUtil.formatToShortDate(defSchDate));
+		key.append(entity);
+		key.append(partnerBankId);
+		return key.toString();
+	}
+
+	private String getPartnerBankWithNonPDCGroupKey(PresentmentDetail ph) {
+		long partnerBankId = ph.getPartnerBankId();
+		Date defSchDate = ph.getDefSchdDate();
+		String entity = ph.getEntityCode();
+
+		StringBuilder key = new StringBuilder();
+
+		key.append(DateUtil.formatToShortDate(defSchDate));
+		key.append(entity);
+		key.append(partnerBankId);
+		return key.toString();
+	}
+
+	private String getDefaultGroupKey(PresentmentDetail ph) {
+		Date defSchDate = ph.getDefSchdDate();
+		String entity = ph.getEntityCode();
+
+		StringBuilder key = new StringBuilder();
+
+		key.append(DateUtil.formatToShortDate(defSchDate));
+		key.append(entity);
+		return key.toString();
+	}
+
+	private String getKeyByPBAndBank(PresentmentDetail ph) {
 		long partnerBankId = ph.getPartnerBankId();
 		Date defSchDate = ph.getDefSchdDate();
 		String bankCode = ph.getBankCode();
@@ -302,8 +350,7 @@ public class PresentmentDetailExtractService {
 	public String extarctPresentments(PresentmentHeader ph) {
 		ph.setBpiPaidOnInstDate(SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE));
 		ph.setGroupByBank(SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK));
-		ph.setGroupByPartnerBank(SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)
-				&& ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK);
+		ph.setGroupByPartnerBank(ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK);
 		try {
 			if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT, ph.getPresentmentType())) {
 				presentmentDetailDAO.extactPresentments(ph, this);
@@ -331,7 +378,7 @@ public class PresentmentDetailExtractService {
 		} else if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_REPRESENTMENT, ph.getPresentmentType())) {
 			presentmentDetailDAO.extactPDCRePresentments(ph, this);
 		}
-		
+
 		if (!ph.getPresentments().isEmpty()) {
 			save(ph);
 		}

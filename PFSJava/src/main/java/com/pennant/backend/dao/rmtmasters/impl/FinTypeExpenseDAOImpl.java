@@ -54,12 +54,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeExpenseDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
@@ -133,7 +133,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeExpense);
-		RowMapper<FinTypeExpense> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeExpense.class);
+		RowMapper<FinTypeExpense> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeExpense.class);
 
 		try {
 			finTypeExpense = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -380,7 +380,7 @@ public class FinTypeExpenseDAOImpl extends SequenceDao<FinTypeExpense> implement
 		selectSql.append(" Where FinType = :FinType And ExpenseTypeID = :ExpenseTypeID");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinTypeExpense> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeExpense.class);
+		RowMapper<FinTypeExpense> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeExpense.class);
 
 		try {
 			finTypeExpense = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,

@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
 import com.pennant.backend.model.applicationmaster.NPABucket;
@@ -95,7 +95,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		nPABucket.setBucketID(bucketID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucket);
-		RowMapper<NPABucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NPABucket.class);
+		RowMapper<NPABucket> rowMapper = BeanPropertyRowMapper.newInstance(NPABucket.class);
 
 		try {
 			nPABucket = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -247,7 +247,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<NPABucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NPABucket.class);
+		RowMapper<NPABucket> rowMapper = BeanPropertyRowMapper.newInstance(NPABucket.class);
 
 		List<NPABucket> list = jdbcTemplate.query(sql.toString(), rowMapper);
 

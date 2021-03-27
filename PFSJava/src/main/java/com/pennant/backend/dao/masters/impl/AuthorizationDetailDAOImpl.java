@@ -48,10 +48,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.masters.AuthorizationDetailDAO;
 import com.pennant.backend.model.masters.AuthorizationDetail;
@@ -142,8 +142,7 @@ public class AuthorizationDetailDAOImpl extends SequenceDao<AuthorizationDetail>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorizationDetail);
-		RowMapper<AuthorizationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AuthorizationDetail.class);
+		RowMapper<AuthorizationDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(AuthorizationDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

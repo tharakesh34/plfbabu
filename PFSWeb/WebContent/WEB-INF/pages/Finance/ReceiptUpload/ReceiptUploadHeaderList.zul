@@ -7,7 +7,7 @@
 
 	<window>
 		<window id="window_ReceiptUploadList" apply="${receiptUploadHeaderListCtrl}" border="none" width="100%">
-
+			<timer id="timer" repeats="true" />
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 
@@ -86,29 +86,29 @@
 								</row>
 
 								<row id="row_AlwWorkflow">
-									<label id="label_ReceiptUploadSearch_RecordStatus" value="${c:l('label.RecordStatus')}" />
+									<label id="label_ReceiptUploadSearch_RecordStatus"
+										value="${c:l('label.RecordStatus')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_ReceiptUploadSearch_RecordType" value="${c:l('label.RecordType')}" />
-									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
-									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxReceiptUpload" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
-							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
-							<listhead sizable="true">
-								<listheader visible="false" id="listHeader_CheckBox_Name" hflex="min" align="center" />
+						<listbox id="listBoxReceiptUpload" emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
+							span="true">
+							<listhead sizable="true" id="listHeadReceiptUpload">
+								<listheader id="listHeader_CheckBox" hflex="min"/>
 								<listheader id="listheader_UploadID" label="${c:l('listheader_UploadId.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_FileName" label="${c:l('listheader_FileName.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_Success" label="${c:l('listheader_SuccessCount.label')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_FailedCount" label="${c:l('listheader_FiledCount.label')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_TotalCount" label="${c:l('listheader_TotalCount.label')}" sort="auto"
-									hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+								<listheader id="listheader_FileName" label="${c:l('listheader_FileName.label')}" sort="auto"   hflex="min" />
+								<listheader id="listheader_TotalCount" label="${c:l('listheader_TotalCount.label')}"
+									sort="auto" hflex="min" align="center"/>
+								<listheader id="listheader_ProcCount" label="${c:l('listheader_ProcCount.label')}"
+									sort="auto" hflex="min" align="center"/>
+								<listheader id="listheader_Success" label="${c:l('listheader_SuccessCount.label')}"
+									sort="auto" hflex="min" align="center"/>
+								<listheader id="listheader_FailedCount" label="${c:l('listheader_FailedCount.label')}"
+									sort="auto" hflex="min" align="center"/>
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" /> 
 							</listhead>
 						</listbox>
 					</div>

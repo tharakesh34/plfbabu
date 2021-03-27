@@ -57,13 +57,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -129,11 +129,12 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks, KnockOffType");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate");
-		sql.append(", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, SourceofFund, TdsAmount");
+		sql.append(
+				", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, ClosureTypeId, SourceofFund, TdsAmount");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -207,6 +208,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
+			ps.setObject(index++, JdbcUtil.getLong(rh.getClosureTypeId()));
 		});
 
 		return rh.getId();
@@ -240,7 +242,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", TransactionRef = :TransactionRef, DepositDate = :DepositDate, PartnerBankId = :PartnerBankId");
 		sql.append(", PrvReceiptPurpose = :PrvReceiptPurpose, ReceiptSource = :ReceiptSource");
 		sql.append(", RecAppDate = :RecAppDate, ReceivedDate = :ReceivedDate, ExtReference = :ExtReference");
-		sql.append(", SourceofFund = :SourceofFund, TdsAmount = :TdsAmount");
+		sql.append(", SourceofFund = :SourceofFund, TdsAmount = :TdsAmount, ClosureTypeId = :ClosureTypeId");
 		sql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -304,13 +306,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", KnockOffType, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
-		sql.append(", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, SourceofFund, TdsAmount");
+		sql.append(
+				", PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate, ClosureTypeId, SourceofFund, TdsAmount");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc");
 			sql.append(", FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory");
 			sql.append(", NextRepayRvwDate, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
-			sql.append(", CashierBranchDesc, FinDivisionDesc, EntityCode");
+			sql.append(", CashierBranchDesc, FinDivisionDesc, EntityCode, ClosureTypeDesc");
 
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
 				sql.append(", ScheduleMethod, PftDaysBasis, CustID, CustomerCIF");
@@ -387,8 +390,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append("  AND RH.ReceiptModeStatus NOT IN('C','B') ORDER BY RH.ReceiptID ");
 
 		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<ReceiptCancelDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ReceiptCancelDetail.class);
+		RowMapper<ReceiptCancelDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ReceiptCancelDetail.class);
 		List<ReceiptCancelDetail> rcptCancelDetails = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		logger.debug(Literal.LEAVING);
 		return rcptCancelDetails;
@@ -646,7 +648,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL + sql.toString());
 		/*
 		 * SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header); RowMapper<FinReceiptHeader>
-		 * typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
+		 * typeRowMapper = BeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
 		 */
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -729,18 +731,30 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public boolean checkInProcessReceipts(String reference, long receiptId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select count(*) from FinReceiptHeader_Temp");
-		sql.append(" where Reference = :Reference");
-		sql.append(" and ReceiptId <> :ReceiptId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Count(*)");
+		sql.append(" From FinReceiptHeader_Temp");
+		sql.append(" Where Reference = ? and ReceiptId <> ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Reference", reference);
-		source.addValue("ReceiptId", receiptId);
+		int count = 0;
+		count = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, receiptId },
+				(rs, rowNum) -> rs.getInt(1));
 
-		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0;
+		// Check for Schedule pay with Cheque mode.
+		if (count == 0) {
+			sql = new StringBuilder("Select");
+			sql.append(" Count(*)");
+			sql.append(" From FinReceiptHeader");
+			sql.append(" Where Reference= ? and ReceiptModeStatus in (?, ?)");
+
+			logger.debug(Literal.SQL + sql.toString());
+
+			count = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, "I", "D" },
+					(rs, rowNum) -> rs.getInt(1));
+		}
+		return count > 0;
 	}
 
 	/**
@@ -817,8 +831,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", Reference);
 
-		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptHeader.class);
+		RowMapper<FinReceiptHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinReceiptHeader.class);
 		List<FinReceiptHeader> rchList = null;
 
 		try {
@@ -1240,6 +1253,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setReceivedDate(rs.getDate("ReceivedDate"));
 			rh.setSourceofFund(rs.getString("SourceofFund"));
 			rh.setTdsAmount(rs.getBigDecimal("TdsAmount"));
+			rh.setClosureTypeId(JdbcUtil.getLong(rs.getObject("ClosureTypeId")));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				rh.setFinType(rs.getString("FinType"));
@@ -1261,6 +1275,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				rh.setCashierBranchDesc(rs.getString("CashierBranchDesc"));
 				rh.setFinDivisionDesc(rs.getString("FinDivisionDesc"));
 				rh.setEntityCode(rs.getString("EntityCode"));
+				rh.setClosureTypeDesc(rs.getString("ClosureTypeDesc"));
 
 				if (StringUtils.trimToEmpty(type).contains("FView")) {
 					rh.setScheduleMethod(rs.getString("ScheduleMethod"));

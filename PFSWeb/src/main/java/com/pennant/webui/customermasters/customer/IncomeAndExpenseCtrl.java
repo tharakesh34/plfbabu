@@ -481,8 +481,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 			//Setting the group total values
 			Listcell gropTotalCell = (Listcell) listbox.getFellowIfAny(groupkey);
 			if (gropTotalCell != null) {
-				gropTotalCell
-						.setLabel(PennantApplicationUtil.formatAmount(mapTotal.get(groupkey), ccyFormatter));
+				gropTotalCell.setLabel(PennantApplicationUtil.formatAmount(mapTotal.get(groupkey), ccyFormatter));
 			}
 		}
 

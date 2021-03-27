@@ -879,6 +879,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		map.put("receiptListCtrl", this);
 		map.put("isKnockOff", isKnockOff);
 		map.put("isForeClosure", isForeClosure);
+		map.put("isWIF", false);
 
 		try {
 			if (enqiryModule) {

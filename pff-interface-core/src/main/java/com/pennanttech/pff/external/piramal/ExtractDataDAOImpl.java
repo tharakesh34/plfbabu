@@ -8,12 +8,12 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.util.CollectionUtils;
 
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -123,7 +123,7 @@ public class ExtractDataDAOImpl implements ExtractDataDAO {
 		StringBuilder selectSQL = new StringBuilder(SELECT_QUERY.replace("tableName", tableName));
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("LastMntOn", date);
-		RowMapper<?> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(beanType);
+		RowMapper<?> typeRowMapper = BeanPropertyRowMapper.newInstance(beanType);
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.mainNamedJdbcTemplate.query(selectSQL.toString(), paramMap, typeRowMapper);

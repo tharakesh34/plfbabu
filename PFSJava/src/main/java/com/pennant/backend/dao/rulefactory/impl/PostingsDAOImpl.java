@@ -60,13 +60,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
@@ -118,7 +118,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(" Where FinReference =:FinReference AND  LinkedTranId  IN(:LinkedTranId) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return postings;
@@ -169,7 +169,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -244,7 +244,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(" Where LinkedTranId  IN(:LinkedTranId) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return postings;
@@ -267,7 +267,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(" Where Postref  =:Postref) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		List<ReturnDataSet> postings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return postings;
@@ -568,7 +568,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(" T2.FinBranch = :FinBranch)T1 order by T1.Account,T1.finReference,T1.TranCode ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), mSource, typeRowMapper);
 	}
@@ -594,7 +594,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		source.addValue("finEvent", Arrays.asList(finEvent));
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
@@ -637,7 +637,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 		List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>();
 		try {
@@ -757,7 +757,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(" select paymentinsid from vasrecording where PRIMARYlinkref = :finReference) )");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
@@ -784,7 +784,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
-		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		RowMapper<ReturnDataSet> typeRowMapper = BeanPropertyRowMapper.newInstance(ReturnDataSet.class);
 		logger.debug("Leaving");
 
 		try {

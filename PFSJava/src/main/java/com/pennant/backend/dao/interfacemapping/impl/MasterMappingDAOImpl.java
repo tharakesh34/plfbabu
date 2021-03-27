@@ -48,11 +48,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.interfacemapping.MasterMappingDAO;
 import com.pennant.backend.model.interfacemapping.MasterMapping;
@@ -92,7 +92,7 @@ public class MasterMappingDAOImpl extends SequenceDao<MasterMapping> implements 
 		selectSql.append(" Where  InterfaceMappingId = :InterfaceMappingId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<MasterMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MasterMapping.class);
+		RowMapper<MasterMapping> typeRowMapper = BeanPropertyRowMapper.newInstance(MasterMapping.class);
 
 		List<MasterMapping> mappings = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 

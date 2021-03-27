@@ -57,7 +57,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.ScoringGroupDAO;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
@@ -107,7 +106,7 @@ public class ScoringGroupDAOImpl extends SequenceDao<ScoringGroup> implements Sc
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringGroup);
-		RowMapper<ScoringGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringGroup.class);
+		RowMapper<ScoringGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringGroup.class);
 
 		try {
 			scoringGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -253,7 +252,7 @@ public class ScoringGroupDAOImpl extends SequenceDao<ScoringGroup> implements Sc
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringGroup);
-		RowMapper<ScoringGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringGroup.class);
+		RowMapper<ScoringGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringGroup.class);
 
 		try {
 			scoringGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

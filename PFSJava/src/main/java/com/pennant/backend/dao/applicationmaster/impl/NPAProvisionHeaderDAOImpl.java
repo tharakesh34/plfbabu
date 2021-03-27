@@ -56,7 +56,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPAProvisionHeaderDAO;
 import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
@@ -102,8 +101,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		provisionHeader.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(provisionHeader);
-		RowMapper<NPAProvisionHeader> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPAProvisionHeader.class);
+		RowMapper<NPAProvisionHeader> rowMapper = BeanPropertyRowMapper.newInstance(NPAProvisionHeader.class);
 
 		try {
 			provisionHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -294,7 +292,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		assetClassificationHeader.setId(listHeaderId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assetClassificationHeader);
-		RowMapper<AssetClassificationHeader> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AssetClassificationHeader> rowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationHeader.class);
 
 		try {

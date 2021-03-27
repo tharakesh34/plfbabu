@@ -54,11 +54,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.legal.LegalPropertyDetailDAO;
 import com.pennant.backend.model.legal.LegalPropertyDetail;
@@ -103,8 +103,7 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		legalPropertyDetail.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalPropertyDetail);
-		RowMapper<LegalPropertyDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalPropertyDetail.class);
+		RowMapper<LegalPropertyDetail> rowMapper = BeanPropertyRowMapper.newInstance(LegalPropertyDetail.class);
 		try {
 			legalPropertyDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

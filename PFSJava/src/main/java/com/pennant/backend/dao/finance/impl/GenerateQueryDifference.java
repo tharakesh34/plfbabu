@@ -87,33 +87,31 @@ public class GenerateQueryDifference {
 		sql.append(
 				", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving, appliedLoanAmt, FinIsRateRvwAtGrcEnd ");
 
-	//	if (!wif) {
-			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
-			sql.append(
-					" LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason, InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval,FinPreApprovedRef,MandateID,");
-			sql.append(" JointAccount,JointCustId,DownPayAccount, SecurityDeposit, RcdMaintainSts,FinCancelAc, ");
-			sql.append(
-					" NextUserId, Priority,RolloverFrq, NextRolloverDate,ShariaStatus, InitiateDate,MMAId, AccountsOfficer , ApplicationNo,");
-			sql.append(
-					" DsaCode, DroplineFrq,FirstDroplineDate,PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment, QuickDisb, WifReference,");
-			sql.append(
-					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes ");
-			sql.append(", PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt , VanReq, VanCode");
-			sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, PlanEMIHAlwInGrace");
+		//	if (!wif) {
+		sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
+		sql.append(
+				" LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason, InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval,FinPreApprovedRef,MandateID,");
+		sql.append(" JointAccount,JointCustId,DownPayAccount, SecurityDeposit, RcdMaintainSts,FinCancelAc, ");
+		sql.append(
+				" NextUserId, Priority,RolloverFrq, NextRolloverDate,ShariaStatus, InitiateDate,MMAId, AccountsOfficer , ApplicationNo,");
+		sql.append(
+				" DsaCode, DroplineFrq,FirstDroplineDate,PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment, QuickDisb, WifReference,");
+		sql.append(
+				" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes ");
+		sql.append(", PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt , VanReq, VanCode");
+		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, PlanEMIHAlwInGrace");
 
-			// HL
-			sql.append(", FinOcrRequired, ReqLoanAmt, ReqLoanTenor, OfferProduct, OfferAmount");
-			sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
-			sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
-			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
-			sql.append(", Pmay, AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-			sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd");
+		// HL
+		sql.append(", FinOcrRequired, ReqLoanAmt, ReqLoanTenor, OfferProduct, OfferAmount");
+		sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
+		sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
+		sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
+		sql.append(", Pmay, AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
+		sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd");
 
 		//}
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		sql.append(" NextTaskId, RecordType, WorkflowId");
-	
-		
 
 		return sql.toString();
 	}
@@ -149,26 +147,26 @@ public class GenerateQueryDifference {
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", appliedLoanAmt, FinIsRateRvwAtGrcEnd");
 		//if (!wif) {
-			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
-			sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
-			sql.append(", InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval");
-			sql.append(", FinPreApprovedRef, MandateID, JointAccount, JointCustId, DownPayAccount, SecurityDeposit");
-			sql.append(", RcdMaintainSts, FinCancelAc, NextUserId, Priority, RolloverFrq, NextRolloverDate");
-			sql.append(", ShariaStatus, InitiateDate, MMAId, AccountsOfficer, ApplicationNo, DsaCode, DroplineFrq");
-			sql.append(", FirstDroplineDate, PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment");
-			sql.append(", QuickDisb, WifReference, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi");
-			sql.append(", MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket");
-			sql.append(", EligibilityMethod, samplingRequired, legalRequired, connector, ProcessAttributes");
-			sql.append(", PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
-			sql.append(", VanReq, VanCode, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
-			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, PlanEMIHAlwInGrace");
-			// HL
-			sql.append(", FinOcrRequired, ReqLoanAmt, ReqLoanTenor, OfferProduct, OfferAmount");
-			sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
-			sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
-			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
-			sql.append(", Pmay, AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-			sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd");
+		sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
+		sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
+		sql.append(", InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval");
+		sql.append(", FinPreApprovedRef, MandateID, JointAccount, JointCustId, DownPayAccount, SecurityDeposit");
+		sql.append(", RcdMaintainSts, FinCancelAc, NextUserId, Priority, RolloverFrq, NextRolloverDate");
+		sql.append(", ShariaStatus, InitiateDate, MMAId, AccountsOfficer, ApplicationNo, DsaCode, DroplineFrq");
+		sql.append(", FirstDroplineDate, PftServicingODLimit, ReferralId, EmployeeName, DmaCode, SalesDepartment");
+		sql.append(", QuickDisb, WifReference, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi");
+		sql.append(", MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket");
+		sql.append(", EligibilityMethod, samplingRequired, legalRequired, connector, ProcessAttributes");
+		sql.append(", PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
+		sql.append(", VanReq, VanCode, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
+		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, PlanEMIHAlwInGrace");
+		// HL
+		sql.append(", FinOcrRequired, ReqLoanAmt, ReqLoanTenor, OfferProduct, OfferAmount");
+		sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
+		sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
+		sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
+		sql.append(", Pmay, AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
+		sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd");
 
 		//}
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");

@@ -98,6 +98,7 @@ import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dedup.DynamicCollateralType;
+import com.pennant.backend.model.finance.RestructureType;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
@@ -2492,4 +2493,60 @@ public class PennantAppUtil {
 		return childFinanceTypes;
 	}
 
+	public static ArrayList<ValueLabel> getRestructureType() {
+		ArrayList<ValueLabel> restructureTypeList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<RestructureType> searchObject = new JdbcSearchObject<RestructureType>(RestructureType.class);
+		searchObject.addSort("RstTypeCode", false);
+		searchObject.addField("RstTypeDesc");
+		searchObject.addField("Id");
+		searchObject.addTabelName("Restructure_Types");
+
+		List<RestructureType> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel codeValue = new ValueLabel(String.valueOf(appList.get(i).getId()),
+					String.valueOf(appList.get(i).getRstTypeDesc()));
+			restructureTypeList.add(codeValue);
+		}
+		return restructureTypeList;
+	}
+
+	public static List<RestructureType> getRestructureType(long id) {
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<RestructureType> searchObject = new JdbcSearchObject<RestructureType>(RestructureType.class);
+		searchObject.addSort("RstTypeCode", false);
+		searchObject.addFilter(new Filter("Id", id, Filter.OP_EQUAL));
+		searchObject.addField("RstTypeCode");
+		searchObject.addField("RstTypeDesc");
+		searchObject.addField("Id");
+		searchObject.addField("MaxEmiHoliday");
+		searchObject.addField("MaxPriHoliday");
+		searchObject.addField("MaxEmiTerm");
+		searchObject.addField("MaxTotTerm");
+		searchObject.addTabelName("Restructure_Types");
+
+		List<RestructureType> appList = pagedListService.getBySearchObject(searchObject);
+		return appList;
+	}
+
+	public static List<ValueLabel> getActiveFieldCodeList(String fieldCode) {
+		List<ValueLabel> fieldCodeList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<LovFieldDetail> searchObject = new JdbcSearchObject<LovFieldDetail>(LovFieldDetail.class);
+		searchObject.addSort("FieldCodeValue", false);
+		searchObject.addFilter(new Filter("FieldCode", fieldCode, Filter.OP_EQUAL));
+		searchObject.addFilter(new Filter("IsActive", true, Filter.OP_EQUAL));
+		searchObject.addField("FieldCodeValue");
+		searchObject.addField("ValueDesc");
+
+		List<LovFieldDetail> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel codeValue = new ValueLabel(String.valueOf(appList.get(i).getFieldCodeValue()),
+					appList.get(i).getValueDesc());
+			fieldCodeList.add(codeValue);
+		}
+		return fieldCodeList;
+	}
 }

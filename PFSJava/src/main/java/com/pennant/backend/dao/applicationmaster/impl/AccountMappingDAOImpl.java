@@ -49,10 +49,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
@@ -97,7 +97,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		accountMapping.setAccount(account);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
-		RowMapper<AccountMapping> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountMapping.class);
+		RowMapper<AccountMapping> rowMapper = BeanPropertyRowMapper.newInstance(AccountMapping.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -134,7 +134,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountMapping);
-		RowMapper<AccountMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountMapping.class);
+		RowMapper<AccountMapping> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountMapping.class);
 
 		logger.debug(Literal.LEAVING);
 

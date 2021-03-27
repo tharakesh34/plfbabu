@@ -54,11 +54,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -184,7 +184,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		try {
 			currency = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -386,7 +386,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		List<Currency> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		if (list != null && list.size() > 0) {
@@ -416,7 +416,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" FROM  RMTCurrencies");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		List<Currency> currencies = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 		logger.debug("Leaving");
@@ -435,7 +435,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" FROM  RMTCurrencies where CcyCode = :CcyCode");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		Currency currencies = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		//logger.debug("Leaving");
@@ -455,7 +455,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append("  Where CcyCode IN(:CCYList)");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), namedParameters, typeRowMapper);
@@ -476,7 +476,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		logger.debug("Leaving");
 
 		try {
-			RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+			RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 			Currency currencies = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 			if (currencies != null) {
 				return true;

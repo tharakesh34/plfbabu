@@ -34,11 +34,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -86,7 +86,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		paymentHeader.setPaymentId(paymentId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentHeader);
-		RowMapper<PaymentHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentHeader.class);
+		RowMapper<PaymentHeader> rowMapper = BeanPropertyRowMapper.newInstance(PaymentHeader.class);
 
 		try {
 			paymentHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -241,7 +241,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<FinanceMain> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> rowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -265,7 +265,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<FinExcessAmount> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
+		RowMapper<FinExcessAmount> rowMapper = BeanPropertyRowMapper.newInstance(FinExcessAmount.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

@@ -49,10 +49,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.contractor.ContractorAssetDetailDAO;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
@@ -104,8 +104,7 @@ public class ContractorAssetDetailDAOImpl extends BasicDao<ContractorAssetDetail
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contractorAssetDetail);
-		RowMapper<ContractorAssetDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ContractorAssetDetail.class);
+		RowMapper<ContractorAssetDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ContractorAssetDetail.class);
 
 		try {
 			contractorAssetDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -139,8 +138,7 @@ public class ContractorAssetDetailDAOImpl extends BasicDao<ContractorAssetDetail
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contractorAssetDetail);
-		RowMapper<ContractorAssetDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ContractorAssetDetail.class);
+		RowMapper<ContractorAssetDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ContractorAssetDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

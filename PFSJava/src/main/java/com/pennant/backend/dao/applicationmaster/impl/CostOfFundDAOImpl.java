@@ -51,11 +51,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CostOfFundDAO;
 import com.pennant.backend.model.applicationmaster.CostOfFund;
@@ -108,7 +108,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
-		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
+		RowMapper<CostOfFund> typeRowMapper = BeanPropertyRowMapper.newInstance(CostOfFund.class);
 		try {
 			costOfFund = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -283,7 +283,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
-		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
+		RowMapper<CostOfFund> typeRowMapper = BeanPropertyRowMapper.newInstance(CostOfFund.class);
 
 		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
@@ -306,7 +306,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
-		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
+		RowMapper<CostOfFund> typeRowMapper = BeanPropertyRowMapper.newInstance(CostOfFund.class);
 
 		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
@@ -371,7 +371,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(costOfFund);
-		RowMapper<CostOfFund> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostOfFund.class);
+		RowMapper<CostOfFund> typeRowMapper = BeanPropertyRowMapper.newInstance(CostOfFund.class);
 
 		List<CostOfFund> costOfFunds = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");

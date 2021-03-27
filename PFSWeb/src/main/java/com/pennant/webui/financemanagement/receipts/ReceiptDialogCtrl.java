@@ -78,6 +78,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -90,12 +91,14 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
@@ -134,6 +137,7 @@ import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
+import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.ScheduleCalculator;
@@ -142,10 +146,12 @@ import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BounceReason;
+import com.pennant.backend.model.applicationmaster.ClosureType;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -153,6 +159,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -187,8 +194,10 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
@@ -196,6 +205,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
+import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -218,6 +228,7 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -246,6 +257,8 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
@@ -285,6 +298,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnSearchCustCIF;
 	protected Button btnSearchFinreference;
 	protected Button btnSearchReceiptInProcess;
+	protected Button btnPrintSchedule;
 
 	// Receipt Details
 	protected Groupbox gb_ReceiptDetails;
@@ -307,6 +321,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Hbox hbox_ReceiptModeStatus;
 	protected Combobox receiptModeStatus;
 	protected Row row_RealizationDate;
+	protected Row row_closuretype;
 	protected Datebox realizationDate;
 	protected Row row_BounceReason;
 	protected Row row_knockOffRef;
@@ -454,6 +469,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private FinReceiptData receiptData = null;
 	private FinReceiptData orgReceiptData = null;
 	private FinanceDetail financeDetail;
+	private FinScheduleData finSchedData = null;
 	private Map<String, BigDecimal> taxPercMap = null;
 
 	private String recordType = "";
@@ -490,6 +506,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private boolean isEarlySettle = false;
 	private Space panSpace;
 
+	// In Closure Maker auto generated SOA and Foreclosure Reports
+	protected A generateSOA;
+	protected A foreClosureLetter;
+	protected Groupbox gb_ForeClosureSOA;
+
 	private static final String RECEIPT_PREFIX = "Receipt";
 	private static final String RECEIPT_TEMPLATE = RECEIPT_PREFIX + PennantConstants.DOC_TYPE_WORD_EXT;
 	private static final String TEMPLATE_PATH = App.getResourcePath(PathUtil.FINANCE_AGREEMENTS, "Receipts");
@@ -506,6 +527,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private RepaymentProcessUtil repayProcessUtil;
 	private boolean isAccountingExecuted = false;
+	private boolean isWIF = false;
+	private transient SOAReportGenerationService soaReportGenerationService;
+
+	//ClosureType
+	protected ExtendedCombobox closureType;
 
 	/**
 	 * default constructor.<br>
@@ -578,6 +604,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (arguments.containsKey("receiptListCtrl")) {
 				setReceiptListCtrl((ReceiptListCtrl) arguments.get("receiptListCtrl"));
+			}
+			if (arguments.containsKey("isWIF")) {
+				isWIF = (Boolean) arguments.get("isWIF");
 			}
 
 			doLoadWorkFlow(finReceiptHeader.isWorkflow(), finReceiptHeader.getWorkflowId(),
@@ -847,6 +876,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		this.btnReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
 		this.btnChangeReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnChangeReceipt"));
+		this.gb_ForeClosureSOA.setVisible(getUserWorkspace().isAllowed("gb_ReceiptDialog_ForeClosure"));
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -859,9 +889,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param finReference
 	 */
 	private void setClosedLoanDetails(String finReference) {
-		String closingStatus = getReceiptService().getClosingStatus(finReference, TableType.MAIN_TAB, false);
-		if (StringUtils.isNotEmpty(closingStatus)
-				&& !StringUtils.equals(closingStatus, FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+		FinanceMain fm = receiptService.getClosingStatus(finReference, TableType.MAIN_TAB, false);
+		if (StringUtils.isNotEmpty(fm.getClosingStatus())
+				&& !StringUtils.equals(fm.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)
+				&& !fm.isWriteoffLoan()) {
 			fillComboBox(this.receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY,
 					PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,EarlySettlement,EarlyPayment,");
 			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
@@ -969,6 +1000,17 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
 
 		appendScheduleMethod(receiptData.getReceiptHeader());
+
+		if (FinanceConstants.CLOSURE_MAKER.equals(module) || FinanceConstants.CLOSURE_APPROVER.equals(module)) {
+			this.row_closuretype.setVisible(true);
+			this.closureType.setMandatoryStyle(false);
+			this.closureType.setModuleName("ClosureType");
+			this.closureType.setValueColumn("Code");
+			this.closureType.setDescColumn("Description");
+			this.closureType.setDisplayStyle(2);
+			this.closureType.setValidateColumns(new String[] { "Code" });
+		}
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
 			BigDecimal recAmount = PennantApplicationUtil
 					.formateAmount(receiptData.getReceiptHeader().getReceiptAmount(), formatter);
@@ -1252,7 +1294,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.postBranch);
 		readOnlyComponent(true, this.finDivision);
 		this.sourceofFund.setDisabled(true);
-
+		readOnlyComponent(isReadOnly("ReceiptDialog_ClosureType"), this.closureType);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1473,6 +1515,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				isCalcCompleted = recalEarlyPaySchd(true);
 				if (isCalcCompleted) {
 					this.effectiveScheduleTab.setVisible(true);
+					if (isForeClosure) {
+						this.btnPrintSchedule.setVisible(
+								getUserWorkspace().isAllowed("button_Receiptdialog_ForeClosureEffschd_btnPrint"));
+					}
 				}
 			} else {
 				isCalcCompleted = true;
@@ -1497,6 +1543,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (isCalcCompleted) {
 			doReadOnly(true);
+			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
 			this.btnReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
 			this.btnChangeReceipt.setDisabled(true);
 			this.btnCalcReceipts.setDisabled(true);
@@ -2069,6 +2116,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			// Fill Effective Schedule Details
 			this.effectiveScheduleTab.setVisible(true);
+			setFinSchedData(fsd);
 
 			/*
 			 * // Dashboard Details Report doLoadTabsData(); doShowReportChart(fsd);
@@ -2585,7 +2633,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			doWriteComponentsToBean();
 
 			// Accounting Details Validations
-			if (ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING) {
+			if (ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING_TAB) {
 				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
 						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
 					boolean validate = false;
@@ -2986,6 +3034,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.row_DepositBank.setVisible(false);
 		}
 
+		if (isForeClosure) {
+			if (rch.getClosureTypeId() != null) {
+				this.closureType.setValue(String.valueOf(rch.getClosureTypeId()));
+			}
+			this.closureType.setDescription(rch.getClosureTypeDesc());
+			this.closureType.setAttribute("ID", rch.getClosureTypeId());
+		}
+
 		fillComboBox(this.receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
 				",FeePayment,");
 		this.receiptPurpose.setDisabled(true);
@@ -3174,7 +3230,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 		// Show Accounting Tab Details Based upon Role Condition using Work flow
-		if (isApprover() && ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING) {
+		if (isApprover() && ImplementationConstants.RECEIPTS_SHOW_ACCOUNTING_TAB) {
 			appendAccountingDetailTab(true);
 		}
 		fillComboBox(this.sourceofFund, receiptHeader.getSourceofFund(), sourceofFundList, "");
@@ -4390,6 +4446,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 
+		try {
+			if (isForeClosure) {
+				header.setClosureTypeId((Long) (this.closureType.getAttribute("ID")));
+			} else {
+				header.setClosureTypeId(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		if (effScheduleMethod.isVisible()) {
 			try {
 				header.setEffectSchdMethod(getComboboxValue(effScheduleMethod));
@@ -6974,6 +7039,137 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		printReceipt();
 	}
 
+	/**
+	 * when the "btnPrintSchedule" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnPrintSchedule(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+
+		List<Object> list = new ArrayList<Object>();
+		FinScheduleListItemRenderer finRender;
+		if (getFinSchedData() != null) {
+
+			// Fee Charges List Render For First Disbursement only/Existing
+			List<FeeRule> feeRuleList = getFinSchedData().getFeeRules();
+			FinanceMain financeMain = getFinSchedData().getFinanceMain();
+
+			// Get Finance Fee Details For Schedule Render Purpose In
+			// maintenance Stage
+			List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
+			if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
+					&& !isWIF) {
+				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), "",
+						isWIF);
+			}
+			approvedFeeRules.addAll(feeRuleList);
+
+			Map<Date, ArrayList<FeeRule>> feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
+			for (FeeRule fee : approvedFeeRules) {
+				if (feeChargesMap.containsKey(fee.getSchDate())) {
+					ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
+					int seqNo = 0;
+					for (FeeRule feeRule : feeChargeList) {
+						if (feeRule.getFeeCode().equals(fee.getFeeCode())) {
+							if (seqNo < feeRule.getSeqNo() && fee.getSchDate().compareTo(feeRule.getSchDate()) == 0) {
+								seqNo = feeRule.getSeqNo();
+							}
+						}
+					}
+					fee.setSeqNo(seqNo + 1);
+					feeChargeList.add(fee);
+					feeChargesMap.put(fee.getSchDate(), feeChargeList);
+
+				} else {
+					ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
+					feeChargeList.add(fee);
+					feeChargesMap.put(fee.getSchDate(), feeChargeList);
+				}
+			}
+
+			finRender = new FinScheduleListItemRenderer();
+			list.add(finRender.getScheduleGraphData(getFinSchedData()));
+			list.add(finRender.getPrintScheduleData(getFinSchedData(), null, null, true, false, false));
+
+			boolean isSchdFee = false;
+			List<FinFeeDetail> finFeeList = getFinSchedData().getFinFeeDetailList();
+			for (int i = 0; i < finFeeList.size(); i++) {
+				FinFeeDetail finFeeDetail = finFeeList.get(i);
+				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+						|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+						|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+								CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+					isSchdFee = true;
+					break;
+				}
+			}
+
+			list.add(isSchdFee);
+
+			// To get Parent Window i.e Finance main based on product
+			Component component = this.window_ReceiptDialog;
+			Window window = null;
+			if (component instanceof Window) {
+				window = (Window) component;
+			} else {
+				window = (Window) this.window_ReceiptDialog.getParent().getParent().getParent().getParent().getParent()
+						.getParent().getParent().getParent();
+			}
+			String reportName = "FINENQ_ScheduleDetail";
+
+			if (StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_CONVENTIONAL)) {
+				reportName = "CFINENQ_ScheduleDetail";
+			} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+				reportName = "ODFINENQ_ScheduleDetail";
+			}
+
+			// Customer CIF && Customer Name Setting
+			CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
+			if (customerDetails != null) {
+				Customer customer = customerDetails.getCustomer();
+				financeMain.setLovDescCustCIF(customer.getCustCIF());
+				financeMain.setLovDescCustShrtName(customer.getCustShrtName());
+			} else {
+				financeMain.setLovDescCustCIF("");
+			}
+
+			if (isWIF) {
+				reportName = "WIFENQ_ScheduleDetail";
+				WIFCustomer customerDetailsData = getFinanceDetail().getCustomer();
+				if (customerDetailsData != null) {
+					financeMain.setLovDescCustCIF(String.valueOf(customerDetailsData.getCustID()));
+					financeMain.setLovDescCustShrtName(customerDetailsData.getCustShrtName());
+				} else {
+					financeMain.setLovDescCustCIF("");
+				}
+			}
+
+			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
+					true);
+
+			int advTerms = 0;
+			if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
+					&& AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
+				advTerms = financeMain.getAdvTerms();
+			}
+
+			String noOfTerms = String.valueOf(financeMain.getCalTerms() + financeMain.getGraceTerms());
+			financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
+					+ (StringUtils.isEmpty(noOfTerms) ? "0" : noOfTerms) + advTerms + " Payments");
+
+			SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
+			String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),
+					securityUser.getUsrLName());
+
+			ReportGenerationUtil.generateReport(reportName, financeMain, list, true, 1, usrName, window);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
 	private void printReceipt() throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -7511,6 +7707,68 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.listBoxExcess.appendChild(item);
 	}
 
+	public void onClick$foreClosureLetter(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("isModelWindow", true);
+		map.put("finReference", this.finReference.getValue());
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/SelectLoanClosureEnquiryList.zul",
+					null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$generateSOA(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		String finReference = this.finReference.getValue();
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		Date finStartDate = financeMain.getFinStartDate();
+		Date appDate = SysParamUtil.getAppDate();
+
+		StatementOfAccount soa = soaReportGenerationService.getStatmentofAccountDetails(finReference, finStartDate,
+				appDate, false);
+
+		List<Object> list = new ArrayList<Object>();
+		list.add(soa.getSoaSummaryReports());
+		list.add(soa.getTransactionReports());
+		list.add(soa.getApplicantDetails());
+		list.add(soa.getOtherFinanceDetails());
+		list.add(soa.getSheduleReports());
+		list.add(soa.getInterestRateDetails());
+
+		String reportName = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_StatementOfAccount" + ".jasper";
+
+		byte[] buf = ReportCreationUtil.reportGeneration("FINENQ_StatementOfAccount", soa, list, reportName,
+				getUserWorkspace().getLoggedInUser().getFullName(), false);
+
+		Filedownload.save(new AMedia("StatementOfAccount", "pdf", "application/pdf", buf));
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$closureType(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		Object dataObject = this.closureType.getObject();
+
+		if (dataObject instanceof String) {
+			this.closureType.setValue(dataObject.toString());
+			this.closureType.setDescription("");
+			this.closureType.setAttribute("ID", new Long(0));
+		} else {
+			ClosureType closuretype = (ClosureType) dataObject;
+			if (closuretype != null) {
+				this.closureType.setAttribute("ID", closuretype.getId());
+			} else {
+				this.closureType.setAttribute("ID", new Long(0));
+			}
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
 	public Map<String, BigDecimal> getTaxPercMap() {
 		return taxPercMap;
 	}
@@ -7589,6 +7847,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	public FinScheduleData getFinSchedData() {
+		return finSchedData;
+	}
+
+	public void setFinSchedData(FinScheduleData finSchedData) {
+		this.finSchedData = finSchedData;
+	}
+
+	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
+		this.soaReportGenerationService = soaReportGenerationService;
 	}
 
 }

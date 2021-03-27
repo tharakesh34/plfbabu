@@ -95,6 +95,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -1014,7 +1015,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					+ "' or (CLOSINGSTATUS is null or CLOSINGSTATUS  in ('" + FinanceConstants.CLOSE_STATUS_EARLYSETTLE
 					+ "','" + FinanceConstants.CLOSE_STATUS_WRITEOFF + "','" + FinanceConstants.CLOSE_STATUS_MATURED
 					+ "')) and ProductCategory != '" + FinanceConstants.PRODUCT_GOLD + "'");
-		} else {
+		} else if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFF)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_GOLD + "'");
 		}
 		if (StringUtils.isNotEmpty(buildedWhereCondition)) {
@@ -1153,9 +1154,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND NextRolloverDate IS NOT NULL ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
-			whereClause
-					.append(" AND ( FinReference IN (select FinReference from FinDisbursementDetails where DisbDate >= '"
-							+ appDate + "') ");
+			whereClause.append(" AND ( FinReference IN (select FinReference from FinDisbursementDetails");
+			whereClause.append(" where DisbDate >= '" + appDate + "') ");
 			whereClause.append(" AND ProductCategory = '" + FinanceConstants.PRODUCT_ODFACILITY + "' )");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
 			whereClause.append(" AND FinStartDate < '" + appDate + "' AND MaturityDate > '" + appDate + "'");
@@ -1193,6 +1193,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND  MaturityDate > '" + appDate + "' AND  FinStartDate <= '" + appDate + "'");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
 			whereClause.append(" AND FinAssetvalue > FinCurrAssetValue ");
+		} else if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
+			whereClause.append(
+					" AND RcdMaintainSts = 'Restructure' AND FinIsActive = 1 AND  MaturityDate > '" + appDate + "'");
 		}
 
 		// Written Off Finance Reference Details Condition
@@ -1204,6 +1207,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// Filtering added based on user branch and division
 		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
+
+		// Along with Above events WriteOff Loans
+		if (FinanceConstants.FINSER_EVENT_HOLDEMI.equals(this.moduleDefiner)
+				|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(this.moduleDefiner)) {
+			whereClause.append(" AND ( ClosingStatus IS NULL OR ClosingStatus !='"
+					+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "')");
+		}
 
 		// Filtering closed loans based on system parameter
 		if (StringUtils.equals("N", SysParamUtil.getValueAsString("ALLOW_CLOSED_LOANS_IN_RECEIPTS"))) {
@@ -1448,6 +1458,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String userRole = aFinanceMain.getNextRoleCode();
 			if (StringUtils.isEmpty(userRole)) {
 				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+
+			//check if payable amount present
+			List<ManualAdvise> manualAdvise = getFinanceWriteoffService()
+					.getManualAdviseByRef(aFinanceMain.getFinReference(), FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
+			if (CollectionUtils.isNotEmpty(manualAdvise)) {
+				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
+				return;
 			}
 
 			final FinanceDetail financeDetail = getFinanceDetailService().getServicingFinance(aFinanceMain.getId(),
@@ -3362,6 +3380,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					eventCodeRef = "";
 					moduleDefiner = FinanceConstants.FINSER_EVENT_LOANDOWNSIZING;
 					workflowCode = FinanceConstants.FINSER_EVENT_LOANDOWNSIZING;
+				} else if ("tab_Restructure".equals(tab.getId())) {
+					eventCodeRef = "";
+					moduleDefiner = FinanceConstants.FINSER_EVENT_RESTRUCTURE;
+					workflowCode = FinanceConstants.FINSER_EVENT_RESTRUCTURE;
+					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
+					this.btnNew
+							.setVisible(getUserWorkspace().isAllowed("button_FinanceSelectList_NewRestructureDetail"));
 				}
 				return;
 			}
@@ -3388,14 +3413,21 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		map.put("financeSelectCtrl", this);
 		map.put("tabbox", tab);
 		map.put("moduleDefiner", moduleDefiner);
+		map.put("workflowCode", workflowCode);
 		map.put("eventCode", eventCodeRef);
 		map.put("menuItemRightName", menuItemRightName);
 		map.put("role", getUserWorkspace().getUserRoles());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Rollover/SelectRolloverFinanceDialog.zul",
-					null, map);
+			if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
+				doSearch(true);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectRestructureDialog.zul", null,
+						map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/FinanceManagement/Rollover/SelectRolloverFinanceDialog.zul",
+						null, map);
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

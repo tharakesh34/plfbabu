@@ -54,11 +54,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
 import com.pennant.backend.model.applicationmaster.IRRFeeType;
@@ -98,7 +98,7 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 		iRRFeeType.setIRRID(iRRID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFeeType);
-		RowMapper<IRRFeeType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFeeType.class);
+		RowMapper<IRRFeeType> rowMapper = BeanPropertyRowMapper.newInstance(IRRFeeType.class);
 
 		try {
 			iRRFeeType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

@@ -1,11 +1,13 @@
 package com.pennant.backend.service.finance;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface FinanceWriteoffService {
@@ -23,4 +25,9 @@ public interface FinanceWriteoffService {
 			throws InterfaceException, IllegalAccessException, InvocationTargetException;
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference);
+
+	List<ManualAdvise> getManualAdviseByRef(String finReference, int manualAdvisePayable, String string);
+
+	int getMaxFinanceWriteoffSeq(String finReference, Date writeoffDate, String string);
+
 }

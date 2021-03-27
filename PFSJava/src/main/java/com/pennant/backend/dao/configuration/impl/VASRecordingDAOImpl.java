@@ -53,11 +53,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -449,8 +449,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 				source = new MapSqlParameterSource();
 				source.addValue("PrimaryLinkRef", primaryLinkRef);
 
-				RowMapper<VasCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-						.newInstance(VasCustomer.class);
+				RowMapper<VasCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(VasCustomer.class);
 
 				vasCustomer = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 			}
@@ -526,7 +525,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		logger.debug("selectSql: " + sql.toString());
 
-		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+		RowMapper<VASRecording> typeRowMapper = BeanPropertyRowMapper.newInstance(VASRecording.class);
 
 		source = new MapSqlParameterSource();
 		source.addValue("PrimaryLinkRef", primaryLinkRef);
@@ -689,7 +688,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		sql.append("Where PrimaryLinkRef=:PrimaryLinkRef");
 		logger.debug("selectSql: " + sql.toString());
 
-		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+		RowMapper<VASRecording> typeRowMapper = BeanPropertyRowMapper.newInstance(VASRecording.class);
 
 		source = new MapSqlParameterSource();
 		source.addValue("PrimaryLinkRef", finReference);

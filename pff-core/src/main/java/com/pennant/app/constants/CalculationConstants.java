@@ -182,4 +182,10 @@ public class CalculationConstants {
 	public static final String STRTPRDCPZ_CPZONFRQ = "FRQ";
 	public static final String STRTPRDCPZ_CPZATEND = "END";
 
+	// Restructure Recal Type
+	public static final String RST_RECAL_ADDTERM_RECALEMI = "ADDRECAL";
+	public static final String RST_RECAL_RECALEMI = "RECAL";
+	public static final String RST_RECAL_ADJUSTTENURE = "ADJTNR";
+	public static final String RESTRUCTURE_REASON = "RSTRS";
+
 }

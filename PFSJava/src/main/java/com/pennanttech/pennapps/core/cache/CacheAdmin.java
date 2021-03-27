@@ -25,13 +25,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -52,7 +52,7 @@ public class CacheAdmin {
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		RowMapper<CacheStats> romapper = ParameterizedBeanPropertyRowMapper.newInstance(CacheStats.class);
+		RowMapper<CacheStats> romapper = BeanPropertyRowMapper.newInstance(CacheStats.class);
 
 		log.debug(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
 
@@ -129,7 +129,7 @@ public class CacheAdmin {
 		paramMap.addValue("ClusterName", clusterName);
 		paramMap.addValue("ClusterNode", currentNode);
 
-		RowMapper<CacheStats> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CacheStats.class);
+		RowMapper<CacheStats> typeRowMapper = BeanPropertyRowMapper.newInstance(CacheStats.class);
 
 		log.debug(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
 

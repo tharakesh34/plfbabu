@@ -89,7 +89,7 @@ public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileD
 				listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
 
-		registerField("ID",SortOrder.DESC);
+		registerField("ID", SortOrder.DESC);
 		registerField("FileLocation");
 		registerField("FileName");
 		registerField("Status");

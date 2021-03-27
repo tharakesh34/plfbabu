@@ -290,7 +290,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		logger.debug("selectListSql: " + selectListSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		try {
-			rowCount = this.jdbcTemplate.queryForLong(selectListSql, beanParameters);
+			rowCount = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			workFlowDetails = null;
@@ -309,7 +309,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		logger.debug("selectListSql: " + selectListSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		try {
-			version = this.jdbcTemplate.queryForInt(selectListSql, beanParameters);
+			version = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			workFlowDetails = null;
@@ -333,7 +333,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		boolean result = false;
 		try {
-			int rowCount = this.jdbcTemplate.queryForInt(selectListSql, beanParameters);
+			int rowCount = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Integer.class);
 			if (rowCount > 0) {
 				result = true;
 			}

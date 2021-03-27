@@ -10,13 +10,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -86,8 +86,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		RowMapper<EquationCurrency> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationCurrency.class);
+		RowMapper<EquationCurrency> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationCurrency.class);
 
 		logger.debug("Leaving");
 		try {
@@ -110,7 +109,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(relationshipOfficer);
-		RowMapper<EquationRelationshipOfficer> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<EquationRelationshipOfficer> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(EquationRelationshipOfficer.class);
 
 		logger.debug("Leaving");
@@ -134,8 +133,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerType);
-		RowMapper<EquationCustomerType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationCustomerType.class);
+		RowMapper<EquationCustomerType> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationCustomerType.class);
 
 		logger.debug("Leaving");
 		try {
@@ -158,8 +156,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
-		RowMapper<EquationDepartment> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationDepartment.class);
+		RowMapper<EquationDepartment> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationDepartment.class);
 
 		logger.debug("Leaving");
 		try {
@@ -182,8 +179,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
-		RowMapper<EquationCustomerGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationCustomerGroup.class);
+		RowMapper<EquationCustomerGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationCustomerGroup.class);
 
 		logger.debug("Leaving");
 		try {
@@ -206,8 +202,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountType);
-		RowMapper<EquationAccountType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationAccountType.class);
+		RowMapper<EquationAccountType> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationAccountType.class);
 
 		logger.debug("Leaving");
 		try {
@@ -230,7 +225,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		RowMapper<EquationCustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<EquationCustomerRating> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(EquationCustomerRating.class);
 
 		logger.debug("Leaving");
@@ -254,8 +249,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(country);
-		RowMapper<EquationCountry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationCountry.class);
+		RowMapper<EquationCountry> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationCountry.class);
 
 		logger.debug("Leaving");
 		try {
@@ -278,7 +272,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(statusCode);
-		RowMapper<EquationCustStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<EquationCustStatusCode> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(EquationCustStatusCode.class);
 
 		logger.debug("Leaving");
@@ -302,8 +296,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(industry);
-		RowMapper<EquationIndustry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationIndustry.class);
+		RowMapper<EquationIndustry> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationIndustry.class);
 
 		logger.debug("Leaving");
 		try {
@@ -326,7 +319,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
-		RowMapper<EquationBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EquationBranch.class);
+		RowMapper<EquationBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationBranch.class);
 
 		logger.debug("Leaving");
 		try {
@@ -349,7 +342,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(internalAccount);
-		RowMapper<EquationInternalAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<EquationInternalAccount> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(EquationInternalAccount.class);
 
 		logger.debug("Leaving");
@@ -373,7 +366,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionCode);
-		RowMapper<EquationTransactionCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<EquationTransactionCode> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(EquationTransactionCode.class);
 
 		logger.debug("Leaving");
@@ -397,8 +390,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(identityType);
-		RowMapper<EquationIdentityType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(EquationIdentityType.class);
+		RowMapper<EquationIdentityType> typeRowMapper = BeanPropertyRowMapper.newInstance(EquationIdentityType.class);
 
 		logger.debug("Leaving");
 		try {
@@ -1449,7 +1441,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSector);
-		RowMapper<SubSector> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubSector.class);
+		RowMapper<SubSector> typeRowMapper = BeanPropertyRowMapper.newInstance(SubSector.class);
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1837,7 +1829,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(incomeAccountTransaction);
-		RowMapper<IncomeAccountTransaction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<IncomeAccountTransaction> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(IncomeAccountTransaction.class);
 
 		logger.debug("Leaving");
@@ -1906,7 +1898,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		logger.debug("Leaving");
 		try {
@@ -1930,8 +1922,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 			selectSql.append(" Where Event = :Event ");
 		}
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeAccounting.class);
+		RowMapper<FinTypeAccounting> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 		logger.debug("Leaving");
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
@@ -2015,7 +2006,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
 		logger.debug("Leaving");
 		try {
@@ -2038,8 +2029,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerPhoneNumber.class);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 
 		logger.debug("Leaving");
 		try {
@@ -2062,7 +2052,7 @@ public class CoreInterfaceDAOImpl extends BasicDao<EquationCurrency> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+		RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
 		logger.debug("Leaving");
 		try {

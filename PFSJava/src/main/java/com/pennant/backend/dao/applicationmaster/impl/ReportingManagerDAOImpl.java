@@ -7,11 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ReportingManagerDAO;
 import com.pennant.backend.model.administration.ReportingManager;
@@ -42,7 +42,7 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 
-		RowMapper<ReportingManager> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReportingManager.class);
+		RowMapper<ReportingManager> rowMapper = BeanPropertyRowMapper.newInstance(ReportingManager.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -66,7 +66,7 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("usrid", usrid);
 
-		RowMapper<ReportingManager> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReportingManager.class);
+		RowMapper<ReportingManager> rowMapper = BeanPropertyRowMapper.newInstance(ReportingManager.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

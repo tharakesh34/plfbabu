@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -49,7 +49,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		commodity.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodity);
-		RowMapper<Commodity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commodity.class);
+		RowMapper<Commodity> rowMapper = BeanPropertyRowMapper.newInstance(Commodity.class);
 
 		try {
 			commodity = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -210,7 +210,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<Commodity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commodity.class);
+		RowMapper<Commodity> rowMapper = BeanPropertyRowMapper.newInstance(Commodity.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

@@ -569,6 +569,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 				financeMain.setClosingStatus(null);
 				financeMain.setFinIsActive(true);
+				financeMain.setWriteoffLoan(financeMain.isWriteoffLoan());
 				financeMainDAO.updateRepaymentAmount(financeMain);
 
 				//Finance Status Details insertion, if status modified then change to High Risk Level

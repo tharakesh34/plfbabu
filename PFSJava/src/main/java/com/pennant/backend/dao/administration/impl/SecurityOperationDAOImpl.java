@@ -50,11 +50,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityOperationDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -115,8 +115,7 @@ public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> imp
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityOperation);
-		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityOperation.class);
+		RowMapper<SecurityOperation> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityOperation.class);
 
 		try {
 			securityOperation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -155,8 +154,7 @@ public class SecurityOperationDAOImpl extends SequenceDao<SecurityOperation> imp
 		source = new MapSqlParameterSource();
 		source.addValue("OprCode", oprCode);
 
-		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityOperation.class);
+		RowMapper<SecurityOperation> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityOperation.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);

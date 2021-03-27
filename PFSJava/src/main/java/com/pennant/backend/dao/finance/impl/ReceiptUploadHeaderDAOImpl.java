@@ -43,7 +43,11 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -51,9 +55,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.ReceiptUploadHeaderDAO;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
+import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
+import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -137,7 +144,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 	}
 
 	@Override
-	public void update(ReceiptUploadHeader ruh, TableType tableType) {
+	public int update(ReceiptUploadHeader ruh, TableType tableType) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update ReceiptUploadHeader");
 		sql.append(tableType.getSuffix());
@@ -186,6 +193,8 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
+
+		return recordCount;
 
 	}
 
@@ -268,7 +277,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 	}
 
 	@Override
-	public void updateUploadProgress(long uploadHeaderId, int receiptDownloaded) {
+	public long updateUploadProgress(long uploadHeaderId, int status) {
 
 		StringBuilder sql = new StringBuilder("Update RECEIPTUPLOADHEADER_temp");
 		sql.append(" Set UploadProgress = ? ");
@@ -276,9 +285,9 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 
 		logger.trace(Literal.SQL, sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setInt(index++, receiptDownloaded);
+			ps.setInt(index++, status);
 			ps.setLong(index++, uploadHeaderId);
 
 		});
@@ -318,13 +327,74 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 			if (rs.getLong("ReceiptId") == 0)
 				return null;
 
-			return JdbcUtil.setLong(rs.getLong("ReceiptId"));
+			return rs.getLong("ReceiptId");
 		});
 	}
 
 	@Override
 	public long generateSeqId() {
 		return getNextValue("SeqReceiptUploadHeader");
+	}
+
+	@Override
+	public Map<Long, ReceiptUploadLog> createAttempLog(List<ReceiptUploadHeader> uploadHeaderList) {
+		Map<Long, ReceiptUploadLog> map = new HashMap<Long, ReceiptUploadLog>();
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert into  RECEIPT_UPLOAD_LOG");
+		sql.append("(Id, HeaderId, AttemptNo, AttemptStatus)");
+		sql.append(" Values( ?, ?, ?, ?)");
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ReceiptUploadHeader header = uploadHeaderList.get(i);
+				long Id = header.getId();
+				ReceiptUploadLog ua = new ReceiptUploadLog(Id);
+				ua.setTotalcount(header.getSuccessCount());
+				ua.setId(getNextValue("SeqReceipt_Upload_Log"));
+				ua.setAttemptStatus(ReceiptUploadConstants.ATTEMPSTATUS_INPROCESS);
+				ua.setAttemptNo(header.getAttemptNo());
+
+				int index = 1;
+				ps.setLong(index++, ua.getId());
+				ps.setLong(index++, Id);
+				ps.setLong(index++, header.getAttemptNo());
+				ps.setInt(index++, ReceiptUploadConstants.ATTEMPSTATUS_INPROCESS);
+				map.put(Id, ua);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return uploadHeaderList.size();
+			}
+		});
+
+		return map;
+	}
+
+	@Override
+	public void updateAttemptLog(ReceiptUploadLog apprLog) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update RECEIPT_UPLOAD_LOG ");
+		sql.append("Set HeaderId = ?, SuccessCount = ?, FailedCount = ?, ProcessedRecords = ?, AttemptStatus=? ");
+		sql.append("Where Id = ?");
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, apprLog.getHeaderId());
+			ps.setInt(index++, apprLog.getSuccessRecords().get());
+			ps.setInt(index++, apprLog.getFailRecords().get());
+			ps.setInt(index++, apprLog.getProcessedRecords().get());
+			ps.setInt(index++, ReceiptUploadConstants.ATTEMPSTATUS_DONE);
+			ps.setLong(index++, apprLog.getId());
+		});
+	}
+
+	@Override
+	public long setHeaderAttempNo(long id) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select count(HeaderId) From RECEIPT_UPLOAD_LOG Where HeaderId = ?");
+
+		return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> rs.getLong(1));
 	}
 
 }

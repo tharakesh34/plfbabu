@@ -17,7 +17,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -400,7 +399,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			paramMap.addValue("RESP_BATCH_ID", batchId);
 			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_DISBURSEMENT);
 
-			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
+			rowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
 			disbursements = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 
 			for (FinAdvancePayments disbursement : disbursements) {
@@ -432,7 +431,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			paramMap.addValue("RESP_BATCH_ID", batchId);
 			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_PAYMENT);
 
-			instructionRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
+			instructionRowMapper = BeanPropertyRowMapper.newInstance(PaymentInstruction.class);
 			instructions = namedJdbcTemplate.query(sql.toString(), paramMap, instructionRowMapper);
 
 			for (PaymentInstruction instruction : instructions) {
@@ -464,8 +463,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			paramMap.addValue("RESP_BATCH_ID", batchId);
 			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_INSURANCE);
 
-			insPaymentInstructionRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(InsurancePaymentInstructions.class);
+			insPaymentInstructionRowMapper = BeanPropertyRowMapper.newInstance(InsurancePaymentInstructions.class);
 			insPaymentInstructions = namedJdbcTemplate.query(sql.toString(), paramMap, insPaymentInstructionRowMapper);
 
 			for (InsurancePaymentInstructions instruction : insPaymentInstructions) {
@@ -711,7 +709,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 
 		if (PAID_STATUS.equals(status)) {
 			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())) {// for
-																							// paid
+																								// paid
 				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status");
 			}
 		} else if ("REJECTED".equalsIgnoreCase(status) || "REJECT".equalsIgnoreCase(status) || "R".equals(status)) {// for rejected

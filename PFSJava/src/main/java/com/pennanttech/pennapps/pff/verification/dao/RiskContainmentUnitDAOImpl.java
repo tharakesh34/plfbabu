@@ -12,12 +12,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -145,8 +145,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		RowMapper<RiskContainmentUnit> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RiskContainmentUnit.class);
+		RowMapper<RiskContainmentUnit> typeRowMapper = BeanPropertyRowMapper.newInstance(RiskContainmentUnit.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -307,8 +306,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
-		RowMapper<RiskContainmentUnit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RiskContainmentUnit.class);
+		RowMapper<RiskContainmentUnit> rowMapper = BeanPropertyRowMapper.newInstance(RiskContainmentUnit.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -402,7 +400,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		RowMapper<RCUDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
+		RowMapper<RCUDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -475,7 +473,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		paramSource.addValue("keyReference", keyReference);
 		paramSource.addValue("documentType", documentType.getKey());
 
-		RowMapper<RCUDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
+		RowMapper<RCUDocument> rowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -573,7 +571,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source.addValue("documentType", rcuDocument.getDocumentType());
 		source.addValue("documentSubId", rcuDocument.getDocumentSubId());
 
-		RowMapper<RCUDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
+		RowMapper<RCUDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

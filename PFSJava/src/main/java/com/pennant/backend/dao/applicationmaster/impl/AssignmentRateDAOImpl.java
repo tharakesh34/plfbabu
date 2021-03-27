@@ -8,11 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AssignmentRateDAO;
 import com.pennant.backend.model.applicationmaster.AssignmentRate;
@@ -33,7 +33,7 @@ public class AssignmentRateDAOImpl extends SequenceDao<AssignmentRate> implement
 		sql.append(" select * from ASSIGNMENTRATES").append(type);
 		sql.append(" where id = :id");
 
-		RowMapper<AssignmentRate> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AssignmentRate.class);
+		RowMapper<AssignmentRate> rowMapper = BeanPropertyRowMapper.newInstance(AssignmentRate.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 
@@ -139,7 +139,7 @@ public class AssignmentRateDAOImpl extends SequenceDao<AssignmentRate> implement
 		assignmentRate.setAssignmentId(assignmentId);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assignmentRate);
-		RowMapper<AssignmentRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AssignmentRate.class);
+		RowMapper<AssignmentRate> typeRowMapper = BeanPropertyRowMapper.newInstance(AssignmentRate.class);
 		try {
 			logger.debug(Literal.LEAVING);
 			return jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);

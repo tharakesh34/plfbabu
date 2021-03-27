@@ -122,7 +122,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		//financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
 		//financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
-		
+
 		for (FinanceDisbursement curDisb : finScheduleData.getDisbursementDetails()) {
 
 			/*
@@ -157,7 +157,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			}
 		}
-		
 
 		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);

@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dashboard.DetailStatisticsHeaderDAO;
 import com.pennant.backend.model.dashboard.DetailStatisticsHeader;
@@ -34,7 +34,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasicDao<DetailStatisticsHead
 		selectSql.append("FROM DetailStatisticsHeader WHERE RoleCode=:RoleCode ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatisticsHeader);
-		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<DetailStatisticsHeader> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -50,7 +50,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasicDao<DetailStatisticsHead
 		selectSql.append("FROM DetailStatisticsHeader WHERE ModuleName=:ModuleName");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatisticsHeader);
-		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<DetailStatisticsHeader> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -111,7 +111,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasicDao<DetailStatisticsHead
 		StringBuilder selectSql = new StringBuilder(" select RoleCode, sum(RecordCount) lovDescTotRecordCount ");
 		selectSql.append(" from DetailStatisticsHeader group by RoleCode order by RoleCode");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new DetailStatisticsHeader());
-		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<DetailStatisticsHeader> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
 		try {
 			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -133,7 +133,7 @@ public class DetailStatisticsHeaderDAOImpl extends BasicDao<DetailStatisticsHead
 		selectSql.append(") group by Modulename ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new DetailStatisticsHeader());
-		RowMapper<DetailStatisticsHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<DetailStatisticsHeader> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(DetailStatisticsHeader.class);
 		try {
 			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

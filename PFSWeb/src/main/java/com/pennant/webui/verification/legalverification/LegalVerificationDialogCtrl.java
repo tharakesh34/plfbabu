@@ -244,7 +244,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
-		
+
 		Filter[] reasonFilter = new Filter[1];
 		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
 			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
@@ -252,8 +252,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
 		}
 		reason.setFilters(reasonFilter);
-		
-		
+
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);

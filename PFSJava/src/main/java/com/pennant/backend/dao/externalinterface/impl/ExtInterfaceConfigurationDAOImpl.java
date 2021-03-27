@@ -46,11 +46,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.externalinterface.ExtInterfaceConfigurationDAO;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
@@ -94,8 +94,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfi
 		InterfaceConfiguration.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(InterfaceConfiguration);
-		RowMapper<InterfaceConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InterfaceConfiguration.class);
+		RowMapper<InterfaceConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(InterfaceConfiguration.class);
 
 		try {
 			InterfaceConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

@@ -49,10 +49,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SukukBrokerBondsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -138,8 +138,7 @@ public class SukukBrokerBondsDAOImpl extends BasicDao<SukukBrokerBonds> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBrokerBonds);
-		RowMapper<SukukBrokerBonds> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SukukBrokerBonds.class);
+		RowMapper<SukukBrokerBonds> typeRowMapper = BeanPropertyRowMapper.newInstance(SukukBrokerBonds.class);
 
 		try {
 			sukukBrokerBonds = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -179,8 +178,7 @@ public class SukukBrokerBondsDAOImpl extends BasicDao<SukukBrokerBonds> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBrokerBonds);
-		RowMapper<SukukBrokerBonds> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SukukBrokerBonds.class);
+		RowMapper<SukukBrokerBonds> typeRowMapper = BeanPropertyRowMapper.newInstance(SukukBrokerBonds.class);
 
 		try {
 			sukukBrokerBonds = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -221,8 +219,7 @@ public class SukukBrokerBondsDAOImpl extends BasicDao<SukukBrokerBonds> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sukukBrokerBonds);
-		RowMapper<SukukBrokerBonds> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SukukBrokerBonds.class);
+		RowMapper<SukukBrokerBonds> typeRowMapper = BeanPropertyRowMapper.newInstance(SukukBrokerBonds.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

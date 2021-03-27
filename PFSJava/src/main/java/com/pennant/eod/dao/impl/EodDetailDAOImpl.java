@@ -5,10 +5,10 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
@@ -91,7 +91,7 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 		try {
 			StringBuilder selectSql = new StringBuilder("SELECT * from EodDetails where  ProcessDate=:ProcessDate");
 			logger.debug("selectSql: " + selectSql.toString());
-			RowMapper<EodDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EodDetail.class);
+			RowMapper<EodDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(EodDetail.class);
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(eodDetail);
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

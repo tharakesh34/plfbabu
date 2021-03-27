@@ -60,7 +60,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -111,8 +110,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -386,8 +384,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		selectSql.append(" Where CollateralRef = :CollateralRef AND DepositorId = :DepositorId AND Status is null ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);

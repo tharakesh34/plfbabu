@@ -155,4 +155,8 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	void updatePayableReserveAmount(long payAgainstID, BigDecimal reserveAmt);
 
+	BigDecimal getPayableBalanceAmt(String finReference, int adviseType);
+
+	BigDecimal getReceivableAmt(String finReference, boolean isBounce);
+
 }

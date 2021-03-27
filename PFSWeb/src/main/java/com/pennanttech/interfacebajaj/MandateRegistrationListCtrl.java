@@ -672,7 +672,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.partnerBank.setMandatoryStyle(false);
 		this.partnerBank.setValue("");
 		this.partnerBank.setDescColumn("");
-		
 
 		this.listheader_AccNumber.setSort("none");
 		this.listheader_AccType.setSort("none");

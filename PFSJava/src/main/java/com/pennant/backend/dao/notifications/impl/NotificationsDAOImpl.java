@@ -52,11 +52,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.model.MailData;
 import com.pennant.backend.dao.notifications.NotificationsDAO;
@@ -104,7 +104,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
-		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
+		RowMapper<Notifications> typeRowMapper = BeanPropertyRowMapper.newInstance(Notifications.class);
 
 		try {
 			notifications = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -145,7 +145,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
-		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
+		RowMapper<Notifications> typeRowMapper = BeanPropertyRowMapper.newInstance(Notifications.class);
 
 		try {
 			notifications = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -315,7 +315,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notifications);
-		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
+		RowMapper<Notifications> typeRowMapper = BeanPropertyRowMapper.newInstance(Notifications.class);
 		List<Notifications> notificationsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		logger.debug("Leaving");
@@ -340,7 +340,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		selectSql.append(" Where RuleId IN (:RuleIdList) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
+		RowMapper<Notifications> typeRowMapper = BeanPropertyRowMapper.newInstance(Notifications.class);
 		List<Notifications> notificationsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return notificationsList;
@@ -363,7 +363,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		sql.append(" Where RuleId IN (Select FinRefId From LMTFinRefDetail_ATView ) ");
 
 		logger.debug("selectSql: " + sql.toString());
-		RowMapper<Notifications> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Notifications.class);
+		RowMapper<Notifications> typeRowMapper = BeanPropertyRowMapper.newInstance(Notifications.class);
 		List<Notifications> notificationsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return notificationsList;
@@ -399,7 +399,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		selectSql.append(" FROM  MailConfiguration where MailName = '" + mailName + "'");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<MailData> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MailData.class);
+		RowMapper<MailData> typeRowMapper = BeanPropertyRowMapper.newInstance(MailData.class);
 		List<MailData> mailData = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		logger.debug("Leaving");
 		return mailData;

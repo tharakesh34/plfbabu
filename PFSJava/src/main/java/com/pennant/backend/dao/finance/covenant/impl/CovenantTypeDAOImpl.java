@@ -50,11 +50,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.model.finance.covenant.CovenantType;
@@ -96,7 +96,7 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		covenantType.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(covenantType);
-		RowMapper<CovenantType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CovenantType.class);
+		RowMapper<CovenantType> rowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
 
 		try {
 			covenantType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -256,7 +256,7 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		sql.append(type);
 		sql.append(" Where code = :code and category=:category ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(covenant);
-		RowMapper<CovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CovenantType.class);
+		RowMapper<CovenantType> typeRowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
 
 		try {
 			covenant = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -293,7 +293,7 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("Category", CategoryName);
 
-		RowMapper<CovenantType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CovenantType.class);
+		RowMapper<CovenantType> rowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
 		List<CovenantType> covenantType = new ArrayList<>();
 		try {
 			covenantType = jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);

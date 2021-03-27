@@ -56,12 +56,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.model.TaskOwners;
@@ -333,7 +333,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 				"SELECT Reference, RoleCode, ActualOwner, CurrentOwner, Processed From Task_Owners");
 		selectSql.append(" Where Reference=:Reference AND RoleCode IN (:RoleCode)");
 
-		RowMapper<TaskOwners> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaskOwners.class);
+		RowMapper<TaskOwners> typeRowMapper = BeanPropertyRowMapper.newInstance(TaskOwners.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}

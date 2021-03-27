@@ -59,7 +59,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -718,7 +717,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
 			financeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -747,7 +746,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		selectSql.append(" FROM RMTFinanceTypes");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		List<FinanceType> finTypes = this.jdbcTemplate.query(selectSql.toString(), typeRowMapper);
 		logger.debug(Literal.LEAVING);
@@ -917,7 +916,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				", :DsfReq, :CashCollateralReq , :TdsAllowToModify , :TdsApplicableTo, :AlwVan, :VanAllocationMethod , :AllowDrawingPower, :AllowRevolving, :AlwSanctionAmt, :AlwSanctionAmtOverride, :SanBsdSchdle ");
 		sql.append(", :OcrRequired, :AllowedOCRS, :DefaultOCR, :AllowedLoanPurposes, :SpecificLoanPurposes ");
 		sql.append(", :GrcAdjReq, :GrcPeriodAftrFullDisb, :AutoIncrGrcEndDate, :GrcAutoIncrMonths ");
-		sql.append(", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd, :TdsType) ");
+		sql.append(
+				", :MaxAutoIncrAllowed, :ThrldtoMaintainGrcPrd, :AlwLoanSplit, :SplitLoanType,:InstBasedSchd, :TdsType) ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -1197,7 +1197,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 		List<FinanceType> finacetypeList = new ArrayList<>();
 		try {
 			finacetypeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1377,7 +1377,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
 			financeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1425,7 +1425,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		StringBuilder sql = new StringBuilder();
 		sql.append("  SELECT FinType , AutoRejectionDays FROM RMTFinanceTypes Where AutoRejectionDays > 0");
 		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 		List<FinanceType> finTypes = this.jdbcTemplate.query(sql.toString(), typeRowMapper);
 		logger.debug(Literal.LEAVING);
 		return finTypes;

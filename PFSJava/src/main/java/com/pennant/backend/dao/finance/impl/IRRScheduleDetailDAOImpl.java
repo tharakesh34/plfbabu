@@ -46,11 +46,11 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.IRRScheduleDetailDAO;
 import com.pennant.backend.model.finance.IRRScheduleDetail;
@@ -127,8 +127,7 @@ public class IRRScheduleDetailDAOImpl extends BasicDao<IRRScheduleDetail> implem
 
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<IRRScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(IRRScheduleDetail.class);
+		RowMapper<IRRScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(IRRScheduleDetail.class);
 
 		List<IRRScheduleDetail> finSchdDetails = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		return finSchdDetails;

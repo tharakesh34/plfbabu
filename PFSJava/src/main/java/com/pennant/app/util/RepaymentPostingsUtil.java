@@ -810,7 +810,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		} else {
 			financeMain.setFinIsActive(true);
 			financeMain.setClosedDate(null);
-			financeMain.setClosingStatus(null);
+			if (!financeMain.isWriteoffLoan()) {
+				financeMain.setClosingStatus(null);
+			}
 		}
 
 		pftDetail.setFinStatus(financeMain.getFinStatus());

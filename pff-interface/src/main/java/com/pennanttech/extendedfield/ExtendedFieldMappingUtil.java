@@ -9,10 +9,10 @@ import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -81,8 +81,7 @@ public class ExtendedFieldMappingUtil {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("moduleCode", extendedFieldsmapping.getModuleCode());
 
-		RowMapper<ExtendedFieldsMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldsMapping.class);
+		RowMapper<ExtendedFieldsMapping> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldsMapping.class);
 		try {
 			list = jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {

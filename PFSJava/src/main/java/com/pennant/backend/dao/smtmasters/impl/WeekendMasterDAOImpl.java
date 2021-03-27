@@ -50,16 +50,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -99,7 +98,7 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(weekendMaster);
-		RowMapper<WeekendMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WeekendMaster.class);
+		RowMapper<WeekendMaster> typeRowMapper = BeanPropertyRowMapper.newInstance(WeekendMaster.class);
 
 		try {
 			weekendMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
@@ -126,7 +125,7 @@ public class WeekendMasterDAOImpl extends BasicDao<WeekendMaster> implements Wee
 		logger.debug("selectListSql: " + selectListSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(weekendMaster);
-		RowMapper<WeekendMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WeekendMaster.class);
+		RowMapper<WeekendMaster> typeRowMapper = BeanPropertyRowMapper.newInstance(WeekendMaster.class);
 
 		List<WeekendMaster> list = this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
 		if (list == null || list.isEmpty()) {

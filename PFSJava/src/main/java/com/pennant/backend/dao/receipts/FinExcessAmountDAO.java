@@ -84,4 +84,7 @@ public interface FinExcessAmountDAO {
 	long saveExcessMovements(List<FinExcessMovement> excessMovement);
 
 	int updateExcessEMIAmount(List<FinExcessAmount> emiInAdvance, String amtType);
+
+	List<FinExcessAmount> getFinExcessDetailsByRef(String finReference);
+
 }

@@ -47,10 +47,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.financialSummary.SynopsisDetailsDAO;
 import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
@@ -102,7 +102,7 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 		synopsisDetails.setFinReference(finReference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(synopsisDetails);
-		RowMapper<SynopsisDetails> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SynopsisDetails.class);
+		RowMapper<SynopsisDetails> rowMapper = BeanPropertyRowMapper.newInstance(SynopsisDetails.class);
 
 		try {
 			synopsisDetails = jdbcTemplate.queryForObject(selectSql.toString(), paramSource, rowMapper);

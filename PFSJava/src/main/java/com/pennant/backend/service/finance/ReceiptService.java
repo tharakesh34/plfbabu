@@ -74,7 +74,7 @@ public interface ReceiptService {
 	Map<Long, String> getOrnamentDescriptions(List<Long> idList);
 
 	// ### Ticket id:124998
-	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
+	FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif);
 
 	// ### 29-10-2018, Ticket id:124998
 	boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose);

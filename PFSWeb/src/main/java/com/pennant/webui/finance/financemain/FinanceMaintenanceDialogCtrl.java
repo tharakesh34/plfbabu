@@ -95,6 +95,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
@@ -1032,7 +1033,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 		// FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
@@ -1311,7 +1312,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 
-			Date curBDay = DateUtility.getAppDate();
+			Date curBDay = SysParamUtil.getAppDate();
 			aeEvent = AEAmounts.procAEAmounts(finMain,
 					getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(),
 					eventCode, curBDay, curBDay);
@@ -1746,7 +1747,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		if (this.tDSApplicable.isChecked() && getComboboxValue(this.cbTdsType).equals(PennantConstants.List_Select)) {
 			if (!this.cbTdsType.isDisabled()) {
 				this.cbTdsType.setConstraint(

@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
@@ -104,8 +104,7 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
-		RowMapper<AgreementDefinition> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AgreementDefinition.class);
+		RowMapper<AgreementDefinition> typeRowMapper = BeanPropertyRowMapper.newInstance(AgreementDefinition.class);
 
 		try {
 			agreementDefinition = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -148,8 +147,7 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(agreementDefinition);
-		RowMapper<AgreementDefinition> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AgreementDefinition.class);
+		RowMapper<AgreementDefinition> typeRowMapper = BeanPropertyRowMapper.newInstance(AgreementDefinition.class);
 
 		try {
 			agreementDefinition = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

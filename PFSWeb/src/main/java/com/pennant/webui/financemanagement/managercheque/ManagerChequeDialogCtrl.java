@@ -1440,10 +1440,9 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		printManagerCheque.setFundingAccount(this.fundingAccount.getValue());
 		printManagerCheque.setNostroAccount(this.nostroAccount.getValue());
 		printManagerCheque.setLoginUsrName(usrName);
-		printManagerCheque.setAmtInLocalCcy(PennantAppUtil.unFormateAmount(
-				CalculationUtil.getConvertedAmount(this.fundingCcy.getValue(),
-						SysParamUtil.getAppCurrency(), this.chequeAmount.getActualValue()),
-				ccyEditField)); // TODO
+		printManagerCheque.setAmtInLocalCcy(
+				PennantAppUtil.unFormateAmount(CalculationUtil.getConvertedAmount(this.fundingCcy.getValue(),
+						SysParamUtil.getAppCurrency(), this.chequeAmount.getActualValue()), ccyEditField)); // TODO
 		printManagerCheque.setAmtInWords(NumberToEnglishWords.getAmountInText(
 				PennantAppUtil.formateAmount(printManagerCheque.getAmtInLocalCcy(), ccyEditField),
 				SysParamUtil.getAppCurrency()));// AHB

@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.IdentityDetailsDAO;
 import com.pennant.backend.model.systemmasters.IdentityDetails;
@@ -95,8 +95,7 @@ public class IdentityDetailsDAOImpl extends BasicDao<IdentityDetails> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(identityDetails);
-		RowMapper<IdentityDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(IdentityDetails.class);
+		RowMapper<IdentityDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(IdentityDetails.class);
 
 		try {
 			identityDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

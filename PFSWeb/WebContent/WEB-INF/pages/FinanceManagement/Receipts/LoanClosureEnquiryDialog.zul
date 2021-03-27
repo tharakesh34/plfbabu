@@ -305,7 +305,7 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<toolbar align="start" visible="false" style="border-style: none;" width="100%">
+								<toolbar align="start" style="border-style: none;" width="100%">
 									<button id="btnPrintSchedule" label="${c:l('label_Print')}" tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
 										style="float:right;" visible="false" />
 									<space width="2px" />

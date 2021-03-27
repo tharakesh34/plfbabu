@@ -13,11 +13,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.ckyc.CKYCDAO;
 import com.pennant.backend.model.cky.CKYCDtl20;
@@ -79,7 +79,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ckycdtl20);
-		RowMapper<CKYCDtl20> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl20.class);
+		RowMapper<CKYCDtl20> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl20.class);
 
 		try {
 			ckycdtl20 = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -104,7 +104,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		logger.debug("selectSql:" + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dtl30);
-		RowMapper<CKYCDtl30> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl30.class);
+		RowMapper<CKYCDtl30> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl30.class);
 		List<CKYCDtl30> ckycDtl30 = new ArrayList<>();
 		try {
 			ckycDtl30 = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -132,7 +132,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dtls60);
-		RowMapper<CKYCDtl60> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl60.class);
+		RowMapper<CKYCDtl60> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl60.class);
 		List<CKYCDtl60> ckycDtl60 = new ArrayList<>();
 		try {
 			ckycDtl60 = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -156,7 +156,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		selectSql.append(" branchcode, custDocImage, filler1, filler2, filler3, filler4");
 		selectSql.append("  from Ckycdtl70 where custId =:custId");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dtls70);
-		RowMapper<CKYCDtl70> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl70.class);
+		RowMapper<CKYCDtl70> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl70.class);
 		List<CKYCDtl70> ckycDtl70 = new ArrayList<>();
 		try {
 			ckycDtl70 = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -368,7 +368,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -397,8 +397,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-			RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerAddres.class);
+			RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 			List<CustomerAddres> customerAddresses = null;
 			try {
 				customerAddresses = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -435,8 +434,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 				logger.trace("selectAddr:" + selectAddr.toString());
 				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-				RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper
-						.newInstance(CustomerAddres.class);
+				RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 				try {
 					customerAddresses = this.jdbcTemplate.query(selectAddr.toString(), beanParameters, typeRowMapper);
 				} catch (Exception e) {
@@ -465,8 +463,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-			RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerPhoneNumber.class);
+			RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 			List<CustomerPhoneNumber> customerPhoneNumbers = null;
 
 			try {
@@ -502,8 +499,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectPh:" + selectPh.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-			RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerPhoneNumber.class);
+			RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 			try {
 				customerPhoneNumbers = this.jdbcTemplate.query(selectPh.toString(), beanParameters, typeRowMapper);
 			} catch (Exception e) {
@@ -528,8 +524,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-			RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerEMail.class);
+			RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 			List<CustomerEMail> customerEmail = null;
 			try {
 				customerEmail = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -564,8 +559,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectEmail:" + selectEmail.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-			RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerEMail.class);
+			RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 			List<CustomerEMail> customerEmail = null;
 			try {
 				customerEmail = this.jdbcTemplate.query(selectEmail.toString(), beanParameters, typeRowMapper);
@@ -594,8 +588,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDoc);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerDocument.class);
+			RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 			List<CustomerDocument> customerDocument = null;
 			try {
 				customerDocument = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -630,8 +623,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectDoc:" + selectDoc.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDoc);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerDocument.class);
+			RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 			List<CustomerDocument> customerDocument = null;
 
 			try {
@@ -773,7 +765,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		selectCkyc.append("  FROM ckycLog  Where custId  =:custId and  ckycNo =:ckycNo ");
 		logger.debug("selectCkyc: " + selectCkyc.toString());
 		SqlParameterSource beanParametersFlag = new BeanPropertySqlParameterSource(ckycNameDetails);
-		RowMapper<CKYCLog> typeRowMapperFlag = ParameterizedBeanPropertyRowMapper.newInstance(CKYCLog.class);
+		RowMapper<CKYCLog> typeRowMapperFlag = BeanPropertyRowMapper.newInstance(CKYCLog.class);
 		try {
 			ckycNameDetails = this.jdbcTemplate.queryForObject(selectCkyc.toString(), beanParametersFlag,
 					typeRowMapperFlag);
@@ -790,7 +782,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		logger.debug("selectCust: " + selectCust.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectCust.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
@@ -828,7 +820,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		selectPerDtls.append(" FROM ckycLog  Where custId  =:custId and  ckycNo =:ckycNo ");
 		logger.debug("selectFlag: " + selectPerDtls.toString());
 		SqlParameterSource beanParametersFlag = new BeanPropertySqlParameterSource(ckycPersonalDtls);
-		RowMapper<CKYCLog> typeRowMapperFlag = ParameterizedBeanPropertyRowMapper.newInstance(CKYCLog.class);
+		RowMapper<CKYCLog> typeRowMapperFlag = BeanPropertyRowMapper.newInstance(CKYCLog.class);
 		try {
 			ckycPersonalDtls = this.jdbcTemplate.queryForObject(selectPerDtls.toString(), beanParametersFlag,
 					typeRowMapperFlag);
@@ -846,7 +838,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		CKYCLog ckycFile = null;
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectCust.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
@@ -1316,7 +1308,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 				"select custId from customers where custCtgCode = 'RETAIL' custcKYCNo is not null and (custcKYCNo = '')");
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		List<Customer> customers = new ArrayList<>();
 		try {
 			customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1342,8 +1334,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		logger.debug("selectPoA: " + selectPoA.toString());
 		List<CustomerDocument> pofAddr = null;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDocument.class);
+		RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 		try {
 			pofAddr = this.jdbcTemplate.query(selectPoA.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {

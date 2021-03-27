@@ -53,11 +53,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.loanquery.QueryDetailDAO;
 import com.pennant.backend.model.loanquery.QueryDetail;
@@ -105,7 +105,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		queryDetail.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
 
 		try {
 			queryDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -223,7 +223,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		queryDetail.setFinReference(finReference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
 
 		try {
 			queryDetails = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -256,7 +256,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		queryDetail.setReference(reference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
 
 		try {
 			queryDetails = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -298,7 +298,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		queryDetail.setFinReference(finReference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
 
 		try {
 			queryDetails = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -331,7 +331,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		parameterSource.addValue("ClosedStatus", "Close");
 		parameterSource.addValue("ResolvedStatus", "Resolve");
 
-		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
 
 		try {
 			queryDetails = this.jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
@@ -360,7 +360,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("Reference", Reference);
 
-		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
 
 		try {
 			queryDetails = this.jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);

@@ -61,11 +61,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.TransactionStatus;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -464,7 +464,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("RESP_BATCH_ID", respBatchId);
 
-		rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
+		rowMapper = BeanPropertyRowMapper.newInstance(Mandate.class);
 		mandates = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 
 		if (mandates == null || mandates.isEmpty()) {
@@ -560,7 +560,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		source = new MapSqlParameterSource();
 		source.addValue("MandateID", id);
 
-		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
+		RowMapper<Mandate> typeRowMapper = BeanPropertyRowMapper.newInstance(Mandate.class);
 		try {
 			return this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

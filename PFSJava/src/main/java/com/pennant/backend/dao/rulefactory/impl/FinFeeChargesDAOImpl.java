@@ -48,11 +48,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -88,7 +88,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
-		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
+		RowMapper<FeeRule> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeRule.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -202,7 +202,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
-		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
+		RowMapper<FeeRule> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeRule.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -227,7 +227,7 @@ public class FinFeeChargesDAOImpl extends BasicDao<FeeRule> implements FinFeeCha
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeRule);
-		RowMapper<FeeRule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeRule.class);
+		RowMapper<FeeRule> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeRule.class);
 
 		try {
 			feeRule = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -8,11 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -90,8 +90,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("LimitGroupCode", id);
 
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitGroupLines.class);
+		RowMapper<LimitGroupLines> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -286,8 +285,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("LimitGroupCode", id);
 
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitGroupLines.class);
+		RowMapper<LimitGroupLines> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
@@ -333,7 +331,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -366,8 +364,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		String groupCode = null;
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitGroupLines.class);
+		RowMapper<LimitGroupLines> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		logger.debug(Literal.LEAVING);
 		try {
 			record = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -411,8 +408,7 @@ public class LimitGroupLinesDAOImpl extends BasicDao<LimitGroupLines> implements
 		}
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<LimitGroupLines> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitGroupLines.class);
+		RowMapper<LimitGroupLines> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupLines.class);
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);

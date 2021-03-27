@@ -8,10 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
@@ -58,8 +58,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-		RowMapper<FinanceWriteoff> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceWriteoff.class);
+		RowMapper<FinanceWriteoff> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceWriteoff.class);
 
 		try {
 			financeWriteoff = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -250,8 +249,7 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
-		RowMapper<FinWriteoffPayment> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinWriteoffPayment.class);
+		RowMapper<FinWriteoffPayment> typeRowMapper = BeanPropertyRowMapper.newInstance(FinWriteoffPayment.class);
 
 		try {
 			finWriteoffPayment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

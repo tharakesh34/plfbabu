@@ -19,9 +19,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -71,14 +71,14 @@ public class PresentmentJobService extends AbstractInterface {
 		Date fromDate = header.getFromDate();
 		Date toDate = header.getToDate();
 		LoggedInUser loggedInUser = new LoggedInUser();
-		
+
 		logger.info("Presentment Extraction Process Started...");
-		
+
 		List<PresentmentHeader> headerList = null;
 		try {
 
-			presentmentDetailService.savePresentmentDetails(header); 
-			
+			presentmentDetailService.savePresentmentDetails(header);
+
 			headerList = presentmentDetailService.getPresenmentHeaderList(fromDate, toDate,
 					RepayConstants.PEXC_EXTRACT);
 			logger.debug("No of Records Extracted : {}", headerList.size());
@@ -102,7 +102,7 @@ public class PresentmentJobService extends AbstractInterface {
 				ph.setExcludeList(excludeList);
 
 				logger.debug("No of Records in Exclude List  : {}", excludeList.size());
-				
+
 				if (StringUtils.isEmpty(ph.getPartnerAcctNumber()) && ph.getPartnerBankId() == 0) {
 					Presentment pb = getPartnerBankId(ph.getLoanType());
 					ph.setPartnerAcctNumber(pb.getAccountNo());
@@ -130,7 +130,7 @@ public class PresentmentJobService extends AbstractInterface {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.info("Presentment Extraction Process compled.");
 	}
 
@@ -388,7 +388,7 @@ public class PresentmentJobService extends AbstractInterface {
 			MapSqlParameterSource source = new MapSqlParameterSource();
 			source.addValue("entityCode", entityCode);
 			source.addValue("active", 1);
-			RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+			RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 			return namedJdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

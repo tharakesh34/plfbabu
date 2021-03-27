@@ -45,7 +45,6 @@ package com.pennant.webui.finance.receiptupload;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -54,14 +53,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.sql.DataSource;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
@@ -78,30 +78,35 @@ import org.zkoss.zkmax.zul.Filedownload;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroup;
+import org.zkoss.zul.Listhead;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Progressmeter;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.receiptUpload.ReceiptUploadHeaderProcess;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
+import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.ReceiptUploadConstants;
+import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -120,17 +125,10 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
-/**
- * This is the controller class for the /WEB-INF/pages/SystemMaster/UploadHeader/UploadHeaderList.zul file.
- */
 public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 1817958653208633892L;
 	private static final Logger logger = LogManager.getLogger(ReceiptUploadHeaderListCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
 	protected Window window_ReceiptUploadList;
 	protected Borderlayout borderLayout_ReceiptUploadList;
 	protected Paging pagingReceiptUploadList;
@@ -142,20 +140,19 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	protected Listbox sortOperator_uploadId;
 	protected Listbox sortOperator_fileName;
 
-	// List headers
+	protected Listhead listHeadReceiptUpload;
 	protected Listheader listheader_UploadID;
 	protected Listheader listheader_FileName;
 	protected Listheader listheader_Success;
 	protected Listheader listheader_FailedCount;
 	protected Listheader listheader_TotalCount;
+	protected Listheader listheader_ProcCount;
 
-	protected Listheader listHeader_CheckBox_Name;
+	protected Listheader listHeader_CheckBox;
 	protected Listcell listCell_Checkbox;
 	protected Listitem listItem_Checkbox;
 	protected Checkbox listHeader_CheckBox_Comp;
 	protected Listbox sortOperator_entityCode;
-
-	protected Checkbox list_CheckBox;
 
 	protected Button btnReject;
 	protected Button btnApprove;
@@ -167,21 +164,22 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	protected ExtendedCombobox entityCode;
 	private Map<Long, String> receiptIdMap = new HashMap<>();
 
-	//module
 	boolean isApprovalMenu = false;
 
-	// checkRights
 	protected Button button_ReceiptUploadList_NewReceiptUpload;
 	protected Button button_ReceiptUploadList_ReceiptUploadSearchDialog;
 
 	private transient ReceiptUploadHeaderService receiptUploadHeaderService;
-	private ReceiptUploadHeaderProcess recptUploadProcess = null;
 
 	private ReceiptUploadApprovalProcess receiptUploadApprovalProcess;
 
-	/**
-	 * default constructor.<br>
-	 */
+	public static Map<Long, Integer> importStatusMap = new HashMap<>();
+	public List<Progressmeter> progressMeterList = new ArrayList<>();
+
+	public static Map<Long, ReceiptUploadLog> approveStatusMap = new HashMap<>();
+	public List<Progressmeter> progressMeterApprList = new ArrayList<>();
+	private Timer timer;
+
 	public ReceiptUploadHeaderListCtrl() {
 		super();
 	}
@@ -191,7 +189,8 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		super.doAddFilters();
 
 		if (isApprovalMenu) {
-			this.searchObject.addWhereClause(" RECORDSTATUS in ('" + PennantConstants.RCD_STATUS_SUBMITTED + "')");
+			this.searchObject.addWhereClause(
+					" RECORDSTATUS in ('" + PennantConstants.RCD_STATUS_SUBMITTED + "'" + ",'Attempt')");
 		} else {
 			this.searchObject.addWhereClause(" RECORDSTATUS not in ('" + PennantConstants.RCD_STATUS_SUBMITTED + "')");
 		}
@@ -202,31 +201,46 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		super.moduleCode = "ReceiptUploadHeader";
 		super.pageRightName = "UploadHeaderList";
 		super.tableName = "ReceiptUploadHeader_AView";
-		super.queueTableName = "ReceiptUploadHeader_View";
 
 		if (StringUtils.equals(getArgument("approval"), "Y")) {
 			this.isApprovalMenu = true;
+			super.queueTableName = "ReceiptUploadHeader_TView";
 		} else {
 			this.isApprovalMenu = false;
+			super.queueTableName = "ReceiptUploadHeader_View";
 		}
 	}
 
-	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
 	public void onCreate$window_ReceiptUploadList(Event event) {
-		// Set the page level components.
+		timer.setDelay(1000);
+		progressMeterList.clear();
+		progressMeterApprList.clear();
+
 		setPageComponents(window_ReceiptUploadList, borderLayout_ReceiptUploadList, listBoxReceiptUpload,
 				pagingReceiptUploadList);
-		setItemRender(new ReceiptUploadListModelItemRenderer());
 
-		// Register buttons and fields.
+		if (isApprovalMenu) {
+			setApprovalItemRenderer();
+			registerField("attemptStatus");
+			registerField("attemptNo");
+			registerField("recordStatus");
+
+			setComparator((a, b) -> {
+				ReceiptUploadHeader data = (ReceiptUploadHeader) a;
+				ReceiptUploadHeader data2 = (ReceiptUploadHeader) b;
+				return Long.compare(data.getUploadHeaderId(), data2.getUploadHeaderId());
+			});
+		} else {
+			listHeadReceiptUpload.removeChild(listheader_ProcCount);
+			listHeadReceiptUpload.removeChild(listHeader_CheckBox);
+			setItemRenderer();
+			registerField("recordStatus", listheader_RecordStatus, SortOrder.NONE, recordStatus,
+					sortOperator_RecordStatus, Operators.STRING);
+			searchObject.addSortDesc("uploadHeaderId");
+		}
+
 		registerButton(button_ReceiptUploadList_NewReceiptUpload, "button_ReceiptUploadList_NewReceiptUpload", true);
 		registerButton(button_ReceiptUploadList_ReceiptUploadSearchDialog);
-
 		registerField("uploadHeaderId", listheader_UploadID, SortOrder.NONE, uploadId, sortOperator_uploadId,
 				Operators.NUMERIC);
 		registerField("fileName", listheader_FileName, SortOrder.NONE, fileName, sortOperator_fileName,
@@ -235,12 +249,11 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		registerField("failedCount", listheader_FailedCount, SortOrder.NONE);
 		registerField("totalRecords", listheader_TotalCount, SortOrder.NONE);
 		registerField("entityCode", entityCode, SortOrder.NONE, sortOperator_entityCode, Operators.STRING);
+		registerField("uploadProgress");
 
-		// Render the page and display the data.
 		doRenderPage();
 
 		if (isApprovalMenu) {
-
 			this.receiptIdMap.clear();
 			doSetFieldProperties();
 			if (listBoxReceiptUpload.getItems().size() > 0) {
@@ -248,41 +261,38 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			} else {
 				listHeader_CheckBox_Comp.setDisabled(true);
 			}
-		} else {
-
-			// rendering the list page data required or not.
-			if (renderListOnLoad) {
-				search();
-			}
+		} else if (renderListOnLoad) {
+			search();
 		}
 
 	}
 
 	private void doSetFieldProperties() {
 
-		//button visible
 		this.row_AlwWorkflow.setVisible(false);
 		this.btnApprove.setVisible(true);
 		this.btndownload.setVisible(true);
 		this.btnReject.setVisible(true);
 		this.print.setVisible(false);
-		this.listHeader_CheckBox_Name.setVisible(true);
+		this.listHeader_CheckBox.setVisible(true);
 		this.button_ReceiptUploadList_NewReceiptUpload.setVisible(false);
 		this.row0.setVisible(true);
 		this.row1.setVisible(true);
 		this.listheader_UploadID.setVisible(true);
 
-		listItem_Checkbox = new Listitem();
-		listCell_Checkbox = new Listcell();
-		listHeader_CheckBox_Comp = new Checkbox();
-		listCell_Checkbox.appendChild(listHeader_CheckBox_Comp);
-		listHeader_CheckBox_Comp.addForward("onClick", self, "onClick_listHeaderCheckBox");
-		listItem_Checkbox.appendChild(listCell_Checkbox);
+		if (isApprovalMenu) {
+			listItem_Checkbox = new Listitem();
+			listCell_Checkbox = new Listcell();
+			listHeader_CheckBox_Comp = new Checkbox();
+			listCell_Checkbox.appendChild(listHeader_CheckBox_Comp);
+			listHeader_CheckBox_Comp.addForward("onClick", self, "onClick_listHeaderCheckBox");
+			listItem_Checkbox.appendChild(listCell_Checkbox);
 
-		if (listHeader_CheckBox_Name.getChildren() != null) {
-			listHeader_CheckBox_Name.getChildren().clear();
+			if (listHeader_CheckBox.getChildren() != null) {
+				listHeader_CheckBox.getChildren().clear();
+			}
+			listHeader_CheckBox.appendChild(listHeader_CheckBox_Comp);
 		}
-		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
 
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setTextBoxWidth(135);
@@ -298,14 +308,17 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		for (int i = 0; i < listBoxReceiptUpload.getItems().size(); i++) {
 			Listitem listitem = listBoxReceiptUpload.getItems().get(i);
-			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
-			cb.setChecked(listHeader_CheckBox_Comp.isChecked());
+			if (listitem instanceof Listgroup) {
+				Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
+				if (cb.isDisabled())
+					continue;
+				cb.setChecked(listHeader_CheckBox_Comp.isChecked());
+			}
 		}
-
 		if (listHeader_CheckBox_Comp.isChecked()) {
 			List<Long> mandateIdList = getReceiptUploadHeaderList();
 			if (mandateIdList != null) {
@@ -317,12 +330,9 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			receiptIdMap.clear();
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Getting the mandate list using JdbcSearchObject with search criteria..
-	 */
 	private List<Long> getReceiptUploadHeaderList() {
 
 		JdbcSearchObject<Map<String, Long>> searchObject = new JdbcSearchObject<>();
@@ -352,12 +362,6 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		return receiptUploadHeaderList;
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the search button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
 	public void onClick$button_ReceiptUploadList_ReceiptUploadSearchDialog(Event event) {
 
 		if (isApprovalMenu) {
@@ -405,19 +409,10 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	}
 
 	private void doRemoveValidation() {
-		logger.debug("Entering ");
 		this.entityCode.setConstraint("");
 		this.entityCode.setErrorMessage("");
-		logger.debug("Leaving ");
-
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the refresh button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
 	public void onClick$btnRefresh(Event event) {
 		doRefresh();
 	}
@@ -445,27 +440,17 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			this.pagingReceiptUploadList.setTotalSize(0);
 
 		} else {
-
 			doReset();
 			search();
 		}
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
 	public void onClick$button_ReceiptUploadList_NewReceiptUpload(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// Create a new entity.
 		ReceiptUploadHeader receiptUploadHeader = new ReceiptUploadHeader();
 		receiptUploadHeader.setNewRecord(true);
 		receiptUploadHeader.setWorkflowId(getWorkFlowId());
-
-		// Display the dialog page.
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptUploadHeader", receiptUploadHeader);
@@ -478,26 +463,17 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
 	public void onReceiptUploadItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		// Get the selected record.
 		Listitem selectedItem = this.listBoxReceiptUpload.getSelectedItem();
 		if (selectedItem == null) {
 			return;
 		}
 
-		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
 		ReceiptUploadHeader receiptUploadHeader = receiptUploadHeaderService.getUploadHeaderById(id, false);
 
@@ -506,16 +482,20 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			return;
 		}
 
+		if (receiptUploadHeader.getUploadProgress() == ReceiptUploadConstants.RECEIPT_IMPORTINPROCESS) {
+			MessageUtil.showMessage("Import is in process for this record");
+			search();
+			return;
+		}
+
 		if (StringUtils.equals(receiptUploadHeader.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
 			return;
 		}
 
-		// Check whether the user has authority to change/view the record.
 		String whereCond = " where UploadHeaderId=?";
 
 		if (doCheckAuthority(receiptUploadHeader, whereCond,
 				new Object[] { receiptUploadHeader.getUploadHeaderId() })) {
-			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && receiptUploadHeader.getWorkflowId() == 0) {
 				receiptUploadHeader.setWorkflowId(getWorkFlowId());
 			}
@@ -524,110 +504,233 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Displays the dialog page with the required parameters as map.
-	 * 
-	 * @param receiptUploadHeader
-	 *            The entity that need to be passed to the dialog.
-	 */
-	private void doShowDialogPage(ReceiptUploadHeader receiptUploadHeader) {
-		logger.debug("Entering");
+	private void doShowDialogPage(ReceiptUploadHeader uploadHeader) {
+		logger.debug(Literal.ENTERING);
 
-		Map<String, Object> aruments = new HashMap<String, Object>();
+		Map<String, Object> args = new HashMap<String, Object>();
 
-		boolean enqiury = false;
-		if (StringUtils.equals(receiptUploadHeader.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
-			enqiury = true;
-		}
+		boolean enqiury = StringUtils.equals(uploadHeader.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED);
 
-		aruments.put("enqModule", enqiury);
-		aruments.put("uploadReceiptHeader", receiptUploadHeader);
-		aruments.put("receiptUploadListCtrl", this);
+		args.put("enqModule", enqiury);
+		args.put("uploadReceiptHeader", uploadHeader);
+		args.put("receiptUploadListCtrl", this);
 
-		// call the ZUL-file with the parameters packed in a map
 		try {
-
 			Executions.createComponents("/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderDialog.zul", null,
-					aruments);
-
+					args);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
 	}
 
-	public class ReceiptUploadListModelItemRenderer implements ListitemRenderer<ReceiptUploadHeader>, Serializable {
-
-		private static final long serialVersionUID = 6352065299727172054L;
-
-		public ReceiptUploadListModelItemRenderer() {
-
-		}
-
-		@Override
-		public void render(Listitem item, ReceiptUploadHeader receiptUploadHeader, int count) throws Exception {
-
+	private void setApprovalItemRenderer() {
+		setItemRender((item, upldHdr, count) -> {
 			Listcell lc;
-
-			if (isApprovalMenu) {
+			long Id = upldHdr.getUploadHeaderId();
+			if (item instanceof Listgroup) {
 				lc = new Listcell();
-				list_CheckBox = new Checkbox();
-				list_CheckBox.setValue(receiptUploadHeader.getUploadHeaderId());
-				list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
-				lc.appendChild(list_CheckBox);
-				if (listHeader_CheckBox_Comp.isChecked()) {
-					list_CheckBox.setChecked(true);
-				} else {
-					list_CheckBox.setChecked(receiptIdMap.containsKey(receiptUploadHeader.getUploadHeaderId()));
+
+				Checkbox listCheckBox = new Checkbox();
+				listCheckBox.setValue(Id);
+				listCheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
+
+				if (listHeader_CheckBox_Comp.isChecked() || receiptIdMap.containsKey(Id)) {
+					listCheckBox.setChecked(true);
 				}
-				lc.setParent(item);
-				lc = new Listcell(String.valueOf(receiptUploadHeader.getUploadHeaderId()));
-				lc.setParent(item);
-			} else {
-				lc = new Listcell(String.valueOf(receiptUploadHeader.getUploadHeaderId()));
-				lc.setParent(item);
-				lc = new Listcell(String.valueOf(receiptUploadHeader.getUploadHeaderId()));
-				lc.setParent(item);
+
+				if (upldHdr.getUploadProgress() == ReceiptUploadConstants.RECEIPT_INPROCESS) {
+					listCheckBox.setDisabled(true);
+				}
+
+				lc.appendChild(listCheckBox);
+				item.appendChild(lc);
+
+				lc = new Listcell(String.valueOf(Id));
+				item.appendChild(lc);
+
+				lc = new Listcell(upldHdr.getFileName());
+				lc.setStyle("font-weight:bold;color:##FF4500;");
+				item.appendChild(lc);
+
+				lc = new Listcell(String.valueOf(upldHdr.getTotalRecords()));
+				lc.setStyle("font-weight:bold;color:##FF4500;");
+				item.appendChild(lc);
+
+				lc = new Listcell();
+				item.appendChild(lc);
+
+				lc = new Listcell();
+				item.appendChild(lc);
+
+				lc = new Listcell();
+				item.appendChild(lc);
+
+				lc = new Listcell(upldHdr.getRecordStatus());
+				item.appendChild(lc);
+
+				return;
 			}
 
-			lc = new Listcell(receiptUploadHeader.getFileName());
-			lc.setParent(item);
-			lc = new Listcell(String.valueOf(receiptUploadHeader.getSuccessCount()));
-			lc.setParent(item);
-			lc = new Listcell(String.valueOf(receiptUploadHeader.getFailedCount()));
-			lc.setParent(item);
-			lc = new Listcell(String.valueOf(receiptUploadHeader.getTotalRecords()));
-			lc.setParent(item);
-			lc = new Listcell(receiptUploadHeader.getRecordStatus());
-			lc.setParent(item);
-			lc = new Listcell(PennantJavaUtil.getLabel(receiptUploadHeader.getRecordType()));
+			lc = new Listcell();
 			lc.setParent(item);
 
-			item.setAttribute("id", receiptUploadHeader.getUploadHeaderId());
+			if (upldHdr.getAttemptNo() > 0) {
+				lc = new Listcell("Attempt" + upldHdr.getAttemptNo());
+			} else
+				lc = new Listcell("Imported");
 
+			lc.setParent(item);
+
+			lc = new Listcell();
+
+			Progressmeter pm = new Progressmeter();
+			pm.setStyle("position: relative !important;");
+			pm.setWidth("195px");
+
+			if (upldHdr.getAttemptStatus() == ReceiptUploadConstants.ATTEMPSTATUS_INPROCESS
+					&& approveStatusMap.containsKey(upldHdr.getId())) {
+				pm.setValue(approveStatusMap.get(upldHdr.getId()).getProgress());
+				pm.setAttribute("id", Id);
+				progressMeterApprList.add(pm);
+				lc.appendChild(pm);
+			} else {
+				pm.setAttribute("id", null);
+			}
+			lc.setParent(item);
+
+			lc = new Listcell();
+			lc.setParent(item);
+
+			String idAttmpt = Id + "" + upldHdr.getAttemptNo();
+			lc = new Listcell(String.valueOf(upldHdr.getProcRecords()));
+			lc.setId("proc" + idAttmpt);
+			lc.setParent(item);
+
+			lc = new Listcell(String.valueOf(upldHdr.getSuccessCount()));
+			lc.setId("succ" + idAttmpt);
+			lc.setParent(item);
+
+			lc = new Listcell(String.valueOf(upldHdr.getFailedCount()));
+			lc.setId("fail" + idAttmpt);
+			lc.setParent(item);
+
+			lc = new Listcell();
+			lc.setParent(item);
+
+			item.setAttribute("id", Id);
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptUploadItemDoubleClicked");
+		});
+	}
+
+	private void setItemRenderer() {
+		setItemRender((item, upldHdr, count) -> {
+			Listcell lc;
+
+			lc = new Listcell(String.valueOf(upldHdr.getUploadHeaderId()));
+			lc.setParent(item);
+
+			lc = new Listcell(upldHdr.getFileName());
+
+			Hbox hb = new Hbox();
+			hb.setHflex("5");
+			hb.setStyle("padding:5px;");
+			Label lb = new Label("Import Progress:");
+			lb.setStyle("font-size:11px;font-weight:bold;color:grey;");
+
+			Progressmeter pm = new Progressmeter();
+			pm.setWidth("195px");
+			pm.setStyle("position: relative !important;");
+
+			hb.appendChild(lb);
+			hb.appendChild(pm);
+
+			if (upldHdr.getUploadProgress() == ReceiptUploadConstants.RECEIPT_IMPORTINPROCESS
+					&& importStatusMap.containsKey(upldHdr.getId())) {
+				pm.setValue(importStatusMap.get(upldHdr.getId()));
+				pm.setAttribute("id", upldHdr.getUploadHeaderId());
+				progressMeterList.add(pm);
+				lc.appendChild(hb);
+			}
+			lc.setParent(item);
+
+			lc = new Listcell(String.valueOf(upldHdr.getTotalRecords()));
+			lc.setParent(item);
+			lc = new Listcell(String.valueOf(upldHdr.getSuccessCount()));
+			lc.setParent(item);
+			lc = new Listcell(String.valueOf(upldHdr.getFailedCount()));
+			lc.setParent(item);
+
+			if (upldHdr.getUploadProgress() == ReceiptUploadConstants.RECEIPT_IMPORTED) {
+				lc = new Listcell("Imported");
+			} else
+				lc = new Listcell(upldHdr.getRecordStatus());
+
+			lc.setParent(item);
+			lc = new Listcell(PennantJavaUtil.getLabel(upldHdr.getRecordType()));
+			lc.setParent(item);
+			item.setAttribute("id", upldHdr.getUploadHeaderId());
+			ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptUploadItemDoubleClicked");
+		});
+	}
+
+	private void updateListCell(long Id, Function<ReceiptUploadLog, AtomicInteger> fun, String name) {
+		try {
+			ReceiptUploadLog ual = approveStatusMap.get(Id);
+			Listcell lc1 = (Listcell) this.listBoxReceiptUpload.getFellowIfAny(name + Id + ual.getAttemptNo());
+			lc1.setLabel(String.valueOf(fun.apply(ual).get()));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+
 		}
 	}
 
-	/**
-	 * Filling the receipt Id List details based on checked and unchecked events of listCellCheckBox.
-	 */
+	public void onTimer$timer(Event event) {
+
+		if (isApprovalMenu) {
+
+			progressMeterApprList.removeIf(e -> {
+				Long id = (Long) e.getAttribute("id");
+
+				if (approveStatusMap.containsKey(id)) {
+					updateListCell(id, log -> log.getFailRecords(), "fail");
+					updateListCell(id, log -> log.getSuccessRecords(), "succ");
+					updateListCell(id, log -> log.getProcessedRecords(), "proc");
+					int progress = approveStatusMap.get(id).getProgress();
+					e.setValue(progress);
+					e.setTooltiptext(progress + "%");
+					return false;
+				}
+
+				e.getParent().getParent().removeChild(e.getParent());
+				search();
+				return true;
+			});
+			return;
+		}
+
+		progressMeterList.removeIf(e -> {
+			Long id = (Long) e.getAttribute("id");
+			if (importStatusMap.containsKey(id)) {
+				int progress = importStatusMap.get(id);
+				e.setValue(progress);
+				e.setTooltiptext(progress + "%");
+				return false;
+			}
+			search();
+			return true;
+		});
+	}
+
 	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
 		if (checkBox.isChecked()) {
@@ -642,7 +745,6 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			listHeader_CheckBox_Comp.setChecked(false);
 		}
 
-		logger.debug("Leaving");
 	}
 
 	public void onClick$btndownload(Event event) throws IOException {
@@ -680,7 +782,6 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			byte[] tobytes = arrayOutputStream.toByteArray();
 			arrayOutputStream.close();
 			arrayOutputStream = null;
-
 			Filedownload.save(new AMedia(zipfileName, "zip", "application/*", tobytes));
 		} else {
 			for (long id : receiptidList) {
@@ -701,85 +802,64 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 
 	private List<Long> getListofReceiptUpload() {
 
-		List<Long> receiptidList;
+		List<Long> headerIdsList;
 
 		if (listHeader_CheckBox_Comp.isChecked()) {
-			receiptidList = getReceiptUploadHeaderList();
+			headerIdsList = getReceiptUploadHeaderList();
 		} else {
-			receiptidList = new ArrayList<Long>(receiptIdMap.keySet());
+			headerIdsList = new ArrayList<Long>(receiptIdMap.keySet());
 		}
-		return receiptidList;
+		return headerIdsList;
 	}
 
 	public void onClick$btnApprove(Event event) {
 
 		logger.debug(Literal.ENTERING);
 
-		List<Long> receiptidList = getListofReceiptUpload();
+		List<Long> headerIdList = getListofReceiptUpload();
+		receiptIdMap.clear();
 
-		if (receiptidList.isEmpty()) {
+		if (headerIdList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("ReceiptUploadDataList_NoEmpty"));
 			return;
 		}
 
-		//boolean isFileDownloaded = checkFileDownloaded(receiptidList);
+		Collections.sort(headerIdList);
 
-		//FIXME: PV temporary disabled
-		//		if (isFileDownloaded) {
-		//		return;
-		//}
+		logger.info("Checking Authority for HeaderIds {}", headerIdList);
+		List<ReceiptUploadHeader> uploadHeadersList = doCheckAuthority(headerIdList, true);
 
-		//check whether Connection established 
-		//	if(!doConnectionEstablished()){
-		//	return;
-		//}
-
-		//sorting
-		Collections.sort(receiptidList);
-
-		List<ReceiptUploadHeader> listReceiptUploadHeader = doCheckAuthority(receiptidList, true);
-
-		if (listReceiptUploadHeader.isEmpty()) {
+		if (uploadHeadersList.isEmpty()) {
+			logger.info("User is not Allowed to Approve");
 			return;
 		}
 
-		List<Long> listReceiptUploadId = new ArrayList<>();
-		for (ReceiptUploadHeader receiptUploadHeader : listReceiptUploadHeader) {
+		try {
+			approveStatusMap.putAll(receiptUploadHeaderService.updateProgress(uploadHeadersList));
 
-			listReceiptUploadId.add(receiptUploadHeader.getUploadHeaderId());
+			logger.info("Started Approval Process for the HeaderId's{}", headerIdList);
 
-			receiptUploadHeader.setUploadProgress(ReceiptUploadConstants.RECEIPT_APPROVED);
-
-			//call dosaveProgress
-			doProcess(receiptUploadHeader, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
+			doApprove(uploadHeadersList);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
-		doApprove(listReceiptUploadId);
-
-		doRefresh();
+		search();
 		Clients.showNotification("Receipt Process initialized.", "info", null, null, -1);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * check authority
-	 * 
-	 * @param receiptidList
-	 * @return
-	 */
 	private List<ReceiptUploadHeader> doCheckAuthority(List<Long> receiptidList, boolean getSucessRecords) {
 
-		List<ReceiptUploadHeader> receiptUploadHeaderList = new ArrayList<>();
+		List<ReceiptUploadHeader> uploadHeaderList = new ArrayList<>();
 
 		for (long id : receiptidList) {
 			ReceiptUploadHeader receiptUploadHeader = receiptUploadHeaderService.getUploadHeaderById(id, false);
 
-			// Check whether the user has authority to change/view the record.
 			String whereCond = " UploadHeaderId= ?";
 
 			if (doCheckAuthority(receiptUploadHeader, whereCond,
 					new Object[] { receiptUploadHeader.getUploadHeaderId() })) {
-				// Set the latest work-flow id for the new maintenance request.
 				if (isWorkFlowEnabled() && receiptUploadHeader.getWorkflowId() == 0) {
 					receiptUploadHeader.setWorkflowId(getWorkFlowId());
 				}
@@ -790,10 +870,10 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 				return new ArrayList<ReceiptUploadHeader>();
 
 			}
-			receiptUploadHeaderList.add(receiptUploadHeader);
+			uploadHeaderList.add(receiptUploadHeader);
 		}
 
-		return receiptUploadHeaderList;
+		return uploadHeaderList;
 	}
 
 	private boolean checkFileDownloaded(List<Long> listUploadId) {
@@ -811,38 +891,37 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		return false;
 	}
 
-	private void doApprove(List<Long> listReceiptUploadId) {
-
+	private void doApprove(List<ReceiptUploadHeader> uploadHeaderList) {
 		try {
+			new Thread(() -> {
 
-			Thread thread = new Thread(new ReceiptUploadThread(listReceiptUploadId));
-			thread.start();
+				List<Long> headerIdList = uploadHeaderList.stream().map(ReceiptUploadHeader::getId)
+						.collect(Collectors.toList());
+				try {
+					receiptUploadApprovalProcess.approveReceipts(headerIdList, getUserWorkspace().getLoggedInUser(),
+							approveStatusMap);
+
+					for (ReceiptUploadHeader ruh : uploadHeaderList) {
+						logger.info("Approving Header ", ruh.getId(), headerIdList);
+
+						ruh.setUploadProgress(ReceiptUploadConstants.RECEIPT_APPROVED);
+						doProcess(ruh, PennantConstants.TRAN_ADD, PennantConstants.RCD_STATUS_APPROVED);
+					}
+				} catch (Exception e) {
+					headerIdList.forEach(ruh -> receiptUploadHeaderService.updateUploadProgress(ruh,
+							ReceiptUploadConstants.RECEIPT_PROCESSFAILED));
+					logger.error(Literal.EXCEPTION, e);
+				} finally {
+					logger.info("Updating Status as Completed for the HeaderIdIs{}", headerIdList, headerIdList);
+					receiptUploadHeaderService.updateStatus(headerIdList, approveStatusMap);
+				}
+			}).start();
+
 			Thread.sleep(1000);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-	}
-
-	public class ReceiptUploadThread implements Runnable {
-		List<Long> listReceiptUploadId;
-
-		public ReceiptUploadThread(List<Long> listReceiptUploadId) {
-			super();
-			this.listReceiptUploadId = listReceiptUploadId;
-		}
-
-		@Override
-		public void run() {
-			receiptUploadApprovalProcess.approveReceipts(listReceiptUploadId, getUserWorkspace().getLoggedInUser());
-
-			for (Long headerId : listReceiptUploadId) {
-				int[] statuscount = receiptUploadHeaderService.getHeaderStatusCnt(headerId);
-				receiptUploadHeaderService.uploadHeaderStatusCnt(headerId, statuscount[0], statuscount[1]);
-			}
-
-		}
-
 	}
 
 	public void onClick$btnReject(Event event) {
@@ -884,13 +963,11 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	private ByteArrayOutputStream doDownloadFiles(String id) {
 		logger.debug(Literal.ENTERING);
 
-		String whereCond = " where t.uploadHeaderId in (" + "'" + id + "'" + ") and  UploadStatus in (" + "'"
-				+ PennantConstants.UPLOAD_STATUS_SUCCESS + "'" + ")";
+		String whereCond = " where t.uploadHeaderId in (" + "'" + id + "'" + ") and  ProcessingStatus ="
+				+ ReceiptDetailStatus.SUCCESS.getValue();
 		StringBuilder searchCriteria = new StringBuilder(" ");
 
-		String reportName = "";
-
-		reportName = "ReceiptUploadApprover";
+		String reportName = "ReceiptUploadApprover";
 		ByteArrayOutputStream outputStream = null;
 		outputStream = generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName, whereCond,
 				searchCriteria, this.window_ReceiptUploadList, true, id);
@@ -899,21 +976,9 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		return outputStream;
 	}
 
-	/**
-	 * Method For generating Report based upon passing Data
-	 * 
-	 * @param reportName
-	 * @param userName
-	 * @param whereCond
-	 * @param searchCriteriaDesc
-	 * @param dialogWindow
-	 * @param createExcel
-	 * @throws JRException
-	 * @throws InterruptedException
-	 */
 	public ByteArrayOutputStream generateReport(String userName, String reportName, String whereCond,
 			StringBuilder searchCriteriaDesc, Window window, boolean createExcel, String id) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Connection connection = null;
 		DataSource dataSourceObj = null;
@@ -927,7 +992,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			reportArgumentsMap.put("userName", userName);
 			reportArgumentsMap.put("reportHeading", reportName);
 			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-			reportArgumentsMap.put("appDate", DateUtility.getAppDate());
+			reportArgumentsMap.put("appDate", SysParamUtil.getAppDate());
 			reportArgumentsMap.put("appCcy", SysParamUtil.getAppCurrency());
 			reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 			reportArgumentsMap.put("unitParam", "Pff");
@@ -987,55 +1052,12 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			dataSourceObj = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return outputStream;
 	}
 
-	private boolean doConnectionEstablished() {
-		//connection 
-
-		WebClient client = null;
-		Response response = null;
-
-		try {
-			String url = SysParamUtil.getValueAsString(ReceiptUploadConstants.RU_API_URL);
-			recptUploadProcess = new ReceiptUploadHeaderProcess();
-			client = recptUploadProcess.getClient(url, String.valueOf(Math.random()));
-			response = client.get();
-		} catch (Exception e) {
-			client.close();
-			client = null;
-			MessageUtil.showError("Connection not established, Please check URl and Authorization");
-			return false;
-		} finally {
-			client.close();
-			client = null;
-		}
-
-		if (response.getStatus() == 404) {
-			MessageUtil.showError("Connection not established, Please check URl and Authorization");
-			return false;
-		}
-
-		return true;
-
-	}
-
-	/**
-	 * Set the workFlow Details List to Object
-	 * 
-	 * @param aReceiptUploadHeader
-	 *            (ReceiptDialog)
-	 * 
-	 * @param tranType
-	 *            (String)
-	 * @param rcdStatusApproved
-	 * 
-	 * @return boolean
-	 * 
-	 */
 	private boolean doProcess(ReceiptUploadHeader aReceiptUploadHeader, String tranType, String rcdStatus) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
@@ -1102,24 +1124,12 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		} else {
 			processCompleted = doSaveProcess(auditHeader, PennantConstants.method_doApprove);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * 
-	 * @param method
-	 *            (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -1130,20 +1140,20 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getReceiptUploadHeaderService().delete(auditHeader);
+						auditHeader = receiptUploadHeaderService.delete(auditHeader);
 					} else {
-						auditHeader = getReceiptUploadHeaderService().saveOrUpdate(auditHeader);
+						auditHeader = receiptUploadHeaderService.saveOrUpdate(auditHeader);
 					}
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getReceiptUploadHeaderService().doApprove(auditHeader);
+						auditHeader = receiptUploadHeaderService.doApprove(auditHeader);
 
 						if (PennantConstants.RECORD_TYPE_DEL.equals(aReceiptUploadHeader.getRecordType())) {
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getReceiptUploadHeaderService().doReject(auditHeader);
+						auditHeader = receiptUploadHeaderService.doReject(auditHeader);
 
 						if (aReceiptUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 						}
@@ -1174,35 +1184,19 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
-	/**
-	 * @param aReceiptUploadHeader
-	 * @param tranType
-	 * @return
-	 */
 	private AuditHeader getAuditHeader(ReceiptUploadHeader aReceiptUploadHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aReceiptUploadHeader.getBefImage(),
 				aReceiptUploadHeader);
 		return new AuditHeader(String.valueOf(aReceiptUploadHeader.getId()), null, null, null, auditDetail,
 				aReceiptUploadHeader.getUserDetails(), getOverideMap());
-
 	}
 
-	/**
-	 * The framework calls this event handler when user clicks the help button.
-	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
-	}
-
-	public ReceiptUploadHeaderService getReceiptUploadHeaderService() {
-		return receiptUploadHeaderService;
 	}
 
 	public void setReceiptUploadHeaderService(ReceiptUploadHeaderService receiptUploadHeaderService) {

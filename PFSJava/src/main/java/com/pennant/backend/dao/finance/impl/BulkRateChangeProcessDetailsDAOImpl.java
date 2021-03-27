@@ -8,11 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.BulkRateChangeProcessDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -92,8 +92,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 		selectSql.append(" Where BulkRateChangeRef = :BulkRateChangeRef AND (Status = 'P' OR Status = 'F')");//Pending OR Failed Finances
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
@@ -132,8 +131,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
 
 		try {
 			bulkRateChangeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -396,8 +394,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -425,8 +422,7 @@ public class BulkRateChangeProcessDetailsDAOImpl extends BasicDao<BulkRateChange
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bulkRateChangeDetails);
-		RowMapper<BulkRateChangeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BulkRateChangeDetails.class);
+		RowMapper<BulkRateChangeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BulkRateChangeDetails.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

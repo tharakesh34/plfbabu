@@ -5,10 +5,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinOCRHeaderDAO;
 import com.pennant.backend.model.finance.FinOCRHeader;
@@ -42,7 +42,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		finOCRHeader.setFinReference(reference);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRHeader);
-		RowMapper<FinOCRHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOCRHeader.class);
+		RowMapper<FinOCRHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOCRHeader.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -72,7 +72,7 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 		finOCRHeader.setHeaderID(headerID);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRHeader);
-		RowMapper<FinOCRHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOCRHeader.class);
+		RowMapper<FinOCRHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOCRHeader.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

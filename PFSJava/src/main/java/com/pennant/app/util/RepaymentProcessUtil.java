@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
@@ -125,6 +126,7 @@ public class RepaymentProcessUtil {
 	private FeeTypeDAO feeTypeDAO;
 	private AssignmentDAO assignmentDAO;
 	private AssignmentDealDAO assignmentDealDAO;
+	private LatePayMarkingService latePayMarkingService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -195,6 +197,14 @@ public class RepaymentProcessUtil {
 		finReceiptData.getRepayMain().setRepayAmountNow(BigDecimal.ZERO);
 		finReceiptData.getRepayMain().setPrincipalPayNow(BigDecimal.ZERO);
 		finReceiptData.getRepayMain().setProfitPayNow(BigDecimal.ZERO);
+
+		int receiptPurposeCtg = 0;
+		receiptPurposeCtg = receiptCalculator.setReceiptCategory(finReceiptData.getReceiptHeader().getReceiptPurpose());
+		if (receiptPurposeCtg == 1) {
+			fsd = ScheduleCalculator.recalEarlyPaySchedule(fsd, rch.getValueDate(), null, finReceiptData.getRemBal(),
+					fsd.getFinanceType().getFinScheduleOn());
+			finReceiptData = receiptCalculator.addPartPaymentAlloc(finReceiptData);
+		}
 
 		for (ReceiptAllocationDetail allocate : finReceiptData.getReceiptHeader().getAllocations()) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
@@ -2092,10 +2102,10 @@ public class RepaymentProcessUtil {
 				finRepayQueue.setTaxHeader(rsdList.get(i).getTaxHeader());
 				finRepayQueues.add(finRepayQueue);
 			}
-			
+
 			//Setting Manual TDS to Map
 			extDataMap.put("ae_manualTds", rch.getTdsAmount());
-			
+
 			BigDecimal totRecvAmount = BigDecimal.ZERO;
 			List<ReceiptAllocationDetail> radList = rch.getAllocations();
 
@@ -2477,7 +2487,7 @@ public class RepaymentProcessUtil {
 	private String getEventCode(String finEvent, String receiptMode) {
 		switch (finEvent) {
 		case FinanceConstants.FINSER_EVENT_SCHDRPY:
-			if (ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+			if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 				if (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
 					return AccountEventConstants.ACCEVENT_PRSNT;
 				}
@@ -2752,6 +2762,14 @@ public class RepaymentProcessUtil {
 
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
+	}
+
+	public LatePayMarkingService getLatePayMarkingService() {
+		return latePayMarkingService;
+	}
+
+	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
+		this.latePayMarkingService = latePayMarkingService;
 	}
 
 }

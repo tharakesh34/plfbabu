@@ -13,11 +13,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.model.finance.TaxHeader;
@@ -48,7 +48,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		selectSql.append(" WHERE ReferenceId = :ReferenceId");
 
 		logger.debug("selectSql : " + selectSql.toString());
-		RowMapper<Taxes> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Taxes.class);
+		RowMapper<Taxes> typeRowMapper = BeanPropertyRowMapper.newInstance(Taxes.class);
 		try {
 			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);

@@ -14,11 +14,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -55,8 +55,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		List<FinCreditRevCategory> creditRevCategories;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevCategory);
-		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCreditRevCategory.class);
+		RowMapper<FinCreditRevCategory> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCreditRevCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
@@ -101,8 +100,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 																									// as
 																									// constants
 
-		RowMapper<FinCreditRevCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCreditRevCategory.class);
+		RowMapper<FinCreditRevCategory> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCreditRevCategory.class);
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -131,7 +129,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 																												// SubCategorySeque
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
-		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -156,7 +154,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 																																							// Time
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
-		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -183,7 +181,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		}
 		selectSql.append(" order by CalcSeque");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
-		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -209,7 +207,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		selectSql.append(" order by CalcSeque");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
-		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -280,7 +278,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditReviewDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewDetails.class);
 
 		try {
@@ -320,7 +318,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetails);
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditReviewDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewDetails.class);
 
 		try {
@@ -505,8 +503,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		selectSql.append("  FROM FinCreditRevType Where CreditRevCode= :CreditRevCode ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRev);
-		RowMapper<FinCreditRevType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCreditRevType.class);
+		RowMapper<FinCreditRevType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCreditRevType.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
@@ -612,7 +609,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 		selectSql.append(" Where CustomerId= :customerId ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditReviewDetails);
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditReviewDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewDetails.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -634,7 +631,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditReviewDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewDetails.class);
 		logger.debug("Leaving");
 		try {
@@ -661,7 +658,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
 		logger.debug("Leaving");
 		try {
@@ -682,7 +679,7 @@ public class CreditApplicationReviewDAOImpl extends SequenceDao<FinCreditReviewD
 
 		List<FinCreditReviewDetails> details;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditReviewDetails);
-		RowMapper<FinCreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditReviewDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditReviewDetails.class);
 
 		details = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

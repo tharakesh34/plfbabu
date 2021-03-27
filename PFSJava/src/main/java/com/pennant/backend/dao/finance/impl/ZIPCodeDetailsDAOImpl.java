@@ -3,10 +3,10 @@ package com.pennant.backend.dao.finance.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ZIPCodeDetailsDAO;
 import com.pennant.backend.model.finance.ZIPCodeDetails;
@@ -44,7 +44,7 @@ public class ZIPCodeDetailsDAOImpl extends BasicDao<ZIPCodeDetails> implements Z
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(zIPCodeDetails);
-		RowMapper<ZIPCodeDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ZIPCodeDetails.class);
+		RowMapper<ZIPCodeDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(ZIPCodeDetails.class);
 
 		try {
 			zIPCodeDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

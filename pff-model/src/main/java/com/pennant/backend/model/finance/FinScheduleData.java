@@ -202,6 +202,8 @@ public class FinScheduleData implements Serializable {
 	@XmlElement(name = "hostReference")
 	private String oldFinReference;
 
+	private RestructureDetail restructureDetail;
+
 	public FinScheduleData() {
 		super();
 	}
@@ -733,4 +735,13 @@ public class FinScheduleData implements Serializable {
 	public void setIrrSDList(List<IRRScheduleDetail> irrSDList) {
 		this.irrSDList = irrSDList;
 	}
+
+	public RestructureDetail getRestructureDetail() {
+		return restructureDetail;
+	}
+
+	public void setRestructureDetail(RestructureDetail restructureDetail) {
+		this.restructureDetail = restructureDetail;
+	}
+
 }

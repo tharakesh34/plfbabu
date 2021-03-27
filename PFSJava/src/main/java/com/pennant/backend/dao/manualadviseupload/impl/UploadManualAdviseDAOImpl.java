@@ -6,11 +6,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.manualadviseupload.UploadManualAdviseDAO;
 import com.pennant.backend.model.finance.UploadManualAdvise;
@@ -45,8 +45,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		RowMapper<UploadManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(UploadManualAdvise.class);
+		RowMapper<UploadManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadManualAdvise.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -189,8 +188,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		RowMapper<UploadManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(UploadManualAdvise.class);
+		RowMapper<UploadManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadManualAdvise.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

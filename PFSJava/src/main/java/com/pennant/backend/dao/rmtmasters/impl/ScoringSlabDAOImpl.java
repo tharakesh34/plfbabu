@@ -50,10 +50,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.ScoringSlabDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -138,7 +138,7 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
-		RowMapper<ScoringSlab> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringSlab.class);
+		RowMapper<ScoringSlab> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
 		try {
 			scoringSlab = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -169,7 +169,7 @@ public class ScoringSlabDAOImpl extends SequenceDao<ScoringSlab> implements Scor
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringSlab);
-		RowMapper<ScoringSlab> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringSlab.class);
+		RowMapper<ScoringSlab> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringSlab.class);
 
 		try {
 			scoringSlabList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

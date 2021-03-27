@@ -52,11 +52,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -334,8 +334,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		source = new MapSqlParameterSource();
 		source.addValue("LimitStructureCode", id);
 
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -429,8 +428,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -503,8 +501,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		source.addValue("LimitLine", code);
 		source.addValue("LimitCategory", limitCategory);
 
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			structureList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -556,8 +553,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

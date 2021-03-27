@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinAssetEvaluationDAO;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
@@ -105,8 +105,7 @@ public class FinAssetEvaluationDAOImpl extends BasicDao<FinAssetEvaluation> impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAssetEvaluation);
-		RowMapper<FinAssetEvaluation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinAssetEvaluation.class);
+		RowMapper<FinAssetEvaluation> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAssetEvaluation.class);
 
 		try {
 			finAssetEvaluation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -54,12 +54,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -103,7 +103,7 @@ public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements 
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
-		RowMapper<FinInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinInsurances.class);
+		RowMapper<FinInsurances> typeRowMapper = BeanPropertyRowMapper.newInstance(FinInsurances.class);
 
 		try {
 			finInsurance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -477,7 +477,7 @@ public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements 
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finInsurance);
-		RowMapper<FinInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinInsurances.class);
+		RowMapper<FinInsurances> typeRowMapper = BeanPropertyRowMapper.newInstance(FinInsurances.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -511,8 +511,7 @@ public class FinInsurancesDAOImpl extends SequenceDao<FinInsurances> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(insSchd);
-		RowMapper<FinSchFrqInsurance> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinSchFrqInsurance.class);
+		RowMapper<FinSchFrqInsurance> typeRowMapper = BeanPropertyRowMapper.newInstance(FinSchFrqInsurance.class);
 		List<FinSchFrqInsurance> insList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return insList;

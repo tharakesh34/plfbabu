@@ -54,11 +54,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.solutionfactory.DeviationDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -144,8 +144,7 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationDetail);
-		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DeviationDetail.class);
+		RowMapper<DeviationDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationDetail.class);
 
 		try {
 			deviationDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -184,8 +183,7 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationDetail);
-		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DeviationDetail.class);
+		RowMapper<DeviationDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

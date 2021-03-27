@@ -50,10 +50,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.model.finance.FinContributorDetail;
@@ -100,8 +100,7 @@ public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		RowMapper<FinContributorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinContributorDetail.class);
+		RowMapper<FinContributorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinContributorDetail.class);
 
 		try {
 			contributorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -136,8 +135,7 @@ public class FinContributorDetailDAOImpl extends SequenceDao<FinContributorDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorDetail);
-		RowMapper<FinContributorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinContributorDetail.class);
+		RowMapper<FinContributorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinContributorDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

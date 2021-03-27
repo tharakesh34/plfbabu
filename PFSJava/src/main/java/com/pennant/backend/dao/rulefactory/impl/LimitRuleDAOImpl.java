@@ -51,11 +51,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
@@ -141,8 +141,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<LimitFilterQuery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitFilterQuery.class);
+		RowMapper<LimitFilterQuery> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
 		try {
 			dedupParm = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -183,8 +182,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<LimitFilterQuery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitFilterQuery.class);
+		RowMapper<LimitFilterQuery> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
 		try {
 			dedupParmList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -348,8 +346,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		selectSql.append(" WHERE RBModule = :RBModule AND RBEvent = :RBEvent");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<BMTRBFldDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BMTRBFldDetails.class);
+		RowMapper<BMTRBFldDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(BMTRBFldDetails.class);
 
 		try {
 			fieldList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -376,8 +373,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		selectSql.append(" FROM LimitFldCriterias");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<LimitFldCriterias> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitFldCriterias.class);
+		RowMapper<LimitFldCriterias> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFldCriterias.class);
 
 		try {
 			fieldList = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
@@ -403,8 +399,7 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<LimitFilterQuery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitFilterQuery.class);
+		RowMapper<LimitFilterQuery> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitFilterQuery.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

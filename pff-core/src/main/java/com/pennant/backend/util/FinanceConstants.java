@@ -232,6 +232,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_FINOPTION = "FinOptions";
 	public static final String FINSER_EVENT_RECADV = "RecAdvise";
 	public static final String FINSER_EVENT_PAYADV = "PayAdvise";
+	public static final String FINSER_EVENT_RESTRUCTURE = "Restructure";
 
 	// Finance Collateral Details
 	public static final String COLLATERAL_FIXEDDEPOSIT = "FD";
@@ -527,4 +528,6 @@ public class FinanceConstants {
 	public static final String HOMELOAN_TP = "HLTP";
 	public static final String PERSONAL_LOAN = "PL";
 	public static final String VRPL_VRBL = "PLBL";
+
+	public static final String FLAG_RESTRUCTURE = "R";
 }

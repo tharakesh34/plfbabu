@@ -26,7 +26,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -100,7 +99,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		parameterSource.addValue("keyReference", keyReference);
 		parameterSource.addValue("verificationType", verificationType);
 
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
@@ -297,7 +296,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" from verifications v left join AMTVehicleDealer_AView a on a.dealerid=v.agency");
 		sql.append(" where id=:id and a.dealerType=:dealerType");
 
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
@@ -327,7 +326,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		RCUDocument rcuDocument = null;
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select v.id, v.verificationDate, coalesce(v.status, 0) status, a.dealerName as lastAgency");
@@ -421,7 +420,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		parameterSource.addValue("referenceFor", Arrays.asList(collaterals));
 
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);

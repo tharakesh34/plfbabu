@@ -7,11 +7,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
@@ -156,7 +156,7 @@ public class FinRepayQueueDAOImpl extends BasicDao<FinRepayQueue> implements Fin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finRepayQueue);
-		RowMapper<FinRepayQueue> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinRepayQueue.class);
+		RowMapper<FinRepayQueue> typeRowMapper = BeanPropertyRowMapper.newInstance(FinRepayQueue.class);
 
 		try {
 			finRepayQueue = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

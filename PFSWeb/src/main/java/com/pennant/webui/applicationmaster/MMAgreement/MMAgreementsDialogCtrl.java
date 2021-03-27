@@ -1678,8 +1678,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setAssetValue(
-					PennantApplicationUtil.formatAmount(this.assetValue.getActualValue(), ccyformatt));
+			aAgreementDetail
+					.setAssetValue(PennantApplicationUtil.formatAmount(this.assetValue.getActualValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1691,8 +1691,8 @@ public class MMAgreementsDialogCtrl extends GFCBaseCtrl<MMAgreement> {
 		}
 
 		try {
-			aAgreementDetail.setSharePerc(
-					PennantApplicationUtil.formatAmount(this.sharePerc.getActualValue(), ccyformatt));
+			aAgreementDetail
+					.setSharePerc(PennantApplicationUtil.formatAmount(this.sharePerc.getActualValue(), ccyformatt));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

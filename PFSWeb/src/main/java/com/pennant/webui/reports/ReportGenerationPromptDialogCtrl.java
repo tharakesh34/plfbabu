@@ -1823,9 +1823,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				} else {
 					reportName = reportConfiguration.getReportJasperName();
 
-					ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-							reportName, whereCond, searchCriteriaDesc, this.dialogWindow, true);
-					
+					ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName,
+							whereCond, searchCriteriaDesc, this.dialogWindow, true);
+
 					if (selectTab != null) {
 						// selectTab.setSelected(true);
 						// if(!reportConfiguration.isPromptRequired()){//ReOpen the Comment after Auto Refresh Fix
@@ -2371,13 +2371,15 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			StringBuilder whereCond = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 
 			ReportFilterFields rff = reportConfiguration.getListReportFieldsDetails().get(2);
-			Component component = dymanicFieldsRows.getFellow(Long.toString(rff.getFieldID()));
-			Date value = ((Datebox) component).getValue();
+			if (!(rff != null && rff.getFieldType().equals(FIELDTYPE.DATERANGE.toString()))) {
+				Component component = dymanicFieldsRows.getFellow(Long.toString(rff.getFieldID()));
+				Date value = ((Datebox) component).getValue();
 
-			whereCond = getWhereClauseForAMZ(whereCond, DateUtil.addMonths(value, -2), value);
-			whereCond1 = getWhereClauseForAMZ(whereCond1, DateUtil.addMonths(value, -1), value);
-			whereCond2 = getWhereClauseForAMZ(whereCond2, value, DateUtil.addMonths(value, 15));
+				whereCond = getWhereClauseForAMZ(whereCond, DateUtil.addMonths(value, -2), value);
+				whereCond1 = getWhereClauseForAMZ(whereCond1, DateUtil.addMonths(value, -1), value);
+				whereCond2 = getWhereClauseForAMZ(whereCond2, value, DateUtil.addMonths(value, 15));
 
+			}
 			doShowReport("where".equals(whereCond.toString().trim()) ? "" : whereCond.toString(),
 					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), null, null,
 					"where".equals(whereCond1.toString().trim()) ? "" : whereCond1.toString());

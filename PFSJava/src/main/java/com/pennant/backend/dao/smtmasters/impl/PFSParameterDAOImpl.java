@@ -34,10 +34,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -61,8 +61,10 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	/**
 	 * Fetch the Record System Parameter details by key field
 	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return PFSParameter
 	 */
 	@Override
@@ -121,8 +123,10 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * This method Deletes the Record from the SMTparameters or SMTparameters_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete System Parameter by key SysParmCode
 	 * 
-	 * @param System Parameter (pFSParameter)
-	 * @param type   (String) ""/_Temp/_View
+	 * @param System
+	 *            Parameter (pFSParameter)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -156,8 +160,10 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * 
 	 * save System Parameter
 	 * 
-	 * @param System Parameter (pFSParameter)
-	 * @param type   (String) ""/_Temp/_View
+	 * @param System
+	 *            Parameter (pFSParameter)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -190,8 +196,10 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * This method updates the Record SMTparameters or SMTparameters_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update System Parameter by key SysParmCode and Version
 	 * 
-	 * @param System Parameter (pFSParameter)
-	 * @param type   (String) ""/_Temp/_View
+	 * @param System
+	 *            Parameter (pFSParameter)
+	 * @param type
+	 *            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -268,7 +276,7 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		selectSql.append(" Version , LastMntBy, LastMntOn From SMTparameters");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new PFSParameter());
 
-		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
+		RowMapper<PFSParameter> typeRowMapper = BeanPropertyRowMapper.newInstance(PFSParameter.class);
 		List<PFSParameter> systemParms = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");

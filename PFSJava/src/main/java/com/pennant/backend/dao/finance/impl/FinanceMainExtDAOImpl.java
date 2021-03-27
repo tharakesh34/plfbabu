@@ -3,11 +3,11 @@ package com.pennant.backend.dao.finance.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceMainExtDAO;
 import com.pennant.backend.model.finance.FinanceMainExt;
@@ -61,7 +61,7 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMainExt);
-		RowMapper<FinanceMainExt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMainExt.class);
+		RowMapper<FinanceMainExt> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMainExt.class);
 
 		try {
 			financeMainExt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -151,7 +151,7 @@ public class FinanceMainExtDAOImpl extends BasicDao<FinanceMainExt> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMainExt);
-		RowMapper<FinanceMainExt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMainExt.class);
+		RowMapper<FinanceMainExt> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMainExt.class);
 
 		try {
 			financeMainExt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

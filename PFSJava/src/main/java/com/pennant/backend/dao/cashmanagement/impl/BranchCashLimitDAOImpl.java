@@ -50,11 +50,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.cashmanagement.BranchCashLimitDAO;
 import com.pennant.backend.model.cashmanagement.BranchCashLimit;
@@ -100,7 +100,7 @@ public class BranchCashLimitDAOImpl extends BasicDao<BranchCashLimit> implements
 		branchCashLimit.setBranchCode(branchCode);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(branchCashLimit);
-		RowMapper<BranchCashLimit> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BranchCashLimit.class);
+		RowMapper<BranchCashLimit> rowMapper = BeanPropertyRowMapper.newInstance(BranchCashLimit.class);
 
 		try {
 			branchCashLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -260,7 +260,7 @@ public class BranchCashLimitDAOImpl extends BasicDao<BranchCashLimit> implements
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("BranchCode", branchCode);
 
-		RowMapper<BranchCashLimit> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BranchCashLimit.class);
+		RowMapper<BranchCashLimit> rowMapper = BeanPropertyRowMapper.newInstance(BranchCashLimit.class);
 		logger.debug(Literal.LEAVING);
 
 		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

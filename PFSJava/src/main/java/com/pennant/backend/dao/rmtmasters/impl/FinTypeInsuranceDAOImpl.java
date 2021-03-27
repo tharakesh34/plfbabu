@@ -51,10 +51,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
@@ -131,8 +131,7 @@ public class FinTypeInsuranceDAOImpl extends BasicDao<FinTypeInsurances> impleme
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
-		RowMapper<FinTypeInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeInsurances.class);
+		RowMapper<FinTypeInsurances> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeInsurances.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -192,8 +191,7 @@ public class FinTypeInsuranceDAOImpl extends BasicDao<FinTypeInsurances> impleme
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
-		RowMapper<FinTypeInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeInsurances.class);
+		RowMapper<FinTypeInsurances> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeInsurances.class);
 
 		try {
 			finTypeInsurance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -368,8 +366,7 @@ public class FinTypeInsuranceDAOImpl extends BasicDao<FinTypeInsurances> impleme
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeInsurance);
-		RowMapper<FinTypeInsurances> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeInsurances.class);
+		RowMapper<FinTypeInsurances> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeInsurances.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

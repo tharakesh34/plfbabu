@@ -31,11 +31,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.commodity.CommodityInventoryDAO;
 import com.pennant.backend.model.commodity.CommodityInventory;
@@ -89,8 +89,7 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
-		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CommodityInventory.class);
+		RowMapper<CommodityInventory> typeRowMapper = BeanPropertyRowMapper.newInstance(CommodityInventory.class);
 
 		try {
 			commodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -259,8 +258,7 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCommodityInventory);
-		RowMapper<FinCommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCommodityInventory.class);
+		RowMapper<FinCommodityInventory> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCommodityInventory.class);
 
 		List<FinCommodityInventory> finCommInventoryList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -317,8 +315,7 @@ public class CommodityInventoryDAOImpl extends SequenceDao<CommodityInventory> i
 		selectSql.append(" From FCMTCommodityInventory");
 		selectSql.append("  Where   HoldCertificateNo=:HoldCertificateNo AND  BrokerCode=:BrokerCode ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commodityInventory);
-		RowMapper<CommodityInventory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CommodityInventory.class);
+		RowMapper<CommodityInventory> typeRowMapper = BeanPropertyRowMapper.newInstance(CommodityInventory.class);
 		try {
 			commodityInventory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

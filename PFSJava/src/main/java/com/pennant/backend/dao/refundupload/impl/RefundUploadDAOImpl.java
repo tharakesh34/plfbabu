@@ -49,11 +49,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.refundupload.RefundUploadDAO;
 import com.pennant.backend.model.refundupload.RefundUpload;
@@ -104,7 +104,7 @@ public class RefundUploadDAOImpl extends SequenceDao<RefundUpload> implements Re
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(refundupload);
-		RowMapper<RefundUpload> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RefundUpload.class);
+		RowMapper<RefundUpload> typeRowMapper = BeanPropertyRowMapper.newInstance(RefundUpload.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

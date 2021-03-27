@@ -10,12 +10,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -263,7 +263,7 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<CollectionCustomerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<CollectionCustomerDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(CollectionCustomerDetail.class);
 
 		try {
@@ -293,7 +293,7 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
 		List<CustomerAddres> customerAddresses = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		logger.debug(Literal.LEAVING);

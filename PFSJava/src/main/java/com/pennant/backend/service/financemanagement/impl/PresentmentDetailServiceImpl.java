@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -1096,7 +1095,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public List<Long> getExcludeList(long id) {
 		return this.presentmentDetailDAO.getExcludeList(id);
 	}
-	
+
 	@Override
 	public void updatePresentmentDetail(String batchId, String pexcSuccess) {
 		presentmentDetailDAO.updatePresentmentDetail(batchId, pexcSuccess);
@@ -1106,12 +1105,12 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public String getPresementStatus(String presentmentRef) {
 		return presentmentDetailDAO.getPresementStatus(presentmentRef);
 	}
-	
+
 	@Override
 	public long getPresentmentId(String presentmentRef) {
 		return presentmentDetailDAO.getPresentmentId(presentmentRef);
 	}
-	
+
 	@Override
 	public void updatePresentmentDetail(String presentmentRef, String status, Long linkedTranId) {
 		presentmentDetailDAO.updatePresentmentDetail(presentmentRef, status, linkedTranId);
@@ -1125,5 +1124,4 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	
 }

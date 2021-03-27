@@ -50,10 +50,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.cashmanagement.BranchCashDetailDAO;
@@ -97,7 +97,7 @@ public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implemen
 		branchCashDetail.setBranchCode(branchCode);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(branchCashDetail);
-		RowMapper<BranchCashDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BranchCashDetail.class);
+		RowMapper<BranchCashDetail> rowMapper = BeanPropertyRowMapper.newInstance(BranchCashDetail.class);
 
 		try {
 			branchCashDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

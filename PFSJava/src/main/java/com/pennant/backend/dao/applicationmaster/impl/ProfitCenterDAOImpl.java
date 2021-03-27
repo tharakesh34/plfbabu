@@ -47,11 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ProfitCenterDAO;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
@@ -93,7 +93,7 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 		profitCenter.setProfitCenterID(profitCenterID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(profitCenter);
-		RowMapper<ProfitCenter> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProfitCenter.class);
+		RowMapper<ProfitCenter> rowMapper = BeanPropertyRowMapper.newInstance(ProfitCenter.class);
 
 		try {
 			profitCenter = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

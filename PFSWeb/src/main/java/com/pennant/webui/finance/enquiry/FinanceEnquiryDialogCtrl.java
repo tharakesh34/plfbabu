@@ -1220,7 +1220,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
-			} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+			} else if (aFinanceMain.isWriteoffLoan()) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
 			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Settled"));

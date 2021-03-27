@@ -6,11 +6,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.QualificationDAO;
 import com.pennant.backend.model.systemmasters.Qualification;
@@ -52,7 +52,7 @@ public class QualificationDAOImpl extends BasicDao<Qualification> implements Qua
 		Qualification qualification = new Qualification();
 		qualification.setId(id);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(qualification);
-		RowMapper<Qualification> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Qualification.class);
+		RowMapper<Qualification> typeRowMapper = BeanPropertyRowMapper.newInstance(Qualification.class);
 
 		try {
 			qualification = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

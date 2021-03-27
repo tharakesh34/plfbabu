@@ -51,7 +51,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.CollateralHeaderDialogCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -1281,7 +1280,8 @@ public class LegalVettingInitiationCtrl extends GFCBaseCtrl<Verification> {
 				return false;
 			}
 
-			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave && ImplementationConstants.ALW_VERIFICATION_SYNC) {
+			if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
+					&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
 				LegalVetting legalVetting = new LegalVetting();
 				legalVetting.setVerificationId(verification.getId());
 				legalVetting = legalVettingService.getLegalVetting(legalVetting, "_View");

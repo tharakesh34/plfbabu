@@ -250,7 +250,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
-		
+
 		Filter[] reasonFilter = new Filter[1];
 		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
 			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
@@ -258,7 +258,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
 		}
 		reason.setFilters(reasonFilter);
-		
+
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(50);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());

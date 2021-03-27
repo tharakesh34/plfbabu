@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.IndustryDAO;
 import com.pennant.backend.model.systemmasters.Industry;
@@ -103,7 +103,7 @@ public class IndustryDAOImpl extends BasicDao<Industry> implements IndustryDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(industry);
-		RowMapper<Industry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Industry.class);
+		RowMapper<Industry> typeRowMapper = BeanPropertyRowMapper.newInstance(Industry.class);
 
 		try {
 			industry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

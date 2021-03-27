@@ -51,11 +51,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ClusterDAO;
 import com.pennant.backend.model.applicationmaster.Cluster;
@@ -99,7 +99,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 		cluster.setId(Id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(cluster);
-		RowMapper<Cluster> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Cluster.class);
+		RowMapper<Cluster> rowMapper = BeanPropertyRowMapper.newInstance(Cluster.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -124,7 +124,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("entity", entity);
 
-		RowMapper<Cluster> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Cluster.class);
+		RowMapper<Cluster> rowMapper = BeanPropertyRowMapper.newInstance(Cluster.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramMap, rowMapper);
@@ -297,7 +297,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("entity", entity);
 
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), source, rowMapper);

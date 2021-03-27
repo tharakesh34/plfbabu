@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.dao.ext.dms.DMSGetLeadsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -35,7 +34,6 @@ import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.others.JVPostingService;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.MiscellaneousServiceController;
 import com.pennanttech.model.dms.DMSLeadDetails;

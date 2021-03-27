@@ -57,13 +57,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.model.limit.LimitDetails;
@@ -120,7 +120,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 
 		List<LimitDetails> detailsList = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
@@ -154,7 +154,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 
 		List<LimitDetails> detailsList = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		logger.debug(Literal.LEAVING);
@@ -451,7 +451,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		selectSql.append(" from LimitLines_view where LimitHeaderId=:HeaderId and SqlRule is not null");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 		logger.debug("Leaving");
 		List<LimitDetails> limitDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		return limitDetailsList;
@@ -479,7 +479,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("GroupCodes", groupcode);
 		source.addValue("LimitHeaderId", headerId);
 
-		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 
 		logger.debug(Literal.LEAVING);
 
@@ -499,7 +499,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("LimitHeaderId", headeId);
 
-		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 
 	}
@@ -568,7 +568,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 
 		try {
 			limitDetail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -623,7 +623,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("HeaderId", headerId);
 
-		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
+		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}

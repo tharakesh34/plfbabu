@@ -48,11 +48,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ReinstateFinanceDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -138,8 +138,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reinstateFinance);
-		RowMapper<ReinstateFinance> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ReinstateFinance.class);
+		RowMapper<ReinstateFinance> typeRowMapper = BeanPropertyRowMapper.newInstance(ReinstateFinance.class);
 
 		try {
 			reinstateFinance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -179,7 +178,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 				" LEFT JOIN REASONHEADER T9 ON T9.ID=T8.ID AND T9.REFERENCE = T1.FINREFERENCE Where FinReference = :FinReference");
 
 		SqlParameterSource sqlParameterSource = new BeanPropertySqlParameterSource(reinstateFinance);
-		RowMapper<ReinstateFinance> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReinstateFinance.class);
+		RowMapper<ReinstateFinance> rowMapper = BeanPropertyRowMapper.newInstance(ReinstateFinance.class);
 
 		logger.debug("Leaving");
 		try {
@@ -358,7 +357,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
 			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

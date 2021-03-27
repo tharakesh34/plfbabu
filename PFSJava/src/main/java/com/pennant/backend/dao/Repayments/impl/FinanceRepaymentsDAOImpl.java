@@ -61,13 +61,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -592,8 +592,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scheduleDetail);
-		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RepayScheduleDetail.class);
+		RowMapper<RepayScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(RepayScheduleDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -881,8 +880,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		selectSql.append("  where FinReference=:FinReference and ReceiptId In (:ReceiptList) group by Finschddate");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceRepayments> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceRepayments.class);
+		RowMapper<FinanceRepayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceRepayments.class);
 
 		logger.debug("Leaving");
 		repaymentList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);

@@ -50,10 +50,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
@@ -126,7 +126,7 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccount);
-		RowMapper<FinTypeAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccount.class);
+		RowMapper<FinTypeAccount> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccount.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -159,7 +159,7 @@ public class FinTypeAccountDAOImpl extends BasicDao<FinTypeAccount> implements F
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccount);
-		RowMapper<FinTypeAccount> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeAccount.class);
+		RowMapper<FinTypeAccount> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccount.class);
 
 		try {
 			finTypeAccount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

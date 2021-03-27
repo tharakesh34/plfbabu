@@ -6,10 +6,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.model.finance.TATDetail;
@@ -42,7 +42,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 			selectSql.append("group by Reference,RoleCode)T2 ON T1.Reference =T2.Reference ");
 			selectSql.append("and T1.RoleCode =T2.RoleCode and T1.SerialNo =T2.SerialNo");
 
-			RowMapper<TATDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TATDetail.class);
+			RowMapper<TATDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(TATDetail.class);
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 			logger.debug("selectSql: " + selectSql.toString());
 
@@ -67,7 +67,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 		selectSql.append(" Where TATEndTime IS NULL ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(tatDetail);
-		RowMapper<TATDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TATDetail.class);
+		RowMapper<TATDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(TATDetail.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
@@ -140,8 +140,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 				"SELECT module, reference, count, RoleCode From TATNotificationLog");
 		selectSql.append(" Where module = :Module and Reference=:Reference AND RoleCode=:RoleCode");
 
-		RowMapper<TATNotificationLog> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TATNotificationLog.class);
+		RowMapper<TATNotificationLog> typeRowMapper = BeanPropertyRowMapper.newInstance(TATNotificationLog.class);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
@@ -166,8 +165,7 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 				"SELECT TATNotificationId, TATNotificationDesc, Time From TATNotificationCodes");
 		selectSql.append(" Where TATNotificationCode =:TatNotificationCode ");
 
-		RowMapper<TATNotificationCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TATNotificationCode.class);
+		RowMapper<TATNotificationCode> typeRowMapper = BeanPropertyRowMapper.newInstance(TATNotificationCode.class);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationCode);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {

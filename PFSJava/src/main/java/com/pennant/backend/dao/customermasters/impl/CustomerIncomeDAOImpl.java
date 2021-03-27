@@ -50,12 +50,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -143,7 +143,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 		logger.trace(Literal.SQL + query.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIncome);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		try {
 			customerIncome = this.jdbcTemplate.queryForObject(query.toString(), beanParameters, typeRowMapper);
@@ -326,7 +326,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("finreference", finReference);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		logger.debug(Literal.LEAVING);
 
@@ -350,7 +350,7 @@ public class CustomerIncomeDAOImpl extends SequenceDao<CustomerIncome> implement
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("samplingid", samplingId);
-		RowMapper<CustomerIncome> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		logger.debug(Literal.LEAVING);
 

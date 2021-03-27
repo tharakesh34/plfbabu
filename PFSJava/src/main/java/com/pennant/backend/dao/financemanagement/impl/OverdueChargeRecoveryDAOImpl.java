@@ -57,11 +57,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -151,8 +151,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		try {
 			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -194,8 +193,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(odcRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		List<OverdueChargeRecovery> odcRecoveries = null;
 
@@ -238,8 +236,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		try {
 			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -449,8 +446,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		try {
 			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -611,8 +607,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		try {
 			overdueChargeRecovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -645,8 +640,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		List<OverdueChargeRecovery> recList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -691,8 +685,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueChargeRecovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		List<OverdueChargeRecovery> recList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -725,8 +718,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		try {
 			recovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -763,8 +755,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recovery);
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 
 		try {
 			recovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -832,8 +823,7 @@ public class OverdueChargeRecoveryDAOImpl extends BasicDao<OverdueChargeRecovery
 		selectSql.append(" WHERE FinReference ='" + ocr.getFinReference() + "'");
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<OverdueChargeRecovery> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OverdueChargeRecovery.class);
+		RowMapper<OverdueChargeRecovery> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueChargeRecovery.class);
 		try {
 			recovery = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 			ocr.setLovDescCurSchPriDue(recovery.getLovDescCurSchPriDue());

@@ -53,10 +53,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.model.finance.FinStatusDetail;
@@ -120,8 +120,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		RowMapper<FinanceSuspHead> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceSuspHead.class);
+		RowMapper<FinanceSuspHead> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceSuspHead.class);
 
 		try {
 			financeSuspHead = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -319,8 +318,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspDetails);
-		RowMapper<FinanceSuspDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceSuspDetails.class);
+		RowMapper<FinanceSuspDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceSuspDetails.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -340,8 +338,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinStatusDetail.class);
+		RowMapper<FinStatusDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinStatusDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

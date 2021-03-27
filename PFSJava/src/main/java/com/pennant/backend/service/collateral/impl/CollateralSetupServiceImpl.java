@@ -542,17 +542,16 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender.setRecordStatus(
-						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordStatus")));
-				extFieldMap.remove("RecordStatus");
 				extendedFieldRender
-						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RoleCode")));
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extFieldMap.remove("RecordStatus");
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
 				extFieldMap.remove("RoleCode");
-				extendedFieldRender.setNextRoleCode(
-						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextRoleCode")));
+				extendedFieldRender
+						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));
@@ -2891,13 +2890,11 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 					: String.valueOf(extFieldMap.get("TaskId")));
 			extFieldMap.remove("TaskId");
-			extendedFieldRender
-					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
-							: String.valueOf(extFieldMap.get("NextTaskId")));
+			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
+					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
 			extFieldMap.remove("NextTaskId");
-			extendedFieldRender
-					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
-							: String.valueOf(extFieldMap.get("RecordType")));
+			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
+					? "" : String.valueOf(extFieldMap.get("RecordType")));
 			extFieldMap.remove("RecordType");
 			extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 			extFieldMap.remove("WorkflowId");
@@ -3299,17 +3296,16 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender.setRecordStatus(
-						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordStatus")));
-				extFieldMap.remove("RecordStatus");
 				extendedFieldRender
-						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RoleCode")));
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extFieldMap.remove("RecordStatus");
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
 				extFieldMap.remove("RoleCode");
-				extendedFieldRender.setNextRoleCode(
-						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextRoleCode")));
+				extendedFieldRender
+						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));
@@ -3393,17 +3389,16 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				extFieldMap.remove("LastMntOn");
 				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				extendedFieldRender.setRecordStatus(
-						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordStatus")));
-				extFieldMap.remove("RecordStatus");
 				extendedFieldRender
-						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RoleCode")));
+						.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordStatus")));
+				extFieldMap.remove("RecordStatus");
+				extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null")
+						? "" : String.valueOf(extFieldMap.get("RoleCode")));
 				extFieldMap.remove("RoleCode");
-				extendedFieldRender.setNextRoleCode(
-						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextRoleCode")));
+				extendedFieldRender
+						.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextRoleCode")));
 				extFieldMap.remove("NextRoleCode");
 				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 						: String.valueOf(extFieldMap.get("TaskId")));

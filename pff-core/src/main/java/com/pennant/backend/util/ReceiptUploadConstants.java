@@ -42,7 +42,22 @@ public class ReceiptUploadConstants {
 		super();
 	}
 
-	//active and inactive
+	public enum ReceiptDetailStatus {
+		DEFAULT(0), INPROGRESS(1), SUCCESS(2), FAILED(3);
+
+		int status;
+
+		private ReceiptDetailStatus(int status) {
+			this.status = status;
+		}
+
+		public int getValue() {
+			return this.status;
+		}
+
+	}
+
+	// active and inactive
 	public static final boolean ACTIVE = true;
 	public static final boolean INACTIVE = false;
 
@@ -50,12 +65,15 @@ public class ReceiptUploadConstants {
 	public static final int RECEIPT_DOWNLOADED = 1;
 	public static final int RECEIPT_APPROVED = 2;
 	public static final int RECEIPT_REJECTED = 3;
+	public static final int RECEIPT_IMPORTINPROCESS = 4;
+	public static final int RECEIPT_IMPORTED = 5;
+	public static final int RECEIPT_INPROCESS = 6;
+	public static final int RECEIPT_PROCESSFAILED = 7;
 
 	// Configured in amz-batch-config.xml file
 	public static final String RU_JOB_NAME = "plfRUJob";
 	public static final String RU_JOB_PARAM = "RU";
 	public static final String RECEIPTUPLOAD_ID = "ReceiptUploadId";
-	public static final String RU_THREAD_COUNT = "RU_THREAD_COUNT";
 	public static final String MULTI_REC_THREAD_COUNT = "MULTI_REC_THREAD_COUNT";
 	public static final String THREAD_RU = "PFSRU";
 	public static final String DATA_RUCOUNT = "RUCount";
@@ -63,12 +81,15 @@ public class ReceiptUploadConstants {
 	public static final int PROGRESS_WAIT = 0;
 	public static final int PROGRESS_SUCCESS = 2;
 
-	//upload
+	// upload
 	public static final String RU_ES_API = "finInstructionRest/loanInstructionService/earlySettlement";
 	public static final String RU_SP_API = "finInstructionRest/loanInstructionService/manualPayment";
 	public static final String RU_EP_API = "finInstructionRest/loanInstructionService/partialSettlement";
 
-	//sys parm meters
+	// sys parm meters
 	public static final String RU_API_URL = "RECEIPTAPIURL";
+
+	public static final int ATTEMPSTATUS_INPROCESS = 1;
+	public static final int ATTEMPSTATUS_DONE = 2;
 
 }

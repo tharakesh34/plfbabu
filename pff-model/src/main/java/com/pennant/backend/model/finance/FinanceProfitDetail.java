@@ -219,6 +219,9 @@ public class FinanceProfitDetail implements Serializable {
 
 	// IND AS Amortization
 	private String aMZMethod;
+	private boolean writeoffLoan = false;
+
+	private int extODDays = 0;
 
 	private EventProperties eventProperties = new EventProperties();
 
@@ -1862,5 +1865,21 @@ public class FinanceProfitDetail implements Serializable {
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public boolean isWriteoffLoan() {
+		return writeoffLoan;
+	}
+
+	public void setWriteoffLoan(boolean writeoffLoan) {
+		this.writeoffLoan = writeoffLoan;
+	}
+
+	public int getExtODDays() {
+		return extODDays;
+	}
+
+	public void setExtODDays(int extODDays) {
+		this.extODDays = extODDays;
 	}
 }

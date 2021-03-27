@@ -50,11 +50,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
@@ -131,8 +131,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeAccounting.class);
+		RowMapper<FinTypeAccounting> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -150,8 +149,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeAccounting.class);
+		RowMapper<FinTypeAccounting> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -183,8 +181,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeAccounting.class);
+		RowMapper<FinTypeAccounting> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 
 		try {
 			finTypeAccounting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -448,8 +445,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 				" Where ReferenceId = :ReferenceId And FinType = :FinType And Event = :Event And ModuleId = :ModuleId");
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeAccounting);
-		RowMapper<FinTypeAccounting> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeAccounting.class);
+		RowMapper<FinTypeAccounting> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeAccounting.class);
 
 		try {
 			finTypeAccounting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

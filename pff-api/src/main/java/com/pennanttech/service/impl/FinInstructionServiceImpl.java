@@ -908,12 +908,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
-		
+
 		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
 		List<FinFeeDetail> feeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		
+
 		List<FinFeeDetail> newList = new ArrayList<>();
-		for (FinFeeDetail fd :feeDetailList) {
+		for (FinFeeDetail fd : feeDetailList) {
 			if (!fd.isOriginationFee()) {
 				newList.add(fd);
 			}

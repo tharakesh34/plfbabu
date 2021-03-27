@@ -31,10 +31,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.FacilityDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -126,7 +126,7 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
-		RowMapper<FacilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityDetail.class);
+		RowMapper<FacilityDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FacilityDetail.class);
 
 		try {
 			facilityDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -296,7 +296,7 @@ public class FacilityDetailDAOImpl extends BasicDao<FacilityDetail> implements F
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityDetail);
-		RowMapper<FacilityDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FacilityDetail.class);
+		RowMapper<FacilityDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FacilityDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

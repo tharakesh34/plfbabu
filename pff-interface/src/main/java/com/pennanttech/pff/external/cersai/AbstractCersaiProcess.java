@@ -7,9 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.media.Media;
 
 import com.pennant.app.util.SysParamUtil;
@@ -20,7 +20,6 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.CersaiProcess;
-
 
 public class AbstractCersaiProcess extends AbstractInterface implements CersaiProcess {
 	protected final Logger logger = LogManager.getLogger(getClass());
@@ -60,7 +59,7 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 				break;
 			}
 		} while ("S".equals(CERSAI_IMPORT.getStatus()) || "F".equals(CERSAI_IMPORT.getStatus()));
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -79,7 +78,7 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("RESP_BATCH_ID", respBatchId);
 
-		rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Cersai.class);
+		rowMapper = BeanPropertyRowMapper.newInstance(Cersai.class);
 		cersaiList = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 
 		if (cersaiList == null || cersaiList.isEmpty()) {
@@ -88,16 +87,16 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 
 		try {
 			for (Cersai respCersai : cersaiList) {
-				
-				CollateralAssignment assignment = getCollateralAssignment(respCersai.getLOAN_REFERENCE_NUMBER(), 
+
+				CollateralAssignment assignment = getCollateralAssignment(respCersai.getLOAN_REFERENCE_NUMBER(),
 						respCersai.getCOLLATERAL_REFERENCE_NUMBER());
-				
+
 				boolean isSuccess = true;
 				if (assignment == null) {
 					respCersai.setREMARKS("Assignment not exist.");
 					respCersai.setSTATUS("F");
 					isSuccess = false;
-				} else if(StringUtils.isNotBlank(assignment.getHostReference())){
+				} else if (StringUtils.isNotBlank(assignment.getHostReference())) {
 					respCersai.setREMARKS("CERSAI ID already exists.");
 					respCersai.setSTATUS("F");
 					isSuccess = false;
@@ -106,11 +105,11 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 				}
 
 				// Update Status of CERSAI Record
-				if(isSuccess){
+				if (isSuccess) {
 					assignment.setHostReference(respCersai.getCERSAI_ASSET_ID());
 					updateAssignmentCersai(assignment);
 				}
-				
+
 				// CERSAI Response Update
 				updateCersaiResp(respCersai);
 			}
@@ -122,6 +121,7 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 
 	/**
 	 * Method for Fetching Collateral Assignment Info against Loan
+	 * 
 	 * @param finReference
 	 * @param collateralRef
 	 * @return
@@ -132,28 +132,26 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(
-				" SELECT Reference, CollateralRef, HostReference ");
+		sql.append(" SELECT Reference, CollateralRef, HostReference ");
 		sql.append(" From CollateralAssignment ");
 		sql.append(" Where Reference =:Reference and CollateralRef=:CollateralRef ");
 		source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 		source.addValue("Reference", finReference);
 
-		RowMapper<CollateralAssignment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CollateralAssignment.class);
+		RowMapper<CollateralAssignment> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralAssignment.class);
 		CollateralAssignment assignment = null;
 		try {
 			assignment = this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
-			assignment= null;
+			assignment = null;
 		}
 
 		logger.debug(Literal.LEAVING);
 		return assignment;
 	}
 
-	
 	private void updateCersaiResp(Cersai respCersai) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -187,7 +185,7 @@ public class AbstractCersaiProcess extends AbstractInterface implements CersaiPr
 		sql.append(" Update CollateralAssignment ");
 		sql.append(" Set HostReference = :HostReference ");
 		sql.append(" Where Reference =:Reference and CollateralRef=:CollateralRef ");
-		
+
 		paramMap.addValue("Reference", assignment.getReference());
 		paramMap.addValue("CollateralRef", assignment.getCollateralRef());
 		paramMap.addValue("HostReference", assignment.getHostReference());

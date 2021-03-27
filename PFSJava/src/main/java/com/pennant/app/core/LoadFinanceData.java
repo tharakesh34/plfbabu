@@ -447,7 +447,9 @@ public class LoadFinanceData extends ServiceHelper {
 			int count = financeDisbursementDAO.updateBatchDisb(disbList, "");
 			logger.info("{}  DisbursementDetails updated.", count);
 
-			returnDataSets.addAll(finEODEvent.getReturnDataSet());
+			if (!fm.isWriteoffLoan()) {
+				returnDataSets.addAll(finEODEvent.getReturnDataSet());
+			}
 		}
 
 		logger.info("Saving Projected Accruals Started...");

@@ -50,10 +50,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.eodsnapshot.SnapShotConditionsDAO;
 import com.pennant.backend.model.eodsnapshot.SnapShotCondition;
@@ -96,8 +96,7 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 		snapShotConditions.setExecutionOrder(executionOrder);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
-		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SnapShotCondition.class);
+		RowMapper<SnapShotCondition> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotCondition.class);
 
 		try {
 			snapShotConditions = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -213,8 +212,7 @@ public class SnapShotConditionsDAOImpl extends BasicDao<SnapShotCondition> imple
 		snapShotConditions.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConditions);
-		RowMapper<SnapShotCondition> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SnapShotCondition.class);
+		RowMapper<SnapShotCondition> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotCondition.class);
 
 		try {
 			conditions = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

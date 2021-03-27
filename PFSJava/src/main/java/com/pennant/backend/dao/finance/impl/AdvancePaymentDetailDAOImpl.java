@@ -46,11 +46,11 @@ package com.pennant.backend.dao.finance.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.AdvancePaymentDetailDAO;
 import com.pennant.backend.model.finance.AdvancePaymentDetail;
@@ -82,8 +82,7 @@ public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> 
 		paramMap.addValue("FinReference", finReference);
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<AdvancePaymentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AdvancePaymentDetail.class);
+		RowMapper<AdvancePaymentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(AdvancePaymentDetail.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, typeRowMapper);

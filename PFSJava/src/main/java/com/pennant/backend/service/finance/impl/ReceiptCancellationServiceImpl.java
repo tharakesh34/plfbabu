@@ -1056,7 +1056,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		long linkedTranID = 0;
 		FeeType penalityFeeType = null;
 
-		if (!ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+		if (!ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 			List<ReturnDataSet> returnDataSets = null;
 			returnDataSets = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId);
 			if (CollectionUtils.isNotEmpty(returnDataSets)) {
@@ -1887,6 +1887,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 					financeMain.setFinIsActive(true);
 					financeMain.setClosingStatus(null);
+					financeMain.setWriteoffLoan(financeMain.isWriteoffLoan());
 
 					financeMainDAO.updateRepaymentAmount(financeMain);
 				}

@@ -919,7 +919,7 @@ public class FinStatementController extends SummaryDetailService {
 			return stmtResponse;
 		}
 	}
-	
+
 	private String getAddress(String seperator, String... values) {
 		StringBuilder builder = new StringBuilder();
 
@@ -1003,12 +1003,11 @@ public class FinStatementController extends SummaryDetailService {
 				}
 			}
 		}
-		
-		
+
 		String address = getAddress("\n", intCert.getCustAddrHnbr(), intCert.getCustFlatNbr(),
 				intCert.getCustAddrStreet(), intCert.getCustAddrCity(), intCert.getCustAddrState(),
 				intCert.getCustAddrZIP(), intCert.getCountryDesc());
-		
+
 		String certType = statementRequest.getType();
 		if (APIConstants.STMT_PROV_INST_CERT_REPORT.equals(certType)) {
 			address = getAddress("\n", address, intCert.getCustEmail(), intCert.getCustPhoneNumber());

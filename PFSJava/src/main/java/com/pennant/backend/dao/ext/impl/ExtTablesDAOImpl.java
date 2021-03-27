@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,7 +16,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.ext.ExtTablesDAO;
 import com.pennant.backend.model.finance.ExtTable;
@@ -38,7 +38,7 @@ public class ExtTablesDAOImpl extends BasicDao<ExtTable> implements ExtTablesDAO
 		selectSql.append(" From AHB_L_AUTOHUNT_UPD where Processed=0 ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(autoHunting);
-		RowMapper<ExtTable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExtTable.class);
+		RowMapper<ExtTable> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtTable.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

@@ -244,6 +244,13 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal vasInstAmt = BigDecimal.ZERO;
 	private BigDecimal manualTds = BigDecimal.ZERO;
 
+	private boolean isWriteOff = false;
+	private BigDecimal prvMntAmz = BigDecimal.ZERO;
+
+	//Od Details 
+	private BigDecimal odPri = BigDecimal.ZERO;
+	private BigDecimal odPft = BigDecimal.ZERO;
+
 	public AEAmountCodes() {
 		super();
 	}
@@ -441,6 +448,8 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_pastCpzChg", this.pastCpzChg);
 		map.put("ae_oemSbvAmount", this.oemSbvAmount);
 		map.put("ae_advInst", this.advInst);
+		map.put("ae_odPft", this.odPft);
+		map.put("ae_odPri", this.odPri);
 
 		return map;
 	}
@@ -1932,13 +1941,45 @@ public class AEAmountCodes implements Serializable {
 	public void setPrvMthAcr(BigDecimal prvMthAcr) {
 		this.prvMthAcr = prvMthAcr;
 	}
-	
+
 	public BigDecimal getManualTds() {
 		return manualTds;
 	}
 
 	public void setManualTds(BigDecimal manualTds) {
 		this.manualTds = manualTds;
+	}
+
+	public boolean isWriteOff() {
+		return isWriteOff;
+	}
+
+	public void setWriteOff(boolean isWriteOff) {
+		this.isWriteOff = isWriteOff;
+	}
+
+	public BigDecimal getPrvMntAmz() {
+		return prvMntAmz;
+	}
+
+	public void setPrvMntAmz(BigDecimal prvMntAmz) {
+		this.prvMntAmz = prvMntAmz;
+	}
+
+	public BigDecimal getOdPri() {
+		return odPri;
+	}
+
+	public void setOdPri(BigDecimal odPri) {
+		this.odPri = odPri;
+	}
+
+	public BigDecimal getOdPft() {
+		return odPft;
+	}
+
+	public void setOdPft(BigDecimal odPft) {
+		this.odPft = odPft;
 	}
 
 }

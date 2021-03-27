@@ -61,13 +61,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
@@ -108,7 +108,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		parameterSource.addValue("FinReference", finReference);
 		parameterSource.addValue("FinODSchdDate", schdDate);
 
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			logger.debug(Literal.LEAVING);
@@ -432,7 +432,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			finODDetails = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -465,7 +465,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("FinReference", finReference);
@@ -765,7 +765,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			finODDetails = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -887,7 +887,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			finODDetails = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -1036,7 +1036,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -1360,7 +1360,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custId);
 
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1428,7 +1428,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		//FinODDetails finODDetails = null;
 
@@ -1439,6 +1439,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		return finODDetails;
 	}
+
 	public static List<FinODDetails> sort(List<FinODDetails> odDetails) {
 		if (odDetails != null && odDetails.size() > 0) {
 			Collections.sort(odDetails, new Comparator<FinODDetails>() {

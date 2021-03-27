@@ -47,11 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRCodeDAO;
 import com.pennant.backend.model.applicationmaster.IRRCode;
@@ -92,7 +92,7 @@ public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 		iRRCode.setIRRID(iRRID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRCode);
-		RowMapper<IRRCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRCode.class);
+		RowMapper<IRRCode> rowMapper = BeanPropertyRowMapper.newInstance(IRRCode.class);
 
 		try {
 			iRRCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

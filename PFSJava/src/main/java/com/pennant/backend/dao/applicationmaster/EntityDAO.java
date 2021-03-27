@@ -68,7 +68,7 @@ public interface EntityDAO extends BasicCrudDao<Entity> {
 	Entity getEntityByFinDivision(String divisionCode, String type);
 
 	Entity getEntityByFinType(String finType, String type);
-	
+
 	List<Entity> getEntites();
 
 }

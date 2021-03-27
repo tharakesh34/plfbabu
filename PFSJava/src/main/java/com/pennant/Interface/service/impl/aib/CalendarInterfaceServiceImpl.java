@@ -19,7 +19,6 @@ import com.pennant.backend.dao.smtmasters.HolidayMasterDAO;
 import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennant.backend.model.smtmasters.WeekendMaster;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.process.DateRollOverProcess;
 import com.pennanttech.pennapps.core.InterfaceException;
 

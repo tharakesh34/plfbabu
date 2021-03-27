@@ -32,10 +32,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -124,8 +124,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		RowMapper<GuarantorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(GuarantorDetail.class);
+		RowMapper<GuarantorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(GuarantorDetail.class);
 
 		try {
 			guarantorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -293,8 +292,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		RowMapper<GuarantorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(GuarantorDetail.class);
+		RowMapper<GuarantorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(GuarantorDetail.class);
 
 		try {
 			guarantorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -412,8 +410,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		selectSql.append(" Where GuarantorId =:GuarantorId");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		RowMapper<GuarantorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(GuarantorDetail.class);
+		RowMapper<GuarantorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(GuarantorDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -442,7 +439,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -481,7 +478,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -520,7 +517,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(guarantorDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -550,7 +547,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(exposer);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {

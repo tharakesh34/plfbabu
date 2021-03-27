@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.VehicleManufacturerDAO;
 import com.pennant.backend.model.amtmasters.VehicleManufacturer;
@@ -92,8 +92,7 @@ public class VehicleManufacturerDAOImpl extends SequenceDao<VehicleManufacturer>
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleManufacturer);
-		RowMapper<VehicleManufacturer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VehicleManufacturer.class);
+		RowMapper<VehicleManufacturer> typeRowMapper = BeanPropertyRowMapper.newInstance(VehicleManufacturer.class);
 
 		try {
 			vehicleManufacturer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -134,4 +134,6 @@ public interface FinanceProfitDetailDAO {
 	void updateAMZMethod(String finReference, String amzMethod);
 
 	void updateSchPaid(FinanceProfitDetail profitDetail);
+
+	void UpdateClosingSts(String finReference, boolean writeoffLoan);
 }

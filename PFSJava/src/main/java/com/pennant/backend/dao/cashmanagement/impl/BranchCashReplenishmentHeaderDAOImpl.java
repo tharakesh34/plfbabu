@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.cashmanagement.BranchCashReplenishmentHeaderDAO;
 import com.pennant.backend.model.cashmanagement.BranchCashReplenishmentHeader;
@@ -121,7 +121,7 @@ public class BranchCashReplenishmentHeaderDAOImpl extends SequenceDao<BranchCash
 		}
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(header);
-		RowMapper<BranchCashReplenishmentHeader> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<BranchCashReplenishmentHeader> rowMapper = BeanPropertyRowMapper
 				.newInstance(BranchCashReplenishmentHeader.class);
 
 		try {
@@ -155,7 +155,7 @@ public class BranchCashReplenishmentHeaderDAOImpl extends SequenceDao<BranchCash
 		header.setUploadStatus(CashManagementConstants.FILE_STATUS_ERROR); //Status is Error
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(header);
-		RowMapper<BranchCashReplenishmentHeader> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<BranchCashReplenishmentHeader> rowMapper = BeanPropertyRowMapper
 				.newInstance(BranchCashReplenishmentHeader.class);
 		list = jdbcTemplate.query(selectSql.toString(), paramSource, rowMapper);
 

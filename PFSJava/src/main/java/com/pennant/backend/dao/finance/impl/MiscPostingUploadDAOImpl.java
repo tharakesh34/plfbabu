@@ -6,12 +6,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.MiscPostingUploadDAO;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
@@ -56,8 +56,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(miscPostingUpload);
-		RowMapper<MiscPostingUpload> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(MiscPostingUpload.class);
+		RowMapper<MiscPostingUpload> typeRowMapper = BeanPropertyRowMapper.newInstance(MiscPostingUpload.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
@@ -243,8 +242,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(miscPostingUpload);
-		RowMapper<MiscPostingUpload> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(MiscPostingUpload.class);
+		RowMapper<MiscPostingUpload> typeRowMapper = BeanPropertyRowMapper.newInstance(MiscPostingUpload.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

@@ -96,6 +96,11 @@ public class AccrualService extends ServiceHelper {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
+			// Ignore ACCRUAL calculation when loan is WriteOff
+			if (finEODEvent.getFinanceMain().isWriteoffLoan()) {
+				continue;
+			}
+
 			finEODEvent = calculateAccruals(finEODEvent, custEODEvent);
 		}
 	}
@@ -518,7 +523,7 @@ public class AccrualService extends ServiceHelper {
 					}
 
 					//First Repayments Date and Amount
-					if (schd.getSchDate().compareTo(pfd.getFinStartDate()) > 0) {
+					if (DateUtil.compare(schd.getSchDate(), pfd.getFinStartDate()) > 0) {
 						if (DateUtil.compare(pfd.getFirstRepayDate(), pfd.getFinStartDate()) == 0) {
 							pfd.setFirstRepayDate(schd.getSchDate());
 							pfd.setFirstRepayAmt(schd.getPrincipalSchd().add(schd.getProfitSchd()));

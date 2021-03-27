@@ -1463,13 +1463,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (aMandate.isNew()) {
 			Date appDate = SysParamUtil.getAppDate();
 			Date sysDate = DateUtil.getSysDate();
-			
+
 			if (DateUtil.compare(appDate, sysDate) == 0) {
 				this.inputDate.setValue(sysDate);
 			} else {
 				this.inputDate.setValue(appDate);
 			}
-			
+
 			this.active.setChecked(true);
 		} else {
 			this.inputDate.setValue(aMandate.getInputDate());
@@ -2836,28 +2836,27 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * This method will set the customer filters
 	 */
 	public void doSetCustomerFilters() {
-			ArrayList<String> custCIFs = new ArrayList<>(2);
-			if (getMandate() != null) {
-				custCIFs.add(getMandate().getCustCIF());
-			}
-			//Inside loan queue
-			if (getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
-				//Get coapplicant CIF's
-				JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl())
-						.getJointAccountDetailDialogCtrl();
-				if (financeJointAccountDetailDialogCtrl != null) {
-					List<Customer> jointAccountCustomers = financeJointAccountDetailDialogCtrl
-							.getJointAccountCustomers();
-					for (Customer customer : jointAccountCustomers) {
-						custCIFs.add(customer.getCustCIF());
-					}
+		ArrayList<String> custCIFs = new ArrayList<>(2);
+		if (getMandate() != null) {
+			custCIFs.add(getMandate().getCustCIF());
+		}
+		//Inside loan queue
+		if (getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
+			//Get coapplicant CIF's
+			JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl())
+					.getJointAccountDetailDialogCtrl();
+			if (financeJointAccountDetailDialogCtrl != null) {
+				List<Customer> jointAccountCustomers = financeJointAccountDetailDialogCtrl.getJointAccountCustomers();
+				for (Customer customer : jointAccountCustomers) {
+					custCIFs.add(customer.getCustCIF());
 				}
 			}
-			//primary customer
-			custCIFs.add(getCIFForCustomer(financeDetail));
-			Filter[] filter = new Filter[1];
-			filter[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
-			this.custID.setFilters(filter);
+		}
+		//primary customer
+		custCIFs.add(getCIFForCustomer(financeDetail));
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
+		this.custID.setFilters(filter);
 	}
 
 	// ******************************************************//

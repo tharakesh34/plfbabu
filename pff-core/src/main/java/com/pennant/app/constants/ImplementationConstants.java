@@ -207,7 +207,7 @@ public class ImplementationConstants {
 		DEFAULT_PRESENTMENT_UPLOAD = getValueAsBoolean(extensions, "DEFAULT_PRESENTMENT_UPLOAD", true);
 		DISB_PAID_CANCELLATION_ALLOW = getValueAsBoolean(extensions, "DISB_PAID_CANCELLATION_ALLOW", false);
 		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean(extensions, "MANDATE_PTNRBNK_IN_DWNLD", false);
-		ALLOW_PRESENTMENT_STAGE_ACCOUNTING = getValueAsBoolean(extensions, "ALLOW_PRESENTMENT_STAGE_ACCOUNTING", false);
+		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean(extensions, "PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
 		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean(extensions, "ALLOW_LOAN_VAS_RATIO_CALC", false);
 		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean(extensions, "ALLOW_ED_FIELDS_IN_NPA", false);
 		/*
@@ -266,7 +266,7 @@ public class ImplementationConstants {
 		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean(extensions, "ADV_EMI_STAGE_REPAY_TERMS", false);
 
 		AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT = getValueAsBoolean(extensions, "AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", false);
-		RECEIPTS_SHOW_ACCOUNTING = getValueAsBoolean(extensions, "RECEIPTS_SHOW_ACCOUNTING", true);
+		RECEIPTS_SHOW_ACCOUNTING_TAB = getValueAsBoolean(extensions, "RECEIPTS_SHOW_ACCOUNTING_TAB", true);
 	}
 
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
@@ -449,9 +449,9 @@ public class ImplementationConstants {
 	public static boolean ALLOW_EOD_INTERVAL_VALIDATION;
 	public static boolean DISB_PAID_CANCELLATION_ALLOW;
 	public static boolean MANDATE_PTNRBNK_IN_DWNLD;
-	public static boolean ALLOW_PRESENTMENT_STAGE_ACCOUNTING;
 	public static boolean ALLOW_LOAN_VAS_RATIO_CALC;
 	public static boolean ALLOW_ED_FIELDS_IN_NPA;
+	public static boolean PRESENTMENT_STAGE_ACCOUNTING_REQ;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;
@@ -467,7 +467,7 @@ public class ImplementationConstants {
 	public static int PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
 	public static int PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
 	public static boolean AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT;
-	public static boolean RECEIPTS_SHOW_ACCOUNTING;
+	public static boolean RECEIPTS_SHOW_ACCOUNTING_TAB;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis

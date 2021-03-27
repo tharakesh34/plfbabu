@@ -6,11 +6,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AccountTypeGroupDAO;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
@@ -58,8 +58,7 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountTypeGroup);
-		RowMapper<AccountTypeGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AccountTypeGroup.class);
+		RowMapper<AccountTypeGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountTypeGroup.class);
 
 		try {
 			accountTypeGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

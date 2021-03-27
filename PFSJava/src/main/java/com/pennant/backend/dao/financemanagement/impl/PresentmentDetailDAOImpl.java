@@ -58,13 +58,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -73,6 +74,7 @@ import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtra
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -405,13 +407,26 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(
 				" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where  Status =1 OR  Status =2 OR Status =3 )) ");
 
-		if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK) && isGroupByPartnerBank(ph)) {
 			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
-		} else {
+		} else if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK) && !isGroupByPartnerBank(ph)) {
 			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
+		} else if (isGroupByPartnerBank(ph)) {
+			sql.append("ORDER BY  T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
+		} else if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
+			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
+		} else {
+			sql.append("ORDER BY  T1.DEFSCHDDATE, T7.EntityCode");
 		}
-
 		return sql.toString();
+	}
+
+	private boolean isGroupByPartnerBank(PresentmentHeader ph) {
+		if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK
+				&& !MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -919,8 +934,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		source.addValue("IMPORTSTATUS", RepayConstants.PEXC_IMPORT);
 		source.addValue("FAILEDSTATUS", RepayConstants.PEXC_FAILURE);
 		try {
-			RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(PresentmentDetail.class);
+			RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.error("Exception :", e);

@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.InstrumentwiseLimitDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
@@ -95,8 +95,7 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		instrumentwiseLimit.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(instrumentwiseLimit);
-		RowMapper<InstrumentwiseLimit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InstrumentwiseLimit.class);
+		RowMapper<InstrumentwiseLimit> rowMapper = BeanPropertyRowMapper.newInstance(InstrumentwiseLimit.class);
 
 		try {
 			instrumentwiseLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

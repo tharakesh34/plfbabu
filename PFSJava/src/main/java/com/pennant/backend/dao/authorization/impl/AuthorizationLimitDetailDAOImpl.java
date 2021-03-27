@@ -51,11 +51,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.authorization.AuthorizationLimitDetailDAO;
 import com.pennant.backend.model.authorization.AuthorizationLimitDetail;
@@ -102,7 +102,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 		authorizationLimitDetail.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AuthorizationLimitDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
@@ -143,7 +143,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 		authorizationLimitDetail.setCode(code);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AuthorizationLimitDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
@@ -311,7 +311,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 		authorizationLimitDetail.setAuthLimitId(authLimitId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AuthorizationLimitDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {

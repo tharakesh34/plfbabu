@@ -320,7 +320,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.tDSAmount.setProperties(false, formatter);
 		this.tDSAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
-		
+
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
 		fillComboBox(this.receiptChannel, "", PennantStaticListUtil.getReceiptChannels(), "");
 		fillComboBox(this.subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), "");
@@ -851,7 +851,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		} else {
 			rch.setReceiptChannel(PennantConstants.List_Select);
 		}
-		
+
 		if (this.row_tDSAmount.isVisible()) {
 			rch.setTdsAmount(PennantApplicationUtil.unFormateAmount(this.tDSAmount.getActualValue(), formatter));
 		}

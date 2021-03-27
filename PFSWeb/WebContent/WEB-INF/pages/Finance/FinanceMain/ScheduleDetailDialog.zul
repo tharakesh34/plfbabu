@@ -21,6 +21,25 @@
 			<borderlayout id="borderlayoutScheduleDetail">
 				<center border="none" autoscroll="false">
 					<div id="basicDetailTabDiv">
+					<groupbox id="eventHistory" style="border:none;" closable="true" open="true" visible="false">
+							<caption id="eventHistoryCaption" />
+							<listbox id="listBoxEventHistory" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+								sizedByContent="true" span="true" width="100%" height="100%" multiple="false">
+								<listhead sizable="false" style="padding:0px;position:relative;">
+									<listheader id="listheader_ScheduleDetailDialog_RestructureAppDate" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_RestructureReason" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_RestructureType" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_RestructureDate" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_EmiHolidayTerms" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_PrincipalHolidayTerms" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_EmiTerms" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_TotalTerms" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_Recalcultionype" hflex="min" visible="true" />
+									<listheader id="listheader_ScheduleDetailDialog_OldMaturity" hflex="min" visible="true" />
+								</listhead>
+							</listbox>
+						</groupbox>
+						
 						<groupbox style="border:none;" closable="true" open="false">
 							<caption label="${c:l('scheduleSummaryDetails')}" />
 							<grid id="grid_effRateOfReturn" sclass="GridLayoutNoBorder" fixedLayout="true">
@@ -188,112 +207,117 @@
 												<button id="btnRecalEMIH" label="${c:l('btnRecalEMIH.label')}" tooltiptext="${c:l('btnRecalEMIH.tooltiptext')}"
 													disabled="true" visible="false" sclass="z-toolbarbutton"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule" />
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure" />
 												<button id="btnAddReviewRate" label="${c:l('btnAddRateChange.label')}" tooltiptext="${c:l('btnAddRateChange.tooltiptext')}"
 													disabled="true" visible="false" sclass="z-toolbarbutton"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule" />
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure" />
 												<button id="btnAdvPftRateChange" label="${c:l('btnAdvPftRateChange.label')}" tooltiptext="${c:l('btnAdvPftRateChange.tooltiptext')}"
 													disabled="true" visible="false" sclass="z-toolbarbutton"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule" />
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure" />
 												<button id="btnChangeRepay" label="${c:l('btnChangeRepayment.label')}" tooltiptext="${c:l('btnChangeRepayment.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnAddDisbursement" label="${c:l('btnAddDisbursement.label')}" tooltiptext="${c:l('btnAddDatedSchedule.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnAddDatedSchedule" label="${c:l('btnAddDatedSchedule.label')}" tooltiptext="${c:l('btnAddDatedSchedule.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnCancelDisbursement" label="${c:l('btnCancelDisbursement.label')}" tooltiptext="${c:l('btnCancelDisbursement.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnHoldEMI" label="${c:l('btnHoldEMI.label')}" tooltiptext="${c:l('btnHoldEMI.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnPostponement" label="${c:l('btnPostponement.label')}" tooltiptext="${c:l('btnPostponement.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnUnPlanEMIH" label="${c:l('btnUnPlanEMIH.label')}" tooltiptext="${c:l('btnUnPlanEMIH.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnReAgeHolidays" label="${c:l('btnReAgeHolidays.label')}" tooltiptext="${c:l('btnReAgeHolidays.tooltiptext')}"
 													disabled="true" visible="false" sclass="z-toolbarbutton"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule" />
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure" />
 												<button id="btnRmvDefferment" label="${c:l('btnRmvDefferment.label')}" tooltiptext="${c:l('btnRmvDefferment.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnAddTerms" disabled="true" visible="false" label="${c:l('btnAddTerm.label')}"
 													tooltiptext="${c:l('btnAddTerms.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnRmvTerms" disabled="true" visible="false" label="${c:l('btnRmvTerm.label')}"
 													tooltiptext="${c:l('btnRmvTerms.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnReCalcualte" disabled="true" visible="false" label="${c:l('btnReCalcualte.label')}"
 													tooltiptext="${c:l('btnReCalcualte.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnSubSchedule" disabled="true" visible="false" label="${c:l('btnSubSchedule.label')}"
 													tooltiptext="${c:l('btnSubSchedule.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnChangeProfit" disabled="true" visible="false" label="${c:l('btnChangeProfit.label')}"
 													tooltiptext="${c:l('btnChangeProfit.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnChangeFrq" disabled="true" visible="false" label="${c:l('btnChangeFrq.label')}"
 													tooltiptext="${c:l('btnChangeFrq.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnReschedule" disabled="true" visible="false" label="${c:l('btnReSchedule.label')}"
 													tooltiptext="${c:l('btnReSchedule.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnChangeInsurance" disabled="true" visible="false" tooltiptext="${c:l('btnChangeInsurance.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnSuplRentIncrCost" disabled="true" visible="false" label="${c:l('btnSuplRentIncrCost.label')}"
 													tooltiptext="${c:l('btnSuplRentIncrCost.tooltiptext')}"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnPrintSchedule" label="${c:l('label_Print')}" tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
 													sclass="z-toolbarbutton" />
 												<button id="btnSchdChng" label="${c:l('btnSchdChng.label')}" tooltiptext="${c:l('btnSchdChng.tooltiptext')}"
 													disabled="true" visible="false"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
-													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule"
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnAddDatedSchedule,btnRestructure"
+													sclass="z-toolbarbutton" />
+												<button id="btnRestructure" label="${c:l('btnRestructure.label')}" tooltiptext="${c:l('btnRestructure.tooltiptext')}"
+													disabled="true" visible="false"
+													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,
+													btnReCalcualte,btnSubSchedule,btnChangeProfit,btnPrintSchedule,btnChangeFrq,btnReschedule,btnChangeInsurance,btnAdvPftRateChange,btnSuplRentIncrCost,btnReAgeHolidays,btnHoldEMI,btnSchdChng,btnChngGestation,btnChngTDS,btnPlannedEMIH,btnChangePayment,btnChngStrtPrdHday,btnRestructure"
 													sclass="z-toolbarbutton" />
 											</toolbar>
 										</hbox>

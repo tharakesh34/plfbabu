@@ -51,12 +51,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ClusterHierarchyDAO;
 import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
@@ -98,7 +98,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		clusterHierarchey.setEntity(entity);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(clusterHierarchey);
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			clusterHierarchey = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -126,7 +126,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("entity", entity);
 
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
@@ -160,7 +160,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		ClusterHierarchy cHierarchey = new ClusterHierarchy();
 		cHierarchey.setEntity(entity);
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(cHierarchey);
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

@@ -176,6 +176,10 @@ public class NPAService extends ServiceHelper {
 			return finEODEvent;
 		}
 
+		if (pftDetail.isWriteoffLoan()) {
+			return finEODEvent;
+		}
+
 		if (provision == null) {
 			provision = getProvision(finEODEvent, provisionBooks);
 		}

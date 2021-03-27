@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinTypeReceiptModesDAO;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
@@ -130,8 +130,7 @@ public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> im
 		selectSql.append(" Where FinType =:FinType");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeReceiptModes);
-		RowMapper<FinTypeReceiptModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeReceiptModes.class);
+		RowMapper<FinTypeReceiptModes> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeReceiptModes.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -161,8 +160,7 @@ public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> im
 		selectSql.append(" Where FinType =:FinType AND VasProduct =:VasProduct ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeReceiptModes);
-		RowMapper<FinTypeReceiptModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeReceiptModes.class);
+		RowMapper<FinTypeReceiptModes> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeReceiptModes.class);
 
 		try {
 			finTypeReceiptModes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

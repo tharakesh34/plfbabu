@@ -60,7 +60,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -222,7 +221,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		selectSql.append(" AND OriginationFee = :Origination  AND ModuleId = :ModuleId And ReferenceId = :ReferenceId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		List<FinTypeFees> schemeFees = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource,
 				typeRowMapper);
@@ -293,7 +292,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		selectSql.append(" Where T1.OriginationFee = 1 AND T1.FinType = :FinType AND T1.ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
@@ -331,7 +330,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		try {
 			finTypeFees = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -625,7 +624,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		source.addValue("ReferenceId", reference);
 		source.addValue("ModuleId", moduleId);
 
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -749,7 +748,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		logger.debug("selectListSql: " + selectSql.toString());
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		try {
 			finTypeFees = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -6,11 +6,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -105,8 +105,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeLimitProcess);
-		RowMapper<FinanceLimitProcess> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceLimitProcess.class);
+		RowMapper<FinanceLimitProcess> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceLimitProcess.class);
 
 		try {
 			limitProcess = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -142,7 +141,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		RowMapper<LimitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetail.class);
+		RowMapper<LimitDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetail.class);
 
 		try {
 			limitDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -245,7 +244,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
 			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -372,6 +372,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> interestSubventionTypeList;
 	private static List<ValueLabel> interestSubventionMethodList;
 	private static List<ValueLabel> tdsTypesList;
+	private static List<ValueLabel> recalTypeList;
 
 	/**
 	 * Gets the list of applications.
@@ -1291,7 +1292,7 @@ public class PennantStaticListUtil {
 			// Labels.getLabel("label_CustomerAccountSummary")));
 			enquiryTypes.add(new ValueLabel("OCRENQ", Labels.getLabel("label_OCREnquiry")));
 			enquiryTypes.add(new ValueLabel("EXCESSENQ", Labels.getLabel("label_ExcessEnquiry")));
-
+			enquiryTypes.add(new ValueLabel("RSTENQ", Labels.getLabel("label_RestructureEnquiry")));
 		}
 		return enquiryTypes;
 	}
@@ -2446,7 +2447,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_ChangeTDS"), "CTDS"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
 					Labels.getLabel("label_FinSerEvent_LoanDownSizing"), "LDS"));
-
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RESTRUCTURE,
+					Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
 		}
 		return events;
 	}
@@ -5869,7 +5871,7 @@ public class PennantStaticListUtil {
 
 		return interestSubventionMethodList;
 	}
-	
+
 	public static List<ValueLabel> getTdsTypes() {
 		if (tdsTypesList != null) {
 			return tdsTypesList;
@@ -5884,4 +5886,16 @@ public class PennantStaticListUtil {
 		return tdsTypesList;
 	}
 
+	public static List<ValueLabel> getRecalTypeList() {
+		if (recalTypeList == null) {
+			recalTypeList = new ArrayList<ValueLabel>();
+			recalTypeList.add(new ValueLabel(CalculationConstants.RST_RECAL_ADJUSTTENURE,
+					Labels.getLabel("label_Restructure_Adjust_Tenure")));
+			recalTypeList.add(new ValueLabel(CalculationConstants.RST_RECAL_RECALEMI,
+					Labels.getLabel("label_Restructure_Recal_EMI")));
+			recalTypeList.add(new ValueLabel(CalculationConstants.RST_RECAL_ADDTERM_RECALEMI,
+					Labels.getLabel("label_Restructure_AddTerm_Recal_EMI")));
+		}
+		return recalTypeList;
+	}
 }

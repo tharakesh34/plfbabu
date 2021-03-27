@@ -53,10 +53,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.lmtmasters.FacilityReferenceDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -144,7 +144,7 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FacilityReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FacilityReferenceDetail.class);
 
 		try {
@@ -215,7 +215,7 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FacilityReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FacilityReferenceDetail.class);
 
 		logger.debug("Leaving");
@@ -395,7 +395,7 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 		parameterMap.put("FinType", fintype);
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FacilityReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FacilityReferenceDetail.class);
 
 		logger.debug("Leaving");
@@ -439,7 +439,7 @@ public class FacilityReferenceDetailDAOImpl extends SequenceDao<FacilityReferenc
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facilityReferenceDetail);
-		RowMapper<FacilityReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FacilityReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FacilityReferenceDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.model.applicationmaster.PinCode;
@@ -97,7 +97,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		pinCode.setPinCodeId(pinCodeId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
-		RowMapper<PinCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PinCode.class);
+		RowMapper<PinCode> rowMapper = BeanPropertyRowMapper.newInstance(PinCode.class);
 
 		try {
 			pinCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -282,7 +282,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		pinCode.setPinCode(code);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
-		RowMapper<PinCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PinCode.class);
+		RowMapper<PinCode> rowMapper = BeanPropertyRowMapper.newInstance(PinCode.class);
 
 		try {
 			pinCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -339,7 +339,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		pinCode.setPinCodeId(pinCodeId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
-		RowMapper<PinCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PinCode.class);
+		RowMapper<PinCode> rowMapper = BeanPropertyRowMapper.newInstance(PinCode.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

@@ -541,6 +541,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	public void doSave_ScoreDetail(FinanceDetail aFinanceDetail) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.ProductGroupDAO;
 import com.pennant.backend.model.systemmasters.ProductGroup;
@@ -145,7 +145,7 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		productGroup.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(productGroup);
-		RowMapper<ProductGroup> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductGroup.class);
+		RowMapper<ProductGroup> rowMapper = BeanPropertyRowMapper.newInstance(ProductGroup.class);
 
 		try {
 			productGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

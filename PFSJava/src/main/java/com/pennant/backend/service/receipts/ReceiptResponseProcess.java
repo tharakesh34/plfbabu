@@ -25,6 +25,7 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -74,10 +75,10 @@ public class ReceiptResponseProcess {
 		if (!doCheckConnectionEstablished()) {
 			for (ReceiptUploadDetail receiptUpladDetail : listReceiptDetails) {
 
-				receiptUpladDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+				receiptUpladDetail.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
 				receiptUpladDetail.setReason(Labels.getLabel("label_ReceiptUpload_Connection_API_Failed"));
 
-				if (StringUtils.equals(PennantConstants.UPLOAD_STATUS_SUCCESS, receiptUpladDetail.getUploadStatus())) {
+				if (ReceiptDetailStatus.SUCCESS.getValue() == receiptUpladDetail.getProcessingStatus()) {
 					successCount = successCount + 1;
 				} else {
 					failedCount = failedCount + 1;
@@ -100,7 +101,7 @@ public class ReceiptResponseProcess {
 			// get respose,check whether it is success or not
 			ReceiptUploadDetail receiptresponseDetail = callApi(mapList);
 
-			if (StringUtils.equals(PennantConstants.UPLOAD_STATUS_SUCCESS, receiptresponseDetail.getUploadStatus())) {
+			if (ReceiptDetailStatus.SUCCESS.getValue() == receiptresponseDetail.getProcessingStatus()) {
 				successCount = successCount + 1;
 			} else {
 				failedCount = failedCount + 1;
@@ -439,10 +440,11 @@ public class ReceiptResponseProcess {
 
 		receiptUploadDetail.setId((long) mapList.get("rootId"));
 		if (StringUtils.equals("0000", errorCode)) {
-			receiptUploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+
+			receiptUploadDetail.setProcessingStatus(ReceiptDetailStatus.SUCCESS.getValue());
 			receiptUploadDetail.setReason("");
 		} else {
-			receiptUploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+			receiptUploadDetail.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
 			receiptUploadDetail.setReason(errorCode + " : " + errorMsg);
 		}
 		return receiptUploadDetail;

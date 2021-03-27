@@ -185,6 +185,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private boolean finTDSApplicable;
 	private String sourceofFund;
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
+	private Long closureTypeId;
+	private String closureTypeDesc;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -294,6 +296,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("presentmentSchDate");
 		excludeFields.add("documentDetails");
 		excludeFields.add("finTDSApplicable");
+		excludeFields.add("closureTypeDesc");
 
 		return excludeFields;
 	}
@@ -1718,13 +1721,29 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public void setSourceofFund(String sourceofFund) {
 		this.sourceofFund = sourceofFund;
 	}
-	
+
 	public BigDecimal getTdsAmount() {
 		return tdsAmount;
 	}
 
 	public void setTdsAmount(BigDecimal tdsAmount) {
 		this.tdsAmount = tdsAmount;
+	}
+
+	public Long getClosureTypeId() {
+		return closureTypeId;
+	}
+
+	public void setClosureTypeId(Long closureTypeId) {
+		this.closureTypeId = closureTypeId;
+	}
+
+	public String getClosureTypeDesc() {
+		return closureTypeDesc;
+	}
+
+	public void setClosureTypeDesc(String closureTypeDesc) {
+		this.closureTypeDesc = closureTypeDesc;
 	}
 
 }

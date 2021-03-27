@@ -61,11 +61,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.StoredProcedureUtil;
 import com.pennant.backend.dao.QueueAssignmentDAO;
@@ -182,8 +182,7 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		selectSql.append(
 				"AND T1.UsrEnabled = 1  GROUP BY  T6.AssignedCount, T1.UsrId, T6.UserId )T1)T where row_num <= 1");
 
-		RowMapper<QueueAssignment> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(QueueAssignment.class);
+		RowMapper<QueueAssignment> typeRowMapper = BeanPropertyRowMapper.newInstance(QueueAssignment.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			queueAssignment = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -400,7 +399,7 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignment);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
- 
+
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
@@ -444,8 +443,7 @@ public class QueueAssignmentDAOImpl extends BasicDao<QueueAssignment> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(queueAssignmentHeader);
-		RowMapper<QueueAssignmentHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(QueueAssignmentHeader.class);
+		RowMapper<QueueAssignmentHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(QueueAssignmentHeader.class);
 
 		try {
 			queueAssignmentHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,

@@ -44,14 +44,14 @@ public class ExternalInterfaceServiceImpl implements ExternalInterfaceService {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public synchronized void processAutoMandateRequest() {
 		logger.info(Literal.ENTERING);
-		
+
 		List<Long> mandates = new ArrayList<>();
 		List<String> entityCodes = mandateProcessdao.getEntityCodes();
-		
+
 		for (String entityCode : entityCodes) {
 			if (ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
 				List<String> partnerBankCodes = mandateProcessdao.getPartnerBankCodeByEntity(entityCode);
@@ -64,7 +64,7 @@ public class ExternalInterfaceServiceImpl implements ExternalInterfaceService {
 				doMandateProcess(entityCode, mandates);
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

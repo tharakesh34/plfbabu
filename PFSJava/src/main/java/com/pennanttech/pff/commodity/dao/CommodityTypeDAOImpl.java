@@ -8,11 +8,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -49,7 +49,7 @@ public class CommodityTypeDAOImpl extends SequenceDao<CommodityType> implements 
 		commodityTYpe.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodityTYpe);
-		RowMapper<CommodityType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CommodityType.class);
+		RowMapper<CommodityType> rowMapper = BeanPropertyRowMapper.newInstance(CommodityType.class);
 
 		try {
 			commodityTYpe = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

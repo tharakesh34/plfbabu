@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerIdentityDAO;
 import com.pennant.backend.model.customermasters.CustomerIdentity;
@@ -99,8 +99,7 @@ public class CustomerIdentityDAOImpl extends BasicDao<CustomerIdentity> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerIdentity);
-		RowMapper<CustomerIdentity> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerIdentity.class);
+		RowMapper<CustomerIdentity> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerIdentity.class);
 
 		try {
 			customerIdentity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

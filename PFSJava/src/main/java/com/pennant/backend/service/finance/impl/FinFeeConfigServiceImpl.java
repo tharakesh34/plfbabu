@@ -25,9 +25,7 @@ import com.pennant.backend.service.finance.FinFeeConfigService;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
-
-public class FinFeeConfigServiceImpl extends GenericService<FinFeeConfig>
-		implements FinFeeConfigService {
+public class FinFeeConfigServiceImpl extends GenericService<FinFeeConfig> implements FinFeeConfigService {
 	private static final Logger logger = LogManager.getLogger(FinFeeConfigServiceImpl.class);
 
 	private FinFeeConfigDAO finFeeConfigDAO;
@@ -47,14 +45,16 @@ public class FinFeeConfigServiceImpl extends GenericService<FinFeeConfig>
 		logger.debug(Literal.LEAVING);
 
 	}
+
 	@Override
-	public List<FinFeeConfig> getFinFeeConfigList(String finReference, String eventCode, boolean origination,String type) {
+	public List<FinFeeConfig> getFinFeeConfigList(String finReference, String eventCode, boolean origination,
+			String type) {
 		logger.debug(Literal.ENTERING);
 		logger.debug(Literal.LEAVING);
-		return finFeeConfigDAO.getFinFeeConfigList(finReference, eventCode,origination,type);
-		
+		return finFeeConfigDAO.getFinFeeConfigList(finReference, eventCode, origination, type);
+
 	}
-	
+
 	public FinFeeConfigDAO getFinFeeConfigDAO() {
 		return finFeeConfigDAO;
 	}
@@ -62,6 +62,5 @@ public class FinFeeConfigServiceImpl extends GenericService<FinFeeConfig>
 	public void setFinFeeConfigDAO(FinFeeConfigDAO finFeeConfigDAO) {
 		this.finFeeConfigDAO = finFeeConfigDAO;
 	}
-
 
 }

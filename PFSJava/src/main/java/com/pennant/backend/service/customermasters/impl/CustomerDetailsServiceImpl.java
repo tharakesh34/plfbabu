@@ -2295,7 +2295,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 
 		//Validate Customer Salutation Code
-				auditDetail = validateSalutationCode(customer, auditDetail);
+		auditDetail = validateSalutationCode(customer, auditDetail);
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 			for (ErrorDetail errDetail : auditDetail.getErrorDetails()) {
@@ -8365,7 +8365,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode) {
 		return customerDAO.isDuplicateCrcpr(custId, custCRCPR, custCtgCode);
 	}
-	
+
 	private AuditDetail validateSalutationCode(Customer customer, AuditDetail auditDetail) {
 		String custSalCode = customer.getCustSalutationCode();
 		String custGendCode = customer.getCustGenderCode();

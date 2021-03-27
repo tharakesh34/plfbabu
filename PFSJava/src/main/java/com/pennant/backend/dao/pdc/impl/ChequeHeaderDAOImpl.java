@@ -47,11 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -93,7 +93,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		chequeHeader.setHeaderID(headerID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
-		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
+		RowMapper<ChequeHeader> rowMapper = BeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
 			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -127,7 +127,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		chequeHeader.setFinReference(finReference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
-		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
+		RowMapper<ChequeHeader> rowMapper = BeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
 			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -160,7 +160,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		chequeHeader.setFinReference(finReference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
-		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
+		RowMapper<ChequeHeader> rowMapper = BeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

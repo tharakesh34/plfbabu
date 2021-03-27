@@ -26,12 +26,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -350,7 +350,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 						Long linkedTranId = null;
 						PresentmentDetail presentmentDetails = null;
-						if (ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+						if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 							presentmentDetails = presentmentDetailService.getPresentmentDetail(presentmentRef);
 							linkedTranId = postStageAccounting(presentmentRef, presentmentDetails);
 						}
@@ -370,7 +370,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 						} else {
 							try {
-								if (ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+								if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 									reverseStageAccounting(linkedTranId, presentmentDetails.getReceiptID());
 								}
 								detail = presentmentCancellation(presentmentRef, reasonCode);
@@ -658,7 +658,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 						Long linkedTranId = null;
 						PresentmentDetail presentmentDetails = null;
-						if (ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+						if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 							presentmentDetails = presentmentDetailService.getPresentmentDetail(presentmentRef);
 							linkedTranId = postStageAccounting(presentmentRef, presentmentDetails);
 						}
@@ -678,7 +678,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
 						} else {
 							try {
-								if (ImplementationConstants.ALLOW_PRESENTMENT_STAGE_ACCOUNTING) {
+								if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 									reverseStageAccounting(linkedTranId, presentmentDetails.getReceiptID());
 								}
 
@@ -958,7 +958,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
 			parameterMap = new MapSqlParameterSource();
 			parameterMap.addValue("ID", batchId);
-			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineLog.class);
+			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
 			return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
 		} catch (Exception e) {
 		} finally {
@@ -1501,8 +1501,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		source.addValue("PRESENTMENTREF", batchId);
 
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 		try {
 			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -1563,8 +1562,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		source.addValue("PRESENTMENTREF", batchId);
 
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 		try {
 			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

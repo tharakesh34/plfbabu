@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
 import com.pennant.backend.model.systemmasters.Salutation;
@@ -102,7 +102,7 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		RowMapper<Salutation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Salutation.class);
+		RowMapper<Salutation> typeRowMapper = BeanPropertyRowMapper.newInstance(Salutation.class);
 
 		try {
 			salutation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

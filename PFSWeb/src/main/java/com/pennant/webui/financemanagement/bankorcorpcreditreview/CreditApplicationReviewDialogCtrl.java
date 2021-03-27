@@ -2675,8 +2675,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 							// creditReviewSubCtgDetails.setCurYearUSDConvstn(PennantAppUtil.formatAmount(convrsnPrice,
 							// 2,false));
 							// Current Year Break Down
-							creditReviewSubCtgDetails
-									.setCurYearBreakDown(PennantAppUtil.formatAmount(breakDown, 2));
+							creditReviewSubCtgDetails.setCurYearBreakDown(PennantAppUtil.formatAmount(breakDown, 2));
 							// Current Year Percentage Change
 							creditReviewSubCtgDetails
 									.setCurYearPercentage(PennantAppUtil.formatAmount(percentChange, 2));

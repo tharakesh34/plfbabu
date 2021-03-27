@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.DepartmentDAO;
 import com.pennant.backend.model.systemmasters.Department;
@@ -100,7 +100,7 @@ public class DepartmentDAOImpl extends BasicDao<Department> implements Departmen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(department);
-		RowMapper<Department> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Department.class);
+		RowMapper<Department> typeRowMapper = BeanPropertyRowMapper.newInstance(Department.class);
 
 		try {
 			department = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

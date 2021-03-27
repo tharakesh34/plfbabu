@@ -7,12 +7,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -48,8 +48,7 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		schemeDealerGroup.setSchemeDealerGroupId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeDealerGroup);
-		RowMapper<SchemeDealerGroup> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SchemeDealerGroup.class);
+		RowMapper<SchemeDealerGroup> rowMapper = BeanPropertyRowMapper.newInstance(SchemeDealerGroup.class);
 
 		try {
 			schemeDealerGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

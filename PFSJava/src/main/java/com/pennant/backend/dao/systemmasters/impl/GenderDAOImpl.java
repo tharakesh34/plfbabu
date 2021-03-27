@@ -48,11 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.model.systemmasters.Gender;
@@ -99,7 +99,7 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
-		RowMapper<Gender> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Gender.class);
+		RowMapper<Gender> typeRowMapper = BeanPropertyRowMapper.newInstance(Gender.class);
 
 		try {
 			gender = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

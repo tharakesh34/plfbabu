@@ -64,6 +64,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -120,6 +121,11 @@ public class ProjectedAmortizationService {
 			fm.setMaturityDate(maturityDate);
 
 			if (maturityDate.compareTo(curMonthStart) < 0) {
+				continue;
+			}
+
+			// Ignore ACCRUAL calculation when loan is WriteOff
+			if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
 				continue;
 			}
 
@@ -845,8 +851,9 @@ public class ProjectedAmortizationService {
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		Date amzMonth = finEODEvent.getEventFromDate();
-
-		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
+		if (fm.isWriteoffLoan()) {
+			calProjIncomeAMZList = calIncomeAMZForWriteOffFins(finEODEvent);
+		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
 				&& fm.getClosedDate().compareTo(amzMonth) <= 0) {
 			calProjIncomeAMZList = calIncomeAMZForCancelledFins(finEODEvent);
 		} else {
@@ -917,6 +924,42 @@ public class ProjectedAmortizationService {
 		// update fee / expense AMZ details
 		this.projectedAmortizationDAO.updateBatchIncomeAMZAmounts(finEODEvent.getIncomeAMZList());
 
+	}
+
+	private List<ProjectedAmortization> calIncomeAMZForWriteOffFins(FinEODEvent finEODEvent) {
+		ProjectedAmortization projIncomeAMZ = null;
+		List<ProjectedAmortization> projIncomeAMZList = new ArrayList<ProjectedAmortization>(1);
+
+		List<ProjectedAmortization> finIncomeAMZList = finEODEvent.getIncomeAMZList();
+		Date curMonthEnd = DateUtility.getMonthEnd(finEODEvent.getEventFromDate());
+
+		for (ProjectedAmortization incomeAMZ : finIncomeAMZList) {
+			// TODO : Avoid Write Off loans from 2nd month onwards, Same is handled in Preparation
+			if (!incomeAMZ.isActive()) {
+				continue;
+			}
+
+			// current month amortization (Table : ProjectedIncomeAMZ)
+			projIncomeAMZ = new ProjectedAmortization();
+			projIncomeAMZList.add(projIncomeAMZ);
+
+			projIncomeAMZ.setMonthEndDate(curMonthEnd);
+			projIncomeAMZ.setFinReference(incomeAMZ.getFinReference());
+			projIncomeAMZ.setFinType(incomeAMZ.getFinType());
+			projIncomeAMZ.setIncomeType(incomeAMZ.getIncomeType());
+			projIncomeAMZ.setReferenceID(incomeAMZ.getReferenceID());
+			projIncomeAMZ.setIncomeTypeID(incomeAMZ.getIncomeTypeID());
+
+			// Previous AMZ
+			ProjectedAmortization prvProjIncomeAMZ = getPrvProjIncomeAMZFromHeader(incomeAMZ, curMonthEnd);
+
+			// Unamortized portion will be amortized in the month of WRITEOFF event
+			projIncomeAMZ.setUnAmortizedAmount(BigDecimal.ZERO);
+			projIncomeAMZ.setCumulativeAmount(incomeAMZ.getActualAmount());
+			projIncomeAMZ.setAmortizedAmount(prvProjIncomeAMZ.getUnAmortizedAmount());
+		}
+
+		return projIncomeAMZList;
 	}
 
 	/**
@@ -1126,8 +1169,13 @@ public class ProjectedAmortizationService {
 					// SCREEN : appDate - DateUtil.getAppDate() ; EOM : amzMonth
 					incomeAMZ.setCalculatedOn(appDate);
 
+					// For WRITEOFF mark as inactive 
+					if (finMain.isWriteoffLoan()) {
+						incomeAMZ.setActive(false);
+					} else {
+						incomeAMZ.setActive(finMain.isFinIsActive());
+					}
 					incomeAMZ.setMonthEndDate(curMonthEnd);
-					incomeAMZ.setActive(finMain.isFinIsActive());
 
 					incomeAMZ.setCurMonthAmz(curProjIncomeAMZ.getAmortizedAmount());
 					incomeAMZ.setAmortizedAmount(curProjIncomeAMZ.getCumulativeAmount());

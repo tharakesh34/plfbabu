@@ -3460,7 +3460,8 @@
 		<property name="pSLDetailService" ref="pSLDetailService" />
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="finOptionService" ref="finOptionService" />
-
+		<property name="restructureService" ref="restructureService" />
+		
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
@@ -3735,6 +3736,11 @@
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<!-- Stage Accounting -->
 		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="receiptService" ref="receiptService" />
 	</bean>
 
 	<!--============ Finance Schedule Details ============== -->
@@ -5566,6 +5572,7 @@
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->
@@ -10393,6 +10400,10 @@
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="saveReceiptResponseFileHeader">PROPAGATION_REQUIRED</prop>
 				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="updateThread">PROPAGATION_REQUIRED</prop>
+				<prop key="executeThreads">PROPAGATION_REQUIRED</prop>
+				<prop key="initiateImportProcess">PROPAGATION_REQUIRED</prop>
+				<prop key="createAttempLog">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -10407,6 +10418,7 @@
 		<property name="receiptResponseDetailDAO" ref="receiptResponseDetailDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="receiptUploadDetailDAO" class="com.pennant.backend.dao.finance.impl.ReceiptUploadDetailDAOImpl" parent="sequenceDao">
@@ -11369,14 +11381,11 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="subventionService" ref="subventionService" />
+		<property name="restructureService" ref="restructureService" />
 	</bean>
 
 	<bean id="receiptUploadApprovalProcess" class="com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess">
-		<property name="dataSource" ref="dataSource" />
-		<property name="projectedRUDAO" ref="projectedRUDAO" />
-		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO" />
-		<property name="receiptService" ref="receiptService" />
-		<property name="uploadAllocationDetailDAO" ref="uploadAllocationDetailDAO" />
+		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
 	</bean>
 
 	<bean id="projectedRUDAO" class="com.pennant.backend.dao.receiptUpload.ProjectedRUDAOImpl" parent="basicDao" />
@@ -12601,7 +12610,40 @@
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="rateChangeService" ref="rateChangeService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
 
+<!--============ Restructure Details ============== -->
+	<bean id="restructureService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="restructureServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="restructureServiceTarget" class="com.pennant.backend.financeservice.impl.RestructureServiceImpl">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="restructureDAO" ref="restructureDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+	</bean> 
+	
+	<bean id="restructureDAO" class="com.pennant.backend.dao.finance.impl.RestructureDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 </beans>

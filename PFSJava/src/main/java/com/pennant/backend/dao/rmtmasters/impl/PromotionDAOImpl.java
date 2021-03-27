@@ -55,11 +55,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -339,7 +339,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
-		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
 		List<Promotion> PromotionList = new ArrayList<>();
 		try {
 			PromotionList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -398,7 +398,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
-		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
 
 		try {
 			promotion = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -431,7 +431,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
-		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
 
 		try {
 			promotion = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -515,7 +515,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 
 		source = new MapSqlParameterSource();
 		source.addValue("ReferenceID", referenceId);
-		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		RowMapper<Promotion> typeRowMapper = BeanPropertyRowMapper.newInstance(Promotion.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

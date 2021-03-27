@@ -89,8 +89,8 @@ public class VasMovementListModelItemRenderer implements ListitemRenderer<VasMov
 		lc.setParent(item);
 		lc = new Listcell(vasMoment.getFinCcy());
 		lc.setParent(item);
-		lc = new Listcell(PennantAppUtil.amountFormate(vasMoment.getFinAmount(),
-				CurrencyUtil.getFormat(vasMoment.getFinCcy())));
+		lc = new Listcell(
+				PennantAppUtil.amountFormate(vasMoment.getFinAmount(), CurrencyUtil.getFormat(vasMoment.getFinCcy())));
 
 		lc.setParent(item);
 		lc = new Listcell(vasMoment.getRecordStatus());

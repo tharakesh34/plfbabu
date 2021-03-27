@@ -59,7 +59,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPAProvisionDetailDAO;
 import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
@@ -360,8 +359,7 @@ public class NPAProvisionDetailDAOImpl extends SequenceDao<NPAProvisionDetail> i
 		nPAProvisionDetail.setId(headerId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPAProvisionDetail);
-		RowMapper<NPAProvisionDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPAProvisionDetail.class);
+		RowMapper<NPAProvisionDetail> rowMapper = BeanPropertyRowMapper.newInstance(NPAProvisionDetail.class);
 
 		try {
 			nPAProvisionDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

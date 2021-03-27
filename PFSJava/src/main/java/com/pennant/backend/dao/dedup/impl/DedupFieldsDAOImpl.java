@@ -51,10 +51,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.model.BuilderTable;
@@ -132,7 +132,7 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupFields);
-		RowMapper<DedupFields> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupFields.class);
+		RowMapper<DedupFields> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupFields.class);
 
 		try {
 			dedupFields = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
@@ -266,7 +266,7 @@ public class DedupFieldsDAOImpl extends BasicDao<DedupFields> implements DedupFi
 
 		String selectListSql = " select fieldName,fieldDesc ,fieldControl from DedupFields where QueryModule='"
 				+ queryModule + "'";
-		RowMapper<BuilderTable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderTable.class);
+		RowMapper<BuilderTable> typeRowMapper = BeanPropertyRowMapper.newInstance(BuilderTable.class);
 		logger.debug("selectSql: " + selectListSql.toString());
 
 		try {

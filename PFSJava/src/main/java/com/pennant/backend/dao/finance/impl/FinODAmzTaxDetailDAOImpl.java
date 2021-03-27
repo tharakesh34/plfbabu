@@ -50,11 +50,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
@@ -237,8 +237,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxIncomeDetail);
-		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTaxIncomeDetail.class);
+		RowMapper<FinTaxIncomeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTaxIncomeDetail.class);
 
 		try {
 			taxIncomeDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -283,8 +282,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
-		RowMapper<FinODAmzTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinODAmzTaxDetail.class);
+		RowMapper<FinODAmzTaxDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODAmzTaxDetail.class);
 
 		try {
 			finODAmzTaxDetailList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -314,8 +312,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
-		RowMapper<FinODAmzTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinODAmzTaxDetail.class);
+		RowMapper<FinODAmzTaxDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODAmzTaxDetail.class);
 
 		try {
 			finODAmzTaxDetailList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -347,8 +344,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxIncomeDetail);
-		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTaxIncomeDetail.class);
+		RowMapper<FinTaxIncomeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTaxIncomeDetail.class);
 
 		List<FinTaxIncomeDetail> incomeList = null;
 		try {

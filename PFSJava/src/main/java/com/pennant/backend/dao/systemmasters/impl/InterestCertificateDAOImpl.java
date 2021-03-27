@@ -57,17 +57,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
@@ -97,8 +93,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InterestCertificate.class);
+		RowMapper<InterestCertificate> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestCertificate.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -127,8 +122,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		source.addValue("FinstartDate", finStartDate);
 		source.addValue("FinEndDate", finEndDate);
 
-		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InterestCertificate.class);
+		RowMapper<InterestCertificate> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestCertificate.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -253,7 +247,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);

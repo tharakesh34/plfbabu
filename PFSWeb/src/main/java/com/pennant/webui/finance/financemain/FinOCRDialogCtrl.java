@@ -895,8 +895,9 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		}
 
 		if (!this.customerPortion.isReadonly()) {
-			this.customerPortion.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_FinOCRDialog_CustomerPortion.value"), PennantConstants.defaultCCYDecPos, true, false, 0, 100));
+			this.customerPortion
+					.setConstraint(new PTDecimalValidator(Labels.getLabel("label_FinOCRDialog_CustomerPortion.value"),
+							PennantConstants.defaultCCYDecPos, true, false, 0, 100));
 		}
 
 		if (!this.totalDemand.isReadonly()) {

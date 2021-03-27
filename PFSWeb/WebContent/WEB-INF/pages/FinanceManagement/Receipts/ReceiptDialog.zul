@@ -440,10 +440,31 @@
 													<label id="label_ReceiptDialog_EarlySettlementReason" value="${c:l('label_ReceiptDialog_EarlySettlementReason.value')}" />
 													<extendedcombobox id="earlySettlementReason" width="180px" />
 												</row>
+												<row id="row_closuretype" visible="false">
+													<label id="label_ClosureTypes"
+														value="${c:l('label_ClosureTypes.value')}" />
+													<extendedcombobox id="closureType" width="180px"/>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>
-
+									<groupbox id="gb_ForeClosureSOA" sclass="gb-dialog" visible="false">
+										<caption id="caption_foreClosure"
+											label="${c:l('label_ReceiptDialog_ForeClosure.value')}" />
+										<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+											<rows>
+												<row>
+													<a id="generateSOA" label="${c:l('label_ReceiptDialog_SOA.value')}"
+														style="padding-left:100px; white-space: nowrap;" tooltiptext="${c:l('generateSOA.tooltiptext')}" />
+													<space />
+													<a id="foreClosureLetter"
+														label="${c:l('label_ReceiptDialog_ForeClosureEnquiry.value')}"
+														style="padding-left:100px; white-space: nowrap;" tooltiptext="${c:l('foreClosureLetter.tooltiptext')}" />
+													<space />
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
 									<groupbox id="gb_InstrumentDetails" sclass="gb-dialog">
 										<caption label="${c:l('label_ReceiptDialog_InstrmentDetails.value')}" />
 										<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
@@ -598,7 +619,7 @@
 										</rows>
 									</grid>
 								</groupbox>
-								<toolbar align="start" visible="false" style="border-style: none;" width="100%">
+								<toolbar align="start"  style="border-style: none;" width="100%">
 									<button id="btnPrintSchedule" label="${c:l('label_Print')}" tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
 										style="float:right;" visible="false" />
 									<space width="2px" />

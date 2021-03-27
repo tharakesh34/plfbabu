@@ -51,11 +51,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -396,7 +396,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
+		RowMapper<Branch> typeRowMapper = BeanPropertyRowMapper.newInstance(Branch.class);
 
 		try {
 			finFeeDetailsList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);

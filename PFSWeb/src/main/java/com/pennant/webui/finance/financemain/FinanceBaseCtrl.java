@@ -5166,9 +5166,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 				if (downPayment.compareTo(this.finAmount.getValidateValue()) > 0) {
 					throw new WrongValueException(this.downPayBank,
-							Labels.getLabel("MAND_FIELD_MIN", new String[] {
-									Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
-									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter) }));
+							Labels.getLabel("MAND_FIELD_MIN",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayment.value"),
+											reqDwnPay.toString(),
+											PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {

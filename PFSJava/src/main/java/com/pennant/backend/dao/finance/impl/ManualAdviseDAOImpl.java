@@ -58,12 +58,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
@@ -1178,7 +1178,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(manualAdvise);
-		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		RowMapper<ManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdvise.class);
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1341,7 +1341,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		source.addValue("FinReference", finReference);
 
 		try {
-			RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+			RowMapper<ManualAdviseMovements> typeRowMapper = BeanPropertyRowMapper
 					.newInstance(ManualAdviseMovements.class);
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
@@ -1382,7 +1382,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		RowMapper<ManualAdvise> rowMapper = BeanPropertyRowMapper.newInstance(ManualAdvise.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -1759,8 +1759,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" Where ReceiptID IN (:ReceiptID)  GROUP BY AdviseID");
 
 		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ManualAdviseMovements.class);
+		RowMapper<ManualAdviseMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdviseMovements.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1924,7 +1923,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		source.addValue("FinReference", finReference);
 		source.addValue("FeeTypeCode", Arrays.asList(AdvanceRuleCode.ADVINT.name(), AdvanceRuleCode.ADVEMI.name()));
 
-		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		RowMapper<ManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(ManualAdvise.class);
 
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
@@ -2006,8 +2005,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxDetail);
-		RowMapper<AdviseDueTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AdviseDueTaxDetail.class);
+		RowMapper<AdviseDueTaxDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(AdviseDueTaxDetail.class);
 
 		try {
 			taxDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -2122,9 +2120,45 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	@Override
+	public BigDecimal getPayableBalanceAmt(String finReference, int adviseType) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT sum(adviseamount-paidamount-waivedamount) from manualAdvise");
+		sql.append(" Where FinReference = ? and AdviseType = ?");
+
+		Object[] object = new Object[] { finReference, adviseType };
+		return this.jdbcOperations.queryForObject(sql.toString(), object, BigDecimal.class);
 
 	}
+
+	@Override
+	public BigDecimal getReceivableAmt(String finReference, boolean isBounce) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Coalesce(Sum(AdviseAmount - PaidAmount - WaivedAmount), 0) Amount");
+		sql.append(" from ManualAdvise");
+		sql.append(" Where FinReference = ? and AdviseType = ? ");
+
+		if (isBounce) {
+			sql.append(" And (BounceId > 0 or FeeTypeID IN (Select FeeTypeID from FeeTypes Where FeeTypeCode = ?))");
+		} else {
+			sql.append(" And FeeTypeID Not IN (Select FeeTypeID from FeeTypes Where FeeTypeCode = ?)");
+		}
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1, "BOUNCE" },
+					BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not found in ManualAdvise for the specified reference >> {} and AdviseTpe >> 1",
+					finReference);
+		}
+
+		return BigDecimal.ZERO;
+	}
+
 }

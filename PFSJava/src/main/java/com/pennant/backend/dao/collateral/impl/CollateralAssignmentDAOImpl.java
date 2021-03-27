@@ -52,11 +52,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.model.collateral.AssignmentDetails;
@@ -303,8 +303,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
-		RowMapper<CollateralAssignment> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralAssignment.class);
+		RowMapper<CollateralAssignment> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralAssignment.class);
 
 		try {
 			collAssignment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -447,8 +446,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movement);
-		RowMapper<CollateralMovement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralMovement.class);
+		RowMapper<CollateralMovement> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralMovement.class);
 
 		List<CollateralMovement> list = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		logger.debug(Literal.LEAVING);

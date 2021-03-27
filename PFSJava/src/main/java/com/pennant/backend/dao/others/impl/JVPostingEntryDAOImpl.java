@@ -50,11 +50,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
@@ -135,7 +135,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		try {
 			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -174,7 +174,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -208,7 +208,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -587,7 +587,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		try {
 			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -608,7 +608,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -624,7 +624,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -639,7 +639,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -662,7 +662,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 1 ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -773,7 +773,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
 
 		try {
 			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

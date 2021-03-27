@@ -5,12 +5,12 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ExposureLinkingDAO;
 import com.pennant.backend.model.finance.ExposureLinking;
@@ -78,8 +78,7 @@ public class ExposureLinkingDAOImpl extends BasicDao<ExposureLinking> implements
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(exposureLinking);
-		RowMapper<ExposureLinking> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExposureLinking.class);
+		RowMapper<ExposureLinking> typeRowMapper = BeanPropertyRowMapper.newInstance(ExposureLinking.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

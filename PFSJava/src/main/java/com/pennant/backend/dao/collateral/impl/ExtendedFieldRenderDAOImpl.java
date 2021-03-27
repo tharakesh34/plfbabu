@@ -13,10 +13,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -47,8 +47,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where  Reference =:Reference AND SeqNo = :SeqNo ");
 
-		RowMapper<ExtendedFieldRender> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldRender.class);
+		RowMapper<ExtendedFieldRender> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldRender.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			fieldRender = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);

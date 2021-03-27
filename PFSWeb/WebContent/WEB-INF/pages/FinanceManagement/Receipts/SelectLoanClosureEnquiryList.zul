@@ -13,14 +13,14 @@
 			<borderlayout id="borderlayoutSelectFintypeDialog">
 				<north size="30px" border="none">
 					<div sclass="z-toolbar" style="padding:0">
-						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start" />
 
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
-								<label value="${c:l('window_SelectLoanClosureEnquiryList.title')}"
+								<label id="windowTitle" value="${c:l('window_SelectLoanClosureEnquiryList.title')}"
 									sclass="label-heading" />
 							</toolbar>
 

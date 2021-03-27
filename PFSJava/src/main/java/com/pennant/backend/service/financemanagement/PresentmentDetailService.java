@@ -81,7 +81,7 @@ public interface PresentmentDetailService {
 	void updatePresentmentIdAsZero(List<Long> presentmentIds);
 
 	FinanceDetail getFinanceDetailsByRef(String finReference);
-	
+
 	FinanceMain getDefualtPostingDetails(String finReference, Date schDate);
 
 	PresentmentDetail getPresentmentDetail(String presentmentRef);

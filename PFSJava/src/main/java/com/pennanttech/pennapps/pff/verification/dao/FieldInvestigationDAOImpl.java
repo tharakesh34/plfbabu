@@ -23,11 +23,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -67,8 +67,7 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
-		RowMapper<FieldInvestigation> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FieldInvestigation.class);
+		RowMapper<FieldInvestigation> rowMapper = BeanPropertyRowMapper.newInstance(FieldInvestigation.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -96,8 +95,7 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("cif", Arrays.asList(cif));
 
-		RowMapper<FieldInvestigation> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FieldInvestigation.class);
+		RowMapper<FieldInvestigation> rowMapper = BeanPropertyRowMapper.newInstance(FieldInvestigation.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -229,7 +227,7 @@ public class FieldInvestigationDAOImpl extends SequenceDao<FieldInvestigation> i
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource,
-					ParameterizedBeanPropertyRowMapper.newInstance(FieldInvestigation.class));
+					BeanPropertyRowMapper.newInstance(FieldInvestigation.class));
 		} catch (EmptyResultDataAccessException e) {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

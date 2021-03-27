@@ -7,12 +7,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -116,7 +116,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		source.addValue("Reference", reference);
 
 		try {
-			RowMapper<ReasonDetailsLog> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
+			RowMapper<ReasonDetailsLog> mapper = BeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
 			return this.jdbcTemplate.query(sql.toString(), source, mapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -138,7 +138,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
-		RowMapper<ReasonHeader> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonHeader.class);
+		RowMapper<ReasonHeader> mapper = BeanPropertyRowMapper.newInstance(ReasonHeader.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), source, mapper);
@@ -229,7 +229,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		paramSource.addValue("Code", code);
 		paramSource.addValue("ReasonCategoryCode", PennantConstants.LOAN_CANCEL);
 		paramSource.addValue("ReasonTypeCode", PennantConstants.LOAN_CANCEL);
-		RowMapper<ReasonCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCode.class);
+		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

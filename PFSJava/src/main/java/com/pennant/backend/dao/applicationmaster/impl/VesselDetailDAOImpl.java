@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.VesselDetailDAO;
 import com.pennant.backend.model.applicationmaster.VesselDetail;
@@ -98,7 +98,7 @@ public class VesselDetailDAOImpl extends BasicDao<VesselDetail> implements Vesse
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vesselDetail);
-		RowMapper<VesselDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VesselDetail.class);
+		RowMapper<VesselDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(VesselDetail.class);
 
 		try {
 			vesselDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -126,7 +126,7 @@ public class VesselDetailDAOImpl extends BasicDao<VesselDetail> implements Vesse
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vesselDetail);
-		RowMapper<VesselDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VesselDetail.class);
+		RowMapper<VesselDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(VesselDetail.class);
 
 		try {
 			vesselDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -25,9 +25,9 @@ public interface RateChangeUploadDAO {
 	List<FinanceMain> getFinanceMain(long batchId);
 
 	boolean getRateCodes(String brCode);
-	
+
 	int logRcUpload(List<ErrorDetail> errDetail, Long id);
-	
+
 	void updateDeRemarks(RateChangeUploadHeader header, DataEngineStatus deStatus);
 
 }

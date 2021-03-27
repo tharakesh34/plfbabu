@@ -52,10 +52,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.model.administration.SecurityGroup;
@@ -99,8 +99,7 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRoleGroups> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityRoleGroups.class);
+		RowMapper<SecurityRoleGroups> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRoleGroups.class);
 		try {
 			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -256,7 +255,7 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		roles.setRoleID(roleId);
 		String selectSql = "";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(roles);
-		RowMapper<SecurityGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityGroup.class);
+		RowMapper<SecurityGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityGroup.class);
 		if (isAssigned) {
 			selectSql = "select * from secGroups_View where grpid in (select grpid from secRoleGroups where roleID = :roleID)";
 		} else {
@@ -288,8 +287,7 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		selectSql.append(" FROM SecRoleGroups_AView where RoleID =:RoleID and GrpID=:GrpID ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRolesGroups);
-		RowMapper<SecurityRoleGroups> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityRoleGroups.class);
+		RowMapper<SecurityRoleGroups> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRoleGroups.class);
 
 		try {
 			secRolesGroups = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -326,8 +324,7 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 		selectSql.append(" WHERE RoleID = :RoleID");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(roleGroups);
-		RowMapper<SecurityRoleGroups> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityRoleGroups.class);
+		RowMapper<SecurityRoleGroups> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRoleGroups.class);
 		try {
 			list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

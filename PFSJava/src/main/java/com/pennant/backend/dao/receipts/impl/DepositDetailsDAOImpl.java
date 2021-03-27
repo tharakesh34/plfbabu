@@ -50,11 +50,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.model.finance.DepositDetails;
@@ -108,7 +108,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositDetails);
-		RowMapper<DepositDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositDetails.class);
+		RowMapper<DepositDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositDetails.class);
 
 		try {
 			depositDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -143,7 +143,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositDetails);
-		RowMapper<DepositDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositDetails.class);
+		RowMapper<DepositDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositDetails.class);
 
 		try {
 			depositDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -342,8 +342,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositMovements);
-		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DepositMovements.class);
+		RowMapper<DepositMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositMovements.class);
 
 		try {
 			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -387,8 +386,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositMovements);
-		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DepositMovements.class);
+		RowMapper<DepositMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositMovements.class);
 
 		try {
 			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -565,8 +563,7 @@ public class DepositDetailsDAOImpl extends SequenceDao<DepositDetails> implement
 		logger.trace(Literal.SQL + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositMovements);
-		RowMapper<DepositMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DepositMovements.class);
+		RowMapper<DepositMovements> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositMovements.class);
 
 		try {
 			depositMovements = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

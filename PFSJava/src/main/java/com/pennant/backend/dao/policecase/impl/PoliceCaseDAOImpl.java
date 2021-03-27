@@ -8,12 +8,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
 import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
@@ -69,7 +69,7 @@ public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements Pol
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCase);
-		RowMapper<PoliceCase> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PoliceCase.class);
+		RowMapper<PoliceCase> typeRowMapper = BeanPropertyRowMapper.newInstance(PoliceCase.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -91,7 +91,7 @@ public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements Pol
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCase);
-		RowMapper<PoliceCase> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PoliceCase.class);
+		RowMapper<PoliceCase> typeRowMapper = BeanPropertyRowMapper.newInstance(PoliceCase.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -108,7 +108,7 @@ public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements Pol
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policecase);
-		ParameterizedBeanPropertyRowMapper<PoliceCaseDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		BeanPropertyRowMapper<PoliceCaseDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(PoliceCaseDetail.class);
 
 		try {
@@ -177,8 +177,7 @@ public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements Pol
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCaseDetail);
-		RowMapper<PoliceCaseDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PoliceCaseDetail.class);
+		RowMapper<PoliceCaseDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PoliceCaseDetail.class);
 
 		try {
 			policeCaseDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -335,7 +334,7 @@ public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements Pol
 			selectSql.append(" SELECT * FROM FinPoliceCaseDetail");
 			selectSql.append(" WHERE FinReference = :FinReference ");
 
-			RowMapper<PoliceCase> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PoliceCase.class);
+			RowMapper<PoliceCase> typeRowMapper = BeanPropertyRowMapper.newInstance(PoliceCase.class);
 			List<PoliceCase> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
 
 			if (list != null && !list.isEmpty()) {

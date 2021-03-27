@@ -11,11 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -245,8 +245,7 @@ public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> i
 		selectSql.append(" Where FinType =:FinType AND VasProduct =:VasProduct ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeVASProducts);
-		RowMapper<FinTypeVASProducts> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypeVASProducts.class);
+		RowMapper<FinTypeVASProducts> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeVASProducts.class);
 
 		try {
 			finTypeVASProducts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

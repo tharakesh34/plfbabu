@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -47,7 +47,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		merchantDetails.setMerchantId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(merchantDetails);
-		RowMapper<MerchantDetails> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MerchantDetails.class);
+		RowMapper<MerchantDetails> rowMapper = BeanPropertyRowMapper.newInstance(MerchantDetails.class);
 
 		try {
 			merchantDetails = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

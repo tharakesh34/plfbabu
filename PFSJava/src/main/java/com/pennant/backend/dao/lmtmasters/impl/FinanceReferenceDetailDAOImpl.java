@@ -60,7 +60,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -153,7 +152,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
 		try {
@@ -251,7 +250,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
 		logger.debug(Literal.LEAVING);
@@ -311,7 +310,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new FinanceReferenceDetail());
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
 		logger.debug(Literal.LEAVING);
@@ -456,7 +455,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		selectSql.append(" AND LovDescCodeLov = :CodeLovList ");
 
 		logger.debug(Literal.SQL + selectSql.toString());
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 		logger.debug(Literal.LEAVING);
 
@@ -781,7 +780,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
 		logger.debug(Literal.LEAVING);
@@ -834,8 +833,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		FinCollaterals finCollaterals = null;
 		try {
-			RowMapper<FinCollaterals> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(FinCollaterals.class);
+			RowMapper<FinCollaterals> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCollaterals.class);
 			finCollaterals = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -1046,7 +1044,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		}
 		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
-		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinanceReferenceDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceReferenceDetail.class);
 
 		logger.debug(Literal.LEAVING);

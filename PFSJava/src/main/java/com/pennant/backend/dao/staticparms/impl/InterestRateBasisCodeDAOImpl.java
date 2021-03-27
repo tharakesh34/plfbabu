@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.staticparms.InterestRateBasisCodeDAO;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
@@ -98,8 +98,7 @@ public class InterestRateBasisCodeDAOImpl extends BasicDao<InterestRateBasisCode
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interestRateBasisCode);
-		RowMapper<InterestRateBasisCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InterestRateBasisCode.class);
+		RowMapper<InterestRateBasisCode> typeRowMapper = BeanPropertyRowMapper.newInstance(InterestRateBasisCode.class);
 
 		try {
 			interestRateBasisCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,

@@ -55,12 +55,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -119,8 +119,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDocument.class);
+		RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 
 		try {
 			customerDocument = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -193,7 +192,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			cd.setNextTaskId(rs.getString("NextTaskId"));
 			cd.setRecordType(rs.getString("RecordType"));
 			cd.setWorkflowId(rs.getLong("WorkflowId"));
-					cd.setRemarks(rs.getString("Remarks"));
+			cd.setRemarks(rs.getString("Remarks"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				cd.setLovDescCustDocCategory(rs.getString("LovDescCustDocCategory"));
@@ -231,8 +230,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDocument.class);
+		RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
@@ -449,8 +447,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		DocumentDetails documentDetails = null;
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
+		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
 
 		try {
 			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -488,8 +485,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		parameterMap.put("DocTypeList", docTypeList);
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
+		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
 
 		List<DocumentDetails> documentDetails = this.jdbcTemplate.query(selectSql.toString(), parameterMap,
 				typeRowMapper);
@@ -523,8 +519,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
+		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
 
 		List<DocumentDetails> documentDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -735,8 +730,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(externalDocument);
-		RowMapper<ExternalDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExternalDocument.class);
+		RowMapper<ExternalDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(ExternalDocument.class);
 
 		List<ExternalDocument> externalDocuments = null;
 		try {

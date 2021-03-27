@@ -51,11 +51,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.DPDBucketConfigurationDAO;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
@@ -100,8 +100,7 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 		dPDBucketConfiguration.setConfigID(configID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dPDBucketConfiguration);
-		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DPDBucketConfiguration.class);
+		RowMapper<DPDBucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(DPDBucketConfiguration.class);
 
 		try {
 			dPDBucketConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -253,8 +252,7 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DPDBucketConfiguration.class);
+		RowMapper<DPDBucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(DPDBucketConfiguration.class);
 		List<DPDBucketConfiguration> list = jdbcTemplate.query(sql.toString(), rowMapper);
 		;
 		logger.debug(Literal.LEAVING);

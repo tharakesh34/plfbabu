@@ -50,11 +50,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
@@ -99,8 +99,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		nPABucketConfiguration.setConfigID(configID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucketConfiguration);
-		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPABucketConfiguration.class);
+		RowMapper<NPABucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(NPABucketConfiguration.class);
 
 		try {
 			nPABucketConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -289,8 +288,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPABucketConfiguration.class);
+		RowMapper<NPABucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(NPABucketConfiguration.class);
 
 		List<NPABucketConfiguration> list = jdbcTemplate.query(sql.toString(), rowMapper);
 
@@ -312,8 +310,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPABucketConfiguration.class);
+		RowMapper<NPABucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(NPABucketConfiguration.class);
 
 		List<NPABucketConfiguration> list = jdbcTemplate.query(sql.toString(), source, rowMapper);
 

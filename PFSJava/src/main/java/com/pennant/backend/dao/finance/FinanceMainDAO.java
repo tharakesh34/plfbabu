@@ -43,7 +43,6 @@
 package com.pennant.backend.dao.finance;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -329,7 +328,7 @@ public interface FinanceMainDAO {
 	FinanceType getFinTypeDetailsByFinreferene(String finReference, String string, boolean b);
 
 	// ### 10-10-2018,Ticket id:124998
-	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
+	FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif);
 
 	boolean isDeveloperFinance(String finReference, String type, boolean wif);
 
@@ -472,5 +471,9 @@ public interface FinanceMainDAO {
 	boolean ispmayApplicable(String finReference, String type);
 
 	void updateRepaymentAmount(FinanceMain financeMain);
+
+	void updateRestructure(String finReference, boolean restructure);
+
+	void updateWriteOffStatus(String finReference, boolean writeoffLoan);
 
 }

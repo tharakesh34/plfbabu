@@ -15,12 +15,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
@@ -251,8 +251,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("samplingid", samplingId);
-		RowMapper<SamplingCollateral> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SamplingCollateral.class);
+		RowMapper<SamplingCollateral> rowMapper = BeanPropertyRowMapper.newInstance(SamplingCollateral.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -287,7 +286,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from sampling").append(type).append(" where id = :samplingid");
 
-		RowMapper<Sampling> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Sampling.class);
+		RowMapper<Sampling> rowMapper = BeanPropertyRowMapper.newInstance(Sampling.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("samplingid", samplingid);
 
@@ -314,7 +313,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("samplingid", samplingid);
 
-		RowMapper<CustomerIncome> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> rowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -342,8 +341,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("samplingid", samplingid);
-		RowMapper<CustomerExtLiability> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> rowMapper = BeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -420,7 +418,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("keyreference", keyreference);
 		source.addValue("custaddrpriority", 5);
-		RowMapper<Customer> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> rowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		try {
 			list = jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (DataAccessException e) {
@@ -439,7 +437,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" select * from sampling").append(type);
 		sql.append(" where keyreference = :keyreference");
 
-		RowMapper<Sampling> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Sampling.class);
+		RowMapper<Sampling> rowMapper = BeanPropertyRowMapper.newInstance(Sampling.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
@@ -492,7 +490,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		source.addValue("keyreference", keyreference);
 		try {
 			return jdbcTemplate.query(sql.toString(), source,
-					ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class));
+					BeanPropertyRowMapper.newInstance(SamplingCollateral.class));
 		} catch (DataAccessException e) {
 			return new ArrayList<>();
 		}
@@ -533,8 +531,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		sql.append(" where reference = :collReference");
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<ExtendedFieldRender> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldRender.class);
+		RowMapper<ExtendedFieldRender> rowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldRender.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("collReference", collReference);
 
@@ -966,10 +963,10 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", linkIds);
 		source.addValue("collateralType", collateralType.toUpperCase());
-		ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class);
+		BeanPropertyRowMapper.newInstance(SamplingCollateral.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source,
-					ParameterizedBeanPropertyRowMapper.newInstance(SamplingCollateral.class));
+					BeanPropertyRowMapper.newInstance(SamplingCollateral.class));
 		} catch (DataAccessException e) {
 			return new ArrayList<>();
 		}
@@ -1011,7 +1008,7 @@ public class SamplingDAOImpl extends SequenceDao<Sampling> implements SamplingDA
 		paramSource.addValue("samplingid", samplingId);
 		paramSource.addValue("custId", custId);
 
-		RowMapper<CustomerIncome> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerIncome.class);
+		RowMapper<CustomerIncome> rowMapper = BeanPropertyRowMapper.newInstance(CustomerIncome.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

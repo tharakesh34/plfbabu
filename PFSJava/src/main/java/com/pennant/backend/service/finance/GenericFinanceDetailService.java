@@ -130,6 +130,7 @@ import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
@@ -317,6 +318,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected ManualAdviseDAO manualAdviseDAO;
 	protected AccountingSetDAO accountingSetDAO;
 	protected SubventionService subventionService;
+	protected RestructureService restructureService;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -1864,9 +1866,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			List<FinServiceInstruction> serviceInsts = financeDetail.getFinScheduleData().getFinServiceInstructions();
 
 			Cloner cloner = new Cloner();
-			for (int instruction = 0; instruction < serviceInsts.size(); instruction++) {
-
-				FinServiceInstruction inst = serviceInsts.get(instruction);
+			int instruction = 0;
+			for (FinServiceInstruction inst : serviceInsts) {
 
 				AEAmountCodes tempAmountCodes = cloner.deepClone(amountCodes);
 				aeEvent.setDataMap(new HashMap<>());
@@ -1895,6 +1896,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}
 				}
 
+				instruction++;
 				// Advance payment Details Resetting
 				if (instruction == serviceInsts.size() - 1) {
 					if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
@@ -1906,6 +1908,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
 
 				aeEvent.setDataMap(dataMap);
+
+				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(financeDetail.getModuleDefiner())
+						&& restructureService != null) {
+					restructureService.processRestructureAccounting(aeEvent, financeDetail);
+				}
 
 				// Prepared Postings execution
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
@@ -2723,7 +2730,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				finScheduleData.getFeeRules().get(i).setFinReference(finScheduleData.getFinReference());
 				finScheduleData.getFeeRules().get(i).setFinEvent(finEvent);
 			}
-			getFinFeeChargesDAO().saveChargesBatch(finScheduleData.getFeeRules(), isWIF, tableType);
+			finFeeChargesDAO.saveChargesBatch(finScheduleData.getFeeRules(), isWIF, tableType);
 		}
 
 		logger.debug("Leaving");
@@ -3859,6 +3866,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setSubventionService(SubventionService subventionService) {
 		this.subventionService = subventionService;
+	}
+
+	public void setRestructureService(RestructureService restructureService) {
+		this.restructureService = restructureService;
 	}
 
 }

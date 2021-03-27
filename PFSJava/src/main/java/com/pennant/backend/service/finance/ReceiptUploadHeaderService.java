@@ -44,12 +44,18 @@
 package com.pennant.backend.service.finance;
 
 import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
+import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
+import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public interface ReceiptUploadHeaderService {
 
@@ -66,8 +72,6 @@ public interface ReceiptUploadHeaderService {
 	boolean isFileNameExist(String value);
 
 	void updateStatus(ReceiptUploadDetail receiptUploadDetail);
-
-	void uploadHeaderStatusCnt(long receiptUploadId, int sucessCount, int failedCount);
 
 	boolean isFileDownloaded(long id, int receiptDownloaded);
 
@@ -105,5 +109,18 @@ public interface ReceiptUploadHeaderService {
 	boolean isChequeExist(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
 
 	boolean isOnlineExist(String reference, String subReceiptMode, String tranRef, String type);
+
+	int updateThread(List<Long> headerIdList);
+
+	Map<Long, ReceiptUploadLog> updateProgress(List<ReceiptUploadHeader> uploadHeaderList);
+
+	void initiateImportProcess(ReceiptUploadHeader receiptUploadHeader, Workbook workbook, String value,
+			List<ReceiptUploadDetail> rudList, List<UploadAlloctionDetail> uadList, Map<Long, Integer> importStatusMap,
+			ExcelFileImport fileImport);
+
+	void updateStatus(List<Long> headerIdList, Map<Long, ReceiptUploadLog> attemptMap);
+
+	void executeThreads(List<Long> headerIdList, LoggedInUser loggedInUser, int startThread, int endThread,
+			Map<Long, ReceiptUploadLog> attemptMap);
 
 }

@@ -305,7 +305,6 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		return parmMap;
 	}
 
-
 	@Override
 	public List<String> getEntityCodes() {
 		String sql = "Select EntityCode from Entity";
@@ -386,16 +385,16 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public List<Long> getMandateList(String entityCode) {
 		String sql = "Select MandateID from MANDATES Where Entitycode = ?";
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode}, Long.class);
+		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode }, Long.class);
 	}
-	
+
 	@Override
 	public List<Long> getMandateList(String entityCode, String partnerBankCode) {
 		StringBuilder sql = new StringBuilder();
@@ -408,15 +407,13 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode, partnerBankCode }, Long.class);
 	}
-	
-	
 
 	@Override
 	public List<String> getPartnerBankCodeByEntity(String entityCode) {
 		String sql = "Select PartnerbankCode from PartnerBanks Where Entity = ?";
-		
+
 		logger.trace(Literal.SQL + sql);
-		
+
 		return jdbcOperations.queryForList(sql, new Object[] { entityCode }, String.class);
 	}
 

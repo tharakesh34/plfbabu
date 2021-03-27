@@ -2179,7 +2179,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendCheckListDetailTab(aFinanceDetail, onLoad);
 
 		// Document Detail Tab Addition
-		if (isTabVisible(StageTabConstants.Documents)) {
+		if (isTabVisible(StageTabConstants.Documents)
+				&& !FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendDocumentDetailTab(onLoad);
 		} else {
 			this.btnSplitDoc.setVisible(false);
@@ -2241,7 +2242,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (PennantConstants.OLD_CREDITREVIEWTAB
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails) && StringUtils.isEmpty(moduleDefiner)) {
+				&& isTabVisible(StageTabConstants.CreditReviewDetails) && StringUtils.isEmpty(moduleDefiner)
+				&& !FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendCreditReviewDetailTab(false);
 		} else if (PennantConstants.NEW_CREDITREVIEWTAB
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
@@ -2279,7 +2281,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Recommend & Comments Details Tab Addition
-		appendRecommendDetailTab(onLoad);
+		if (!FinanceConstants.FINSER_EVENT_RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
+			appendRecommendDetailTab(onLoad);
+		}
 
 		// Extended Field Tab Addition
 		if (isTabVisible(StageTabConstants.ExtendedField)) {
@@ -3884,8 +3888,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.tDSPercentage.setReadonly(true);
 			this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 		}
-
-		doSetTdsDetails();
 
 		if (aFinanceMain.isNew()) {
 			if (financeType.isTdsApplicable() && ImplementationConstants.ALLOW_TDS_ON_FEE) {
@@ -7012,6 +7014,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!this.reqLoanAmt.isReadonly()) {
 			this.reqLoanAmt.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_FinanceMainDialog_RequestedLoanAmt.value"), finFormatter, false, false));
+		}
+
+		if (!this.tDSStartDate.isReadonly() && !this.tDSEndDate.isReadonly()) {
+			this.tDSStartDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value"), true));
+			this.tDSEndDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSEndDate.value"), true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -14013,8 +14022,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// FinanceMain Details tab ---> 2. Grace Period Details
 		try {
-			if (StringUtils.isEmpty(moduleDefiner)
-					|| FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
+			if (StringUtils.isEmpty(moduleDefiner) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
 					|| FinanceConstants.FINSER_EVENT_CHGGRCEND.equals(moduleDefiner)) {
 				if (this.gracePeriodEndDate.getValue() != null) {
 					this.gracePeriodEndDate_two.setValue(this.gracePeriodEndDate.getValue());
@@ -15950,7 +15958,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				aFinanceSchData.setLowerTaxDeductionDetails(lowerTaxDeduction);
 			}
 		}
-		
+
 		try {
 			if (isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
 				aFinanceMain.setTdsType(getComboboxValue(this.cbTdsType));
@@ -16314,6 +16322,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				aeEvent.setDataMap(dataMap);
 
+				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
+					financeDetailService.processRestructureAccounting(aeEvent, getFinanceDetail());
+				}
+
 				engineExecution.getAccEngineExecResults(aeEvent);
 				accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 			}
@@ -16635,6 +16647,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		amountCodes.setAddFeeToFinance(addFeeToFinance);
 		amountCodes.setFeeWaived(feeWaived);
 		amountCodes.setPaidFee(paidFee);
+		// VAS
+		amountCodes.setDeductVasDisb(deductVasDisb);
+		amountCodes.setAddVasToFinance(addVasToFinance);
+		amountCodes.setVasFeeWaived(vasFeeWaived);
+		amountCodes.setPaidVasFee(paidVasFee);
 
 		dataMap.put("VAS_DD", deductVasDisb);
 		dataMap.put("VAS_AF", addVasToFinance);
@@ -16960,7 +16977,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fillComboBox(this.cbTdsType, financeType.getTdsType(), PennantStaticListUtil.getTdsTypes(),
 					"," + PennantConstants.TDS_USER_SELECTION + ",");
 		}
-		
+
 		if (getComboboxValue(this.cbProfitDaysBasis).equals(PennantConstants.List_Select)) {
 			fillComboBox(this.cbProfitDaysBasis, financeType.getFinDaysCalType(),
 					PennantStaticListUtil.getProfitDaysBasis(), "");

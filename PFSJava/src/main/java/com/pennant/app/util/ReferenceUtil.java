@@ -246,5 +246,4 @@ public class ReferenceUtil implements Serializable {
 				.concat(StringUtils.leftPad(String.valueOf(curCalendar.get(Calendar.DAY_OF_YEAR)), 3, "0")));
 	}
 
-
 }

@@ -47,11 +47,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CostCenterDAO;
 import com.pennant.backend.model.applicationmaster.CostCenter;
@@ -93,7 +93,7 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		costCenter.setCostCenterID(costCenterID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costCenter);
-		RowMapper<CostCenter> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostCenter.class);
+		RowMapper<CostCenter> rowMapper = BeanPropertyRowMapper.newInstance(CostCenter.class);
 
 		try {
 			costCenter = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

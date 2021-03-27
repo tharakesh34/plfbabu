@@ -45,10 +45,10 @@ package com.pennant.backend.dao.messages.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.messages.UserContactsListDAO;
 import com.pennant.backend.model.messages.UserContactsList;
@@ -81,8 +81,7 @@ public class UserContactsListDAOImpl extends BasicDao<UserContactsList> implemen
 		selectSql.append("  FROM USERCONTACTSLIST  where UsrID=:UsrID order by UsrID Asc ");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userContactsList);
-		RowMapper<UserContactsList> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(UserContactsList.class);
+		RowMapper<UserContactsList> typeRowMapper = BeanPropertyRowMapper.newInstance(UserContactsList.class);
 		logger.debug("Leaving ");
 		try {
 			userContactsList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

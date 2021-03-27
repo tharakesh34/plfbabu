@@ -30,10 +30,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
@@ -85,8 +85,7 @@ public class IndicativeTermDetailDAOImpl extends BasicDao<IndicativeTermDetail> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<IndicativeTermDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(IndicativeTermDetail.class);
+		RowMapper<IndicativeTermDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(IndicativeTermDetail.class);
 
 		try {
 			detail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -49,11 +49,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -148,7 +148,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(directorDetail);
-		RowMapper<DirectorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DirectorDetail.class);
+		RowMapper<DirectorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(DirectorDetail.class);
 
 		try {
 			directorDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -454,7 +454,7 @@ public class DirectorDetailDAOImpl extends SequenceDao<DirectorDetail> implement
 		source.addValue("DirectorId", directorId);
 		source.addValue("CustID", custId);
 
-		RowMapper<DirectorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DirectorDetail.class);
+		RowMapper<DirectorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(DirectorDetail.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {

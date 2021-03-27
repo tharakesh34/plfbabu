@@ -45,5 +45,11 @@
 			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#214.26" author="naveenkumar.a" >
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+				<column name="ClosureTypeId" type="bigint" />
+		</addColumn>
+	</changeSet>
 		
 </databaseChangeLog>

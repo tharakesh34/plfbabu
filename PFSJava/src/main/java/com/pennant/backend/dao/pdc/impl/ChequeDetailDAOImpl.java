@@ -53,11 +53,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
@@ -104,7 +104,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		chequeDetail.setChequeDetailsID(chequeDetailsID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
-		RowMapper<ChequeDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeDetail.class);
+		RowMapper<ChequeDetail> rowMapper = BeanPropertyRowMapper.newInstance(ChequeDetail.class);
 
 		try {
 			chequeDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -142,7 +142,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		chequeDetail.setHeaderID(headerID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
-		RowMapper<ChequeDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeDetail.class);
+		RowMapper<ChequeDetail> rowMapper = BeanPropertyRowMapper.newInstance(ChequeDetail.class);
 		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 
 	}

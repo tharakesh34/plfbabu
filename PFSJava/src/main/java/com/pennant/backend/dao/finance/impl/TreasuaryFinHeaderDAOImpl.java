@@ -32,10 +32,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.TreasuaryFinHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -122,8 +122,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(investmentFinance);
-		RowMapper<InvestmentFinHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InvestmentFinHeader.class);
+		RowMapper<InvestmentFinHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(InvestmentFinHeader.class);
 
 		try {
 			investmentFinance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -167,8 +166,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<InvestmentFinHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InvestmentFinHeader.class);
+		RowMapper<InvestmentFinHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(InvestmentFinHeader.class);
 
 		try {
 			invHeadeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -338,7 +336,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(investmentFinHeader);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -369,7 +367,7 @@ public class TreasuaryFinHeaderDAOImpl extends BasicDao<InvestmentFinHeader> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		logger.debug("Leaving");
 		try {

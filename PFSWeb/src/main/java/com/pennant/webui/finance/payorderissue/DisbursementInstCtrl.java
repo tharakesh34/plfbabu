@@ -938,11 +938,11 @@ public class DisbursementInstCtrl {
 	public void setModuleDefiner(String moduleDefiner) {
 		this.moduleDefiner = moduleDefiner;
 	}
-	
+
 	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
 		this.vASConfigurationDAO = vASConfigurationDAO;
 	}
-	
+
 	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
 		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
 	}

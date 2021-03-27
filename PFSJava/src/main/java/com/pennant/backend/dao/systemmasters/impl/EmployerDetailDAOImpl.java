@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.EmployerDetailDAO;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
@@ -106,7 +106,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
-		RowMapper<EmployerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmployerDetail.class);
+		RowMapper<EmployerDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(EmployerDetail.class);
 
 		try {
 			employerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

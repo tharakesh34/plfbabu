@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.RatingTypeDAO;
 import com.pennant.backend.model.bmtmasters.RatingType;
@@ -94,7 +94,7 @@ public class RatingTypeDAOImpl extends BasicDao<RatingType> implements RatingTyp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ratingType);
-		RowMapper<RatingType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RatingType.class);
+		RowMapper<RatingType> typeRowMapper = BeanPropertyRowMapper.newInstance(RatingType.class);
 
 		try {
 			ratingType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

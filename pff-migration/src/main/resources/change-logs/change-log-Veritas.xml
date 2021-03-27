@@ -6968,5 +6968,129 @@ UNION ALL
 			]]>
 	    </sql>
     </changeSet>
+    
+    <changeSet id="DE#234" author="pavankalyan.s">
+		<sql>
+			<![CDATA[
+				DELETE  from reportfilterfields where reportid =(select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport');
+
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport' ),1,'Entity','LOVSEARCH','Entity','EntityCode',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+			    
+			    
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport' ),2,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,1,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+                
+                
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport' ),3,'From Date','DATE','From Date','T1.MONTHENDDATE',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP, null);
+                
+                DELETE  from reportfilterfields where reportid =(select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport');
+                
+                INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport' ),1,'Entity','LOVSEARCH','Entity','EntityCode',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+			    
+			    
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport' ),2,'FinType','LOVSEARCH','Loan Type','T1.FinType',null,'FinanceType','getFinType','getFinType',0,0,0,0,2,1,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+                
+                
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport' ),3,'From Date','DATERANGE','From Date','T1.MONTHENDDATE',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP, null);
+			
+			]]>
+	    </sql>
+    </changeSet>	
+    
+	<changeSet id="DE#251" author="pavankalyan.s">
+		<sql>
+		<![CDATA[
+		    update data_engine_config set fileprefixname = '${FILE_NAME_PREFIX}' where name = 'PRESENTMENT_REQUEST';
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#234.1" author="pavankalyan.s">
+		<sql>
+			<![CDATA[
+				DELETE  from reportfilterfields where reportid =(select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport');
+
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport' ),1,'Entity','LOVSEARCH','Entity','EntityCode',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+			    
+			    
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport' ),2,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,1,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+                
+                
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport' ),3,'From Date','DATE','From Date','T1.MONTHENDDATE',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP, null);
+                
+                DELETE  from reportfilterfields where reportid =(select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport');
+                
+                INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport' ),1,'Entity','LOVSEARCH','Entity','EntityCode',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+			    
+			    
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport' ),2,'FinType','LOVSEARCH','Loan Type','T1.FinType',null,'FinanceType','getFinType','getFinType',0,0,0,0,2,1,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,CURRENT_TIMESTAMP, '');
+                
+                
+			    INSERT INTO REPORTFILTERFIELDS(reportid,fieldid,fieldname,fieldtype,fieldlabel,fielddbname,apputilmethodname,modulename,lovhiddenfieldmethod,lovtextfieldmethod,multiselectsearch,fieldlength,fieldmaxvalue,fieldminvalue,seqorder,mandatory,fieldconstraint,fielderrormessage,
+			    wherecondition,staticvalue,fieldwidth,filterrequired,defaultfilter,version,lastmntby,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid,lastmnton,filterfileds)
+			    VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport' ),3,'From Date','DATE','From Date','T1.MONTHENDDATE',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP, null);
+			
+			]]>
+	    </sql>
+    </changeSet>
+    
+    <changeSet id="ST#214.27" author="pavankalyan.s">
+		<sql>
+			<![CDATA[
+			    DELETE FROM closure_types WHERE CODE in ('DC','IBT','NC','PC');
+                INSERT INTO closure_types VALUES ((select max(id)+1 from closure_types), 'DC', 'Death Closure',1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO closure_types VALUES ((select max(id)+1 from closure_types), 'IBT', 'IBT Closure',1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO closure_types VALUES ((select max(id)+1 from closure_types), 'NC', 'Normal Closure',1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO closure_types VALUES ((select max(id)+1 from closure_types), 'PC', 'Pre Closure',1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+    </changeSet>
+    
+	<changeSet id="DE#234.2" author="pavankalyan.s">
+		<sql>
+		<![CDATA[
+		    UPDATE reportfilterfields SET MANDATORY=1 WHERE REPORTID=(select REPORTID from reportconfiguration WHERE MENUITEMCODE='menu_Item_FeeAmzLoanTypeReport') AND FIELDID=3;
+            UPDATE reportfilterfields SET MANDATORY=1 WHERE REPORTID=(select REPORTID from reportconfiguration WHERE MENUITEMCODE='menu_Item_FeeAmzLoanTypeReport') AND FIELDID=3;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#234.3" author="pavankalyan.s">
+		<sql>
+		<![CDATA[
+		    UPDATE reportfilterfields SET MANDATORY=1 WHERE REPORTID=(select REPORTID from reportconfiguration WHERE MENUITEMCODE='menu_Item_FeeAmzReferenceReport') AND FIELDID=3;
+            UPDATE reportfilterfields SET MANDATORY=1 WHERE REPORTID=(select REPORTID from reportconfiguration WHERE MENUITEMCODE='menu_Item_FeeAmzLoanTypeReport') AND FIELDID=3;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="DE#234.4" author="pavankalyan.s">
+		<sql>
+		<![CDATA[
+		   update reportfilterfields set fieldtype='DATERANGE' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport') and fieldid=3;
+           update reportfilterfields set fieldtype='DATERANGE' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport') and fieldid=3;
+
+		]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

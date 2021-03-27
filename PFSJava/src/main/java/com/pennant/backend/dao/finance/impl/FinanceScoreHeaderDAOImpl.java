@@ -7,12 +7,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceScoreHeaderDAO;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
@@ -56,7 +56,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 			fsh.setOverride(rs.getBoolean("Override"));
 			fsh.setOverrideScore(rs.getInt("OverrideScore"));
 			fsh.setCreditWorth(rs.getString("CreditWorth"));
-					fsh.setCustId(rs.getLong("CustId"));
+			fsh.setCustId(rs.getLong("CustId"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fsh.setGroupCode(rs.getString("GroupCode"));
@@ -126,8 +126,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 		parameterMap.put("HeaderId", headerIds);
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinanceScoreDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceScoreDetail.class);
+		RowMapper<FinanceScoreDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceScoreDetail.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), parameterMap, typeRowMapper);

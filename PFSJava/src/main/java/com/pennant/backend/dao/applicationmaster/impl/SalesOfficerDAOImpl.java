@@ -47,10 +47,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SalesOfficerDAO;
 import com.pennant.backend.model.applicationmaster.SalesOfficer;
@@ -99,7 +99,7 @@ public class SalesOfficerDAOImpl extends BasicDao<SalesOfficer> implements Sales
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salesOfficer);
-		RowMapper<SalesOfficer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SalesOfficer.class);
+		RowMapper<SalesOfficer> typeRowMapper = BeanPropertyRowMapper.newInstance(SalesOfficer.class);
 
 		try {
 			salesOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

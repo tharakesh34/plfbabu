@@ -50,11 +50,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ManualDeviationDAO;
 import com.pennant.backend.model.applicationmaster.ManualDeviation;
@@ -99,7 +99,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		manualDeviation.setDeviationID(deviationID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualDeviation);
-		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
+		RowMapper<ManualDeviation> rowMapper = BeanPropertyRowMapper.newInstance(ManualDeviation.class);
 
 		try {
 			manualDeviation = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -128,7 +128,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		ManualDeviation manualDeviation = new ManualDeviation();
 		manualDeviation.setDeviationID(deviationID);
 
-		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
+		RowMapper<ManualDeviation> rowMapper = BeanPropertyRowMapper.newInstance(ManualDeviation.class);
 
 		try {
 			manualDeviation = jdbcTemplate.queryForObject(DESC_QUERY.toString(), source, rowMapper);
@@ -331,7 +331,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("categorizationCode", categorizationCode);
 
-		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
+		RowMapper<ManualDeviation> rowMapper = BeanPropertyRowMapper.newInstance(ManualDeviation.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
@@ -364,7 +364,7 @@ public class ManualDeviationDAOImpl extends SequenceDao<ManualDeviation> impleme
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("code", code);
 
-		RowMapper<ManualDeviation> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualDeviation.class);
+		RowMapper<ManualDeviation> rowMapper = BeanPropertyRowMapper.newInstance(ManualDeviation.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, rowMapper);

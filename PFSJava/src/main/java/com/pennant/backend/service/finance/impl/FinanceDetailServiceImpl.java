@@ -134,6 +134,7 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
+import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
@@ -215,6 +216,7 @@ import com.pennant.backend.model.finance.OverdraftMovements;
 import com.pennant.backend.model.finance.PricingDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.TATDetail;
@@ -510,6 +512,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	@Qualifier("verificationPostExteranalServiceHook")
 	private PostExteranalServiceHook postExteranalServiceHook;
+
+	private RestructureService restructureService;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -1294,6 +1298,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		 * if (!feeIds.isEmpty()) { scheduleData.setFinFeeReceipts(getFinFeeDetailService().
 		 * getFinFeeReceiptsById(feeIds, "_TView")); }
 		 */
+
+		// Restructure Details
+		if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(procEdtEvent)) {
+			RestructureDetail restructure = restructureService.getRestructureDetailByRef(finReference, "_View");
+			scheduleData.setRestructureDetail(restructure);
+			if (CollectionUtils.isNotEmpty(financeDetail.getFinTypeFeesList())) {
+				financeDetail.setFinTypeFeesList(new ArrayList<FinTypeFees>());
+			}
+		}
 
 		// Collateral Details
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
@@ -3108,6 +3121,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (financeDetail.getCreditReviewData() != null && creditFinancialService != null) {
 			creditFinancialService.saveOrUpdate(financeDetail, auditHeader, tableType.getSuffix());
+		}
+
+		// Restructure Details
+		if (financeDetail.getFinScheduleData().getRestructureDetail() != null) {
+			auditDetails.add(restructureService.saveOrUpdateRestructureDetail(financeDetail, tableType.getSuffix(),
+					auditHeader.getAuditTranType()));
 		}
 
 		if (!isWIF) {
@@ -5405,38 +5424,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							"_Temp", auditTranType));
 				}
 				/*
-				 * //Deleting FinancailSummary RisksAndMitigants Details
-				 * List<RisksAndMitigants> risksAndMitigants =
-				 * financeDetail.getRisksAndMitigantsList(); if
-				 * (CollectionUtils.isNotEmpty(risksAndMitigants)) {
-				 * auditDetails.addAll(risksAndMitigantsService.delete(
-				 * risksAndMitigants, TableType.TEMP_TAB, auditTranType)); }
-				 * //Deleting FinancailSummary SanctionConditions Details
-				 * List<SanctionConditions> sanctionConditions =
-				 * financeDetail.getSanctionDetailsList(); if
+				 * //Deleting FinancailSummary RisksAndMitigants Details List<RisksAndMitigants> risksAndMitigants =
+				 * financeDetail.getRisksAndMitigantsList(); if (CollectionUtils.isNotEmpty(risksAndMitigants)) {
+				 * auditDetails.addAll(risksAndMitigantsService.delete( risksAndMitigants, TableType.TEMP_TAB,
+				 * auditTranType)); } //Deleting FinancailSummary SanctionConditions Details List<SanctionConditions>
+				 * sanctionConditions = financeDetail.getSanctionDetailsList(); if
 				 * (CollectionUtils.isNotEmpty(sanctionConditions)) {
-				 * auditDetails.addAll(sanctionConditionsService.delete(
-				 * sanctionConditions, TableType.TEMP_TAB, auditTranType)); }
-				 * //Deleting FinancailSummary DealRecommendationMerits Details
+				 * auditDetails.addAll(sanctionConditionsService.delete( sanctionConditions, TableType.TEMP_TAB,
+				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
 				 * List<DealRecommendationMerits> dealRecommendationMerits =
 				 * financeDetail.getDealRecommendationMeritsDetailsList(); if
 				 * (CollectionUtils.isNotEmpty(dealRecommendationMerits)) {
-				 * auditDetails.addAll(dealRecommendationMeritsService.delete(
-				 * dealRecommendationMerits, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary DueDiligence
-				 * Details List<DueDiligenceDetails> dueDiligenceDetails =
-				 * financeDetail.getDueDiligenceDetailsList(); if
+				 * auditDetails.addAll(dealRecommendationMeritsService.delete( dealRecommendationMerits,
+				 * TableType.TEMP_TAB, auditTranType)); } //Deleting FinancailSummary DueDiligence Details
+				 * List<DueDiligenceDetails> dueDiligenceDetails = financeDetail.getDueDiligenceDetailsList(); if
 				 * (CollectionUtils.isNotEmpty(dueDiligenceDetails)) {
-				 * auditDetails.addAll(dueDiligenceDetailsService.delete(
-				 * dueDiligenceDetails, TableType.TEMP_TAB, auditTranType)); }
-				 * //Deleting FinancailSummary DealRecommendationMerits Details
+				 * auditDetails.addAll(dueDiligenceDetailsService.delete( dueDiligenceDetails, TableType.TEMP_TAB,
+				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
 				 * 
 				 * 
-				 * //Deleting FinancailSummary Synopsis Details if
-				 * (financeDetail.getSynopsisDetails() != null) {
-				 * auditDetailList.add(getSynopsisDetailsService().delete(
-				 * financeDetail.getSynopsisDetails(), TableType.TEMP_TAB,
-				 * auditTranType)); }
+				 * //Deleting FinancailSummary Synopsis Details if (financeDetail.getSynopsisDetails() != null) {
+				 * auditDetailList.add(getSynopsisDetailsService().delete( financeDetail.getSynopsisDetails(),
+				 * TableType.TEMP_TAB, auditTranType)); }
 				 */
 
 			}
@@ -5452,13 +5461,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					// Fin Fee Receipt Details Deletion
 					/*
-					 * //TODO:GANESH NEED TO REMOVE if
-					 * (financeDetail.getFinScheduleData().getFinFeeReceipts()
-					 * != null) {
-					 * auditDetailList.addAll(getFinFeeDetailService().
-					 * deleteFinFeeReceipts(
-					 * financeDetail.getFinScheduleData().getFinFeeReceipts(),
-					 * "_Temp", auditHeader.getAuditTranType())); }
+					 * //TODO:GANESH NEED TO REMOVE if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null)
+					 * { auditDetailList.addAll(getFinFeeDetailService(). deleteFinFeeReceipts(
+					 * financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp",
+					 * auditHeader.getAuditTranType())); }
 					 */
 
 					// Step Details Deletion
@@ -5608,6 +5614,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (CollectionUtils.isNotEmpty(calculateFees)) {
 				getFinFeeConfigService().saveList(calculateFees, "");
 			}
+		}
+
+		// Restructure Detail
+		if (financeDetail.getFinScheduleData().getRestructureDetail() != null) {
+			auditDetails.addAll(restructureService.doApproveRestructureDetail(financeDetail, "", tranType));
+			restructureService.computeLPPandUpdateOD(financeDetail);
 		}
 
 		// Save GCDCustomer'/////
@@ -7326,6 +7338,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		 * financeDetail.getFinScheduleData().getFinFeeReceipts(), "_Temp", auditHeader.getAuditTranType())); }
 		 */
 
+		// Restructure Details
+		if (fd.getFinScheduleData().getRestructureDetail() != null) {
+			auditDetails.add(restructureService.deleteRestructureDetail(fd, TableType.TEMP_TAB.getSuffix(),
+					auditHeader.getAuditTranType()));
+		}
+
 		auditHeader.setAuditDetails(auditDetails);
 
 		// Saving the reasons
@@ -7856,6 +7874,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails
 						.addAll(getLegalDetailService().validateDetailsFromLoan(financeDetail, auditTranType, method));
 			}
+		}
+
+		// Restructure Details
+		if (financeDetail.getFinScheduleData().getRestructureDetail() != null) {
+			auditDetails.add(restructureService.validationRestructureDetail(financeDetail, method, usrLanguage));
 		}
 
 		// Finance Fee details
@@ -12402,6 +12425,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.ENTERING);
 	}
 
+	@Override
+	public void processRestructureAccounting(AEEvent aeEvent, FinanceDetail financeDetail) {
+		restructureService.processRestructureAccounting(aeEvent, financeDetail);
+	}
+
 	/**
 	 * Getting Fin details for rate report
 	 */
@@ -13106,6 +13134,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
+	}
+
+	public void setRestructureService(RestructureService restructureService) {
+		this.restructureService = restructureService;
 	}
 
 }

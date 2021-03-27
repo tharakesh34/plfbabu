@@ -2029,6 +2029,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
+
 	public DocumentDetailDialogCtrl getDocumentDetailDialogCtrl() {
 		return documentDetailDialogCtrl;
 	}

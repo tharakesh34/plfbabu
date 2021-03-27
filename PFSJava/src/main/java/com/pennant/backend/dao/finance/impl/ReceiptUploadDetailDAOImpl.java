@@ -43,19 +43,23 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
-import com.amazonaws.util.StringUtils;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
-import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.model.receiptupload.ThreadAllocation;
 import com.pennant.backend.util.ReceiptUploadConstants;
+import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -77,12 +81,12 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	public List<ReceiptUploadDetail> getUploadReceiptDetails(long id, boolean getsucessrcdOnly) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select UploadHeaderId, UploadDetailId, RootId, Reference, ReceiptPurpose, ReceiptAmount");
-		sql.append(", AllocationType, UploadStatus, ReceivedDate, Reason, ReceiptId");
+		sql.append(", AllocationType, ProcessingStatus, ReceivedDate, Reason, ReceiptId");
 		sql.append(" From ReceiptUploadDetails");
 		sql.append(" Where UploadHeaderId = ?");
 
 		if (getsucessrcdOnly) {
-			sql.append(" and UploadStatus = ?");
+			sql.append(" and ProcessingStatus = ?");
 		}
 
 		logger.trace(Literal.SQL, sql.toString());
@@ -92,7 +96,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setLong(index++, id);
 
 			if (getsucessrcdOnly) {
-				ps.setString(index++, PennantConstants.UPLOAD_STATUS_SUCCESS);
+				ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
 			}
 
 		}, (rs, rowNum) -> {
@@ -104,7 +108,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			rud.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			rud.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
 			rud.setAllocationType(rs.getString("AllocationType"));
-			rud.setUploadStatus(rs.getString("UploadStatus"));
+			rud.setProcessingStatus(rs.getInt("ProcessingStatus"));
 			rud.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
 			rud.setReason(rs.getString("Reason"));
 			rud.setReceiptId(rs.getLong("ReceiptId") == 0 ? null : rs.getLong("ReceiptId"));
@@ -121,10 +125,11 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	public ReceiptUploadDetail getUploadReceiptDetail(long headerId, long detailId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" UploadHeaderId, UploadDetailId, RootId, Reference, ReceiptPurpose, ReceiptAmount");
-		sql.append(", AllocationType, UploadStatus, Reason, ExcessAdjustTo, EffectSchdMethod, Remarks");
+		sql.append(", AllocationType, ProcessingStatus, Reason, ExcessAdjustTo, EffectSchdMethod, Remarks");
 		sql.append(", ValueDate, ReceivedDate, ReceiptMode, FundingAc, PaymentRef, FavourNumber, BankCode");
 		sql.append(", ChequeAcNo ChequeNo, TransactionRef, Status, DepositDate, RealizationDate, InstrumentDate");
-		sql.append(", ExtReference, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId, TdsAmount");
+		sql.append(
+				", ExtReference, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId, TdsAmount");
 		sql.append(" From ReceiptUploadDetails");
 		sql.append(" Where UploadheaderId = ? And UploadDetailId = ? ");
 
@@ -142,7 +147,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 						ca.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 						ca.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
 						ca.setAllocationType(rs.getString("AllocationType"));
-						ca.setUploadStatus(rs.getString("UploadStatus"));
+						ca.setProcessingStatus(rs.getInt("ProcessingStatus"));
 						ca.setReason(rs.getString("Reason"));
 						ca.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
 						ca.setEffectSchdMethod(rs.getString("EffectSchdMethod"));
@@ -167,7 +172,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 						ca.setPanNumber(rs.getString("PanNumber"));
 						ca.setCollectionAgentId(rs.getLong("CollectionAgentId"));
 						ca.setTdsAmount(rs.getBigDecimal("TdsAmount"));
-						
+
 						return ca;
 					});
 		} catch (EmptyResultDataAccessException e) {
@@ -188,7 +193,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" ReceiptUploaddetails");
 		sql.append(" (UploadHeaderId, UploadDetailId, Reference, ReceiptPurpose, Receiptamount, AllocationType");
-		sql.append(", UploadStatus, Reason, RootId, ExcessAdjustTo, EffectSchdMethod, Remarks, ValueDate");
+		sql.append(", ProcessingStatus, Reason, RootId, ExcessAdjustTo, EffectSchdMethod, Remarks, ValueDate");
 		sql.append(", ReceivedDate, ReceiptMode, FundingAc, PaymentRef, FavourNumber, BankCode, ChequeAcNo");
 		sql.append(", TransactionRef, Status, DepositDate, RealizationDate, InstrumentDate, ExtReference");
 		sql.append(", SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId, TdsAmount");
@@ -208,7 +213,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setString(index++, rud.getReceiptPurpose());
 			ps.setBigDecimal(index++, rud.getReceiptAmount());
 			ps.setString(index++, rud.getAllocationType());
-			ps.setString(index++, rud.getUploadStatus());
+			ps.setInt(index++, rud.getProcessingStatus());
 			ps.setString(index++, rud.getReason());
 			ps.setString(index++, rud.getRootId());
 			ps.setString(index++, rud.getExcessAdjustTo());
@@ -268,7 +273,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		rud.setReason(reason);
 
 		StringBuilder sql = new StringBuilder("Update ReceiptUploadDetails");
-		sql.append(" Set UploadStatus = ?, Reason = ?");
+		sql.append(" Set ProcessingStatus = ?, Reason = ?");
 		sql.append(" Where UploadDetailId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -276,7 +281,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		try {
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
-				ps.setString(index++, rud.getUploadStatus());
+				ps.setInt(index++, rud.getProcessingStatus());
 				ps.setString(index++, rud.getReason());
 				ps.setLong(index++, rud.getUploadDetailId());
 			});
@@ -334,7 +339,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(" Where UploadHeaderId in ");
 		sql.append("(Select UploadHeaderId From ReceiptUploadHeader_View");
 		sql.append(" Where FileName not in (?) and uploadprogress in ( ?,? ) )");
-		sql.append(" and Reference = ? and uploadstatus in (?)");
+		sql.append(" and Reference = ? and ProcessingStatus in (?)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -342,7 +347,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			return jdbcOperations.queryForObject(sql.toString(),
 					new Object[] { receiptFileName, ReceiptUploadConstants.RECEIPT_DEFAULT,
 							ReceiptUploadConstants.RECEIPT_DOWNLOADED, finReference,
-							PennantConstants.UPLOAD_STATUS_SUCCESS },
+							ReceiptDetailStatus.SUCCESS.getValue() },
 					(rs, rowNum) -> rs.getString(1));
 		} catch (DataAccessException e) {
 			logger.warn(
@@ -385,10 +390,10 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			parm[index++] = headerId;
 		}
 
-		parm[index] = PennantConstants.UPLOAD_STATUS_SUCCESS;
+		parm[index] = ReceiptDetailStatus.SUCCESS.getValue();
 
 		sql.append(")");
-		sql.append(" and Uploadstatus = ?");
+		sql.append(" and ProcessingStatus = ?");
 		sql.append(" Order by Reference, ValueDate");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -400,7 +405,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	public ReceiptUploadDetail getUploadReceiptDetail(long detailID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("  UploadHeaderId, UploadDetailId, RootId, Reference, ReceiptPurpose, ReceiptAmount");
-		sql.append(", AllocationType, UploadStatus, Reason, ExcessAdjustTo, EffectSchdMethod");
+		sql.append(", AllocationType, ProcessingStatus, Reason, ExcessAdjustTo, EffectSchdMethod");
 		sql.append(", Remarks, ValueDate, ReceivedDate, ReceiptMode, FundingAc, PaymentRef, FavourNumber");
 		sql.append(", BankCode, ChequeAcNo ChequeNo, TransactionRef, Status, DepositDate, RealizationDate");
 		sql.append(", InstrumentDate, ExtReference, SubReceiptMode, ReceiptChannel, ReceivedFrom");
@@ -420,7 +425,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			rud.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			rud.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
 			rud.setAllocationType(rs.getString("AllocationType"));
-			rud.setUploadStatus(rs.getString("UploadStatus"));
+			rud.setProcessingStatus(rs.getInt("ProcessingStatus"));
 			rud.setReason(rs.getString("Reason"));
 			rud.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
 			rud.setEffectSchdMethod(rs.getString("EffectSchdMethod"));
@@ -449,4 +454,195 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		});
 	}
 
+	@Override
+	public List<ThreadAllocation> getFinRefWithCount(List<Long> uploadHeaderIdList) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT DISTINCT(Reference),");
+		sql.append(" (SELECT COUNT(Reference)");
+		sql.append(" From ReceiptUploadDetails");
+		sql.append(" WHERE Reference = UploadDetails.Reference");
+		sql.append(" And ProcessingStatus = ? And UploadHeaderId in ( ");
+		sql.append(commaJoin(uploadHeaderIdList));
+		sql.append(" )) FinCount");
+		sql.append(" From ReceiptUploadDetails UploadDetails");
+		sql.append(" WHERE UploadHeaderId in ( ");
+		sql.append(commaJoin(uploadHeaderIdList));
+		sql.append(" ) And ProcessingStatus = ? order by Fincount");
+
+		logger.trace(Literal.SQL, sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
+
+			while (index - 2 != 2 * uploadHeaderIdList.size()) {
+				for (Long uploadHeader : uploadHeaderIdList) {
+					ps.setLong(index++, uploadHeader);
+				}
+			}
+			ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
+		}, (rs, rowNum) -> {
+			ThreadAllocation thread = new ThreadAllocation();
+			thread.setReference(rs.getString("Reference"));
+			thread.setCount(rs.getInt("FinCount"));
+			return thread;
+		});
+
+	}
+
+	private String commaJoin(List<Long> uploadHeaderList) {
+		return uploadHeaderList.stream().map(e -> "?").collect(Collectors.joining(","));
+	}
+
+	@Override
+	public List<ReceiptUploadDetail> getUploadReceiptDetailsByThreadId(List<Long> uploadHeaderIdList,
+			Integer threadId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  UploadHeaderId, UploadDetailId, RootId, Reference, ReceiptPurpose, ReceiptAmount");
+		sql.append(", AllocationType, ProcessingStatus, Reason, ExcessAdjustTo, EffectSchdMethod");
+		sql.append(", Remarks, ValueDate, ReceivedDate, ReceiptMode, FundingAc, PaymentRef, FavourNumber");
+		sql.append(", BankCode, ChequeAcNo ChequeNo, TransactionRef, Status, DepositDate, RealizationDate");
+		sql.append(", InstrumentDate, ExtReference, SubReceiptMode, ReceiptChannel, ReceivedFrom");
+		sql.append(", PanNumber, CollectionAgentId");
+		sql.append(" From ReceiptUploadDetails");
+		sql.append(" WHERE UploadHeaderId in ( ");
+		sql.append(commaJoin(uploadHeaderIdList));
+		sql.append(" )");
+		sql.append(" And ThreadId = ? And ProcessingStatus = 1");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long uploadHeader : uploadHeaderIdList) {
+				ps.setLong(index++, uploadHeader);
+			}
+			ps.setInt(index++, threadId);
+		}, (rs, rowNum) -> {
+			ReceiptUploadDetail rud = new ReceiptUploadDetail();
+
+			rud.setUploadheaderId(rs.getLong("UploadHeaderId"));
+			rud.setUploadDetailId(rs.getLong("UploadDetailId"));
+			rud.setRootId(rs.getString("RootId"));
+			rud.setReference(rs.getString("Reference"));
+			rud.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+			rud.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+			rud.setAllocationType(rs.getString("AllocationType"));
+			rud.setProcessingStatus(rs.getInt("ProcessingStatus"));
+			rud.setReason(rs.getString("Reason"));
+			rud.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
+			rud.setEffectSchdMethod(rs.getString("EffectSchdMethod"));
+			rud.setRemarks(rs.getString("Remarks"));
+			rud.setValueDate(rs.getDate("ValueDate"));
+			rud.setReceivedDate(rs.getDate("ReceivedDate"));
+			rud.setReceiptMode(rs.getString("ReceiptMode"));
+			rud.setFundingAc(rs.getString("FundingAc"));
+			rud.setPaymentRef(rs.getString("PaymentRef"));
+			rud.setFavourNumber(rs.getString("FavourNumber"));
+			rud.setBankCode(rs.getString("BankCode"));
+			rud.setChequeNo(rs.getString("ChequeNo"));
+			rud.setTransactionRef(rs.getString("TransactionRef"));
+			rud.setStatus(rs.getString("Status"));
+			rud.setDepositDate(rs.getDate("DepositDate"));
+			rud.setRealizationDate(rs.getDate("RealizationDate"));
+			rud.setInstrumentDate(rs.getDate("InstrumentDate"));
+			rud.setExtReference(rs.getString("ExtReference"));
+			rud.setSubReceiptMode(rs.getString("SubReceiptMode"));
+			rud.setReceiptChannel(rs.getString("ReceiptChannel"));
+			rud.setReceivedFrom(rs.getString("ReceivedFrom"));
+			rud.setPanNumber(rs.getString("PanNumber"));
+			rud.setCollectionAgentId(rs.getLong("CollectionAgentId"));
+
+			return rud;
+		});
+	}
+
+	@Override
+	public int updateThreadAllocationByFinRef(List<ThreadAllocation> batchAllocations, List<Long> uploadHeaderIdList) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update ReceiptUploadDetails");
+		sql.append(" Set ThreadId = ?");
+		sql.append(" Where Reference = ? And UploadHeaderId In (");
+		sql.append(commaJoin(uploadHeaderIdList));
+		sql.append(") And ProcessingStatus = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ThreadAllocation fd = batchAllocations.get(i);
+				int index = 1;
+				ps.setInt(index++, fd.getThreadId());
+				ps.setString(index++, fd.getReference());
+				for (Long uploadHeader : uploadHeaderIdList) {
+					ps.setLong(index++, uploadHeader);
+				}
+				ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return batchAllocations.size();
+			}
+		}).length;
+	}
+
+	@Override
+	public long updateStatus(List<Long> uploadHeaderIdList) {
+
+		StringBuilder sql = new StringBuilder("Update ReceiptUploaddetails");
+		sql.append(" Set ProcessingStatus = ?");
+		sql.append(" Where UploadHeaderid in ( ");
+		sql.append(commaJoin(uploadHeaderIdList));
+		sql.append(" ) And ProcessingStatus = ?");
+
+		logger.trace(Literal.SQL, sql.toString());
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
+
+			for (Long uploadHeader : uploadHeaderIdList) {
+				ps.setLong(index++, uploadHeader);
+			}
+
+			ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
+		});
+
+	}
+
+	@Override
+	public List<String> isDuplicateExists(ReceiptUploadDetail rud) {
+
+		boolean isOnline = StringUtils.isNotBlank(rud.getTransactionRef());
+		StringBuilder sql = new StringBuilder("Select FileName From ReceiptUploadHeader_temp");
+		sql.append(" Where UploadHeaderId IN (");
+		sql.append(" Select UploadHeaderId From ReceiptUploadDetails");
+		sql.append(" Where Reference = ?  AND ValueDate = ? AND ReceiptAmount = ?");
+		sql.append(" AND UploadHeaderId <> ? AND ProcessingStatus = ?)");
+
+		if (isOnline) {
+			sql.append(" AND TransactionRef = ? ");
+		}
+
+		logger.trace(Literal.SQL + sql);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, rud.getReference());
+			ps.setDate(index++, JdbcUtil.getDate(rud.getValueDate()));
+			ps.setBigDecimal(index++, rud.getReceiptAmount());
+			ps.setLong(index++, rud.getUploadheaderId());
+			ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
+			if (isOnline) {
+				ps.setString(index++, rud.getTransactionRef());
+			}
+
+		}, (rs, roNum) -> {
+			return rs.getString(1);
+		});
+
+	}
 }

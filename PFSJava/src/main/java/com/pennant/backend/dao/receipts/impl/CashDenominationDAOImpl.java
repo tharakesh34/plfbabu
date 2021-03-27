@@ -20,11 +20,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.CashDenominationDAO;
 import com.pennant.backend.model.finance.CashDenomination;
@@ -176,7 +176,7 @@ public class CashDenominationDAOImpl extends BasicDao<CashDenomination> implemen
 		cashDenomination.setMovementId(movementId);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cashDenomination);
-		RowMapper<CashDenomination> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CashDenomination.class);
+		RowMapper<CashDenomination> rowMapper = BeanPropertyRowMapper.newInstance(CashDenomination.class);
 		list = jdbcTemplate.query(sql.toString(), beanParameters, rowMapper);
 
 		logger.debug(Literal.LEAVING);

@@ -53,11 +53,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.model.finance.SubventionDetail;
@@ -257,7 +257,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subVenschedule);
-		RowMapper<SubventionScheduleDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SubventionScheduleDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(SubventionScheduleDetail.class);
 
 		try {
@@ -293,7 +293,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subventionScheduleDetail);
-		RowMapper<SubventionScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SubventionScheduleDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SubventionScheduleDetail.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -91,7 +91,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 	Map<Long, ExtendedFieldRender> extFieldValues = new HashMap<>();
 	@Autowired
 	private CreditReviewSummaryDAO creditReviewSummaryDao;
-	
+
 	LinkedHashMap<String, Sheet> sepSheetsMap = new LinkedHashMap<>();
 	private long auditYr;
 
@@ -112,9 +112,9 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 	 * @param event
 	 * @throws Exception
 	 */
-	@SuppressWarnings({"rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) throws Exception {
-		logger.debug("Entering");		
+		logger.debug("Entering");
 		// Set the page level components.
 		setPageComponents(window_SpreadSheetDialog);
 
@@ -131,7 +131,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			if (arguments.containsKey("financeDetail")) {
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 			}
-			
+
 			if (arguments.containsKey("creditReviewData") && arguments.get("creditReviewData") != null) {
 				creditReviewData = (CreditReviewData) arguments.get("creditReviewData");
 			}
@@ -139,10 +139,10 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			if (arguments.containsKey("isReadOnly")) {
 				isReadOnly = (boolean) arguments.get("isReadOnly");
 			}
-			
+
 			if (arguments.containsKey("extBreDetails")) {
 				this.extBreDetails = (ExtBreDetails) arguments.get("extBreDetails");
-			}			
+			}
 
 			if (this.extCreditReviewConfig != null) {
 				doShowDialog();
@@ -153,8 +153,10 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 				try {
 					Class[] paramType = { this.getClass() };
 					Object[] stringParameter = { this };
-					if (financeMainDialogCtrl.getClass().getMethod("setFinanceExtCreditReviewSpreadSheetCtrl", paramType) != null) {
-						financeMainDialogCtrl.getClass().getMethod("setFinanceExtCreditReviewSpreadSheetCtrl", paramType)
+					if (financeMainDialogCtrl.getClass().getMethod("setFinanceExtCreditReviewSpreadSheetCtrl",
+							paramType) != null) {
+						financeMainDialogCtrl.getClass()
+								.getMethod("setFinanceExtCreditReviewSpreadSheetCtrl", paramType)
 								.invoke(financeMainDialogCtrl, stringParameter);
 					}
 				} catch (Exception e) {
@@ -177,14 +179,14 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 
 	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
-		
+
 		try {
 			Importer importer = Importers.getImporter();
 			Book book = importer.imports(getFile(this.extCreditReviewConfig.getTemplateName()),
-						this.extCreditReviewConfig.getTemplateName());
-			
-			doWriteBeanToComponents(creditReviewData, book);				
-			
+					this.extCreditReviewConfig.getTemplateName());
+
+			doWriteBeanToComponents(creditReviewData, book);
+
 			this.window_SpreadSheetDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 
 		} catch (Exception e) {
@@ -201,8 +203,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 				Range cellRange = Ranges.range(sheet, protectedCell);
 				CellStyle cellStyle = cellRange.getCellStyle();
 				cellStyle.isLocked();
-				EditableCellStyle newStyle = cellRange.getCellStyleHelper()
-						.createCellStyle(cellStyle);
+				EditableCellStyle newStyle = cellRange.getCellStyleHelper().createCellStyle(cellStyle);
 				newStyle.setLocked(isReadOnly);
 				cellRange.setCellStyle(newStyle);
 			}
@@ -221,14 +222,13 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			}
 		}
 	}
-	
-	
-	public void doWriteBeanToComponents(CreditReviewData creditReviewData,Book book) {
+
+	public void doWriteBeanToComponents(CreditReviewData creditReviewData, Book book) {
 		logger.debug(Literal.ENTERING);
 
 		try {
 			//Prepare MainApplicant Sheet
-			if(!financeDetail.getCustomerDetails().getCustomer().getCustCIF().isEmpty()){
+			if (!financeDetail.getCustomerDetails().getCustomer().getCustCIF().isEmpty()) {
 				prepareMainApplicantSheet(book);
 			}
 
@@ -237,37 +237,35 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			for (JointAccountDetail jointAccountDetail : coapplicantsList) {
 				prepareCoApplicantsSheets(jointAccountDetail.getCustomerDetails(), book);
 			}
-			
+
 			//Prepare consolidated corp financials Sheet
-			if(StringUtils.isNotEmpty(this.extCreditReviewConfig.getSepFields())){
-				prepareConsolidatedFinancialsSheet(book);			
+			if (StringUtils.isNotEmpty(this.extCreditReviewConfig.getSepFields())) {
+				prepareConsolidatedFinancialsSheet(book);
 			}
-			
+
 			//Prepare consolidated obligations Sheet
-			if(StringUtils.isNotEmpty(this.extCreditReviewConfig.getConsolidatedObligationsFields())){
-				prepareConsolidatedObligationsSheet(coapplicantsList,book);			
+			if (StringUtils.isNotEmpty(this.extCreditReviewConfig.getConsolidatedObligationsFields())) {
+				prepareConsolidatedObligationsSheet(coapplicantsList, book);
 			}
 
 			//Prepare FinalEligibility Sheet
-			if(StringUtils.isNotEmpty(this.extCreditReviewConfig.getFinalEligibilityFields())){
-				prepareFinalEligibilitySheet(coapplicantsList, book);			
+			if (StringUtils.isNotEmpty(this.extCreditReviewConfig.getFinalEligibilityFields())) {
+				prepareFinalEligibilitySheet(coapplicantsList, book);
 			}
-			
-			
+
 		} catch (Exception e) {
 			logger.debug(e);
 		}
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-		public static Map<String, Object> convertStringToMap(String payload) {
+
+	public static Map<String, Object> convertStringToMap(String payload) {
 		logger.debug(Literal.ENTERING);
 
 		org.codehaus.jackson.map.ObjectMapper mapper = new org.codehaus.jackson.map.ObjectMapper();
 		HashMap<String, Object> map = null;
-		
+
 		try {
 			map = mapper.readValue(payload, new TypeReference<HashMap<String, Object>>() {
 			});
@@ -292,7 +290,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		BigDecimal custObligations = BigDecimal.ZERO;
 		Sheet finalEligibilitySheet = null;
 		finalEligibilitySheet = book.getSheet("Final_Eligibility");
-		
+
 		// Set the properties to SpreadSheet
 		spreadSheet.setHiderowhead(true);
 		spreadSheet.setHidecolumnhead(true);
@@ -303,21 +301,20 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		spreadSheet.setMaxVisibleColumns(100);
 		spreadSheet.setMaxVisibleRows(300);
 		spreadSheet.setSelectedSheet("Final_Eligibility");
-		
-		
+
 		//Unprotect Final Eligibility fields block
 		String incomeUserEntryFields = this.extCreditReviewConfig.getFinalEligIncomeUserEntryFields();
-		for (int i = 0; i<= coApplicantsList.size()+1; i++) {
-				incomeUserEntryFields = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeUserEntryFields);
-				unProtectCells(incomeUserEntryFields, finalEligibilitySheet);
-				incomeUserEntryFields = incomeUserEntryFields.replace(incomeUserEntryFields.charAt(0),(char) (incomeUserEntryFields.charAt(0) + 1));				
+		for (int i = 0; i <= coApplicantsList.size() + 1; i++) {
+			incomeUserEntryFields = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeUserEntryFields);
+			unProtectCells(incomeUserEntryFields, finalEligibilitySheet);
+			incomeUserEntryFields = incomeUserEntryFields.replace(incomeUserEntryFields.charAt(0),
+					(char) (incomeUserEntryFields.charAt(0) + 1));
 		}
 		unProtectCells(this.extCreditReviewConfig.getFinalEligLowLtvUserEntryFields(), finalEligibilitySheet);
 		unProtectCells(this.extCreditReviewConfig.getFinalEligLRDUserEntryFields(), finalEligibilitySheet);
 		unProtectCells(this.extCreditReviewConfig.getFinalEligSuperLowerEntryFields(), finalEligibilitySheet);
 		unProtectCells(this.extCreditReviewConfig.getFinalEligSuperHigherEntryField(), finalEligibilitySheet);
-		
-		
+
 		//populate Editable Cells Data
 		Map<String, Object> dataMap = new HashMap<>();
 
@@ -334,16 +331,17 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 				range.setCellValue(entrySet.getValue());
 			}
 		}
-		
+
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+				DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
 		BREService response = null;
 		try {
-			
+
 			response = mapper.readValue(this.extBreDetails.getResponse(), BREService.class);
 		} catch (IOException e) {
 			logger.debug("BRE respose is not present");
-		}catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			logger.debug("BRE respose is not present");
 		}
 
@@ -351,59 +349,65 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		String incomeDetailsRange = this.extCreditReviewConfig.getFinalEligIncomeDetailsFields();
 		//Income foir fields
 		String incomeFoirRange = this.extCreditReviewConfig.getFinalEligIncomeFoirFields();
-		populateCifAndName(coApplicantsList,finalEligibilitySheet);//FIXME - Optimize
-		if(ObjectUtils.isNotEmpty(response)){
-				
-		List<ApplicantOutElement> applOutElmntList = response.getDaXMLDocument().getPchflOut().getApplicantOut().getElement();
-		for (ApplicantOutElement applicantOutElement : applOutElmntList) {
-			if (ObjectUtils.isNotEmpty(applicantOutElement.getEligApclOut())) {
+		populateCifAndName(coApplicantsList, finalEligibilitySheet);//FIXME - Optimize
+		if (ObjectUtils.isNotEmpty(response)) {
 
-				if (StringUtils.equalsAnyIgnoreCase(applicantOutElement.getApplicantDetails().getCccid(),
-						financeDetail.getCustomerDetails().getCustomer().getCustCIF())) {
-					List<CustomerExtLiability> mainAppCustExtLiabList = financeDetail.getCustomerDetails()
-							.getCustomerExtLiabilityList();
-					for (CustomerExtLiability customerExtLiability : mainAppCustExtLiabList) {
-						custObligations = custObligations.add(PennantApplicationUtil.formateAmount(customerExtLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));
-								
-					}
-					al.add(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
-					al.add(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-					al.add(custObligations.toString());
-				} else {
-					for (JointAccountDetail jointAccountDetail : coApplicantsList) {
-						String custCif = jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF();
-						if (custCif.equalsIgnoreCase(applicantOutElement.getApplicantDetails().getCccid())) {
-							List<CustomerExtLiability> cpAppCustExtLiabList = jointAccountDetail.getCustomerDetails().getCustomerExtLiabilityList();
-							for (CustomerExtLiability customerExtLiability : cpAppCustExtLiabList) {
-								custObligations = custObligations.add(PennantApplicationUtil.formateAmount(customerExtLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));
+			List<ApplicantOutElement> applOutElmntList = response.getDaXMLDocument().getPchflOut().getApplicantOut()
+					.getElement();
+			for (ApplicantOutElement applicantOutElement : applOutElmntList) {
+				if (ObjectUtils.isNotEmpty(applicantOutElement.getEligApclOut())) {
+
+					if (StringUtils.equalsAnyIgnoreCase(applicantOutElement.getApplicantDetails().getCccid(),
+							financeDetail.getCustomerDetails().getCustomer().getCustCIF())) {
+						List<CustomerExtLiability> mainAppCustExtLiabList = financeDetail.getCustomerDetails()
+								.getCustomerExtLiabilityList();
+						for (CustomerExtLiability customerExtLiability : mainAppCustExtLiabList) {
+							custObligations = custObligations.add(PennantApplicationUtil.formateAmount(
+									customerExtLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));
+
+						}
+						al.add(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
+						al.add(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+						al.add(custObligations.toString());
+					} else {
+						for (JointAccountDetail jointAccountDetail : coApplicantsList) {
+							String custCif = jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF();
+							if (custCif.equalsIgnoreCase(applicantOutElement.getApplicantDetails().getCccid())) {
+								List<CustomerExtLiability> cpAppCustExtLiabList = jointAccountDetail
+										.getCustomerDetails().getCustomerExtLiabilityList();
+								for (CustomerExtLiability customerExtLiability : cpAppCustExtLiabList) {
+									custObligations = custObligations.add(PennantApplicationUtil.formateAmount(
+											customerExtLiability.getInstalmentAmount(),
+											PennantConstants.defaultCCYDecPos));
+								}
+								al.add(jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
+								al.add(custCif);
+								al.add(custObligations.toString());
 							}
-							al.add(jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
-							al.add(custCif);
-							al.add(custObligations.toString());
 						}
 					}
-				}
 
-				List<EligibilityApclOutElement> eligApclOutElmtList = applicantOutElement.getEligApclOut().getEligApclOutElement();
-				
+					List<EligibilityApclOutElement> eligApclOutElmtList = applicantOutElement.getEligApclOut()
+							.getEligApclOutElement();
+
 					try {
 						for (EligibilityApclOutElement eligibilityApclOutElement : eligApclOutElmtList) {
 							if (ObjectUtils.isNotEmpty(eligibilityApclOutElement.getIncomeMethod())) {
 								getEligibleIncome(al, eligibilityApclOutElement);
 							}
 						}
-						
+
 						incomeDetailsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeDetailsRange);
 						String incomeDetailsCells[] = incomeDetailsRange.split(",");
-						
+
 						for (int i = 0; i < incomeDetailsCells.length; i++) {
 							Range range = Ranges.range(finalEligibilitySheet, incomeDetailsCells[i]);
 							range.setCellValue(al.get(i));
 						}
 					} catch (Exception e) {
-					logger.info("Exception occured while populating Final Eligbility income details block");
-				}
-				
+						logger.info("Exception occured while populating Final Eligbility income details block");
+					}
+
 					try {
 						for (EligibilityApclOutElement eligibilityApclOutElement : eligApclOutElmtList) {
 							if (ObjectUtils.isNotEmpty(eligibilityApclOutElement.getIncomeMethod())) {
@@ -412,99 +416,129 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 						}
 						incomeFoirRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeFoirRange);
 						String incomeFoirCells[] = incomeFoirRange.split(",");
-						
+
 						for (int i = 0; i < incomeFoirCells.length; i++) {
 							Range range = Ranges.range(finalEligibilitySheet, incomeFoirCells[i]);
 							range.setCellValue(alFoir.get(i));
 						}
 
 					} catch (Exception e) {
-				logger.info("Exception occured while populating Final Eligbility Foir block");
-			}
-				
-				
-			}
-			custObligations = BigDecimal.ZERO;
-			al.clear();
-			alFoir.clear();
-			incomeDetailsRange = incomeDetailsRange.replace(incomeDetailsRange.charAt(0),(char) (incomeDetailsRange.charAt(0) + 1));
-			incomeFoirRange = incomeFoirRange.replace(incomeFoirRange.charAt(0),(char) (incomeFoirRange.charAt(0) + 1));
-		}
-		al = null;
-	}
+						logger.info("Exception occured while populating Final Eligbility Foir block");
+					}
 
-		
-		List<VASRecording> vasRecrsList =  financeDetail.getFinScheduleData().getVasRecordingList();
+				}
+				custObligations = BigDecimal.ZERO;
+				al.clear();
+				alFoir.clear();
+				incomeDetailsRange = incomeDetailsRange.replace(incomeDetailsRange.charAt(0),
+						(char) (incomeDetailsRange.charAt(0) + 1));
+				incomeFoirRange = incomeFoirRange.replace(incomeFoirRange.charAt(0),
+						(char) (incomeFoirRange.charAt(0) + 1));
+			}
+			al = null;
+		}
+
+		List<VASRecording> vasRecrsList = financeDetail.getFinScheduleData().getVasRecordingList();
 		BigDecimal liVasAmtSum = BigDecimal.ZERO;
 		BigDecimal giVasAmtSum = BigDecimal.ZERO;
 		for (VASRecording vasRecording : vasRecrsList) {
-			if(vasRecording.getProductCode().equalsIgnoreCase("LI"))
+			if (vasRecording.getProductCode().equalsIgnoreCase("LI"))
 				liVasAmtSum = liVasAmtSum.add(vasRecording.getFee());
 			else if (vasRecording.getProductCode().equalsIgnoreCase("GI"))
 				giVasAmtSum = giVasAmtSum.add(vasRecording.getFee());
 		}
-		
+
 		//Populate Final Eligibility block
 		String finalEligFieldsRange = this.extCreditReviewConfig.getFinalEligibilityFields();
 		finalEligFieldsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(finalEligFieldsRange);
 		String finalEligCells[] = finalEligFieldsRange.split(",");
-		List finalEligList	= new ArrayList<>();
-		if(ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility())){
-			
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getConsideredMonthlyIncome()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getExistingMonthlyObligations()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getMaxPossibleEmi()));
-			finalEligList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getTenorAsPerNorms());
+		List finalEligList = new ArrayList<>();
+		if (ObjectUtils.isNotEmpty(response) && ObjectUtils
+				.isNotEmpty(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility())) {
+
+			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getConsideredMonthlyIncome()));
+			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getExistingMonthlyObligations()));
+			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getMaxPossibleEmi()));
+			finalEligList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility()
+					.getTenorAsPerNorms());
 			finalEligList.add(financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms());
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEligibleLoan()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmi()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiLiGi()));
-			finalEligList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getFoirCalc());
-			finalEligList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getFoirCalcLigi());
+			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getEligibleLoan()));
+			finalEligList.add(Double.parseDouble(
+					response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmi()));
+			finalEligList.add(Double.parseDouble(
+					response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiLiGi()));
+			finalEligList.add(
+					response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getFoirCalc());
+			finalEligList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility()
+					.getFoirCalcLigi());
 			finalEligList.add(financeDetail.getFinScheduleData().getFinanceMain().getRepayProfitRate().doubleValue());
 			BigDecimal childLoansRoi = BigDecimal.ZERO;
 			BigDecimal childLoansSumAmt = BigDecimal.ZERO;
-			if(ObjectUtils.isNotEmpty(financeDetail.getPricingDetail())){
-				List<FinanceMain> childFinList = financeDetail.getPricingDetail().getFinanceMains(); 
-				
+			if (ObjectUtils.isNotEmpty(financeDetail.getPricingDetail())) {
+				List<FinanceMain> childFinList = financeDetail.getPricingDetail().getFinanceMains();
+
 				for (FinanceMain childFin : childFinList) {
 					childLoansRoi = childLoansRoi.add(childFin.getRepayProfitRate());
-					childLoansSumAmt  = childLoansSumAmt.add(childFin.getFinAssetValue());
+					childLoansSumAmt = childLoansSumAmt.add(childFin.getFinAssetValue());
 				}
 			}
 			finalEligList.add(childLoansRoi.doubleValue());
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getFinalEligibleLoanBtHl()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getFinalEligibleLoanHeTopup()));
-			finalEligList.add(PennantApplicationUtil.formateAmount((BigDecimal) financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue(), PennantConstants.defaultCCYDecPos).doubleValue());
-			finalEligList.add(PennantApplicationUtil.formateAmount((BigDecimal) childLoansSumAmt, PennantConstants.defaultCCYDecPos).doubleValue());
-			finalEligList.add(PennantApplicationUtil.formateAmount((BigDecimal) liVasAmtSum, PennantConstants.defaultCCYDecPos).doubleValue());
-			finalEligList.add(PennantApplicationUtil.formateAmount((BigDecimal) giVasAmtSum, PennantConstants.defaultCCYDecPos).doubleValue());
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiLi()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiGi()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiBtHl()));
-			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiHeTopup()));
-						
+			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getFinalEligibleLoanBtHl()));
+			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getFinalEligibleLoanHeTopup()));
+			finalEligList.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue(),
+							PennantConstants.defaultCCYDecPos)
+					.doubleValue());
+			finalEligList.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) childLoansSumAmt, PennantConstants.defaultCCYDecPos).doubleValue());
+			finalEligList.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) liVasAmtSum, PennantConstants.defaultCCYDecPos).doubleValue());
+			finalEligList.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) giVasAmtSum, PennantConstants.defaultCCYDecPos).doubleValue());
+			finalEligList.add(Double.parseDouble(
+					response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiLi()));
+			finalEligList.add(Double.parseDouble(
+					response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiGi()));
+			finalEligList.add(Double.parseDouble(
+					response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getEmiBtHl()));
+			finalEligList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getEmiHeTopup()));
+
 			for (int i = 0; i < finalEligCells.length; i++) {
 				Range range = Ranges.range(finalEligibilitySheet, finalEligCells[i]);
-				range.setCellValue(finalEligList.get(i));			
+				range.setCellValue(finalEligList.get(i));
 			}
 		}
 		finalEligList = null;
-		
+
 		//Populate SuperLower block
-		if(ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi())){
+		if (ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(
+				response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi())) {
 			String superLowerRange = this.extCreditReviewConfig.getFinalEligSuperLowerFields();
 			String superLowerCells[] = superLowerRange.split(",");
-			List superLowerList	= new ArrayList<>();
-			
-			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi().getFoir_insurance()));
-			superLowerList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi().getPerc_low_emi_possible());
-			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi().getProposed_loan_effective_emi()));
-			superLowerList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi().getPerc_change_emi_balance_60());
-			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi().getApplicable_emi_first_60()));
-			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi().getApplicable_emi_next_60()));
-			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperLowEmi().getApplicable_emi_balance()));
-			
+			List superLowerList = new ArrayList<>();
+
+			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperLowEmi().getFoir_insurance()));
+			superLowerList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility()
+					.getSuperLowEmi().getPerc_low_emi_possible());
+			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperLowEmi().getProposed_loan_effective_emi()));
+			superLowerList.add(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility()
+					.getSuperLowEmi().getPerc_change_emi_balance_60());
+			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperLowEmi().getApplicable_emi_first_60()));
+			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperLowEmi().getApplicable_emi_next_60()));
+			superLowerList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperLowEmi().getApplicable_emi_balance()));
+
 			try {
 				for (int i = 0; i < superLowerCells.length; i++) {
 					Range range = Ranges.range(finalEligibilitySheet, superLowerCells[i]);
@@ -513,24 +547,32 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			} catch (Exception e) {
 				logger.info("Exception occured while populating final eligbility super lower block");
 			}
-			
+
 			superLowerList = null;
 		}
-		
+
 		//Populate SuperHigher block
-		else if (ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan())){
+		else if (ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(response.getDaXMLDocument().getPchflOut()
+				.getApplicationOut().getFinalEligibility().getSuperHigherLoan())) {
 			String superHigherRange = this.extCreditReviewConfig.getFinalEligSuperHigherFields();
 			superHigherRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(superHigherRange);
 			String superHigherCells[] = superHigherRange.split(",");
 			List<Double> superHigherList = new ArrayList<>();
-			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan().getFoirInsurance()));
-			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan().getPercIncreaseElig()));
-			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan().getPossibleHigherLoan()));
-			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan().getPercChangeEmiBalance()));
-			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan().getApplicableEmiFirst60()));
-			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan().getApplicableEmiNext60()));
-			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getSuperHigherLoan().getApplicableEmiBalance()));
-			
+			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperHigherLoan().getFoirInsurance()));
+			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperHigherLoan().getPercIncreaseElig()));
+			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperHigherLoan().getPossibleHigherLoan()));
+			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperHigherLoan().getPercChangeEmiBalance()));
+			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperHigherLoan().getApplicableEmiFirst60()));
+			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperHigherLoan().getApplicableEmiNext60()));
+			superHigherList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getSuperHigherLoan().getApplicableEmiBalance()));
+
 			try {
 				for (int i = 0; i < superHigherCells.length; i++) {
 					Range range = Ranges.range(finalEligibilitySheet, superHigherCells[i]);
@@ -539,28 +581,34 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			} catch (Exception e) {
 				logger.info("Exception occured while populating final eligbility super higher block");
 			}
-			
+
 			superHigherList = null;
 		}
-		
+
 		//Populate Advantage block
-		if(ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage())){
+		if (ObjectUtils.isNotEmpty(response) && ObjectUtils.isNotEmpty(
+				response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage())) {
 			String advFieldsRange = this.extCreditReviewConfig.getFinalEligAdvantageFields();
 			advFieldsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(advFieldsRange);
 			String advantageCells[] = advFieldsRange.split(",");
 			List<Double> advList = new ArrayList<>();
-			advList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage().getEligibleLoanAdvantage()));
-			advList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage().getCombinedLoanSanctioned()));
-			advList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage().getRoiAdvantage()));
+			advList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getAdvantage().getEligibleLoanAdvantage()));
+			advList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getAdvantage().getCombinedLoanSanctioned()));
+			advList.add(Double.parseDouble(response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getAdvantage().getRoiAdvantage()));
 			advList.add(Double.valueOf(financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms()));
-			List<String> emiAmtItems = response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage().getEmiAmount().getItem();
-			List<String> monthsItems = response.getDaXMLDocument().getPchflOut().getApplicationOut().getFinalEligibility().getAdvantage().getMonths().getItem();
-			
-			for(int i = 0; i <= emiAmtItems.size() || i <= monthsItems.size(); i++){
+			List<String> emiAmtItems = response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getAdvantage().getEmiAmount().getItem();
+			List<String> monthsItems = response.getDaXMLDocument().getPchflOut().getApplicationOut()
+					.getFinalEligibility().getAdvantage().getMonths().getItem();
+
+			for (int i = 0; i <= emiAmtItems.size() || i <= monthsItems.size(); i++) {
 				advList.add(Double.parseDouble(emiAmtItems.get(i)));
 				advList.add(Double.parseDouble(monthsItems.get(i)));
 			}
-			
+
 			try {
 				for (int i = 0; i < advantageCells.length; i++) {
 					Range range = Ranges.range(finalEligibilitySheet, advantageCells[i]);
@@ -571,7 +619,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			}
 			advList = null;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -582,24 +630,25 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		incomeCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(incomeCellsRange);
 		Range range;
 		String incmCellRange[] = incomeCellsRange.split(",");
-		
+
 		range = Ranges.range(finalEligibilitySheet, incmCellRange[0]);
 		range.setCellValue(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
-		
+
 		range = Ranges.range(finalEligibilitySheet, incmCellRange[1]);
 		range.setCellValue(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-		
+
 		for (JointAccountDetail jointAccountDetail : coApplicantsList) {
-			incomeCellsRange = incomeCellsRange.replace(incomeCellsRange.charAt(0),(char) (incomeCellsRange.charAt(0) + 1));
+			incomeCellsRange = incomeCellsRange.replace(incomeCellsRange.charAt(0),
+					(char) (incomeCellsRange.charAt(0) + 1));
 			String incomeCells[] = incomeCellsRange.split(",");
-			
+
 			range = Ranges.range(finalEligibilitySheet, incomeCells[0]);
 			range.setCellValue(jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
-			
+
 			range = Ranges.range(finalEligibilitySheet, incomeCells[1]);
 			range.setCellValue(jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -633,7 +682,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			break;
 		}
 	}
-	
+
 	private void getEligibileFoir(List<String> al, EligibilityApclOutElement eligibilityApclOutElement) {
 		switch (eligibilityApclOutElement.getIncomeMethod()) {
 		case "GROSS SALARIED":
@@ -686,7 +735,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		String sepCellsRange = this.extCreditReviewConfig.getSepFields();
 		sepCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(sepCellsRange);
 
-		if(auditYr !=0){
+		if (auditYr != 0) {
 			Range range0 = Ranges.range(consolFinancialsSheet, "C4");
 			range0.setCellValue(
 					"FY " + String.valueOf(auditYr).substring(2) + "-" + String.valueOf(auditYr + 1).substring(2));
@@ -696,7 +745,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 				sepCellsRange = sepCellsRange.replace(sepCellsRange.charAt(0), (char) (sepCellsRange.charAt(0) + 1));
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -714,10 +763,10 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			sumValue = BigDecimal.ZERO;
 		}
 	}
-	
+
 	public static BigDecimal getValueInBigDecimal(Object value) {
 		BigDecimal ret = BigDecimal.ZERO;
-		
+
 		if (value != null) {
 			if (value instanceof BigDecimal) {
 				ret = (BigDecimal) value;
@@ -736,7 +785,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 
 	private void prepareConsolidatedObligationsSheet(List<JointAccountDetail> coapplicantsList, Book book) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Sheet consldtdObligsSheet = null;
 		consldtdObligsSheet = book.getSheet("Consolidated Obligations");
 		Sheet consolObligSheet = SheetCopier.clone("Consolidated_Obligations", consldtdObligsSheet);
@@ -751,59 +800,65 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		spreadSheet.setMaxVisibleColumns(100);
 		spreadSheet.setMaxVisibleRows(300);
 		spreadSheet.setSelectedSheet("Consolidated_Obligations");
-		
+
 		ArrayList<CustomerExtLiability> custExtLiabList = new ArrayList<>();
-		List<CustomerExtLiability> mainAppExtLiabList = financeDetail.getCustomerDetails().getCustomerExtLiabilityList();
-		
+		List<CustomerExtLiability> mainAppExtLiabList = financeDetail.getCustomerDetails()
+				.getCustomerExtLiabilityList();
+
 		for (CustomerExtLiability customerExtLiability : mainAppExtLiabList) {
 			custExtLiabList.add(customerExtLiability);
 		}
-		
+
 		for (JointAccountDetail jointAccountDetail : coapplicantsList) {
-			List<CustomerExtLiability> coAppExLiabList = jointAccountDetail.getCustomerDetails().getCustomerExtLiabilityList();
+			List<CustomerExtLiability> coAppExLiabList = jointAccountDetail.getCustomerDetails()
+					.getCustomerExtLiabilityList();
 			for (CustomerExtLiability customerExtLiability : coAppExLiabList) {
 				custExtLiabList.add(customerExtLiability);
 			}
 		}
-		
+
 		int counter = 1;
 		List<Object> al = new ArrayList<>();
 		String consldtdObligCellsRange = this.extCreditReviewConfig.getConsolidatedObligationsFields();
-		
+
 		for (CustomerExtLiability customerExtLiability : custExtLiabList) {
-			if(StringUtils.equalsIgnoreCase("S", customerExtLiability.getFinStatus())){
+			if (StringUtils.equalsIgnoreCase("S", customerExtLiability.getFinStatus())) {
 				continue;
 			}
 			al.add(counter);
 			al.add(customerExtLiability.getCustShrtName());
 			al.add(customerExtLiability.getLoanBankName());
 			al.add(customerExtLiability.getLoanPurpose());
-			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getOriginalAmount(), PennantConstants.defaultCCYDecPos));
+			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getOriginalAmount(),
+					PennantConstants.defaultCCYDecPos));
 			al.add(customerExtLiability.getTenure());
 			al.add(customerExtLiability.getMob());
 			al.add(customerExtLiability.getBalanceTenure());
-			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getPrincipalOutstanding(), PennantConstants.defaultCCYDecPos));
-			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getInstalmentAmount(), PennantConstants.defaultCCYDecPos));
+			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getPrincipalOutstanding(),
+					PennantConstants.defaultCCYDecPos));
+			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getInstalmentAmount(),
+					PennantConstants.defaultCCYDecPos));
 			al.add(customerExtLiability.getFinStatus());
-			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getRateOfInterest(), PennantConstants.defaultCCYDecPos));
+			al.add(PennantApplicationUtil.formateAmount(customerExtLiability.getRateOfInterest(),
+					PennantConstants.defaultCCYDecPos));
 			al.add(PennantStaticListUtil.getSourceInfoList().get(customerExtLiability.getSource()).getLabel());
 			al.add(customerExtLiability.getSecurityDetails());
 			al.add(customerExtLiability.getRepayBankName());
 			al.add(customerExtLiability.getRepayFromAccNo());
 			al.add(customerExtLiability.isConsideredBasedOnRTR());
-			
+
 			String consldtdObligCells[] = consldtdObligCellsRange.split(",");
-			
+
 			for (int i = 0; i < consldtdObligCells.length; i++) {
 				Range range = Ranges.range(consolObligSheet, consldtdObligCells[i]);
 				range.setCellValue(al.get(i));
 			}
 			char cr = consldtdObligCellsRange.charAt(1);
 			Integer i = Integer.parseInt(String.valueOf(cr));
-			Integer j = i+1;
+			Integer j = i + 1;
 			String nextChar = j.toString();
 			char nextCr = nextChar.charAt(0);
-			
+
 			consldtdObligCellsRange = consldtdObligCellsRange.replace(consldtdObligCellsRange.charAt(1), nextCr);
 			al.clear();
 			counter++;
@@ -817,40 +872,36 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		logger.debug(Literal.ENTERING);
 		String coApplicantCtg = custDetails.getCustomer().getCustCtgCode();
 		String subCat = custDetails.getCustomer().getSubCategory();
-		
-		if (StringUtils.equalsIgnoreCase(coApplicantCtg, "RETAIL")
-				&& (StringUtils.equalsIgnoreCase(subCat, "SAL")
-						|| StringUtils.equalsIgnoreCase(subCat, "NON-WORKING"))) {
-			prepareSalSheet("C_",custDetails, book);
+
+		if (StringUtils.equalsIgnoreCase(coApplicantCtg, "RETAIL") && (StringUtils.equalsIgnoreCase(subCat, "SAL")
+				|| StringUtils.equalsIgnoreCase(subCat, "NON-WORKING"))) {
+			prepareSalSheet("C_", custDetails, book);
 
 		} else if (StringUtils.equalsIgnoreCase(coApplicantCtg, "RETAIL")
-				&& (StringUtils.equalsIgnoreCase(subCat, "SEP")
-						|| StringUtils.equalsIgnoreCase(subCat, "SENP"))) {
-			prepareSepSheet("C_",custDetails, book);
+				&& (StringUtils.equalsIgnoreCase(subCat, "SEP") || StringUtils.equalsIgnoreCase(subCat, "SENP"))) {
+			prepareSepSheet("C_", custDetails, book);
 
 		} else if (StringUtils.equalsIgnoreCase(coApplicantCtg, "CORP")) {
 			prepareSepSheet("C_", custDetails, book);
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void prepareMainApplicantSheet(Book book) {
 		logger.debug(Literal.ENTERING);
 		String applicantCtg = financeDetail.getCustomerDetails().getCustomer().getCustCtgCode();
 		String subCat = financeDetail.getCustomerDetails().getCustomer().getSubCategory();
-		
-		if (StringUtils.equalsIgnoreCase(applicantCtg, "RETAIL")
-				&& (StringUtils.equalsIgnoreCase(subCat, "SALARIED")
-						|| StringUtils.equalsIgnoreCase(subCat, "NON-WORKING"))) {
-			prepareSalSheet("A_",financeDetail.getCustomerDetails(), book);
+
+		if (StringUtils.equalsIgnoreCase(applicantCtg, "RETAIL") && (StringUtils.equalsIgnoreCase(subCat, "SALARIED")
+				|| StringUtils.equalsIgnoreCase(subCat, "NON-WORKING"))) {
+			prepareSalSheet("A_", financeDetail.getCustomerDetails(), book);
 
 		} else if (StringUtils.equalsIgnoreCase(applicantCtg, "RETAIL")
-				&& (StringUtils.equalsIgnoreCase(subCat, "SEP")
-						|| StringUtils.equalsIgnoreCase(subCat, "SENP"))) {
-			prepareSepSheet("A_",financeDetail.getCustomerDetails(), book);
+				&& (StringUtils.equalsIgnoreCase(subCat, "SEP") || StringUtils.equalsIgnoreCase(subCat, "SENP"))) {
+			prepareSepSheet("A_", financeDetail.getCustomerDetails(), book);
 
 		} else if (StringUtils.equalsIgnoreCase(applicantCtg, "CORP")) {
-			prepareSepSheet("A_",financeDetail.getCustomerDetails(), book);
+			prepareSepSheet("A_", financeDetail.getCustomerDetails(), book);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -861,13 +912,18 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		Sheet sepSheet = null;
 		LinkedHashMap<String, Object> creditRevMap = new LinkedHashMap<>();
 		sheet = book.getSheet("SEP");
-		if(custDetails.getCustomer().getCustCtgCode().equalsIgnoreCase("RETAIL")){
-			sepSheet = SheetCopier.clone(appType + custDetails.getCustomer().getCustCtgCode() +"_"+custDetails.getCustomer().getSubCategory() +"_"+ custDetails.getCustomer().getCustCIF(), sheet);
-			
-		}else{
-			sepSheet = SheetCopier.clone(appType + custDetails.getCustomer().getCustCtgCode() +"_" + custDetails.getCustomer().getCustCIF(), sheet);
+		if (custDetails.getCustomer().getCustCtgCode().equalsIgnoreCase("RETAIL")) {
+			sepSheet = SheetCopier.clone(
+					appType + custDetails.getCustomer().getCustCtgCode() + "_"
+							+ custDetails.getCustomer().getSubCategory() + "_" + custDetails.getCustomer().getCustCIF(),
+					sheet);
+
+		} else {
+			sepSheet = SheetCopier.clone(
+					appType + custDetails.getCustomer().getCustCtgCode() + "_" + custDetails.getCustomer().getCustCIF(),
+					sheet);
 		}
-		
+
 		sepSheetsMap.put(custDetails.getCustomer().getCustCIF(), sepSheet);
 
 		// Set the properties to SpreadSheet
@@ -879,50 +935,55 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
 		spreadSheet.setMaxVisibleColumns(100);
 		spreadSheet.setMaxVisibleRows(300);
-		
-		if(custDetails.getCustomer().getCustCtgCode().equalsIgnoreCase("RETAIL")){
-			spreadSheet.setSelectedSheet(appType + custDetails.getCustomer().getCustCtgCode() +"_"+custDetails.getCustomer().getSubCategory() +"_"+ custDetails.getCustomer().getCustCIF());			
-		}else{
-			spreadSheet.setSelectedSheet(appType + custDetails.getCustomer().getCustCtgCode() +"_" + custDetails.getCustomer().getCustCIF());
+
+		if (custDetails.getCustomer().getCustCtgCode().equalsIgnoreCase("RETAIL")) {
+			spreadSheet.setSelectedSheet(appType + custDetails.getCustomer().getCustCtgCode() + "_"
+					+ custDetails.getCustomer().getSubCategory() + "_" + custDetails.getCustomer().getCustCIF());
+		} else {
+			spreadSheet.setSelectedSheet(appType + custDetails.getCustomer().getCustCtgCode() + "_"
+					+ custDetails.getCustomer().getCustCIF());
 		}
 		String sepCellsRange = this.extCreditReviewConfig.getSepFields().trim();
-		sepCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(sepCellsRange);		
-		List<String> auditYearsList = creditReviewSummaryDao.getAuditYearsbyCustdId(custDetails.getCustomer().getCustID());
+		sepCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(sepCellsRange);
+		List<String> auditYearsList = creditReviewSummaryDao
+				.getAuditYearsbyCustdId(custDetails.getCustomer().getCustID());
 		List<Integer> auditYears = auditYearsList.stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
-		
+
 		String finCrdtRevRange = sepCellsRange.replace(sepCellsRange.charAt(0), (char) (sepCellsRange.charAt(0) - 2));
 		String finCrdtRevCells[] = finCrdtRevRange.split(",");
-		
+
 		Collections.sort(auditYears, Collections.reverseOrder());
 		int count = 1;
 		for (long auditYear : auditYears) {
 			Range range = Ranges.range(sepSheet, "C4");
 			auditYr = auditYear;
-			range.setCellValue("FY " + String.valueOf(auditYear).substring(2)+"-"+String.valueOf(auditYear+1).substring(2));
-			
-			creditRevMap = creditReviewSummaryDao.getFinCreditRevSummaryByCustIdAndAdtYr(custDetails.getCustomer().getCustID(), auditYear);
+			range.setCellValue(
+					"FY " + String.valueOf(auditYear).substring(2) + "-" + String.valueOf(auditYear + 1).substring(2));
+
+			creditRevMap = creditReviewSummaryDao
+					.getFinCreditRevSummaryByCustIdAndAdtYr(custDetails.getCustomer().getCustID(), auditYear);
 
 			setCorpFinancialsData(sepSheet, sepCellsRange, finCrdtRevCells, creditRevMap);
 			sepCellsRange = sepCellsRange.replace(sepCellsRange.charAt(0), (char) (sepCellsRange.charAt(0) + 1));
 			count++;
-			if(count == 4)
+			if (count == 4)
 				break;
 		}
-		
+
 		//Prepare Banking Info block
 		String consldtdBnkCellsRange = this.extCreditReviewConfig.getConsolidatedBankingFields();
 		consldtdBnkCellsRange = CharMatcher.BREAKING_WHITESPACE.removeFrom(consldtdBnkCellsRange);
 		String bankInfoFieldsRange[] = consldtdBnkCellsRange.split("##");
-		List<CustomerBankInfo> custBnkInfoList = custDetails.getCustomerBankInfoList();		
-		
+		List<CustomerBankInfo> custBnkInfoList = custDetails.getCustomerBankInfoList();
+
 		List<CustomerBankInfo> caAccountsList = new ArrayList<>();
 		List<CustomerBankInfo> nonCaAccountsList = new ArrayList<>();
 		List<CustomerBankInfo> allBanksAccounts = new ArrayList<>();
-		
+
 		for (CustomerBankInfo customerBankInfo : custBnkInfoList) {
-			if(StringUtils.equalsIgnoreCase(customerBankInfo.getAccountType(), "CA")){
+			if (StringUtils.equalsIgnoreCase(customerBankInfo.getAccountType(), "CA")) {
 				caAccountsList.add(customerBankInfo);
-			}else{
+			} else {
 				nonCaAccountsList.add(customerBankInfo);
 			}
 		}
@@ -930,8 +991,8 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		allBanksAccounts.addAll(nonCaAccountsList);
 		int counter = 0;
 		for (CustomerBankInfo customerBankInfo : allBanksAccounts) {
-			if (counter == bankInfoFieldsRange.length){
-				break;				
+			if (counter == bankInfoFieldsRange.length) {
+				break;
 			}
 			populateBankingInfoFields(sepSheet, bankInfoFieldsRange, counter, customerBankInfo);
 			counter = counter + 1;
@@ -942,73 +1003,98 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void populateBankingInfoFields(Sheet sepSheet, String[] bankInfoFieldsRange,
-			 int counter, CustomerBankInfo customerBankInfo) {
+	private void populateBankingInfoFields(Sheet sepSheet, String[] bankInfoFieldsRange, int counter,
+			CustomerBankInfo customerBankInfo) {
 		String dayBalSum = "";
 		List<String> al = new ArrayList<>();
 		String accountCellsRange = bankInfoFieldsRange[counter];
 		String accountHeaderRange[] = accountCellsRange.split("#");
-		
+
 		String accountHeaderFields = accountHeaderRange[0].toString();
 		String accountHeaderCells[] = accountHeaderFields.split(",");
 		List<String> headerItems = new ArrayList<>();
-		
+
 		headerItems.add(customerBankInfo.getAccountHolderName());
 		headerItems.add(customerBankInfo.getLovDescBankName());
 		headerItems.add(customerBankInfo.getLovDescAccountType());
-		if(StringUtils.equalsIgnoreCase(customerBankInfo.getAccountType(), "CA"))
+		if (StringUtils.equalsIgnoreCase(customerBankInfo.getAccountType(), "CA"))
 			headerItems.add("YES");
 		else
 			headerItems.add("NO");
-		headerItems.add(PennantApplicationUtil.formateAmount((BigDecimal) customerBankInfo.getCcLimit(), PennantConstants.defaultCCYDecPos).toString());
+		headerItems.add(PennantApplicationUtil
+				.formateAmount((BigDecimal) customerBankInfo.getCcLimit(), PennantConstants.defaultCCYDecPos)
+				.toString());
 		headerItems.add("0");
-		
+
 		for (int i = 0; i < accountHeaderCells.length; i++) {
 			Range range = Ranges.range(sepSheet, accountHeaderCells[i]);
 			range.setCellValue(headerItems.get(i));
 		}
-		
+
 		String bankInfoDays = SysParamUtil.getValueAsString("BANKINFO_DAYS");
 		int days[] = Arrays.asList(bankInfoDays.split(",")).stream().mapToInt(Integer::parseInt).toArray();
 		int monthsCounts = 0;
 		List<BankInfoDetail> bankInfoList = customerBankInfo.getBankInfoDetails();
 		for (BankInfoDetail bankInfoDetail : bankInfoList) {
-			if(monthsCounts == 6)
+			if (monthsCounts == 6)
 				break;
 			String accountCells[] = accountHeaderRange[1].split(",");
-			al.clear();		
-			
+			al.clear();
+
 			al.add(String.valueOf(bankInfoDetail.getCreditNo()));
-			al.add(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getCreditAmt(), PennantConstants.defaultCCYDecPos).toString());
+			al.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) bankInfoDetail.getCreditAmt(), PennantConstants.defaultCCYDecPos)
+					.toString());
 			al.add(String.valueOf(bankInfoDetail.getDebitNo()));
-			al.add(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getDebitAmt(), PennantConstants.defaultCCYDecPos).toString());				
-			al.add(PennantApplicationUtil.formateAmount(getDayEndBalance(bankInfoDetail,days[0]), PennantConstants.defaultCCYDecPos).toString());
-			al.add(PennantApplicationUtil.formateAmount(getDayEndBalance(bankInfoDetail,days[1]), PennantConstants.defaultCCYDecPos).toString());
-			al.add(PennantApplicationUtil.formateAmount(getDayEndBalance(bankInfoDetail,days[2]), PennantConstants.defaultCCYDecPos).toString());
-			al.add(PennantApplicationUtil.formateAmount(getDayEndBalance(bankInfoDetail,days[3]), PennantConstants.defaultCCYDecPos).toString());
-			al.add(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getClosingBal(), PennantConstants.defaultCCYDecPos).toString());
-			al.add(String.valueOf(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getBounceIn(), PennantConstants.defaultCCYDecPos)));
-			al.add(String.valueOf(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getBounceOut(), PennantConstants.defaultCCYDecPos)));
-			
-			dayBalSum = String.valueOf(getDayEndBalance(bankInfoDetail, days[0]).add(getDayEndBalance(bankInfoDetail, days[1]))
-					.add(getDayEndBalance(bankInfoDetail, days[2]))
+			al.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) bankInfoDetail.getDebitAmt(), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(PennantApplicationUtil
+					.formateAmount(getDayEndBalance(bankInfoDetail, days[0]), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(PennantApplicationUtil
+					.formateAmount(getDayEndBalance(bankInfoDetail, days[1]), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(PennantApplicationUtil
+					.formateAmount(getDayEndBalance(bankInfoDetail, days[2]), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(PennantApplicationUtil
+					.formateAmount(getDayEndBalance(bankInfoDetail, days[3]), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) bankInfoDetail.getClosingBal(), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(String.valueOf(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getBounceIn(),
+					PennantConstants.defaultCCYDecPos)));
+			al.add(String.valueOf(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getBounceOut(),
+					PennantConstants.defaultCCYDecPos)));
+
+			dayBalSum = String.valueOf(getDayEndBalance(bankInfoDetail, days[0])
+					.add(getDayEndBalance(bankInfoDetail, days[1])).add(getDayEndBalance(bankInfoDetail, days[2]))
 					.add(getDayEndBalance(bankInfoDetail, days[3])));
-			
+
 			Double odccUtilization = Double.parseDouble(dayBalSum) / days.length;
-			
-			al.add(PennantApplicationUtil.formateAmount(BigDecimal.valueOf(odccUtilization), PennantConstants.defaultCCYDecPos).toString());
-			al.add(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getoDCCLimit(), PennantConstants.defaultCCYDecPos).toString());
-			al.add(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getInterest(), PennantConstants.defaultCCYDecPos).toString());
-			al.add(PennantApplicationUtil.formateAmount((BigDecimal) bankInfoDetail.getTrf(), PennantConstants.defaultCCYDecPos).toString());
-			
-				for (int i = 0; i < accountCells.length; i++) {
-					Range range = Ranges.range(sepSheet, accountCells[i]);
-					range.setCellValue(al.get(i));
-				}
-				monthsCounts++;
-				accountHeaderRange[1] = accountHeaderRange[1].replace(accountHeaderRange[1].charAt(0),(char) (accountHeaderRange[1].charAt(0) + 1));
+
+			al.add(PennantApplicationUtil
+					.formateAmount(BigDecimal.valueOf(odccUtilization), PennantConstants.defaultCCYDecPos).toString());
+			al.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) bankInfoDetail.getoDCCLimit(), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) bankInfoDetail.getInterest(), PennantConstants.defaultCCYDecPos)
+					.toString());
+			al.add(PennantApplicationUtil
+					.formateAmount((BigDecimal) bankInfoDetail.getTrf(), PennantConstants.defaultCCYDecPos).toString());
+
+			for (int i = 0; i < accountCells.length; i++) {
+				Range range = Ranges.range(sepSheet, accountCells[i]);
+				range.setCellValue(al.get(i));
 			}
+			monthsCounts++;
+			accountHeaderRange[1] = accountHeaderRange[1].replace(accountHeaderRange[1].charAt(0),
+					(char) (accountHeaderRange[1].charAt(0) + 1));
 		}
+	}
 
 	private BigDecimal getDayEndBalance(BankInfoDetail bankInfoDetail, int day) {
 		BigDecimal dayEndBal = BigDecimal.ZERO;
@@ -1023,13 +1109,15 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		return dayEndBal;
 	}
 
-	private void setCorpFinancialsData(Sheet sepSheet, String sepCellsRange,String finCrdtRevCells[], Map<String, Object> creditRevMap) {
+	private void setCorpFinancialsData(Sheet sepSheet, String sepCellsRange, String finCrdtRevCells[],
+			Map<String, Object> creditRevMap) {
 		String sepCells[] = sepCellsRange.split(",");
 
 		for (int i = 0; i < sepCells.length; i++) {
 			Range range = Ranges.range(sepSheet, sepCells[i]);
 			Range range1 = Ranges.range(sepSheet, finCrdtRevCells[i]);
-			range.setCellValue(PennantApplicationUtil.formateAmount((BigDecimal) creditRevMap.get(range1.getCellValue()), PennantConstants.defaultCCYDecPos));
+			range.setCellValue(PennantApplicationUtil.formateAmount(
+					(BigDecimal) creditRevMap.get(range1.getCellValue()), PennantConstants.defaultCCYDecPos));
 		}
 	}
 
@@ -1038,8 +1126,8 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		Sheet sheet = null;
 		sheet = book.getSheet("SAL");
 
-		Sheet salSheet = SheetCopier.clone(appType + custDetails.getCustomer().getCustCtgCode() + "_" + custDetails.getCustomer().getSubCategory()
-				+ "_" + custDetails.getCustomer().getCustCIF(), sheet);
+		Sheet salSheet = SheetCopier.clone(appType + custDetails.getCustomer().getCustCtgCode() + "_"
+				+ custDetails.getCustomer().getSubCategory() + "_" + custDetails.getCustomer().getCustCIF(), sheet);
 
 		// Set the properties to SpreadSheet
 		spreadSheet.setHiderowhead(true);
@@ -1050,8 +1138,8 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		spreadSheet.disableUserAction(AuxAction.ADD_SHEET, true);
 		spreadSheet.setMaxVisibleColumns(100);
 		spreadSheet.setMaxVisibleRows(300);
-		spreadSheet.setSelectedSheet(appType + custDetails.getCustomer().getCustCtgCode() + "_" + custDetails.getCustomer().getSubCategory()
-				+ "_" + custDetails.getCustomer().getCustCIF());
+		spreadSheet.setSelectedSheet(appType + custDetails.getCustomer().getCustCtgCode() + "_"
+				+ custDetails.getCustomer().getSubCategory() + "_" + custDetails.getCustomer().getCustCIF());
 
 		HashMap<String, String> hMap = getsalariedFinancialsData(custDetails);
 		String salCellsRange = this.extCreditReviewConfig.getSalFields();
@@ -1072,62 +1160,96 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 			for (CustomerIncome customerIncome : custIncomeList) {
 				switch (customerIncome.getIncomeType()) {
 				case "BASIC":
-					hMap.put("BASIC", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("BASIC",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "HRA":
-					hMap.put("HRA", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("HRA",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "OTHFIX":
-					hMap.put("OTHFIX", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("OTHFIX",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "SPALLWNC":
-					hMap.put("SPALLWNC", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("SPALLWNC",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "MONTH3":
-					hMap.put("MONTH3", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("MONTH3",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "MONTH2":
-					hMap.put("MONTH2", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("MONTH2",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "MONTH1":
-					hMap.put("MONTH1", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("MONTH1",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "QUARTER2":
-					hMap.put("QUARTER2", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("QUARTER2",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "QUARTER1":
-					hMap.put("QUARTER1", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("QUARTER1",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "ANNUAL":
-					hMap.put("ANNUAL", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("ANNUAL",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "RENTINC":
-					hMap.put("RENTINC", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("RENTINC",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "PREVINT":
-					hMap.put("PREVINT", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("PREVINT",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "LATINT":
-					hMap.put("LATINT", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("LATINT",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "PREVDIV":
-					hMap.put("PREVDIV", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("PREVDIV",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "LATDIV":
-					hMap.put("LATDIV", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("LATDIV",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "PREVCOMM":
-					hMap.put("PREVCOMM", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("PREVCOMM",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
 				case "LATCOMM":
-					hMap.put("LATCOMM", PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(), PennantConstants.defaultCCYDecPos).toString());
+					hMap.put("LATCOMM",
+							PennantApplicationUtil.formateAmount((BigDecimal) customerIncome.getCalculatedAmount(),
+									PennantConstants.defaultCCYDecPos).toString());
 					break;
-					
+
 				}
 			}
 		}
 		return hMap;
-		
+
 	}
 
 	public void doWriteComponentstoBean() {
@@ -1150,16 +1272,16 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 					if (celldata != null && !cellStyle.isLocked() && !celldata.isFormula()) {
 						dataMap.put(range2.toString(), celldata.getValue());
 					}
-					if(i == 7 && (j > 1 && j < 11)){
+					if (i == 7 && (j > 1 && j < 11)) {
 						dataMap.put(range2.toString(), celldata.getValue());
 					}
 				}
 			}
 		}
-		
+
 		try {
 			jsonInString = mapper.writeValueAsString(dataMap);
-			
+
 		} catch (Exception e) {
 			logger.error("Exception in json request string" + e);
 		}
@@ -1170,7 +1292,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 
 		this.creditReviewData.setTemplateName(this.extCreditReviewConfig.getTemplateName());
 		this.creditReviewData.setTemplateData(jsonInString);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1180,7 +1302,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		if ((userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_RESUBMITTED)
 				|| userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)
 				|| userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_CANCELLED))) {
-				return true;
+			return true;
 		}
 
 		try {
@@ -1190,7 +1312,7 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 				creditReviewData.setVersion(creditReviewData.getVersion() + 1);
 				creditReviewData.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				creditReviewData.setNewRecord(true);
-				}
+			}
 			creditReviewData.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			creditReviewData.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		} catch (Exception e) {
@@ -1231,7 +1353,6 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 	public void setCreditReviewSummaryDao(CreditReviewSummaryDAO creditReviewSummaryDao) {
 		this.creditReviewSummaryDao = creditReviewSummaryDao;
 	}
-	
 
 	public CreditApplicationReviewService getCreditApplicationReviewService() {
 		return creditApplicationReviewService;
@@ -1241,5 +1362,4 @@ public class FinanceExtCreditReviewSpreadSheetCtrl extends GFCBaseCtrl<CreditRev
 		this.creditApplicationReviewService = creditApplicationReviewService;
 	}
 
-		
 }

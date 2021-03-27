@@ -9,11 +9,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
 import com.pennant.backend.model.finance.finoption.FinOption;
@@ -129,7 +129,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		finOption.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finOption);
-		RowMapper<FinOption> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOption.class);
+		RowMapper<FinOption> rowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -170,7 +170,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		RowMapper<FinOption> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOption.class);
+		RowMapper<FinOption> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -194,7 +194,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finreference);
 
-		RowMapper<FinOption> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOption.class);
+		RowMapper<FinOption> rowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), source, rowMapper);

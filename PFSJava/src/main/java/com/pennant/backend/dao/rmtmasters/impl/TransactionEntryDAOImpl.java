@@ -58,13 +58,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -155,8 +155,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 
 		try {
 			transactionEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -208,8 +207,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -482,7 +480,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 			selectSql.append(" Order BY SeqOrder ");
 
 			logger.debug("selectSql: " + selectSql.toString());
-			RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+			RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 			logger.debug("Leaving");
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
@@ -768,8 +766,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -787,8 +784,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new TransactionEntry());
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -810,8 +806,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new TransactionEntry());
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -849,8 +844,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 				"  where AccountSetID IN (select AccountSetID from FintypeAccounting where FinType = :FinType)");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 
 		logger.debug("Leaving");
 
@@ -873,7 +867,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		source.addValue("RuleCode", subHeadRules);
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 		ruleList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");

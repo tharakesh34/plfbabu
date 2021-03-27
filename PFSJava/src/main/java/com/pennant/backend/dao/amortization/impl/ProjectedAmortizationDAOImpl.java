@@ -55,13 +55,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
@@ -353,8 +353,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
-		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAccrual.class);
+		RowMapper<ProjectedAccrual> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAccrual.class);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
@@ -528,8 +527,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAMZ);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
@@ -660,8 +658,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
 			amzLog = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -726,8 +723,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
 			amzLog = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

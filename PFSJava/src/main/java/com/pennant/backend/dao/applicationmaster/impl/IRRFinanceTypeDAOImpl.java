@@ -54,11 +54,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
@@ -104,7 +104,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 		iRRFinanceType.setFinType(finType);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFinanceType);
-		RowMapper<IRRFinanceType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFinanceType.class);
+		RowMapper<IRRFinanceType> rowMapper = BeanPropertyRowMapper.newInstance(IRRFinanceType.class);
 
 		try {
 			iRRFinanceType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -266,7 +266,7 @@ public class IRRFinanceTypeDAOImpl extends BasicDao<IRRFinanceType> implements I
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(iRRFinanceType);
-		RowMapper<IRRFinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFinanceType.class);
+		RowMapper<IRRFinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(IRRFinanceType.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 

@@ -51,12 +51,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.inventorysettlement.InventorySettlementDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -138,8 +138,7 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(inventorySettlement);
-		RowMapper<InventorySettlement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InventorySettlement.class);
+		RowMapper<InventorySettlement> typeRowMapper = BeanPropertyRowMapper.newInstance(InventorySettlement.class);
 
 		try {
 			inventorySettlement = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -288,7 +287,7 @@ public class InventorySettlementDAOImpl extends SequenceDao<InventorySettlement>
 		selectSql.append(" inner join FCMTBrokerDetail FB on Fb.BrokerCode=t.BrokerCode ");
 		selectSql.append(" where CI.FinalSettlementDate <=:FinalSettlementDate ");
 
-		RowMapper<InventorySettlementDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<InventorySettlementDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(InventorySettlementDetails.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");

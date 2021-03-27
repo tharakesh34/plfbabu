@@ -49,11 +49,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.PhoneTypeDAO;
 import com.pennant.backend.model.systemmasters.PhoneType;
@@ -100,7 +100,7 @@ public class PhoneTypeDAOImpl extends BasicDao<PhoneType> implements PhoneTypeDA
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(phoneType);
-		RowMapper<PhoneType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PhoneType.class);
+		RowMapper<PhoneType> typeRowMapper = BeanPropertyRowMapper.newInstance(PhoneType.class);
 
 		try {
 			phoneType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

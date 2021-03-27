@@ -55,11 +55,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.model.finance.RepayInstruction;
@@ -111,8 +111,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(repayInstruction);
-		RowMapper<RepayInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RepayInstruction.class);
+		RowMapper<RepayInstruction> typeRowMapper = BeanPropertyRowMapper.newInstance(RepayInstruction.class);
 
 		try {
 			repayInstruction = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

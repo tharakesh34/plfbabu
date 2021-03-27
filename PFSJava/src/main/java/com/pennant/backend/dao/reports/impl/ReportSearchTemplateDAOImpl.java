@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reports.ReportSearchTemplateDAO;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
@@ -104,7 +104,7 @@ public class ReportSearchTemplateDAOImpl extends BasicDao<ReportSearchTemplate> 
 		logger.debug("selectSql : " + selectSql.toString());
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aReportSearchTemplate);
-			RowMapper<ReportSearchTemplate> typeRowMapper = ParameterizedBeanPropertyRowMapper
+			RowMapper<ReportSearchTemplate> typeRowMapper = BeanPropertyRowMapper
 					.newInstance(ReportSearchTemplate.class);
 			logger.debug("Leaving ");
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

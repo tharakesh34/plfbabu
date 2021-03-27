@@ -149,6 +149,9 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	int listRows;
 	private boolean saveRecord = false;
 
+	protected Listheader listheader_AccType;
+	protected Listheader listheader_AmountRule;
+
 	/**
 	 * default constructor.<br>
 	 */

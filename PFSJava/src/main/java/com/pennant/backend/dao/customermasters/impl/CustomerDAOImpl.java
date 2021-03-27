@@ -56,11 +56,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -464,7 +464,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -843,7 +843,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(wifCustomer);
-		RowMapper<WIFCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WIFCustomer.class);
+		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
 
 		try {
 			wifCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1027,7 +1027,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		paramSource.addValue("CustID", custID);
 		paramSource.addValue("FinReference", curFinReference);
 
-		RowMapper<FinanceExposure> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		RowMapper<FinanceExposure> rowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		List<FinanceExposure> financeExposures = new ArrayList<>();
 		try {
@@ -1074,8 +1074,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceExposure.class);
+		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		try {
 			exposure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1315,7 +1314,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<WIFCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WIFCustomer.class);
+		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1431,8 +1430,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(prospectCustomer);
-		RowMapper<ProspectCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProspectCustomer.class);
+		RowMapper<ProspectCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(ProspectCustomer.class);
 
 		try {
 			prospectCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1456,7 +1454,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1527,7 +1525,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pastDue);
-		RowMapper<AvailPastDue> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AvailPastDue.class);
+		RowMapper<AvailPastDue> typeRowMapper = BeanPropertyRowMapper.newInstance(AvailPastDue.class);
 
 		try {
 			pastDue = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1683,7 +1681,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<WIFCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(WIFCustomer.class);
+		RowMapper<WIFCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(WIFCustomer.class);
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -1951,7 +1949,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("Leaving");
 		try {
-			RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+			RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
@@ -1968,7 +1966,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("Leaving");
 		try {
-			RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+			RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 			custList = (ArrayList<Customer>) this.jdbcTemplate.query(queryCode, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug("Exception: ", dae);
@@ -2107,7 +2105,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -2270,7 +2268,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		List<Customer> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
 		return list;
@@ -2525,7 +2523,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -2546,7 +2544,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" Where CustCoreBank = :CustCoreBank");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -2689,7 +2687,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" Where CustCIF = :CustCIF");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

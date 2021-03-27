@@ -50,10 +50,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.TakafulProviderDAO;
 import com.pennant.backend.model.applicationmaster.TakafulProvider;
@@ -104,8 +104,7 @@ public class TakafulProviderDAOImpl extends BasicDao<TakafulProvider> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
-		RowMapper<TakafulProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TakafulProvider.class);
+		RowMapper<TakafulProvider> typeRowMapper = BeanPropertyRowMapper.newInstance(TakafulProvider.class);
 
 		try {
 			takafulProvider = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -250,8 +249,7 @@ public class TakafulProviderDAOImpl extends BasicDao<TakafulProvider> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(takafulProvider);
-		RowMapper<TakafulProvider> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TakafulProvider.class);
+		RowMapper<TakafulProvider> typeRowMapper = BeanPropertyRowMapper.newInstance(TakafulProvider.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
