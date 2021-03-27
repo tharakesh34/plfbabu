@@ -2092,6 +2092,10 @@ public class RepaymentProcessUtil {
 				finRepayQueue.setTaxHeader(rsdList.get(i).getTaxHeader());
 				finRepayQueues.add(finRepayQueue);
 			}
+			
+			//Setting Manual TDS to Map
+			extDataMap.put("ae_manualTds", rch.getTdsAmount());
+			
 			BigDecimal totRecvAmount = BigDecimal.ZERO;
 			List<ReceiptAllocationDetail> radList = rch.getAllocations();
 

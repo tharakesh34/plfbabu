@@ -675,6 +675,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		HashMap<String, Object> extDataMap = (HashMap<String, Object>) amountCodes.getDeclaredFieldValues();
 		extDataMap.put("PB_ReceiptAmount", receiptHeader.getReceiptAmount());
+		amountCodes.setManualTds(receiptHeader.getTdsAmount());
 		aeEvent.setDataMap(extDataMap);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
