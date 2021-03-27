@@ -25414,6 +25414,126 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+		<changeSet id="901_pre" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'ocrdetails');
+				select deps_save_and_drop_dependencies ('plf', 'ocrdetails_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="901" author="venkates.ch">
+		<modifyDataType tableName="ocrdetails" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="901.1" author="venkates.ch">
+		<modifyDataType tableName="ocrdetails" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="902" author="venkates.ch">
+		<modifyDataType tableName="ocrdetails_temp" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="902.1" author="venkates.ch">
+		<modifyDataType tableName="ocrdetails_temp" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="902_post" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'ocrdetails');
+				select deps_restore_dependencies ('plf', 'ocrdetails_temp');
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="903_pre" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'ocrheader');
+				select deps_save_and_drop_dependencies ('plf', 'ocrheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="903" author="venkates.ch">
+		<modifyDataType tableName="ocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="904" author="venkates.ch">
+		<modifyDataType tableName="ocrheader_temp" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="904_post" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'ocrheader');
+				select deps_restore_dependencies ('plf', 'ocrheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="905_pre" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrdetails');
+				select deps_save_and_drop_dependencies ('plf', 'finocrdetails_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="905" author="venkates.ch">
+		<modifyDataType tableName="finocrdetails" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="905.1" author="venkates.ch">
+		<modifyDataType tableName="finocrdetails" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="906" author="venkates.ch">
+		<modifyDataType tableName="finocrdetails_temp" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="906.1" author="venkates.ch">
+		<modifyDataType tableName="finocrdetails_temp" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="906_post" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrdetails');
+				select deps_restore_dependencies ('plf', 'finocrdetails_temp');
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="907_pre" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrheader');
+				select deps_save_and_drop_dependencies ('plf', 'finocrheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="907" author="venkates.ch">
+		<modifyDataType tableName="finocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="908" author="venkates.ch">
+		<modifyDataType tableName="finocrheader_temp" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>
+
+	<changeSet id="908_post" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrheader');
+				select deps_restore_dependencies ('plf', 'finocrheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- Receipt Level views handle in single place starts-->
 	
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">

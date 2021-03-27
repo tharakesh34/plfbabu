@@ -3079,4 +3079,28 @@
 	
 	<!-- ST#158-TDS Type at Receipt Level changes end -->
 	
+	<changeSet id="326" author="venkates.ch">
+		<modifyDataType tableName="adtocrdetails" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="326.1" author="venkates.ch">
+		<modifyDataType tableName="adtocrdetails" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="327" author="venkates.ch">
+		<modifyDataType tableName="adtocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="328" author="venkates.ch">
+		<modifyDataType tableName="adtfinocrdetails" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="328.1" author="venkates.ch">
+		<modifyDataType tableName="adtfinocrdetails" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="329" author="venkates.ch">
+		<modifyDataType tableName="adtfinocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>	
+	
 </databaseChangeLog>
