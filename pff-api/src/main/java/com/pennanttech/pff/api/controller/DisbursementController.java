@@ -44,7 +44,9 @@ public class DisbursementController {
 
 		DisbursementRequest dr = new DisbursementRequest();
 		dr.setPartnerBankCode(fap.getPartnerbankCode());
-		dr.setFinType(fap.getFinType());
+		if (!DisbursementConstants.CHANNEL_INSURANCE.equals(fap.getChannel())) {
+			dr.setFinType(fap.getFinType());
+		}
 		dr.setEntityCode(fap.getEntityCode());
 
 		if (fap.getPaymentType() != null) {

@@ -93,20 +93,22 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 		}
 
 		/* Validate Loan Type */
+		String channel = finAdvancePayments.getChannel();
 		String finType = finAdvancePayments.getFinType();
-		if (StringUtils.isBlank(finType)) {
-			String valueParm[] = new String[1];
-			valueParm[0] = "FinType";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-		}
+		if (!DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
+			if (StringUtils.isBlank(finType)) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "FinType";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
 
-		FinanceType fiananceType = financeTypeDAO.getFinanceTypeByFinType(finType);
-		if (fiananceType == null) {
-			String valueParm[] = new String[1];
-			valueParm[0] = "FinType";
-			return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
+			FinanceType fiananceType = financeTypeDAO.getFinanceTypeByFinType(finType);
+			if (fiananceType == null) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "FinType";
+				return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
+			}
 		}
-
 		/* Validate Partner Bank */
 		String partnerbankCode = finAdvancePayments.getPartnerbankCode();
 		if (StringUtils.isBlank(partnerbankCode)) {
@@ -115,8 +117,7 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		boolean Exists = partnerBankDAO.isPartnerBankCodeExistsByEntity(entityCode, partnerbankCode, "_AView");
-		if (!Exists) {
+		if (!partnerBankDAO.isPartnerBankCodeExistsByEntity(entityCode, partnerbankCode, "")) {
 			String valueParm[] = new String[2];
 			valueParm[0] = "PartnerBankCode: " + partnerbankCode + " with";
 			valueParm[1] = "EntityCode: " + entityCode;
@@ -139,7 +140,6 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 		}
 
 		/* Validate Channel */
-		String channel = finAdvancePayments.getChannel();
 		if (StringUtils.isNotBlank(channel)) {
 			List<ValueLabel> channelList = PennantStaticListUtil.getChannelTypes();
 			List<String> channelTypeList = new ArrayList<>();
@@ -184,7 +184,14 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				return disbRequestDetail;
 			}
 
-			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
+			int count = 0;
+
+			if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel())) {
+				count = financeMainDAO.isFinReferenceExists(finReference, "", false) == true ? 1 : 0;
+			} else {
+				count = financeMainDAO.getFinanceCountById(finReference, "", false);
+			}
+
 			if (count <= 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = finReference;
@@ -268,16 +275,23 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
 
-			if (StringUtils.isBlank(disbRequest.getFinReference())) {
+			String finReference = disbRequest.getFinReference();
+			if (StringUtils.isBlank(finReference)) {
 				String[] valueParam = new String[1];
 				valueParam[0] = "FinReference";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
 
-			int count = financeMainDAO.getFinanceCountById(disbRequest.getFinReference(), " ", false);
+			int count = 0;
+			if (DisbursementConstants.CHANNEL_PAYMENT.equals(disbRequest.getChannel())) {
+				count = financeMainDAO.isFinReferenceExists(finReference, "", false) == true ? 1 : 0;
+			} else {
+				count = financeMainDAO.getFinanceCountById(finReference, "", false);
+			}
+
 			if (count <= 0) {
 				String[] valueParam = new String[1];
-				valueParam[0] = disbRequest.getFinReference();
+				valueParam[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 			}
 

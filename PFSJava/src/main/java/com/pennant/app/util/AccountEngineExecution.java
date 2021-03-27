@@ -301,7 +301,7 @@ public class AccountEngineExecution implements Serializable {
 		if (eventProperties.isParameterLoaded()) {
 			aeEvent.setAppDate(eventProperties.getAppDate());
 			aeEvent.setAppValueDate(eventProperties.getAppValueDate());
-			aeEvent.setPostDate(eventProperties.getPostDate());
+			aeEvent.setPostDate(aeEvent.getPostDate() == null ? eventProperties.getPostDate() : aeEvent.getPostDate());
 			zeroPostingFlag = eventProperties.getAllowZeroPostings();
 			appCurrency = eventProperties.getAppCurrency();
 		} else {
