@@ -145,7 +145,7 @@ public class SMTParameterConstants {
 	public static final String CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = "CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES";
 
 	public static final String NEW_COVENANT_MODULE = "NEW_COVENANT_MODULE";
-	
+
 	// Upfront Fee reversal required on loan cancellation
 	public static final String UPFRONT_FEE_REVERSAL_REQ = "UPFRONT_FEE_REVERSAL_REQ";
 
@@ -379,4 +379,6 @@ public class SMTParameterConstants {
 	public static final String RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE = "RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE";
 	public static final String RECEIPT_UPLOAD_THREAD_SIZE = "RECEIPT_UPLOAD_THREAD_SIZE";
 	public static final String RECEIPT_UPLOAD_THREAD_BATCH_SIZE = "RECEIPT_UPLOAD_THREAD_BATCH_SIZE";
+
+	public static final String ALW_CASHFLOW_REPORT = "ALW_CASHFLOW_REPORT";
 }

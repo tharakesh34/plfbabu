@@ -915,4 +915,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
 	</bean>
+
+	<bean id="cashFlowReportDAO" class="com.pennant.backend.dao.reports.impl.CashFlowReportDAOImpl" parent="basicDao" />
 </beans>

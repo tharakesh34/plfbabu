@@ -23862,6 +23862,49 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="650" author="madhuri.n">
+		<sql>
+			<![CDATA[
+				DELETE from SMTparameters WHERE SYSPARMCODE = 'ALW_CASHFLOW_REPORT';
+				INSERT INTO SMTparameters (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC,SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('ALW_CASHFLOW_REPORT', 'Is CashFlow Report Download required', 'String', '1', 'N', 1, 0, NULL, NULL,'', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="86_pre" author="madhuri.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'cashflowreport_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="86" author="madhuri.n" dbms="mssql">
+		<createView viewName="CASHFLOWREPORT_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT DISTINCT FA.FINREFERENCE,
+					FM.FINTYPE 
+				FROM FINADVANCEPAYMENTS FA
+				JOIN FINDISBURSEMENTDETAILS FD  ON (FA.FINREFERENCE=FD.FINREFERENCE)
+				JOIN FINANCEMAIN FM ON (FM.FINREFERENCE=FA.FINREFERENCE) 
+				WHERE STATUS IN ('PAID','REALIZED') AND FM.FINISACTIVE = 1
+				UNION
+				SELECT FINREFERENCE,
+					FINTYPE
+				FROM FINANCEMAIN FM JOIN GETFINANCIALYEARWITHFUN() FY ON FM.CLOSEDDATE >= FY.STARTDATE AND FM.CLOSEDDATE <= FY.ENDDATE
+				WHERE FINISACTIVE = 0 AND CLOSINGSTATUS IN('C','M','E')
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="86_post" author="madhuri.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'cashflowreport_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- Receipt Level views handle in single place starts-->
 	
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">

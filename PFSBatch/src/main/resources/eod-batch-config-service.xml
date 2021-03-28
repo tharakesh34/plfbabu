@@ -638,4 +638,13 @@
 	</bean>
 
 	<bean id="eventPropertiesService" class="com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl" />
+
+	<!-- CashFlow Report Preperation -->
+	<bean id="cashFlowService" class="com.pennant.backend.service.reports.impl.CashFlowServiceImpl">
+		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="cashFlowReportDAO" ref="cashFlowReportDAO" />
+	</bean>
 </beans>

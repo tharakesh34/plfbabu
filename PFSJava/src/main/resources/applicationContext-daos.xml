@@ -3461,7 +3461,7 @@
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="finOptionService" ref="finOptionService" />
 		<property name="restructureService" ref="restructureService" />
-		
+
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
@@ -8333,7 +8333,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-<!-- NPAProvisionHeader -->
+	<!-- NPAProvisionHeader -->
 	<bean id="nPAProvisionHeaderDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPAProvisionHeaderDAOImpl"
 		parent="sequenceDao" />
 
@@ -12590,7 +12590,7 @@
 	<bean id="currencyCache" class="com.pennant.pff.eod.cache.CurrencyConfigCache">
 		<property name="currencyService" ref="currencyService" />
 	</bean>
-	
+
 	<bean name="subventionService" class="com.pennant.subvention.service.SubventionService">
 		<property name="subventionDetailDAO" ref="subventionDetailDAO" />
 	</bean>
@@ -12612,7 +12612,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
-<!--============ Restructure Details ============== -->
+	<!--============ Restructure Details ============== -->
 	<bean id="restructureService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -12640,10 +12640,39 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
-	</bean> 
-	
+	</bean>
+
 	<bean id="restructureDAO" class="com.pennant.backend.dao.finance.impl.RestructureDAOImpl" parent="sequenceDao">
 		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!--============ Cash Flow ============== -->
+	<bean id="cashFlowReportDAO" class="com.pennant.backend.dao.reports.impl.CashFlowReportDAOImpl" parent="basicDao" />
+
+	<bean id="cashFlowService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="cashFlowServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="cashFlowServiceTarget" class="com.pennant.backend.service.reports.impl.CashFlowServiceImpl">
+		<property name="cashFlowReportDAO" ref="cashFlowReportDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 
 </beans>

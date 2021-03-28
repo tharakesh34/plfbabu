@@ -235,9 +235,13 @@
 
 	<bean id="autoKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnockOffDAOImpl" parent="basicDao" />
 
-	<bean id="customerDataPreperationTaskLet" class="com.pennant.backend.endofday.tasklet.CustomerDataExport"/>
+	<bean id="customerDataPreperationTaskLet" class="com.pennant.backend.endofday.tasklet.CustomerDataExport" />
 
-	<bean id="masterDataPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.MasterDataExport"/>
+	<bean id="masterDataPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.MasterDataExport" />
 
 	<bean id="dmsRetrieveProcessTaskLet" class="com.pennant.backend.endofday.tasklet.DMSRetrieveProcess" />
+
+	<bean id="cashFlowPreperationTaskLet" class="com.pennant.backend.endofday.tasklet.CashFlowPreperation">
+		<property name="cashFlowService" ref="cashFlowService" />
+	</bean>
 </beans>
