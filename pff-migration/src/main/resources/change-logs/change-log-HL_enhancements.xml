@@ -23325,6 +23325,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="657" author="madhuri.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_PartCancellation', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- Receipt Level views handle in single place starts -->
 
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">

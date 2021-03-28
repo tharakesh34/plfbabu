@@ -760,7 +760,7 @@
 		<menuItem id="menu_Item_DMSRetrievalProcess" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/DMSRetrievalProcess.zul"
 			rightName="menuItem_DMSRetrievalProcess" />
 		<menuItem id="menu_Item_PartCancellation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/PartCancellationProcess.zul"
-			rightName="" />
+			rightName="menu_Item_PartCancellation" />
 	</menu>
 
 	<!-- Menu for Receipts -->
