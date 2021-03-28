@@ -218,6 +218,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private byte[] docImage;
 	@XmlElement(name = "docFormat")
 	private String docType;
+	@XmlElement
+	private String vasProductCode;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -315,6 +317,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		entity.setRealizationDate(this.realizationDate);
 		entity.setOnlineProcReq(this.onlineProcReq);
 		entity.setHoldDisbursement(this.holdDisbursement);
+		entity.setVasProductCode(this.vasProductCode);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -375,6 +378,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("documentName");
 		excludeFields.add("docImage");
 		excludeFields.add("docType");
+		excludeFields.add("vasProductCode");
 
 		return excludeFields;
 	}
@@ -1065,6 +1069,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setDocType(String docType) {
 		this.docType = docType;
+	}
+
+	public String getVasProductCode() {
+		return vasProductCode;
+	}
+
+	public void setVasProductCode(String vasProductCode) {
+		this.vasProductCode = vasProductCode;
 	}
 
 }

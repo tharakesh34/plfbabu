@@ -2287,6 +2287,17 @@ public class CreateFinanceController extends SummaryDetailService {
 				advPayment.setNextRoleCode(financeMain.getNextRoleCode());
 				advPayment.setTaskId(financeMain.getTaskId());
 				advPayment.setNextTaskId(financeMain.getNextTaskId());
+				
+				//Setting Vas Reference for FinAdvancepayments based on Product Code
+				if (APIConstants.FINSOURCE_ID_API.equals(financeMain.getFinSourceID())) {
+					for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+						if (advPayment.getVasProductCode() != null) {
+							if (advPayment.getVasProductCode().equals(vasRecording.getProductCode())) {
+								advPayment.setVasReference(vasRecording.getVasReference());
+							}
+						}
+					}
+				}
 
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT)

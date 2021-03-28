@@ -679,6 +679,24 @@ public class FinanceDataValidation {
 					}
 				}
 			}
+
+			//Validating duplicate product codes in vas recording
+			List<VASRecording> vasRecordingList = finScheduleData.getVasRecordingList();
+			if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+				for (int i = 0; i < vasRecordingList.size() - 1; i++) {
+					VASRecording vasRecording = vasRecordingList.get(i);
+					if (vasRecordingList.size() > 1) {
+						VASRecording aVasRecording = vasRecordingList.get(i + 1);
+						if (StringUtils.equals(vasRecording.getProductCode(), aVasRecording.getProductCode())) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Product Code: " + vasRecording.getProductCode();
+							valueParm[1] = "VAS Recording";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+						}
+					}
+				}
+			}
+
 			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
 				int count = 0;
 				for (FinFeeDetail detail : finScheduleData.getFinFeeDetailList()) {
@@ -3230,6 +3248,66 @@ public class FinanceDataValidation {
 					if (StringUtils.isNotBlank(advPayment.getPhoneNumber())) {
 						if (!(advPayment.getPhoneNumber().matches("\\d{10}"))) {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90278", null)));
+						}
+					}
+
+					//Validating Vas Disb Instructions
+					if (PennantConstants.FINSOURCE_ID_API.equals(financeMain.getFinSourceID())) {
+						if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(advPayment.getPaymentDetail())) {
+							//Product code is mandatory when disbParty is VAS
+							if (StringUtils.isBlank(advPayment.getVasProductCode())
+									&& advPayment.getVasProductCode() == null) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "Disb Party: " + advPayment.getPaymentDetail();
+								valueParm[1] = "Product Code";
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91132", valueParm)));
+							}
+							FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+							List<VASRecording> vasRecordingList = finScheduleData.getVasRecordingList();
+							int productCount = 0;
+							for (VASRecording vasRecording : vasRecordingList) {
+								if (advPayment.getVasProductCode() != null) {
+									if (advPayment.getVasProductCode().equals(vasRecording.getProductCode())) {
+										if (!PennantApplicationUtil.formateAmount(vasRecording.getFee(), 2)
+												.equals(PennantApplicationUtil
+														.formateAmount(advPayment.getAmtToBeReleased(), 2))) {
+											//Validating VAS Disbursement Amount and configured VAS Amount equal r not
+											String[] valueParm = new String[2];
+											valueParm[0] = " VAS Disbursement Amount";
+											valueParm[1] = " configured VAS Amount";
+											errorDetails
+													.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+										}
+										productCount++;
+										break;
+									}
+								}
+
+							}
+							// Validating the product code is valid or not
+							if (productCount < 1) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "Product";
+								valueParm[1] = advPayment.getVasProductCode();
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+							}
+							//Validating duplicate product codes in Disbursement Instruction
+							if (CollectionUtils.isNotEmpty(finAdvPayments)) {
+								for (int i = 0; i < finAdvPayments.size() - 1; i++) {
+									FinAdvancePayments finAdvancePayments = finAdvPayments.get(i);
+									if (finAdvPayments.size() > 1) {
+										FinAdvancePayments aFinAdvancePayments = finAdvPayments.get(i + 1);
+										if (StringUtils.equals(finAdvancePayments.getVasProductCode(),
+												aFinAdvancePayments.getVasProductCode())) {
+											String[] valueParm = new String[2];
+											valueParm[0] = "Product Code: " + finAdvancePayments.getVasProductCode();
+											valueParm[1] = "Disbursement Instruction";
+											errorDetails
+													.add(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+										}
+									}
+								}
+							}
 						}
 					}
 				} else if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IST)) {
