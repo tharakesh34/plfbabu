@@ -313,6 +313,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Listheader listheader_ScheduleDetailDialog_OldMaturity;
 
 	protected ApprovalScreenEventHistory approvalScreenEventHistory;
+	boolean printNotRequired = false;
 
 	/**
 	 * default constructor.<br>
@@ -354,6 +355,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		if (arguments.containsKey("isWIF")) {
 			isWIF = (Boolean) arguments.get("isWIF");
+		}
+
+		if (arguments.containsKey("printNotRequired")) {
+			printNotRequired = (Boolean) arguments.get("printNotRequired");
 		}
 
 		if (arguments.containsKey("workflowCode")) {
@@ -772,6 +777,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					visiblePlanEMIHolidays(false, true);
 					setPlanEMIHDateList(this.finScheduleData.getPlanEMIHDates());
 				}
+			}
+
+			if (printNotRequired) {
+				this.btnPrintSchedule.setVisible(false);
 			}
 
 			// Schedule Maintenance Buttons hiding for Other Event Operations

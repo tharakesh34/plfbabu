@@ -203,7 +203,7 @@
 								<tabpanel style="overflow:auto">
 									<div sclass="z-toolbar" style="padding:0">
 										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
-											<toolbar align="start" sclass="toolbar-start">
+											<toolbar align="start" sclass="toolbar-start"  id="toolbarButton">
 												<button id="btnRecalEMIH" label="${c:l('btnRecalEMIH.label')}" tooltiptext="${c:l('btnRecalEMIH.tooltiptext')}"
 													disabled="true" visible="false" sclass="z-toolbarbutton"
 													autodisable="btnRecalEMIH,btnAddReviewRate,btnChangeRepay,btnAddDisbursement,btnAddTerms,btnRmvTerms,btnUnPlanEMIH,btnCancelDisbursement,btnPostponement,

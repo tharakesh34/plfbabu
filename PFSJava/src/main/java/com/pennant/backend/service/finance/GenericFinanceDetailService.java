@@ -1876,9 +1876,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					dataMap = prepareFeeRulesMap(tempAmountCodes, dataMap, financeDetail);
 				}
 
-				if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())) {
 					tempAmountCodes.setDisburse(inst.getAmount());
 					tempAmountCodes.setIntAdjusted(financeMain.getIntTdsAdjusted());
+				} else if (FinanceConstants.PART_CANCELLATION.equals(financeDetail.getModuleDefiner())) {
+					tempAmountCodes.setRefund(inst.getRefund());
 				}
 				tempAmountCodes.setPftChg(inst.getPftChg());
 

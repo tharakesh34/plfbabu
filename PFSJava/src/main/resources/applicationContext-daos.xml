@@ -12685,7 +12685,7 @@
 		<property name="transactionAttributes">
 			<props>
 					<prop key="doPartCancellation">PROPAGATION_REQUIRED</prop>
-				<prop key="postPartCanellation">PROPAGATION_REQUIRED</prop>
+				<prop key="postPartCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
