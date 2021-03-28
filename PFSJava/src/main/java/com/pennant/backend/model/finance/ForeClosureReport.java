@@ -102,7 +102,9 @@ public class ForeClosureReport implements Serializable {
 	private String custAddrZIP;
 	private String custAddrCountryName;
 	private String validTill;
-	private List<Map<String, Object>> collAddressList = new ArrayList<>();;
+	private List<Map<String, Object>> collAddressList = new ArrayList<>();
+	private String valueDate;
+	private BigDecimal oneDayInterest;
 
 	public ForeClosureReport() {
 		super();
@@ -739,5 +741,22 @@ public class ForeClosureReport implements Serializable {
 	public void setCollAddressList(List<Map<String, Object>> collAddressList) {
 		this.collAddressList = collAddressList;
 	}
+	
+	public BigDecimal getOneDayInterest() {
+		return oneDayInterest;
+	}
+
+	public void setOneDayInterest(BigDecimal oneDayInterest) {
+		this.oneDayInterest = oneDayInterest;
+	}
+
+	public String getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(String valueDate) {
+		this.valueDate = valueDate;
+	}
+
 
 }

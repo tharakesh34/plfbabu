@@ -3961,6 +3961,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				// Linked Loan Reference
 				closureReport.setLinkedFinRef(linkedFinRef.toString());
+				closureReport.setValueDate(DateFormatUtils.format(chrgTillDate, "dd-MMM-yyyy"));
+				BigDecimal calcIntrstPerDay = getCalcIntrstPerDay(closureReport.getOutstandingPri(),
+						financeMain.getRepayProfitRate(), financeMain.getCalRoundingMode());
+				closureReport.setOneDayInterest(calcIntrstPerDay);
 
 				closureReport.setEntityDesc(financeMain.getEntityDesc());
 			}
@@ -4589,6 +4593,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		return map;
 	}
 
+	private BigDecimal getCalcIntrstPerDay(BigDecimal priOutstanding, BigDecimal roi, String roundingMode) {
+		BigDecimal oneDayIntrst = BigDecimal.ZERO;
+		oneDayIntrst = priOutstanding.multiply(roi.divide(new BigDecimal(100))).divide(new BigDecimal(365), 2);
+		oneDayIntrst = oneDayIntrst.setScale(0, RoundingMode.valueOf(roundingMode));
+		return oneDayIntrst;
+	}
+	
 	public Map<String, BigDecimal> getTaxPercMap() {
 		return taxPercMap;
 	}
