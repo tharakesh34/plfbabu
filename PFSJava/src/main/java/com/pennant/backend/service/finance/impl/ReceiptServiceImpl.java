@@ -5394,16 +5394,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finReceiptHeader.setValueDate(finReceiptHeader.getRealizationDate());
 			}
 			if (ImplementationConstants.ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE) {
-				if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)
-						&& (StringUtils.equals(finReceiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
-								|| StringUtils.equals(finReceiptHeader.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))
+				Date appDate = SysParamUtil.getAppDate();
+				String receiptMode = finReceiptHeader.getReceiptMode();
+				
+				if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(finReceiptHeader.getReceiptPurpose())
+						&& (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
+								|| RepayConstants.RECEIPTMODE_DD.equals(receiptMode))
 						&& finReceiptHeader.getRealizationDate() != null) {
 					FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO
 							.getNextUnpaidSchPayment(finReceiptHeader.getReference(), finReceiptHeader.getValueDate());
 					if (finScheduleDetail != null) {
 						Date schDate = finScheduleDetail.getSchDate();
 						if (!finReceiptHeader.getValueDate().after(schDate)) {
-							finReceiptHeader.setValueDate(schDate);
+							//Schedule Date should be less than or equal to App date to skip future Installments
+							if (schDate.compareTo(appDate) <= 0) {
+								finReceiptHeader.setValueDate(schDate);
+							}
 						}
 					}
 				}
