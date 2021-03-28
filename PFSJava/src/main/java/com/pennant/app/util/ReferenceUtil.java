@@ -120,9 +120,11 @@ public class ReferenceUtil implements Serializable {
 		if (dateYYJDay != DateUtility.getDateYYJDay()) {
 			dateYYJDay = DateUtility.getDateYYJDay();
 			//preparing new seqno
-			String updatedSeq = "00001";
+			String updatedSeq = "00002";
 			String seqString = String.valueOf(dateYYJDay).concat(updatedSeq);
 			long seqNo = Long.valueOf(seqString);
+			//Create a Collateral with Sequence with 1
+			seqNumber = 1;
 			//call sequence update query
 			sequenceDAO.updateSequence("SeqCollateralSetup", seqNo);
 		}
