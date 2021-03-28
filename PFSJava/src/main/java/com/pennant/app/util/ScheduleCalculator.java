@@ -6325,6 +6325,8 @@ public class ScheduleCalculator {
 		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_BIWEEKLY)
 				|| calFrq.equals(FrequencyCodeTypes.FRQ_FORTNIGHTLY)) {
 			periods = new BigDecimal(26);
+		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_15DAYS)) {
+			periods = new BigDecimal(24);
 		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_BIMONTHLY)) {
 			periods = new BigDecimal(6);
 		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_WEEKLY)) {
@@ -9409,10 +9411,10 @@ public class ScheduleCalculator {
 				} else if (StringUtils.equals(curSchd.getPftDaysBasis(), CalculationConstants.IDB_30E360IH)) {
 
 					BigDecimal idb30Factor = BigDecimal.valueOf(30 / 360d);
-					idb30Factor = idb30Factor.setScale(9,RoundingMode.HALF_DOWN);
+					idb30Factor = idb30Factor.setScale(9, RoundingMode.HALF_DOWN);
 					BigDecimal dayFactor = CalculationUtil.getInterestDays(prvSchd.getSchDate(), curSchd.getSchDate(),
 							CalculationConstants.IDB_30E360IH);
-					BigDecimal dayFactorScale = dayFactor.setScale(9,RoundingMode.HALF_DOWN);
+					BigDecimal dayFactorScale = dayFactor.setScale(9, RoundingMode.HALF_DOWN);
 
 					if (idb30Factor.compareTo(dayFactorScale) == 0) {
 						daysBasis = 360;

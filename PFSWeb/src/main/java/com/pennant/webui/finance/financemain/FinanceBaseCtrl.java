@@ -3119,6 +3119,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				day = StringUtils.leftPad(String.valueOf(Integer.parseInt(day) % 7), 2, "0");
 			} else if (FrequencyCodeTypes.FRQ_FORTNIGHTLY.equals(frqCode)) {
 				day = StringUtils.leftPad(String.valueOf(Integer.parseInt(day) % 14), 2, "0");
+			} else if (FrequencyCodeTypes.FRQ_15DAYS.equals(frqCode)) {
+				day = StringUtils.leftPad(String.valueOf(Integer.parseInt(day) % 15), 2, "0");
 			}
 			frequencyBox.updateFrequency(mnth, day);
 		}

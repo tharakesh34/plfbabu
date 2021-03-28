@@ -160,6 +160,7 @@ public class FrequencyUtil implements Serializable {
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIMONTHLY, "label_Select_BiMonthly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_MONTHLY, "label_Select_Monthly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, "label_Select_Fortnightly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_15DAYS, "label_Select_15DAYS"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIWEEKLY, "label_Select_BiWeekly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_WEEKLY, "label_Select_Weekly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_DAILY, "label_Select_Daily"));
@@ -193,6 +194,9 @@ public class FrequencyUtil implements Serializable {
 			break;
 		case FrequencyCodeTypes.FRQ_FORTNIGHTLY:
 			repayFrequency = Labels.getLabel("label_Select_Fortnightly");
+			break;
+		case FrequencyCodeTypes.FRQ_15DAYS:
+			repayFrequency = Labels.getLabel("label_Select_15DAYS");
 			break;
 		case FrequencyCodeTypes.FRQ_BIWEEKLY:
 			repayFrequency = Labels.getLabel("label_Select_BiWeekly");
@@ -285,6 +289,9 @@ public class FrequencyUtil implements Serializable {
 		case 'F':
 			arrfrqMonth.add(new ValueLabel(M00, Labels.getLabel("label_Select_Fortnightly")));
 			break;
+		case 'T':
+			arrfrqMonth.add(new ValueLabel(M00, Labels.getLabel("label_Select_15DAYS")));
+			break;
 		case 'X':
 			arrfrqMonth.add(new ValueLabel(M00, Labels.getLabel("label_Select_BiWeekly")));
 			break;
@@ -321,6 +328,9 @@ public class FrequencyUtil implements Serializable {
 			case 'X':
 			case 'F':
 				days = 14;
+				break;
+			case 'T':
+				days = 15;
 				break;
 			case 'W':
 				days = 7;
@@ -489,6 +499,16 @@ public class FrequencyUtil implements Serializable {
 
 			frequencyDetail.setFrequencyDescription(
 					Labels.getLabel("label_Select_Fortnightly") + "," + frequencyDetail.getFrequencyDay());
+			break;
+		case 'T':
+
+			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 1, 15, frequencyDetail));
+			if (frequencyDetail.getErrorDetails() != null) {
+				return frequencyDetail;
+			}
+
+			frequencyDetail.setFrequencyDescription(
+					Labels.getLabel("label_Select_15DAYS") + "," + frequencyDetail.getFrequencyDay());
 			break;
 
 		case 'X':
@@ -834,6 +854,12 @@ public class FrequencyUtil implements Serializable {
 			return getQHYSchedule(terms, baseDate, frequencyDetails, handlerType, 1, includeBaseDate);
 		case 'F':
 			return getFortnightlySchedule(terms, baseDate, frequencyDetails, handlerType, 14, includeBaseDate);
+		case 'T':
+			/*
+			 * Satish K : going with getFortnightlySchedule method only, since a parameter for days given. so changed
+			 * the days to 15 which will meet the requirement.may be we need to rename the method
+			 */
+			return getFortnightlySchedule(terms, baseDate, frequencyDetails, handlerType, 15, includeBaseDate);
 		case 'X':
 			return getBiWeeklySchedule(terms, baseDate, frequencyDetails, handlerType, includeBaseDate);
 		case 'W':
@@ -961,6 +987,12 @@ public class FrequencyUtil implements Serializable {
 
 			} else {
 				nday = day + increment;
+				if (nMONTH == Calendar.FEBRUARY) {
+					int maxdays = baseDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+					if (nday > maxdays) {
+						nday = maxdays;
+					}
+				}
 			}
 
 			baseDate.set(nYEAR, nMONTH, nday);
@@ -1163,7 +1195,20 @@ public class FrequencyUtil implements Serializable {
 			}
 
 			return false;
+		case 'T':
+			int daysAdd = 0;
+			if (dayOfMonth == 15) {
+				daysAdd = 16;
+			} else {
+				daysAdd = 15;
+			}
 
+			if (dayOfMonth == freqDetails.getFrequencyDay()
+					|| (dayOfMonth + daysAdd) == freqDetails.getFrequencyDay()) {
+				return true;
+			}
+
+			return false;
 		case 'M':
 
 			return validateDate(freqDetails.getFrequencyDay(), day, maxDaysOfMonth);
@@ -1384,7 +1429,22 @@ public class FrequencyUtil implements Serializable {
 					return FrequencyCodeTypes.INVALID_CODE;
 				}
 				break;
+			case 'T':
+				if (frqDay1 == 15 || frqDay1 == 31) {
+					if (frqDay2 != 15 && frqDay2 != 31) {
+						return FrequencyCodeTypes.INVALID_DATE;
+					}
+				}
 
+				if ((frqDay2 % 15) != frqDay1) {
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+
+				// TODO: Verify whether it is required or not
+				if (frqCode2 == 'D' || frqCode2 == 'M' || frqCode2 == 'F') {
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				break;
 			case 'M':
 				if (frqDay1 != frqDay2) {
 					return FrequencyCodeTypes.INVALID_DATE;

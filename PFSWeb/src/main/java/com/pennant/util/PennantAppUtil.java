@@ -1515,6 +1515,9 @@ public class PennantAppUtil {
 		case FrequencyCodeTypes.FRQ_FORTNIGHTLY:
 			returnMaxCount = CalculationConstants.FRQ_FORTNIGHTLY;
 			break;
+		case FrequencyCodeTypes.FRQ_15DAYS:
+			returnMaxCount = CalculationConstants.FRQ_15DAYS;
+			break;
 		case FrequencyCodeTypes.FRQ_BIWEEKLY:
 			returnMaxCount = CalculationConstants.FRQ_BIWEEKLY;
 			break;
@@ -1599,6 +1602,9 @@ public class PennantAppUtil {
 			break;
 		case FrequencyCodeTypes.FRQ_FORTNIGHTLY:
 			returnMaxCount = CalculationConstants.FRQ_FORTNIGHTLY;
+			break;
+		case FrequencyCodeTypes.FRQ_15DAYS:
+			returnMaxCount = CalculationConstants.FRQ_15DAYS;
 			break;
 		case FrequencyCodeTypes.FRQ_BIWEEKLY:
 			returnMaxCount = CalculationConstants.FRQ_BIWEEKLY;
