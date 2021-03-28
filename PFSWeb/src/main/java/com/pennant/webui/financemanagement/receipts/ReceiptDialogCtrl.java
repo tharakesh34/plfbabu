@@ -4554,7 +4554,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			bounce.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			bounce.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			bounce.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			bounce.setVersion(bounce.getVersion() + 1);
 
 			header.setManualAdvise(bounce);
