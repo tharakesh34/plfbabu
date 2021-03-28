@@ -160,6 +160,12 @@
 															<space spacing="2px" />
 															<checkbox id="tDSApplicable" checked="false" />
 														</hbox>
+														<label id="label_FinanceMainDialog_TDSType"
+															value="${c:l('label_FinanceMainDialog_TDSType.value')}" />
+														<hbox>
+															<combobox id="cbTdsType" width="180px" readonly="true"
+																visible="false" />
+														</hbox>
 													</row>
 													<row id="row_tDSPercentage" visible="false">
 														<label id="label_tDSPercentage" value="${c:l('label_FinanceMainDialog_tDSPercentage.value')}" />
@@ -467,6 +473,20 @@
 														<hbox>
 															<space spacing="2px" id="space_applicationNo" />
 															<uppercasebox id="applicationNo" width="170px" visible="true" />
+														</hbox>
+													</row>
+													<row id="row_AllowLoanTypes" visible="true">
+														<label id="label_FinanceMainDialog_AllowLoanSplit"
+															value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<checkbox id="alwLoanSplit" checked="false" />
+														</hbox>
+														<label id="label_FinanceMainDialog_ParentLoanReference"
+															value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<extendedcombobox id="parentLoanReference" />
 														</hbox>
 													</row>
 													<row id="row_EligibilityMethod" visible="false">
@@ -1092,6 +1112,82 @@
 												</rows>
 											</grid>
 										</groupbox>
+										<!-- Subvention Details Start -->
+										<groupbox id="gb_SubventionDetails" visible="false">
+											<caption label="${c:l('interestSubventionDetails')}" />
+											<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+												<columns>
+													<column width="220px" />
+													<column />
+													<column width="220px" />
+													<column />
+												</columns>
+												<rows>
+													<row id="row0">
+														<label
+															value="${c:l('label_SubventionDetailDialog_SubventionAllowed.value')}" />
+														<hbox>
+															<space id="space_SubventionAllowed" spacing="2px" />
+															<checkbox id="subventionAllowed" />
+														</hbox>
+														<label
+															value="${c:l('label_SubventionDetailDialog_Method.value')}" />
+														<combobox id="subventionMethod" width="120px" />
+													</row>
+													<row id="row1">
+														<label
+															value="${c:l('label_SubventionDetailDialog_Type.value')}" />
+														<hbox>
+															<space spacing="2px" sclass="mandatory" />
+															<combobox id="subventionType" width="120px" />
+														</hbox>
+														<label
+															value="${c:l('label_SubventionDetailDialog_Rate.value')}" />
+														<hbox>
+															<space spacing="2px" sclass="mandatory" />
+															<decimalbox id="subventionRate" width="120px"
+																maxlength="15" />
+														</hbox>
+													</row>
+													<row id="row2">
+														<label
+															value="${c:l('label_SubventionDetailDialog_PeriodRate.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<decimalbox id="subventionperiodRateByCust" width="120px"
+																maxlength="15" />
+														</hbox>
+														<label
+															value="${c:l('label_SubventionDetailDialog_DiscountRate.value')}" />
+														<hbox>
+															<space spacing="2px" sclass="mandatory" />
+															<decimalbox id="subventionDiscountRate" width="120px"
+																maxlength="15" />
+														</hbox>
+													</row>
+													<row id="row3">
+														<label
+															value="${c:l('label_SubventionDetailDialog_Tenure.value')}" />
+														<hbox>
+															<space spacing="2px" sclass="mandatory" />
+															<intbox id="subventionTenure" width="120px" maxlength="4" />
+															<space spacing="2px" />
+															<intbox id="subventionTenure_two" readonly="true"
+																width="50px" maxlength="4" tabindex="-1" />
+														</hbox>
+														<label
+															value="${c:l('label_SubventionDetailDialog_EndDate.value')}" />
+														<hbox>
+															<datebox id="subventionEndDate" width="120px" />
+															<space spacing="2px" />
+															<datebox id="subventionEndDate_two" readonly="true"
+																buttonVisible="false" width="120px" tabindex="-1" />
+														</hbox>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+										<!-- Subvention Details End -->
 										<groupbox id="gb_OverDuePenalty" visible="false" closable="true">
 											<caption label="${c:l('label_FinanceMainDialog_ODPenalty')}" />
 											<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">

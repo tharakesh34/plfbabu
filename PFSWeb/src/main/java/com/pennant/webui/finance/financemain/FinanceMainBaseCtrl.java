@@ -1207,7 +1207,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_FinanceMainDialog_ParentLoanReference;
 	@Autowired
 	private CovenantsService covenantsService;
-	private Label label_FinanceMainDialog_TDSType;
+	protected Label label_FinanceMainDialog_TDSType;
 	private List<ValueLabel> tdsTypeList = PennantStaticListUtil.getTdsTypes();
 
 	//SubventionDetails
@@ -15962,7 +15962,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			if (isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
+			if (this.cbTdsType.isVisible() && isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
 				aFinanceMain.setTdsType(getComboboxValue(this.cbTdsType));
 			}
 		} catch (WrongValueException we) {

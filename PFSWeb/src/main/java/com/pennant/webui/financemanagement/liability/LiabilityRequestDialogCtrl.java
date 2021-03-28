@@ -1260,6 +1260,9 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		if (!aFinanceMain.isTDSApplicable()) {
 			this.tDSApplicable.setVisible(false);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(false);
+			this.label_FinanceMainDialog_TDSType.setVisible(false);
+			this.cbTdsType.setVisible(false);
+			this.cbTdsType.setDisabled(true);
 		}
 
 		if (!financeType.isFinCommitmentReq()) {
@@ -1802,6 +1805,14 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				aFinanceDetail.getFinScheduleData().getFinanceMain()
 						.setInitiateUser(getUserWorkspace().getLoggedInUser().getUserId());
 			}
+		}
+		
+		if(this.alwLoanSplit.isChecked()){
+			this.parentLoanReference.setVisible(true);
+			label_FinanceMainDialog_ParentLoanReference.setVisible(true);
+		} else{
+			this.parentLoanReference.setVisible(false);
+			label_FinanceMainDialog_ParentLoanReference.setVisible(false);
 		}
 
 		setReadOnlyForCombobox();
