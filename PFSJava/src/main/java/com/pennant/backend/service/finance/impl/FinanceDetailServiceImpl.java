@@ -8093,10 +8093,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void doPostHookValidation(AuditHeader auditHeader, boolean isWIF) {
 		if (postValidationHook != null && !isWIF) {
 			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
-
-			if (errorDetails != null) {
+			//Bugfix: API Validations are not showing
+			if (CollectionUtils.isNotEmpty(errorDetails)) {
 				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
-				auditHeader.setErrorList(errorDetails);
+				if (auditHeader.getAuditDetail() != null) {
+					auditHeader.getAuditDetail().addErrorDetails(errorDetails);
+				} else {
+					auditHeader.setErrorList(errorDetails);
+				}
 			}
 		}
 	}
