@@ -2938,6 +2938,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ProfitDaysBasis_30E_360IH")));
 			PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_30E360IA,
 					Labels.getLabel("label_ProfitDaysBasis_30E_360IA")));
+			if (ImplementationConstants.FRQ_15DAYS_REQ) {
+				PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_15E360IA,
+						Labels.getLabel("label_ProfitDaysBasis_15E_360IA")));
+			}
 			PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_30EP360,
 					Labels.getLabel("label_ProfitDaysBasis_30EPLUS_360")));
 			PftDaysBasisList.add(

@@ -62,6 +62,8 @@ public class CalculationConstants {
 	public static final String IDB_30E360IH = "30E360IH";
 	//30E/360 ISDA OR Actual/365 Fixed
 	public static final String IDB_30E360IA = "30E360IA";
+	//15E/360 ISDA OR Actual/365 Fixed
+	public static final String IDB_15E360IA = "15E360IA";
 
 	// Schedule Calculations constants
 	public static final String SCHMTHD_EQUAL = "EQUAL";
@@ -102,10 +104,6 @@ public class CalculationConstants {
 	public static final int FRQ_QUARTERLY = 4;
 	public static final int FRQ_BIMONTHLY = 6;
 	public static final int FRQ_MONTHLY = 12;
-	/*
-	 * Satish K:fornighlty means 26 periods , don't why we are maintaining it as 24 here, in schedule calculator we are
-	 * having it as 26. we are only using this constant for validation only.
-	 */
 	public static final int FRQ_FORTNIGHTLY = 24;
 	public static final int FRQ_15DAYS = 24;
 	public static final int FRQ_BIWEEKLY = 26;

@@ -1200,8 +1200,8 @@ public class FrequencyUtil implements Serializable {
 			return false;
 		case 'T':
 			int daysAdd = 0;
-			if (dayOfMonth == 15) {
-				daysAdd = 16;
+			if (dayOfMonth > 15) {
+				daysAdd = -15;
 			} else {
 				daysAdd = 15;
 			}

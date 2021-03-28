@@ -1168,6 +1168,7 @@ public class FinanceDataDefaulting {
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_ACT_365LEAPS)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_ACT_ISDA)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30E360IA)
+				&& !StringUtils.equals(IDB, CalculationConstants.IDB_15E360IA)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_BY_PERIOD)) {
 			return false;
 		}

@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -5082,6 +5083,34 @@ public class FinanceDataValidation {
 			valueParm[1] = finMain.getRepayFrq();
 			valueParm[2] = financeType.getFrequencyDays();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+		}
+
+		//Interest Days Basis should be 15E/360 ISDA OR Actual/365 Fixed when 
+		if (ImplementationConstants.FRQ_15DAYS_REQ) {
+			String repay = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
+			if (StringUtils.isNotEmpty(repay)) {
+				//Frequency Code
+				repay = "M";
+				if (!FrequencyCodeTypes.FRQ_15DAYS.equals(repay)) {
+					String frqCode = Labels.getLabel("label_Select_15DAYS");
+					String[] valueParm = new String[2];
+					valueParm[0] = "Repay Frequency ";
+					valueParm[1] = "'" + frqCode + "'";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+					return errorDetails;
+				}
+
+				//Interest Days Basis
+				if (!CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())) {
+					String profitDaysBasis = Labels.getLabel("label_ProfitDaysBasis_15E_360IA");//
+					String[] valueParm = new String[2];
+					valueParm[0] = "profitDaysBasis";
+					valueParm[1] = "'" + profitDaysBasis + "'";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+					return errorDetails;
+
+				}
+			}
 		}
 
 		// First Repayment Date Vs Start Date
