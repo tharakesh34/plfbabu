@@ -3432,6 +3432,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return receiptData;
 			}
 			financeDetail = receiptData.getFinanceDetail();
+			//While Receipt Upload 
+			rch.setTdsAmount(fsi.getTdsAmount());
 			receiptData.setReceiptHeader(rch);
 			finScheduleData = financeDetail.getFinScheduleData();
 			finScheduleData.setFinServiceInstruction(tempFsi);
