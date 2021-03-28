@@ -402,6 +402,8 @@ public class ExtendedFieldDetailsService {
 				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
 						tableName + type)) {
 					extendedFieldRender.setNewRecord(true);
+				} else {
+					extendedFieldRender.setNewRecord(false);
 				}
 			}
 			saveRecord = false;
