@@ -618,6 +618,12 @@ public class FinanceDataDefaulting {
 		}
 		// tasks # >>End Advance EMI and DSF
 
+		//Setting Default TDS Type
+		if (StringUtils.isBlank(finMain.getTdsType())
+				&& !PennantConstants.TDS_USER_SELECTION.equals(financeType.getTdsType())) {
+			finMain.setTdsType(financeType.getTdsType());
+		}
+
 		finMain.setInstBasedSchd(financeType.isInstBasedSchd());
 	}
 
