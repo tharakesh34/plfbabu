@@ -88,6 +88,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -214,6 +215,10 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 		 * this.providerId.setValueColumn("DealerId"); this.providerId.setDescColumn("DealerName");
 		 * this.providerId.setValueType(DataType.LONG); this.providerId.setValidateColumns(new String[] { "DealerId" });
 		 */
+		//Filter to display only VAS Manufacturers
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("DealerType", "VASM", Filter.OP_EQUAL);
+		this.providerId.setFilters(filter);
 
 		this.providerId.setProperties("VASManufacturer", "DealerName", "DealerCity", true, 8);
 
