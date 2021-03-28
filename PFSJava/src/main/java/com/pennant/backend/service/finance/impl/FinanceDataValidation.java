@@ -3465,40 +3465,50 @@ public class FinanceDataValidation {
 			valueParm[2] = finMain.getFinType();
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90203", valueParm)));
 		}
+		String tdsType = finMain.getTdsType();
 		if (finMain.isTDSApplicable()) {
+			//Loan Queue TDS is Applicable but in Loan Type it is marked as False
 			if (!financeType.isTdsApplicable()) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "tds";
 				valueParm[1] = financeType.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 			}
-		} else if (StringUtils.isNotBlank(finMain.getTdsType())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "tdsType";
-			valueParm[1] = "tdsApplicable is true";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
-		}
-		if (finMain.isTDSApplicable()) {
-			if (StringUtils.isNotBlank(finMain.getTdsType())) {
-				if (!PennantConstants.TDS_USER_SELECTION.equalsIgnoreCase(financeType.getTdsType())) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "tdsType";
-					valueParm[1] = "tdsType in Loan Type is User Selection";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
+			//Validating TDS Type
+			String loanTypeTdsType = financeType.getTdsType();
+			if (StringUtils.isNotBlank(tdsType)) {
+				//Loan type TDS Type as USER or AUTO or MANUAL
+				if (!"#".equals(loanTypeTdsType)) {
+					//If TDS Type is not != User selection 
+					if (!PennantConstants.TDS_USER_SELECTION.equals(loanTypeTdsType)) {
+						//Loan Type value and Loan Queue Value should be same
+						if (!StringUtils.equals(tdsType, loanTypeTdsType)) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "tdsType";
+							valueParm[1] = loanTypeTdsType;
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+						}
+						//From Loan Queue passing Different Values
+					} else if (!(StringUtils.equalsIgnoreCase(tdsType, PennantConstants.TDS_AUTO)
+							|| StringUtils.equalsIgnoreCase(tdsType, PennantConstants.TDS_MANUAL))) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "tdsType";
+						valueParm[1] = PennantConstants.TDS_AUTO + " , " + PennantConstants.TDS_MANUAL;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+					}
 				}
-			} else {
+				//With out passing TDS Type in Loan Queue but in Loan Type TDS type is USER or AUTO or MANUAL	
+			} else if (StringUtils.isBlank(tdsType) && !"#".equals(loanTypeTdsType)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "tdsType";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 			}
-		}
-		if (!(PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())
-				|| PennantConstants.TDS_MANUAL.equalsIgnoreCase(finMain.getTdsType()))) {
+			//TDS is not applicable in loan queue but passing TDS Type value from API	
+		} else if (StringUtils.isNotBlank(tdsType)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "tdsType";
-			valueParm[1] = PennantConstants.TDS_AUTO + " , " + PennantConstants.TDS_MANUAL;
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
-
+			valueParm[1] = "tdsApplicable is true";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
 		}
 		if (finMain.isQuickDisb()) {
 			if (!financeType.isQuickDisb()) {
