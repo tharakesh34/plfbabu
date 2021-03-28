@@ -5967,4 +5967,9 @@
 		<property name="partCancellationService" ref="partCancellationService" />
 	</bean> 
 	
+	<!-- Merchant UTR Upload Process -->
+	<bean id="merchantUTRUploadCtrl" class="com.pennant.webui.finance.upload.MerchantUTRUploadCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
 </beans> 

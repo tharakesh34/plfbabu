@@ -476,4 +476,6 @@ public interface FinanceMainDAO {
 
 	void updateWriteOffStatus(String finReference, boolean writeoffLoan);
 
+	FinanceMain getFinCategoryByFinRef(String finReference);
+
 }

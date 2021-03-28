@@ -7113,4 +7113,35 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		});
 	}
 
+	/**
+	 * Fetch the Record Finance Main Detail details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return FinanceMain
+	 */
+	@Override
+	public FinanceMain getFinCategoryByFinRef(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinCategory");
+		sql.append(" from FinanceMain");
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, i) -> {
+				FinanceMain fm = new FinanceMain();
+				fm.setFinCategory(rs.getString("FinCategory"));
+				return fm;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("FinCategory is not found in FinanceMain for the specified FinReference >> {}", finReference);
+		}
+
+		return null;
+	}
+
 }

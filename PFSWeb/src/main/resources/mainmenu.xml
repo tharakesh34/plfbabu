@@ -129,7 +129,7 @@
 				rightName="menuItem_SystemMaster_PRelationCode" />
 			<menuItem id="menu_Item_Qualification" zulNavigation="/WEB-INF/pages/SystemMaster/Qualification/QualificationList.zul"
 				rightName="menuItem_SystemMaster_Qualification" />
-			<menuItem id="menu_Item_OCR" zulNavigation="/WEB-INF/pages/OCR/OCRHeaderList.zul" rightName="menuItem_SystemMaster_OCRHeader" />		
+			<menuItem id="menu_Item_OCR" zulNavigation="/WEB-INF/pages/OCR/OCRHeaderList.zul" rightName="menuItem_SystemMaster_OCRHeader" />
 		</menu>
 		<menu id="menu_Category_BusinessPartners">
 			<menu id="menu_Category_Agencies">
@@ -304,8 +304,7 @@
 				rightName="menuItem_RulesFactory_Notifications" />
 			<menuItem id="menu_Item_ScoringMetrics" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ScoringRuleList.zul"
 				rightName="menuItem_RulesFactory_Notifications" />
-			<menuItem id="menu_Item_BRERule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/BRERuleList.zul"
-				rightName="menuItem_RulesFactory_BRERules" />
+			<menuItem id="menu_Item_BRERule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/BRERuleList.zul" rightName="menuItem_RulesFactory_BRERules" />
 		</menu>
 		<menu id="menu_Category_NotificationRules">
 			<menuItem id="menu_Item_MailTemplate" zulNavigation="/WEB-INF/pages/Mail/MailTemplate/MailTemplateList.zul"
@@ -466,7 +465,7 @@
 			rightName="menuItem_Commitment_Commitment" />
 		<menuItem id="menu_Item_CKYCProcess" zulNavigation="/WEB-INF/pages/CustomerMasters/CKYC/CKYCProcess.zul"
 			rightName="menuItem_CKYCProcess" />
-		
+
 		<!-- <menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview"/> 
 			<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
 	</menu>
@@ -723,7 +722,7 @@
 			<menuItem id="menu_Item_FeeWaivers" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menu_Item_FeeWaiverHeader" />
 			<menuItem id="menu_Item_Restructure" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-				rightName="menuItem_FinanceManagement_RestructureDetail" />	
+				rightName="menuItem_FinanceManagement_RestructureDetail" />
 		</menu>
 		<menu id="menu_Category_LmsPostDisbursementEdit">
 			<menuItem id="menu_Item_BasicDetail" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
@@ -757,7 +756,7 @@
 		</menu>
 		<menuItem id="menu_Item_LoanDownSizing" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 			rightName="menuItem_FinanceManagement_LoanDownSizing" />
-			
+
 		<menuItem id="menu_Item_DMSRetrievalProcess" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/DMSRetrievalProcess.zul"
 			rightName="menuItem_DMSRetrievalProcess" />
 		<menuItem id="menu_Item_PartCancellation" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/PartCancellationProcess.zul"
@@ -805,7 +804,7 @@
 		<menu id="menu_Category_Mandates">
 			<menuItem id="menu_Item_MandateRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateRegistrationList.zul"
 				rightName="menuItem_MandateRegistration" />
-				<menuItem id="menu_Item_MandateUploadToDownload" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateUploadToDownload.zul"
+			<menuItem id="menu_Item_MandateUploadToDownload" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateUploadToDownload.zul"
 				rightName="menu_Item_MandateUploadToDownload" />
 			<menuItem id="menu_Item_MandatesFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=MANDATES"
 				rightName="menuItem_MandateFileDownlaods" />
@@ -852,10 +851,10 @@
 				rightName="menuItem_MiscPostingUpload" />
 			<menuItem id="menu_Item_MiscPostingUploadApproval" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=MA"
 				rightName="menuItem_MiscPostingUploadApproval" />
-				<!-- RateChangeUpload -->
+			<!-- RateChangeUpload -->
 			<menuItem id="menu_Item_RateChangeUpload" zulNavigation="/WEB-INF/pages/Finance/Uploads/RateChangeUpload.zul"
 				rightName="menu_Item_RateChangeUpload" />
-			
+
 		</menu>
 		<menuItem id="menu_Item_LenderUpload" zulNavigation="/WEB-INF/pages/LenderUpload/LenderDataUpload.zul"
 			rightName="menuItem_LenderUpload" />
@@ -876,6 +875,11 @@
 			<menuItem id="menu_Item_HunterUpload" zulNavigation="/WEB-INF/pages/Finance/HunterUpload/HunterUploadDialog.zul"
 				rightName="menu_Item_HunterUploadDialog" />
 		</menu>
+		<menu id="menu_Category_MerchantUTR">
+			<menuItem id="menu_Item_MerchantUTRUpload" zulNavigation="/WEB-INF/pages/Finance/MerchantUTR/MerchantUTRUpload.zul"
+				rightName="menu_Item_MerchantUTRUpload" />
+		</menu>
+
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
@@ -1126,8 +1130,8 @@
 			<menuItem id="menu_Item_MandateDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_MandateDetails" />
 			<!-- This menu should enable in veritas. -->
-		    <menuItem id="menu_Item_CollateralDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
-				rightName="menu_Item_CollateralDetails" /> 
+			<menuItem id="menu_Item_CollateralDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_CollateralDetails" />
 		</menu>
 		<menu id="menu_Category_CustomerTemplates">
 			<!-- <menuItem id="menu_Item_AccountStmt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_CustomerTemplates_SOA" 
@@ -1256,12 +1260,14 @@
 				rightName="menu_Item_EMIDueReport" />
 			<menuItem id="menu_Item_GSTReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_GSTReport" />
-			<menuItem id="menu_Item_PDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PDCReport" />
-			<menuItem id="menu_Item_PortfolioDataRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PortfolioDataRpt" />		
+			<menuItem id="menu_Item_PDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_PDCReport" />
+			<menuItem id="menu_Item_PortfolioDataRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_PortfolioDataRpt" />
 		</menu>
 
 		<menu id="menu_Category_Legal">
-		    <!-- This menu items should enable in veritas. -->
+			<!-- This menu items should enable in veritas. -->
 			<menuItem id="menu_Item_LegalDetailAcknowledgementReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_Reports_LegalDetail_AcknowledgementReport" />
 			<menuItem id="menu_Item_LegalDetailDisbursementReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
@@ -1402,8 +1408,10 @@
 			<menuItem id="menu_Item_PaymentTypeReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_FinDeptReports_PastDue" />
 		</menu>
-        <menuItem id="menu_Item_MiscellaneouspostUploadStsrpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"  rightName="menu_Item_MiscellaneouspostUploadStsrpt"/>
-	    <menuItem id="menu_Item_LoanMasterReport" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/LoanMasterReport.zul"  rightName="menu_Item_LoanMasterReport"/>
+		<menuItem id="menu_Item_MiscellaneouspostUploadStsrpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+			rightName="menu_Item_MiscellaneouspostUploadStsrpt" />
+		<menuItem id="menu_Item_LoanMasterReport" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/LoanMasterReport.zul"
+			rightName="menu_Item_LoanMasterReport" />
 		<!-- <menu id="menu_Category_SCM" rightName=""> <menuItem id="menu_Item_DeliveryOrder" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 			rightName="" /> <menuItem id="menu_Item_GoodsReceipt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 			rightName="" /> </menu> -->

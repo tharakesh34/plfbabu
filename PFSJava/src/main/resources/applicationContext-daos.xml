@@ -12697,5 +12697,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />   	
 	</bean>
 	
+	<bean id="defaultMerchantUTRProcess" class="com.pennanttech.pff.external.merchant.DefaultMerchantUTRUploadProcess" parent="abstractInterface" />
+	
 </beans>
 
