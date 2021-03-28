@@ -44,6 +44,7 @@ package com.pennant.backend.service.bmtmasters.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -387,6 +388,26 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			parameters[1] = PennantJavaUtil.getLabel("label_BankCode") + ": " + bankBranch.getBankCode();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+
+		if (PennantConstants.RECORD_TYPE_DEL.equals(StringUtils.trimToEmpty(bankBranch.getRecordType()))) {
+			long bankBranchID = bankBranch.getBankBranchID();
+
+			int mandateCount = mandateDAO.getBranch(bankBranchID, "");
+			int disbCount = finAdvancePaymentsDAO.getBranch(bankBranchID, "");
+			int beneficiaryCount = beneficiaryDAO.getBranch(bankBranchID, "");
+
+			if (mandateCount != 0 && beneficiaryCount != 0 && disbCount != 0) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(bankBranch.getBranchCode());
+
+				errParm[0] = PennantJavaUtil.getLabel("label_BankBranchCode") + ":" + valueParm[0];
+
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
