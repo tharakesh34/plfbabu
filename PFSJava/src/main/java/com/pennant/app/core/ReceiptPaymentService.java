@@ -1,6 +1,7 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -157,6 +158,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setActFinReceipt(true);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
 		header.setReceivedDate(businessDate);
+		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		header.setLastMntBy(pd.getLastMntBy());
+		header.setVersion(header.getVersion() + 1);
 
 		if (!isPDetailsExits) {
 			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
@@ -255,6 +259,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setPostBranch("EOD");//FIXME
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		header.setReceivedDate(businessDate);
+		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		header.setLastMntBy(detail.getLastMntBy());
+		header.setVersion(header.getVersion() + 1);
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 

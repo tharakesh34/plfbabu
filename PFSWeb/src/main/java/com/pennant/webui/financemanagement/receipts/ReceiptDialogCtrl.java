@@ -4552,6 +4552,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				wve.add(e);
 			}
 
+			bounce.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			bounce.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			bounce.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			bounce.setVersion(bounce.getVersion() + 1);
+
 			header.setManualAdvise(bounce);
 		} else if (StringUtils.equals(status, RepayConstants.PAYSTATUS_CANCEL)) {
 

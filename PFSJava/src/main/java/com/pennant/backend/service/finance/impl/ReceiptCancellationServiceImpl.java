@@ -460,6 +460,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				receiptHeader.setNextTaskId("");
 				receiptHeader.setWorkflowId(0);
 				receiptHeader.setRcdMaintainSts(null);
+				receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				ManualAdvise advice = receiptHeader.getManualAdvise();
 				if (advice != null) {
 					advice.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -469,6 +470,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					advice.setTaskId("");
 					advice.setNextTaskId("");
 					advice.setWorkflowId(0);
+					advice.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					String adviseId = manualAdviseDAO.save(advice, TableType.MAIN_TAB);
 					advice.setAdviseID(Long.parseLong(adviseId));
 				}
@@ -903,9 +905,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					PennantJavaUtil.getLabel("label_ManualAdvise_Notavailable") + presentmentDetail.getMandateType());
 			return presentmentDetail;
 		}
+		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		manualAdvise.setLastMntBy(presentmentDetail.getLastMntBy());
+		manualAdvise.setVersion(manualAdvise.getVersion() + 1);
+
 		receiptHeader.setManualAdvise(manualAdvise);
 		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
-		receiptHeader.setBounceDate(DateUtility.getAppDate());
+		receiptHeader.setBounceDate(SysParamUtil.getAppDate());
+		receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		receiptHeader.setLastMntBy(presentmentDetail.getLastMntBy());
+		receiptHeader.setVersion(receiptHeader.getVersion() + 1);
 
 		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(receiptHeader.getReference());
 

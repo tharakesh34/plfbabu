@@ -43,6 +43,7 @@
 package com.pennant.backend.service.financemanagement.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
@@ -736,81 +736,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				repayHierarchy, schDate, appDate);
 	}
 
-	private void processReceipts(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,
-			boolean updateReceiptId) throws Exception {
-
-		FinReceiptData finReceiptData = new FinReceiptData();
-		FinReceiptHeader header = new FinReceiptHeader();
-
-		Date appDate = DateUtility.getAppDate();
-
-		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
-		header.setReference(presentmentDetail.getFinReference());
-		header.setReceiptDate(presentmentDetail.getSchDate());
-		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReceiptID(receiptId);
-		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
-		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
-		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
-		header.setReceiptAmount(presentmentDetail.getPresentmentAmt());
-		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
-		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-		header.setLogSchInPresentment(true);
-
-		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
-
-		FinReceiptDetail receiptDetail = new FinReceiptDetail();
-
-		if (presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
-			receiptDetail = new FinReceiptDetail();
-			header.setReceiptAmount(presentmentDetail.getPresentmentAmt());
-			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
-			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
-			receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
-			receiptDetail.setDueAmount(presentmentDetail.getPresentmentAmt());
-			receiptDetail.setValueDate(presentmentDetail.getSchDate());
-			receiptDetail.setReceivedDate(appDate);
-			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
-			receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
-			receiptDetail.setFundingAc(presentmentDetail.getPartnerBankId());
-			receiptDetails.add(receiptDetail);
-
-		}
-
-		header.setReceiptDetails(receiptDetails);
-
-		header.setRemarks("");
-		finReceiptData.setReceiptHeader(header);
-		finReceiptData.setFinReference(presentmentDetail.getFinReference());
-		finReceiptData.setSourceId("");
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(presentmentDetail.getFinReference(), "_AView",
-				false);
-		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true,
-				"_AView");
-		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
-				.getFinScheduleDetails(presentmentDetail.getFinReference(), "_AView", false);
-		FinanceProfitDetail profitDetail = profitDetailsDAO
-				.getFinProfitDetailsById(presentmentDetail.getFinReference());
-		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
-		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
-				profitDetail, header, financeType.getRpyHierarchy(), presentmentDetail.getSchDate(), appDate);
-		if (presentmentDetail.getId() != Long.MIN_VALUE && updateReceiptId) {
-			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
-		}
-	}
-
 	private void processEmiInAdvance(PresentmentDetail presentmentDetail, boolean isExcessNoReserve,
 			boolean updateReceiptId) throws Exception {
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader header = new FinReceiptHeader();
 
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
 		header.setReference(presentmentDetail.getFinReference());
@@ -929,6 +861,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 		header.setLogSchInPresentment(true);
+		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		header.setLastMntBy(presentmentDetail.getLastMntBy());
+		header.setVersion(header.getVersion() + 1);
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 
