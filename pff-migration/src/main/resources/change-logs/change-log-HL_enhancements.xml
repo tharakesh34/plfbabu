@@ -23343,6 +23343,20 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="915" author="madhuri.n">
+		<addColumn tableName="RejectFinanceMain">
+			<column name="tdsType" type="varchar(8)" defaultValue="#" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="916" author="madhuri.n">
+		<sql>
+			<![CDATA[
+				update RejectFinanceMain set tdsType='#' where  tdsType is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- Receipt Level views handle in single place starts -->
 
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">
@@ -28034,6 +28048,7 @@ UNION ALL
 					F.SOURCINGBRANCH,
 					F.SOURCHANNELCATEGORY,
 					F.ASMNAME,
+					F.TDSTYPE,
 					F.WRITEOFFLOAN,
 					F.RESTRUCTURE					
 			    FROM ((REJECTFINANCEMAIN F

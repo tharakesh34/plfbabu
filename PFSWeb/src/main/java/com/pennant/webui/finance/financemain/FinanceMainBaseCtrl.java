@@ -10731,19 +10731,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.tDSApplicable.isChecked()) {
 			String excludeFields = "," + PennantConstants.TDS_USER_SELECTION + ",";
 			fillComboBox(this.cbTdsType, PennantConstants.List_Select, tdsTypeList, excludeFields);
-			if (financeType.isTdsApplicable()) {
-				this.cbTdsType.setVisible(true);
-				this.label_FinanceMainDialog_TDSType.setVisible(true);
-				this.cbTdsType.setDisabled(true);
-				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-				fillComboBox(this.cbTdsType, financeMain.getTdsType(), tdsTypeList, excludeFields);
-				if (financeMain.isNewRecord()) {
-					if (StringUtils.equalsIgnoreCase(financeType.getTdsType(), PennantConstants.TDS_USER_SELECTION)) {
-						this.cbTdsType.setDisabled(isReadOnly("FinanceMainDialog_TDSType"));
-						fillComboBox(this.cbTdsType, PennantConstants.List_Select, tdsTypeList, excludeFields);
-					} else {
-						fillComboBox(this.cbTdsType, financeType.getTdsType(), tdsTypeList, excludeFields);
-					}
+			this.cbTdsType.setVisible(true);
+			this.label_FinanceMainDialog_TDSType.setVisible(true);
+			this.cbTdsType.setDisabled(true);
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			fillComboBox(this.cbTdsType, financeMain.getTdsType(), tdsTypeList, excludeFields);
+			if (financeMain.isNewRecord()) {
+				if (StringUtils.equalsIgnoreCase(financeType.getTdsType(), PennantConstants.TDS_USER_SELECTION)) {
+					this.cbTdsType.setDisabled(isReadOnly("FinanceMainDialog_TDSType"));
+					fillComboBox(this.cbTdsType, PennantConstants.List_Select, tdsTypeList, excludeFields);
+				} else {
+					fillComboBox(this.cbTdsType, financeType.getTdsType(), tdsTypeList, excludeFields);
 				}
 			}
 		} else {
