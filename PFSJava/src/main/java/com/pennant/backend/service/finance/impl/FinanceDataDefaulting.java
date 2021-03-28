@@ -595,6 +595,7 @@ public class FinanceDataDefaulting {
 		finMain.setShariaStatus(PennantConstants.SHARIA_STATUS_NOTREQUIRED);
 		finMain.setCalRoundingMode(financeType.getRoundingMode());
 		finMain.setRoundingTarget(financeType.getRoundingTarget());
+		finMain.setTDSApplicable(financeType.isTdsApplicable());
 
 		// tasks # >>Start Advance EMI and DSF
 		if (financeType.isGrcAdvIntersetReq()) {

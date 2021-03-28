@@ -1194,9 +1194,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		// TDS Type
+		//Setting Default TDS Type
 		if (StringUtils.isBlank(financeMain.getTdsType())
-				&& PennantConstants.TDS_USER_SELECTION.equalsIgnoreCase(finType.getTdsType())) {
+				&& !PennantConstants.TDS_USER_SELECTION.equals(finType.getTdsType())) {
 			financeMain.setTdsType(finType.getTdsType());
 		}
 

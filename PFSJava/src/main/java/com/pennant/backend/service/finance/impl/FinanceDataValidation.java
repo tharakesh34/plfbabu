@@ -3504,7 +3504,7 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 			}
 			//TDS is not applicable in loan queue but passing TDS Type value from API	
-		} else if (StringUtils.isNotBlank(tdsType)) {
+		} else if (StringUtils.isNotBlank(tdsType)  && "#".equals(tdsType)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "tdsType";
 			valueParm[1] = "tdsApplicable is true";
