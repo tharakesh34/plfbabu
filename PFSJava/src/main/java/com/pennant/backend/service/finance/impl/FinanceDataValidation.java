@@ -667,11 +667,17 @@ public class FinanceDataValidation {
 		int vasFeeCount = 0;
 		if (finScheduleData.getFinFeeDetailList() != null && !finScheduleData.getFinFeeDetailList().isEmpty()) {
 			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
-				for (VASRecording vasRecording : finScheduleData.getVasRecordingList())
-					if (StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
+				for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+					String feeTypeCode = feeDetail.getFeeTypeCode();
+					if (StringUtils.startsWith(feeTypeCode, "{") && StringUtils.endsWith(feeTypeCode, "}")) {
+						feeTypeCode = feeTypeCode.replace("{", "");
+						feeTypeCode = feeTypeCode.replace("}", "");
+					}
+					if (StringUtils.equals(feeTypeCode, vasRecording.getProductCode())) {
 						feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 						vasFeeCount++;
 					}
+				}
 			}
 			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
 				int count = 0;
@@ -3504,7 +3510,7 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 			}
 			//TDS is not applicable in loan queue but passing TDS Type value from API	
-		} else if (StringUtils.isNotBlank(tdsType)  && "#".equals(tdsType)) {
+		} else if (StringUtils.isNotBlank(tdsType) && "#".equals(tdsType)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "tdsType";
 			valueParm[1] = "tdsApplicable is true";
