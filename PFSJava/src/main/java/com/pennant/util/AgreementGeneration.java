@@ -3931,7 +3931,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		//Flat/Shop/Unit No, Floor No & Wing
 		String custAddrHNbr = StringUtils.trimToEmpty(customerAddres.getCustAddrHNbr());
 		if (StringUtils.isNotEmpty(custAddrHNbr)) {
-			custAddress.append(custAddrHNbr).append("\n");
+			custAddress.append(custAddrHNbr);
+		}
+		//Building/society/Project name
+		String custFlatNbr = StringUtils.trimToEmpty(customerAddres.getCustFlatNbr());
+		if (StringUtils.isNotEmpty(custFlatNbr)) {
+			custAddress.append(", ").append(custFlatNbr).append("\n");
+		} else {
+			custAddress.append("\n");
 		}
 		//Street / Road Name
 		String custAddrStreet = StringUtils.trimToEmpty(customerAddres.getCustAddrStreet());
