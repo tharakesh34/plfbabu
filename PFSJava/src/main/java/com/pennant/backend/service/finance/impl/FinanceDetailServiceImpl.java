@@ -12829,6 +12829,57 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 				}
 
+				FinTaxDetails finTaxDetails = null;
+				for (FinFeeDetail feeDetail : pricingDetail.getTopUpFinFeeDetails()) {
+					feeDetail.setRecordType(main.getRecordType());
+					feeDetail.setRecordStatus(main.getRecordStatus());
+					feeDetail.setLastMntOn(main.getLastMntOn());
+					feeDetail.setLastMntBy(main.getLastMntBy());
+					String finType = financeMainDAO.getFinanceTypeFinReference(feeDetail.getFinReference(), "_Temp");
+					FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
+							finType, FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
+					if (financeWorkFlow != null) {
+						WorkFlowDetails workFlowDetails = WorkFlowUtil
+								.getDetailsByType(financeWorkFlow.getWorkFlowType());
+						if (workFlowDetails != null) {
+							WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+							String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
+							feeDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
+							feeDetail.setRoleCode(workflow.firstTaskOwner());
+							feeDetail.setNextRoleCode(workflow.firstTaskOwner());
+							feeDetail.setTaskId(taskid);
+							feeDetail.setNextTaskId(taskid + ";");
+							feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						}
+					} else {
+						feeDetail.setWorkflowId(main.getWorkflowId());
+						feeDetail.setRoleCode(main.getRoleCode());
+						feeDetail.setNextRoleCode(main.getNextRoleCode());
+						feeDetail.setTaskId(main.getTaskId());
+						feeDetail.setNextTaskId(main.getNextTaskId());
+						feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					}
+					finTaxDetails = feeDetail.getFinTaxDetails();
+					if (feeDetail.isNewRecord()) {
+						feeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(feeDetail, false, "_Temp") + 1);
+						long feeId = getFinFeeDetailDAO().save(feeDetail, false, "_Temp");
+						if (finTaxDetails != null) {
+							finTaxDetails.setFeeID(feeId);
+							finTaxDetailsDAO.save(finTaxDetails, "_Temp");
+						}
+					} else {
+						if (StringUtils.equals(feeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+							getFinFeeDetailDAO().delete(feeDetail, false, "_Temp");
+							finTaxDetailsDAO.deleteByFeeID(feeDetail.getFeeID(), "_Temp");
+						} else {
+							getFinFeeDetailDAO().update(feeDetail, false, "_Temp");
+							if (finTaxDetails != null && finTaxDetails.getFinTaxID() > 0) {
+								finTaxDetailsDAO.update(finTaxDetails, "_Temp");
+							}
+						}
+					}
+				}
+
 				for (VASRecording vasRecording : pricingDetail.getTopUpVasDetails()) {
 					vasRecording.setRecordType(main.getRecordType());
 					vasRecording.setRecordStatus(main.getRecordStatus());

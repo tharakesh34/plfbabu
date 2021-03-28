@@ -2630,6 +2630,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			BeanUtils.copyProperties(finFeeDetail, tempfinFee);
 			excessAmt = excessAmt.add(finFeeDetail.getFinFeeReceipts().get(0).getPaidAmount());
 			calculateGST(tempfinFee, taxPercentages);
+			tempfinFee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finFeeDetailService.updateFeesFromUpfront(tempfinFee, "_Temp");
 		}
 

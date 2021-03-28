@@ -395,6 +395,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					if (finFeeDtl != null) {
 						fee.setFeeID(finFeeDtl.getFeeID());
 						fee.setFeeSeq(finFeeDtl.getFeeSeq());
+						fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						getFinFeeDetailDAO().update(fee, false, "");
 					}
 				} else {

@@ -1240,6 +1240,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			for (FinFeeDetail finFeeDetail : feeDetailsList) {
 				finFeeDetail.setFinReference(finReference);
+				finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 
 				if (!newRecord && finFeeDetail.isOriginationFee() && finFeeDetail.getFeeID() > 0) {

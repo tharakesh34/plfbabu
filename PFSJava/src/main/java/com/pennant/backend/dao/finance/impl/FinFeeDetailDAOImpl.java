@@ -1074,6 +1074,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(" RemainingFeeOriginal = :RemainingFeeOriginal, ");
 		sql.append(" RemainingFeeGST = :RemainingFeeGST ");
 		sql.append(", PaidTDS = :PaidTDS, RemTDS = :RemTDS");
+		sql.append(", LastMntOn = :LastMntOn ");
 		sql.append(" Where FeeID = :FeeID ");
 
 		logger.debug(Literal.SQL + sql.toString());

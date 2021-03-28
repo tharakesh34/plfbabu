@@ -1169,6 +1169,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 					//checking if the fee available in main table or not, if no save or else update in main table
 					FinFeeDetail finFeeDetail = new FinFeeDetail();
 					finFeeDetail.setFeeID(feeDetail.getFeeID());
+					feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					FinFeeDetail prvsFees = finFeeDetailDAO.getFinFeeDetailById(finFeeDetail, false,
 							TableType.MAIN_TAB.getSuffix());
 					if (prvsFees != null) {
@@ -1194,6 +1195,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 		String type = "_Temp";
 		for (FinFeeDetail fee : feeDetails) {
+			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finFeeDetailService.updateFeesFromUpfront(fee, type);
 			//VAS need to update vasrecording also
 			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
@@ -1231,6 +1233,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		for (FinFeeDetail feeDetail : feeDetails) {
 			FinFeeReceipt feeReceipt = feeDetail.getFinFeeReceipts().get(0);
 			if (feeReceipt.getId() == Long.MIN_VALUE) {
+				feeDetail.setTransactionId(receiptHeader.getExtReference());
+				feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				feeReceipt.setReceiptID(receiptHeader.getReceiptID());
 				feeReceipt.setFeeID(feeDetail.getFeeID());
 				feeReceipt.setFeeTypeId(feeDetail.getFeeTypeID());
