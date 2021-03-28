@@ -5953,6 +5953,11 @@
 	<bean id="approvalScreenEventHistory"
 		class="com.pennant.webui.systemmasters.holdEmi.model.ApprovalScreenEventHistory">
 	</bean>
-		
+
+	<!-- Mandate UploadToDownload Process -->
+	<bean id="mandateUploadToDownloadCtrl" class="com.pennanttech.interfacebajaj.MandateUploadToDownloadCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>		
 </beans> 
 

@@ -44,6 +44,8 @@
 package com.pennanttech.pff.external.mandate;
 
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -60,7 +62,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -98,6 +102,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcesses;
+import com.pennanttech.pff.external.service.ExternalInterfaceService;
 import com.pennanttech.pff.model.mandate.MandateData;
 
 public class DefaultMandateProcess extends AbstractInterface implements MandateProcesses {
@@ -118,6 +123,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	@Autowired(required = false)
 	@Qualifier("mandateUploadValidationImpl")
 	private ValidateRecord mandateUploadValidationImpl;
+	private ExternalInterfaceService externalInterfaceService;
 
 	public DefaultMandateProcess() {
 		super();
@@ -859,6 +865,134 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		}
 	}
 
+	@Override
+	public void processUploadToDownLoadFile(long userId, File file, Media media, DataEngineStatus status)
+			throws Exception {
+		logger.debug(Literal.ENTERING);
+		String configName = status.getName();
+		String name = "";
+		if (file != null) {
+			name = file.getName();
+		} else if (media != null) {
+			name = media.getName();
+		}
+		status.reset();
+		status.setFileName(name);
+		status.setRemarks("initiated Mandate Upload To Download file [ " + name + " ] processing..");
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
+				status);
+		dataEngine.setFile(file);
+		dataEngine.setMedia(media);
+		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
+		dataEngine.setValidateRecord(mandateUploadValidationImpl);
+		Map<String, Object> parameterMap = new HashMap<>();
+		parameterMap.put("APP_DATE", SysParamUtil.getAppDate());
+		dataEngine.setParameterMap(parameterMap);
+		dataEngine.importData(configName);
+
+		do {
+			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
+				processResponse(status.getId(), status);
+				break;
+			}
+		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void processResponse(long respBatchId, DataEngineStatus status) throws Exception {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT MANDATEID");
+		sql.append(" FROM MANDATEUPLOADTODOWNLOAD");
+		sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("RESP_BATCH_ID", respBatchId);
+
+		List<Long> mandateIdList = namedJdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
+
+		if (mandateIdList == null || mandateIdList.isEmpty()) {
+			return;
+		}
+		//Updating the mandate status as 'NEW' for download
+		updateMandateStatus(mandateIdList);
+		try {
+			MandateData mandateData = new MandateData();
+			mandateData.setMandateIdList(mandateIdList);
+			MandateProcessThread process = new MandateProcessThread(mandateData, respBatchId);
+			Thread thread = new Thread(process);
+			thread.start();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public class MandateProcessThread extends Thread {
+		MandateData mandateData;
+		long respBatchId;
+
+		public MandateProcessThread(MandateData mandateData, long respBatchId) {
+			this.mandateData = mandateData;
+			this.respBatchId = respBatchId;
+		}
+
+		@Override
+		public void run() {
+			try {
+				externalInterfaceService.processMandateRequest(mandateData);
+				updateResponseStatus(mandateData.getMandateIdList(), respBatchId);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+
+	private void updateResponseStatus(List<Long> mandateIdList, long batchId) {
+		logger.debug(Literal.ENTERING);
+		try {
+			this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
+					"update MANDATEUPLOADTODOWNLOAD set status = ?, remarks = ? where mandateId=? and RESP_BATCH_ID=?",
+					new BatchPreparedStatementSetter() {
+						public void setValues(PreparedStatement ps, int i) throws SQLException {
+							ps.setString(1, "SUCCESS");
+							ps.setString(2, "Sent for Registration Process");
+							ps.setLong(3, mandateIdList.get(i));
+							ps.setLong(4, batchId);
+						}
+
+						public int getBatchSize() {
+							return mandateIdList.size();
+						}
+					});
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void updateMandateStatus(List<Long> mandateIdList) throws Exception {
+		logger.debug(Literal.ENTERING);
+		try {
+			this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
+					"update mandates set status = ? where mandateId=? and status!='NEW'",
+					new BatchPreparedStatementSetter() {
+						public void setValues(PreparedStatement ps, int i) throws SQLException {
+							ps.setString(1, "NEW");
+							ps.setLong(2, mandateIdList.get(i));
+						}
+
+						public int getBatchSize() {
+							return mandateIdList.size();
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	protected void addCustomParameter(Map<String, Object> parameterMap) {
 
 	}
@@ -883,4 +1017,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		this.dataEngineConfig = dataEngineConfig;
 	}
 
+	@Autowired
+	public void setExternalInterfaceService(ExternalInterfaceService externalInterfaceService) {
+		this.externalInterfaceService = externalInterfaceService;
+	}
 }

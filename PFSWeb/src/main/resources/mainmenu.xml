@@ -803,6 +803,8 @@
 		<menu id="menu_Category_Mandates">
 			<menuItem id="menu_Item_MandateRegistration" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateRegistrationList.zul"
 				rightName="menuItem_MandateRegistration" />
+				<menuItem id="menu_Item_MandateUploadToDownload" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateUploadToDownload.zul"
+				rightName="menu_Item_MandateUploadToDownload" />
 			<menuItem id="menu_Item_MandatesFileDownlaods" zulNavigation="/WEB-INF/pages/InterfaceBajaj/FileDownloadList.zul?module=MANDATES"
 				rightName="menuItem_MandateFileDownlaods" />
 			<menuItem id="menu_Item_MandatesFileImport" zulNavigation="/WEB-INF/pages/InterfaceBajaj/MandateDataImport.zul"
