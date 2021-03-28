@@ -538,6 +538,7 @@ public class PennantStaticListUtil {
 			regexType.add(getValueLabel("REGEX_WEB", "label_REGEX_WEB"));
 			regexType.add(getValueLabel("REGEX_SPECIAL_REGX", "label_REGEX_SPECIAL_REGX"));
 			regexType.add(getValueLabel("REGEX_TELEPHONE", "label_REGEX_TELEPHONE"));
+			regexType.add(new ValueLabel("REGEX_ADDRESS", Labels.getLabel("label_ADDRESS_REGEX")));
 		}
 		return regexType;
 
