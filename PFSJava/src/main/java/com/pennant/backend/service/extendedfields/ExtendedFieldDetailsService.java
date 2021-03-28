@@ -397,10 +397,12 @@ public class ExtendedFieldDetailsService {
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
-			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
-					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						tableName + type)) {
+			boolean exists = extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
+					extendedFieldRender.getSeqNo(), tableName + type);
+
+			if (PennantConstants.RCD_STATUS_SUBMITTED.equals(extendedFieldRender.getRecordStatus())
+					&& PennantConstants.RECORD_TYPE_UPD.equals(extendedFieldRender.getRecordType())) {
+				if (!exists) {
 					extendedFieldRender.setNewRecord(true);
 				} else {
 					extendedFieldRender.setNewRecord(false);
@@ -434,7 +436,8 @@ public class ExtendedFieldDetailsService {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())
+						&& exists) {
 					//If saved record has been updated then it should be updated in the table.
 					updateRecord = true;
 					saveRecord = false;
