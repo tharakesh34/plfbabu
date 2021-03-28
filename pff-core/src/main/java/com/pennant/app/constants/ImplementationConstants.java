@@ -210,6 +210,7 @@ public class ImplementationConstants {
 		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean(extensions, "PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
 		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean(extensions, "ALLOW_LOAN_VAS_RATIO_CALC", false);
 		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean(extensions, "ALLOW_ED_FIELDS_IN_NPA", false);
+		FRQ_15DAYS_REQ = getValueAsBoolean(extensions, "FRQ_15DAYS_REQ", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -452,6 +453,7 @@ public class ImplementationConstants {
 	public static boolean ALLOW_LOAN_VAS_RATIO_CALC;
 	public static boolean ALLOW_ED_FIELDS_IN_NPA;
 	public static boolean PRESENTMENT_STAGE_ACCOUNTING_REQ;
+	public static boolean FRQ_15DAYS_REQ;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;

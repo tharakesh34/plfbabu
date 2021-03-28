@@ -52,6 +52,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
@@ -160,7 +161,9 @@ public class FrequencyUtil implements Serializable {
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIMONTHLY, "label_Select_BiMonthly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_MONTHLY, "label_Select_Monthly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, "label_Select_Fortnightly"));
-		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_15DAYS, "label_Select_15DAYS"));
+		if (ImplementationConstants.FRQ_15DAYS_REQ) {
+			frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_15DAYS, "label_Select_15DAYS"));
+		}
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIWEEKLY, "label_Select_BiWeekly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_WEEKLY, "label_Select_Weekly"));
 		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_DAILY, "label_Select_Daily"));
