@@ -46,6 +46,10 @@
 								<extendedcombobox id="finReference" />
 							</row>
 							<row>
+								<label/>
+								<label value="(OR)" />
+							</row>
+							<row>
 								<label id="label_LoanMasterReport_LoanStartYear" value="${c:l('label_LoanMasterReport_LoanStartYear.value')}" />
 							<hbox>
 								<space spacing="2px" sclass="mandatory" />
