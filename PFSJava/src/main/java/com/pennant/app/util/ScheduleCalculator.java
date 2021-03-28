@@ -9408,10 +9408,11 @@ public class ScheduleCalculator {
 					}
 				} else if (StringUtils.equals(curSchd.getPftDaysBasis(), CalculationConstants.IDB_30E360IH)) {
 
-					BigDecimal idb30Factor = new BigDecimal(30 / 360d).setScale(9);
+					BigDecimal idb30Factor = BigDecimal.valueOf(30 / 360d);
+					idb30Factor = idb30Factor.setScale(9,RoundingMode.HALF_DOWN);
 					BigDecimal dayFactor = CalculationUtil.getInterestDays(prvSchd.getSchDate(), curSchd.getSchDate(),
 							CalculationConstants.IDB_30E360IH);
-					BigDecimal dayFactorScale = dayFactor.setScale(9);
+					BigDecimal dayFactorScale = dayFactor.setScale(9,RoundingMode.HALF_DOWN);
 
 					if (idb30Factor.compareTo(dayFactorScale) == 0) {
 						daysBasis = 360;
