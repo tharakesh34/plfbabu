@@ -3910,6 +3910,59 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
 		agreement.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
 		agreement.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+
+		StringBuffer custAddress = new StringBuffer();
+		//careof
+		String custAddrLine3 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine3());
+		if (StringUtils.isNotEmpty(custAddrLine3)) {
+			custAddress.append(custAddrLine3).append("\n");
+		}
+		//Flat/Shop/Unit No, Floor No & Wing
+		String custAddrHNbr = StringUtils.trimToEmpty(customerAddres.getCustAddrHNbr());
+		if (StringUtils.isNotEmpty(custAddrHNbr)) {
+			custAddress.append(custAddrHNbr).append("\n");
+		}
+		//Street / Road Name
+		String custAddrStreet = StringUtils.trimToEmpty(customerAddres.getCustAddrStreet());
+		if (StringUtils.isNotEmpty(custAddrStreet)) {
+			custAddress.append(custAddrStreet).append("\n");
+		}
+		//Landmark
+		String custAddrLine1 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine1());
+		if (StringUtils.isNotEmpty(custAddrLine1)) {
+			custAddress.append(custAddrLine1).append("\n");
+		}
+		//Locality
+		String custAddrLine2 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine2());
+		if (StringUtils.isNotEmpty(custAddrLine2)) {
+			custAddress.append(custAddrLine2).append("\n");
+		}
+		//Town/Village/Taluka
+		String custAddrLine4 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine4());
+		if (StringUtils.isNotEmpty(custAddrLine4)) {
+			custAddress.append(custAddrLine4).append("\n");
+		}
+		//City
+		String cityName = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName());
+		if (StringUtils.isNotEmpty(cityName)) {
+			custAddress.append(cityName).append("\n");
+		}
+		//District
+		String custDistrict = StringUtils.trimToEmpty(customerAddres.getCustDistrict());
+		if (StringUtils.isNotEmpty(custDistrict)) {
+			custAddress.append(custDistrict).append("\n");
+		}
+		//Province
+		String provinceName = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName());
+		if (StringUtils.isNotEmpty(provinceName)) {
+			custAddress.append(provinceName).append("\n");
+		}
+		//Zip Code
+		String custAddrZIP = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
+		if (StringUtils.isNotEmpty(custAddrZIP)) {
+			custAddress.append(custAddrZIP);
+		}
+		agreement.setCustaddress(custAddress.toString());
 	}
 
 	private void setAddressDetails(CoApplicant coapplicant, CustomerAddres customerAddres) {
