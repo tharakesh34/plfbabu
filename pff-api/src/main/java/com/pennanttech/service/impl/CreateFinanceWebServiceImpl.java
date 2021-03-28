@@ -121,6 +121,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		FinScheduleData fsData = financeDetail.getFinScheduleData();
 		FinanceMain finMain = fsData.getFinanceMain();
+		finMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinanceGroup.class);

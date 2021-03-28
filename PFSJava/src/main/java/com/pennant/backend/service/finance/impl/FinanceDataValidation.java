@@ -669,56 +669,50 @@ public class FinanceDataValidation {
 			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
 				for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
 					String feeTypeCode = feeDetail.getFeeTypeCode();
-					if (StringUtils.startsWith(feeTypeCode, "{") && StringUtils.endsWith(feeTypeCode, "}")) {
-						feeTypeCode = feeTypeCode.replace("{", "");
-						feeTypeCode = feeTypeCode.replace("}", "");
-					}
-					if (StringUtils.equals(feeTypeCode, vasRecording.getProductCode())) {
+					String productCode = vasRecording.getProductCode();
+					feeTypeCode = extractFeeCode(feeTypeCode);
+					productCode = extractFeeCode(productCode);
+
+					if (StringUtils.equals(feeTypeCode, productCode)) {
 						feeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
 						vasFeeCount++;
 					}
 				}
 			}
 
-			//Validating duplicate product codes in vas recording
-			List<VASRecording> vasRecordingList = finScheduleData.getVasRecordingList();
-			if (CollectionUtils.isNotEmpty(vasRecordingList)) {
-				for (int i = 0; i < vasRecordingList.size() - 1; i++) {
-					VASRecording vasRecording = vasRecordingList.get(i);
-					if (vasRecordingList.size() > 1) {
-						VASRecording aVasRecording = vasRecordingList.get(i + 1);
-						if (StringUtils.equals(vasRecording.getProductCode(), aVasRecording.getProductCode())) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "Product Code: " + vasRecording.getProductCode();
-							valueParm[1] = "VAS Recording";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+			//Duplicate Fee Code check
+			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+				int count = 0;
+				String feeTypeCode2 = feeDetail.getFeeTypeCode();
+				feeTypeCode2 = extractFeeCode(feeTypeCode2);
+				for (FinFeeDetail detail : finScheduleData.getFinFeeDetailList()) {
+					String feeTypeCode = detail.getFeeTypeCode();
+					feeTypeCode = extractFeeCode(feeTypeCode);
+					if (StringUtils.equals(feeTypeCode, feeTypeCode2)) {
+						count++;
+						if (count > 1) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Fee Code: " + feeTypeCode;
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+							return errorDetails;
 						}
 					}
 				}
 			}
 
-			for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
-				int count = 0;
-				for (FinFeeDetail detail : finScheduleData.getFinFeeDetailList()) {
-					if (StringUtils.contains(detail.getFeeTypeCode(), "{"))
-						if (StringUtils.equals(detail.getFeeTypeCode(), feeDetail.getFeeTypeCode())) {
-							count++;
-							if (count > 1) {
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90326", null)));
-							}
-						}
-				}
-			}
-
-			if (finScheduleData.getVasRecordingList().size() > 0 && vasFeeCount <= 0) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90326", null)));
-			} else if (finScheduleData.getVasRecordingList().size() <= 0 && vasFeeCount > 0) {
+			if (finScheduleData.getVasRecordingList().size() <= 0 && vasFeeCount > 0) {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90327", null)));
 			} else if (finScheduleData.getVasRecordingList().size() != vasFeeCount) {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90328", null)));
 			}
 
 			if (errorDetails.size() > 0) {
+				return errorDetails;
+			}
+		} else {
+			//setting validation for vas fees which are available in vas Block
+			if (finScheduleData.getVasRecordingList().size() != vasFeeCount) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90328", null)));
 				return errorDetails;
 			}
 		}
@@ -770,16 +764,20 @@ public class FinanceDataValidation {
 			}
 		}
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
-			boolean isVasFeeProduct = false;
+			String feeTypeCode = feeDetail.getFeeTypeCode();
+			feeTypeCode = extractFeeCode(feeTypeCode);
+
 			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
-				if (StringUtils.equals(feeDetail.getFeeTypeCode(), "{" + vasRecording.getProductCode() + "}")) {
-					isVasFeeProduct = true;
+				String productCode = vasRecording.getProductCode();
+				productCode = extractFeeCode(productCode);
+
+				if (StringUtils.equals(feeTypeCode, productCode)) {
 					// validate negative values
 					if (feeDetail.getActualAmount().compareTo(BigDecimal.ZERO) < 0
 							|| feeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) < 0
 							|| feeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) < 0) {
 						String[] valueParm = new String[1];
-						valueParm[0] = feeDetail.getFeeTypeCode();
+						valueParm[0] = feeTypeCode;
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90259", valueParm)));
 						return errorDetails;
 					}
@@ -789,7 +787,7 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[3];
 						valueParm[0] = "Fee amount";
 						valueParm[1] = "VAS recording fee:" + String.valueOf(vasRecording.getFee());
-						valueParm[2] = feeDetail.getFeeTypeCode();
+						valueParm[2] = feeTypeCode;
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90268", valueParm)));
 						return errorDetails;
 					}
@@ -800,19 +798,41 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[3];
 						valueParm[0] = "Sum of waiver and paid amounts";
 						valueParm[1] = "Actual fee amount:" + String.valueOf(feeDetail.getActualAmount());
-						valueParm[2] = feeDetail.getFeeTypeCode();
+						valueParm[2] = feeTypeCode;
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90268", valueParm)));
 						return errorDetails;
 					}
 				}
 			}
-
-			if (!isVasFeeProduct && StringUtils.contains(feeDetail.getFeeTypeCode(), "{")) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90326", null)));
-				return errorDetails;
-			}
 		}
 		return errorDetails;
+	}
+
+	private String extractFeeCode(String feeTypeCode) {
+		if (StringUtils.startsWith(feeTypeCode, "{") && StringUtils.endsWith(feeTypeCode, "}")) {
+			feeTypeCode = feeTypeCode.replace("{", "");
+			feeTypeCode = feeTypeCode.replace("}", "");
+		}
+		return feeTypeCode;
+	}
+
+	private List<String> getVasFeeCodes(FinScheduleData finScheduleData) {
+		List<String> feeCodes = new ArrayList<String>();
+		if (finScheduleData.getFinanceType() == null) {
+			FinanceType financeType = new FinanceType();
+			// fetch the vasProduct list based on the FinanceType
+			financeType.setFinTypeVASProductsList(
+					finTypeVASProductsDAO.getVASProductsByFinType(finScheduleData.getFinanceMain().getFinType(), ""));
+			finScheduleData.setFinanceType(financeType);
+		}
+		List<FinTypeVASProducts> finTypeVASProductsList = finScheduleData.getFinanceType().getFinTypeVASProductsList();
+		//Vas Products configured in FinType
+		if (CollectionUtils.isNotEmpty(finTypeVASProductsList)) {
+			for (FinTypeVASProducts finTypeVASProducts : finTypeVASProductsList) {
+				feeCodes.add(finTypeVASProducts.getVasProduct());
+			}
+		}
+		return feeCodes;
 	}
 
 	private List<ErrorDetail> vasRecordingValidations(String vldGroup, FinScheduleData finScheduleData,
@@ -850,7 +870,9 @@ public class FinanceDataValidation {
 				 */
 				for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
 					for (VASRecording detail : finScheduleData.getVasRecordingList()) {
-						if (StringUtils.equals(detail.getProductCode(), vasProduct.getVasProduct())) {
+						String productCode = detail.getProductCode();
+						productCode = extractFeeCode(productCode);
+						if (StringUtils.equals(productCode, vasProduct.getVasProduct())) {
 							isVasProduct = true;
 							if (vasProduct.isMandatory()) {
 								userVasCount++;
@@ -1164,8 +1186,32 @@ public class FinanceDataValidation {
 				}
 			}
 		}
-		return errorDetails;
 
+		//Validating duplicate product codes in vas recording
+		List<VASRecording> vasRecordingList = finScheduleData.getVasRecordingList();
+		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+			for (VASRecording vasRecording : vasRecordingList) {
+				int count = 0;
+				String productCode = vasRecording.getProductCode();
+				productCode = extractFeeCode(productCode);
+				for (VASRecording vasRcding : vasRecordingList) {
+					String vasCode = vasRcding.getProductCode();
+					vasCode = extractFeeCode(vasCode);
+					if (StringUtils.equals(productCode, vasCode)) {
+						count++;
+						if (count > 1) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Product Code: " + vasRecording.getProductCode();
+							valueParm[1] = "VAS Recording";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+							return errorDetails;
+						}
+					}
+				}
+			}
+		}
+
+		return errorDetails;
 	}
 
 	/**
@@ -3259,18 +3305,17 @@ public class FinanceDataValidation {
 									&& advPayment.getVasProductCode() == null) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "Disb Party: " + advPayment.getPaymentDetail();
-								valueParm[1] = "Product Code";
+								valueParm[1] = "VAS Product Code";
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91132", valueParm)));
+								return errorDetails;
 							}
 							FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 							List<VASRecording> vasRecordingList = finScheduleData.getVasRecordingList();
 							int productCount = 0;
-							for (VASRecording vasRecording : vasRecordingList) {
-								if (advPayment.getVasProductCode() != null) {
+							if (advPayment.getVasProductCode() != null) {
+								for (VASRecording vasRecording : vasRecordingList) {
 									if (advPayment.getVasProductCode().equals(vasRecording.getProductCode())) {
-										if (!PennantApplicationUtil.formateAmount(vasRecording.getFee(), 2)
-												.equals(PennantApplicationUtil
-														.formateAmount(advPayment.getAmtToBeReleased(), 2))) {
+										if (vasRecording.getFee().compareTo(advPayment.getAmtToBeReleased()) != 0) {
 											//Validating VAS Disbursement Amount and configured VAS Amount equal r not
 											String[] valueParm = new String[2];
 											valueParm[0] = " VAS Disbursement Amount";
@@ -3292,13 +3337,13 @@ public class FinanceDataValidation {
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
 							}
 							//Validating duplicate product codes in Disbursement Instruction
+							int duplicateCount = 0;
 							if (CollectionUtils.isNotEmpty(finAdvPayments)) {
-								for (int i = 0; i < finAdvPayments.size() - 1; i++) {
-									FinAdvancePayments finAdvancePayments = finAdvPayments.get(i);
-									if (finAdvPayments.size() > 1) {
-										FinAdvancePayments aFinAdvancePayments = finAdvPayments.get(i + 1);
-										if (StringUtils.equals(finAdvancePayments.getVasProductCode(),
-												aFinAdvancePayments.getVasProductCode())) {
+								for (FinAdvancePayments finAdvancePayments : finAdvPayments) {
+									if (StringUtils.equals(finAdvancePayments.getVasProductCode(),
+											advPayment.getVasProductCode())) {
+										duplicateCount++;
+										if (duplicateCount > 1) {
 											String[] valueParm = new String[2];
 											valueParm[0] = "Product Code: " + finAdvancePayments.getVasProductCode();
 											valueParm[1] = "Disbursement Instruction";
@@ -3588,7 +3633,7 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 			}
 			//TDS is not applicable in loan queue but passing TDS Type value from API	
-		} else if (StringUtils.isNotBlank(tdsType) && "#".equals(tdsType)) {
+		} else if (StringUtils.isNotBlank(tdsType) && !"#".equals(tdsType)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "tdsType";
 			valueParm[1] = "tdsApplicable is true";
@@ -5468,9 +5513,13 @@ public class FinanceDataValidation {
 				for (FinFeeDetail feeDetail : finSchdData.getFinFeeDetailList()) {
 					BigDecimal finWaiverAmount = BigDecimal.ZERO;
 					boolean isFeeCodeFound = false;
+					String feeTypeCode = feeDetail.getFeeTypeCode();
+					feeTypeCode = extractFeeCode(feeTypeCode);
 					for (FinTypeFees finTypeFee : finTypeFeeDetail) {
-						if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode()) || StringUtils
-								.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)) {
+						String feeTypeCode2 = finTypeFee.getFeeTypeCode();
+						feeTypeCode2 = extractFeeCode(feeTypeCode2);
+						if (StringUtils.equals(feeTypeCode, feeTypeCode2)
+								|| AccountEventConstants.ACCEVENT_VAS_FEE.equals(feeDetail.getFinEvent())) {
 							isFeeCodeFound = true;
 
 							// validate negative values
@@ -5478,7 +5527,7 @@ public class FinanceDataValidation {
 									|| feeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) < 0
 									|| feeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) < 0) {
 								String[] valueParm = new String[1];
-								valueParm[0] = feeDetail.getFeeTypeCode();
+								valueParm[0] = feeTypeCode;
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90259", valueParm)));
 								return errorDetails;
 							}
@@ -5488,7 +5537,7 @@ public class FinanceDataValidation {
 								if (!finTypeFee.isAlwModifyFeeSchdMthd() && !StringUtils
 										.equals(feeDetail.getFeeScheduleMethod(), finTypeFee.getFeeScheduleMethod())) {
 									String[] valueParm = new String[1];
-									valueParm[0] = feeDetail.getFeeTypeCode();
+									valueParm[0] = feeTypeCode;
 									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90246", valueParm)));
 									return errorDetails;
 								}
@@ -5499,7 +5548,7 @@ public class FinanceDataValidation {
 									CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 								if (feeDetail.getPaidAmount().compareTo(finTypeFee.getAmount()) != 0) {
 									String[] valueParm = new String[1];
-									valueParm[0] = finTypeFee.getFeeTypeCode();
+									valueParm[0] = feeTypeCode;
 									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90254", valueParm)));
 									return errorDetails;
 								}
@@ -5511,7 +5560,7 @@ public class FinanceDataValidation {
 									String[] valueParm = new String[3];
 									valueParm[0] = "Waiver amount";
 									valueParm[1] = "Actual waiver amount:" + String.valueOf(finWaiverAmount);
-									valueParm[2] = feeDetail.getFeeTypeCode();
+									valueParm[2] = feeTypeCode;
 									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90258", valueParm)));
 									return errorDetails;
 								}
@@ -5531,10 +5580,36 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		} else {
-			String[] valueParm = new String[1];
-			valueParm[0] = finSchdData.getFinanceMain().getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90245", valueParm)));
-			return errorDetails;
+			//If we pass vas FEES details with out Loan type FEES configuration and VAS details in VAS block
+			List<VASRecording> vasRecordingList = finSchdData.getVasRecordingList();
+			List<String> feeCodes = getVasFeeCodes(finSchdData);
+			if (CollectionUtils.isEmpty(vasRecordingList) && CollectionUtils.isNotEmpty(feeCodes)) {
+				for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
+					//Setting validation for vas recording and fees block
+					String feeTypeCode = finFeeDetail.getFeeTypeCode();
+					feeTypeCode = extractFeeCode(feeTypeCode);
+					if (feeCodes.contains(feeTypeCode)) {
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90328", null)));
+						return errorDetails;
+					} else {
+						//Setting validation fees
+						String[] valueParm = new String[1];
+						valueParm[0] = finSchdData.getFinanceMain().getFinType();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90245", valueParm)));
+						return errorDetails;
+					}
+				}
+				//Validation if no Fee configured in Loan type except vas and providing invalid fee code in Fee Block
+			} else if (CollectionUtils.isNotEmpty(feeCodes)) {
+				for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
+					String feeTypeCode = finFeeDetail.getFeeTypeCode();
+					feeTypeCode = extractFeeCode(feeTypeCode);
+					if (!feeCodes.contains(feeTypeCode)) {
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90244", null)));
+						return errorDetails;
+					}
+				}
+			}
 		}
 
 		return errorDetails;
