@@ -310,6 +310,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
 		finServiceInstruction.setFinReference(finReference);
 		finServiceInstruction.setFinEvent(finEvent);
+		finServiceInstruction.setFromDate(fromDate);
 
 		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
 		selectSql.append(

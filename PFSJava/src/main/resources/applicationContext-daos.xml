@@ -12695,7 +12695,8 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" /> 
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />   
-		<property name="financeDetailService" ref="financeDetailService" />   	
+		<property name="financeDetailService" ref="financeDetailService" />   
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />   		
 	</bean>
 	
 	<bean id="defaultMerchantUTRProcess" class="com.pennanttech.pff.external.merchant.DefaultMerchantUTRUploadProcess" parent="abstractInterface" />
