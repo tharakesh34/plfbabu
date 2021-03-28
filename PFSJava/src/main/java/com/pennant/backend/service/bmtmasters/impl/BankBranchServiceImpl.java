@@ -396,7 +396,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			int disbCount = finAdvancePaymentsDAO.getBranch(bankBranchID, "");
 			int beneficiaryCount = beneficiaryDAO.getBranch(bankBranchID, "");
 
-			if (mandateCount != 0 && beneficiaryCount != 0 && disbCount != 0) {
+			if (mandateCount != 0 || beneficiaryCount != 0 || disbCount != 0) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(bankBranch.getBranchCode());
