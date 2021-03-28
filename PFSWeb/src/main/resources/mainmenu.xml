@@ -1252,7 +1252,8 @@
 				rightName="menu_Item_EMIDueReport" />
 			<menuItem id="menu_Item_GSTReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_GSTReport" />
-				<menuItem id="menu_Item_PDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PDCReport" />	
+			<menuItem id="menu_Item_PDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PDCReport" />
+			<menuItem id="menu_Item_PortfolioDataRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_PortfolioDataRpt" />		
 		</menu>
 
 		<menu id="menu_Category_Legal">
