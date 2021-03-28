@@ -449,6 +449,11 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			paramMap.addValue("LLDATE", disbursement.getClearingDate());
 		}
 
+		if (disbursement.getLastMntOn() != null) {
+			sql.append(", LastMntOn= :LastMntOn");
+			paramMap.addValue("LastMntOn", disbursement.getLastMntOn());
+		}
+
 		sql.append("  Where PAYMENTID = :PAYMENTID  AND STATUS = :OLDSTATUS");
 
 		paramMap.addValue("STATUS", disbursement.getStatus());

@@ -1,5 +1,6 @@
 package com.pennant.backend.service.payorderissue.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
 				addToCustomerBeneficiary(disbursement, fm.getCustID());
 			}
-
+			disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			// update paid or rejected
 			count = finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
 		} catch (Exception e) {
