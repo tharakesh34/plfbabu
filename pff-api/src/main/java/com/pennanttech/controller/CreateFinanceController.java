@@ -1194,6 +1194,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
+		// TDS Type
+		if (StringUtils.isBlank(financeMain.getTdsType())
+				&& PennantConstants.TDS_USER_SELECTION.equalsIgnoreCase(finType.getTdsType())) {
+			financeMain.setTdsType(finType.getTdsType());
+		}
+
 		// vas Details
 		String entityCode = divisionDetailDAO.getEntityCodeByDivision(finType.getFinDivision(), "");
 		for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {

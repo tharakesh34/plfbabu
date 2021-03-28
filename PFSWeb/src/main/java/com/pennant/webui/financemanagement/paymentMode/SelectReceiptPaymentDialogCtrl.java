@@ -982,7 +982,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				}
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
 				resetDefaults(financeMain);
-				if (StringUtils.equalsIgnoreCase(financeMain.getTdsType(), PennantConstants.TDS_MANUAL)) {
+				if (FinanceConstants.RECEIPT_MAKER.equals(this.module)
+						&& PennantConstants.TDS_MANUAL.equalsIgnoreCase(financeMain.getTdsType())) {
 					this.row_tDSAmount.setVisible(true);
 					this.tDSAmount.setValue(BigDecimal.ZERO);
 				}

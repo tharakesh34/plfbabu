@@ -3432,8 +3432,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return receiptData;
 			}
 			financeDetail = receiptData.getFinanceDetail();
-			//While Receipt Upload 
-			rch.setTdsAmount(fsi.getTdsAmount());
 			receiptData.setReceiptHeader(rch);
 			finScheduleData = financeDetail.getFinScheduleData();
 			finScheduleData.setFinServiceInstruction(tempFsi);
@@ -3451,9 +3449,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinReceiptHeader rch = receiptData.getReceiptHeader();
 			rch.setReference(finReference);
 			rch.setReceiptAmount(amount);
-			BigDecimal tdsAmount = new BigDecimal(
-					PennantApplicationUtil.amountFormate(fsi.getTdsAmount(), 2).replaceAll(",", ""));
-			rch.setTdsAmount(tdsAmount);
 			rch.setReceiptPurpose(receiptPurpose);
 			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
@@ -4543,6 +4538,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		rch.setUserDetails(userDetails);
+		rch.setTdsAmount(fsi.getTdsAmount());
 
 		if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(fsi.getReceiptPurpose()) && fsi.isBckdtdWthOldDues()) {
 			Date derivedDate = getDerivedValueDate(receiptData, fsi, appDate);

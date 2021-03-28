@@ -1363,6 +1363,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());
 		finScheduleData.setFinServiceInstruction(fsi);
 		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
+		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
 		FinReceiptData receiptData = receiptService.doReceiptValidations(financeDetail, moduleDefiner);
 		financeDetail = receiptData.getFinanceDetail();
 		finScheduleData = financeDetail.getFinScheduleData();

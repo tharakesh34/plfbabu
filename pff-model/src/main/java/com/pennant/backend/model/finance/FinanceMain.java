@@ -871,6 +871,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean restructure = false;
 
 	private EventProperties eventProperties = new EventProperties();
+	@XmlElement
 	private String tdsType;
 
 	public Set<String> getExcludeFields() {

@@ -461,6 +461,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private long custID;
 	@XmlElement(name = "cif")
 	private String custCIF;
+	@XmlElement
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
 
 	public String getFinReference() {

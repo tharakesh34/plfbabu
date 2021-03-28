@@ -3472,6 +3472,33 @@ public class FinanceDataValidation {
 				valueParm[1] = financeType.getFinType();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 			}
+		} else if (StringUtils.isNotBlank(finMain.getTdsType())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "tdsType";
+			valueParm[1] = "tdsApplicable is true";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
+		}
+		if (finMain.isTDSApplicable()) {
+			if (StringUtils.isNotBlank(finMain.getTdsType())) {
+				if (!PennantConstants.TDS_USER_SELECTION.equalsIgnoreCase(financeType.getTdsType())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "tdsType";
+					valueParm[1] = "tdsType in Loan Type is User Selection";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
+				}
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = "tdsType";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
+			}
+		}
+		if (!(PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())
+				|| PennantConstants.TDS_MANUAL.equalsIgnoreCase(finMain.getTdsType()))) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "tdsType";
+			valueParm[1] = PennantConstants.TDS_AUTO + " , " + PennantConstants.TDS_MANUAL;
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+
 		}
 		if (finMain.isQuickDisb()) {
 			if (!financeType.isQuickDisb()) {
