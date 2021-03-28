@@ -294,8 +294,10 @@ public class NPAService extends ServiceHelper {
 		Object provisionAmount = ruleResult.getProvAmount();
 		Object percentage = ruleResult.getProvPercentage();
 
-		provision.setProvisionRate(new BigDecimal(percentage.toString()));
-		provision.setProvisionedAmt(new BigDecimal(provisionAmount.toString()));
+		BigDecimal provisionRate = new BigDecimal(percentage != null ? percentage.toString() : "0");
+		provision.setProvisionRate(provisionRate);
+		BigDecimal provisionAmt = new BigDecimal(provisionAmount != null ? provisionAmount.toString() : "0");
+		provision.setProvisionedAmt(provisionAmt);
 
 		List<ProvisionAmount> provisionAmountsList = provision.getProvisionAmounts();
 		List<ProvisionAmount> insuranceProvAmountList = new ArrayList<>();
@@ -306,15 +308,22 @@ public class NPAService extends ServiceHelper {
 					RuleReturnType.OBJECT);
 			RuleResult ruleResult1 = (RuleResult) ruleResultObj;
 
-			provisonAmt.setProvisionPer(new BigDecimal(ruleResult1.getProvPercentage().toString()));
-			provisonAmt.setProvisionAmtCal(new BigDecimal(ruleResult1.getProvAmount().toString()));
+			Object provPercentage = ruleResult1.getProvPercentage() != null ? ruleResult1.getProvPercentage() : "0";
+			provisonAmt.setProvisionPer(new BigDecimal(provPercentage.toString()));
+			Object provAmount = ruleResult1.getProvAmount() != null ? ruleResult1.getProvAmount() : "0";
+			provisonAmt.setProvisionAmtCal(new BigDecimal(provAmount.toString()));
 
-			if (provision.isInsuranceComponent() && ruleResult1.getVasProvAmount() != null) {
+			Object vasProvAmount = ruleResult1.getVasProvAmount();
+			if (provision.isInsuranceComponent() && vasProvAmount != null) {
 				ProvisionAmount pa = new ProvisionAmount();
 				pa.setAssetCode(provisonAmt.getAssetCode());
 				pa.setProvisionType(provisonAmt.getProvisionType() + "_INS");
-				pa.setProvisionPer(new BigDecimal(ruleResult1.getVasProvPercentage().toString()));
-				pa.setProvisionAmtCal(new BigDecimal(ruleResult1.getVasProvAmount().toString()));
+
+				Object vasProvPerc = ruleResult1.getVasProvPercentage();
+				Object vasProvPercentage = vasProvPerc != null ? vasProvPerc : "0";
+
+				pa.setProvisionPer(new BigDecimal(vasProvPercentage.toString()));
+				pa.setProvisionAmtCal(new BigDecimal(vasProvAmount.toString()));
 				insuranceProvAmountList.add(pa);
 			}
 
@@ -325,7 +334,9 @@ public class NPAService extends ServiceHelper {
 	private void getPropertyType(Provision provision, Map<String, Object> dataMap) {
 		if (!ImplementationConstants.ALLOW_ED_FIELDS_IN_NPA || extendedFieldServiceHook == null
 				|| extendedFieldRenderDAO == null) {
-			dataMap.put("PropertyType", provision.getPropertyType());
+			if (!dataMap.containsKey("PropertyType")) {
+				dataMap.put("PropertyType", provision.getPropertyType());
+			}
 			return;
 		}
 
