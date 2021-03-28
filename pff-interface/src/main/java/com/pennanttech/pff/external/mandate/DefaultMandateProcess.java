@@ -123,6 +123,9 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	@Autowired(required = false)
 	@Qualifier("mandateUploadValidationImpl")
 	private ValidateRecord mandateUploadValidationImpl;
+	@Autowired(required = false)
+	@Qualifier("uploadToDownloadValidationImpl")
+	private ValidateRecord uploadToDownloadValidationImpl;
 	private ExternalInterfaceService externalInterfaceService;
 
 	public DefaultMandateProcess() {
@@ -884,7 +887,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
-		dataEngine.setValidateRecord(mandateUploadValidationImpl);
+		dataEngine.setValidateRecord(uploadToDownloadValidationImpl);
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("APP_DATE", SysParamUtil.getAppDate());
 		dataEngine.setParameterMap(parameterMap);
@@ -902,6 +905,9 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 	public void processResponse(long respBatchId, DataEngineStatus status) throws Exception {
 		logger.debug(Literal.ENTERING);
+
+		setExceptionLog(status);
+
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT MANDATEID");
@@ -991,6 +997,34 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			e.printStackTrace();
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	//Setting the exception log data engine status.
+	private void setExceptionLog(DataEngineStatus status) {
+		List<DataEngineLog> engineLogs = getExceptions(status.getId());
+		if (CollectionUtils.isNotEmpty(engineLogs)) {
+			status.setDataEngineLogList(engineLogs);
+		}
+	}
+
+	// Getting the exception log
+	public List<DataEngineLog> getExceptions(long batchId) {
+		RowMapper<DataEngineLog> rowMapper = null;
+		MapSqlParameterSource parameterMap = null;
+		StringBuilder sql = null;
+
+		try {
+			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
+			parameterMap = new MapSqlParameterSource();
+			parameterMap.addValue("ID", batchId);
+			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
+			return namedJdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
+		} catch (Exception e) {
+		} finally {
+			rowMapper = null;
+			sql = null;
+		}
+		return null;
 	}
 
 	protected void addCustomParameter(Map<String, Object> parameterMap) {
