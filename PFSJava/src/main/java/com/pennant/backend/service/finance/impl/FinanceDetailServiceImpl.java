@@ -898,7 +898,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// PMAY
 		financeDetail.setPmay(pmayService.getPMAY(finReference, "_View"));
 
-		subventionService.setSubventionDetails(scheduleData, "_View");
+		if (subventionService != null) {
+			subventionService.setSubventionDetails(scheduleData, "_View");
+		}
 
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
@@ -1891,7 +1893,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Disbursement Details
 		scheduleData.setDisbursementDetails(
 				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
-		subventionService.setSubventionScheduleDetails(scheduleData, type);
+		if (subventionService != null) {
+			subventionService.setSubventionScheduleDetails(scheduleData, type);
+		}
 
 		// Finance Repayments Instruction Details
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
@@ -1977,8 +1981,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
 					isWIF ? "_View" : type, isWIF));
 
-			subventionService.setSubventionDetails(scheduleData, "_View");
-			subventionService.setSubventionScheduleDetails(scheduleData, type);
+			if (subventionService != null) {
+				subventionService.setSubventionDetails(scheduleData, "_View");
+				subventionService.setSubventionScheduleDetails(scheduleData, type);
+			}
 
 			// Finance Repayments Instruction Details
 			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
@@ -3095,9 +3101,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getFinScheduleData().getSubventionDetail() != null
 				&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
 						|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
-			details = subventionService.processSubventionDetails(details, tableType, financeDetail);
-			auditDetails.addAll(details);
+			if (subventionService != null) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
+				details = subventionService.processSubventionDetails(details, tableType, financeDetail);
+				auditDetails.addAll(details);
+			}
 		}
 
 		if (!isWIF) {
@@ -4138,9 +4146,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getFinScheduleData().getSubventionDetail() != null
 					&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
 							|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
-				subventionService.delete(financeDetail.getFinScheduleData().getSubventionDetail(), TableType.MAIN_TAB);
-				auditDetails.addAll(details);
+				if (subventionService != null) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
+					subventionService.delete(financeDetail.getFinScheduleData().getSubventionDetail(),
+							TableType.MAIN_TAB);
+					auditDetails.addAll(details);
+				}
 			}
 
 			if (financeDetail.getFinAssetEvaluation() != null) {
@@ -5141,9 +5152,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getFinScheduleData().getSubventionDetail() != null
 					&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
 							|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
-				details = subventionService.processSubventionDetails(details, TableType.MAIN_TAB, financeDetail);
-				auditDetails.addAll(details);
+				if (subventionService != null) {
+					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("SubventionDetails");
+					details = subventionService.processSubventionDetails(details, TableType.MAIN_TAB, financeDetail);
+					auditDetails.addAll(details);
+				}
 			}
 
 			// Finance Fee Details
@@ -5415,8 +5428,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getFinScheduleData().getSubventionDetail() != null
 						&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
 								|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
-					subventionService.delete(financeDetail.getFinScheduleData().getSubventionDetail(),
-							TableType.TEMP_TAB);
+					if (subventionService != null) {
+						subventionService.delete(financeDetail.getFinScheduleData().getSubventionDetail(),
+								TableType.TEMP_TAB);
+					}
 				}
 
 				if (financeDetail.getFinanceCollaterals() != null) {
@@ -7306,9 +7321,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// SubventionDetails
 			if (fd.getFinScheduleData().getSubventionDetail() != null && (StringUtils.isBlank(fd.getModuleDefiner())
 					|| FinanceConstants.FINSER_EVENT_ORG.equals(fd.getModuleDefiner()))) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("SubventionDetails");
-				subventionService.delete(fd.getFinScheduleData().getSubventionDetail(), TableType.TEMP_TAB);
-				auditDetails.addAll(details);
+				if (subventionService != null) {
+					List<AuditDetail> details = fd.getAuditDetailMap().get("SubventionDetails");
+					subventionService.delete(fd.getFinScheduleData().getSubventionDetail(), TableType.TEMP_TAB);
+					auditDetails.addAll(details);
+				}
 			}
 
 			if (fd.getFinanceCollaterals() != null) {
@@ -8438,7 +8455,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getFinScheduleData().getSubventionDetail() != null
 				&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
 						|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()))) {
-			if (financeDetail.getFinScheduleData().getSubventionDetail() != null) {
+			if (financeDetail.getFinScheduleData().getSubventionDetail() != null && subventionService != null) {
 				auditDetailMap.put("SubventionDetails",
 						subventionService.setSubventionDetailsAuditData(financeDetail, auditTranType, method));
 				auditDetails.addAll(auditDetailMap.get("SubventionDetails"));
@@ -9101,7 +9118,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		finSchData.setDisbursementDetails(
 				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
-		subventionService.setSubventionScheduleDetails(finSchData, type);
+		if (subventionService != null) {
+			subventionService.setSubventionScheduleDetails(finSchData, type);
+		}
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
 		if (logKey == 0) {
@@ -9169,9 +9188,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Disbursement Details
 		finSchData.setDisbursementDetails(
 				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
-
-		subventionService.setSubventionDetails(finSchData, type);
-		subventionService.setSubventionScheduleDetails(finSchData, type);
+		if (subventionService != null) {
+			subventionService.setSubventionDetails(finSchData, type);
+			subventionService.setSubventionScheduleDetails(finSchData, type);
+		}
 
 		// Repay instructions
 		finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
@@ -9287,7 +9307,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setDisbursementDetails(
 				financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false));
 
-		subventionService.setSubventionScheduleDetails(scheduleData, type);
+		if (subventionService != null) {
+			subventionService.setSubventionScheduleDetails(scheduleData, type);
+		}
 
 		// Finance Type
 		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), type));
@@ -11147,7 +11169,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<FinanceDisbursement> getFinanceDisbursements(String finReferecne, String type, boolean isWIF) {
 		List<FinanceDisbursement> fdd = financeDisbursementDAO.getFinanceDisbursementDetails(finReferecne, type, isWIF);
 		// SubventionDetails
-		subventionService.setSubventionScheduleDetails(fdd, type);
+		if (subventionService != null) {
+			subventionService.setSubventionScheduleDetails(fdd, type);
+		}
 		return fdd;
 	}
 

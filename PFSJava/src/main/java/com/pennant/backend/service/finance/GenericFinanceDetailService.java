@@ -2593,7 +2593,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		getRepayInstructionDAO().deleteByFinReference(scheduleData.getFinReference(), tableType, isWIF, 0);
 
 		if (StringUtils.isBlank(tableType) || "_Temp".equalsIgnoreCase(tableType)) {
-			subventionService.deleteByFinReference(scheduleData.getFinReference(), tableType);
+			if (subventionService != null) {
+				subventionService.deleteByFinReference(scheduleData.getFinReference(), tableType);
+			}
 		}
 
 		// Fee Charge Details & Finance Overdue PenaltyRate Details
@@ -2632,7 +2634,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		getFinanceScheduleDetailDAO().saveList(finDetail.getFinanceScheduleDetails(), tableType, isWIF);
-		subventionService.savSubvnetion(finDetail, tableType);
+		if (subventionService != null) {
+			subventionService.savSubvnetion(finDetail, tableType);
+		}
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();

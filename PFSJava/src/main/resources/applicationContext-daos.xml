@@ -12490,8 +12490,6 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="finAssetAmtMovementDAO" ref="finAssetAmtMovementDAO" />
-		<property name="accrualService" ref="accrualService" />
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
 
 	<!-- Loan DownSizing Movements -->
