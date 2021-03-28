@@ -125,7 +125,7 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ProductCategory, AllowDeviation");
+		sql.append(" ProductCategory, AllowDeviation, ProductCode, ProductDesc");
 		sql.append(" from BMTProduct");
 		sql.append(" Where ProductCode = ?");
 
@@ -139,6 +139,8 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 
 					pc.setProductCategory(rs.getString("ProductCategory"));
 					pc.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+					pc.setProductCode(rs.getString("ProductCode"));
+					pc.setProductDesc(rs.getString("ProductDesc"));
 
 					return pc;
 				}

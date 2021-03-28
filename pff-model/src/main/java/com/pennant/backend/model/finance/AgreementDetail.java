@@ -1067,6 +1067,10 @@ public class AgreementDetail {
 	 * Provides current Loan Type.
 	 */
 	private String finType = ""; // Finance Type
+	/**
+	 *  Provides current Loan Type Product.
+	 */
+	private String finProduct = ""; // Product
 
 	/**
 	 * Provides current Loan Type Description.
@@ -11532,5 +11536,13 @@ public class AgreementDetail {
 
 	public void setInitialCreditCompletedDate(String initialCreditCompletedDate) {
 		this.initialCreditCompletedDate = initialCreditCompletedDate;
+	}
+	
+	public String getFinProduct() {
+		return finProduct;
+	}
+
+	public void setFinProduct(String finProduct) {
+		this.finProduct = finProduct;
 	}
 }

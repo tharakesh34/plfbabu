@@ -92,6 +92,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
+import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
@@ -102,6 +103,7 @@ import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.bmtmasters.Product;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -327,6 +329,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	private List<ValueLabel> subCategoryGeneralList = PennantStaticListUtil.getSubCategoryGeneralList();
 	private List<FinTypeFees> finTypeFeesList;
 	private List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
+	@Autowired
+	private ProductDAO productDAO;
 
 	public AgreementGeneration() {
 		super();
@@ -409,6 +413,13 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		String finRef = financeMain.getFinReference();
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		String mMAReference = financeMain.getLovDescMMAReference();
+		String finProduct = financeMain.getFinCategory();
+		if (StringUtils.isNotEmpty(finProduct) && productDAO != null) {
+			Product product = productDAO.getProductByProduct(finProduct);
+			if (product != null) {
+				agreement.setFinProduct(product.getProductDesc());
+			}
+		}
 		agreement.setLpoDate(appDate);
 		agreement.setLovDescEligibilityMethod(financeMain.getLovDescEligibilityMethod());
 		agreement.setFinRef(financeMain.getFinReference());
