@@ -480,6 +480,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			int futureInst = finMain.getCalTerms() - financeProfitDetail.getNOPaidInst();
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
 				futureInst = futureInst + finMain.getGraceTerms() - cpzTerms - emiHoliday - odTerm;
+				statementOfAccount.setFutureInstNo(futureInst);
 			}
 
 			statementOfAccount.setFinCurrAssetValue(
