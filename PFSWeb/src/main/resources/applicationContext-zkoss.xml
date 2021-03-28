@@ -5959,5 +5959,12 @@
 		scope="prototype">
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 	</bean>		
+	
+	<!--============ Part Cancellation ============== -->
+	
+	<bean id="partCancellationProcessCtrl" class="com.pennant.webui.finance.financemain.PartCancellationProcessCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="partCancellationService" ref="partCancellationService" />
+	</bean> 
+	
 </beans> 
-

@@ -146,4 +146,8 @@ public interface FinServiceInstRESTService {
 	public WSReturnStatus cancelDisbursementInstructions(FinServiceInstruction finServiceInstRequest)
 			throws ServiceException;
 
+	@POST
+	@Path("/loanInstructionService/partCancellation")
+	public FinanceDetail partCancellation(FinServiceInstruction finServiceInstruction) throws ServiceException;
+
 }

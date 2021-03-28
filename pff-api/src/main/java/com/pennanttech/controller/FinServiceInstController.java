@@ -2554,7 +2554,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * @throws InterfaceException
 	 * @throws JaxenException
 	 */
-	private FinanceDetail getResponse(FinanceDetail financeDetail, FinServiceInstruction finServiceInst)
+	public FinanceDetail getResponse(FinanceDetail financeDetail, FinServiceInstruction finServiceInst)
 			throws JaxenException, InterfaceException {
 		logger.debug("Entering");
 
@@ -4639,4 +4639,5 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
 		this.insuranceDetailService = insuranceDetailService;
 	}
+
 }

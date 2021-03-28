@@ -84,6 +84,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
 import com.pennant.validation.AddTermsGroup;
@@ -93,6 +94,7 @@ import com.pennant.validation.ChangeInterestGroup;
 import com.pennant.validation.ChangeRepaymentGroup;
 import com.pennant.validation.DefermentsGroup;
 import com.pennant.validation.EarlySettlementGroup;
+import com.pennant.validation.PartCancellationGroup;
 import com.pennant.validation.PartialSettlementGroup;
 import com.pennant.validation.ReSchedulingGroup;
 import com.pennant.validation.RecalculateGroup;
@@ -106,6 +108,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CreateFinanceController;
 import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -160,6 +163,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private InsuranceDetailDAO insuranceDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+	private PartCancellationService partCancellationService;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -2814,6 +2818,80 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 	}
 
+	@Override
+	public FinanceDetail partCancellation(FinServiceInstruction finServiceInstruction) {
+		logger.debug(Literal.ENTERING);
+		FinanceDetail financeDetail = null;
+
+		try {
+
+			validationUtility.validate(finServiceInstruction, PartCancellationGroup.class);
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
+			// set Default date formats
+			setDefaultDateFormats(finServiceInstruction);
+
+			// validate ReqType
+			WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(returnStatus);
+				return financeDetail;
+			}
+
+			String eventCode = AccountEventConstants.PART_CANCELATION;
+			financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
+
+			// validate service instruction data
+			AuditDetail auditDetail = partCancellationService.validateRequest(finServiceInstruction, financeDetail);
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					financeDetail = new FinanceDetail();
+					doEmptyResponseObject(financeDetail);
+					financeDetail.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return financeDetail;
+				}
+			}
+
+			// call part cancellation service
+			financeDetail = partCancellationService.doPartCancellation(finServiceInstruction, financeDetail);
+
+			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
+
+			// Get the response
+			financeDetail = finServiceInstController.getResponse(financeDetail, finServiceInstruction);
+
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return financeDetail;
+	}
+
 	@Autowired
 	public void setFeeDetailService(FeeDetailService feeDetailService) {
 		this.feeDetailService = feeDetailService;
@@ -2892,6 +2970,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
 		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	}
+
+	@Autowired
+	public void setPartCancellationService(PartCancellationService partCancellationService) {
+		this.partCancellationService = partCancellationService;
 	}
 
 }

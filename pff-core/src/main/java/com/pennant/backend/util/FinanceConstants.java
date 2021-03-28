@@ -226,6 +226,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_HOLDDISB = "HoldDisbursement";
 	public static final String FINSER_EVENT_STARTPERIODHDAY = "StartPeriodHoliday";
 	public static final String FINSER_EVENT_LOANDOWNSIZING = "LoanDownsizing";
+	public static final String PART_CANCELLATION = "PartCancellation";
 	// This value is Hard coded in View "CovenantsMaintenance_View"
 	public static final String FINSER_EVENT_COVENANTS = "Covenants";
 	// This value is Hard coded in View "CovenantsMaintenance_View"

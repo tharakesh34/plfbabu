@@ -12675,5 +12675,27 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 
+	<bean id="partCancellationService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="partCancellationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="partCancellationProcess">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="partCancellationServiceTarget" class="com.pennant.pff.core.schd.service.PartCancellationServiceImpl">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" /> 
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />   
+		<property name="financeDetailService" ref="financeDetailService" />   	
+	</bean>
+	
 </beans>
 
