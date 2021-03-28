@@ -106,6 +106,7 @@ import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -519,7 +520,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			if (DateUtility.compare(this.fromDate.getValue(), appDate) < 0
 					|| DateUtility.compare(this.fromDate.getValue(), maturityDate) >= 0
 							&& !this.fromDate.isReadonly()) {
@@ -689,45 +690,48 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 
-			boolean notAlwBefGrcStrDate = false;
-			Date grcStartDate = null;
 			int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
 			if (finMain.isAllowGrcPeriod() && finMain.isEndGrcPeriodAftrFullDisb()) {
+				boolean notAlwBefGrcStrDate = false;
+				Date grcStartDate = null;
 				for (int i = 0; i <= sdSize - 1; i++) {
 					FinanceScheduleDetail curSchd = aFinScheduleData.getFinanceScheduleDetails().get(i);
-					if (curSchd.getInstNumber() == 1) {
+					if (curSchd.getInstNumber() == 1
+							|| StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 						grcStartDate = curSchd.getSchDate();
-					}
-
-					if (grcStartDate != null && DateUtility.compare(grcStartDate, this.fromDate.getValue()) >= 0) {
-						notAlwBefGrcStrDate = true;
 						break;
 					}
 				}
-			}
 
-			BigDecimal prvTotDisbValue = BigDecimal.ZERO;
-			for (FinanceDisbursement curDisb : aFinScheduleData.getDisbursementDetails()) {
-				if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
-					continue;
+				if (grcStartDate != null && DateUtil.compare(grcStartDate, this.fromDate.getValue()) > 0) {
+					notAlwBefGrcStrDate = true;
 				}
 
-				if (curDisb.getLinkedDisbId() != 0) {
-					continue;
+				if (notAlwBefGrcStrDate) {
+					BigDecimal prvTotDisbValue = BigDecimal.ZERO;
+					for (FinanceDisbursement curDisb : aFinScheduleData.getDisbursementDetails()) {
+						if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+							continue;
+						}
+
+						if (curDisb.getLinkedDisbId() != 0) {
+							continue;
+						}
+
+						prvTotDisbValue = prvTotDisbValue.add(curDisb.getDisbAmount());
+					}
+					BigDecimal curTotDisbValue = PennantAppUtil
+							.unFormateAmount(this.disbAmount.getValidateValue(), formatter).add(prvTotDisbValue);
+
+					if (curTotDisbValue.compareTo(finMain.getFinAssetValue()) == 0) {
+						isValidDate = false;
+						throw new WrongValueException(this.fromDate,
+								Labels.getLabel("DATE_ALLOWED_RANGE",
+										new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
+												DateUtil.formatToLongDate(grcStartDate),
+												DateUtil.formatToLongDate(maturityDate) }));
+					}
 				}
-
-				prvTotDisbValue = prvTotDisbValue.add(curDisb.getDisbAmount());
-			}
-			BigDecimal curTotDisbValue = PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter)
-					.add(prvTotDisbValue);
-
-			if (notAlwBefGrcStrDate && curTotDisbValue.compareTo(finMain.getFinAssetValue()) == 0) {
-				isValidDate = false;
-				throw new WrongValueException(this.fromDate,
-						Labels.getLabel("DATE_ALLOWED_RANGE",
-								new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
-										DateUtility.formatToLongDate(grcStartDate),
-										DateUtility.formatToLongDate(maturityDate) }));
 			}
 
 		} catch (WrongValueException we) {

@@ -4836,6 +4836,11 @@ public class ScheduleCalculator {
 		if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0
 				&& (finMain.isAllowGrcCpz() || finMain.isCpzAtGraceEnd())) {
 			curSchd.setCpzOnSchDate(true);
+			if (ImplementationConstants.NON_FRQ_CAPITALISATION) {
+				if (!FrequencyUtil.isFrqDate(finMain.getGrcCpzFrq(), finMain.getGrcPeriodEndDate())) {
+					curSchd.setCpzOnSchDate(finMain.isCpzAtGraceEnd());
+				}
+			}
 		}
 
 		// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past Due
