@@ -1176,8 +1176,6 @@
 		<menu id="menu_Category_Loan">
 			<menuItem id="menu_Item_ExcessAmountReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_ExcessAmountReport" />
-			<menuItem id="menu_Item_Install_Due_Today" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menuItem_Reports_DueToDayReports" />
 			<menuItem id="menu_Item_LoanOutstandingReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_Reports_LoanOutStandingReports" />
 			<menuItem id="menu_Item_CIFBasedSearchReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
@@ -1250,22 +1248,12 @@
 				rightName="menu_Item_CollateralRegisterReport" />
 			<menuItem id="menu_Item_ExcessAmountEnquiry" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_ExcessAmountEnquiry" />
-			<menuItem id="menu_Item_VerificationStsReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_VerificationStsReport" />
 			<menuItem id="menu_Item_PMAYDetails" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_PMAYDetails" />
 			<menuItem id="menu_Item_PDCChequeRealization" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_PDCChequeRealization" />
 			<menuItem id="menu_Item_EMIDueReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_EMIDueReport" />
-			<menuItem id="menu_Item_GSTReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_GSTReport" />
-			<menuItem id="menu_Item_PDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_PDCReport" />
-			<menuItem id="menu_Item_PortfolioDataRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_PortfolioDataRpt" />
-			<menuItem id="menu_Item_ReceiptclearancestsRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_ReceiptclearancestsRpt" />
 		</menu>
 
 		<menu id="menu_Category_Legal">
@@ -1409,6 +1397,34 @@
 				rightName="menuItem_FinDeptReports_PastDue" />
 			<menuItem id="menu_Item_PaymentTypeReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_FinDeptReports_PastDue" />
+		</menu>
+		<menu id="menu_Category_CustomReports">
+			<menuItem id="menu_Item_Install_Due_Today" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_Reports_DueToDayReports" />
+			<menuItem id="menu_Item_VerificationStsReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_VerificationStsReport" />
+			<menuItem id="menu_Item_LoanMasterReport" zulNavigation="/WEB-INF/pages/Others/External/Reports/LoanMasterReport.zul"
+				rightName="menu_Item_LoanMasterReport" />
+			<menuItem id="menu_Item_ProcessingFeeReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_ProcessingFeeReport" />
+			<menuItem id="menu_Item_ALMReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_ALMReport" />
+			<menuItem id="menu_Item_ChequeReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_ChequeReport" />
+			<menuItem id="menu_Item_DisbursementReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_DisbursementReport" />
+			<menuItem id="menu_Item_LoanSanctionedReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_LoanSanctionedReport" />
+			<menuItem id="menu_Item_MonthlyCollectionReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_MonthlyCollectionReport" />
+			<menuItem id="menu_Item_GSTReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_GSTReport" />
+			<menuItem id="menu_Item_PDCReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_PDCReport" />
+			<menuItem id="menu_Item_PortfolioDataRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_PortfolioDataRpt" />
+			<menuItem id="menu_Item_ReceiptclearancestsRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_ReceiptclearancestsRpt" />
 		</menu>
 		<menuItem id="menu_Item_MiscellaneouspostUploadStsrpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 			rightName="menu_Item_MiscellaneouspostUploadStsrpt" />
