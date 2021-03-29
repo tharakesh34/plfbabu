@@ -5090,8 +5090,8 @@ public class FinanceDataValidation {
 			String repay = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
 			if (StringUtils.isNotEmpty(repay)) {
 				//Frequency Code
-				repay = "M";
-				if (!FrequencyCodeTypes.FRQ_15DAYS.equals(repay)) {
+				if (!FrequencyCodeTypes.FRQ_15DAYS.equals(repay)
+						&& CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())) {
 					String frqCode = Labels.getLabel("label_Select_15DAYS");
 					String[] valueParm = new String[2];
 					valueParm[0] = "Repay Frequency ";
@@ -5101,7 +5101,8 @@ public class FinanceDataValidation {
 				}
 
 				//Interest Days Basis
-				if (!CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())) {
+				if (!CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())
+						&& FrequencyCodeTypes.FRQ_15DAYS.equals(repay)) {
 					String profitDaysBasis = Labels.getLabel("label_ProfitDaysBasis_15E_360IA");//
 					String[] valueParm = new String[2];
 					valueParm[0] = "profitDaysBasis";
