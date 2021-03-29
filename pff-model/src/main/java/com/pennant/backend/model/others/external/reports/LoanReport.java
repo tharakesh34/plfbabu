@@ -1,8 +1,14 @@
-package com.pennant.backend.model.finance;
+package com.pennant.backend.model.others.external.reports;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class LoanReport extends AbstractWorkflowEntity {
@@ -70,6 +76,11 @@ public class LoanReport extends AbstractWorkflowEntity {
 	private int roundingTarget;
 	private String lovValue;
 	private Date maturityDate;
+	private List<CollateralAssignment> collateralAssignments;
+	private List<FinAdvancePayments> finAdvancePayments;
+	private List<VASRecording> vasRecordings;
+	private List<FinanceScheduleDetail> financeScheduleDetails;
+	private List<FinFeeDetail> finFeeDetails;
 
 	public String getLovValue() {
 		return lovValue;
@@ -571,4 +582,43 @@ public class LoanReport extends AbstractWorkflowEntity {
 		this.maturityDate = maturityDate;
 	}
 
+	public List<CollateralAssignment> getCollateralAssignments() {
+		return collateralAssignments;
+	}
+
+	public void setCollateralAssignments(List<CollateralAssignment> collateralAssignments) {
+		this.collateralAssignments = collateralAssignments;
+	}
+
+	public List<FinAdvancePayments> getFinAdvancePayments() {
+		return finAdvancePayments;
+	}
+
+	public void setFinAdvancePayments(List<FinAdvancePayments> finAdvancePayments) {
+		this.finAdvancePayments = finAdvancePayments;
+	}
+
+	public List<VASRecording> getVasRecordings() {
+		return vasRecordings;
+	}
+
+	public void setVasRecordings(List<VASRecording> vasRecordings) {
+		this.vasRecordings = vasRecordings;
+	}
+
+	public List<FinanceScheduleDetail> getFinanceScheduleDetails() {
+		return financeScheduleDetails;
+	}
+
+	public void setFinanceScheduleDetails(List<FinanceScheduleDetail> financeScheduleDetails) {
+		this.financeScheduleDetails = financeScheduleDetails;
+	}
+
+	public List<FinFeeDetail> getFinFeeDetails() {
+		return finFeeDetails;
+	}
+
+	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
+		this.finFeeDetails = finFeeDetails;
+	}
 }

@@ -12541,7 +12541,7 @@
 
 	<bean id="dmsGetLeadsDAO" class="com.pennant.backend.dao.ext.dms.impl.DMSGetLeadsDAOImpl" parent="basicDao" />
 	<!--============ Loan Master Report ============== -->
-	<bean id="loanMasterReportDAO" class="com.pennant.backend.dao.reports.impl.LoanMasterReportDAOImpl" parent="basicDao" />
+	<bean id="loanMasterReportDAO" class="com.pennant.backend.dao.others.external.reports.impl.LoanMasterReportDAOImpl" parent="basicDao" />
 
 	<bean id="loanMasterReportService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">

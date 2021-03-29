@@ -5922,7 +5922,7 @@
 	
 	<bean id="DMSRetrievalProcessCtrl" class="com.pennant.webui.finance.dms.DMSRetrievalProcessCtrl" parent="basisListCtrl" scope="prototype"/>
 	<!--============ LOAN MASTER REPORT  ============== -->
-	<bean id="loanMasterReportCtrl" class="com.pennant.webui.finance.financemain.LoanMasterReportCtrl" parent="basisListCtrl" scope="prototype">
+	<bean id="loanMasterReportCtrl" class="com.pennant.webui.others.external.reports.LoanMasterReportCtrl" parent="basisListCtrl" scope="prototype">
 	<property name="loanMasterReportService" ref="loanMasterReportService" />
 	</bean>
 	

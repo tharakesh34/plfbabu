@@ -350,13 +350,7 @@ public class NPAService extends ServiceHelper {
 		for (CollateralAssignment ca : colAssRef) {
 			String tableName = CollateralConstants.MODULE_NAME + "_" + ca.getCollateralType() + "_ED";
 			String colRef = ca.getCollateralRef();
-			List<Map<String, Object>> list = extendedFieldRenderDAO.getExtendedFieldMap(colRef, tableName, "");
-
-			if (CollectionUtils.isEmpty(list)) {
-				continue;
-			}
-
-			extendedFieldServiceHook.setExtendedFields(dataMap, CollateralConstants.MODULE_NAME, list);
+			extendedFieldServiceHook.setExtendedFields(dataMap, CollateralConstants.MODULE_NAME, tableName, colRef);
 		}
 	}
 

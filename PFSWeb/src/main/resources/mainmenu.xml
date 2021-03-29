@@ -1410,7 +1410,7 @@
 		</menu>
 		<menuItem id="menu_Item_MiscellaneouspostUploadStsrpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 			rightName="menu_Item_MiscellaneouspostUploadStsrpt" />
-		<menuItem id="menu_Item_LoanMasterReport" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/LoanMasterReport.zul"
+		<menuItem id="menu_Item_LoanMasterReport" zulNavigation="/WEB-INF/pages/Others/External/Reports/LoanMasterReport.zul"
 			rightName="menu_Item_LoanMasterReport" />
 		<!-- <menu id="menu_Category_SCM" rightName=""> <menuItem id="menu_Item_DeliveryOrder" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 			rightName="" /> <menuItem id="menu_Item_GoodsReceipt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 

@@ -1,4 +1,4 @@
-package com.pennant.webui.finance.financemain;
+package com.pennant.webui.others.external.reports;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,8 +15,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -35,8 +34,8 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.finance.LoanReport;
-import com.pennant.backend.service.reports.LoanMasterReportService;
+import com.pennant.backend.model.others.external.reports.LoanReport;
+import com.pennant.backend.service.others.external.reports.LoanMasterReportService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.equation.util.DateUtility;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -46,7 +45,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = LogManager.getLogger(LoanMasterReportCtrl.class);
+	private final static Logger logger = Logger.getLogger(LoanMasterReportCtrl.class);
 
 	protected Window window_LoanMasterReport;
 	protected Borderlayout borderLayout_loanMasterReport;
@@ -289,10 +288,18 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 		}
 		// Sanction Amount
 		BigDecimal sanctionAmount = loanReport.getSanctioAmount();
-		list.add(PennantApplicationUtil.amountFormate(sanctionAmount, formater).replace(",", ""));
+		sanctionAmount = PennantApplicationUtil.formateAmount(sanctionAmount, formater);
+
 		//sanction amount VAS
 		BigDecimal sanctionAmountVAS = loanReport.getSanctionAmountVAS();
-		list.add(PennantApplicationUtil.amountFormate(sanctionAmountVAS, formater).replace(",", ""));
+		//Bugfix:AUM report :165098 Sanction amount (HL & NHL Loan) è Logic of this column includes the VAS amount. 
+		//Client requested to exclude VAS amount as there is another column [Sanction amount (Insurance Loan)] that captures VAS amount.
+		sanctionAmount = sanctionAmount.subtract(sanctionAmountVAS);
+		list.add(String.valueOf(sanctionAmount));
+
+		//amount is already formatted
+		list.add(String.valueOf(sanctionAmountVAS));
+
 		//Disbursed Amount
 		BigDecimal disbAmt = loanReport.getDisbursementAmount();
 		list.add(PennantApplicationUtil.amountFormate(disbAmt, formater).replace(",", ""));
@@ -302,10 +309,14 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 		//OutStanding Amount loan & Adv
 		BigDecimal outstandingLoanAdv = loanReport.getOutstandingAmt_Loan_Adv();
 		outstandingLoanAdv = outstandingLoanAdv.setScale(formater, RoundingMode.valueOf(loanReport.getRoundingMode()));
-		list.add(String.valueOf(outstandingLoanAdv));
 		//OutStanding Amount LI & GI
 		BigDecimal outstandingVAS = loanReport.getOustandingAmt_LI_GI();
 		outstandingVAS = outstandingVAS.setScale(formater, RoundingMode.valueOf(loanReport.getRoundingMode()));
+		//Outstanding Amount (of Loan & Adv) è Logic of this column includes the VAS amount. 
+		//Client requested to exclude VAS amount as there is another column [Sanction amount (Insurance Loan)] that captures VAS amount.
+		outstandingLoanAdv = outstandingLoanAdv.subtract(outstandingVAS);
+		list.add(String.valueOf(outstandingLoanAdv));
+		//OutStanding Amount LI & GI
 		list.add(String.valueOf(outstandingVAS));
 		//Captalized intrest
 		BigDecimal intrstCaptalized = loanReport.getCaptilizedIntrest();
