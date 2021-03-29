@@ -269,21 +269,37 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		finServInst.setMargin(rcu.getMargin());
 		finServInst.setActualRate(rcu.getActualRate());
 		finServInst.setRecalType(rcu.getRecalType());
+		finServInst.setRemarks(rcu.getUploadStatusRemarks());
+		finServInst.setServiceReqNo(rcu.getServiceReqNo());
 		finServInst.setReqFrom(UploadConstants.RATE_CHANGE_UPLOAD);
 		finServInst.setFinEvent(UploadConstants.RATE_CHANGE_UPLOAD);
 		finServInst.setReference(String.valueOf(rcu.getId()));
-		finServInst.setFromDate(SysParamUtil.getAppDate());
-		SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
-		if (rcu.getRecalFromDate() != null) {
-			Date recalfromDate = dateFormat.parse(rcu.getRecalFromDate().toString());
-			finServInst.setRecalFromDate(recalfromDate);
-		}
-		if (rcu.getRecalToDate() != null) {
-			Date recalToDate = dateFormat.parse(rcu.getRecalToDate().toString());
-			finServInst.setRecalToDate(recalToDate);
 
+		if (rcu.getRecalFromDate() != null) {
+			finServInst.setRecalFromDate(parseDate(rcu.getRecalFromDate()));
 		}
+
+		if (rcu.getRecalToDate() != null) {
+			finServInst.setRecalToDate(parseDate(rcu.getRecalToDate()));
+		}
+
+		if (rcu.getFromDate() != null) {
+			finServInst.setFromDate(parseDate(rcu.getFromDate()));
+		}
+
+		if (rcu.getToDate() != null) {
+			finServInst.setToDate(parseDate(rcu.getToDate()));
+		}
+
+		finServInst.setFromDate(rcu.getFromDate());
+		finServInst.setToDate(rcu.getToDate());
+
 		return finServInst;
+	}
+
+	private Date parseDate(Date date) throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
+		return dateFormat.parse(date.toString());
 	}
 
 	private ErrorDetail getErrorDetail(String code, String message) {

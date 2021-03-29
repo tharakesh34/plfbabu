@@ -172,7 +172,7 @@ public class ExtendedFieldCtrl {
 			}
 		}
 		if (fieldValuesMap != null) {
-			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
+			generator.setFieldValueMap((Map<String, Object>) fieldValuesMap);
 		}
 		try {
 			generator.renderWindow(this.extendedFieldHeader, this.isNewRecord);

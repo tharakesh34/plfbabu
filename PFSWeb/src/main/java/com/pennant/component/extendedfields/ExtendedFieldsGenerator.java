@@ -3185,7 +3185,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		return fieldValueMap;
 	}
 
-	public void setFieldValueMap(HashMap<String, Object> fieldValueMap) {
+	public void setFieldValueMap(Map<String, Object> fieldValueMap) {
 		this.fieldValueMap = fieldValueMap;
 	}
 

@@ -24,9 +24,12 @@ public class RateChangeUpload implements Serializable {
 	private String recalType;
 	private Date recalFromDate;
 	private Date recalToDate;
-	
+	private Date fromDate;
+	private Date toDate;
+	private String serviceReqNo;
 	private String remarks;
 	private String status;
+	private String uploadStatusRemarks;
 	private FinanceMain fm;
 	private List<ErrorDetail> errors = new ArrayList<>();
 
@@ -37,7 +40,7 @@ public class RateChangeUpload implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getRecalType() {
 		return recalType;
 	}
@@ -62,6 +65,29 @@ public class RateChangeUpload implements Serializable {
 		this.recalToDate = recalToDate;
 	}
 
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getServiceReqNo() {
+		return serviceReqNo;
+	}
+
+	public void setServiceReqNo(String serviceReqNo) {
+		this.serviceReqNo = serviceReqNo;
+	}
 
 	public String getFinReference() {
 		return finReference;
@@ -117,6 +143,14 @@ public class RateChangeUpload implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getUploadStatusRemarks() {
+		return uploadStatusRemarks;
+	}
+
+	public void setUploadStatusRemarks(String uploadStatusRemarks) {
+		this.uploadStatusRemarks = uploadStatusRemarks;
 	}
 
 	public String getSpecialRate() {

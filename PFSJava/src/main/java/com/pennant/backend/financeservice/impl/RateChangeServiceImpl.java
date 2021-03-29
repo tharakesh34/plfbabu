@@ -130,8 +130,15 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		FinanceMain financeMain = financeMainDAO.getFinanceBasicDetailByRef(finReference, isWIF);
 
 		if (StringUtils.equals(UploadConstants.RATE_CHANGE_UPLOAD, finSrvInst.getReqFrom())) {
-			finSrvInst.setToDate(financeMain.getMaturityDate());
 			finSrvInst.setPftDaysBasis(financeMain.getProfitDaysBasis());
+
+			if (finSrvInst.getToDate() == null) {
+				finSrvInst.setToDate(financeMain.getMaturityDate());
+			}
+
+			if (finSrvInst.getFromDate() == null) {
+				finSrvInst.setFromDate(SysParamUtil.getAppDate());
+			}
 
 			if (StringUtils.isBlank(finSrvInst.getBaseRate())) {
 				finSrvInst.setBaseRate(null);

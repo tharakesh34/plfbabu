@@ -634,7 +634,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			renderMap = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, String>>() {
 				@Override
 				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					HashMap<String, String> mapRet = new HashMap<String, String>();
+					Map<String, String> mapRet = new HashMap<String, String>();
 					while (rs.next()) {
 						if (rs.getString("UpdateCpID") == null) {
 							mapRet.put(rs.getString("Reference"), rs.getString("UpdateCpID"));
@@ -683,7 +683,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			renderMap = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, String>>() {
 				@Override
 				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					HashMap<String, String> mapRet = new HashMap<String, String>();
+					Map<String, String> mapRet = new HashMap<String, String>();
 					while (rs.next()) {
 						if (rs.getString("UpdateCpID") != null) {
 							mapRet.put(rs.getString("Reference"), rs.getString("UpdateCpID"));
