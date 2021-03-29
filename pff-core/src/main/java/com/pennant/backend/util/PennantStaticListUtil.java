@@ -373,6 +373,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> interestSubventionMethodList;
 	private static List<ValueLabel> tdsTypesList;
 	private static List<ValueLabel> recalTypeList;
+	private static List<ValueLabel> receiptClearanceStatus;
 
 	/**
 	 * Gets the list of applications.
@@ -5902,5 +5903,14 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_Restructure_AddTerm_Recal_EMI")));
 		}
 		return recalTypeList;
+	}
+
+	public static void getReceiptClearanceStatus(List<ValueLabel> list) {
+		receiptClearanceStatus = new ArrayList<>();
+		if (CollectionUtils.isEmpty(list)) {
+			return;
+		}
+		receiptClearanceStatus.clear();
+		receiptClearanceStatus.addAll(list);
 	}
 }
