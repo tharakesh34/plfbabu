@@ -131,6 +131,10 @@ public class ReceiptUploadThreadProcess implements Runnable {
 			rud.setReceiptId(null);
 			rud.setReason(error);
 			this.receiptUploadDetailDAO.updateStatus(rud);
+		} finally {
+			if (transactionStatus != null) {
+				transactionStatus.flush();
+			}
 		}
 	}
 
