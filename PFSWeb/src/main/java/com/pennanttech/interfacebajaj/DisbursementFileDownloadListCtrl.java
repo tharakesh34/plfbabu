@@ -171,6 +171,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		//list.add("DISB_EXPORT_OTHER_NEFT_RTGS");
 
 		this.searchObject.addFilterLike("NAME", "DISB_");
+		this.searchObject.addSortDesc("ENDTIME");
 	}
 
 	/**
