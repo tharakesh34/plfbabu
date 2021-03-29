@@ -1264,6 +1264,8 @@
 				rightName="menu_Item_PDCReport" />
 			<menuItem id="menu_Item_PortfolioDataRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_PortfolioDataRpt" />
+			<menuItem id="menu_Item_ReceiptclearancestsRpt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_ReceiptclearancestsRpt" />
 		</menu>
 
 		<menu id="menu_Category_Legal">
