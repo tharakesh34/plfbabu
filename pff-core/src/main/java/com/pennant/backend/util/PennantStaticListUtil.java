@@ -5905,12 +5905,10 @@ public class PennantStaticListUtil {
 		return recalTypeList;
 	}
 
-	public static void getReceiptClearanceStatus(List<ValueLabel> list) {
-		receiptClearanceStatus = new ArrayList<>();
-		if (CollectionUtils.isEmpty(list)) {
-			return;
+	public static List<ValueLabel> getReceiptClearanceStatus() {
+		if (receiptClearanceStatus == null) {
+			receiptClearanceStatus = new ArrayList<ValueLabel>(3);
 		}
-		receiptClearanceStatus.clear();
-		receiptClearanceStatus.addAll(list);
+		return receiptClearanceStatus;
 	}
 }

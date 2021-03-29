@@ -115,7 +115,7 @@ public class NPAService extends ServiceHelper {
 
 		Date eodDate = custEODEvent.getEodDate();
 		Date monthEnd = DateUtil.getMonthEnd(eodDate);
-		if (!(DateUtil.compare(eodDate, monthEnd) == 0)) {
+		if (!(DateUtil.compare(eodDate, monthEnd) != 0)) {
 			return;
 		}
 		logger.info("Provision Calculation started...");

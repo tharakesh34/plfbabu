@@ -1075,14 +1075,4 @@ public class PennantConstants {
 	public static final String TDS_MANUAL = "MANUAL";
 	public static final String TDS_USER_SELECTION = "USER";
 
-	//Receipt Clearance Status 
-	public static final String APPROVED = "Approved";
-	public static final String CANCELLED = "Cancelled";
-	public static final String FEERECEIPT_MAKER = "FEERECEIPT_MAKER";
-	public static final String FEERECEIPT_APPROVER = "FEERECEIPT_APPROVER";
-	public static final String FEEDEPOSIT_MAKER = "FEEDEPOSIT_MAKER";
-	public static final String FEEDEPOSIT_APPROVER = "FEEDEPOSIT_APPROVER";
-	public static final String FEERECEIPTREALIZE_MAKER = "FEERECEIPTREALIZE_MAKER";
-	public static final String FEERECEIPTREALIZE_APPROVER = "FEERECEIPTREALIZE_APPROVER";
-
 }
