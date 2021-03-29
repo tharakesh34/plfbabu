@@ -1527,8 +1527,14 @@ public class CreateFinanceController extends SummaryDetailService {
 		// Set VAS reference as feeCode for VAS related fees
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
 			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
-				if (StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)
-						&& StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
+				String feeTypeCode = feeDetail.getFeeTypeCode();
+				String productCode = vasRecording.getProductCode();
+				//Extracting feetypecode and productcode by excluding('{' and '}')
+				feeTypeCode = extractFeeCode(feeTypeCode);
+				productCode = extractFeeCode(productCode);
+
+				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(feeDetail.getFinEvent())
+						&& StringUtils.equals(feeTypeCode, productCode)) {
 					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
 					feeDetail.setVasReference(vasRecording.getVasReference());
 					feeDetail.setCalculatedAmount(vasRecording.getFee());
@@ -1783,11 +1789,15 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Processing OCR workflow details
-	 * 
-	 * @param financeDetail
-	 */
+	private String extractFeeCode(String feeTypeCode) {
+		if (StringUtils.startsWith(feeTypeCode, "{") && StringUtils.endsWith(feeTypeCode, "}")) {
+			feeTypeCode = feeTypeCode.replace("{", "");
+			feeTypeCode = feeTypeCode.replace("}", "");
+		}
+
+		return feeTypeCode;
+	}
+
 	private void doProcessOCRDetails(FinanceDetail financeDetail, LoggedInUser userDetails) {
 		if (financeDetail != null) {
 			FinOCRHeader finOCRHeader = financeDetail.getFinOCRHeader();
@@ -2287,7 +2297,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				advPayment.setNextRoleCode(financeMain.getNextRoleCode());
 				advPayment.setTaskId(financeMain.getTaskId());
 				advPayment.setNextTaskId(financeMain.getNextTaskId());
-				
+
 				//Setting Vas Reference for FinAdvancepayments based on Product Code
 				if (APIConstants.FINSOURCE_ID_API.equals(financeMain.getFinSourceID())) {
 					for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
