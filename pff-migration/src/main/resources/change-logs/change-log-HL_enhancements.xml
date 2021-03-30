@@ -23389,6 +23389,1459 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="525" author="lakshmi.n">
+		<comment>PSD # 156906 </comment>
+			<sql>
+				<![CDATA[
+					DELETE FROM ERRORDETAILS WHERE CODE = '60214';
+					INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('60214', 'EN', 'W', 'All the VAS instructions of the loan are not cancelled. Do you want proceed to cancel the loan ?','', 'Approved', '', '', '', '', '', 0, current_timestamp, 1000, 1);
+				]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="PSD#158198" author="venkatesh.ch">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'VERIFICATIONS_CUSTOMERVIEW';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('VERIFICATIONS_CUSTOMERVIEW', 'VERIFICATIONS CIF Button VISIBILITY', 'String', 1, 'Y', 1, 0, null, null, 'VERIFICATIONS CIF Button VISIBILITY', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="527" author="Lakshmi.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(rightid)+1  from Secrights), 0, 'menuItem_CKYCProcess', 'MENU', 1, 1000, current_timestamp, null, null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="528" author="Mangapathi">
+	<comment> TK#332 </comment>
+		<sql>
+			<![CDATA[
+			INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(rightid)+1  from Secrights), 0, 'menuItem_RulesFactory_BRERules', 'MENU', 1, 1000, current_timestamp, null, null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="529" author="Venkatesh.ch">
+	<comment> TK#158845 </comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'FORECLOSURE_VALIDITY_DAYS';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('FORECLOSURE_VALIDITY_DAYS', 'ForeClosure Validate Days', 'INT', 1, 10, 2, 0, null, null, 'ForeClosure Validate Days', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="531" author="Lakshmi.n">
+		<comment>PSD#159645 </comment>
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RIGHTID)+1 from SecRights), 3, 'VehicleDealerDialog_RCUVAGENCY_branch', 'VehicleDealerDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, '', 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'DEALER_MAKER'), (select RightID from SecRights WHERE RightName = 'VehicleDealerDialog_RCUVAGENCY_branch'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, '', 0);
+			]]>
+		</sql> 	
+	</changeSet>
+		
+	<changeSet id="532" author="mangapathi.s">
+		<comment>Message corrections </comment>
+		<sql>
+			<![CDATA[
+				UPDATE ERRORDETAILS set MESSAGE = '{0} is less than or equals to {1} .' WHERE CODE = '90220';
+				UPDATE ERRORDETAILS set MESSAGE = '{0} is less than required value {1}' WHERE CODE = '30557';
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="533" author="Lakshmi.N">
+		<comment>PSD#160182 </comment>
+		<sql>
+			<![CDATA[
+				INSERT INTO SMTPARAMETERS(SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL', 'Repay postings required at loan cancel', 'String', 1, 'Y', 50, 0, null, null, 'Repay postings required at loan cancel', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="534" author="Venkatesh.ch">
+		<comment>ST#223 </comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerDocumentDialog_btnUploadDoc';
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) VALUES ((select max(RIGHTID)+1 from SecRights), 2, 'button_CustomerDocumentDialog_btnUploadDoc', 'CustomerDocumentDialog', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="535" author="Lakshmi.N">
+		<comment>PSD#160296</comment>
+			<sql>
+				<![CDATA[
+					INSERT INTO ERRORDETAILS(CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('99028', 'EN', 'W', 'PRINT Instruction status will be marked as Rejected if resubmit the case. Do you want to proceed?', 'PRINT Disbursement Instruction status will be marked as Rejected if resubmit the case.', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 1);
+				]]>
+			</sql> 	
+	</changeSet>
+	
+	<changeSet id="536" author="Lakshmi.N">
+		<comment>PSD#164431</comment>
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 2, 'button_FinOCRDialog_btnDelete', 'FinOCRDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 2, 'button_FinOCRDialog_btnSave', 'FinOCRDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinOCRCaptureDialog_ocrReceiptDate', 'FinOCRCaptureDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 0, 'menuItem_FinanceManagement_OCRMaintenance', 'MENU', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+					
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ((select max(GRPID)+1  from SecGroups), 'OCRMaintenance_MAKER', 'WF Maker for Enduse', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ((select max(GRPID)+1  from SecGroups), 'OCRMaintenance_APPROVER', 'WF Approver for Enduse', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ((select max(GRPID)+1  from SecGroups), 'OCRStep_MAKER', 'WF Maker for Enduse', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ((select max(GRPID)+1  from SecGroups), 'OCRStep_APPROVER', 'WF Approver for Enduse', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ((select max(GRPID)+1  from SecGroups), 'OCRCapture_MAKER', 'WF Maker for Enduse', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ((select max(GRPID)+1  from SecGroups), 'OCRCapture_APPROVER', 'WF Approver for Enduse', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRMaintenance_MAKER'), (select RightID from SecRights WHERE RightName = 'menuItem_FinanceManagement_OCRMaintenance'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRMaintenance_MAKER'), (select RightID from SecRights WHERE RightName = 'button_FinOCRDialog_btnDelete'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRMaintenance_MAKER'), (select RightID from SecRights WHERE RightName = 'button_FinOCRDialog_btnSave'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRMaintenance_MAKER'), (select RightID from SecRights WHERE RightName = 'FinOCRDialog_btnNew_FinOCRCapture'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRMaintenance_APPROVER'), (select RightID from SecRights WHERE RightName = 'menuItem_FinanceManagement_OCRMaintenance'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRMaintenance_APPROVER'), (select RightID from SecRights WHERE RightName = 'button_FinOCRDialog_btnSave'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRCapture_MAKER'), (select RightID from SecRights WHERE RightName = 'button_FinOCRCaptureDialog_btnDelete'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRCapture_MAKER'), (select RightID from SecRights WHERE RightName = 'button_FinOCRCaptureDialog_btnSave'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRCapture_MAKER'), (select RightID from SecRights WHERE RightName = 'FinOCRCaptureDialog_builderDemand'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRCapture_MAKER'), (select RightID from SecRights WHERE RightName = 'FinOCRCaptureDialog_ocrPaid'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRCapture_MAKER'), (select RightID from SecRights WHERE RightName = 'FinOCRCaptureDialog_ocrReceiptDate'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'OCRCapture_MAKER'), (select RightID from SecRights WHERE RightName = 'FinOCRCaptureDialog_remarks'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(roleid)+1 from secroles), 1, 'OCRMAINTENANCE_MAKER', 'OCR maintenance maker', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(roleid)+1 from secroles), 1, 'OCRMAINTENANCE_APPROVER', 'OCR maintenance approver', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='OCRMaintenance_MAKER'), (Select RoleID From SecRoles Where RoleCd='OCRMAINTENANCE_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='OCRCapture_MAKER'), (Select RoleID From SecRoles Where RoleCd='OCRMAINTENANCE_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='OCRStep_MAKER'), (Select RoleID From SecRoles Where RoleCd='OCRMAINTENANCE_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='OCRMaintenance_APPROVER'), (Select RoleID From SecRoles Where RoleCd='OCRMAINTENANCE_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="538" author="Lakshmi.S">
+		<comment>PSD#164431</comment>
+			<sql>
+				<![CDATA[	
+					DELETE FROM REPORTLIST WHERE MODULE = 'FinOCRHeader';
+					INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('FinOCRHeader', 'FinOCRHeader', 'listheader_OCRMaintenanceLoanReference.label,listheader_OCRMaintenanceTotalDemand.label,listheader_OCRMaintenanceOCRType.label', 'finReference,totalDemand,ocrType', 'String,BigDecimal,String', '', 'ReportList03','FinOCR Header', 'Application Masters', 1, 1000, null,'Approved', '', '', '', '', '', 0, '0');
+
+				]]>
+			</sql> 	
+	</changeSet>
+	
+	<changeSet id="539" author="Lakshmi.N">
+		<comment>PSD#164431</comment>
+		<sql>
+			<![CDATA[	
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinanceMainDialog_ParentLoanReference', 'FinanceMainDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinOCRDialog_TotalDemand', 'FinOCRDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinOCRDialog_TotalReceivable', 'FinOCRDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinOCRDialog_OCRType', 'FinOCRDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="540" author="Lakshmi.N">
+		<comment>PSD#165186 </comment>
+		<sql>
+			<![CDATA[
+				INSERT INTO SMTPARAMETERS(SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('CHECK_COLL_MAINTENANCE', 'Check Collateral in maintenance', 'String', 1, 'N', 50, 0, null, null, 'Repay postings required at loan cancel', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="541" author="Lakshmi.N">
+		<comment>PSD#165151 </comment>
+		<sql>
+			<![CDATA[
+				INSERT INTO SMTPARAMETERS(SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('CIBIL_DEFAULT_AMOUNT', 'Cibil default amount', 'int', 0, '1', 1, 0, null, null, 'Cibil default amount', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="543" author="praveena.v">
+		<comment>PSD#149000 </comment>
+		<sql>
+			<![CDATA[
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('60022', 'EN', 'W', 'LAN has outstanding Receivable DUE, Do you want to proceed ?', '', 'Approved', '', '', '', '', '', 0, current_timestamp, 1000, 1);
+			]]>
+		</sql> 	
+	</changeSet>
+	
+	<changeSet id="544" author="Praveena.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'qryDesc', 'Query Description', 'A', 'Origination');
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="545" author="lakshmi.N">
+		<comment>PSD#163130</comment>
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) Values ((select max(RightId)+1 from SecRights), 3, 'CovenantDialog_AdditionalRemarks', 'CovenantDialog', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'COVENANT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CovenantDialog_AdditionalRemarks'), 1, 0,1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="546" author="praveena.v">
+		<sql>
+			<![CDATA[
+				UPDATE ERRORDETAILS SET MESSAGE = 'Number of Repay Steps must be equal to entered Number of Repay Steps' WHERE CODE = '30542';
+
+				DELETE FROM ERRORDETAILS WHERE CODE = 'STP001';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('STP001', 'EN', 'I', 'Grace Schedule method will be overridden by Repay Schedule Method  as it is a graded schedule even in Grace period', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>	
+	
+	 <changeSet id="548" author="lakshmi.N">
+		<sql>
+			<![CDATA[
+				UPDATE ERRORDETAILS SET MESSAGE = '{1} are not allowed for Disbursement Type : {0}' WHERE CODE = '41101';
+				UPDATE ERRORDETAILS SET MESSAGE = '{0} should be greater than {1}.' WHERE CODE = '91121';
+			]]>
+		</sql>
+	</changeSet>	
+
+	<changeSet id="549" author="Lakshmi.N">
+	<comment>PSD # 169092</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = 'STP002';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('STP002', 'EN', 'W', 'Sum of Total capitalized interest during tenor and  Total disbursed amount is more than the sanction amount. Do you want to proceed?', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="550" author="Lakshmi.N">
+	<comment>TK#705</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = 'STP003';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('STP003', 'EN', 'W', 'EMI is less than the interest amount for the given step. Increase the EMI amount for the given Step', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="294" author="Swetha.s">
+		<sql>
+			<![CDATA[	
+				DELETE FROM ERRORDETAILS WHERE CODE = 'CU001';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('CU001','EN','W','Customer Last Name is empty. Do you want to proceed?', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="705" author="Lakshmi.N">
+		<addColumn tableName="FINBLACKLISTDETAIL">
+			<column name="sourcecif" type="nvarchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="707.0" author="Lakshmi.N">
+		<sql>
+			<![CDATA[
+				UPDATE FINBLACKLISTDETAIL SET SOURCECIF = 0 WHERE SOURCECIF is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="707" author="Lakshmi.N">
+		<addNotNullConstraint tableName="finblacklistdetail" columnName="sourcecif" columnDataType="nvarchar(50)" />
+	</changeSet>
+
+	<changeSet id="708" author="Lakshmi.N">
+		<dropPrimaryKey constraintName="pk_finblacklistdetail" tableName="finblacklistdetail" />
+	</changeSet>
+
+	<changeSet id="709" author="Lakshmi.N">
+		<addPrimaryKey columnNames="finreference, custcif, sourcecif" constraintName="pk_finblacklistdetail"
+			tableName="finblacklistdetail" />
+	</changeSet>
+	
+	<changeSet id="710" author="Lakshmi.N">
+		<addColumn tableName="RejectFinBlackListDetail">
+			<column name="sourcecif" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="711" author="Lakshmi.N">
+		<addNotNullConstraint tableName="finblacklistdetail"
+			columnName="sourcecif" columnDataType="nvarchar(50)" />
+	</changeSet>
+	
+	<changeSet id="712" author="Lakshmi.N">
+    	<dropPrimaryKey constraintName="pk_rejectfinblacklistdetail"
+                    tableName="RejectFinBlackListDetail"/>
+	</changeSet>
+
+	<changeSet id="713" author="Lakshmi.N">
+    	<addPrimaryKey 
+            columnNames="finreference, custcif, sourcecif"
+            constraintName="pk_rejectfinblacklistdetail"
+            tableName="RejectFinBlackListDetail"/>
+	</changeSet>
+	
+	<changeSet id="714" author="naga.g">
+		<renameColumn tableName="OCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
+	</changeSet>
+
+	<changeSet id="715" author="naga.g">
+		<renameColumn tableName="OCRHEADER_TEMP" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
+	</changeSet>
+	
+	<changeSet id="717" author="naga.g">
+		<dropColumn columnName="splitapplicable" tableName="OCRHEADER " />
+	</changeSet>
+	
+	<changeSet id="718" author="naga.g">
+		<dropColumn columnName="splitapplicable" tableName="OCRHEADER_TEMP " />
+	</changeSet>
+
+	<changeSet id="719" author="naga.g">
+		<renameColumn tableName="FINOCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
+	</changeSet>
+
+	<changeSet id="720" author="naga.g">
+		<renameColumn tableName="FINOCRHEADER_TEMP" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
+	</changeSet>
+
+	<changeSet id="721.0_pre" author="naga.g" dbms="postgresql">
+		<sql>
+				<![CDATA[
+						select deps_save_and_drop_dependencies ('plf', 'finocrheader_view');
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="721" author="naga.g">
+		<dropColumn columnName="splitapplicable" tableName="FinOCRHeader " />
+	</changeSet>
+	
+	<changeSet id="722" author="naga.g">
+		<dropColumn columnName="splitapplicable" tableName="FINOCRHEADER_TEMP " />
+	</changeSet>
+	
+	<changeSet id="723" author="naga.g">
+		<addColumn tableName="FinOCRHeader">
+		<column name="totaldemand" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="724" author="naga.g">
+		<addColumn tableName="FINOCRHEADER_TEMP">
+			<column name="totaldemand" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="725" author="naga.g">
+		<addColumn tableName="FINOCRCAPTURE">
+			<column name="receiptdate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="726" author="naga.g">
+		<addColumn tableName="FINOCRCAPTURE_TEMP">
+			<column name="receiptdate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="727" author="naga.g">
+		<addColumn tableName="FINOCRCAPTURE">
+			<column name="filename" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="728" author="naga.g">
+		<addColumn tableName="FINOCRCAPTURE_TEMP">
+			<column name="filename" type="VARCHAR(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="729" author="naga.g">
+		<addColumn tableName="FINOCRCAPTURE">
+			<column name="documentref" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="730" author="naga.g">
+		<addColumn tableName="FINOCRCAPTURE_TEMP">
+			<column name="documentref" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="731_pre" author="Lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'builderprojcet');
+				select deps_save_and_drop_dependencies ('plf', 'builderprojcet_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="731" author="Lakshmi.n">
+		<comment>registrationNumber length changed to 50 instead of 20</comment>
+		<modifyDataType tableName="builderprojcet" columnName="registrationNumber" newDataType="varchar(50)" />
+	</changeSet>
+		
+	<changeSet id="732" author="Lakshmi.n">
+		<comment>registrationNumber length changed to 50 instead of 20</comment>
+		<modifyDataType tableName="builderprojcet_temp" columnName="registrationNumber" newDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="732_post" author="Lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'builderprojcet');
+				select deps_restore_dependencies ('plf', 'builderprojcet_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+		<changeSet id="733" author="venkatesh.ch">
+		<addForeignKeyConstraint constraintName="FK_finocrheader" referencedTableName="ocrheader"
+			referencedColumnNames="ocrid" baseTableName="finocrheader" baseColumnNames="ocrid" />
+	</changeSet>
+	
+	<changeSet id="734" author="Lakshmi.N">
+		<comment>PSD#164067</comment>
+		<addUniqueConstraint tableName="FinMaintainInstructions_temp" columnNames="finreference,event" />
+	</changeSet>
+	
+	<changeSet id="739" author="Lakshmi">
+		<sql>
+			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='OCRMAINTENANCE';
+		</sql>
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">OCRMAINTENANCE</column>
+			<column name="WorkFlowSubType">OCR MAINTENANCE</column>
+			<column name="WorkFlowDesc">OCR MAINTENANCE</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">OCRMAINTENANCE_MAKER;OCRMAINTENANCE_APPROVER</column>
+			<column name="FirstTaskOwner">OCRMAINTENANCE_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">0</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="740" author="Lakshmi">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":"canvas","properties":{"process_id":"OCRMAINTENANCE","name":"OCR MAINTENANCE","documentation":"OCR MAINTENANCE","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-6C748604-07ED-409C-AACF-2B7A9189AC0E"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA","properties":{"overrideid":"","name":"Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"OCRMAINTENANCE_MAKER","firstName":"OCRMAINTENANCE_MAKER","fullName":"OCRMAINTENANCE_MAKER","id":"OCRMAINTENANCE_MAKER","roledesc":"OCR maintenance maker","$$hashKey":"object:2475"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-E008429F-C263-45DA-A99F-962B7954A32C"},{"resourceId":"sid-9D8EA3D0-FDCA-4048-AA7F-CFD5125683EE"}],"bounds":{"lowerRight":{"x":265,"y":215},"upperLeft":{"x":165,"y":135}},"dockers":[]},{"resourceId":"sid-6C748604-07ED-409C-AACF-2B7A9189AC0E","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA"}],"bounds":{"lowerRight":{"x":164.78169969647763,"y":177.54813849089433},"upperLeft":{"x":130.06205030352237,"y":176.50654900910567}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA"}},{"resourceId":"sid-2248113D-9B9B-4987-9E47-0749A862AEDF","properties":{"overrideid":"","name":"Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"OCRMAINTENANCE_APPROVER","firstName":"OCRMAINTENANCE_APPROVER","fullName":"OCRMAINTENANCE_APPROVER","id":"OCRMAINTENANCE_APPROVER","roledesc":"OCR maintenance approver role","$$hashKey":"object:4423"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-F569BBC5-D5B9-48D9-92DF-CAC3F22466F4"}],"bounds":{"lowerRight":{"x":460,"y":215},"upperLeft":{"x":360,"y":135}},"dockers":[]},{"resourceId":"sid-6F4F2166-55F6-4544-B0B4-D645F99235BB","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-3CDB1A30-F0F9-486F-8A98-D99180FF9257"},{"resourceId":"sid-4597A3AF-C9C5-4FB4-ACCA-32504E2745AC"},{"resourceId":"sid-BB55E1BC-0B9E-46D4-8D46-3DFCDDFF46FE"}],"bounds":{"lowerRight":{"x":545,"y":195},"upperLeft":{"x":505,"y":155}},"dockers":[]},{"resourceId":"sid-F569BBC5-D5B9-48D9-92DF-CAC3F22466F4","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-6F4F2166-55F6-4544-B0B4-D645F99235BB"}],"bounds":{"lowerRight":{"x":504.64844687000755,"y":175.4097335362338},"upperLeft":{"x":460.62889687999245,"y":175.2191727137662}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-6F4F2166-55F6-4544-B0B4-D645F99235BB"}},{"resourceId":"sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0","properties":{"overrideid":"","name":"Complete Process","rerunnable":true,"servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-92E5A26B-B511-407D-B2F8-D1E1527F7939"}],"bounds":{"lowerRight":{"x":690.671875,"y":219},"upperLeft":{"x":590.671875,"y":139}},"dockers":[]},{"resourceId":"sid-6ACF2190-6F09-4F4A-A68A-185097EC939D","properties":{"overrideid":"","name":"End"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":781.671875,"y":188},"upperLeft":{"x":753.671875,"y":160}},"dockers":[]},{"resourceId":"sid-92E5A26B-B511-407D-B2F8-D1E1527F7939","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-6ACF2190-6F09-4F4A-A68A-185097EC939D"}],"bounds":{"lowerRight":{"x":752.7820241017711,"y":177.00753539770753},"upperLeft":{"x":691.2804758982289,"y":174.58621460229247}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-6ACF2190-6F09-4F4A-A68A-185097EC939D"}},{"resourceId":"sid-E008429F-C263-45DA-A99F-962B7954A32C","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-2248113D-9B9B-4987-9E47-0749A862AEDF"}],"bounds":{"lowerRight":{"x":359.48828125,"y":175},"upperLeft":{"x":265.51171875,"y":175}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-2248113D-9B9B-4987-9E47-0749A862AEDF"}},{"resourceId":"sid-3CDB1A30-F0F9-486F-8A98-D99180FF9257","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0"}],"bounds":{"lowerRight":{"x":590.1844213980683,"y":177.4657184090581},"upperLeft":{"x":544.4951440316192,"y":176.0772503409419}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0"}},{"resourceId":"sid-4597A3AF-C9C5-4FB4-ACCA-32504E2745AC","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA"}],"bounds":{"lowerRight":{"x":525.5,"y":154.921875},"upperLeft":{"x":215,"y":86}},"dockers":[{"x":20.5,"y":20.5},{"x":525.5,"y":86},{"x":215,"y":86},{"x":50,"y":40}],"target":{"resourceId":"sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA"}},{"resourceId":"sid-C6F60435-BC2C-4367-BCF8-842F878CCA30","properties":{"overrideid":"","name":"Cancel Process","rerunnable":true,"servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-C2EC9FCD-6845-4075-9D8A-045136406130"}],"bounds":{"lowerRight":{"x":565,"y":350},"upperLeft":{"x":465,"y":270}},"dockers":[]},{"resourceId":"sid-BB55E1BC-0B9E-46D4-8D46-3DFCDDFF46FE","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":"","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C6F60435-BC2C-4367-BCF8-842F878CCA30"}],"bounds":{"lowerRight":{"x":525.5,"y":269.0365444282751},"upperLeft":{"x":525.5,"y":195.72777174812376}},"dockers":[{"x":20.5,"y":20.5},{"x":60.5,"y":8.048115989993335}],"target":{"resourceId":"sid-C6F60435-BC2C-4367-BCF8-842F878CCA30"}},{"resourceId":"sid-9D8EA3D0-FDCA-4048-AA7F-CFD5125683EE","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-C6F60435-BC2C-4367-BCF8-842F878CCA30"}],"bounds":{"lowerRight":{"x":464.78125,"y":310},"upperLeft":{"x":215,"y":215.0234375}},"dockers":[{"x":50,"y":40},{"x":215,"y":310},{"x":50,"y":40}],"target":{"resourceId":"sid-C6F60435-BC2C-4367-BCF8-842F878CCA30"}},{"resourceId":"sid-D2EAD59D-A351-47EB-9E10-E4F5276C7027","properties":{"overrideid":"","name":"End"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":529,"y":448},"upperLeft":{"x":501,"y":420}},"dockers":[]},{"resourceId":"sid-C2EC9FCD-6845-4075-9D8A-045136406130","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D2EAD59D-A351-47EB-9E10-E4F5276C7027"}],"bounds":{"lowerRight":{"x":515,"y":419.4375},"upperLeft":{"x":515,"y":350.71875}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-D2EAD59D-A351-47EB-9E10-E4F5276C7027"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+					<process id="OCRMAINTENANCE" name="OCR MAINTENANCE" isExecutable="true">
+						<documentation>OCR MAINTENANCE</documentation>
+						<startEvent id="startEvent1" name="Start"/>
+						<userTask id="sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA" name="Maker" activiti:actor="OCRMAINTENANCE_MAKER" activiti:assignmentLevel="Role Queue"/>
+						<sequenceFlow id="sid-6C748604-07ED-409C-AACF-2B7A9189AC0E" sourceRef="startEvent1" targetRef="sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+						<userTask id="sid-2248113D-9B9B-4987-9E47-0749A862AEDF" name="Approver" activiti:actor="OCRMAINTENANCE_APPROVER" activiti:assignmentLevel="Role Queue"/>
+						<exclusiveGateway id="sid-6F4F2166-55F6-4544-B0B4-D645F99235BB"/>
+						<sequenceFlow id="sid-F569BBC5-D5B9-48D9-92DF-CAC3F22466F4" sourceRef="sid-2248113D-9B9B-4987-9E47-0749A862AEDF" targetRef="sid-6F4F2166-55F6-4544-B0B4-D645F99235BB" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+						<serviceTask id="sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
+						<endEvent id="sid-6ACF2190-6F09-4F4A-A68A-185097EC939D" name="End"/>
+						<sequenceFlow id="sid-92E5A26B-B511-407D-B2F8-D1E1527F7939" sourceRef="sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0" targetRef="sid-6ACF2190-6F09-4F4A-A68A-185097EC939D" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+						<sequenceFlow id="sid-E008429F-C263-45DA-A99F-962B7954A32C" name="Submit" sourceRef="sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA" targetRef="sid-2248113D-9B9B-4987-9E47-0749A862AEDF" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+						<conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
+						</sequenceFlow>
+						<sequenceFlow id="sid-3CDB1A30-F0F9-486F-8A98-D99180FF9257" name="Approve" sourceRef="sid-6F4F2166-55F6-4544-B0B4-D645F99235BB" targetRef="sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
+						<conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
+						</sequenceFlow>
+						<sequenceFlow id="sid-4597A3AF-C9C5-4FB4-ACCA-32504E2745AC" name="Resubmit" sourceRef="sid-6F4F2166-55F6-4544-B0B4-D645F99235BB" targetRef="sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+						<conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
+						</sequenceFlow>
+						<serviceTask id="sid-C6F60435-BC2C-4367-BCF8-842F878CCA30" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
+						<sequenceFlow id="sid-BB55E1BC-0B9E-46D4-8D46-3DFCDDFF46FE" name="Reject" sourceRef="sid-6F4F2166-55F6-4544-B0B4-D645F99235BB" targetRef="sid-C6F60435-BC2C-4367-BCF8-842F878CCA30" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="false" captureReasons="false">
+						<conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
+						</sequenceFlow>
+						<sequenceFlow id="sid-9D8EA3D0-FDCA-4048-AA7F-CFD5125683EE" name="Cancel" sourceRef="sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA" targetRef="sid-C6F60435-BC2C-4367-BCF8-842F878CCA30" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="false" captureReasons="false">
+						<conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
+						</sequenceFlow>
+						<endEvent id="sid-D2EAD59D-A351-47EB-9E10-E4F5276C7027" name="End"/>
+						<sequenceFlow id="sid-C2EC9FCD-6845-4075-9D8A-045136406130" sourceRef="sid-C6F60435-BC2C-4367-BCF8-842F878CCA30" targetRef="sid-D2EAD59D-A351-47EB-9E10-E4F5276C7027" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+					</process>
+					<bpmndi:BPMNDiagram id="BPMNDiagram_OCRMAINTENANCE">
+						<bpmndi:BPMNPlane bpmnElement="OCRMAINTENANCE" id="BPMNPlane_OCRMAINTENANCE">
+						<bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+							<omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNShape bpmnElement="sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA" id="BPMNShape_sid-C9AD495F-7F51-4021-A7F5-A08A20E0A6FA">
+							<omgdc:Bounds height="80.0" width="100.0" x="165.0" y="135.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNShape bpmnElement="sid-2248113D-9B9B-4987-9E47-0749A862AEDF" id="BPMNShape_sid-2248113D-9B9B-4987-9E47-0749A862AEDF">
+							<omgdc:Bounds height="80.0" width="100.0" x="360.0" y="135.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNShape bpmnElement="sid-6F4F2166-55F6-4544-B0B4-D645F99235BB" id="BPMNShape_sid-6F4F2166-55F6-4544-B0B4-D645F99235BB">
+							<omgdc:Bounds height="40.0" width="40.0" x="505.0" y="155.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNShape bpmnElement="sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0" id="BPMNShape_sid-5A8D8A4C-8683-4CFE-A19A-6AEAB2B686B0">
+							<omgdc:Bounds height="80.0" width="100.0" x="590.671875" y="139.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNShape bpmnElement="sid-6ACF2190-6F09-4F4A-A68A-185097EC939D" id="BPMNShape_sid-6ACF2190-6F09-4F4A-A68A-185097EC939D">
+							<omgdc:Bounds height="28.0" width="28.0" x="753.671875" y="160.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNShape bpmnElement="sid-C6F60435-BC2C-4367-BCF8-842F878CCA30" id="BPMNShape_sid-C6F60435-BC2C-4367-BCF8-842F878CCA30">
+							<omgdc:Bounds height="80.0" width="100.0" x="465.0" y="270.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNShape bpmnElement="sid-D2EAD59D-A351-47EB-9E10-E4F5276C7027" id="BPMNShape_sid-D2EAD59D-A351-47EB-9E10-E4F5276C7027">
+							<omgdc:Bounds height="28.0" width="28.0" x="501.0" y="420.0"/>
+						</bpmndi:BPMNShape>
+						<bpmndi:BPMNEdge bpmnElement="sid-6C748604-07ED-409C-AACF-2B7A9189AC0E" id="BPMNEdge_sid-6C748604-07ED-409C-AACF-2B7A9189AC0E">
+							<omgdi:waypoint x="129.9932545528355" y="177.5502023634149"/>
+							<omgdi:waypoint x="165.0" y="176.5"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-BB55E1BC-0B9E-46D4-8D46-3DFCDDFF46FE" id="BPMNEdge_sid-BB55E1BC-0B9E-46D4-8D46-3DFCDDFF46FE">
+							<omgdi:waypoint x="525.5" y="194.5"/>
+							<omgdi:waypoint x="525.5" y="270.0"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-3CDB1A30-F0F9-486F-8A98-D99180FF9257" id="BPMNEdge_sid-3CDB1A30-F0F9-486F-8A98-D99180FF9257">
+							<omgdi:waypoint x="543.9396313364056" y="176.06036866359446"/>
+							<omgdi:waypoint x="590.671875" y="177.48053181386516"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-9D8EA3D0-FDCA-4048-AA7F-CFD5125683EE" id="BPMNEdge_sid-9D8EA3D0-FDCA-4048-AA7F-CFD5125683EE">
+							<omgdi:waypoint x="215.0" y="215.0"/>
+							<omgdi:waypoint x="215.0" y="310.0"/>
+							<omgdi:waypoint x="465.0" y="310.0"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-F569BBC5-D5B9-48D9-92DF-CAC3F22466F4" id="BPMNEdge_sid-F569BBC5-D5B9-48D9-92DF-CAC3F22466F4">
+							<omgdi:waypoint x="460.0" y="175.2164502164502"/>
+							<omgdi:waypoint x="505.4130434782609" y="175.41304347826087"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-92E5A26B-B511-407D-B2F8-D1E1527F7939" id="BPMNEdge_sid-92E5A26B-B511-407D-B2F8-D1E1527F7939">
+							<omgdi:waypoint x="690.671875" y="177.03149606299212"/>
+							<omgdi:waypoint x="753.6827124247945" y="174.55075443209472"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-4597A3AF-C9C5-4FB4-ACCA-32504E2745AC" id="BPMNEdge_sid-4597A3AF-C9C5-4FB4-ACCA-32504E2745AC">
+							<omgdi:waypoint x="525.5" y="155.5"/>
+							<omgdi:waypoint x="525.5" y="86.0"/>
+							<omgdi:waypoint x="215.0" y="86.0"/>
+							<omgdi:waypoint x="215.0" y="135.0"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-C2EC9FCD-6845-4075-9D8A-045136406130" id="BPMNEdge_sid-C2EC9FCD-6845-4075-9D8A-045136406130">
+							<omgdi:waypoint x="515.0" y="350.0"/>
+							<omgdi:waypoint x="515.0" y="420.0"/>
+						</bpmndi:BPMNEdge>
+						<bpmndi:BPMNEdge bpmnElement="sid-E008429F-C263-45DA-A99F-962B7954A32C" id="BPMNEdge_sid-E008429F-C263-45DA-A99F-962B7954A32C">
+							<omgdi:waypoint x="265.0" y="175.0"/>
+							<omgdi:waypoint x="360.0" y="175.0"/>
+						</bpmndi:BPMNEdge>
+						</bpmndi:BPMNPlane>
+					</bpmndi:BPMNDiagram>
+					</definitions>]]></column>
+			<where>workflowtype='OCRMAINTENANCE' and workflowactive=1
+			</where>
+		</update>
+		<sql>
+			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="909_pre" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'collectionagencies');
+				select deps_save_and_drop_dependencies ('plf', 'collectionagencies_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="909" author="PAVAN.C">
+		<modifyDataType tableName="collectionagencies" columnName="code" newDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="910" author="PAVAN.C">
+		<modifyDataType tableName="collectionagencies_temp" columnName="code" newDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="910_post" author="venkates.ch" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'collectionagencies');
+				select deps_restore_dependencies ('plf', 'collectionagencies_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="911" author="Lakshmi.N">
+		<comment>PSD#163130</comment>
+		<addColumn tableName="COVENANTS">
+			<column name="remarks1" type="blob" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="912" author="Lakshmi.N">
+		<comment>PSD#163130</comment>
+		<addColumn tableName="COVENANTS_TEMP">
+			<column name="remarks1" type="blob" />
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="913_pre" author="lakshmi.N" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'sanction_conditions');
+				select deps_save_and_drop_dependencies ('plf', 'sanction_conditions_temp');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="913" author="lakshmi.N">
+		<modifyDataType tableName="sanction_conditions" columnName="sanctioncondition" newDataType="varchar(600)" />
+	</changeSet>
+	
+	<changeSet id="914" author="lakshmi.N">
+		<modifyDataType tableName="sanction_conditions_temp" columnName="sanctioncondition" newDataType="varchar(600)" />
+	</changeSet>
+	
+	<changeSet id="914_post" author="lakshmi.N" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'sanction_conditions');
+				select deps_restore_dependencies ('plf', 'sanction_conditions_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="915" author="praveena.v">
+		<addColumn tableName="rmtfinancetypes">
+			<column name="calcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="916" author="praveena.v">
+		<addColumn tableName="rmtfinancetypes_temp">
+			<column name="calcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="917" author="praveena.v">
+		<addColumn tableName="rmtfinancetypes">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="918" author="praveena.v">
+		<addColumn tableName="rmtfinancetypes_temp">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="919" author="praveena.v">
+		<addColumn tableName="financemain">
+			<column name="calcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="920" author="praveena.v">
+		<addColumn tableName="financemain_temp">
+			<column name="calcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="921" author="praveena.v">
+		<addColumn tableName="financemain">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="922" author="praveena.v">
+		<addColumn tableName="financemain_temp">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="923" author="praveena.v">
+		<addColumn tableName="finsteppolicydetail">
+			<column name="stepSpecifier" type="varchar(5)" >  
+			</column>
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="924" author="praveena.v">
+		<addColumn tableName="finsteppolicydetail_temp">
+			<column name="stepSpecifier" type="varchar(5)" > 
+			    </column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="924.1" author="praveena.v">
+		<sql>
+			<![CDATA[
+				UPDATE FINSTEPPOLICYDETAIL SET STEPSPECIFIER = 'R';
+				UPDATE FINSTEPPOLICYDETAIL_TEMP SET STEPSPECIFIER = 'R';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="924.2" author="praveena.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="stepSpecifier" tableName="finsteppolicydetail" defaultValue="R" />
+	</changeSet>
+	
+	<changeSet id="924.3" author="praveena.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="stepSpecifier" tableName="finsteppolicydetail_temp" defaultValue="R" />
+	</changeSet>
+		
+	<changeSet id="925" author="praveena.v">
+    	<dropPrimaryKey constraintName="pk_financesteppolicydetail"
+                    tableName="finsteppolicydetail"/>
+	</changeSet> 
+	
+	<changeSet id="926" author="praveena.v">
+    	<addPrimaryKey 
+            columnNames="stepSpecifier,finreference,stepno"
+            constraintName="pk_financesteppolicydetail"
+            tableName="finsteppolicydetail"/>
+	</changeSet>
+	
+	<changeSet id="927" author="praveena.v">
+    	<dropPrimaryKey constraintName="pk_finsteppolicydetail_temp"
+                    tableName="finsteppolicydetail_temp"/>
+	</changeSet>
+	 
+	<changeSet id="928" author="praveena.v">
+    	<addPrimaryKey 
+            columnNames="stepSpecifier,finreference,stepno"
+            constraintName="pk_finsteppolicydetail_temp"
+            tableName="finsteppolicydetail_temp"/>
+	</changeSet> 
+	
+	<changeSet id="929" author="praveena.v">
+		<addColumn tableName="finsteppolicydetail">
+			<column name="stepstart" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="930" author="praveena.v">
+		<addColumn tableName="finsteppolicydetail_temp">
+			<column name="stepstart" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="931" author="praveena.v">
+		<addColumn tableName="WIFFinStepPolicyDetail">
+			<column name="stepstart" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="932" author="praveena.v">
+		<addColumn tableName="WIFFinStepPolicyDetail_temp">
+			<column name="stepstart" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="933" author="praveena.v">
+		<addColumn tableName="finsteppolicydetail">
+			<column name="stepend" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="934" author="praveena.v">
+		<addColumn tableName="finsteppolicydetail_temp">
+			<column name="stepend" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="935" author="praveena.v">
+		<addColumn tableName="WIFFinStepPolicyDetail">
+			<column name="stepend" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="936" author="praveena.v">
+		<addColumn tableName="WIFFinStepPolicyDetail_temp">
+			<column name="stepend" type="datetime" >  
+			</column>
+		</addColumn>
+	</changeSet>
+			
+	<changeSet id="937" author="praveena.v">
+		<addColumn tableName="WIFFinStepPolicyDetail">
+			<column name="stepSpecifier" type="varchar(5)" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="938" author="praveena.v">
+		<addColumn tableName="WIFFinStepPolicyDetail_temp">
+			<column name="stepSpecifier" type="varchar(5)" >  
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="293" author="Swetha.s">
+	<comment>PSD#165575</comment>
+	<createTable tableName="cibil_member_details_bk">
+		<column name="ID" type="bigint" autoIncrement="true" />
+		<column name="Type" type="varchar(1)" />
+		<column name="segment_type" type="varchar(10)" >
+		<constraints nullable="false" />
+		</column>
+		<column name="member_code" type="varchar(10)" >
+		<constraints nullable="false" />
+		</column>
+		<column name="member_id" type="varchar(30)" >
+		<constraints nullable="false" />
+		</column>
+		<column name="previous_member_id" type="varchar(30)" />
+		<column name="member_short_name" type="varchar(20)" >
+		<constraints nullable="false" />
+		</column>
+		<column name="member_password" type="varchar(1000)" >
+		<constraints nullable="false" />
+		</column>
+		<column name="file_path" type="varchar(100)" >
+		<constraints nullable="false" />
+		</column>
+		<column name="file_formate" type="varchar(10)" />
+	</createTable>
+	</changeSet>
+
+	<changeSet id="293.1" author="Swetha.s">
+		<addPrimaryKey tableName="cibil_member_details_bk" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="293.2" author="Swetha.s">
+		<addUniqueConstraint tableName="cibil_member_details_bk" columnNames="ID, Type, segment_type " />
+	</changeSet>
+
+	<changeSet id="293.3" author="Swetha.s">
+		<sql>
+			<![CDATA[	
+				INSERT INTO CIBIL_MEMBER_DETAILS_BK (TYPE, SEGMENT_TYPE, MEMBER_CODE, MEMBER_ID, PREVIOUS_MEMBER_ID, MEMBER_SHORT_NAME, MEMBER_PASSWORD, FILE_PATH, FILE_FORMATE) SELECT 'R', SEGMENT_TYPE, MEMBER_CODE, MEMBER_ID, PREVIOUS_MEMBER_ID, MEMBER_SHORT_NAME, MEMBER_PASSWORD, FILE_PATH, FILE_FORMATE FROM CIBIL_MEMBER_DETAILS;
+ 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="293.4" author="Swetha.s">
+		<sql>
+			<![CDATA[
+				DROP TABLE CIBIL_MEMBER_DETAILS;
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="293.5" author="Swetha.s">
+		<renameTable newTableName="Cibil_member_details" oldTableName="Cibil_member_details_bk" />
+	</changeSet>
+	
+	<!-- ST#1627 Non LAN Receipt changes start -->
+	
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.1" author="kavya.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE,WORKFLOWID, ACTIVE) VALUES ('NLRCPT', 'Non Loan Receipts', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, '1');
+				
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NLRCPT', 0, 'rd_amount', 'Receipt Payamount', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values('NLRCPT', 0, 'ae_receiptSource', 'Receipt Source', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.2.1" author="kavya.n">
+	<createTable tableName="COLLECTION_AGENCIES">
+		<column name="ID" type="bigint" autoIncrement="true">
+			<constraints nullable="false" />
+		</column>
+		<column name="Code" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+		<column name="Description" type="varchar(50)" />
+	</createTable>
+    </changeSet>
+	
+	<changeSet id="ST#1627.2.2" author="kavya.n">
+		<addPrimaryKey tableName="COLLECTION_AGENCIES" columnNames="ID" constraintName="PK_COLLECTION_AGENCIES" />
+	</changeSet>
+
+	<changeSet id="ST#1627.3" author="kavya.n">
+		<sql>
+		   <![CDATA[
+				INSERT INTO COLLECTION_AGENCIES (ID, CODE, DESCRIPTION) values(1, 'AGN10002SME09ALL', 'fdy');
+				INSERT INTO COLLECTION_AGENCIES (ID, CODE, DESCRIPTION) values(2, 'AGN10701SME3ALL', 'test');
+				INSERT INTO COLLECTION_AGENCIES (ID, CODE, DESCRIPTION) values(3, 'AGN10004SME09ALL', 'taru');
+				INSERT INTO COLLECTION_AGENCIES (ID, CODE, DESCRIPTION) values(4, 'AGN10003SME09ALL', 'new');
+				INSERT INTO COLLECTION_AGENCIES (ID, CODE, DESCRIPTION) values(5, 'AGN00101RUR1ALL', 'taru');
+		   ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.4" author="kavya.n">
+		<comment>Receipt Mode</comment>
+		<sql>
+		    <![CDATA[
+				INSERT INTO BMTLOVFIELDCODE(FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)values ('RCTMODE','Receipt Mode','String',1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.5" author="kavya.n">
+		<comment>Receipt Mode</comment>
+		<sql>
+		   <![CDATA[
+				INSERT INTO RMTLOVFIELDDETAIL(FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTMODE', 'CASH', 'CASH', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+	            INSERT INTO RMTLOVFIELDDETAIL(FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTMODE', 'CHEQUE', 'CHEQUE', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL(FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTMODE', 'DD', 'DD',1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL(FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTMODE', 'ONLINE', 'ONLINE',1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+           ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.6" author="kavya.n">
+		<comment>SubReceipt Mode</comment>
+		<sql>
+		   <![CDATA[ 
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)values ('SUBRCTMODE', 'SubReceipt Mode', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	            
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'NEFT', 'NEFT', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'RTGS', 'RTGS', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'IMPS', 'IMPS', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'PAYTM', 'PAYTM', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'EXPERIA', 'EXPERIA', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTo RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'PAYU', 'PAYU', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'ESCROW', 'ESCROW', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'SUBRCTMODE', 'BILLDESK', 'BILLDESK', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+           ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.7" author="kavya.n">
+		<comment>Receipt Channel</comment>
+		<sql>
+		   <![CDATA[ 
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)values ('RCTCHNL', 'Receipt Channel', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	           
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTCHNL', 'MOB', 'MOB', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTCHNL', 'OTC', 'OTC',1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTCHNL', 'POR', 'PORTAL', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+		   ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.8" author="kavya.n">
+		<comment>Receipt Source</comment>
+		<sql>
+		   <![CDATA[ 
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID)values ('RCTSRC', 'Receipt Source', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'MOB', 'MOBILE', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null,null, null, null, 0, 1);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'RBL', 'RBL', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'ELC', 'ELITECARD(RUPGD)', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'IHO', 'IHO', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'INS', 'INSURANCE', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'CDM', 'CASH DEPOSITMACHINE', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+	            INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'HDFCCDM', 'HDFC Cash DepositMachine', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'ICICICDM', 'ICICI Cash DepositMachine', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'ICIC_ISURP', 'ICICIISURP', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT)values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RCTSRC', 'INDUS_ISRP','INDUSISRUP', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+           ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.10" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="EntityCode" type="Varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1627.10.2" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1627.11" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="EntityCode" type="Varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1627.11.2" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1627.10.3" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="ReceiptSource" type="Varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1627.11.3" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="ReceiptSource" type="Varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1627.10.4" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="TransactionRef" type="Varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1627.11.4" author="kavya.n">
+		<addColumn tableName="FinReceiptHeader_Temp">
+			<column name="TransactionRef" type="Varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1627.13.1_pre" author="kavya.n">
+		<modifyDataType tableName="RBFIELDDETAILS" columnName="RbFldTableName" newDataType="varchar(30)" />
+	</changeSet>
+
+	<changeSet id="ST#1627.13.2_pre" author="kavya.n">
+		<modifyDataType tableName="RBFIELDDETAILS" columnName="ModuleCode" newDataType="varchar(30)" />
+	</changeSet>
+
+	<changeSet id="ST#1627.13" author="kavya.n">
+		<sql>
+		   <![CDATA[
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE)values ('SUBHEAD', 'SUBHEAD', 'ae_receiptSource', 'Receipt Source For Non LANReceipts', 'nvarchar', 10, '0', '1', 'FinReceiptHeader', 'static, global, dbvalue', 'FinReceiptHeader');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE)values ('SUBHEAD', 'SUBHEAD', 'ae_receiptChannel', 'Receipt Channel ForReceipts', 'nvarchar', 20, '0', '1', 'FinReceiptHeader', 'static, global, dbvalue', 'FinReceiptHeader');
+			    INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE)values ('SUBHEAD', 'SUBHEAD', 'ae_receiptSourceAcType', 'Receipt Source Account Type ForReceipts', 'nvarchar', 50, '0', '1', 'Receipt_Source_Account_Types', 'static,global,dbvalue', 'Receipt_Source_Account_Types');
+		   ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.14.2" author="kavya.n">
+		<createTable tableName="Receipt_Source_Account_Types">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="Receipt_Source" type="varchar(10)" />
+			<column name="Description" type="varchar(100)" />
+			<column name="Account_Type" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1627.14.3" author="kavya.n">
+		<addNotNullConstraint tableName="Receipt_Source_Account_Types" columnName="Receipt_Source"
+			columnDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="ST#1627.14.4" author="kavya.n">
+		<addPrimaryKey tableName="Receipt_Source_Account_Types" columnNames="ID" constraintName="PK_RSAT_ID" />
+	</changeSet>
+
+	<changeSet id="ST#1627.14.5" author="kavya.n">
+		<createIndex tableName="Receipt_Source_Account_Types" indexName="IDX_RSAT_RS" unique="true">
+			<column name="Receipt_Source" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1627.16.1" author="kavya.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('IHO', 'Receipt Source IHO', 'IHOFEE');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('ELC', 'Receipt SourceELC', 'ELTCRDFEE');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('MOB', 'ReceiptSource Mobile', 'CASH');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('INS', 'Receipt SourceInsurance', 'INSFEE');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('CDM', 'Receipt Source Cash DepositMachine', 'CDMFEE');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('RBL', 'Receipt Source RBL', 'RBLFEE');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('ICICICDM', 'Receipt SourceICICI CashDeposit Machine', 'CASH');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('ICIC_ISURP', 'Receipt Source ICICIISURP', 'CASH');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('HDFCCDM', 'Receipt Source HDFC CashDeposit Machine', 'CASH');
+				INSERT INTO RECEIPT_SOURCE_ACCOUNT_TYPES (RECEIPT_SOURCE, DESCRIPTION, ACCOUNT_TYPE) Values('INDUS_ISRP', 'Receipt Source INDUSISRUP', 'CASH');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1627.17" author="kavya.n">
+		<createTable tableName="COLLECTION_MOB_AGENCY_LIMITS">
+			<column name="ID" type="bigInt" autoIncrement="true" />
+			<column name="Message_Id" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="Receipt_Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Request_Time" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)" />
+			<column name="Response_Code" type="varchar(10)" />
+			<column name="ReTry_Count" type="int" />
+			<column name="ReTry_On" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1627.17.3" author="kavya.n">
+		<addPrimaryKey tableName="COLLECTION_MOB_AGENCY_LIMITS" columnNames="ID" constraintName="PK_COL_MOB_AGENCY_LIMITS" />
+	</changeSet>
+
+	<changeSet id="ST#1627.17.4" author="kavya.n">
+		<createIndex tableName="COLLECTION_MOB_AGENCY_LIMITS" indexName="IDX_C_CMAL_MID" unique="true">
+			<column name="Message_Id" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1627.17.5" author="kavya.n">
+		<addForeignKeyConstraint constraintName="FK_RCAL_FRH_RID" referencedTableName="FinReceiptHeader"
+			baseColumnNames="Receipt_Id" baseTableName="COLLECTION_MOB_AGENCY_LIMITS" referencedColumnNames="ReceiptID" />
+	</changeSet>
+
+	<changeSet id="ST#1627.17.6.1" author="kavya.n">
+		<addForeignKeyConstraint constraintName="FK_RCAL_ILD_MID" referencedTableName="INTERFACELOGDETAILS"
+			baseColumnNames="Message_Id" baseTableName="COLLECTION_MOB_AGENCY_LIMITS" referencedColumnNames="SeqId" />
+	</changeSet>
+	
+	<changeSet id="ST#1627.17.8.1" author="kavya.n">
+		<modifyDataType tableName="COLLECTION_MOB_AGENCY_LIMITS" columnName="Response_Code" newDataType="clob" />
+	</changeSet>
+
+	<changeSet id="ST#1627.24" author="kavya.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NonLanReceiptEnuiry', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'NON_LAN_RECEIPT_ENQUIRY', 'WF Enquiry Group', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+	
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT_ENQUIRY'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_NonLanReceiptEnuiry'), 1, 0, 1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0);
+	
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT_ENQUIRY'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+	 
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT_ENQUIRY'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1627.24.2" author="kavya.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NonLanReceipts_InitMaker', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NonLanReceipts_DepositMaker', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+	            
+	            INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NonLanReceipts_DepositApprover', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NonLanReceipts_RealizationMaker', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NonLanReceipts_RealizationApprover', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'NON_LAN_RECEIPT', 'NON_LAN_RECEIPT', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_NonLanReceipts_InitMaker'), 1, 0, 1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_NonLanReceipts_DepositMaker'), 1, 0, 1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_NonLanReceipts_DepositApprover'), 1, 0, 1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_NonLanReceipts_RealizationMaker'), 1, 0, 1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_NonLanReceipts_RealizationApprover'), 1, 0, 1000, CURRENT_TIMESTAMP,'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'NON_LAN_RECEIPT'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1627.27.1_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'nonlanfinreceiptdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.27.1" author="kavya.n">
+		<createView viewName="NonLanFinReceiptDetail_View" replaceIfExists="true">
+		    <![CDATA[
+				 SELECT T1.REFERENCE, 
+                    T1.RECEIPTID, 
+                    T1.RECEIPTDATE,
+                    T1.RECEIPTAMOUNT,
+                    T1.RECEIPTSOURCE, 
+                    T1.DEPOSITDATE,
+					T1.BANKCODE,  
+					T1.RECEIPTPURPOSE, 
+					T1.RECEIPTMODE, 
+					T1.BOUNCEDATE CANCELDATE,
+					T1.VALUEDATE,
+					T2.PAYAGAINSTID,
+					T1.BOUNCEDATE, 
+					T1.REALIZATIONDATE, 
+					T1.CANCELREASON,
+					T1.RECAGAINST,
+					T1.EXTREFERENCE,
+        			T6.PARTNERBANKCODE,
+        			T1.TRANSACTIONREF, 
+        			T2.FUNDINGAC,
+        			T1.VERSION , 
+        			T1.LASTMNTBY, 
+        			T1.LASTMNTON,
+        			T1.RECORDSTATUS, 
+        			T1.ROLECODE, 
+        			T1.NEXTROLECODE, 
+        			T1.TASKID, 
+        			T1.NEXTTASKID, 
+        			T1.RECORDTYPE, 
+        			T1.WORKFLOWID, 
+        			T5.ROLEDESC LOVDESCREQUESTSTAGE,
+        			T2.PAYMENTTYPE,
+        			T6.ACTYPE PARTNERBANKACTYPE,
+        			T6.ACCOUNTNO PARTNERBANKAC,
+        			T7.BANKNAME BANKCODEDESC,
+        			T6.PARTNERBANKNAME FUNDINGACDESC,	
+        			T6.PARTNERBANKCODE FUNDINGACCODE,
+        			T2.LOGKEY,
+        			T2.PAYORDER, 
+        			T2.STATUS,
+        			T1.RECEIVEDDATE,
+        			T2.CHEQUEACNO,
+        			T2.PAYMENTREF,
+        			T2.DEPOSITNO,
+        			T2.FAVOURNAME,
+        			T2.FAVOURNUMBER,
+        			T2.AMOUNT,
+        			T2.PAYMENTTO,
+        			T2.RECEIPTTYPE,
+        			T2.RECEIPTSEQID
+				FROM FINRECEIPTHEADER_TEMP T1
+				LEFT JOIN FINRECEIPTDETAIL_TEMP T2 ON T1.RECEIPTID = T2.RECEIPTID  					
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				LEFT JOIN PARTNERBANKS T6 ON T6.PARTNERBANKID = T2.FUNDINGAC
+				LEFT JOIN BMTBANKDETAIL T7 ON T2.BANKCODE = T7.BANKCODE
+				WHERE T1.RECEIPTTYPE = 'N'
+				UNION ALL 
+				 SELECT T1.REFERENCE, 
+                    T1.RECEIPTID, 
+                    T1.RECEIPTDATE,
+                    T1.RECEIPTAMOUNT,
+                    T1.RECEIPTSOURCE, 
+                    T1.DEPOSITDATE,
+					T1.BANKCODE,  
+					T1.RECEIPTPURPOSE, 
+					T1.RECEIPTMODE, 
+					T1.BOUNCEDATE CANCELDATE,
+					T1.VALUEDATE,
+					T2.PAYAGAINSTID,
+					T1.BOUNCEDATE, 
+					T1.REALIZATIONDATE, 
+					T1.CANCELREASON,
+					T1.RECAGAINST,
+					T1.EXTREFERENCE,
+        			T6.PARTNERBANKCODE,
+        			T1.TRANSACTIONREF, 
+        			T2.FUNDINGAC,
+        			T1.VERSION , 
+        			T1.LASTMNTBY, 
+        			T1.LASTMNTON,
+        			T1.RECORDSTATUS, 
+        			T1.ROLECODE, 
+        			T1.NEXTROLECODE, 
+        			T1.TASKID, 
+        			T1.NEXTTASKID, 
+        			T1.RECORDTYPE, 
+        			T1.WORKFLOWID, 
+        			T5.ROLEDESC LOVDESCREQUESTSTAGE,
+        			T2.PAYMENTTYPE,
+        			T6.ACTYPE PARTNERBANKACTYPE,
+        			T6.ACCOUNTNO PARTNERBANKAC,
+        			T7.BANKNAME BANKCODEDESC,
+        			T6.PARTNERBANKNAME FUNDINGACDESC,	
+        			T6.PARTNERBANKCODE FUNDINGACCODE,
+        			T2.LOGKEY,
+        			T2.PAYORDER, 
+        			T2.STATUS,
+        			T1.RECEIVEDDATE,
+        			T2.CHEQUEACNO,
+        			T2.PAYMENTREF,
+        			T2.DEPOSITNO,
+        			T2.FAVOURNAME,
+        			T2.FAVOURNUMBER,
+        			T2.AMOUNT,
+        			T2.PAYMENTTO,
+        			T2.RECEIPTTYPE,
+        			T2.RECEIPTSEQID
+				FROM FINRECEIPTHEADER T1
+				LEFT JOIN FINRECEIPTDETAIL T2 ON T1.RECEIPTID = T2.RECEIPTID   					
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				LEFT JOIN PARTNERBANKS T6 ON T6.PARTNERBANKID = T2.FUNDINGAC
+				LEFT JOIN BMTBANKDETAIL T7 ON T2.BANKCODE = T7.BANKCODE 
+				WHERE T1.RECEIPTTYPE = 'N' AND NOT EXISTS(SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
+			]]>
+    	</createView>
+	</changeSet>
+
+	<changeSet id="ST#1627.27.1_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'nonlanfinreceiptdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.28.1_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'nonlanfinreceiptdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.28.1" author="kavya.n">
+		<createView viewName="NonLanFinReceiptDetail_AView" replaceIfExists="true">
+			<![CDATA[
+                SELECT T1.REFERENCE, 
+                    T1.RECEIPTID, 
+                    T1.RECEIPTDATE,
+                    T1.RECEIPTAMOUNT,
+                    T1.RECEIPTSOURCE, 
+                    T1.DEPOSITDATE,
+					T1.BANKCODE,  
+					T1.RECEIPTPURPOSE, 
+					T1.RECEIPTMODE, 
+					T1.BOUNCEDATE CANCELDATE,
+					T1.VALUEDATE,
+					T2.PAYAGAINSTID,
+					T1.BOUNCEDATE, 
+					T1.REALIZATIONDATE, 
+					T1.CANCELREASON,
+					T1.RECAGAINST,
+					T1.EXTREFERENCE,
+        			T6.PARTNERBANKCODE,
+        			T1.TRANSACTIONREF, 
+        			T2.FUNDINGAC,
+        			T1.VERSION , 
+        			T1.LASTMNTBY, 
+        			T1.LASTMNTON,
+        			T1.RECORDSTATUS, 
+        			T1.ROLECODE, 
+        			T1.NEXTROLECODE, 
+        			T1.TASKID, 
+        			T1.NEXTTASKID, 
+        			T1.RECORDTYPE, 
+        			T1.WORKFLOWID, 
+        			T5.ROLEDESC LOVDESCREQUESTSTAGE,
+        			T2.PAYMENTTYPE,
+        			T6.ACTYPE PARTNERBANKACTYPE,
+        			T6.ACCOUNTNO PARTNERBANKAC,
+        			T7.BANKNAME BANKCODEDESC,
+        			T6.PARTNERBANKNAME FUNDINGACDESC,	
+        			T6.PARTNERBANKCODE FUNDINGACCODE,
+        			T2.LOGKEY,
+        			T2.PAYORDER, 
+        			T2.STATUS,
+        			T1.RECEIVEDDATE,
+        			T2.CHEQUEACNO,
+        			T2.PAYMENTREF,
+        			T2.DEPOSITNO,
+        			T2.FAVOURNAME,
+        			T2.FAVOURNUMBER,
+        			T2.AMOUNT,
+        			T2.PAYMENTTO,
+        			T2.RECEIPTTYPE,
+        			T2.RECEIPTSEQID
+			   FROM FINRECEIPTHEADER T1
+    		   LEFT JOIN FINRECEIPTDETAIL T2 ON T1.RECEIPTID = T2.RECEIPTID   					
+    		   LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+   			   LEFT JOIN PARTNERBANKS T6 ON T6.PARTNERBANKID = T2.FUNDINGAC
+    		   LEFT JOIN BMTBANKDETAIL T7 ON T2.BANKCODE = T7.BANKCODE 
+			   WHERE T1.RECEIPTTYPE = 'N'
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1627.28.1_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'nonlanfinreceiptdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1627.29_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'partnerbankmodes_rview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1627.29" author="kavya.n">
+		<createView viewName="PARTNERBANKMODES_RVIEW" replaceIfExists="true">
+	        <![CDATA[
+	            SELECT T.PARTNERBANKID, 
+	                 T.PARTNERBANKCODE, 
+	                 T.PARTNERBANKNAME, 
+	                 T.BANKCODE, 
+	                 T.BANKBRANCHCODE,
+	                 T.BRANCHMICRCODE, 
+	                 T.BRANCHIFSCCODE, 
+	                 T.BRANCHCITY, 
+	                 T.UTILITYCODE, 
+	                 T.ACCOUNTNO, 
+	                 T.ACTYPE, 
+	                 T.ALWFILEDOWNLOAD, 
+	                 T.INFAVOURLENGTH, 
+	                 T.ACTIVE, 
+	                 T.ALWDISB, 
+	                 T.ALWPAYMENT, 
+	                 T.ALWRECEIPT, 
+	                 T.HOSTGLCODE, 
+	                 T.PROFITCENTERID, 
+	                 T.COSTCENTERID, 
+	                 T.FILENAME, 
+	                 T.ENTITY, 
+	                 T1.PAYMENTMODE, 
+	                 T1.PURPOSE
+		        FROM PARTNERBANKS T  
+		        LEFT JOIN PARTNERBANKMODES T1 ON T.PARTNERBANKID = T1.PARTNERBANKID
+		        WHERE Purpose='R';
+		    ]]>
+	    </createView>
+	</changeSet>
+	
+	<changeSet id="ST#1627.29_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'partnerbankmodes_rview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1627.30" author="kavya.n">
+		<addColumn tableName="MultiReceiptApproval">
+			<column name="CANCELREMARKS" type="Varchar(500)" />
+		</addColumn>
+	</changeSet>
+	
+	
+	<!-- ST#1627 Non LAN Receipt changes end -->
+	
 	<!-- Receipt Level views handle in single place starts -->
 
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">

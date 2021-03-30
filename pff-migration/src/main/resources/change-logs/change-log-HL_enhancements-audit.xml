@@ -3103,4 +3103,172 @@
 		<modifyDataType tableName="adtfinocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
 	</changeSet>	
 	
+	<changeSet id="243" author="Lakshmi.N">
+		<addColumn tableName="adtfinblacklistdetail">
+			<column name="sourcecif" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="244" author="naga.g">
+		<renameColumn tableName="AdtOCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
+	</changeSet>
+
+	<changeSet id="245" author="naga.g">
+		<dropColumn columnName="splitapplicable" tableName="AdtOCRHEADER " />
+	</changeSet>
+
+
+	<changeSet id="246" author="naga.g">
+		<renameColumn tableName="AdtFINOCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
+	</changeSet>
+
+	<changeSet id="247" author="naga.g">
+		<dropColumn columnName="splitapplicable" tableName="AdtFINOCRHEADER " />
+	</changeSet>	
+
+	<changeSet id="248" author="naga.g">
+	<addColumn tableName="AdtFINOCRHEADER">
+		<column name="totaldemand" type="bigint"  />
+	</addColumn>
+	</changeSet>
+		
+	<changeSet id="249" author="naga.g">
+		<addColumn tableName="ADTFINOCRCAPTURE">
+		<column name="receiptdate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="250" author="naga.g">
+		<addColumn tableName="ADTFINOCRCAPTURE">
+			<column name="filename" type="varchar(50)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="251" author="Lakshmi.n">
+		<comment>registrationNumber length changed to 50 instead of 20</comment>
+		<modifyDataType tableName="adtbuilderprojcet" columnName="registrationNumber" newDataType="varchar(50)" />
+	</changeSet>
+	
+	<!-- 	Merged from SS_HL id = 326 to 329 -->
+	<changeSet id="326" author="venkates.ch">
+		<modifyDataType tableName="adtocrdetails" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="326.1" author="venkates.ch">
+		<modifyDataType tableName="adtocrdetails" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+		<changeSet id="327" author="venkates.ch">
+		<modifyDataType tableName="adtocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="328" author="venkates.ch">
+		<modifyDataType tableName="adtfinocrdetails" columnName="customercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="328.1" author="venkates.ch">
+		<modifyDataType tableName="adtfinocrdetails" columnName="financercontribution" newDataType="decimal(5,2)" />
+	</changeSet>
+	
+	<changeSet id="329" author="venkates.ch">
+		<modifyDataType tableName="adtfinocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
+	</changeSet>	
+	
+	<changeSet id="330" author="Lakshmi.N">
+		<comment>PSD#163130</comment>
+		<addColumn tableName="ADTCOVENANTS">
+			<column name="remarks1" type="blob" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="331" author="lakshmi.N">
+		<modifyDataType tableName="adtsanctionconditions" columnName="sanctioncondition" newDataType="varchar(600)" />
+	</changeSet>
+	
+	 <changeSet id="330" author="praveena.v">
+		<addColumn tableName="adtrmtfinancetypes">
+			<column name="calcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="331" author="praveena.v">
+			<addColumn tableName="adtrmtfinancetypes">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="332" author="praveena.v">
+		<addColumn tableName="adtfinancemain">
+			<column name="calcOfSteps" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="333" author="praveena.v">
+		<addColumn tableName="adtfinancemain">
+			<column name="StepsAppliedFor" type="varchar(8)" />
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="334" author="praveena.v">
+		<createTable tableName="adtfinsteppolicydetail">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="finreference" type="varchar(20)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="stepno" type="int" />
+			<column name="tenorsplitperc" type="decimal(5,2)" />
+			<column name="installments" type="int" />
+			<column name="ratemargin" type="decimal(13,9)" />
+			<column name="emisplitperc" type="decimal(5,2)" />
+			<column name="steppedemi" type="decimal(18,0)" />
+			<column name="stepspecifier" type="varchar(5)" />
+			<column name="stepstart" type="datetime" />
+			<column name="stepend" type="datetime" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<!-- ST#1627 Non LAN Receipt changes start -->
+	
+	<changeSet id="ST#1627.1" author="kavya.n">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="EntityCode" type="Varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1627.2" author="kavya.n">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1627.3" author="kavya.n">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="ReceiptSource" type="Varchar(50)" />
+			<column name="TransactionRef" type="Varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<!-- ST#1627 Non LAN Receipt changes end -->
+	
 </databaseChangeLog>
