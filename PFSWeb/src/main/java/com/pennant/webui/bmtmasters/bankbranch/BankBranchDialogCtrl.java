@@ -215,6 +215,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.city.setMaxlength(8);
 		this.mICR.setMaxlength(20);
 		this.iFSC.setMaxlength(20);
+		this.addOfBranch.setMaxlength(100);
 
 		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);

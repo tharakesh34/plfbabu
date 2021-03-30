@@ -560,6 +560,7 @@ public class PennantJavaUtil {
 	// private static String WF_DEPOSITDETAILS = "DEPOSITDETAILS";
 	// private static String WF_HOLDDISBURSEMENT = "HOLDDISBURSEMENT";
 	private static String WF_EXPENSEUPLOAD = "EXPENSEUPLOAD";
+	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -885,6 +886,11 @@ public class PennantJavaUtil {
 						new String[] { "PinCode", "AreaName", "City", "PCCityName", "PCProvince",
 								"LovDescPCProvinceName", "Gstin", "LovDescPCCountryName" },
 						new Object[][] { { "Active", "0", 1 } }, 700));
+
+		ModuleUtil.register("ReceiptPartnerBankModes",
+				new ModuleMapping("PartnerBankModes", PartnerBankModes.class,
+						new String[] { "PartnerBankModes_RView", "PartnerBankModes_RView" }, masterWF,
+						new String[] { "PartnerBankId", "PartnerBankCode", "PartnerBankName" }, null, 300));
 
 		ModuleUtil.register("PartnerBankModes",
 				new ModuleMapping("PartnerBankModes", PartnerBankModes.class,
@@ -3256,6 +3262,12 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("ReleaseLock", new ModuleMapping("ReleaseLock", FinanceMain.class,
 				new String[] { "LockedFinances_View" }, null, new String[] { "" }, null, 350));
+		
+		//NonLanReceipt
+				ModuleUtil.register("NonLanReceipt",
+						new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class,
+								new String[] { "FinReceiptHeader", "NonLanFinReceiptHeader_View" }, "RECEIPTS_WORKFLOW",
+								new String[] { "ReceiptID", "ExtReference" }, null, 300));
 
 		// VASRebooking
 		ModuleUtil.register("VASRebooking",
@@ -3351,10 +3363,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinOption", FinOption.class, new String[] { "FIN_OPTIONS", "FIN_OPTIONS_AView" },
 						masterWF, new String[] { "Id", "FinOption" }, null, 600));
 
-		ModuleUtil.register("CollectionAgencies",
-				new ModuleMapping("CollectionAgencies", BusinessVertical.class,
-						new String[] { "CollectionAgencies", "CollectionAgencies" }, BUSINESS_VERTICAL,
-						new String[] { "id", "code" }, null, 600));
+		ModuleUtil.register("COLLECTION_AGENCIES",
+				new ModuleMapping("COLLECTION_AGENCIES", BusinessVertical.class,
+						new String[] { "COLLECTION_AGENCIES", "COLLECTION_AGENCIES" }, BUSINESS_VERTICAL,
+						new String[] { "id", "code", "Description" }, null, 600));
 
 		ModuleUtil.register("Excess",
 				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
@@ -3735,7 +3747,7 @@ public class PennantJavaUtil {
 		// Fin OCR Header Details
 		ModuleUtil.register("FinOCRHeader",
 				new ModuleMapping("FinOCRHeader", FinOCRHeader.class,
-						new String[] { "FinOCRHeader", "FinOCRHeader_AView" }, masterWF,
+						new String[] { "FinOCRHeader", "FinOCRHeader_AView" }, WF_OCRMAINTENANCE,
 						new String[] { "OcrID", "OcrDescription" }, null, 300));
 		// Fin OCR Details
 		ModuleUtil.register("FinOCRDetail",

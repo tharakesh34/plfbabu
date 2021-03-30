@@ -105,4 +105,7 @@ public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 
 	boolean isPartnerBankCodeExistsByEntity(String entityCode, String partnerbankCode, String type);
 
+	//### 17-12-2020, ST#1627
+	List<PartnerBankModes> getPartnerBankModes(long id, String purpose);
+
 }

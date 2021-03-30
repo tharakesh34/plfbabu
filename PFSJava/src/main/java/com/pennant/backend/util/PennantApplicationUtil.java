@@ -39,6 +39,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
@@ -1004,5 +1005,24 @@ public class PennantApplicationUtil {
 		}
 
 		return dataMap;
+	}
+
+	public static List<String> getActiveFieldCodeList(String fieldCode) {
+		List<String> fieldCodeList = new ArrayList<String>();
+
+		Search search = new Search(LovFieldDetail.class);
+		search.addSort("FieldCodeValue", false);
+		search.addFilter(new Filter("FieldCode", fieldCode, Filter.OP_EQUAL));
+		search.addFilter(new Filter("IsActive", true, Filter.OP_EQUAL));
+		search.addField("FieldCodeValue");
+		search.addField("ValueDesc");
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		List<LovFieldDetail> appList = searchProcessor.getResults(search);
+		for (int i = 0; i < appList.size(); i++) {
+			String codeValue = String.valueOf(appList.get(i).getFieldCodeValue());
+			fieldCodeList.add(codeValue);
+		}
+		return fieldCodeList;
 	}
 }

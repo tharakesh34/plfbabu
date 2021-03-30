@@ -847,4 +847,30 @@
 	<!-- soap container -->
 	<jaxws:endpoint id="disbursementSOAPService" implementor="#wsDisbursementService" address="/disbursementSoap"
 		publish="false" />
+		
+	<!-- rest container -->
+	<bean id="wsVerificationsService" class="com.pennanttech.service.impl.VerificationsWebServiceImpl" />
+
+	<jaxrs:server id="verificationsRESTService" address="/verificationsRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsVerificationsService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+	
+	
 </beans>

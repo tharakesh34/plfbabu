@@ -66,6 +66,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6420966711989511378L;
 
 	private Long custID = Long.MIN_VALUE;
+	@XmlElement
 	private String lovDescCustShrtName;
 	@XmlElement(name = "docFormat")
 	private String custDocType;
@@ -103,6 +104,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private CustomerDocument befImage;
 	private LoggedInUser userDetails;
 	private String lovDescCustRecordType;
+	@XmlElement
 	private String lovDescCustCIF;
 	private String lovDescCustDocVerifiedBy;
 	private boolean lovDescdocExpDateIsMand = false;
@@ -121,6 +123,10 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String offerId;
 	private String applicationNo;
 	private String finReference;
+	private boolean lovDescNewImage = false;
+	//Specific to Verification API LV
+	@XmlElement
+	private int docTypeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -161,6 +167,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("offerId");
 		excludeFields.add("applicationNo");
 		excludeFields.add("finReference");
+		excludeFields.add("docTypeId");
 		return excludeFields;
 	}
 
@@ -516,6 +523,22 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public boolean isLovDescNewImage() {
+		return lovDescNewImage;
+	}
+
+	public void setLovDescNewImage(boolean lovDescNewImage) {
+		this.lovDescNewImage = lovDescNewImage;
+	}
+
+	public int getDocTypeId() {
+		return docTypeId;
+	}
+
+	public void setDocTypeId(int docTypeId) {
+		this.docTypeId = docTypeId;
 	}
 
 }

@@ -31,6 +31,14 @@ public enum RCUDocStatus {
 		return value;
 	}
 
+	public static RCUDocStatus getType(Integer key) {
+		for (RCUDocStatus status : values()) {
+			if (status.getKey().equals(key)) {
+				return status;
+			}
+		}
+		return null;
+	}
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();
 		for (RCUDocStatus status : values()) {

@@ -26,10 +26,14 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.Filedownload;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -45,8 +49,10 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.external.dms.model.ExternalDocument;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -71,6 +77,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private Object financeMainDialogCtrl;
 	private List<ValueLabel> custCifs = new ArrayList<ValueLabel>();
 	private List<ValueLabel> collateralsList = new ArrayList<ValueLabel>();
+	private DocumentDetailsDAO documentDetailsDAO;
+	private CollateralSetupDAO collateralSetupDAO;
 
 	ArrayList<ValueLabel> documentTypes = PennantAppUtil.getDocumentTypes();
 	Tab tab = null;
@@ -84,7 +92,6 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		super.pageRightName = "DMSDialog";
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onCreate$window_DocManagementControlDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -163,7 +170,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (financeMainDialogCtrl != null) {
 				if (financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
 					String applicationNo = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo();
-					extDocument.setLeadId(applicationNo);
+					String leadId = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId();
+					extDocument.setLeadId(leadId);
 					extDocument.setApplicationNumber(applicationNo);
 					extDocument.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
 
@@ -216,7 +224,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					listcell.appendChild(custCif);
 					listitem.appendChild(listcell);
 
-				} else if (StringUtils.equalsIgnoreCase(documentDetail.getCategoryOfDocument(), "Collateral")) {
+				} else if (StringUtils.contains(documentDetail.getCategoryOfDocument(), "Collateral")) {
 					listcell = new Listcell();
 					Combobox coll = new Combobox();
 					coll.setId(String.valueOf(documentDetail.getDocRefId()) + "_coll");
@@ -248,7 +256,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					listitem.appendChild(listcell);
 					listcell.setVisible(false);
 
-				} else if (StringUtils.equalsIgnoreCase(documentDetail.getCategoryOfDocument(), "Collateral")) {
+				} else if (StringUtils.contains(documentDetail.getCategoryOfDocument(), "Collateral")) {
 					listcell = new Listcell();
 					ExtendedCombobox docCategory = new ExtendedCombobox();
 					docCategory.setId(String.valueOf(documentDetail.getDocRefId()) + "_CatOfDoc");
@@ -285,29 +293,40 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	public void onDocViewButtonClicked(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
-		String viewURL = "";
 
-		ExternalDocument externalDocument = (ExternalDocument) event.getData();
+		ExternalDocument documentDetail = (ExternalDocument) event.getData();
+		DocumentDetails docDetail = new DocumentDetails();
 
-		//TODO to view the documents.
-		String application_Number = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo();
-		String doc_type = StringUtils.trimToEmpty(externalDocument.getDocumentType());
-
-		String docRefId = StringUtils.trimToEmpty(externalDocument.getDocRefId());
-
-		if (StringUtils.isNotEmpty(App.getProperty("exteranal.interface.dms.leadId.based"))) {
-			String baseUrl = App.getProperty("exteranal.interface.base.url");
-			String endPoint = App.getProperty("exteranal.interface.dms.viewdoc.endpoint");
-			viewURL = baseUrl + endPoint + "?documentid=" + docRefId;
-
+		DMSQueue dmsQueue = dmsService.getImageByUri(documentDetail.getDocRefId());
+		documentDetail.setDocImage(dmsQueue.getDocImage());
+		documentDetail.setDocExtn(dmsQueue.getDocExt());
+		if (dmsQueue.getDocImage() != null && StringUtils.isNotBlank(dmsQueue.getDocImage().toString())) {
+			if (StringUtils.equalsIgnoreCase(documentDetail.getDocExtn(), PennantConstants.DOC_TYPE_WORD)
+					|| StringUtils.equalsIgnoreCase(documentDetail.getDocExtn(), PennantConstants.DOC_TYPE_MSG)
+					|| StringUtils.equalsIgnoreCase(documentDetail.getDocExtn(), PennantConstants.DOC_TYPE_DOC)
+					|| StringUtils.equalsIgnoreCase(documentDetail.getDocExtn(), PennantConstants.DOC_TYPE_DOCX)
+					|| StringUtils.equalsIgnoreCase(documentDetail.getDocExtn(), PennantConstants.DOC_TYPE_EXCEL)) {
+				Filedownload.save(documentDetail.getDocImage(), StringUtils.upperCase(documentDetail.getDocExtn()),
+						documentDetail.getDocName());
+			} else {
+				try {
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					docDetail.setDoctype(documentDetail.getDocExtn());
+					if (StringUtils.equalsIgnoreCase(docDetail.getDoctype(), "JPEG")
+							|| StringUtils.equalsIgnoreCase(docDetail.getDoctype(), PennantConstants.DOC_TYPE_JPG)) {
+						docDetail.setDoctype(PennantConstants.DOC_TYPE_IMAGE);
+					}
+					docDetail.setDoctype(docDetail.getDoctype().toUpperCase());
+					docDetail.setDocImage(dmsQueue.getDocImage());
+					map.put("FinDocumentDetail", docDetail);
+					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
+				} catch (Exception e) {
+					logger.debug(e);
+				}
+			}
 		} else {
-			viewURL = App.getProperty("exteranal.interface.ghf.docview.url") + "&DocId="
-					+ externalDocument.getDocRefId() + "&DC.Application_Number=" + application_Number + "&DC.LAN_No="
-					+ StringUtils.trimToEmpty(externalDocument.getFinReference()) + "&DC.Lead_ID="
-					+ StringUtils.trimToEmpty(externalDocument.getLeadId()) + "&DC.Document_Type=" + doc_type;
+			MessageUtil.showError("Document Details not Found.");
 		}
-
-		Executions.getCurrent().sendRedirect(viewURL, "_new");
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -497,7 +516,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug(Literal.ENTERING);
 
 		List<DocumentDetails> newFinDocumentdetails = new ArrayList<>();
-		Map<String, DocumentDetails> exteranlDocMap = new HashMap<>();
+		Map<String, DocumentDetails> externalDocMap = new HashMap<>();
 		FinanceDetail financeDetail = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getFinanceDetail();
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
 		String applicationNo = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo();
@@ -507,16 +526,17 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			for (DocumentDetails documentDetail : documentDetails) {
 				if (StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), FinanceConstants.MODULE_NAME)) {
 					if (StringUtils.isNotBlank(documentDetail.getDocUri())) {
-						if (StringUtils.equals("DM", documentDetail.getDocCategory())
+						if ((StringUtils.equals("DM", documentDetail.getDocCategory())
 								|| StringUtils.equals("CAM", documentDetail.getDocCategory())
 								|| StringUtils.equals("WL", documentDetail.getDocCategory())
 								|| StringUtils.equals("SLP", documentDetail.getDocCategory())
-								|| StringUtils.equals("SL", documentDetail.getDocCategory())) {
+								|| StringUtils.equals("SL", documentDetail.getDocCategory()))
+								&& !financeDetail.isActionSave()) {
 							String uri = documentDetail.getDocUri();
 							documentDetail.setDocUri(null);
-							exteranlDocMap.put(uri, documentDetail);
+							externalDocMap.put(uri, documentDetail);
 						} else {
-							exteranlDocMap.put(documentDetail.getDocUri(), documentDetail);
+							externalDocMap.put(documentDetail.getDocUri(), documentDetail);
 						}
 					} else {
 						documentDetail.setApplicationNo(StringUtils.trimToEmpty(applicationNo));
@@ -532,8 +552,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 				ExternalDocument extDoc = (ExternalDocument) listitem.getAttribute("document");
 
-				if (!StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "Customer")
-						&& !StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "Collateral")
+				if (!StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "FINANCE")
 						&& !(StringUtils.equals("DM", extDoc.getDocumentType())
 								|| StringUtils.equals("CAM", extDoc.getDocumentType())
 								|| StringUtils.equals("WL", extDoc.getDocumentType())
@@ -558,20 +577,52 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					docDetail.setVersion(1);
 					docDetail.setReferenceId(finReference);
 
-					if (exteranlDocMap.containsKey(extDoc.getDocRefId())) {
+					if (externalDocMap.containsKey(extDoc.getDocRefId())) {
 						docDetail.setApplicationNo(StringUtils.trimToEmpty(applicationNo));
 						docDetail.setLeadId(StringUtils.trimToEmpty(leadId));
 						docDetail.setNewRecord(false);
-						docDetail.setDocId(exteranlDocMap.get(extDoc.getDocRefId()).getDocId());
+						docDetail.setDocId(externalDocMap.get(extDoc.getDocRefId()).getDocId());
 						docDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						docDetail.setRecordStatus(exteranlDocMap.get(extDoc.getDocRefId()).getRecordStatus());
-						exteranlDocMap.put(docDetail.getDocUri(), docDetail);
+						docDetail.setRecordStatus(externalDocMap.get(extDoc.getDocRefId()).getRecordStatus());
+						DocumentDetails doc = externalDocMap.get(extDoc.getDocRefId());
+						if (!doc.isLovDescNewImage()
+								&& NumberUtils.toLong(doc.getDocUri()) < NumberUtils.toLong(extDoc.getDocRefId())) {
+							externalDocMap.put(docDetail.getDocUri(), docDetail);
+						}
 					} else {
-						docDetail.setApplicationNo(StringUtils.trimToEmpty(applicationNo));
-						docDetail.setLeadId(StringUtils.trimToEmpty(leadId));
-						docDetail.setNewRecord(true);
-						docDetail.setRecordType(PennantConstants.RCD_ADD);
-						newFinDocumentdetails.add(docDetail);
+						boolean rcdFound = false;
+						if (CollectionUtils.isNotEmpty(newFinDocumentdetails)) {
+							for (DocumentDetails doc : newFinDocumentdetails) {
+								if (StringUtils.equals(StringUtils.trimToEmpty(doc.getDocCategory()),
+										extDoc.getDocumentType())
+										&& !StringUtils.equals(StringUtils.trimToEmpty(doc.getRecordType()),
+												PennantConstants.RECORD_TYPE_DEL)
+										&& !StringUtils.equals(StringUtils.trimToEmpty(doc.getRecordType()),
+												PennantConstants.RECORD_TYPE_CAN)) {
+									rcdFound = true;
+									if (!doc.isLovDescNewImage() && NumberUtils.toLong(doc.getDocUri()) < NumberUtils
+											.toLong(extDoc.getDocRefId())) {
+										doc.setDocUri(extDoc.getDocRefId());
+										doc.setDoctype(extDoc.getDocExtn().toUpperCase());
+										doc.setDocName(extDoc.getDocName());
+										doc.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+										doc.setNewRecord(false);
+										doc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										doc.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+									}
+									break;
+								}
+							}
+						}
+
+						if (!rcdFound) {
+							docDetail.setApplicationNo(StringUtils.trimToEmpty(applicationNo));
+							docDetail.setLeadId(StringUtils.trimToEmpty(leadId));
+							docDetail.setRecordType(PennantConstants.RCD_ADD);
+							docDetail.setDocCategory(extDoc.getDocumentType());
+							docDetail.setNewRecord(true);
+							newFinDocumentdetails.add(docDetail);
+						}
 					}
 					//Calling metaData update API to update that doc is received  - Piramal implementation 
 					if (StringUtils.isNotEmpty(App.getProperty("exteranal.interface.dms.leadId.based"))) {
@@ -583,7 +634,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 		}
 
-		newFinDocumentdetails.addAll(exteranlDocMap.values());
+		newFinDocumentdetails.addAll(externalDocMap.values());
 
 		logger.debug(Literal.LEAVING);
 		return newFinDocumentdetails;
@@ -608,34 +659,23 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug(Literal.ENTERING);
 
 		List<CustomerDocument> newCustDocumentdetails = new ArrayList<>();
+		Map<String, CustomerDocument> exteranlDocMap = new HashMap<>();
 		List<WrongValueException> wve = new ArrayList<>();
 
 		if (CollectionUtils.isNotEmpty(custDocList)) {
 			for (CustomerDocument custDoc : custDocList) {
-				if (mappedUris.containsKey(custDoc.getDocUri())) {
-					String applicationNo = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo();
-					String leadId = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId();
-					custDoc.setApplicationNo(applicationNo);
-					custDoc.setOfferId(leadId);
-					custDoc.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					custDoc.setNewRecord(false);
-					custDoc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					custDoc.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-					newCustDocumentdetails.add(custDoc);
-				} else {
-					newCustDocumentdetails.add(custDoc);
-				}
-			}
+				String applicationNo = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo();
+				String leadId = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId();
+				custDoc.setApplicationNo(applicationNo);
+				custDoc.setOfferId(leadId);
+				newCustDocumentdetails.add(custDoc);
 		}
+	}
 
 		if (this.listBoxDMSDocuments.getItemCount() > 0) {
 			for (Listitem listitem : listBoxDMSDocuments.getItems()) {
 
 				ExternalDocument extDoc = (ExternalDocument) listitem.getAttribute("document");
-
-				if (mappedUris.containsKey(extDoc.getDocRefId())) {
-					continue;
-				}
 
 				if (StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "Customer")) {
 
@@ -676,20 +716,33 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						docDetail.setCustID(custId);
 						docDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						docDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-
+						
+						boolean rcdFound = false;
 						if (CollectionUtils.isNotEmpty(newCustDocumentdetails)) {
 							for (CustomerDocument custDoc : newCustDocumentdetails) {
 								if (StringUtils.equals(StringUtils.trimToEmpty(custDoc.getCustDocCategory()),
-										extDoc.getDocumentType())) {
-									custDoc.setDocUri(extDoc.getDocRefId());
-									custDoc.setCustDocType(extDoc.getDocExtn().toUpperCase());
-									mappedUris.put(extDoc.getDocRefId(), custDoc);
+										extDoc.getDocumentType())
+										&& !StringUtils.equals(StringUtils.trimToEmpty(custDoc.getRecordType()),
+												PennantConstants.RECORD_TYPE_DEL)
+										&& !StringUtils.equals(StringUtils.trimToEmpty(custDoc.getRecordType()),
+												PennantConstants.RECORD_TYPE_CAN)) {
+									rcdFound = true;
+									if (!custDoc.isLovDescNewImage() && NumberUtils
+											.toLong(custDoc.getDocUri()) < NumberUtils.toLong(extDoc.getDocRefId())) {
+										custDoc.setDocUri(extDoc.getDocRefId());
+										custDoc.setCustDocType(extDoc.getDocExtn().toUpperCase());
+										custDoc.setCustDocName(extDoc.getDocName());
+										custDoc.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+										custDoc.setNewRecord(false);
+										custDoc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										custDoc.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+									}
 									break;
 								}
 							}
 						}
 
-						if (!mappedUris.containsKey(extDoc.getDocRefId())) {
+						if (!rcdFound) {
 							docDetail.setRecordType(PennantConstants.RCD_ADD);
 							docDetail.setCustDocCategory(extDoc.getDocumentType());
 							docDetail.setNewRecord(true);
@@ -718,6 +771,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			throw new WrongValuesException(wvea);
 		}
 
+		newCustDocumentdetails.addAll(exteranlDocMap.values());
 		logger.debug(Literal.LEAVING);
 		return newCustDocumentdetails;
 	}
@@ -725,33 +779,158 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void prepareCollateralDocuments(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+		List<CollateralAssignment> assignementList = financeDetail.getCollateralAssignmentList();
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		long custId = financeDetail.getFinScheduleData().getFinanceMain().getCustID();
 		String applicationNo = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo();
 		String leadId = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId();
 
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			for (CollateralSetup collateralSetup : collateralSetupList) {
+				List<DocumentDetails> collateralDocuments = collateralSetup.getDocuments();
+				List<DocumentDetails> existingDocList = new ArrayList<>();
+
+				for (DocumentDetails documentDetail : collateralDocuments) {
+					if (StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), CollateralConstants.MODULE_NAME)) {
+						existingDocList.add(documentDetail);
+					}
+				}
+				List<DocumentDetails> documents = preapreCollateralDMSDocs(existingDocList,
+						collateralSetup.getCollateralRef(), applicationNo, leadId, finReference);
+				collateralSetup.setDocuments(documents);
+			}
+		} else if (CollectionUtils.isNotEmpty(assignementList)) {
+			List<CollateralSetup> collateralList = new ArrayList<>();
+			for (CollateralAssignment collateralAssignment : assignementList) {
+				String collateralRef = collateralAssignment.getCollateralRef();
+				CollateralSetup collateralSetup = collateralSetupDAO.getCollateralSetupByRef(collateralRef, "");
+				collateralSetup.setFromLoan(true);
+				collateralSetup.setSourceId(DMSModule.DMS.name());
+				List<DocumentDetails> existingDocList = documentDetailsDAO.getDocumentDetailsByRef(collateralRef,
+						CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "");
+				if (CollectionUtils.isNotEmpty(existingDocList)) {
+					for (DocumentDetails documentDetail : existingDocList) {
+						//Already approved documents need to synch with DMS so if docUri is blank setting the record type as update.
+						if (StringUtils.isBlank(documentDetail.getDocUri())) {
+							documentDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+							documentDetail.setNewRecord(false);
+							documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							documentDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+						}
+					}
+				}
+				List<DocumentDetails> documents = preapreCollateralDMSDocs(existingDocList,
+						collateralSetup.getCollateralRef(), applicationNo, leadId, finReference);
+				for (DocumentDetails documentDetails : documents) {
+					documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					documentDetails.setCustId(custId);
+				}
+				collateralSetup.setDocuments(documents);
+				collateralList.add(collateralSetup);
+			}
+			financeDetail.setDmsCollateralDocuments(collateralList);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private List<DocumentDetails> preapreCollateralDMSDocs(List<DocumentDetails> existingDocList, String collRef,
+			String applicationNo, String leadId, String finReference) {
+
+		logger.debug(Literal.ENTERING);
+		List<DocumentDetails> newCollDocList = new ArrayList<>();
 		List<WrongValueException> wve = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(collateralSetupList) && this.listBoxDMSDocuments.getItemCount() > 0) {
+		if (CollectionUtils.isNotEmpty(existingDocList)) {
+			for (DocumentDetails doc : existingDocList) {
+				doc.setApplicationNo(applicationNo);
+				doc.setLeadId(leadId);
+				doc.setFinReference(finReference);
+				newCollDocList.add(doc);
+			}
+		}
+
+		if (this.listBoxDMSDocuments.getItemCount() > 0) {
 			for (Listitem listitem : listBoxDMSDocuments.getItems()) {
 
 				ExternalDocument extDoc = (ExternalDocument) listitem.getAttribute("document");
 
-				if (StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "Collateral")) {
+				if (StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "COLLATERAL1")
+						|| StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "COLLATERAL2")
+						|| StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "COLLATERAL3")) {
 
 					Combobox collCombobox = (Combobox) (listitem)
 							.getFellowIfAny(String.valueOf(extDoc.getDocRefId()) + "_coll");
 					collCombobox.clearErrorMessage();
 					Clients.clearWrongValue(collCombobox);
-					String collateralVal = getComboboxValue(collCombobox);
+					String collateralRef = getComboboxValue(collCombobox);
+					try {
+						if (collateralRef.equals(PennantConstants.List_Select)) {
+							throw new WrongValueException(collCombobox,
+									Labels.getLabel("STATIC_INVALID", new String[] { "Collaterl Ref" }));
+						}
+					} catch (WrongValueException e) {
+						wve.add(e);
+					}
 
-					if (CollectionUtils.isNotEmpty(collateralsList)) {
-						try {
-							if (collateralVal.equals(PennantConstants.List_Select)) {
-								throw new WrongValueException(collCombobox,
-										Labels.getLabel("STATIC_INVALID", new String[] { "Collaterl Ref" }));
+					if (StringUtils.equals(collateralRef, collRef)) {
+						boolean rcdFound = false;
+						if (CollectionUtils.isNotEmpty(newCollDocList)) {
+							for (DocumentDetails collateralDoc : newCollDocList) {
+								if (StringUtils.equals(StringUtils.trimToEmpty(collateralDoc.getDocCategory()),
+										extDoc.getDocumentType())
+										&& !StringUtils.equals(StringUtils.trimToEmpty(collateralDoc.getRecordType()),
+												PennantConstants.RECORD_TYPE_DEL)
+										&& !StringUtils.equals(StringUtils.trimToEmpty(collateralDoc.getRecordType()),
+												PennantConstants.RECORD_TYPE_CAN)) {
+									rcdFound = true;
+									if (!collateralDoc.isLovDescNewImage()
+											&& NumberUtils.toLong(collateralDoc.getDocUri()) < NumberUtils
+													.toLong(extDoc.getDocRefId())) {
+										collateralDoc.setDocUri(extDoc.getDocRefId());
+										collateralDoc.setDoctype(extDoc.getDocExtn().toUpperCase());
+										collateralDoc.setDocName(extDoc.getDocName());
+										//Record type setting as EDIT for already approved documents (Collateral created outside)if same category matched.
+										if (StringUtils.isBlank(collateralDoc.getRecordType()) || StringUtils.equals(
+												collateralDoc.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+											collateralDoc.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+										} else {
+											collateralDoc.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+										}
+										collateralDoc.setNewRecord(false);
+										collateralDoc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										collateralDoc.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+									}
+									break;
+								}
 							}
-						} catch (WrongValueException e) {
-							wve.add(e);
+						}
+
+						if (!rcdFound) {
+							DocumentDetails docDetail = new DocumentDetails();
+							docDetail.setDocUri(extDoc.getDocRefId());
+							docDetail.setDocModule(CollateralConstants.MODULE_NAME);
+							docDetail.setDocCategory(extDoc.getDocumentType());
+							docDetail.setDocName(extDoc.getDocName());
+							docDetail.setApplicationNo(applicationNo);
+							docDetail.setFinReference(finReference);
+							docDetail.setLeadId(leadId);
+							if (StringUtils.equalsAnyIgnoreCase(extDoc.getDocExtn(), "XLSX")
+									|| StringUtils.equalsAnyIgnoreCase(extDoc.getDocExtn(), "XLS")) {
+								docDetail.setDoctype(PennantConstants.DOC_TYPE_EXCEL);
+							} else {
+								docDetail.setDoctype(extDoc.getDocExtn().toUpperCase());
+							}
+							docDetail.setRemarks(extDoc.getRemarks1());
+							docDetail.setDocReceivedDate(
+									DateUtility.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat));
+							docDetail.setVersion(1);
+							docDetail.setReferenceId(collateralRef);
+							docDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							docDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+							docDetail.setRecordType(PennantConstants.RCD_ADD);
+							docDetail.setDocCategory(extDoc.getDocumentType());
+							docDetail.setNewRecord(true);
+							newCollDocList.add(docDetail);
 						}
 					}
 				}
@@ -770,93 +949,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			throw new WrongValuesException(wvea);
 		}
 
-		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			for (CollateralSetup collateralSetup : collateralSetupList) {
-				List<DocumentDetails> collateralDocuments = collateralSetup.getDocuments();
-
-				Map<String, DocumentDetails> externalDocMap = new HashMap<>();
-				Map<String, DocumentDetails> internalDocMap = new HashMap<>();
-				for (DocumentDetails documentDetail : collateralDocuments) {
-					if (StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), CollateralConstants.MODULE_NAME)) {
-						if (StringUtils.isNotBlank(documentDetail.getDocUri())
-								&& documentDetail.getDocId() != Long.MIN_VALUE && documentDetail.getDocId() != -1) {
-							documentDetail.setApplicationNo(applicationNo);
-							documentDetail.setLeadId(leadId);
-							documentDetail.setFinReference(finReference);
-							externalDocMap.put(documentDetail.getDocUri(), documentDetail);
-						} else {
-							documentDetail.setApplicationNo(applicationNo);
-							documentDetail.setLeadId(leadId);
-							documentDetail.setFinReference(finReference);
-							internalDocMap.put(documentDetail.getDocCategory(), documentDetail);
-						}
-					}
-				}
-				preapreCollateralDMSDocs(collateralSetup, externalDocMap, internalDocMap, applicationNo, leadId);
-			}
-		}
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void preapreCollateralDMSDocs(CollateralSetup collateralSetup, Map<String, DocumentDetails> externalDocMap,
-			Map<String, DocumentDetails> internalDocMap, String applicationNo, String leadId) {
-		logger.debug(Literal.ENTERING);
-
-		List<DocumentDetails> newCollateralDocumentDetails = new ArrayList<>();
-
-		if (this.listBoxDMSDocuments.getItemCount() > 0) {
-			for (Listitem listitem : listBoxDMSDocuments.getItems()) {
-
-				ExternalDocument extDoc = (ExternalDocument) listitem.getAttribute("document");
-
-				if (StringUtils.equalsIgnoreCase(extDoc.getCategoryOfDocument(), "Collateral")) {
-
-					Combobox collCombobox = (Combobox) (listitem)
-							.getFellowIfAny(String.valueOf(extDoc.getDocRefId()) + "_coll");
-					collCombobox.clearErrorMessage();
-					Clients.clearWrongValue(collCombobox);
-					String collateralVal = getComboboxValue(collCombobox);
-
-					if (StringUtils.equals(collateralVal, collateralSetup.getCollateralRef())) {
-						DocumentDetails docDetail = new DocumentDetails();
-						docDetail.setDocUri(extDoc.getDocRefId());
-						docDetail.setDocModule(CollateralConstants.MODULE_NAME);
-						docDetail.setDocCategory(extDoc.getDocumentType());
-						docDetail.setDocName(extDoc.getDocName());
-						docDetail.setApplicationNo(applicationNo);
-						docDetail.setLeadId(leadId);
-						if (StringUtils.equalsAnyIgnoreCase(extDoc.getDocExtn(), "XLSX")
-								|| StringUtils.equalsAnyIgnoreCase(extDoc.getDocExtn(), "XLS")) {
-							docDetail.setDoctype(PennantConstants.DOC_TYPE_EXCEL);
-						} else {
-							docDetail.setDoctype(extDoc.getDocExtn().toUpperCase());
-						}
-						docDetail.setRemarks(extDoc.getRemarks1());
-						docDetail.setDocReceivedDate(
-								DateUtility.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat));
-						docDetail.setVersion(1);
-						docDetail.setReferenceId(collateralVal);
-
-						if (externalDocMap.containsKey(extDoc.getDocRefId())) {
-							docDetail.setNewRecord(false);
-							docDetail.setDocId(externalDocMap.get(extDoc.getDocRefId()).getDocId());
-							docDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-							docDetail.setRecordStatus(externalDocMap.get(extDoc.getDocRefId()).getRecordStatus());
-							externalDocMap.put(docDetail.getDocUri(), docDetail);
-						} else {
-							docDetail.setNewRecord(true);
-							docDetail.setRecordType(PennantConstants.RCD_ADD);
-							internalDocMap.put(extDoc.getDocumentType(), docDetail);
-						}
-					}
-				}
-			}
-		}
-
-		newCollateralDocumentDetails.addAll(externalDocMap.values());
-		newCollateralDocumentDetails.addAll(internalDocMap.values());
-		collateralSetup.setDocuments(newCollateralDocumentDetails);
-		logger.debug(Literal.LEAVING);
+		return newCollDocList;
 	}
 
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
@@ -894,4 +988,11 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.finDocumentDetailList = documentDetailList;
 	}
 
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
 }

@@ -495,6 +495,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnSave"));
+		this.btnUploadDoc.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnUploadDoc"));
 		this.btnCancel.setVisible(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -776,7 +777,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			CustomerDocument details = (CustomerDocument) this.documnetName.getAttribute("data");
 			aCustomerDocument.setCustDocImage(details.getCustDocImage());
 			aCustomerDocument.setCustDocType(details.getCustDocType());
-			aCustomerDocument.setDocRefId(Long.MIN_VALUE);
+			aCustomerDocument.setDocRefId(details.getDocRefId());
 			aCustomerDocument.setDocIsPasswordProtected(details.isDocIsPasswordProtected());
 			aCustomerDocument.setPdfMappingRef(details.getPdfMappingRef());
 			aCustomerDocument.setDocIsPdfExtRequired(details.isDocIsPdfExtRequired());
@@ -1211,7 +1212,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 		this.custDocType.setReadonly(isReadOnly("CustomerDocumentDialog_custDocType"));
 		this.custDocTitle.setReadonly(isReadOnly("CustomerDocumentDialog_custDocTitle"));
-		this.btnUploadDoc.setDisabled(isReadOnly("CustomerDocumentDialog_custDocIssuedCountry"));
 		this.custDocSysName.setReadonly(isReadOnly("CustomerDocumentDialog_custDocSysName"));
 		this.pdfPassword.setReadonly(isReadOnly("CustomerDocumentDialog_custDocSysName"));
 		this.custDocRcvdOn.setDisabled(isReadOnly("CustomerDocumentDialog_custDocRcvdOn"));
@@ -2233,13 +2233,19 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 
 			textbox.setValue(fileName);
+
 			if (textbox.getAttribute("data") == null) {
 				CustomerDocument documentDetails = new CustomerDocument("", docType, fileName, ddaImageData);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			} else {
 				CustomerDocument documentDetails = (CustomerDocument) textbox.getAttribute("data");
 				documentDetails.setCustDocType(docType);
 				documentDetails.setCustDocImage(ddaImageData);
+				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocUri(null);
+				documentDetails.setLovDescNewImage(true);
+
 				textbox.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {

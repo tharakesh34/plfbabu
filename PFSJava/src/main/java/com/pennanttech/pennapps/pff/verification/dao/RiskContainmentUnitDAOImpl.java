@@ -609,4 +609,44 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		return 0;
 	}
 
+	@Override
+	public List<RCUDocument> getDocuments(String keyReference, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT VERIFICATIONID, SEQNO, DOCUMENTID, DOCUMENTTYPE,  DECISION, DECISIONREMARKS, REINITID");
+		sql.append(" ,DOCUMENTSUBID, DOCUMENTREFID, DOCUMENTURI, INITREMARKS");
+		sql.append(" ,DOCUMENTSUBID AS DOCCATEGORY");
+		sql.append(" FROM VERIFICATION_RCU_DETAILS");
+
+		if (tableType == TableType.BOTH_TAB) {
+			sql.append("_view");
+		} else {
+			sql.append(tableType.getSuffix());
+		}
+		sql.append(" WHERE VERIFICATIONID IN (SELECT ID FROM VERIFICATIONS WHERE KEYREFERENCE = ?)");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(),
+					new Object[] { keyReference}, (rs, rowNum) -> {
+						RCUDocument rcu = new RCUDocument();
+
+						rcu.setSeqNo((rs.getInt("seqNo")));
+						rcu.setDocumentType(rs.getInt("documentType"));
+						rcu.setDocumentSubId(rs.getString("documentSubId"));
+						rcu.setVerificationId(rs.getLong("verificationId"));
+
+						return rcu;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+
+	}
 }
+

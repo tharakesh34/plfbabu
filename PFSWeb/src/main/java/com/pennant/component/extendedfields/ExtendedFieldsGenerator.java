@@ -748,9 +748,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			}
 
 			String id = getComponentId(detail.getFieldName());
-			isReadOnly = !detail.isEditable();
+			//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			if (!isReadOnly) {
+				isReadOnly = !detail.isEditable();
+			}
 
-			if (!detail.isVisible()) {
+			if (!isReadOnly && !detail.isVisible()) {
 				isReadOnly = true;
 			}
 

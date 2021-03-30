@@ -68,6 +68,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 
 	private long custAddressId = Long.MIN_VALUE;
 	private long custID = Long.MIN_VALUE;
+	@XmlElement
 	private String lovDescCustShrtName;
 	@XmlElement(name = "addrType")
 	private String custAddrType;
@@ -106,6 +107,7 @@ public class CustomerAddres extends AbstractWorkflowEntity implements Entity {
 	@XmlElement(name = "residingFrom")
 	private Timestamp custAddrFrom;
 	private String lovDescCustRecordType;
+	@XmlElement
 	private String lovDescCustCIF;
 	@XmlElement(name = "priority")
 	private int custAddrPriority;

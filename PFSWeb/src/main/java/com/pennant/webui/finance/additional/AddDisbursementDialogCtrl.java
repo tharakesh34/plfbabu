@@ -53,6 +53,7 @@ import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,6 +81,7 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
@@ -91,6 +93,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.accounts.AccountsService;
@@ -300,6 +303,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.row_Qdp.setVisible(true);
 		}
 
+		if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+			this.row_Qdp.setVisible(false);
+		}
+
 		if (getFinanceScheduleDetail() != null) {
 			this.disbAmount.setValue(PennantApplicationUtil.formateAmount(getFinanceScheduleDetail().getDisbAmount(),
 					CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy())));
@@ -357,6 +364,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			boolean isStepPOS = false;
+			boolean isStepLoan = false;
 			if (aFinSchData.getFinanceMain().isStepFinance() && aFinSchData.getFinanceMain().isAllowGrcPeriod()
 					&& StringUtils.equals(aFinSchData.getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
 					&& (StringUtils.equals(aFinSchData.getFinanceMain().getScheduleMethod(),
@@ -365,6 +373,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									CalculationConstants.SCHMTHD_PRI_PFT))) {
 				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,";
 				isStepPOS = true;
+			} else if (getFinScheduleData().getFinanceMain().isStepFinance()
+					&& StringUtils.equals(financeMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+				isStepLoan = true;
 			}
 
 			if (aFinSchData.getFinanceMain().isSanBsdSchdle()) {
@@ -374,6 +385,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isStepPOS) {
 				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS,
 						PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
+			} else if (isStepLoan) {
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPADJTNR,
+						PennantStaticListUtil.getStepDisbCalCodes(), "");
 			} else {
 				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
@@ -551,7 +565,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		try {
 			this.disbAmount.getValidateValue();
 			finServiceInstruction
-					.setAmount(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
+					.setAmount(PennantApplicationUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter));
 
 			if (isOverdraft && isValidDate) {
 
@@ -1016,7 +1030,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (this.reCalTypeRow.isVisible()) {
 			if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_TILLMDT)
 					|| this.cbReCalType.getSelectedItem().getValue().toString()
-							.equals(CalculationConstants.RPYCHG_ADDRECAL)) {
+							.equals(CalculationConstants.RPYCHG_ADDRECAL)
+					|| (this.cbReCalType.getSelectedItem().getValue().toString()
+							.equals(CalculationConstants.RPYCHG_STEPADJTNR))) {
 				Date fromDate = (Date) this.cbFromDate.getSelectedItem().getValue();
 				finMain.setRecalFromDate(fromDate);
 				finMain.setRecalToDate(maturityDate);
@@ -1232,7 +1248,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						CalculationConstants.RPYCHG_STEPPOS)) {
 			// Nothing TO DO
 		} else if (this.cbReCalType.getSelectedItem().getValue().toString()
-				.equals(CalculationConstants.RPYCHG_TILLMDT)) {
+				.equals(CalculationConstants.RPYCHG_TILLMDT)
+				|| this.cbReCalType.getSelectedItem().getValue().toString()
+						.equals(CalculationConstants.RPYCHG_STEPADJTNR)) {
 			fillSchDates(cbFromDate, getFinScheduleData(), null);
 			this.label_AddDisbursementDialog_TillFromDate
 					.setValue(Labels.getLabel("label_AddDisbursementDialog_CalFromDate.value"));
@@ -1335,6 +1353,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		boolean isApplySanctionBasedSchd = SanctionBasedSchedule.isApplySanctionBasedSchedule(getFinScheduleData());
 
 		// STEP POS Recalculation Type Addition Check
+		boolean isStepLoan = false;
 		if (this.fromDate.getValue() != null && DateUtility.compare(this.fromDate.getValue(),
 				getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
 
@@ -1355,6 +1374,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									CalculationConstants.SCHMTHD_PRI_PFT))) {
 				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,";
 				isStepPOS = true;
+			} else if (getFinScheduleData().getFinanceMain().isStepFinance() && StringUtils.equals(
+					getFinScheduleData().getFinanceMain().getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+				isStepLoan = true;
 			}
 
 			if (getFinScheduleData().getFinanceMain().isSanBsdSchdle()) {
@@ -1364,6 +1386,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isStepPOS) {
 				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS,
 						PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
+			} else if (isStepLoan) {
+				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPADJTNR,
+						PennantStaticListUtil.getStepDisbCalCodes(), "");
 			} else {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
@@ -1371,6 +1396,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		} else {
 			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
+
+			if (getFinScheduleData().getFinanceMain().isStepFinance() && StringUtils.equals(
+					getFinScheduleData().getFinanceMain().getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+				isStepLoan = true;
+			}
 
 			if (isApplySanctionBasedSchd) {
 				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,TILLDATE,";
@@ -1387,7 +1417,12 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (getFinScheduleData().getFinanceMain().isSanBsdSchdle()) {
 				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
 			}
-			fillComboBox(this.cbReCalType, value, PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
+
+			if (isStepLoan) {
+				fillComboBox(this.cbReCalType, value, PennantStaticListUtil.getStepDisbCalCodes(), "");
+			} else {
+				fillComboBox(this.cbReCalType, value, PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
+			}
 		}
 
 		fillSchDates(cbFromDate, getFinScheduleData(), null);
@@ -1419,11 +1454,44 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		FinanceMain fm = scheduleData.getFinanceMain();
+		boolean isStepLoan = false;
+		FinanceStepPolicyDetail rpyStep = null;
+		FinanceStepPolicyDetail grcStep = null;
+
+		if (fm.isStepFinance() && StringUtils.equals(fm.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
+			isStepLoan = true;
+		}
+
+		if (isStepLoan) {
+			List<FinanceStepPolicyDetail> spdList = scheduleData.getStepPolicyDetails();
+			List<FinanceStepPolicyDetail> rpyList = new ArrayList<>(1);
+			List<FinanceStepPolicyDetail> grcList = new ArrayList<>(1);
+			for (FinanceStepPolicyDetail financeStepPolicyDetail : spdList) {
+				if (StringUtils.equals(financeStepPolicyDetail.getStepSpecifier(),
+						PennantConstants.STEP_SPECIFIER_REG_EMI)) {
+					rpyList.add(financeStepPolicyDetail);
+				} else {
+					grcList.add(financeStepPolicyDetail);
+				}
+			}
+			if (CollectionUtils.isNotEmpty(rpyList)) {
+				Collections.sort(rpyList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? -1
+						: step1.getStepNo() < step2.getStepNo() ? 1 : 0);
+				rpyStep = rpyList.get(0);
+			}
+			if (CollectionUtils.isNotEmpty(grcList)) {
+				Collections.sort(grcList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? -1
+						: step1.getStepNo() < step2.getStepNo() ? 1 : 0);
+				grcStep = grcList.get(0);
+			}
+		}
+		
 		if (scheduleData.getFinanceScheduleDetails() != null) {
 			boolean checkForLastPaid = true;
 
 			List<FinanceScheduleDetail> financeScheduleDetails = scheduleData.getFinanceScheduleDetails();
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			int allowedDays = SysParamUtil.getValueAsInt("FutureNotAllowedDays_Disb");
 
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -1487,10 +1555,28 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
-				comboitem.setValue(curSchd.getSchDate());
-				dateCombobox.appendChild(comboitem);
+				if (isStepLoan) {
+					if (rpyStep != null && rpyStep.getStepStart() != null) {
+						if (curSchd.getSchDate().compareTo(rpyStep.getStepStart()) == 0) {
+							comboitem = new Comboitem();
+							comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+							comboitem.setValue(curSchd.getSchDate());
+							dateCombobox.appendChild(comboitem);
+						}
+					} else if (grcStep != null && grcStep.getStepEnd() != null) {
+						if (curSchd.getSchDate().compareTo(grcStep.getStepEnd()) > 0) {
+							comboitem = new Comboitem();
+							comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+							comboitem.setValue(curSchd.getSchDate());
+							dateCombobox.appendChild(comboitem);
+						}
+					}
+				} else {
+					comboitem = new Comboitem();
+					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+					comboitem.setValue(curSchd.getSchDate());
+					dateCombobox.appendChild(comboitem);
+				}
 			}
 		}
 		logger.debug("Leaving");

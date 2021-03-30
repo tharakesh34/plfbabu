@@ -195,6 +195,8 @@ public class MailTemplateData {
 	//Including grace and installments
 	private String totalTenor;
 
+	private String qryDesc;
+
 	public MailTemplateData() {
 
 	}
@@ -1470,6 +1472,14 @@ public class MailTemplateData {
 
 	public void setFinTypeDesc(String finTypeDesc) {
 		this.finTypeDesc = finTypeDesc;
+	}
+
+	public String getQryDesc() {
+		return qryDesc;
+	}
+
+	public void setQryDesc(String qryDesc) {
+		this.qryDesc = qryDesc;
 	}
 
 }

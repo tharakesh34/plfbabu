@@ -54,6 +54,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -139,6 +140,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
 	//### 10-05-2018 Start Development Item 82
 	private Map<String, Object> rules = new HashMap<>();
+	private List<JointAccountDetail> tempJointAccountDetailList = null;
 
 	public Map<String, Object> getRules() {
 		return rules;
@@ -220,6 +222,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 		} else {
 			this.finBasicdetails.setZclass("null");
+		}
+		if (financeDetail != null && CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())
+				&& tempJointAccountDetailList == null) {
+			tempJointAccountDetailList = new ArrayList<>(1);
+			List<JointAccountDetail> jointAccountList = financeDetail.getJountAccountDetailList();
+			for (JointAccountDetail jointAccountDetail : jointAccountList) {
+				JointAccountDetail befImage = new JointAccountDetail();
+				BeanUtils.copyProperties(jointAccountDetail, befImage);
+				getTempJointAccountDetailList().add(befImage);
+			}
 		}
 		rules.put("Guarantors_Bank_CustomerCount", 0);
 		rules.put("Guarantors_Other_CustomerCount", 0);
@@ -400,6 +412,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("filter", setFilter(getjointAcFilter()));
 		map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from  getGurantorFilter()
 		if (financeMainDialogCtrl != null && financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
+			map.put("jointAccountDetailList", tempJointAccountDetailList);
 			map.put("applicationNo", ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo());
 			map.put("leadId", ((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId());
 		} else {
@@ -567,6 +580,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("ccy", ccy);
 				map.put("filter", setFilter(getjointAcFilter()));
 				map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from  getGurantorFilter()
+				map.put("jointAccountDetailList", tempJointAccountDetailList);
 				if (!enquiry) {
 					map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
 					map.put("financeDetail", financeDetail);
@@ -1115,6 +1129,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
 		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
+	}
+
+	public List<JointAccountDetail> getTempJointAccountDetailList() {
+		return tempJointAccountDetailList;
+	}
+
+	public void setTempJointAccountDetailList(List<JointAccountDetail> tempJointAccountDetailList) {
+		this.tempJointAccountDetailList = tempJointAccountDetailList;
 	}
 
 }

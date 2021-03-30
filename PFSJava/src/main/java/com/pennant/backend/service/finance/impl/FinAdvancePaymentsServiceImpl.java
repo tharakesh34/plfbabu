@@ -805,17 +805,37 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				&& StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
 						PennantConstants.RCD_STATUS_APPROVED)
 				&& financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
+			int i = 0;
 			for (FinAdvancePayments finAdPayment : finAdvancePayList) {
-				int i = 0;
-				if (finAdPayment.getStatus().equalsIgnoreCase(DisbursementConstants.STATUS_PAID)) {
+				if (finAdPayment.getStatus().equalsIgnoreCase(DisbursementConstants.STATUS_PRINT)) {
 					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(finAdPayment.getPaymentType())
 							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(finAdPayment.getPaymentType())) {
+						finAdPayment.setStatus(DisbursementConstants.STATUS_PAID);
+						++i;
 						finAdvancePaymentsDAO.updateLLDate(finAdPayment, "");
 						String[] fields = PennantJavaUtil.getFieldDetails(finAdPayment,
 								finAdPayment.getExcludeFields());
-						auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						auditDetails.add(new AuditDetail(auditTranType, i, fields[0], fields[1],
 								finAdPayment.getBefImage(), finAdPayment));
 					}
+				}
+			}
+			return auditDetails;
+		} else if (ImplementationConstants.ALW_QDP_CUSTOMIZATION
+				&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+				&& StringUtils.contains(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
+						"Resubmit")
+				&& financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
+			int i = 0;
+			for (FinAdvancePayments finAdPayment : finAdvancePayList) {
+				if (finAdPayment.getStatus().equalsIgnoreCase(DisbursementConstants.STATUS_PRINT)) {
+
+					finAdPayment.setStatus(DisbursementConstants.STATUS_REJECTED);
+					++i;
+					finAdvancePaymentsDAO.updateLLDate(finAdPayment, "");
+					String[] fields = PennantJavaUtil.getFieldDetails(finAdPayment, finAdPayment.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, i, fields[0], fields[1], finAdPayment.getBefImage(),
+							finAdPayment));
 				}
 			}
 			return auditDetails;
@@ -868,9 +888,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		if (CollectionUtils.isNotEmpty(advPayList)) {
 			for (int i = 0; i < advPayList.size(); i++) {
 				FinAdvancePayments advPayment = advPayList.get(i);
-				if (finAdvanceMap.containsKey(advPayment.getDisbSeq() + "_" + advPayment.getPaymentSeq())) {
-					advPayment.setLinkedTranId(
-							finAdvanceMap.get(advPayment.getDisbSeq() + "_" + advPayment.getPaymentSeq()));
+				if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
+					advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
 				}
 			}
 		}

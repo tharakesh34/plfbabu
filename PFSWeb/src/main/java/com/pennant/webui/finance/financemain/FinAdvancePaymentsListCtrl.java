@@ -360,7 +360,8 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			boolean disbDownload = false;
 			for (FinAdvancePayments advancePayments : finDetail.getAdvancePaymentsList()) {
 				if (ImplementationConstants.CHEQUENO_MANDATORY_DISB_INS
-						&& DisbursementConstants.STATUS_PAID.equals(advancePayments.getStatus())
+						&& (DisbursementConstants.STATUS_PAID.equals(advancePayments.getStatus())
+								|| DisbursementConstants.STATUS_PRINT.equals(advancePayments.getStatus()))
 						&& (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE,
 								advancePayments.getPaymentType())
 								|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,

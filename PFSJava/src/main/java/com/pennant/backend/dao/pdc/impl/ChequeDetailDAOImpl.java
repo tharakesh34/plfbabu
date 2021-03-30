@@ -377,8 +377,8 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" CHEQUEDETAIL");
-		sql.append(" Set Chequestatus = :Chequestatus");
-		sql.append(" where ChequeDetailsId = :ChequeDetailsId");
+		sql.append(" Set Chequestatus = ?");
+		sql.append(" where ChequeDetailsId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 

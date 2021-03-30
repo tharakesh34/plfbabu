@@ -104,6 +104,7 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.bmtmasters.Product;
+import com.pennant.backend.model.collateral.CoOwnerDetail;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -4439,6 +4440,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 									}
 								}
 							} catch (Exception e) {
+								mapValues.put("COLLATERALTYPE", cs.getCollateralType());
+								collateralData.setCollMap(mapValues);
 							}
 						}
 						if (null != mapValues.get(key)) {
@@ -4467,6 +4470,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					}
 					detailCol.setFields(mapValues);
 					extendedDetailsList.add(detailCol);
+					setCoOwnerDetails(collateralData, cs);
 				}
 			}
 			if (CollectionUtils.isEmpty(extendedDetailsList)) {
@@ -4845,17 +4849,33 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					agreement.setGrcStartDate(DateUtil.formatToLongDate(finSchDetail.getSchDate()));
 				}
 			}
+		}
 
-			if (finSchDetail.isRepayOnSchDate()) {
-				if (morPeriod > 0 && StringUtils.isEmpty(agreement.getMorEndDate())) {
-					agreement.setMorEndDate(
-							DateUtil.formatToLongDate(DateUtil.addMonths(finSchDetail.getSchDate(), -1)));
+		FinanceMain main = detail.getFinScheduleData().getFinanceMain();
+
+		if (main.isAllowGrcPeriod()) {
+			if (StringUtils.equals(main.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFT)) {
+				morPeriod = DateUtil.getMonthsBetween(main.getFinStartDate(), main.getNextGrcPftDate());
+				if (morPeriod > 1) {
+					agreement.setMorStartDate(DateUtil.formatToLongDate(main.getFinStartDate()));
+					agreement
+							.setMorEndDate(DateUtil.formatToLongDate(DateUtil.addMonths(main.getNextGrcPftDate(), -1)));
+					agreement.setMorPeriod(String.valueOf(morPeriod));
+					agreement.setGrcStartDate(DateUtil.formatToLongDate(main.getNextGrcPftDate()));
+					agreement.setGrcEndDate(DateUtil.formatToLongDate(main.getGrcPeriodEndDate()));
+					agreement.setGrcPeriod(String.valueOf(main.getGraceTerms() - morPeriod));
+				} else {
+					agreement.setGrcStartDate(DateUtil.formatToLongDate(main.getFinStartDate()));
+					agreement.setGrcEndDate(DateUtil.formatToLongDate(main.getGrcPeriodEndDate()));
+					agreement.setGrcPeriod(String.valueOf(main.getGraceTerms()));
 				}
-				break;
+			}
+			if (StringUtils.equals(main.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY)) {
+				agreement.setMorStartDate(DateUtil.formatToLongDate(main.getFinStartDate()));
+				agreement.setMorEndDate(DateUtil.formatToLongDate(main.getGrcPeriodEndDate()));
+				agreement.setMorPeriod(String.valueOf(main.getGraceTerms()));
 			}
 		}
-		agreement.setMorPeriod(String.valueOf(morPeriod));
-		agreement.setGrcPeriod(String.valueOf(grcPeriod));
 		logger.debug(Literal.LEAVING);
 		return agreement;
 	}
@@ -5489,6 +5509,27 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	public List<AuditTransaction> getFacilityAuditDetails(String finReference) {
 		return getApprovalStatusEnquiryDAO().getFinTransactions(finReference);
+	}
+
+	private FinCollaterals setCoOwnerDetails(FinCollaterals finCollaterals, CollateralSetup collateralSetup) {
+		logger.debug(Literal.ENTERING);
+
+		List<com.pennant.backend.model.finance.AgreementDetail.FinCollaterals.CoOwners> coOwnerList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(collateralSetup.getCoOwnerDetailList())) {
+			for (CoOwnerDetail coOwnerDetail : collateralSetup.getCoOwnerDetailList()) {
+				if (coOwnerDetail != null) {
+					com.pennant.backend.model.finance.AgreementDetail.FinCollaterals.CoOwners coOwners = finCollaterals.new CoOwners();
+					coOwners.setCif(StringUtils.trimToEmpty(coOwnerDetail.getCoOwnerCIF()));
+					coOwners.setName(StringUtils.trimToEmpty(coOwnerDetail.getCoOwnerCIFName()));
+					coOwnerList.add(coOwners);
+				}
+			}
+			if (CollectionUtils.isNotEmpty(coOwnerList)) {
+				finCollaterals.setCoOwnersList(coOwnerList);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return finCollaterals;
 	}
 
 	private static String maskString(String strText, int start, int end, char maskChar) {

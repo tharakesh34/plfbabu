@@ -1,6 +1,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,8 +33,11 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 
 	private boolean newRecord = false;
 	private String lovValue;
+	private String stepSpecifier;
 	private FinanceStepPolicyDetail befImage;
 	private LoggedInUser userDetails;
+	private Date stepStart;
+	private Date stepEnd;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -144,6 +148,14 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 		this.befImage = beforeImage;
 	}
 
+	public String getStepSpecifier() {
+		return stepSpecifier;
+	}
+
+	public void setStepSpecifier(String stepSpecifier) {
+		this.stepSpecifier = stepSpecifier;
+	}
+
 	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
@@ -151,4 +163,21 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
+
+	public Date getStepStart() {
+		return stepStart;
+	}
+
+	public void setStepStart(Date stepStart) {
+		this.stepStart = stepStart;
+	}
+
+	public Date getStepEnd() {
+		return stepEnd;
+	}
+
+	public void setStepEnd(Date stepEnd) {
+		this.stepEnd = stepEnd;
+	}
+	
 }

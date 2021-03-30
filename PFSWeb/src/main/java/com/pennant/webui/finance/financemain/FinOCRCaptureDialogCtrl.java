@@ -3,6 +3,7 @@ package com.pennant.webui.finance.financemain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -488,7 +489,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		//Disbursement Seq
 		try {
 
-			afinOCRCapture.setDisbSeq(this.disbursementSequence.getValue());
+			afinOCRCapture.setDisbSeq(this.disbursementSequence.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -718,7 +719,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_disbSeq"), this.disbursementSequence);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_builderDemand"), this.builderDemand);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_ocrPaid"), this.ocrPaid);
-		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_ocrPaid"), this.ocrReceiptDate);
+		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_ocrReceiptDate"), this.ocrReceiptDate);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_remarks"), this.remarks);
 		logger.debug(Literal.LEAVING);
 	}
@@ -734,6 +735,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		readOnlyComponent(true, this.ocrPaid);
 		readOnlyComponent(true, this.ocrReceiptDate);
 		readOnlyComponent(true, this.remarks);
+		readOnlyComponent(true, this.btnUpload);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -964,20 +966,18 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 	 * @return
 	 */
 	private int getDisbursementSequence(FinOCRCapture ocrCapture) {
-		int sequence = 0;
+		int sequence = 1;
 		if (ocrCapture.getDisbSeq() > 0) {
 			return ocrCapture.getDisbSeq();
 		}
 		List<FinOCRCapture> list = finOCRDialogCtrl.getFinOCRCaptureList();
 		if (!CollectionUtils.isEmpty(list)) {
-			for (FinOCRCapture ocrDetail2 : list) {
-				if (ocrDetail2.getDisbSeq() > 0) {
-					sequence = ocrDetail2.getDisbSeq();
-				}
-			}
+			Collections.sort(list, (ocrCapture1, ocrCapture2) -> ocrCapture1.getDisbSeq() > ocrCapture2.getDisbSeq()
+					? -1 : ocrCapture1.getDisbSeq() < ocrCapture2.getDisbSeq() ? 1 : 0);
+			sequence = list.get(0).getDisbSeq() + 1;
 		}
 
-		return sequence + 1;
+		return sequence;
 	}
 
 	// ******************************************************//

@@ -292,6 +292,9 @@ public class PennantConstants {
 	public static final String PFF_CUSTCTG_CORP = "CORP";
 	public static final String PFF_CUSTCTG_SME = "SME";
 
+	public static final String PFF_CIBIL_TYPE_GENERATE = "R";
+	public static final String PFF_CIBIL_TYPE_ENQUIRY = "E";
+
 	// Customer De-dup Field Details
 	public static final String CUST_DEDUP_LIST_FIELDS = "CustCIF,CustShrtName,CustCtgCode,CustDOB,CustNationality";
 	public static final String CUST_DEDUP_LIST_BUILD_EQUAL = "CustIDList = :CustIDList";
@@ -1075,4 +1078,13 @@ public class PennantConstants {
 	public static final String TDS_MANUAL = "MANUAL";
 	public static final String TDS_USER_SELECTION = "USER";
 
+	//stepping details
+	public static final String STEPPING_CALC_AMT = "AMT";
+	public static final String STEPPING_CALC_PERC = "PERC";
+	public static final String STEPPING_APPLIED_GRC = "GRCPRD";
+	public static final String STEPPING_APPLIED_EMI = "REGEMI";
+	public static final String STEPPING_APPLIED_BOTH = "BOTH";
+
+	public static final String STEP_SPECIFIER_GRACE = "G";
+	public static final String STEP_SPECIFIER_REG_EMI = "R";
 }

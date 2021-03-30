@@ -83,5 +83,7 @@ public interface ReasonCodeDAO extends BasicCrudDao<ReasonCode> {
 	boolean isreasonTypeIDExists(long rTypeCode);
 
 	List<ReasonCode> getReasonDetails(String reasonTypeCode);
+	
+	ReasonCode getReasonCode(long id, String reasontypeCode, String type);
 
 }

@@ -49,10 +49,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,6 +71,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -627,6 +630,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			selectSql.append(" and OldLinkedTranID = 0 ");
 		}
 
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
+			selectSql.append(" and T1.FinEvent != 'REPAY' ");
+		}
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL)) {
 			selectSql.append(
 					" and T1.LinkedTranId not in (Select LINKEDTRANID from FINADVANCEPAYMENTS Where STATUS in ('REJECTED','CANCELED') ");
@@ -880,6 +887,96 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	@Autowired
 	public void setStagePostingDAO(StagePostingDAO stagePostingDAO) {
 		this.stagePostingDAO = stagePostingDAO;
+	}
+
+	@Override
+	public List<ReturnDataSet> getPostings(String postRef, String finEvent) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode, ");
+		sql.append(" RevTranCode, TranDesc, DrOrCr, Account, PostAmount, ");
+		sql.append(" FinEvent, AcCcy, PostBranch, UserBranch, PostStatus, TranOrderId ");
+		sql.append(" From Postings");
+		sql.append(" Where Postref = ? AND FinEvent IN (?) ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		List<ReturnDataSet> list = null;
+
+		list = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, postRef);
+			ps.setString(2, finEvent);
+		}, (rs, i) -> {
+			ReturnDataSet rds = new ReturnDataSet();
+
+			rds.setValueDate(rs.getTimestamp("ValueDate"));
+			rds.setPostDate(rs.getTimestamp("PostDate"));
+			rds.setAppDate(rs.getTimestamp("AppDate"));
+			rds.setAppValueDate(rs.getTimestamp("AppValueDate"));
+			rds.setTranCode(rs.getString("TranCode"));
+			rds.setRevTranCode(rs.getString("RevTranCode"));
+			rds.setTranDesc(rs.getString("TranDesc"));
+			rds.setDrOrCr(rs.getString("DrOrCr"));
+			rds.setAccount(rs.getString("Account"));
+			rds.setPostAmount(rs.getBigDecimal("PostAmount"));
+			rds.setFinEvent(rs.getString("FinEvent"));
+			rds.setAcCcy(rs.getString("AcCcy"));
+			rds.setPostBranch(rs.getString("PostBranch"));
+			rds.setUserBranch(rs.getString("UserBranch"));
+			rds.setPostStatus(rs.getString("PostStatus"));
+			rds.setTranOrderId(rs.getString("TranOrderId"));
+			rds.setValueDate(rs.getTimestamp("ValueDate"));
+
+			return rds;
+		});
+
+		if (CollectionUtils.isEmpty(list)) {
+			logger.info(Literal.LEAVING);
+			return list;
+		}
+
+		sortPostingsByDate(list);
+		sortPostingsByLinkedTranId(list);
+		sortPostingsByTransOrder(list);
+
+		return list;
+	}
+
+	private static List<ReturnDataSet> sortPostingsByDate(List<ReturnDataSet> postings) {
+		if (CollectionUtils.isNotEmpty(postings)) {
+			Collections.sort(postings, new Comparator<ReturnDataSet>() {
+				@Override
+				public int compare(ReturnDataSet detail1, ReturnDataSet detail2) {
+					return DateUtility.compare(detail1.getValueDate(), detail2.getValueDate());
+				}
+			});
+		}
+
+		return postings;
+	}
+
+	private static List<ReturnDataSet> sortPostingsByLinkedTranId(List<ReturnDataSet> postings) {
+		if (CollectionUtils.isNotEmpty(postings)) {
+			Collections.sort(postings, new Comparator<ReturnDataSet>() {
+				@Override
+				public int compare(ReturnDataSet detail1, ReturnDataSet detail2) {
+					return Long.compare(detail1.getLinkedTranId(), detail2.getLinkedTranId());
+				}
+			});
+		}
+
+		return postings;
+	}
+
+	private static List<ReturnDataSet> sortPostingsByTransOrder(List<ReturnDataSet> postings) {
+		if (CollectionUtils.isNotEmpty(postings)) {
+			Collections.sort(postings, new Comparator<ReturnDataSet>() {
+				@Override
+				public int compare(ReturnDataSet detail1, ReturnDataSet detail2) {
+					return Long.compare(detail1.getTransOrder(), detail2.getTransOrder());
+				}
+			});
+		}
+
+		return postings;
 	}
 
 }

@@ -52,14 +52,25 @@ public class DMSServiceImpl implements DMSService {
 		documentManager.setDocImage(dmsQueue.getDocImage());
 		documentManager.setCustId(dmsQueue.getCustId());
 		documentManager.setDocURI(StringUtils.trimToNull(dmsQueue.getDocUri()));
+		boolean insert = false;
 
 		if (dmsQueue.getDocManagerID() == 0 || dmsQueue.getDocManagerID() == Long.MIN_VALUE) {
 			long docManagerId = documentManagerDAO.save(documentManager);
 			dmsQueue.setDocManagerID(docManagerId);
+			insert = true;
+		} else if (dmsQueue.getDocManagerID() > 0 && dmsQueue.getDocUri() != null) {
+			documentManagerDAO.update(dmsQueue.getDocManagerID(), dmsQueue.getCustId(), dmsQueue.getDocUri());
 		}
 
-		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			dMSQueueDAO.log(dmsQueue);
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))
+				|| DMSStorage.EXTERNAL == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			if (insert && dmsQueue.getDocImage() != null) {
+				dMSQueueDAO.log(dmsQueue);
+			} else if (insert && dmsQueue.getDocUri() != null) {
+				dMSQueueDAO.log(dmsQueue);
+			} else if (dmsQueue.getDocManagerID() > 0) {
+				dMSQueueDAO.update(dmsQueue);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -243,18 +254,18 @@ public class DMSServiceImpl implements DMSService {
 	}
 
 	@Override
-	public byte[] getImageByUri(String docUri) {
+	public DMSQueue getImageByUri(String docUri) {
 		logger.debug(Literal.ENTERING);
-		byte[] docImage = null;
+		DMSQueue queue = new DMSQueue();
 		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
 			String docURI = StringUtils.trimToNull(docUri);
 			if (docURI != null) {
-				docImage = documentFileSystem.retrive(docURI);
+				queue = documentFileSystem.retriveDMS(docURI);
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
-		return docImage;
+		return queue;
 	}
 
 	@Override

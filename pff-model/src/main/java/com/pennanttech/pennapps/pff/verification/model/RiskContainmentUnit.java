@@ -8,8 +8,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -17,22 +22,32 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private String cif;
+	@XmlElement
 	private String keyReference;
+	@XmlElement(name = "name")
 	private String custName;
 	private String rcuReference;
-
+	@XmlElement
 	private long verificationId;
+	@XmlElement
 	private Date verificationDate;
+	@XmlElement
 	private String agentCode;
+	@XmlElement
 	private String agentName;
+	@XmlElement(name = "recommendations")
 	private int status;
+	@XmlElement
 	private Long reason;
 	private String reasonCode;
+	@XmlElement
 	private String reasonDesc;
+	@XmlElement
 	private String remarks;
 
 	private Date createdOn;
@@ -42,6 +57,8 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	private String documentSubId;
 
 	private List<DocumentDetails> documents = null;
+	@XmlElementWrapper(name = "rcuDocuments")
+	@XmlElement(name = "rcuDocument")
 	private List<RCUDocument> rcuDocuments = new ArrayList<>();
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
@@ -54,6 +71,10 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	private String sourceId;
 
 	public RiskContainmentUnit() {
 		super();
@@ -82,6 +103,8 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 		excludeFields.add("rcuReference");
 		excludeFields.add("extendedFieldHeader");
 		excludeFields.add("extendedFieldRender");
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
 		return excludeFields;
 	}
 
@@ -315,6 +338,22 @@ public class RiskContainmentUnit extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
 	}
 
 }

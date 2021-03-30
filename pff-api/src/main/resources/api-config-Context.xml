@@ -206,4 +206,8 @@
 
 	<bean id="relationshipOfficerService" class="com.pennant.backend.service.applicationmaster.impl.RelationshipOfficerServiceImpl" />
 
+	<!-- Verification Controller -->
+	<bean id="verificationController" class="com.pennanttech.controller.VerificationController" autowire="byName"
+		scope="prototype">
+	</bean>
 </beans>

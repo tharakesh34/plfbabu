@@ -14,6 +14,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.systemmasters.OCRDetailDAO;
 import com.pennant.backend.dao.systemmasters.OCRHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -34,6 +35,7 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 	private AuditHeaderDAO auditHeaderDAO;
 	private OCRHeaderDAO ocrHeaderDAO;
 	private OCRDetailDAO ocrDetailDAO;
+	private FinanceTypeDAO financeTypeDAO;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -535,6 +537,25 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 
 			}
 		}
+
+		if (ocrHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			List<String> allowOCRList = financeTypeDAO.getAllowedOCRList();
+			for (String ocr : allowOCRList) {
+				if (StringUtils.isNotEmpty(ocr)) {
+					String[] ocrs = ocr.split(",");
+					for (int i = 0; i < ocrs.length; i++) {
+						if (StringUtils.equals(ocrs[i], ocrHeader.getOcrID())) {
+							String[] valueParm = new String[1];
+							valueParm[0] = ocrHeader.getOcrID();
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41006", valueParm)));
+							return auditDetail;
+						}
+					}
+				}
+			}
+
+		}
+
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 
@@ -591,6 +612,14 @@ public class OCRHeaderServiceImpl extends GenericService<OCRHeader> implements O
 
 	public void setOcrDetailDAO(OCRDetailDAO ocrDetailDAO) {
 		this.ocrDetailDAO = ocrDetailDAO;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
 	}
 
 }

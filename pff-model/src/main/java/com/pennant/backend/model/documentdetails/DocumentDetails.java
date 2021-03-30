@@ -58,6 +58,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private boolean custDocIsVerified;
 	private long custDocVerifiedBy;
 	private boolean custDocIsAcrive;
+	@XmlElement
 	private String lovDescCustCIF;
 
 	private String lovDescDocCategoryName;
@@ -100,6 +101,15 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	// Fields used in Godrej DMS
 	private String applicationNo;
 	private String leadId;
+	private boolean lovDescNewImage = false;
+	//Specific To Verification API 
+	@XmlElement
+	private String lovDescCustShrtName;
+	@XmlElement
+	private String refId;
+	//Specific To  LV verification  API
+	@XmlElement
+	private int docTypeId;
 
 	public DocumentDetails() {
 		super();
@@ -150,6 +160,9 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 		excludeFields.add("applicationNo");
 		excludeFields.add("leadId");
+		excludeFields.add("lovDescCustShrtName");
+		excludeFields.add("refId");
+		excludeFields.add("docTypeId");
 
 		return excludeFields;
 	}
@@ -589,6 +602,38 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setLeadId(String leadId) {
 		this.leadId = leadId;
+	}
+
+	public boolean isLovDescNewImage() {
+		return lovDescNewImage;
+	}
+
+	public void setLovDescNewImage(boolean lovDescNewImage) {
+		this.lovDescNewImage = lovDescNewImage;
+	}
+
+	public String getLovDescCustShrtName() {
+		return lovDescCustShrtName;
+	}
+
+	public void setLovDescCustShrtName(String lovDescCustShrtName) {
+		this.lovDescCustShrtName = lovDescCustShrtName;
+	}
+
+	public String getRefId() {
+		return refId;
+	}
+
+	public void setRefId(String refId) {
+		this.refId = refId;
+	}
+
+	public int getDocTypeId() {
+		return docTypeId;
+	}
+
+	public void setDocTypeId(int docTypeId) {
+		this.docTypeId = docTypeId;
 	}
 
 }

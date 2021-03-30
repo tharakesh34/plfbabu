@@ -1,26 +1,41 @@
 package com.pennant.backend.service.cibil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.cibil.CIBILDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public class CIBILServiceImpl implements CIBILService {
+	private static Logger logger = Logger.getLogger(CIBILServiceImpl.class);
 
 	@Autowired
 	private CIBILDAO cibildao;
+	@Autowired
+	private FinanceMainDAO financeMainDAO;
+	@Autowired
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId, String finreference, String segmentType) {
+		logger.debug(Literal.ENTERING);
+		logger.trace(Literal.ENTERING);
+
 		CustomerDetails customer = new CustomerDetails();
 
 		try {
@@ -74,11 +89,32 @@ public class CIBILServiceImpl implements CIBILService {
 			}
 
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			logger.trace(Literal.EXCEPTION, e);
+			logger.debug(Literal.EXCEPTION, e);
 			e.printStackTrace();
 			customer = null;
 		}
-
+		logger.debug(Literal.LEAVING);
+		logger.trace(Literal.LEAVING);
 		return customer;
+	}
+
+	@Override
+	public List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type) {
+		return null;
+
+	}
+
+	@Override
+	public FinanceSummary getFinanceProfitDetails(String finRef) {
+		return financeMainDAO.getFinanceProfitDetails(finRef);
+
+	}
+
+	@Override
+	public Date getMaxReceiptDateByRef(String finReference) {
+		return finReceiptHeaderDAO.getMaxReceiptDateByRef(finReference);
 	}
 
 	@Override
@@ -124,6 +160,12 @@ public class CIBILServiceImpl implements CIBILService {
 		return cibildao.getMemberDetails(segmentType);
 	}
 
+	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+	@Override
+	public CibilMemberDetail getMemberDetailsByType(String segmentType, String type) {
+		return cibildao.getMemberDetailsByType(segmentType, type);
+	}
+
 	@Override
 	public long getotalRecords(String segmentType) {
 		return cibildao.getotalRecords(segmentType);
@@ -137,4 +179,5 @@ public class CIBILServiceImpl implements CIBILService {
 	public void setCibildao(CIBILDAO cibildao) {
 		this.cibildao = cibildao;
 	}
+
 }

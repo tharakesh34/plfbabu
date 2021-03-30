@@ -90,6 +90,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -104,6 +105,7 @@ import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennant.backend.service.finance.ChangeTDSService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
+import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.service.finance.FinOptionMaintanceService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -137,6 +139,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
@@ -223,6 +226,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FinCovenantMaintanceService finCovenantMaintanceService;
 	private transient FinOptionMaintanceService finOptionMaintanceService;
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
+	private transient FinOCRHeaderService finOCRHeaderService;
 
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -1299,6 +1303,19 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 								Labels.getLabel("info.param_add_disb_warning", new Object[] { finReferences }));
 					}
 				}
+
+				FinOCRHeader finOCRHeader = finOCRHeaderService.getFinOCRHeaderByRef(aFinanceMain.getFinReference(),
+						TableType.TEMP_TAB.getSuffix());
+				if (finOCRHeader == null && StringUtils.isNotBlank(aFinanceMain.getParentRef())) {
+					finOCRHeader = finOCRHeaderService.getFinOCRHeaderByRef(aFinanceMain.getParentRef(),
+							TableType.TEMP_TAB.getSuffix());
+				}
+
+				if (finOCRHeader != null) {
+					MessageUtil.showError(Labels.getLabel("label_FinOCRDialog_OCRMaintenance.value"));
+					return;
+				}
+
 			}
 
 		}
@@ -3949,6 +3966,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setLoanDownSizingService(LoanDownSizingService loanDownSizingService) {
 		this.loanDownSizingService = loanDownSizingService;
+	}
+
+	public void setFinOCRHeaderService(FinOCRHeaderService finOCRHeaderService) {
+		this.finOCRHeaderService = finOCRHeaderService;
 	}
 
 }

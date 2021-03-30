@@ -45,6 +45,7 @@
  */
 package com.pennant.webui.finance.covenant;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -79,10 +80,13 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -165,6 +169,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	protected Textbox tbdocumentdate;
 	protected Textbox tbdocumentName;
 	protected Listbox listboxDocuments;
+	protected Textbox additionalRemarks;
+	protected Tab additionalRemarksTab;
+	protected Tabpanel additionalRemarksTabPanel;
+	protected Tab covenantDetailsTab;
 
 	private Covenant covenant;
 	private transient boolean newFinance;
@@ -406,6 +414,11 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				this.btnSave.setVisible(false);
 			}
 
+			if (ImplementationConstants.COVENANT_ADTNL_REMARKS) {
+				additionalRemarksTab.setVisible(true);
+				this.additionalRemarksTabPanel.setVisible(true);
+			}
+
 			this.covenantDialogWindow.setHeight("85%");
 			this.covenantDialogWindow.setWidth("100%");
 			this.gbStatusDetails.setVisible(false);
@@ -454,6 +467,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setReadonly(true);
 		//readOnlyComponent(isReadOnly("CovenantDialog_Description"), this.description);
 		readOnlyComponent(isReadOnly("CovenantDialog_Remarks"), this.remarks);
+		readOnlyComponent(isReadOnly("CovenantDialog_AdditionalRemarks"), this.additionalRemarks);
 		readOnlyComponent(isReadOnly("CovenantDialog_StandardValue"), this.standardValue);
 		readOnlyComponent(isReadOnly("CovenantDialog_ActualValue"), this.actualValue);
 
@@ -521,6 +535,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.notifyTo.setReadonly(true);
 		this.internalUse.setDisabled(true);
 		this.remarks.setReadonly(true);
+		this.additionalRemarks.setReadonly(true);
 		this.standardValue.setReadonly(true);
 		this.actualValue.setReadonly(true);
 		this.btnCovenantReceived.setDisabled(true);
@@ -596,8 +611,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setMaxlength(500);
 		this.alertDays.setMaxlength(3);
 		this.covenantGraceDays.setMaxlength(3);
-		this.description.setWidth("850px");
+		this.description.setWidth("850px");	
 		this.remarks.setWidth("850px");
+		this.remarks.setMaxlength(500);
+
+		this.additionalRemarks.setWidth("1200px");
+		this.additionalRemarks.setMaxlength(10000);
 
 		if ("Maintanance".equals(module) || enqiryModule) {
 			this.rw_manrole.setVisible(false);
@@ -692,6 +711,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 		this.description.setValue(covenantType.getDescription());
 
+		if (covenant.getRemarks1() != null) {
+			this.additionalRemarks.setValue(new String(covenant.getRemarks1(), StandardCharsets.UTF_8));
+		}
 		this.pdd.setChecked(covenant.isPdd());
 
 		this.otc.setChecked(covenant.isOtc());
@@ -856,6 +878,13 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		}
 
 		try {
+			String addRemarks = this.additionalRemarks.getValue();
+			covenant.setRemarks1(addRemarks.getBytes(StandardCharsets.UTF_8));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
 			covenant.setAllowWaiver(this.alwWaiver.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1018,6 +1047,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		doRemoveLOVValidation();
 
 		if (!wve.isEmpty()) {
+			this.covenantDetailsTab.setSelected(true);
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
@@ -1062,6 +1092,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		if (!this.description.isReadonly() && description.length() > 0) {
 			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_Covenant_Description.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
+		
+		if (!this.additionalRemarks.isReadonly()) {
+			this.additionalRemarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CovenantsDialog_AdditionalRemarks.value"),
+							null, false));
 		}
 
 		if (!this.receivableDate.isReadonly() && this.pdd.isChecked()) {
@@ -1205,6 +1241,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setErrorMessage("");
 		this.mandRole.setErrorMessage("");
 		this.receivableDate.setErrorMessage("");
+		this.additionalRemarks.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 

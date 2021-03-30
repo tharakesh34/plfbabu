@@ -67,6 +67,10 @@ public class FinOCRHeader extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
+	public boolean isNew() {
+		return isNewRecord();
+	}
+
 	public long getHeaderID() {
 		return headerID;
 	}

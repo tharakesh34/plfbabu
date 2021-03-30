@@ -144,6 +144,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.AssetConstants;
@@ -306,6 +307,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	@Autowired(required = false)
 	private InsuranceProspectService insuranceProspectService;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	String insuranceUrl = App.getProperty("iifl.insurance.url");
 
@@ -893,7 +895,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
 						finFeeDetail.setNetAmount(aVASRecording.getFee());
 
-						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+						if (aVASRecording.isNewRecord()) {
+							finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+						} else {
+							finFeeDetail.setRecordType(aVASRecording.getRecordType());
+						}
 						finFeeDetailsList.add(finFeeDetail);
 
 						appendFeesToFeeList(finFeeDetail);
@@ -1664,6 +1670,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(220);
 		generator.setCcyFormat(getCcyFormat());
+		generator.setExtendedFieldDetailsService(getExtendedFieldDetailsService());
 		if (enqiryModule || isCancelProcess) {
 			generator.setReadOnly(true);
 		} else {
@@ -3860,6 +3867,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void setVaildatePremium(boolean vaildatePremium) {
 		this.vaildatePremium = vaildatePremium;
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 }

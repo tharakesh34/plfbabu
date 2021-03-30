@@ -67,6 +67,7 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal inProcess = BigDecimal.ZERO;
 
 	private String taxType = "";
+	@XmlElement
 	private String feeTypeCode = "";
 	private long feeId;
 	private Long taxHeaderId;

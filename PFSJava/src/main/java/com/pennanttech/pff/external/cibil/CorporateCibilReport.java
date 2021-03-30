@@ -202,10 +202,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		StringBuilder builder = new StringBuilder(reportLocation);
 		builder.append(File.separator);
 		builder.append(memberId);
-		builder.append("-");
+		builder.append("_");
 		builder.append(DateUtil.getSysDate("ddMMYYYY"));
-		builder.append("-");
-		builder.append(DateUtil.getSysDate("Hmmss"));
+		//builder.append("_");
+		//builder.append(DateUtil.getSysDate("Hmmss"));
 		builder.append(".txt");
 		reportName = new File(builder.toString());
 
@@ -1431,9 +1431,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		}
 
 	}
-
+	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	private void initlize() {
-		memberDetails = cibilService.getMemberDetails(PennantConstants.PFF_CUSTCTG_CORP);
+		memberDetails = cibilService.getMemberDetailsByType(PennantConstants.PFF_CUSTCTG_CORP,
+				PennantConstants.PFF_CIBIL_TYPE_GENERATE);
 		totalRecords = 0;
 		processedRecords = 0;
 		successCount = 0;

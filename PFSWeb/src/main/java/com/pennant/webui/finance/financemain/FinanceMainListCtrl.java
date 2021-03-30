@@ -82,10 +82,13 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -105,6 +108,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRenderer;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
@@ -119,6 +123,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
@@ -218,6 +223,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private DedupParmService dedupParmService;
 	private FinanceMainExtService financeMainExtService;
 	private FinChangeCustomerService finChangeCustomerService;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+	private CollateralSetupDAO collateralSetupDAO;
 
 	private String CREATE_CIF = "CREATECIF";
 	private String CREATE_ACCOUNT = "CREATACCOUNT";
@@ -538,6 +545,24 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (custInMaintain) {
 			MessageUtil.showMessage("Customer is Maintainance");
 			return;
+		}
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CHECK_COLL_MAINTENANCE)
+				&& StringUtils.equals(screenEvent, FinanceConstants.FINSER_EVENT_ORG)) {
+			String finReference = aFinanceMain.getFinReference();
+			List<CollateralAssignment> collateralAssignmentList = collateralAssignmentDAO
+					.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME,
+							TableType.TEMP_TAB.getSuffix());
+			if (CollectionUtils.isNotEmpty(collateralAssignmentList)) {
+				for (CollateralAssignment collateralAssignment : collateralAssignmentList) {
+					boolean isRcdMaintenance = collateralSetupDAO.isCollateralInMaintenance(
+							collateralAssignment.getCollateralRef(), TableType.TEMP_TAB.getSuffix());
+					if (isRcdMaintenance) {
+						MessageUtil.showMessage("Collateral is Maintainance");
+						return;
+					}
+				}
+			}
 		}
 
 		doLoadWorkFlow(aFinanceMain.isWorkflow(), aFinanceMain.getWorkflowId(), aFinanceMain.getNextTaskId());
@@ -1632,4 +1657,13 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			betaDialog = "_Beta";
 		}
 	}
+
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
 }

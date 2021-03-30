@@ -21,7 +21,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
-	private long receiptID = 0;// Auto Generated Sequence
+	private long receiptID = 0;
 	private Date receiptDate;
 	private String receiptType;
 	private String recAgainst;
@@ -61,7 +61,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String knockoffAmount;
 	private String slipNo;
 	private String realizeStatus;
-	private String bounceReason;
+	private long bounceReason;
 	private String realizeRemarks;
 	private String extReference;
 	private String module;
@@ -93,8 +93,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal gstLppAmount = BigDecimal.ZERO;
 
 	private String remarks;
-	private boolean depositProcess = false; // added for Cash Management 
-	private String depositBranch; // added for Cash Management 
+	private boolean depositProcess = false;
+	private String depositBranch;
 	private boolean newRecord;
 	private String lovValue;
 	private FinReceiptHeader befImage;
@@ -132,8 +132,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private List<ManualAdviseReserve> payableReserves = new ArrayList<>(1);
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<>(1);
 	private List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<>(1);
-	private ManualAdvise manualAdvise; // Bounce Reason
-	private List<FinFeeDetail> paidFeeList = new ArrayList<FinFeeDetail>(1); // Paid Fee Detail List for Fee Receipt
+	private ManualAdvise manualAdvise;
+	private List<FinFeeDetail> paidFeeList = new ArrayList<FinFeeDetail>(1);
 	private List<FinODDetails> finODDetails = new ArrayList<>(1);
 	private List<ManualAdviseMovements> payablesMovements = new ArrayList<>(1);
 	private List<FinExcessMovement> finExcessMovements = new ArrayList<>(1);
@@ -191,6 +191,20 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+	private String receiptSourceAcType;
+	private String receiptSourceAcDesc;
+	private String entityDesc;
+	private String sourceId;
+
+	public FinReceiptHeader() {
+		super();
+	}
+
+	public FinReceiptHeader(long id) {
+		super();
+		this.setId(id);
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("receiptDetails");
@@ -297,6 +311,10 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("documentDetails");
 		excludeFields.add("finTDSApplicable");
 		excludeFields.add("closureTypeDesc");
+		excludeFields.add("entityDesc");
+		excludeFields.add("receiptSourceAcType");
+		excludeFields.add("receiptSourceAcDesc");
+		excludeFields.add("sourceId");
 
 		return excludeFields;
 	}
@@ -473,15 +491,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public FinReceiptHeader() {
-		super();
-	}
-
-	public FinReceiptHeader(long id) {
-		super();
-		this.setId(id);
 	}
 
 	public long getId() {
@@ -1332,11 +1341,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.realizeStatus = realizeStatus;
 	}
 
-	public String getBounceReason() {
+	public long getBounceReason() {
 		return bounceReason;
 	}
 
-	public void setBounceReason(String bounceReason) {
+	public void setBounceReason(long bounceReason) {
 		this.bounceReason = bounceReason;
 	}
 
@@ -1746,4 +1755,35 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.closureTypeDesc = closureTypeDesc;
 	}
 
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public String getReceiptSourceAcType() {
+		return receiptSourceAcType;
+	}
+
+	public void setReceiptSourceAcType(String receiptSourceAcType) {
+		this.receiptSourceAcType = receiptSourceAcType;
+	}
+
+	public String getReceiptSourceAcDesc() {
+		return receiptSourceAcDesc;
+	}
+
+	public void setReceiptSourceAcDesc(String receiptSourceAcDesc) {
+		this.receiptSourceAcDesc = receiptSourceAcDesc;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
 }

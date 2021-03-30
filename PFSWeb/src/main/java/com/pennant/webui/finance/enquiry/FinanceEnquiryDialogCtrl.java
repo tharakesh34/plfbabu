@@ -119,6 +119,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.SubventionDetail;
@@ -129,6 +130,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.AssetConstants;
@@ -316,6 +318,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Intbox planEmiHLockPeriod;
 	protected Checkbox cpzAtPlanEmi;
 	private Label label_FinanceMainDialog_PlanEmiHolidayMethod;
+	protected Row row_BpiTreatment;
 
 	// Unplanned Emi Holidays
 	protected Row row_UnPlanEmiHLockPeriod;
@@ -572,14 +575,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox leadSource;
 	protected Textbox poSource;
 	protected Checkbox finOCRRequired;
+	protected Checkbox alwLoanSplit;
+	protected ExtendedCombobox parentLoanReference;
 	protected Checkbox alwPlannedEmiHolidayInGrace;
 	Customer customer = null;
 	@Autowired
 	private JointAccountDetailService jointAccountDetailService;
 	@Autowired
 	private CreditApplicationReviewService creditApplicationReviewService;
-	protected Checkbox alwLoanSplit;
-	protected Textbox parentLoanReference;
 	protected Label label_FinanceMainDialog_ParentLoanReference;
 
 	//SubventionDetails
@@ -595,6 +598,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate;
 	protected Datebox subventionEndDate_two;
 
+	private FinanceDetailService financeDetailService;
+	
 	public FinanceSummary getFinSummary() {
 		return finSummary;
 	}
@@ -1054,6 +1059,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_manualSteps.setVisible(true);
 				this.row_stepType.setVisible(true);
 				this.stepFinance.setChecked(aFinanceMain.isStepFinance());
+				if (aFinanceMain.isStepFinance()) {
+					appendStepDetailTab();
+				}
 				this.stepPolicy.setValue(aFinanceMain.getStepPolicy(), aFinanceMain.getLovDescStepPolicyName());
 				this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
 				this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
@@ -1104,7 +1112,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.grcRepayRow.setVisible(true);
 						this.allowGrcRepay.setChecked(aFinanceMain.isAllowGrcRepay());
 					}
-					this.graceSchdMethod.setValue(aFinanceMain.getGrcSchdMthd());
+					this.graceSchdMethod.setValue(PennantStaticListUtil.getlabelDesc(aFinanceMain.getGrcSchdMthd(),
+							PennantStaticListUtil.getScheduleMethods()));
 				}
 
 				if (StringUtils.trimToEmpty(aFinanceMain.getGrcCpzFrq()).length() == 5) {
@@ -1259,11 +1268,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayAccount.setVisible(false);
 			this.label_FinanceMainDialog_DownPayAccount.setVisible(false);
 		}
-
-		this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
-		fillComboBox(this.dftBpiTreatment, aFinanceMain.getBpiTreatment(), PennantStaticListUtil.getDftBpiTreatment(),
-				"");
-		oncheckalwBpiTreatment();
+		if (ImplementationConstants.ALLOW_BPI_TREATMENT) {
+				this.row_BpiTreatment.setVisible(true);
+				this.alwBpiTreatment.setChecked(aFinanceMain.isAlwBPI());
+				fillComboBox(this.dftBpiTreatment, aFinanceMain.getBpiTreatment(),
+						PennantStaticListUtil.getDftBpiTreatment(), "");
+				oncheckalwBpiTreatment();
+			} 
 		if (ImplementationConstants.ALLOW_PLANNED_EMIHOLIDAY) {
 			this.alwPlannedEmiHoliday.setChecked(aFinanceMain.isPlanEMIHAlw());
 			onCheckPlannedEmiholiday();
@@ -1726,9 +1737,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.alwLoanSplit.setChecked(aFinanceMain.isAlwLoanSplit());
 		// Under Construction
 		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
-		if (aFinanceMain.getParentRef() != null && StringUtils.isNotBlank(aFinanceMain.getParentRef())) {
-			this.parentLoanReference.setValue(aFinanceMain.getParentRef());
-		}
+		this.parentLoanReference.setValue(aFinanceMain.getParentRef());
+
 		logger.debug("Leaving");
 	}
 
@@ -1780,6 +1790,39 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return arrayList;
 	}
 
+	/**
+	 * Method for Rendering Step Details Data in finance
+	 */
+	protected void appendStepDetailTab() {
+		logger.debug(Literal.ENTERING);
+
+		createTab(AssetConstants.UNIQUE_ID_STEPDETAILS, true);
+		Tab tab = getTab(AssetConstants.UNIQUE_ID_STEPDETAILS);
+
+		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
+		List<FinanceStepPolicyDetail> financeStepPolicyDetailList = new ArrayList<FinanceStepPolicyDetail>();
+
+		if (fromApproved) {
+			financeStepPolicyDetailList = getFinanceDetailService()
+					.getFinStepPolicyDetails(aFinanceMain.getFinReference(), "_AView", false);
+		} else {
+			financeStepPolicyDetailList = getFinanceDetailService()
+					.getFinStepPolicyDetails(aFinanceMain.getFinReference(), "_View", false);
+		}
+
+		getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList);
+
+		final HashMap<String, Object> map = getDefaultArguments();
+		map.put("financeDetail", this.financeDetail);
+		map.put("enquiryModule", true);
+		map.put("isWIF", false);
+		map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul",
+				getTabpanel(AssetConstants.UNIQUE_ID_STEPDETAILS), map);
+
+		logger.debug(Literal.LEAVING);
+	}
+	
 	/**
 	 * Method for Rendering Joint account and Guaranteer Details Data in finance
 	 */
@@ -2374,7 +2417,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.accountsOfficer.setReadonly(true);
 		this.eligibilityMethod.setReadonly(true);
 		this.alwPlannedEmiHoliday.setDisabled(true);
-		this.planEmiMethod.setReadonly(true);
+		this.planEmiMethod.setDisabled(true);
 		this.maxPlanEmiPerAnnum.setReadonly(true);
 		this.maxPlanEmi.setReadonly(true);
 		this.planEmiHLockPeriod.setReadonly(true);
@@ -2401,6 +2444,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.repayRvwFrq.setDisabled(true);
 		this.repayCpzFrq.setDisabled(true);
 		this.parentLoanReference.setReadonly(true);
+		//BPI
+		this.alwBpiTreatment.setDisabled(true);
+		this.dftBpiTreatment.setDisabled(true);
 	}
 
 	/** ========================================================= */
@@ -2914,6 +2960,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceCancellationService(FinanceCancellationService financeCancellationService) {
 		this.financeCancellationService = financeCancellationService;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }

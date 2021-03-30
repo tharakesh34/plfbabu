@@ -303,6 +303,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		if (enqiryModule) {
 			List<String> filterList = new ArrayList<>();
 			filterList.add(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+			filterList.add(RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE);
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
 			// searchObject.addWhereClause(" PAYAGAINSTID = 0");
 		} else if (!enqiryModule) {
@@ -353,6 +354,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				searchObject.addFilter(fil);
 			}
 		}
+		searchObject.addFilter(
+				new Filter("ReceiptPurpose", RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE, Filter.OP_NOT_EQUAL));
 		logger.debug("Leaving");
 	}
 
@@ -584,7 +587,15 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(
 					PennantAppUtil.formateDate(finReceiptHeader.getReceiptDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
-
+			
+			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finReceiptHeader.getKnockOffType())) {
+				lc = new Listcell("Auto");
+			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(finReceiptHeader.getKnockOffType())) {
+				lc = new Listcell("Manual");
+			} else {
+				lc = new Listcell("");
+			}
+			lc.setParent(item);
 			lc = new Listcell(
 					PennantAppUtil.formateDate(finReceiptHeader.getReceivedDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);

@@ -277,9 +277,14 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		} else {
 			FinanceMain details = (FinanceMain) dataObject;
 			if (details != null) {
+				Date finApprovedDate = details.getFinApprovedDate();
+				if (finApprovedDate != null && (finApprovedDate.compareTo(details.getFinStartDate()) < 0)) {
+					this.startDate.setValue(finApprovedDate);
+				} else {
+					this.startDate.setValue(details.getFinStartDate());
+				}
 				this.finReference.setValue(details.getFinReference());
-				this.startDate.setValue(details.getFinStartDate());
-				this.endDate.setValue(DateUtility.getAppDate());
+				this.endDate.setValue(SysParamUtil.getAppDate());
 			} else {
 				this.finReference.setValue("");
 				this.startDate.setValue(null);

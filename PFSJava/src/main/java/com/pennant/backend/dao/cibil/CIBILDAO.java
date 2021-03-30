@@ -71,4 +71,6 @@ public interface CIBILDAO {
 
 	EventProperties getEventProperties(String configName);
 
+	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+	CibilMemberDetail getMemberDetailsByType(String bureauType, String type);
 }

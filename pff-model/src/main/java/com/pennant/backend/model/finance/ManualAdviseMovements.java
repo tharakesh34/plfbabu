@@ -51,6 +51,7 @@ public class ManualAdviseMovements implements Serializable {
 	private boolean lppAmzReqonME;
 	private BigDecimal currWaiverGst = BigDecimal.ZERO;
 	private boolean tdsReq;
+	private Long insReceiptID;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -377,6 +378,14 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setTdsReq(boolean tdsReq) {
 		this.tdsReq = tdsReq;
+	}
+
+	public long getInsReceiptID() {
+		return insReceiptID;
+	}
+
+	public void setInsReceiptID(long insReceiptID) {
+		this.insReceiptID = insReceiptID;
 	}
 
 }

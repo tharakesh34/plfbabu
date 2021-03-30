@@ -304,4 +304,39 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		return null;
 	}
 
+	@Override
+	public ReasonCode getReasonCode(long id, String reasonTypeCode, String type) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, reasonTypeID, reasonCategoryID, code, description, active,");
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(",reasonTypeDesc,reasonCategoryDesc,reasonCategoryCode,reasonTypeCode");
+		}
+		sql.append(" From Reasons");
+		sql.append(type);
+		sql.append(" Where id = :id AND reasonTypeCode = :reasonTypeCode");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		ReasonCode reasonCode = new ReasonCode();
+		reasonCode.setId(id);
+		reasonCode.setReasonTypeCode(reasonTypeCode);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonCode);
+		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
+		try {
+			reasonCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			reasonCode = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return reasonCode;
+	}
 }

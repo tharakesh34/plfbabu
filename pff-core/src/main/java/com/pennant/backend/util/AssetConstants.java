@@ -109,6 +109,7 @@ public class AssetConstants {
 	public static final String UNIQUE_ID_FINANCIALSUMMARY = "FINANCIALSUMMARY";
 	public static final String UNIQUE_ID_OCRDETAILS = "OCRDETAILS";
 	public static final String UNIQUE_ID_DMSINTERFACE = "DMSINTERFACE";
+	public static final String UNIQUE_ID_EXTERNALAGREEMENTS = "EXTERNALAGREEMENTS";
 
 	public static final String UNIQUE_ID_PMAY = "PMAY";
 

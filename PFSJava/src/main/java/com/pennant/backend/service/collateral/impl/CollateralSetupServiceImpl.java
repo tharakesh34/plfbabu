@@ -376,7 +376,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		String tableType = "";
 		CollateralSetup collateralSetup = (CollateralSetup) auditHeader.getAuditDetail().getModelData();
 
-		if (collateralSetup.isWorkflow()) {
+		if (collateralSetup.isWorkflow() && !StringUtils.equals(DMSModule.DMS.name(), collateralSetup.getSourceId())) {
 			tableType = "_Temp";
 		}
 		if (collateralSetup.isNew()) {
@@ -999,7 +999,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						usrLanguage);
 				auditDetails.addAll(details);
 				//Collateral Dedup Validation
-				if (ImplementationConstants.COLLATERAL_DEDUP_WARNING) {
+				if (ImplementationConstants.COLLATERAL_DEDUP_WARNING
+						&& !PennantConstants.FINSOURCE_ID_API.equals(collateralSetup.getSourceId())) {
 					long queryId = collateralStructure.getQueryId();
 					String querySubCode = collateralStructure.getQuerySubCode();
 					String queryCode = collateralStructure.getQueryCode();
@@ -1828,8 +1829,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
 
-			documentDetails.setCustId(collateralSetup.getDepositorId());
-			documentDetails.setFinReference(collateralSetup.getFinReference());
+			if (collateralSetup.getCustomerDetails() != null) {
+				documentDetails.setCustId(collateralSetup.getCustomerDetails().getCustID());
+			}
+			if (collateralSetup.getFinReference() != null) {
+				documentDetails.setFinReference(collateralSetup.getFinReference());
+			}
 
 			if (StringUtils.isBlank(documentDetails.getRecordType())) {
 				continue;
@@ -2967,16 +2972,24 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		List<CollateralSetup> collateralSetupList = financeDetail.getCollaterals();
+		List<CollateralSetup> collateralSetupList = null;
+		collateralSetupList = financeDetail.getCollaterals();
 
-		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
+		if (CollectionUtils.isEmpty(collateralSetupList)) {
+			collateralSetupList = financeDetail.getDmsCollateralDocuments();
+		}
+
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 
 			if ("doApprove".equals(method)) {
 				collateralSetupList = setApprovedData(collateralSetupList, financeDetail);
 			}
 
 			for (int i = 0; i < collateralSetupList.size(); i++) {
-				CollateralSetup collateralSetup = setWorkFlowValues(financeDetail, collateralSetupList.get(i), method);
+				CollateralSetup collateralSetup = collateralSetupList.get(i);
+				if (!StringUtils.equals(DMSModule.DMS.name(), collateralSetup.getSourceId())) {
+					collateralSetup = setWorkFlowValues(financeDetail, collateralSetup, method);
+				}
 				String[] fields = PennantJavaUtil.getFieldDetails(collateralSetup, collateralSetup.getExcludeFields());
 				AuditHeader auditHeader = getAuditHeader(collateralSetup, auditTranType);
 

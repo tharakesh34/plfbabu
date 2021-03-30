@@ -390,7 +390,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_BounceCode.isVisible()) {
-				finReceiptHeader.setBounceReason(this.bounceCode.getValidatedValue());
+				finReceiptHeader.setBounceReason(Integer.valueOf(this.bounceCode.getValidatedValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

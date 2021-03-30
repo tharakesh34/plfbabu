@@ -152,8 +152,20 @@ public class DisbursementInstCtrl {
 
 				for (FinAdvancePayments finAdvancePayments : list) {
 					if (finAdvancePayments.ispOIssued()) {
-						if (!StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_CANCEL)) {
-							return false;
+						if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+							if(!(StringUtils
+										.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_CANCEL)
+										|| StringUtils.equals(finAdvancePayments.getStatus(),
+												DisbursementConstants.STATUS_REJECTED)
+										|| StringUtils.equals(finAdvancePayments.getStatus(),
+											DisbursementConstants.STATUS_PRINT))) {
+								return false;
+							}
+						}else{
+							if (!StringUtils.equals(finAdvancePayments.getStatus(),
+									DisbursementConstants.STATUS_CANCEL)) {
+								return false;
+							}
 						}
 					}
 				}
@@ -317,8 +329,9 @@ public class DisbursementInstCtrl {
 					lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));
 					lc.setParent(item);
 
-					if (detail.getStatus() != null && detail.getStatus().equals("REJECTED")) {
-						lc = new Listcell(detail.getStatus() + "-" + StringUtils.trimToEmpty(detail.getRejectReason()));
+					if (StringUtils.equals(detail.getStatus(), DisbursementConstants.STATUS_REJECTED)) {
+						lc = new Listcell(detail.getStatus().concat(StringUtils.isNotEmpty(detail.getRejectReason())
+								? "-" + StringUtils.trimToEmpty(detail.getRejectReason()) : ""));
 					} else {
 						lc = new Listcell(detail.getStatus());
 					}

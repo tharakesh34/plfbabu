@@ -279,8 +279,6 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.solutionfactory.DeviationHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
-import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
-import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.spreadsheet.SpreadSheet;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
@@ -537,21 +535,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// Step Finance Details
 	protected Checkbox stepFinance;
-	protected ExtendedCombobox stepPolicy;
-	protected Label label_FinanceMainDialog_StepPolicy;
-	protected Label label_FinanceMainDialog_numberOfSteps;
-	protected Checkbox alwManualSteps;
-	protected Intbox noOfSteps;
+	// protected ExtendedCombobox stepPolicy;
+	// protected Label label_FinanceMainDialog_StepPolicy;
+	// protected Label label_FinanceMainDialog_numberOfSteps;
+	// protected Checkbox alwManualSteps;
+	// protected Intbox noOfSteps;
 	protected Row row_stepFinance;
-	protected Row row_manualSteps;
-	protected Space space_StepPolicy;
-	protected Space space_noOfSteps;
-	protected Hbox hbox_numberOfSteps;
+	// protected Row row_manualSteps;
+	// protected Space space_StepPolicy;
+	// protected Space space_noOfSteps;
+	// protected Hbox hbox_numberOfSteps;
 	protected Row row_shariaApproval;
 	protected Checkbox shariaApprovalReq;
-	protected Combobox stepType;
-	protected Space space_stepType;
-	protected Row row_stepType;
+	// protected Combobox stepType;
+	// protected Space space_stepType;
+	// protected Row row_stepType;
 
 	protected CurrencyBox custPaymentAmount;
 	protected AccountSelectionBox custPayAccId;
@@ -807,12 +805,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient boolean oldVar_manualSchedule;
 	// Step Finance Details
 	protected transient boolean oldVar_stepFinance;
-	protected transient String oldVar_stepPolicy;
-	protected transient boolean oldVar_alwManualSteps;
-	protected transient int oldVar_noOfSteps;
-	protected transient int oldVar_stepType;
+	// protected transient String oldVar_stepPolicy;
+	// protected transient boolean oldVar_alwManualSteps;
+	// protected transient int oldVar_noOfSteps;
+	// protected transient int oldVar_stepType;
 	protected transient int oldVar_planDeferCount;
-	protected transient List<FinanceStepPolicyDetail> oldVar_finStepPolicyList;
+	// protected transient List<FinanceStepPolicyDetail> oldVar_finStepPolicyList;
 	protected transient Date oldVar_gracePeriodEndDate;
 	protected transient boolean oldVar_allowGrace;
 	protected transient int oldVar_graceTerms;
@@ -1503,14 +1501,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.firstDroplineDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		// Step Finance Field Properties
-		this.noOfSteps.setMaxlength(2);
-		this.stepType.setReadonly(true);
+		// this.noOfSteps.setMaxlength(2);
+		// this.stepType.setReadonly(true);
 
-		this.stepPolicy.setProperties("StepPolicyHeader", "PolicyCode", "PolicyDesc", true, 8);
-		String[] alwdStepPolices = StringUtils.trimToEmpty(financeType.getAlwdStepPolicies()).split(",");
-		Filter filter[] = new Filter[1];
-		filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
-		this.stepPolicy.setFilters(filter);
+		// this.stepPolicy.setProperties("StepPolicyHeader", "PolicyCode", "PolicyDesc", true, 8);
+		// String[] alwdStepPolices = StringUtils.trimToEmpty(financeType.getAlwdStepPolicies()).split(",");
+		// Filter filter[] = new Filter[1];
+		// filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
+		// this.stepPolicy.setFilters(filter);
 
 		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
 		this.accountsOfficer.getTextbox().setMaxlength(50);
@@ -1788,8 +1786,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.parentLoanReference.setValueColumn("FinReference");
 		this.parentLoanReference.setDescColumn("FinType");
 		this.parentLoanReference.setValidateColumns(new String[] { "FinReference" });
-		this.parentLoanReference
-				.setFilters(new Filter[] { new Filter("CustID", financeMain.getCustID(), Filter.OP_EQUAL) });
+
+		Filter[] filters = new Filter[3];
+		filters[0] = new Filter("CustID", financeMain.getCustID(), Filter.OP_EQUAL);
+		filters[1] = new Filter("FinOcrRequired", 1, Filter.OP_EQUAL);
+		filters[2] = new Filter("FinReference", financeMain.getFinReference(), Filter.OP_NOT_EQUAL);
+		this.parentLoanReference.setFilters(filters);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2093,6 +2096,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
+			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())) {
+				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+				List<FinanceStepPolicyDetail> financeStepPolicyDetailList = new ArrayList<FinanceStepPolicyDetail>();
+
+				financeStepPolicyDetailList = getFinanceDetailService()
+						.getFinStepPolicyDetails(financeMain.getFinReference(), "_AView", false);
+
+				getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList);
+			}
 			// Step Policy Details
 			appendStepDetailTab(onLoad, true);
 
@@ -2227,6 +2239,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//DMS Interface Tab
 			if (ImplementationConstants.LOAN_ORG_DMS_TAB_REQ && isTabVisible(StageTabConstants.DMSInterface)) {
 				appendDMSInterfaceTab(onLoad);
+			}
+			if (StringUtils.isEmpty(moduleDefiner) && getUserWorkspace().isAllowed("FinanceMainDialog_comm360")) {
+				appendComm360Tab(onLoad);
 			}
 
 		} else {
@@ -2646,9 +2661,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty()
 						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))) {
 			final HashMap<String, Object> map = getDefaultArguments();
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setAllowGrcPeriod(this.allowGrace.isChecked());
+			map.put("financeDetail", getFinanceDetail());
 			map.put("isWIF", false);
-			map.put("alwManualSteps", this.alwManualSteps.isChecked());
 			map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
+			if (StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				map.put("enquiryModule", true);
+			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_STEPDETAILS), map);
 			if (tab != null) {
@@ -4059,13 +4078,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		this.stepFinance.setChecked(aFinanceMain.isStepFinance());
 		doStepPolicyCheck(false);
-		this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
-		this.stepPolicy.setDescription(aFinanceMain.getLovDescStepPolicyName());
-		this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
-		doAlwManualStepsCheck(false);
-		this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
-		fillComboBox(this.stepType, aFinanceMain.getStepType(), PennantStaticListUtil.getStepType(), "");
-
 		if (aFinanceMain.isNewRecord()) {
 			if (aFinanceMain.isAlwManualSteps()
 					&& getFinanceDetail().getFinScheduleData().getStepPolicyDetails() == null) {
@@ -5635,7 +5647,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.numberOfTerms_two.setValue(1);
 				}
 				this.row_stepFinance.setVisible(false);
-				this.row_manualSteps.setVisible(false);
 			}
 
 			// Saving Gestation Period Next (Pft/Rvw/Cpz) Dates
@@ -5820,10 +5831,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Step Finance Details
 		this.oldVar_stepFinance = this.stepFinance.isChecked();
-		this.oldVar_stepPolicy = this.stepPolicy.getValue();
-		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
-		this.oldVar_noOfSteps = this.noOfSteps.intValue();
-		this.oldVar_stepType = this.stepType.getSelectedIndex();
 
 		// FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -5910,7 +5917,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		int months = DateUtility.getMonthsBetween(maturDate, this.finStartDate.getValue(), true);
 		this.oldVar_tenureInMonths = months;
-		this.oldVar_finStepPolicyList = getFinanceDetail().getFinScheduleData().getStepPolicyDetails();
 		this.oldVar_finInsuranceList = getFinanceDetail().getFinScheduleData().getFinInsuranceList();
 
 		if (finFeeDetailListCtrl != null) {
@@ -6013,17 +6019,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.oldVar_stepFinance != this.stepFinance.isChecked()) {
 			return true;
 		}
-		if (!this.oldVar_stepPolicy.equals(this.stepPolicy.getValue())) {
-			return true;
-		}
-		if (this.oldVar_alwManualSteps != this.alwManualSteps.isChecked()) {
-			return true;
-		}
-		if (this.oldVar_noOfSteps != this.noOfSteps.intValue()) {
-			return true;
-		}
-		if (this.oldVar_stepType != this.stepType.getSelectedIndex()) {
-			return true;
+		if (stepDetailDialogCtrl != null) {
+			if (stepDetailDialogCtrl.isScdlRegenerate()) {
+				return true;
+			}
 		}
 		if (this.oldVar_planDeferCount != this.planDeferCount.intValue()) {
 			return true;
@@ -6041,14 +6040,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal oldDwnPaySupl = PennantApplicationUtil.unFormateAmount(this.oldVar_downPaySupl, formatter);
 		BigDecimal newDwnPaySupl = PennantApplicationUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter);
 		if (oldDwnPaySupl.compareTo(newDwnPaySupl) != 0) {
-			return true;
-		}
-
-		// Step Finance Details List Validation
-
-		if (stepDetailDialogCtrl != null
-				&& stepDetailDialogCtrl.getFinStepPoliciesList() != this.oldVar_finStepPolicyList) {
-
 			return true;
 		}
 
@@ -6351,9 +6342,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!noValidation && !getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
 			return true;
 		}
-		if (!getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) {
-			return true;
-		}
+
+		// PSD#163298 Below code commented because while Resubmitting without any changes build validation is coming
+		/*
+		 * if (!getFinanceDetail().getFinScheduleData().getFinanceMain().isLovDescIsSchdGenerated()) { return true; }
+		 */
 
 		/*
 		 * if (feeDetailDialogCtrl != null && feeDetailDialogCtrl.isDataChanged(false)) { return true; }
@@ -6418,7 +6411,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		//As this issue to be address at high level hence commenting for now 02/05/2020
+		// As this issue to be address at high level hence commenting for now 02/05/2020
+		// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+		boolean validateDetails = true;
+		if (this.userAction.getSelectedItem() != null) {
+			String userAction = this.userAction.getSelectedItem().getLabel();
+
+			if ("Cancel".equalsIgnoreCase(userAction) || userAction.contains("Reject")
+					|| userAction.contains("Resubmit")) {
+				validateDetails = false;
+			}
+		}
+
 		/*
 		 * if (isBackwardCase(financeDetail.getFinScheduleData().getFinanceMain())) { return; }
 		 */
@@ -6532,8 +6536,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							PennantRegularExpressions.REGEX_UPPBOX_ALPHANUM_UNDERSCORE, true));
 		}
 		if (this.finAmount.isVisible() && !this.finAmount.isReadonly()) {
+			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			this.finAmount.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_FinanceMainDialog_FinAmount.value"), finFormatter, true, false));
+					Labels.getLabel("label_FinanceMainDialog_FinAmount.value"), finFormatter, validateDetails, false));
 		}
 
 		if (this.gb_RolloverFinance.isVisible()) {
@@ -6551,8 +6556,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (this.row_FinAssetValue.isVisible()) {
 			if (this.finAssetValue.isVisible() && !this.finAssetValue.isReadonly()) {
+				// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 				this.finAssetValue.setConstraint(new PTDecimalValidator(
-						label_FinanceMainDialog_FinAssetValue.getValue(), finFormatter, true, false));
+						label_FinanceMainDialog_FinAssetValue.getValue(), finFormatter, validateDetails, false));
 			}
 			if (this.finCurrentAssetValue.isVisible() && !this.finCurrentAssetValue.isReadonly()) {
 				this.finCurrentAssetValue.setConstraint(new PTDecimalValidator(
@@ -6595,21 +6601,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_FinContractDate.value"), false,
 								appStartDate, appEndDate, true));
 			}
-		}
-
-		if (!this.stepPolicy.isReadonly() && this.stepFinance.isChecked() && !this.alwManualSteps.isChecked()) {
-			this.stepPolicy.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FinanceMainDialog_StepPolicy.value"), null, true, true));
-		}
-
-		if (!this.stepType.isDisabled() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()) {
-			this.stepType.setConstraint(new StaticListValidator(PennantStaticListUtil.getStepType(),
-					Labels.getLabel("label_FinanceMainDialog_StepType.value")));
-		}
-
-		if (!this.noOfSteps.isReadonly() && this.stepFinance.isChecked() && this.alwManualSteps.isChecked()) {
-			this.noOfSteps.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_FinanceMainDialog_NumberOfSteps.value"), true, false, 2, 99));
 		}
 
 		// FinanceMain Details Tab ---> 2. Grace Period Details
@@ -7008,12 +6999,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (!this.reqLoanTenor.isReadonly()) {
-			this.reqLoanTenor.setConstraint(
-					new PTNumberValidator(Labels.getLabel("label_FinanceMainDialog_ReqloanTenor.value"), false, false));
+			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			this.reqLoanTenor.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_FinanceMainDialog_ReqloanTenor.value"), validateDetails, false));
 		}
 		if (!this.reqLoanAmt.isReadonly()) {
-			this.reqLoanAmt.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_FinanceMainDialog_RequestedLoanAmt.value"), finFormatter, false, false));
+			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			this.reqLoanAmt.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_FinanceMainDialog_RequestedLoanAmt.value"),
+							finFormatter, validateDetails, false));
 		}
 
 		if (!this.tDSStartDate.isReadonly() && !this.tDSEndDate.isReadonly()) {
@@ -7677,8 +7671,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Extended Field validations
 		if (aFinanceDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
-			//FIXME: validating the extended fields while moving the case forward stages(validations will skip on save and re-submissions and cancel)
-			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
+			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			boolean validationReq = true;
+			if (this.userAction.getSelectedItem() != null) {
+				String userAction = this.userAction.getSelectedItem().getLabel();
+				if ("Cancel".equalsIgnoreCase(userAction) || userAction.contains("Reject")
+						|| userAction.contains("Resubmit")) {
+					validationReq = false;
+				}
+			}
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(validationReq));
 		}
 
 		// Save Contributor List Details
@@ -7786,7 +7788,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setCreditReviewData(spreadSheetCtrl.getCreditReviewData());
 		}
 
-		if (financeSpreadSheetCtrl != null) {
+		if (financeSpreadSheetCtrl != null && !isReadOnly("FinanceMainDialog_EligibilitySal")) {
 			if (financeSpreadSheetCtrl.doSave(userAction, true)) {
 				return;
 			}
@@ -7805,6 +7807,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				creditReviewData.setFinReference(this.finReference.getValue());
 				aFinanceDetail.setCreditReviewData(creditReviewData);
 			}
+		}
+
+		// Step Details saving
+		Tab stepTab = getTab(AssetConstants.UNIQUE_ID_STEPDETAILS);
+		if (stepDetailDialogCtrl != null && StringUtils.isEmpty(moduleDefiner)) {
+			stepDetailDialogCtrl.doWriteComponentsToBean(aFinScheduleData, stepTab, "Save");
+		}
+
+		if (!aFinanceMain.isStepFinance()) {
+			aFinanceMain.setStepsAppliedFor(null);
+			aFinanceMain.setCalcOfSteps(null);
+			aFinanceMain.setNoOfSteps(0);
+			aFinanceMain.setAlwManualSteps(false);
+			aFinanceMain.setStepType(PennantConstants.List_Select);
+			aFinanceMain.setStepPolicy("");
 		}
 
 		// Finance Flags
@@ -8022,6 +8039,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail = eligibilityDetailDialogCtrl.doSave_EligibilityList(aFinanceDetail);
 		}
 
+		if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+			setLlDateInAdvPayments(aFinanceDetail);
+		}
+
 		// Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
 			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData(), true);
@@ -8075,7 +8096,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					List<CustomerDocument> customerDocuments = dmsDialogCtrl.prepareCustomerDocuments(custDocList,
 							custId, mappedUris);
 
-					aFinanceDetail.getCustomerDetails().getCustomerDocumentsList().addAll(customerDocuments);
+					aFinanceDetail.getCustomerDetails().setCustomerDocumentsList(customerDocuments);
 
 					if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
 						for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
@@ -10195,13 +10216,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setLlDateInAdvPayments(FinanceDetail aFinanceDetail) throws ParseException {
 		logger.debug(Literal.ENTERING);
+
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		if (StringUtils.equals(aFinanceDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
-				&& StringUtils.equals(financeMain.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)
-				&& financeMain.isQuickDisb()) {
+				&& financeMain.isQuickDisb() && CollectionUtils.isNotEmpty(aFinanceDetail.getAdvancePaymentsList())) {
 			for (FinAdvancePayments finAdvancePayments : aFinanceDetail.getAdvancePaymentsList()) {
-				finAdvancePayments.setLLDate(financeMain.getFinStartDate());
-				finAdvancePayments.setPostingQdp(true);
+				if (userAction != null && StringUtils.equals(userAction.getSelectedItem().getValue().toString(),
+						PennantConstants.RCD_STATUS_APPROVED)) {
+					if (StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_PRINT)
+							|| StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_PAID)) {
+						finAdvancePayments.setLLDate(financeMain.getFinStartDate());
+						finAdvancePayments.setPostingQdp(true);
+					}
+				} else {
+					finAdvancePayments.setPostingQdp(false);
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -10477,7 +10506,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fillComboBox(this.repayRateBasis, CalculationConstants.RATE_BASIS_R,
 					PennantStaticListUtil.getInterestRateType(true), ",C,");
 			this.row_stepFinance.setVisible(false);
-			this.row_manualSteps.setVisible(false);
 			this.stepFinance.setChecked(false);
 			doStepPolicyCheck(false);
 			Tab tab = null;
@@ -11298,9 +11326,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = eligibilityMethod.getObject();
 		String fieldCode = "";
-		if (dataObject instanceof String) {
-			this.eligibilityMethod.setValue(dataObject.toString());
+		if (dataObject == null || dataObject instanceof String) {
+			this.eligibilityMethod.setValue("");
 			this.eligibilityMethod.setDescription("");
+			this.eligibilityMethod.setAttribute("FieldCodeId", null);
 		} else {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
@@ -11847,6 +11876,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.manualSchedule.isChecked()) {
 			onCheckgrace(false);
 		}
+
+		if (stepDetailDialogCtrl != null) {
+			if (stepFinance.isChecked() && allowGrace.isChecked()) {
+				stepDetailDialogCtrl.setAlwGraceChanges(true);
+			} else {
+				stepDetailDialogCtrl.setAlwGraceChanges(false);
+			}
+		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
@@ -12343,49 +12380,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return null;
 	}
 
-	/**
-	 * when clicks on button "Step Policy Detail"
-	 * 
-	 * @param event
-	 */
-	public void onFulfill$stepPolicy(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-
-		this.stepPolicy.setConstraint("");
-		this.noOfSteps.setConstraint("");
-		this.stepType.setConstraint("");
-		this.stepPolicy.clearErrorMessage();
-		this.noOfSteps.setErrorMessage("");
-		this.stepType.setErrorMessage("");
-
-		Object dataObject = stepPolicy.getObject();
-		if (dataObject == null || dataObject instanceof String) {
-			if (dataObject != null) {
-				this.stepPolicy.setValue(dataObject.toString());
-				this.stepPolicy.setDescription("");
-			}
-			fillComboBox(this.stepType, "", PennantStaticListUtil.getStepType(), "");
-			getFinanceDetail().getFinScheduleData().getStepPolicyDetails().clear();
-
-		} else {
-			StepPolicyHeader detail = (StepPolicyHeader) dataObject;
-			if (detail != null) {
-				this.stepPolicy.setValue(detail.getPolicyCode(), detail.getPolicyDesc());
-				fillComboBox(this.stepType, detail.getStepType(), PennantStaticListUtil.getStepType(), "");
-				// Fetch Step Policy Details List
-				List<StepPolicyDetail> policyList = getStepPolicyService()
-						.getStepPolicyDetailsById(this.stepPolicy.getValue());
-				this.noOfSteps.setValue(policyList.size());
-				getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
-			}
-		}
-
-		if (stepDetailDialogCtrl != null) {
-			stepDetailDialogCtrl.doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
 	/*
 	 * onCheck Event For Step Finance Check Box
 	 */
@@ -12404,7 +12398,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& (getFinanceDetail().getFinScheduleData().getFinanceMain() != null)) {
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setParentRef(this.parentLoanReference.getValue());
 		}
-		appendOCRDetailsTab(false);
+		if (this.finOCRRequired.isChecked()) {
+			appendOCRDetailsTab(false);
+		}
 		doCheckOCRDetailsTab();
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -12454,23 +12450,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void doStepPolicyCheck(boolean isAction) {
 
-		this.stepPolicy.setMandatoryStyle(false);
-		this.stepPolicy.setConstraint("");
-		this.stepPolicy.setErrorMessage("");
-		this.stepPolicy.setValue("", "");
-
-		this.alwManualSteps.setChecked(false);
-		this.noOfSteps.setConstraint("");
-		this.noOfSteps.setErrorMessage("");
-		this.noOfSteps.setValue(0);
-		this.row_manualSteps.setVisible(false);
-
-		this.stepPolicy.setVisible(false);
-		this.label_FinanceMainDialog_StepPolicy.setVisible(false);
-		this.label_FinanceMainDialog_numberOfSteps.setVisible(false);
-		this.hbox_numberOfSteps.setVisible(false);
-		this.row_stepType.setVisible(false);
-
 		Tab tab = getTab(AssetConstants.UNIQUE_ID_STEPDETAILS);
 		if (tab != null) {
 			tab.setVisible(this.stepFinance.isChecked());
@@ -12485,37 +12464,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (this.stepFinance.isChecked()) {
-			FinanceType type = getFinanceDetail().getFinScheduleData().getFinanceType();
-			if (type.isAlwManualSteps()
-					|| getFinanceDetail().getFinScheduleData().getFinanceMain().isAlwManualSteps()) {
-				this.row_manualSteps.setVisible(true);
-			}
-			if (type.isSteppingMandatory()) {
-				this.stepFinance.setDisabled(true);
-			}
-			this.label_FinanceMainDialog_StepPolicy.setVisible(true);
-			this.stepPolicy.setVisible(true);
-			if (!StringUtils.trimToEmpty(type.getDftStepPolicy()).equals(PennantConstants.List_Select)) {
-				this.stepPolicy.setValue(type.getDftStepPolicy(), type.getLovDescDftStepPolicyName());
-			}
-			this.stepPolicy.setMandatoryStyle(true);
-			this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
-
-			fillComboBox(this.stepType, type.getDftStepPolicyType(), PennantStaticListUtil.getStepType(), "");
-			this.row_stepType.setVisible(true);
-			this.space_stepType.setSclass("");
-			this.stepType.setDisabled(true);
-
 			// Filling Step Policy Details List
 			if (isAction) {
-				List<StepPolicyDetail> policyList = getStepPolicyService()
-						.getStepPolicyDetailsById(this.stepPolicy.getValue());
-				getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
-				if (stepDetailDialogCtrl != null) {
-					stepDetailDialogCtrl
-							.doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
-				} else {
+				if (stepDetailDialogCtrl == null) {
 					appendStepDetailTab(false, false);
+				}
+				if (stepDetailDialogCtrl != null) {
+					stepDetailDialogCtrl.doStepPolicyCheck();
 				}
 			}
 		} else {
@@ -12523,94 +12478,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_stepFinance.setVisible(false);
 			}
 		}
-	}
-
-	/*
-	 * onCheck Event For Manual Steps Check Box
-	 */
-	public void onCheck$alwManualSteps(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-		doAlwManualStepsCheck(true);
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
-	private void doAlwManualStepsCheck(boolean isAction) {
-
-		this.stepPolicy.setConstraint("");
-		this.stepPolicy.setErrorMessage("");
-
-		this.noOfSteps.setConstraint("");
-		this.noOfSteps.setErrorMessage("");
-		this.noOfSteps.setValue(0);
-
-		if (this.alwManualSteps.isChecked()) {
-			this.stepPolicy.setMandatoryStyle(false);
-			this.label_FinanceMainDialog_numberOfSteps.setVisible(true);
-			this.hbox_numberOfSteps.setVisible(true);
-			this.stepPolicy.setValue("", "");
-			this.stepPolicy.setReadonly(true);
-			this.space_stepType.setSclass(PennantConstants.mandateSclass);
-			this.stepType.setDisabled(isReadOnly("FinanceMainDialog_stepType"));
-
-		} else {
-
-			if (this.financeDetail.isNewRecord()) {
-				this.stepPolicy.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getDftStepPolicy());
-				this.stepPolicy.setDescription(
-						getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescDftStepPolicyName());
-				this.stepType.setValue(getFinanceDetail().getFinScheduleData().getFinanceType().getDftStepPolicyType());
-				fillComboBox(this.stepType,
-						getFinanceDetail().getFinScheduleData().getFinanceType().getDftStepPolicyType(),
-						PennantStaticListUtil.getStepType(), "");
-			} else {
-				this.stepPolicy.setValue(getFinanceDetail().getFinScheduleData().getFinanceMain().getStepPolicy());
-				this.stepPolicy.setDescription(
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescStepPolicyName());
-				fillComboBox(this.stepType, getFinanceDetail().getFinScheduleData().getFinanceMain().getStepType(),
-						PennantStaticListUtil.getStepType(), "");
-			}
-			this.stepPolicy.setMandatoryStyle(true);
-			this.label_FinanceMainDialog_numberOfSteps.setVisible(false);
-			this.hbox_numberOfSteps.setVisible(false);
-			this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
-			this.stepType.setReadonly(isReadOnly("FinanceMainDialog_stepType"));
-			this.space_stepType.setSclass("");
-			this.stepType.setDisabled(true);
-			if (isReadOnly("FinanceMainDialog_alwManualSteps")) {
-				this.row_manualSteps.setVisible(false);
-			}
-
-		}
-
-		if (stepDetailDialogCtrl != null) {
-			stepDetailDialogCtrl.setAllowedManualSteps(this.alwManualSteps.isChecked());
-		}
-
-		// Filling Step Policy Details List
-		if (isAction) {
-
-			List<StepPolicyDetail> policyList = new ArrayList<StepPolicyDetail>();
-			if (StringUtils.isNotEmpty(this.stepPolicy.getValue())) {
-				policyList = getStepPolicyService().getStepPolicyDetailsById(this.stepPolicy.getValue());
-			}
-			getFinanceDetail().getFinScheduleData().resetStepPolicyDetails(policyList);
-			if (stepDetailDialogCtrl != null) {
-				stepDetailDialogCtrl.doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
-			} else {
-				appendStepDetailTab(false, false);
-			}
-		}
-	}
-
-	/**
-	 * Method for getting selected Step Type Using In Step Detail Dialog Controller for EMI Validation
-	 * 
-	 * @return
-	 */
-	public String getStepType() {
-		this.stepType.setConstraint("");
-		this.stepType.setErrorMessage("");
-		return getComboboxValue(this.stepType);
 	}
 
 	/**
@@ -12718,21 +12585,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
 							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") }, new String[] {}));
 				}
-
-				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
-						FinanceConstants.STEPTYPE_PRIBAL)
-						&& StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-								CalculationConstants.SCHMTHD_EQUAL)) {
-					errorList.add(new ErrorDetail("StepFinance", "30555",
-							new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
-				}
-
-				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
-						FinanceConstants.STEPTYPE_EMI)
-						&& !StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-								CalculationConstants.SCHMTHD_EQUAL)) {
-					errorList.add(new ErrorDetail("StepFinance", "30703",
-							new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
+				if (stepDetailDialogCtrl != null) {
+					errorList.addAll(stepDetailDialogCtrl.ValidatePaymentMethod(errorList,
+							this.cbScheduleMethod.getSelectedItem().getValue().toString(),
+							this.repayRateBasis.getSelectedItem().getValue().toString()));
 				}
 
 				if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
@@ -12744,26 +12600,33 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							errorList.add(new ErrorDetail("StepFinance", "30553",
 									new String[] { Labels.getLabel("label_Flat") }, new String[] {}));
 						}
-
-						if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
-								FinanceConstants.STEPTYPE_EMI)) {
-							if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-									CalculationConstants.SCHMTHD_EQUAL)
-									&& StringUtils.equals(this.repayRateBasis.getSelectedItem().getValue().toString(),
-											CalculationConstants.RATE_BASIS_R)) {
-								errorList.add(new ErrorDetail("StepFinance", "30554",
-										new String[] { Labels.getLabel("label_ScheduleMethod_Equal"),
-												Labels.getLabel("label_Reduce") },
-										new String[] {}));
-							}
-						}
+					}
+					if (stepDetailDialogCtrl != null) {
+						errorList.addAll(stepDetailDialogCtrl.ValidatePaymentMethod(errorList,
+								this.cbScheduleMethod.getSelectedItem().getValue().toString(),
+								this.repayRateBasis.getSelectedItem().getValue().toString()));
 					}
 				}
+
 				if (stepDetailDialogCtrl != null) {
-					errorList.addAll(stepDetailDialogCtrl.doValidateStepDetails(
-							getFinanceDetail().getFinScheduleData().getFinanceMain(), this.numberOfTerms_two.intValue(),
-							this.alwManualSteps.isChecked(), this.noOfSteps.intValue(),
-							this.stepType.getSelectedItem().getValue().toString()));
+					FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+					String stepAppliedOn = "";
+					stepAppliedOn = financeMain.getStepsAppliedFor() != null ? financeMain.getStepsAppliedFor()
+							: financeType.getStepsAppliedFor();
+
+					if (PennantConstants.STEPPING_APPLIED_EMI.equals(stepAppliedOn)
+							|| PennantConstants.STEPPING_APPLIED_BOTH.equals(stepAppliedOn)) {
+						errorList.addAll(stepDetailDialogCtrl.doValidateStepDetails(
+								getFinanceDetail().getFinScheduleData().getFinanceMain(),
+								this.numberOfTerms_two.intValue(), PennantConstants.STEP_SPECIFIER_REG_EMI,
+								stepAppliedOn));
+					}
+					if (PennantConstants.STEPPING_APPLIED_GRC.equals(stepAppliedOn)
+							|| PennantConstants.STEPPING_APPLIED_BOTH.equals(stepAppliedOn)) {
+						errorList.addAll(stepDetailDialogCtrl.doValidateStepDetails(
+								getFinanceDetail().getFinScheduleData().getFinanceMain(),
+								this.graceTerms_Two.intValue(), PennantConstants.STEP_SPECIFIER_GRACE, stepAppliedOn));
+					}
 				}
 
 				// both step and EMI holiday not allowed
@@ -13460,6 +13323,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected ArrayList<WrongValueException> doWriteComponentsToBean(FinScheduleData aFinanceSchData)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 
+		// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+		boolean validateDetails = true;
+		if (this.userAction.getSelectedItem() != null) {
+			String userAction = this.userAction.getSelectedItem().getLabel();
+
+			if ("Cancel".equalsIgnoreCase(userAction) || userAction.contains("Reject")
+					|| userAction.contains("Resubmit")) {
+				validateDetails = false;
+			}
+		}
+
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
 		int formatter = CurrencyUtil.getFormat(aFinanceMain.getFinCcy());
@@ -13557,7 +13431,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			aFinanceMain.setParentRef(this.parentLoanReference.getValue());
+			if (this.finOCRRequired.isChecked()) {
+				aFinanceMain.setParentRef(this.parentLoanReference.getValue());
+			} else {
+				aFinanceMain.setParentRef("");
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -13838,8 +13716,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			if (!isOverDraft) {
-				aFinanceMain.setFinAmount(PennantApplicationUtil.unFormateAmount(this.finAmount.isReadonly()
-						? this.finAmount.getActualValue() : this.finAmount.getValidateValue(), formatter));
+				// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+				if (validateDetails) {
+					aFinanceMain.setFinAmount(PennantApplicationUtil.unFormateAmount(this.finAmount.isReadonly()
+							? this.finAmount.getActualValue() : this.finAmount.getValidateValue(), formatter));
+				} else {
+					aFinanceMain.setFinAmount(
+							PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+				}
 				aFinanceMain.setCurDisbursementAmt(
 						PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
 			}
@@ -13911,24 +13795,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Step Finance Details
 		if (this.row_stepFinance.isVisible()) {
 			aFinanceMain.setStepFinance(this.stepFinance.isChecked());
-			if (this.stepFinance.isChecked()) {
-				try {
-					aFinanceMain.setStepPolicy(this.stepPolicy.getValue());
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-				try {
-					aFinanceMain.setStepType(this.stepType.getSelectedItem().getValue().toString());
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-			}
-			aFinanceMain.setAlwManualSteps(this.alwManualSteps.isChecked());
-			try {
-				aFinanceMain.setNoOfSteps(this.noOfSteps.intValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
 		}
 
 		try {
@@ -14689,7 +14555,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (this.rpyPftFrqRow.isVisible()) {
-				if (!this.nextRepayPftDate.isDisabled() && StringUtils.isNotEmpty(this.repayPftFrq.getValue())) {
+				if (!this.nextRepayPftDate.isReadonly() && StringUtils.isNotEmpty(this.repayPftFrq.getValue())) {
 					if (this.nextRepayPftDate.getValue() != null) {
 						this.nextRepayPftDate_two.setValue(this.nextRepayPftDate.getValue());
 					}
@@ -15189,8 +15055,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 												String.valueOf(label_FinanceMainDialog_FinAssetValue.getValue()) }));
 					}
 				}
-				aFinanceMain.setFinAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.isReadonly()
-						? this.finAssetValue.getActualValue() : this.finAssetValue.getValidateValue(), formatter));
+				// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+				if (validateDetails) {
+					aFinanceMain.setFinAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.isReadonly()
+							? this.finAssetValue.getActualValue() : this.finAssetValue.getValidateValue(), formatter));
+				} else {
+					aFinanceMain.setFinAssetValue(
+							PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
+				}
 			}
 			// Validation on finAsset And fin Current Asset value based on field
 			// visibility
@@ -15962,7 +15834,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			if (this.cbTdsType.isVisible() && isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
+			if (this.cbTdsType.isVisible()
+					&& isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
 				aFinanceMain.setTdsType(getComboboxValue(this.cbTdsType));
 			}
 		} catch (WrongValueException we) {
@@ -16355,6 +16228,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Vas Recording Accounting Entries
 		if (StringUtils.isEmpty(moduleDefiner)) {
+			if (getFinanceDetail().getFinScheduleData().getVasRecordingList() != null
+					&& !getFinanceDetail().getFinScheduleData().getVasRecordingList().isEmpty()) {
+				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent,
+						getFinanceDetail().getFinScheduleData().getVasRecordingList()));
+				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+					accountingSetEntries.addAll(getFinanceDetailService().prepareInsPayAccounting(aeEvent,
+							getFinanceDetail().getFinScheduleData().getVasRecordingList()));
+				}
+			}
 			accountingSetEntries.addAll(installmentDueService.processbackDateInstallmentDues(getFinanceDetail(),
 					profitDetail, appDate, false, ""));
 			/*
@@ -17685,7 +17567,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Start FinanceMain Details Tab ---> 1. Offer Details
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AlwLoanSplit"), this.alwLoanSplit);
-		this.parentLoanReference.setReadonly(false);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_ParentLoanReference"), this.parentLoanReference);
+		if (financeMain.isFinOcrRequired()) {
+			readOnlyComponent(true, this.parentLoanReference);
+		} else {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_ParentLoanReference"), this.parentLoanReference);
+		}
+
+		// this.parentLoanReference.setReadonly(false);
 
 		// FinanceMain Details Tab ---> 1. Basic Details
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finPurpose"), this.finPurpose);
@@ -18276,31 +18165,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (isStepFinance) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_stepFinance"), this.stepFinance);
-			readOnlyComponent(isReadOnly("FinanceMainDialog_stepPolicy"), this.stepPolicy);
 			row_stepFinance.setVisible(true);
-
-			if (isAlwManualSteps) {
-				readOnlyComponent(isReadOnly("FinanceMainDialog_alwManualSteps"), this.alwManualSteps);
-				readOnlyComponent(isReadOnly("FinanceMainDialog_noOfSteps"), this.noOfSteps);
-				readOnlyComponent(isReadOnly("FinanceMainDialog_stepType"), this.stepType);
-				row_manualSteps.setVisible(true);
-				row_stepType.setVisible(true);
-			} else {
-				this.alwManualSteps.setDisabled(true);
-				this.noOfSteps.setDisabled(true);
-				this.stepType.setDisabled(true);
-				row_manualSteps.setVisible(false);
-				row_stepType.setVisible(false);
-			}
 		} else {
 			this.stepFinance.setDisabled(true);
-			this.stepPolicy.setReadonly(true);
-			this.alwManualSteps.setDisabled(true);
-			this.noOfSteps.setDisabled(true);
-			this.stepType.setDisabled(true);
 			row_stepFinance.setVisible(false);
-			row_manualSteps.setVisible(false);
-			row_stepType.setVisible(false);
 		}
 	}
 
@@ -18555,10 +18423,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Step Finance Fields
 		this.stepFinance.setDisabled(true);
-		this.stepPolicy.setReadonly(true);
-		this.alwManualSteps.setDisabled(true);
-		this.noOfSteps.setDisabled(true);
-		this.stepType.setDisabled(true);
 		this.applicationNo.setReadonly(true);
 
 		// FinanceMain Details Tab ---> 2. Grace Period Details
@@ -18655,7 +18519,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.reqLoanTenor.setReadonly(true);
 		readOnlyComponent(true, this.fixedRateTenor);
 		readOnlyComponent(true, this.fixedTenorRate);
-		this.alwLoanSplit.setDisabled(true);
+		readOnlyComponent(true, this.alwLoanSplit);
+		readOnlyComponent(true, this.parentLoanReference);
+		readOnlyComponent(true, this.samplingRequired);
+		readOnlyComponent(true, this.legalRequired);
 		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
@@ -19821,24 +19688,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (!main.isAllowRepayRvw()) {
 						rvwchecked = true;
 					}
-
-					if (pftchecked) {
-						this.oldVar_nextRepayPftDate = this.nextRepayPftDate_two.getValue();
-					}
-
-					if (repaychecked) {
-						this.oldVar_nextRepayDate = this.nextRepayDate_two.getValue();
-					}
-
-					if (rvwchecked) {
-						this.oldVar_nextRepayRvwDate = this.nextRepayRvwDate_two.getValue();
-					}
-
-					if (cpzchecked) {
-						this.oldVar_nextRepayCpzDate = this.nextRepayCpzDate_two.getValue();
-					}
 				}
 			}
+
+			if (pftchecked) {
+				this.oldVar_nextRepayPftDate = this.nextRepayPftDate_two.getValue();
+			}
+
+			if (repaychecked) {
+				this.oldVar_nextRepayDate = this.nextRepayDate_two.getValue();
+			}
+
+			if (rvwchecked) {
+				this.oldVar_nextRepayRvwDate = this.nextRepayRvwDate_two.getValue();
+			}
+
+			if (cpzchecked) {
+				this.oldVar_nextRepayCpzDate = this.nextRepayCpzDate_two.getValue();
+			}
+
 		} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGFRQ)) {
 
 			FinanceMain main = scheduleData.getFinanceMain();
@@ -21158,7 +21026,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// Object
 				if (stepDetailDialogCtrl != null) {
 					validFinScheduleData.setStepPolicyDetails(stepDetailDialogCtrl.getFinStepPoliciesList());
-					this.oldVar_finStepPolicyList = stepDetailDialogCtrl.getFinStepPoliciesList();
+					stepDetailDialogCtrl.setDataChanged(false);
 				}
 
 				// Setting Finance Step Policy Details to Finance Schedule Data
@@ -21436,6 +21304,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finCurrentAssetValue.setValue(PennantApplicationUtil.formateAmount(utilizedAmt, formatter));
 
 		doWriteComponentsToBean(validFinScheduleData);
+		Tab stepTab = getTab(AssetConstants.UNIQUE_ID_STEPDETAILS);
+		if (stepTab != null && stepDetailDialogCtrl != null) {
+			stepDetailDialogCtrl.doWriteComponentsToBean(validFinScheduleData, stepTab, "Validate");
+		}
 
 		if (manualSchedule.isChecked()) {
 			if (getManualScheduleDetailDialogCtrl() == null) {
@@ -22235,22 +22107,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setLabel_FinanceMainDialog_AlwGrace(Label labelFinanceMainDialogAlwGrace) {
 		this.label_FinanceMainDialog_AlwGrace = labelFinanceMainDialogAlwGrace;
-	}
-
-	public Label getLabel_FinanceMainDialog_StepPolicy() {
-		return label_FinanceMainDialog_StepPolicy;
-	}
-
-	public void setLabel_FinanceMainDialog_StepPolicy(Label labelFinanceMainDialogStepPolicy) {
-		this.label_FinanceMainDialog_StepPolicy = labelFinanceMainDialogStepPolicy;
-	}
-
-	public Label getLabel_FinanceMainDialog_numberOfSteps() {
-		return label_FinanceMainDialog_numberOfSteps;
-	}
-
-	public void setLabel_FinanceMainDialog_numberOfSteps(Label labelFinanceMainDialogNumberOfSteps) {
-		this.label_FinanceMainDialog_numberOfSteps = labelFinanceMainDialogNumberOfSteps;
 	}
 
 	public Label getLabel_FinanceMainDialog_PromoProduct() {
@@ -24094,6 +23950,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.isNotEmpty(moduleDefiner)) {
 				defaultArguments.put("definitionApproved", true);
 			}
+			if (StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				defaultArguments.put("enqiryModule", true);
+			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinOCRDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_OCRDETAILS), defaultArguments);
 		}
@@ -24129,6 +23988,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	protected void appendComm360Tab(boolean onLoad) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		try {
+			if (onLoad) {
+				createTab(AssetConstants.UNIQUE_ID_EXTERNALAGREEMENTS, true);
+			} else {
+				HashMap<String, Object> map = getDefaultArguments();
+				map.put("tab", getTab(AssetConstants.UNIQUE_ID_EXTERNALAGREEMENTS));
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Comm360/Comm360Dialog.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_EXTERNALAGREEMENTS), map);
+
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	public List<ValueLabel> getCustomerCifs() {
 		List<ValueLabel> custCifs = new ArrayList<ValueLabel>();
 		custCifs.add(new ValueLabel(String.valueOf(getFinanceDetail().getCustomerDetails().getCustID()),
@@ -24158,12 +24035,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public List<ValueLabel> getAssignedCollateralRefs() {
 		List<ValueLabel> collRefs = new ArrayList<ValueLabel>();
-
-		for (CollateralAssignment collAssign : getFinanceDetail().getCollateralAssignmentList()) {
-
-			collRefs.add(new ValueLabel(String.valueOf(collAssign.getCollateralRef()),
-					collAssign.getCollateralRef() + " - " + StringUtils
-							.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName())));
+		if (CollectionUtils.isNotEmpty(getFinanceDetail().getCollateralAssignmentList())) {
+			for (CollateralAssignment collAssign : getFinanceDetail().getCollateralAssignmentList()) {
+				collRefs.add(new ValueLabel(String.valueOf(collAssign.getCollateralRef()),
+						collAssign.getCollateralRef() + " - " + StringUtils
+								.trimToEmpty(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName())));
+			}
 		}
 		return collRefs;
 	}

@@ -27,6 +27,7 @@ public class Covenant extends CovenantType {
 	private Date extendedDate;
 	@XmlElement(name = "description")
 	private String remarks;
+	private byte[] remarks1;
 	@XmlElement(name = "remarks")
 	private String additionalField1;
 	@XmlElement(name = "standardValue")
@@ -175,6 +176,14 @@ public class Covenant extends CovenantType {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public byte[] getRemarks1() {
+		return remarks1;
+	}
+
+	public void setRemarks1(byte[] remarks1) {
+		this.remarks1 = remarks1;
 	}
 
 	public String getAdditionalField1() {

@@ -132,6 +132,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 		//PROCESS ACCOUNTING
 		AEEvent aeEvent = processAccounting(refundHeader);
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		String userBranch = refundHeader.getUserDetails().getBranchCode();
@@ -743,6 +744,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		aeEvent.setBranch(feeRefundHeader.getFinBranch());
 		aeEvent.setCcy(feeRefundHeader.getFinCcy());
 		aeEvent.setCustID(feeRefundHeader.getCustId());
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();

@@ -25,4 +25,7 @@ public interface ReceiptCancellationService {
 	PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) throws Exception;
 
 	Map<String, Object> getGLSubHeadCodes(String reference);
+
+	//### 16-12-2020, ST#1627
+	AuditHeader doApproveNonLanReceipt(AuditHeader auditHeader) throws Exception;
 }

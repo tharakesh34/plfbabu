@@ -1340,9 +1340,26 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				}
 			}
 		} else if (verificationType != VerificationType.PD) {
-			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-			verification.setCustId(customer.getCustID());
-			verification.setCustomerName(customer.getCustShrtName());
+			if (!StringUtils.equalsIgnoreCase(verification.getReferenceType(), DocumentType.COAPPLICANT.getValue())) {
+				verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+				verification.setCustId(customer.getCustID());
+				verification.setCustomerName(customer.getCustShrtName());
+			} else {
+				if (CollectionUtils.isNotEmpty(jointaccountdetails)) {
+					for (JointAccountDetail jointAccountDetail : jointaccountdetails) {
+						if (verification.getCustId() != null
+								&& jointAccountDetail.getCustID() == verification.getCustId()) {
+							verification.setCif(jointAccountDetail.getCustCIF());
+							if (jointAccountDetail.getCustomerDetails() != null
+									&& jointAccountDetail.getCustomerDetails().getCustomer() != null) {
+								verification.setCustomerName(
+										jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
+							}
+							break;
+						}
+					}
+				}
+			}
 		}
 
 	}

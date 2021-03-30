@@ -577,7 +577,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(", NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc");
+			sql.append(", DepositorCIF, CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc");
 			sql.append(", UtilizedAmount, BankLTV, SpecialLTV");
 			sql.append(", DepositorCIF, CollateralType");
 		}
@@ -616,6 +616,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			ca.setWorkflowId(rs.getLong("WorkflowId"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
+				ca.setDepositorCIF(rs.getString("DepositorCIF"));//added for Verification API
 				ca.setCollateralCcy(rs.getString("CollateralCcy"));
 				ca.setCollateralValue(rs.getBigDecimal("CollateralValue"));
 				ca.setBankValuation(rs.getBigDecimal("BankValuation"));

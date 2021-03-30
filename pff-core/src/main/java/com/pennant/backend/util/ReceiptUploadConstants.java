@@ -75,6 +75,7 @@ public class ReceiptUploadConstants {
 	public static final String RU_JOB_PARAM = "RU";
 	public static final String RECEIPTUPLOAD_ID = "ReceiptUploadId";
 	public static final String MULTI_REC_THREAD_COUNT = "MULTI_REC_THREAD_COUNT";
+	public static final String NON_LAN_RECEIPT = "N";
 	public static final String THREAD_RU = "PFSRU";
 	public static final String DATA_RUCOUNT = "RUCount";
 	public static final String DATA_TOTALRUFINANCES = "TotalRUFinances";

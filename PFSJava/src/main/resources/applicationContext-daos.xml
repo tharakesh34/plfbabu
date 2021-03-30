@@ -8517,7 +8517,7 @@
 	</bean>
 
 	<bean id="scriptValidationService" class="com.pennant.backend.service.collateral.impl.ScriptValidationService"
-	scope="prototype" />
+		scope="prototype" />
 
 	<bean id="accountingConfigCache" class="com.pennant.cache.util.AccountingConfigCache">
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
@@ -11221,6 +11221,7 @@
 
 	<bean name="multiReceiptThreadProcess" class="com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess">
 		<property name="receiptService" ref="receiptService" />
+		<property name="nonLanReceiptService" ref="nonLanReceiptService" />
 	</bean>
 	<!-- Change TDS -->
 	<bean id="changeTDSDAO" class="com.pennant.backend.dao.finance.impl.ChangeTDSDAOImpl" parent="basicDao" />
@@ -12006,7 +12007,7 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
-
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 
 	<bean id="cashBackDetailDAO" class="com.pennant.backend.dao.finance.impl.CashBackDetailDAOImpl" parent="basicDao" />
@@ -12539,7 +12540,8 @@
 
 	<bean id="dmsGetLeadsDAO" class="com.pennant.backend.dao.ext.dms.impl.DMSGetLeadsDAOImpl" parent="basicDao" />
 	<!--============ Loan Master Report ============== -->
-	<bean id="loanMasterReportDAO" class="com.pennant.backend.dao.others.external.reports.impl.LoanMasterReportDAOImpl" parent="basicDao" />
+	<bean id="loanMasterReportDAO" class="com.pennant.backend.dao.others.external.reports.impl.LoanMasterReportDAOImpl"
+		parent="basicDao" />
 
 	<bean id="loanMasterReportService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -12680,22 +12682,83 @@
 		</property>
 		<property name="transactionAttributes">
 			<props>
-					<prop key="doPartCancellation">PROPAGATION_REQUIRED</prop>
+				<prop key="doPartCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="postPartCancellation">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
 	</bean>
-	
+
 	<bean name="partCancellationServiceTarget" class="com.pennant.pff.core.schd.service.PartCancellationServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" /> 
-		<property name="repayInstructionDAO" ref="repayInstructionDAO" />   
-		<property name="financeDetailService" ref="financeDetailService" />   
-		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />   		
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
-	
-	<bean id="defaultMerchantUTRProcess" class="com.pennanttech.pff.external.merchant.DefaultMerchantUTRUploadProcess" parent="abstractInterface" />
-	
+
+	<!-- Non Loan Receipts -->
+	<bean id="nonLanReceiptService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="nonLanReceiptServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="saveMultiReceipt*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="nonLanReceiptServiceTarget" class="com.pennant.backend.service.finance.impl.NonLanReceiptServiceImpl"
+		parent="genericFinanceDetailService">
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
+		<property name="receiptCancellationService" ref="receiptCancellationService" />
+		<property name="entityDAO" ref="entityDAO" />
+		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
+		<property name="branchCashDetailDAO" ref="branchCashDetailDAO" />
+		<property name="interfaceLoggingDAO" ref="interfaceLoggingDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<!--============ LoanTypeKNOCKOFF Details ============== -->
+	<bean id="loanTypeKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeKnockOffDAOImpl"
+		parent="basicDao" />
+
+	<bean id="loanTypeKnockOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="loanTypeKnockOffTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="loanTypeKnockOffTarget" class="com.pennant.backend.service.applicationmaster.impl.LoanTypeKnockOffServiceImpl">
+		<property name="loanTypeKnockOffDAO" ref="loanTypeKnockOffDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<bean id="defaultMerchantUTRProcess" class="com.pennanttech.pff.external.merchant.DefaultMerchantUTRUploadProcess"
+		parent="abstractInterface" />
+
 </beans>
 

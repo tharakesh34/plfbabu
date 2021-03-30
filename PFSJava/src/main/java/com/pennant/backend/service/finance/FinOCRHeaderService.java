@@ -5,6 +5,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinOCRHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface FinOCRHeaderService {
 
@@ -12,11 +13,11 @@ public interface FinOCRHeaderService {
 
 	FinOCRHeader getFinOCRHeaderById(long headerId, String type);
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	AuditHeader saveOrUpdate(AuditHeader auditHeader, FinanceDetail financeDetail, boolean fromLoan);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader);
+	AuditHeader doApprove(AuditHeader auditHeader, FinanceDetail financeDetail, boolean fromLoan);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 

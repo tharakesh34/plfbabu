@@ -2880,8 +2880,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (extDocDetail != null) {
 				detail.setDocId(extDocDetail.getDocId());
 				detail.setNewRecord(false);
-				detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				detail.setVersion(extDocDetail.getVersion() + 1);
 			}
 
 			detail.setDocModule(FinanceConstants.MODULE_NAME);

@@ -437,12 +437,14 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				documentDetail.setDocReceivedDate(SysParamUtil.getAppDate());
 				documentDetail.setVersion(1);
 				documentDetail.setLastMntBy(getUserWorkspace().getUserId());
+				documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				//				documentDetail.setCustId();
 				textbox.setAttribute("data", documentDetail);
 			} else {
 				DocumentDetails documentDetail = (DocumentDetails) textbox.getAttribute("data");
 				documentDetail.setDocImage(docData);
 				documentDetail.setDocModule(FinanceConstants.QUERY_MANAGEMENT);
+				documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				textbox.setAttribute("data", documentDetail);
 			}
 		} catch (Exception ex) {

@@ -208,11 +208,12 @@ public class PersonalDiscussionDAOImpl extends SequenceDao<PersonalDiscussion> i
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select verificationid, name, addresstype, housenumber,flatnumber, street,");
 		sql.append(
-				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city, countryDesc, ");
-		sql.append(" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, verifiedDate, ");
+				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city,");
+		sql.append(" zipcode, contactnumber1, contactnumber2, verifiedDate, ");
 		sql.append(" agentcode, agentname, status, reason, summaryremarks,");
 		if ("_view".equalsIgnoreCase(type)) {
-			sql.append("cif, custid, keyreference, createdon, reasoncode, reasondesc,");
+			sql.append(
+					"cif, custid, keyreference, createdon, reasoncode, reasondesc, countryDesc, provinceDesc, cityDesc, ");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

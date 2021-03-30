@@ -771,7 +771,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	private void getDocument(Mandate mandate) {
 		DocumentDetails dd = new DocumentDetails();
-		dd.setFinReference(mandate.getFinReference());
+		dd.setFinReference(mandate.getOrgReference());
 		dd.setDocName(mandate.getDocumentName());
 		dd.setCustId(mandate.getCustID());
 		if (mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0 && !mandate.isNewRecord()) {

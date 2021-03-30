@@ -163,14 +163,15 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		sql.append(", AllowWaiver, MaxAllowedDays, DocumentReceived, DocumentReceivedDate, AllowPostponement");
 		sql.append(", ExtendedDate, AllowedPaymentModes, Frequency, NextFrequencyDate, GraceDays");
 		sql.append(", GraceDueDate, AlertsRequired, AlertType, AlertToRoles, AlertDays, InternalUse, Remarks");
-		sql.append(", AdditionalField1, AdditionalField2, AdditionalField3, AdditionalField4");
+		sql.append(", Remarks1, AdditionalField1, AdditionalField2, AdditionalField3, AdditionalField4");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkFlowId)");
 		sql.append(" values(:Id, :KeyReference, :Module , :CovenantTypeId, :Los, :MandatoryRole, :Otc, :Pdd");
 		sql.append(", :ReceivableDate, :AllowWaiver, :MaxAllowedDays, :DocumentReceived, :DocumentReceivedDate");
 		sql.append(", :allowPostPonement, :ExtendedDate, :AllowedPaymentModes, :Frequency, :NextFrequencyDate");
 		sql.append(", :GraceDays, :GraceDueDate, :alertsRequired, :alertType, :AlertToRoles, :AlertDays");
-		sql.append(", :InternalUse, :Remarks, :AdditionalField1, :AdditionalField2, :AdditionalField3");
+		sql.append(
+				", :InternalUse, :Remarks, :Remarks1, :AdditionalField1, :AdditionalField2, :AdditionalField3");
 		sql.append(", :AdditionalField4, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
 		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -233,7 +234,8 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 				", AllowedPaymentModes = :AllowedPaymentModes, Frequency = :Frequency, NextFrequencyDate = :NextFrequencyDate");
 		sql.append(", GraceDays = :GraceDays, GraceDueDate = :GraceDueDate, AlertsRequired = :alertsRequired");
 		sql.append(", AlertType = :alertType, AlertToRoles = :AlertToRoles, AlertDays = :AlertDays");
-		sql.append(", InternalUse = :InternalUse, Remarks = :Remarks, AdditionalField1 = :AdditionalField1");
+		sql.append(
+				", InternalUse = :InternalUse, Remarks = :Remarks, Remarks1 = :Remarks1, AdditionalField1 = :AdditionalField1");
 		sql.append(", AdditionalField2 = :AdditionalField2, AdditionalField3 = :AdditionalField3");
 		sql.append(", AdditionalField4 = :AdditionalField4, Version = :Version, LastMntBy = :LastMntBy");
 		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
@@ -435,7 +437,8 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		sql.append(" Id, KeyReference, Module, CovenantTypeId, Los, MandatoryRole, Otc, Pdd, ReceivableDate");
 		sql.append(", AllowWaiver, MaxAllowedDays, DocumentReceived, DocumentReceivedDate, AllowPostPonement");
 		sql.append(", ExtendedDate, AllowedPaymentModes, Frequency, NextFrequencyDate, GraceDays, GraceDueDate");
-		sql.append(", AlertsRequired, AlertType, AlertToRoles, AlertDays, InternalUse, Remarks, AdditionalField1");
+		sql.append(
+				", AlertsRequired, AlertType, AlertToRoles, AlertDays, InternalUse, Remarks, Remarks1, AdditionalField1");
 		sql.append(", AdditionalField2, AdditionalField3, AdditionalField4");
 		sql.append(", version, LastMntby, LastMnton, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -570,6 +573,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 			c.setAlertDays(rs.getInt("AlertDays"));
 			c.setInternalUse(rs.getBoolean("InternalUse"));
 			c.setRemarks(rs.getString("Remarks"));
+			c.setRemarks1(rs.getBytes("Remarks1"));
 			c.setAdditionalField1(rs.getString("AdditionalField1"));
 			c.setAdditionalField2(rs.getString("AdditionalField2"));
 			c.setAdditionalField3(rs.getString("AdditionalField3"));

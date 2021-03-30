@@ -72,7 +72,7 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 		logger.debug(Literal.LEAVING);
 		return dmsQueue.getDocUri();
 	}
-
+	
 	@Override
 	public byte[] retrive(String docURI) {
 		logger.debug(Literal.ENTERING);
@@ -83,6 +83,23 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 			dmsQueue.setDocUri(docURI);
 			dmsQueue = externalDocumentManagementService.retrieve(dmsQueue);
 			return dmsQueue.getDocImage();
+		}
+	}
+
+	@Override
+	public DMSQueue retriveDMS(String docURI) {
+		logger.debug(Literal.ENTERING);
+
+		DMSQueue dmsQueue = new DMSQueue();
+		if (externalDocumentManagementService == null) {
+			dmsQueue.setDocUri(docURI);
+			byte[] docImage = retriveDocFromFileSystem(docURI);
+			dmsQueue.setDocImage(docImage);
+			return dmsQueue;
+		} else {
+			dmsQueue.setDocUri(docURI);
+			dmsQueue = externalDocumentManagementService.retrieve(dmsQueue);
+			return dmsQueue;
 		}
 	}
 

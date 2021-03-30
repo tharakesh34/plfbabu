@@ -51,7 +51,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 					ps.setString(9, dMSQueue.getDocCategory());
 					ps.setString(10, dMSQueue.getDocType());
 					ps.setString(11, dMSQueue.getDocExt());
-					ps.setDate(12, JdbcUtil.getDate(dMSQueue.getCreatedOn()));
+					ps.setTimestamp(12, dMSQueue.getCreatedOn());
 					ps.setLong(13, JdbcUtil.setLong(dMSQueue.getCreatedBy()));
 					ps.setString(14, dMSQueue.getOfferId());
 					ps.setString(15, dMSQueue.getApplicationNo());
@@ -61,7 +61,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 			});
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e.getCause());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -230,6 +230,26 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		return dmsQueue.getDocImage();
 	}
 
+	public byte[] getDocImage(long docMgrId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("select DocImage from Documentmanager where id = ?");
+		DMSQueue dmsQueue = new DMSQueue();
+
+		this.jdbcOperations.query(sql.toString(), new ResultSetExtractor<DMSQueue>() {
+
+			@Override
+			public DMSQueue extractData(ResultSet rs) throws SQLException, DataAccessException {
+				while (rs.next()) {
+					dmsQueue.setDocImage(rs.getBytes("DocImage"));
+				}
+				return dmsQueue;
+			}
+		}, docMgrId);
+		logger.debug(Literal.LEAVING);
+		return dmsQueue.getDocImage();
+	}
+
 	@Override
 	public int delete(long queueId) {
 		logger.debug(Literal.ENTERING);
@@ -243,4 +263,34 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		logger.debug(Literal.LEAVING);
 		return 0;
 	}
+
+	@Override
+	public void update(DMSQueue dMSQueue) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update DMS_QUEUE");
+		sql.append(" set  AuxiloryFields1 = ?, createdon= ?");
+		sql.append(" where docManagerID = ? and processflag=0");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					ps.setString(1, dMSQueue.getAuxiloryFields1());
+					ps.setTimestamp(2, dMSQueue.getCreatedOn());
+					ps.setLong(3, dMSQueue.getDocManagerID());
+
+				}
+			});
+
+		} catch (Exception e) {
+			logger.trace(Literal.EXCEPTION, e.getCause());
+
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
 }

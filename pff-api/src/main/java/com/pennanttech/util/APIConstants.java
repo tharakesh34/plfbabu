@@ -43,7 +43,8 @@ public class APIConstants {
 	public static final String REPORT_TEMPLATE_APPLICATION = "Format1";
 	public static final String REPORT_TEMPLATE_API = "Format2";
 	public static final String CUST_AGR_NAME = "SANCTIONAGREEMENT";
-
+	public static final String STMT_FORECLOSUREV1 = "FORECLOSUREV1";
+	
 	public static final String FIN_WEL_LETTER = "WELCOMELETR";
 	public static final String FIN_SANC_LETTER = "SNCTNLTR";
 
@@ -64,4 +65,10 @@ public class APIConstants {
 
 	public static final String COVENANT_MODULE_NAME = "Loan";
 
+	//verifications
+	public static final int FI = 1;
+	public static final int TV = 2;
+	public static final int LV = 3;
+	public static final int RCU = 4;
+	public static final int PD = 5;
 }

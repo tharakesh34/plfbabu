@@ -37,6 +37,8 @@ public class ExternalDocument implements Serializable {
 	private String docTypeDesc;
 	private String owner;
 	private String author;
+	private String source;
+	private String collateralRef;
 
 	public ExternalDocument() {
 		// TODO Auto-generated constructor stub
@@ -289,4 +291,20 @@ public class ExternalDocument implements Serializable {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getCollateralRef() {
+		return collateralRef;
+	}
+
+	public void setCollateralRef(String collateralRef) {
+		this.collateralRef = collateralRef;
+	}
+
 }

@@ -44,6 +44,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -84,6 +85,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	private String moduleType = "";
 	private ScriptValidationService scriptValidationService;
 	private DedupParmService dedupParmService;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	/**
 	 * default constructor.<br>
@@ -155,6 +157,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(260);
+		generator.setExtendedFieldDetailsService(getExtendedFieldDetailsService());
 		this.extendedFieldTabPanel.setHeight("100%");
 		generator.setCcyFormat(ccyFormat);
 		if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
@@ -795,4 +798,13 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		this.dedupParmService = dedupParmService;
 	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
 }

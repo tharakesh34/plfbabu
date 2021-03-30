@@ -3340,7 +3340,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
-			fsi.setReceiptChannel("OTC");
+			if (fsi.getReceiptChannel() == null) {
+				fsi.setReceiptChannel("OTC");
+			}
+
 		}
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_MOBILE)) {
 			fsi.setPaymentMode(RepayConstants.RECEIPTMODE_MOBILE);
@@ -3705,8 +3708,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		}
 		// Funding account is mandatory for all modes
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE) && rcd.getFundingAc() <= 0) {
+		if ((!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE))
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD) && rcd.getFundingAc() <= 0) {
 			finScheduleData = setErrorToFSD(finScheduleData, "90502", "Funding Account");
 			return receiptData;
 		} else if (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
@@ -3832,6 +3836,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
 				|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
 						&& StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH))) {
 			int count = finTypePartnerBankDAO.getPartnerBankCount(financeMain.getFinType(), receiptMode,
@@ -4533,6 +4538,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setReceiptMode(fsi.getPaymentMode());
 		rch.setSubReceiptMode(fsi.getSubReceiptMode());
 		rch.setReceiptChannel(fsi.getReceiptChannel());
+		rch.setExtReference(fsi.getExternalReference());
 		rch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		rch.setNewRecord(true);
 		rch.setLastMntBy(userDetails.getUserId());
@@ -5389,14 +5395,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (size > 0) {
 			FinReceiptDetail recDtl = receiptDetailList.get(size - 1);
 			finReceiptHeader.setValueDate(recDtl.getValueDate());
-			if (finReceiptHeader.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
-					&& finReceiptHeader.getRealizationDate() != null) {
+			//PSD#165780 Setting realization date to Value date irrespective of receipt purpose
+			/*
+			 * if (finReceiptHeader.getReceiptPurpose().equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) &&
+			 * finReceiptHeader.getRealizationDate() != null) {
+			 */
+			if (finReceiptHeader.getRealizationDate() != null) {
 				finReceiptHeader.setValueDate(finReceiptHeader.getRealizationDate());
 			}
 			if (ImplementationConstants.ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE) {
 				Date appDate = SysParamUtil.getAppDate();
 				String receiptMode = finReceiptHeader.getReceiptMode();
-				
+
 				if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(finReceiptHeader.getReceiptPurpose())
 						&& (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
 								|| RepayConstants.RECEIPTMODE_DD.equals(receiptMode))

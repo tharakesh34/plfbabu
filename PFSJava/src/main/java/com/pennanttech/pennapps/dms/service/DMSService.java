@@ -24,7 +24,7 @@ public interface DMSService {
 
 	DMSQueue getOfferIdByFin(DMSQueue dmsQueue);
 
-	public byte[] getImageByUri(String docUri);
+	public DMSQueue getImageByUri(String docUri);
 
 	public void updateDMSQueue(DMSQueue dmsQueue);
 

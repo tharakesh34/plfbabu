@@ -2656,6 +2656,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 								RepayConstants.PAYSTATUS_CANCEL)) {
 					calculateRepayments();
 				}
+				FinReceiptData data = receiptData;
 				FinReceiptHeader rch = receiptData.getReceiptHeader();
 				List<FinReceiptDetail> receiptDetails = rch.getReceiptDetails();
 				BigDecimal totReceiptAmt = receiptData.getTotReceiptAmount();
@@ -2678,7 +2679,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_EXCESS, rch.getReceiptMode())
 							&& StringUtils.equals(receiptDetail.getPaymentType(), rch.getReceiptMode())) {
 						receiptDetail.setFavourNumber(this.favourNo.getValue());
-						receiptDetail.setValueDate(this.valueDate.getValue());
+						//PSD#165780
+						if ((StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE,
+								data.getReceiptHeader().getReceiptMode())
+								|| StringUtils.equals(RepayConstants.RECEIPTMODE_DD,
+										data.getReceiptHeader().getReceiptMode()))
+								&& StringUtils.equals(receiptData.getReceiptHeader().getReceiptModeStatus(),
+										RepayConstants.PAYSTATUS_REALIZED)
+								&& this.realizationDate.getValue() != null) {
+							receiptDetail.setValueDate(this.realizationDate.getValue());
+						} else {
+							receiptDetail.setValueDate(this.valueDate.getValue());
+						}
 						receiptDetail.setBankCode(this.bankCode.getValue());
 						receiptDetail.setFavourName(this.favourName.getValue());
 						receiptDetail.setDepositDate(this.depositDate.getValue());
@@ -2947,7 +2959,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						rch.getReference(), " Loan ", rch.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
-				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+				if (!("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						|| StringUtils.equals(rch.getReceiptChannel(), RepayConstants.RECEIPT_CHANNEL_MOBILE))) {
 					FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 					Notification notification = new Notification();
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
@@ -3141,7 +3154,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
 					this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rcd.getAmount(), formatter));
 					this.favourNo.setValue(rcd.getFavourNumber());
-					this.valueDate.setValue(rcd.getValueDate());
+					//PSD#165780
+					//this.valueDate.setValue(rcd.getValueDate());
 					this.bankCode.setValue(rcd.getBankCode());
 					this.bankCode.setDescription(rcd.getBankCodeDesc());
 					this.favourName.setValue(rcd.getFavourName());
@@ -4408,14 +4422,17 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		 * try { header.setSubReceiptMode(getComboboxValue(receiptType)); } catch (WrongValueException we) {
 		 * wve.add(we); }
 		 */
-		try {
-			header.setReceiptMode(getComboboxValue(receiptMode));
-			if ("#".equals(header.getSubReceiptMode())) {
-				header.setSubReceiptMode(header.getReceiptMode());
+		if (!StringUtils.equals(header.getReceiptMode(), RepayConstants.PAYTYPE_PRESENTMENT)) {
+			try {
+				header.setReceiptMode(getComboboxValue(receiptMode));
+				if ("#".equals(header.getSubReceiptMode())) {
+					header.setSubReceiptMode(header.getReceiptMode());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
-		} catch (WrongValueException we) {
-			wve.add(we);
 		}
+
 		if (excessAdjustTo.isVisible()) {
 			try {
 				header.setExcessAdjustTo(getComboboxValue(excessAdjustTo));

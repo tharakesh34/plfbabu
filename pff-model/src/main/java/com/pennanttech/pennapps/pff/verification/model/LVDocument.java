@@ -14,6 +14,10 @@ package com.pennanttech.pennapps.pff.verification.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -21,18 +25,24 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>verification_lv_details table</b>
  *
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class LVDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long verificationId = Long.MIN_VALUE;
+	@XmlElement
 	private int seqNo;
 	private Long documentId;
+	@XmlElement(name = "documentName")
 	private String documentSubId;
 	private String remarks;
 	private String docCategory;
 	private String docModule;
+	@XmlElement
 	private String remarks1;
+	@XmlElement
 	private String remarks2;
+	@XmlElement
 	private String remarks3;
 
 	private Long docRefID;
@@ -40,6 +50,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private String docUri;
 	private String code;
 	private String description;
+	@XmlElement
 	private int documentType;
 	private String documentUri;
 	private String docType;
@@ -49,6 +60,8 @@ public class LVDocument extends AbstractWorkflowEntity {
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
 	private LVDocument befImage;
+
+	private String sourceId;
 
 	public LVDocument() {
 		super();
@@ -74,6 +87,7 @@ public class LVDocument extends AbstractWorkflowEntity {
 		excludeFields.add("documentUri");
 		excludeFields.add("collateralRef");
 		excludeFields.add("referenceId");
+		excludeFields.add("sourceId");
 		return excludeFields;
 	}
 
@@ -271,5 +285,13 @@ public class LVDocument extends AbstractWorkflowEntity {
 
 	public void setReferenceId(String referenceId) {
 		this.referenceId = referenceId;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
 	}
 }

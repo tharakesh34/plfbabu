@@ -632,4 +632,27 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entity, partnerbankCode },
 				Integer.class) > 0 ? true : false;
 	}
+
+	@Override
+	public List<PartnerBankModes> getPartnerBankModes(long id, String purpose) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PartnerBankId, Purpose, PaymentMode");
+		sql.append(" From PartnerBankModes");
+		sql.append(" Where PartnerBankId = ? And Purpose = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, id);
+			ps.setString(2, purpose);
+		}, (rs, i) -> {
+			PartnerBankModes pbm = new PartnerBankModes();
+			pbm.setPartnerBankId(rs.getLong("PartnerBankId"));
+			pbm.setPurpose(rs.getString("Purpose"));
+			pbm.setPaymentMode(rs.getString("PaymentMode"));
+			return pbm;
+		});
+
+	}
+
 }

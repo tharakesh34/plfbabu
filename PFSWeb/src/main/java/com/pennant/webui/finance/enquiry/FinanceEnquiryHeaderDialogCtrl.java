@@ -104,6 +104,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinMainReportData;
+import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStatusDetail;
@@ -793,8 +794,20 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("OCRENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OCREnquiry.value"));
 			FinanceDetail financeDetail = new FinanceDetail();
+			FinanceMain financeMain = financeMainDAO.getFinanceMain(finReference,
+					new String[] { "FinType", "FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue",
+							"FinOcrRequired" },
+					"");
+			FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View");
+			if (finOcrHeader != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
+				FinOCRHeader parentFinOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(financeMain.getParentRef(),
+						"_View");
+				if (parentFinOcrHeader != null) {
+					finOcrHeader.setOcrDetailList(parentFinOcrHeader.getOcrDetailList());
+				}
+			}
 			// Finance OCR Details
-			financeDetail.setFinOCRHeader(finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View"));
+			financeDetail.setFinOCRHeader(finOcrHeader);
 			financeDetail.setFinScheduleData(finScheduleData);
 			map.put("financeDetail", financeDetail);
 			map.put("enqiryModule", true);

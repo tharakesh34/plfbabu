@@ -8,4 +8,6 @@ public interface DocumentFileSystem {
 
 	public byte[] retrive(String docURI);
 
+	public DMSQueue retriveDMS(String docURI);
+
 }

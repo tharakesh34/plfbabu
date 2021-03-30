@@ -115,7 +115,7 @@ public class PennantRegularExpressions {
 	public static final String REGEX_FAX = "REGEX_FAX";
 	public static final String REGEX_MOBILE = "REGEX_MOBILE";
 
-	public static final String EMAIL_REGEX = "^[a-zA-Z]+[0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-z]+[0-9]*(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
+	public static final String EMAIL_REGEX = "^[a-zA-Z0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-Z0-9]*(\\.?[a-zA-Z]*)?\\.{1}[a-zA-Z]{2,3}";
 	public static final String ADDRESS_REGEX = "[a-zA-Z0-9.\\>\\<\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]+";
 	public static final String WEB_REGEX = "^[wW]{3}[\\.]{1}([a-zA-z]+[0-9]*)(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
 
@@ -272,7 +272,7 @@ public class PennantRegularExpressions {
 			put(REGEX_LOOK_UP_VALUE, "^[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_BARCODE_NUMBER, "[0-9]{9}[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_SPECIAL_REGX,
-					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_\\=]*");
+					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_\\=\\']*");
 			put(REGEX_ALPHA_NUMERIC_DOT_SPACE, "[A-Za-z0-9 .]+");
 			put(REGEX_CLUST_NAME, "^[A-Za-z]+[A-Za-z0-9&\\-\\_\\,\\s,:]*");
 			put(REGEX_ALPHANUM_ALPHAFIRST, "^[A-Za-z]+[A-Za-z0-9]*");

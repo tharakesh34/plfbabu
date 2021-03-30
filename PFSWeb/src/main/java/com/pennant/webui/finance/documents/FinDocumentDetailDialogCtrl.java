@@ -618,11 +618,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				DocumentDetails details = (DocumentDetails) this.documnetName.getAttribute("data");
 				aDocumentDetails.setDocImage(details.getDocImage());
 				aDocumentDetails.setDoctype(details.getDoctype());
+				aDocumentDetails.setDocRefId(details.getDocRefId());
 			} else {
 				aDocumentDetails.setDocImage(null);
 				aDocumentDetails.setDoctype(null);
+				aDocumentDetails.setDocRefId(Long.MIN_VALUE);
 			}
-			aDocumentDetails.setDocRefId(Long.MIN_VALUE);
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1263,7 +1264,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.documnetName.setAttribute("data", null);
 			Clients.clearWrongValue(docReceived);
 		} else {
-			this.docReceivedDt.setReadonly(true);
+			this.docReceivedDt.setDisabled(true);
 			this.space_docReceivedDt.setSclass("");
 			// this.documnetName.setReadonly(false);
 			this.btnUploadDoc.setVisible(true);
@@ -1445,11 +1446,15 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (textbox.getAttribute("data") == null) {
 				DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
 						fileName, ddaImageData);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			} else {
 				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
 				documentDetails.setDoctype(docType);
 				documentDetails.setDocImage(ddaImageData);
+				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocUri(null);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {

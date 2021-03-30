@@ -2,6 +2,7 @@ package com.pennanttech.webui.verification;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -302,57 +303,23 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		//Get Document Value from collateral extended fields.
 
-		/*
-		 * for (Verification veri : verifications) {
-		 * 
-		 * 
-		 * String collRef = veri.getReferenceFor(); if (!collateralCOP.containsKey(collRef.concat(DOCVALUE))) {
-		 * Map<String, Object> valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef,
-		 * veri.getCollateralType()); if (!valAmounts.isEmpty()) { if (valAmounts.get(DOCVALUE) != null) {
-		 * collateralCOP.put(collRef.concat(DOCVALUE), (PennantApplicationUtil.formateAmount( new
-		 * BigDecimal(valAmounts.get(DOCVALUE).toString()), PennantConstants.defaultCCYDecPos))); }
-		 * 
-		 * if (valAmounts.get(TOTALVALUATIONASPE) != null) { collateralCOP.put(collRef.concat(TOTALVALUATIONASPE), new
-		 * BigDecimal(valAmounts.get(TOTALVALUATIONASPE).toString())); } } } }
-		 */
-
-		for (Verification verf : verifications) {
-			for (CollateralSetup setup : financeDetail.getCollaterals()) {
-				if (verf.getCollateralType().equals(setup.getCollateralType())) {
-					if (CollectionUtils.isNotEmpty(setup.getExtendedFieldRenderList())) {
-						Map<String, Object> map = setup.getExtendedFieldRenderList().get(0).getMapValues();
-						String collRef = verf.getReferenceFor();
-						if (map.containsKey(DOCVALUE)) {
-							if (!collateralCOP.containsKey(collRef.concat(DOCVALUE))) {
-								Map<String, Object> valAmounts = technicalVerificationService
-										.getCostOfPropertyValue(collRef, verf.getCollateralType(), DOCVALUE);
-								if (!valAmounts.isEmpty()) {
-									if (valAmounts.get(DOCVALUE) != null) {
-										collateralCOP.put(collRef.concat(DOCVALUE),
-												(PennantApplicationUtil.formateAmount(
-														new BigDecimal(valAmounts.get(DOCVALUE).toString()),
-														PennantConstants.defaultCCYDecPos)));
-									}
-								}
-							}
-
-						}
-
-						if (map.containsKey(TOTALVALUATIONASPE)) {
-							if (!collateralCOP.containsKey(collRef.concat(TOTALVALUATIONASPE))) {
-								Map<String, Object> valAmounts = technicalVerificationService
-										.getCostOfPropertyValue(collRef, verf.getCollateralType(), TOTALVALUATIONASPE);
-								if (!valAmounts.isEmpty()) {
-									if (valAmounts.get(TOTALVALUATIONASPE) != null) {
-										collateralCOP.put(collRef.concat(TOTALVALUATIONASPE),
-												(PennantApplicationUtil.formateAmount(
-														new BigDecimal(valAmounts.get(TOTALVALUATIONASPE).toString()),
-														PennantConstants.defaultCCYDecPos)));
-									}
-								}
-							}
-
-						}
+		for (Verification veri : verifications) {
+			String collRef = veri.getReferenceFor();
+			if (!collateralCOP.containsKey(collRef.concat(DOCVALUE))) {
+				Map<String, Object> valAmounts = new HashMap<>();
+				if (StringUtils.isNotEmpty(veri.getCollateralType())) {
+					valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef, veri.getCollateralType(), DOCVALUE);
+				}
+				if (!valAmounts.isEmpty()) {
+					if (valAmounts.get(DOCVALUE) != null) {
+						collateralCOP.put(collRef.concat(DOCVALUE),
+								(PennantApplicationUtil.formateAmount(
+										new BigDecimal(valAmounts.get(DOCVALUE).toString()),
+										PennantConstants.defaultCCYDecPos)));
+					}
+					if (valAmounts.get(TOTALVALUATIONASPE) != null) {
+						collateralCOP.put(collRef.concat(TOTALVALUATIONASPE),
+								new BigDecimal(valAmounts.get(TOTALVALUATIONASPE).toString()));
 					}
 				}
 			}
@@ -462,6 +429,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> oldVerifications = getOldVerifications();
 		//PSD#157163 UAT2 : TV Initiation : able to initiate TV for deleted collateral.
 		List<Verification> tempOldVerifications = new ArrayList<>();
+		if (enqiryModule) {
+			collaterals = Collections.emptyList();
+			tempOldVerifications.addAll(oldVerifications);
+		}
 		if (CollectionUtils.isNotEmpty(collaterals)) {
 			for (Verification verification : oldVerifications) {
 				for (CollateralAssignment collateral : collaterals) {

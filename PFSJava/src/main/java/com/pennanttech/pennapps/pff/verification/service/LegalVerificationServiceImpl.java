@@ -667,12 +667,12 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 					documentDetails.setReferenceId(String.valueOf(lv.getVerificationId()));
 				}
-				saveDocument(DMSModule.FINANCE, DMSModule.VERIFICATION, documentDetails);
+				saveDocument(DMSModule.FINANCE, DMSModule.LV, documentDetails);
 				documentDetailsDAO.save(documentDetails, type);
 			}
 
 			if (updateRecord) {
-				saveDocument(DMSModule.FINANCE, DMSModule.VERIFICATION, documentDetails);
+				saveDocument(DMSModule.FINANCE, DMSModule.LV, documentDetails);
 				documentDetailsDAO.update(documentDetails, type);
 			}
 

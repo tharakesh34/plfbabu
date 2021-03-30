@@ -4296,9 +4296,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				} else {
 					MessageUtil.showMessage(perfiosHeader.getStatusDesc());
 				}
-			} else if (StringUtils.equals(perfiosHeader.getStatusCode(), "E")
-					&& StringUtils.isNotEmpty(perfiosHeader.getStatusDesc())) {
-				MessageUtil.showMessage("Perfios Report not yet generated.");
+			} else if ("E".equals(perfiosHeader.getStatusCode())) {
+				MessageUtil.showMessage("Received Error from Perfios " + StringUtils.trimToEmpty(perfiosHeader.getStatusDesc()));
 			} else {
 				MessageUtil.showMessage("Perfios Report not yet generated.");
 			}

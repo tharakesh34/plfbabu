@@ -41,6 +41,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 
 	private static String PAID_STATUS = "E";
 	private static String REALIZED_STATUS = "P";
+	private static String PRINT_STATUS = "PR";
 
 	@Override
 	public int processDisbursement(FinAdvancePayments disbursement) {
@@ -76,6 +77,8 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				}
 			} else if (StringUtils.equals(REALIZED_STATUS, disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_REALIZED);
+			} else if (StringUtils.equals(PRINT_STATUS, disbursement.getStatus())) {
+				disbursement.setStatus(DisbursementConstants.STATUS_PRINT);
 			} else {
 				if (!PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
 					postingsPreparationUtil.postReversalsByLinkedTranID(disbursement.getLinkedTranId());

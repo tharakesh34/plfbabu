@@ -1195,11 +1195,11 @@ public class AgreementDetail {
 	/**
 	 * Provides Loan Grace Period End Date.
 	 */
-	private String morPeriod = ""; // Number of Moratorium terms
+	private String morPeriod = "0"; // Number of Moratorium terms
 	private String morStartDate = ""; // Moratorium Start Date
 	private String morEndDate = ""; // Moratorium End Date
 
-	private String grcPeriod = ""; // Number of Grace terms
+	private String grcPeriod = "0"; // Number of Grace terms
 	private String grcStartDate = ""; // Grace Period Start Date 
 	private String grcEndDate = ""; // Grace Period End Date
 
@@ -2953,6 +2953,8 @@ public class AgreementDetail {
 		private String colAddrCity = "";
 		private String colLtv = "";
 		private List<ExtendedDetailCollateral> extendedDetailsList = null;
+		private List<CoOwners> coOwnersList = new ArrayList<>();
+		private Map<String, Object> collMap = new HashMap<>();
 
 		public String getReference() {
 			return reference;
@@ -3025,6 +3027,46 @@ public class AgreementDetail {
 		public void setExtendedDetailsList(List<ExtendedDetailCollateral> extendedDetailsList) {
 			this.extendedDetailsList = extendedDetailsList;
 		}
+
+		public List<CoOwners> getCoOwnersList() {
+			return coOwnersList;
+		}
+
+		public void setCoOwnersList(List<CoOwners> coOwnersList) {
+			this.coOwnersList = coOwnersList;
+		}
+
+		public Map<String, Object> getCollMap() {
+			return collMap;
+		}
+
+		public void setCollMap(Map<String, Object> collMap) {
+			this.collMap = collMap;
+		}
+
+		public class CoOwners {
+
+			private String cif = "";
+			private String name = "";
+
+			public String getCif() {
+				return cif;
+			}
+
+			public void setCif(String cif) {
+				this.cif = cif;
+			}
+
+			public String getName() {
+				return name;
+			}
+
+			public void setName(String name) {
+				this.name = name;
+			}
+
+		}
+
 	}
 
 	private ExtendedDetailCollateral edc;

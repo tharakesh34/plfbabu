@@ -6,9 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 /**
- * @author rahul.k This class uses for generating report for EarlySettlement(Closing the loan before maturity date)
+ * @author rahul.k This class uses for generating report for
+ *         EarlySettlement(Closing the loan before maturity date)
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ForeClosureReport implements Serializable {
 	/**
 	 * 
@@ -86,14 +91,14 @@ public class ForeClosureReport implements Serializable {
 	private String linkedFinRef;
 	private BigDecimal actPercentage = BigDecimal.ZERO;
 
-	//Variable to set 18% GST on foreclosure charges
+	// Variable to set 18% GST on foreclosure charges
 	private BigDecimal gstOnForeClosFees = BigDecimal.ZERO;
-	//Variable to set excluding 18% GST on foreclosure charges GHF
+	// Variable to set excluding 18% GST on foreclosure charges GHF
 	private BigDecimal foreClosFeesExGST = BigDecimal.ZERO;
 
 	private BigDecimal chargesIncGST = BigDecimal.ZERO;
 	private String chargesIncGSTInWords = "Zero Only";
-	//Customer Address
+	// Customer Address
 	private String custAddrHNbr;
 	private String custFlatNo;
 	private String custAddrStreet;

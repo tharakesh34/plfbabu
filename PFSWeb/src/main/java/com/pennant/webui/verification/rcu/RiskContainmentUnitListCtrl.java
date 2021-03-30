@@ -19,6 +19,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.rcu.model.RiskContainmentUnitListModelItemRender;
@@ -152,6 +153,12 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 			long agencyId = Long.parseLong(agency.getAttribute("agency").toString());
 			this.searchObject.addFilter(new Filter("agency", agencyId, Filter.OP_EQUAL));
 		}
+
+		if (ImplementationConstants.BRANCHWISE_RCU_INITIATION) {
+			this.searchObject.addFilter(new Filter("Branchcode",
+					"%" + getUserWorkspace().getLoggedInUser().getBranchCode() + "%", Filter.OP_LIKE));
+		}
+
 	}
 
 	public void onFulfill$agency(Event event) {

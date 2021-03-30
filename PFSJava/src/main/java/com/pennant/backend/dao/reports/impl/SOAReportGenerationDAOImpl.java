@@ -306,9 +306,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent,");
 		selectSql.append(
 				" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.PaidCESS, T1.WaivedCGST, T1.WaivedSGST,");
-		selectSql.append(" T1.WaivedIGST, T1.WaivedUGST, T1.WaivedCESS");
+		selectSql.append(" T1.WaivedIGST, T1.WaivedUGST, T1.WaivedCESS, T3.Reason as BounceCodeDesc");
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
+		selectSql.append(" Left Join Bouncereasons T3 ON T1.bounceid = T3.BounceId");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
@@ -850,7 +851,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				" SELECT Distinct PRD.ReceiptId,PRD.SchDate,BR.REASON BounceReason, PRD.Status, PRH.MandateType, M.MandateRef, ");
-		sql.append(" EMIno FROM PRESENTMENTDETAILS PRD Left Join Mandates M ON M.MandateId = PRD.MandateId ");
+		sql.append(
+				" EMIno, PresentmentType FROM PRESENTMENTDETAILS PRD Left Join Mandates M ON M.MandateId = PRD.MandateId ");
 		sql.append(" Left join BOUNCEREASONS BR ON PRD.BOUNCEID  = BR.BOUNCEID ");
 		sql.append(" inner join PRESENTMENTHEADER PRH on PRH.id = PRD.Presentmentid");
 		sql.append(" Where PRD.RECEIPTID != 0 and FinReference = :FinReference");
@@ -1320,7 +1322,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		paramMap.addValue("FinReference", finReference);
 		// 30-08-2019:Added ValueDate
 		selectSql.append(
-				" SELECT Id, HeaderID, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, LastMntOn  from FinFeeRefundDetails");
+				" SELECT Id, HeaderID, r.FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, r.LastMntOn, t.feetypedesc as feeTypeCode from FinFeeRefundDetails r");
+		selectSql.append(" left join FinFeeDetail f on f.feeid = r.feeid");
+		selectSql.append(" left join feetypes t on t.feetypeid = f.feetypeid ");
 		selectSql.append(
 				" Where HeaderID in (Select HeaderId from FinFeeRefundHeader where FinReference = :FinReference) ");
 

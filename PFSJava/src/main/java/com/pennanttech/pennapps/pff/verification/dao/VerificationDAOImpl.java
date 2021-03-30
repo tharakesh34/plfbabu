@@ -143,8 +143,10 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			entity.setId(keyHolder.getKey().longValue());
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 		}
-
+		
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(entity.getId());
 	}
@@ -653,6 +655,104 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	//Specific to API
+	@Override
+	public List<Verification> getVerifications(String finReference, int verificationType, int requestType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT ID, REFERENCEFOR, REQUESTTYPE, VERIFICATIONTYPE, c.CUSTSHRTNAME  FROM VERIFICATIONS v");
+		sql.append(" LEFT JOIN CUSTOMERS c on c.CUSTID = v.CUSTID");
+		sql.append(" WHERE KEYREFERENCE= ? and VERIFICATIONTYPE= ? and REQUESTTYPE= ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(),
+					new Object[] { finReference, verificationType, requestType }, (rs, rowNum) -> {
+						Verification vf = new Verification();
+
+						vf.setId(rs.getLong("ID"));
+						vf.setReferenceFor(rs.getString("REFERENCEFOR"));
+						vf.setCustomerName(rs.getString("CUSTSHRTNAME"));
+						vf.setRequestType(rs.getInt("REQUESTTYPE"));
+						vf.setVerificationType(rs.getInt("VERIFICATIONTYPE"));
+
+						return vf;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public boolean isVerificationIdExists(String finReference, String referenceFor, String reference,
+			int verificationtype, String referenceType) {
+		logger.debug(Literal.ENTERING);
+		int count = 0;
+
+		StringBuilder sql = new StringBuilder("SELECT COUNT(ID) FROM VERIFICATIONS");
+		sql.append(" WHERE REFERENCEFOR= :referenceFor AND verificationtype= :verificationtype");
+		sql.append(" AND KEYREFERENCE= :keyReference ");
+		if (verificationtype != 4) {
+			sql.append("and REFERENCE= :reference");
+		}
+		if (verificationtype == 4) {
+			if (referenceType.equals("CUSTOMER")) {
+				sql.append("and REFERENCE= :reference");
+			}
+			sql.append(" and ReferenceType=:referenceType");
+		}
+		logger.debug(Literal.SQL + sql);
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("referenceFor", referenceFor);
+		paramMap.addValue("verificationtype", verificationtype);
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("reference", reference);
+		if (verificationtype == 4) {
+			paramMap.addValue("referenceType", referenceType);
+		}
+
+		try {
+			count = jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		logger.debug("Leaving");
+		return count > 0 ? true : false;
+	}
+	
+	@Override
+	public boolean isInitiatedVerfication(VerificationType verificationType, long verificationId, String type) {
+		//"verification_pd_temp"
+		logger.debug(Literal.ENTERING);
+		int count = 0;
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(verificationid) FROM ");
+		sql.append("VERIFICATION");
+		sql.append("_");
+		sql.append(verificationType);
+		sql.append(type);
+		sql.append(" WHERE verificationid= :verificationid");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("verificationid", verificationId);
+
+		try {
+			count = jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		logger.debug("Leaving");
+		return count > 0 ? true : false;
 	}
 
 }

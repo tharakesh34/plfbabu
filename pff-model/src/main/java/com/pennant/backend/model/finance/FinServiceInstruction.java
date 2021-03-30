@@ -463,6 +463,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String custCIF;
 	@XmlElement
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
+	@XmlElement
+	private String receiptSource;
+	@XmlElement
+	private String recAgainst;
+	@XmlElement
+	private String collectionAgency;
+	@XmlElement
+	private String division;
 
 	public String getFinReference() {
 		return finReference;
@@ -1490,4 +1498,35 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.tdsAmount = tdsAmount;
 	}
 
+	public String getReceiptSource() {
+		return receiptSource;
+	}
+
+	public void setReceiptSource(String receiptSource) {
+		this.receiptSource = receiptSource;
+	}
+
+	public String getRecAgainst() {
+		return recAgainst;
+	}
+
+	public void setRecAgainst(String recAgainst) {
+		this.recAgainst = recAgainst;
+	}
+
+	public String getCollectionAgency() {
+		return collectionAgency;
+	}
+
+	public void setCollectionAgency(String collectionAgency) {
+		this.collectionAgency = collectionAgency;
+	}
+
+	public String getDivision() {
+		return division;
+	}
+
+	public void setDivision(String division) {
+		this.division = division;
+	}
 }

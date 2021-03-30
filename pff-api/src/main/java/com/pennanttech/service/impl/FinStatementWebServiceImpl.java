@@ -760,6 +760,52 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
+	
+	@Override
+	public FinStatementResponse getForeclosureStmtV1(FinStatementRequest statementRequest) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		FinStatementResponse finStatementResponse = new FinStatementResponse();
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		String finReference = statementRequest.getFinReference();
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return finStatementResponse;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return finStatementResponse;
+			}
+		}
+
+		statementRequest.setDays(1);
+		// call controller to get fore-closure letter
+		FinStatementResponse response = finStatementController.getStatement(statementRequest,
+				APIConstants.STMT_FORECLOSUREV1);
+		if (response != null) {
+			response.setCustomer(null);
+			response.setFinance(null);
+			response.setDocImage(null);
+			response.setStatementSOA(null);
+		} else {
+			response = new FinStatementResponse();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			logger.debug(Literal.LEAVING);
+			return response;
+
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
 
 	@Autowired
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {

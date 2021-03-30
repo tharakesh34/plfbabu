@@ -242,7 +242,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			}
 
 			getBorderLayoutHeight();
-			this.htmlArtifact.setHeight(borderLayoutHeight - 270 + "px");
+			this.htmlArtifact.setHeight(borderLayoutHeight - 170 + "px");
 			// this.emailSubject.setHeight(borderLayoutHeight-270+"px");
 			this.templateData.setHeight(borderLayoutHeight - 230 + "px");
 
@@ -940,6 +940,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			this.btnSimulate.setVisible(false);
 			this.divHtmlArtifact.setVisible(true);
 			this.htmlArtifact.setVisible(false);
+			this.templateData.setVisible(false);
+			this.templateData1.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}
@@ -1430,6 +1432,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				this.btnSimulate.setVisible(false);
 				this.divHtmlArtifact.setVisible(true);
 				this.htmlArtifact.setVisible(false);
+				this.templateData.setVisible(false);
+				this.templateData1.setVisible(false);
 			} else {
 				this.btnSimulate.setVisible(true);
 				this.htmlArtifact.setVisible(true);

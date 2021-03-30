@@ -42,6 +42,7 @@ public class ExternalDocument extends AbstractWorkflowEntity implements Entity {
 	//As per ExternalDocuments below fields are added
 	@XmlElement
 	private boolean bankReport = false;
+	private boolean lovDescNewImage = false;
 
 	public ExternalDocument() {
 		super();
@@ -196,4 +197,11 @@ public class ExternalDocument extends AbstractWorkflowEntity implements Entity {
 		this.bankReport = bankReport;
 	}
 
+	public boolean isLovDescNewImage() {
+		return lovDescNewImage;
+	}
+
+	public void setLovDescNewImage(boolean lovDescNewImage) {
+		this.lovDescNewImage = lovDescNewImage;
+	}
 }

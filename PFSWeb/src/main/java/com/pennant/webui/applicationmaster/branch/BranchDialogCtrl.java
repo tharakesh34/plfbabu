@@ -1120,6 +1120,12 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		BeanUtils.copyProperties(getBranch(), aBranch);
 		String tranType = PennantConstants.TRAN_WF;
 
+		if (aBranch.getClusterId() != null) {
+			if (aBranch.getClusterId() == 0) {
+				aBranch.setClusterId(null);
+			}
+		}
+
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
 				+ Labels.getLabel("label_BranchDialog_BranchCode.value") + " : " + aBranch.getBranchCode();

@@ -342,6 +342,7 @@ public class DeviationRenderer {
 			// Remarks
 			listcell = getNewListCell(StringUtils.trimToEmpty(deviation.getRemarks()), devNotallowed);
 			listcell.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+			listcell.setTooltiptext(deviation.getRemarks());
 			listitem.appendChild(listcell);
 
 			// Operation

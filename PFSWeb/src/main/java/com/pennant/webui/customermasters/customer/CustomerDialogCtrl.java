@@ -1473,6 +1473,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custSubSector.setValue(aCustomer.getCustSubSector());
 			this.custSubSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSubSectorName()));
 		} else {
+			this.custSubSector.setFilters(
+					new Filter[] { new Filter("SectorCode", aCustomer.getCustSector(), Filter.OP_EQUAL) });
 			this.custSubSector.setReadonly(isReadOnly("CustomerDialog_custIndustry"));
 			this.custSubSector.setButtonDisabled(isReadOnly("CustomerDialog_custIndustry"));
 			this.custSubSector.setValue(aCustomer.getCustSubSector());
@@ -1615,7 +1617,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
 
 			if (isFinanceProcess || fromLoan) {
-				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 195);
+				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 220);
 			} else {
 				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 90);
 			} // for getting rights in ExtendeFieldGenerator these two fields
@@ -3069,16 +3071,20 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					Labels.getLabel("label_CustomerDialog_CustNationality.value"), null, true, true));
 		}
 		if (!this.custQualification.isReadonly()) {
+		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			this.custQualification.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDialog_CustQualification.value"), null, false, true));
+					Labels.getLabel("label_CustomerDialog_CustQualification.value"), null, isMandValidate, true));
 		}
 		if (!this.custSector.isReadonly() && nonWorking) {
+		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			this.custSector.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSector.value"), null, true, true));
+					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSector.value"), null,
+							isMandValidate, true));
 		}
 		if (!this.custIndustry.isReadonly() && this.custIndustry.isVisible() && nonWorking) {
+		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			this.custIndustry.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDialog_CustIndustry.value"), null, true, true));
+					Labels.getLabel("label_CustomerDialog_CustIndustry.value"), null, isMandValidate, true));
 		}
 		if (!this.custCOB.isReadonly()) {
 			this.custCOB.setConstraint(
@@ -3104,8 +3110,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSts.value"), null, false, true));
 		}
 		if (!this.custSegment.isReadonly() && this.custSegment.isVisible() && nonWorking) {
-			this.custSegment.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDialog_CustSegment.value"), null, false, true));
+			//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			this.custSegment.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSegment.value"), null,
+							isMandValidate, true));
 		}
 
 		if (isRetailCustomer) {

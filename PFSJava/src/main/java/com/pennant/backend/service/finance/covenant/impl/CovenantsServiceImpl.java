@@ -67,6 +67,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.covenant.CovenantType;
@@ -288,8 +289,6 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 				recordStatus = covenant.getRecordStatus();
 				covenant.setRecordType("");
 				covenant.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				covenantsDAO.deleteDocuments(covenant, TableType.TEMP_TAB);
-				covenantsDAO.delete(covenant, TableType.TEMP_TAB);
 			}
 			if (saveRecord) {
 				covenantsDAO.save(covenant, tableType);
@@ -815,56 +814,57 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			return auditDetails;
 		}
 
-		for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
-			//skipping the approved instructions in OTC validation
-			if (PennantConstants.RCD_STATUS_APPROVED.equalsIgnoreCase(finAdvancePayment.getRecordStatus())) {
-				continue;
-			}
-			boolean isAllowedMethod = false;
-			boolean isDocumentReceived = false;
-			boolean otcCovenant = false;
-			for (Covenant covenant : covenants) {
-				otcCovenant = covenant.isOtc();
-				String repaymethods = StringUtils.trimToEmpty(covenant.getAllowedPaymentModes());
-				if (otcCovenant && StringUtils.isEmpty(repaymethods)) {
-					continue;
-				} else if (otcCovenant) {
-					for (String rpymethod : repaymethods.split(",")) {
-						if (StringUtils.equals(finAdvancePayment.getPaymentType(), rpymethod)) {
-							isAllowedMethod = true;
-							break;
-						}
-					}
-				} else {
-					otcCovenant = false;
-				}
-			}
+		String usrLanguage = PennantConstants.default_Language;
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (financeMain != null && financeMain.getUserDetails() != null) {
+			usrLanguage = financeMain.getUserDetails().getLanguage();
+		}
 
-			if (otcCovenant && !isAllowedMethod) {
-				for (Covenant covenant : covenants) {
-					if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {
-						for (CovenantDocument document : covenant.getCovenantDocuments()) {
-							if (document.getDocumentReceivedDate() != null) {
-								isDocumentReceived = true;
+		for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
+
+			for (Covenant covenant : covenants) {
+				boolean isAllowedMethod = false;
+				boolean isDocumentReceived = false;
+				boolean otcCovenant = false;
+				if (!(StringUtils.equals(covenant.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+						|| StringUtils.equals(covenant.getRecordType(), PennantConstants.RECORD_TYPE_CAN))) {
+					if (covenant.isOtc()) {
+						otcCovenant = true;
+						String repaymethods = StringUtils.trimToEmpty(covenant.getAllowedPaymentModes());
+						if (StringUtils.isNotEmpty(repaymethods)) {
+							for (String rpymethod : repaymethods.split(",")) {
+								if (StringUtils.equals(finAdvancePayment.getPaymentType(), rpymethod)) {
+									isAllowedMethod = true;
+									break;
+								}
+							}
+						}
+
+						if (otcCovenant && !isAllowedMethod) {
+							for (CovenantDocument document : covenant.getCovenantDocuments()) {
+								if (document.getDocumentReceivedDate() != null) {
+									isDocumentReceived = true;
+									break;
+								}
+							}
+
+							if (!isDocumentReceived) {
+								String[] valueParm = new String[2];
+								AuditDetail detail = new AuditDetail();
+								valueParm[0] = finAdvancePayment.getPaymentType();
+								valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
+								detail.setErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "41101", valueParm, null));
+								detail.setErrorDetails(
+										ErrorUtil.getErrorDetails(detail.getErrorDetails(), usrLanguage));
+								auditDetails.add(detail);
 								break;
 							}
 						}
-					} else {
-						isDocumentReceived = false;
-					}
-
-					if (!isDocumentReceived) {
-						String[] valueParm = new String[2];
-						AuditDetail detail = new AuditDetail();
-						valueParm[0] = finAdvancePayment.getPaymentType();
-						valueParm[1] = Labels.getLabel("label_FinCovenantTypeDialog_AlwOTC.value");
-						detail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41101", valueParm)));
-						auditDetails.add(detail);
 					}
 				}
 			}
 		}
-
 		return auditDetails;
 	}
 

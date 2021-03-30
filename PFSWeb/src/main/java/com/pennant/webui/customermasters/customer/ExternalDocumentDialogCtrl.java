@@ -422,11 +422,13 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 				ExternalDocument details = (ExternalDocument) this.documnetName.getAttribute("data");
 				aExternalDocument.setDocImage(details.getDocImage());
 				aExternalDocument.setDocType(details.getDocType());
+				aExternalDocument.setDocRefId(details.getDocRefId());
 			} else {
 				aExternalDocument.setDocImage(null);
 				aExternalDocument.setDocType(null);
+				aExternalDocument.setDocRefId(0);
 			}
-			aExternalDocument.setDocRefId(Long.MIN_VALUE);
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -591,11 +593,15 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 				textbox.setValue(fileName);
 				if (textbox.getAttribute("data") == null) {
 					ExternalDocument externalDocument = new ExternalDocument(docType, fileName, ddaImageData);
+					externalDocument.setLovDescNewImage(true);
 					textbox.setAttribute("data", externalDocument);
 				} else {
 					ExternalDocument externalDocument = (ExternalDocument) textbox.getAttribute("data");
 					externalDocument.setDocType(docType);
 					externalDocument.setDocImage(ddaImageData);
+					externalDocument.setDocUri(null);
+					externalDocument.setDocRefId(0);
+					externalDocument.setLovDescNewImage(true);
 					textbox.setAttribute("data", externalDocument);
 				}
 			}

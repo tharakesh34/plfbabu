@@ -698,7 +698,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin, FinCategory");
 		sql.append(", ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor, BusinessVertical");
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
-		sql.append(", appliedLoanAmt, FinIsRateRvwAtGrcEnd");
+		sql.append(", AppliedLoanAmt, FinIsRateRvwAtGrcEnd, CalcOfSteps, StepsAppliedFor");
 		if (!wif) {
 			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 			sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
@@ -730,7 +730,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		if (!wif) {
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -913,6 +913,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setBoolean(index++, fm.isAllowRevolving());
 				ps.setBigDecimal(index++, fm.getAppliedLoanAmt());
 				ps.setBoolean(index++, fm.isFinIsRateRvwAtGrcEnd());
+				ps.setString(index++, fm.getCalcOfSteps());
+				ps.setString(index++, fm.getStepsAppliedFor());
 				if (!wif) {
 					ps.setString(index++, fm.getInvestmentRef());
 					ps.setBoolean(index++, fm.isMigratedFinance());
@@ -1105,6 +1107,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" PlanEMIHMax=:PlanEMIHMax , PlanEMIHLockPeriod=:PlanEMIHLockPeriod , PlanEMICpz=:PlanEMICpz , CalRoundingMode=:CalRoundingMode ,RoundingTarget=:RoundingTarget, AlwMultiDisb=:AlwMultiDisb, FeeChargeAmt=:FeeChargeAmt, BpiAmount=:BpiAmount, DeductFeeDisb=:DeductFeeDisb, ");
 		sql.append(
 				"RvwRateApplFor =:RvwRateApplFor, SchCalOnRvw =:SchCalOnRvw,PastduePftCalMthd=:PastduePftCalMthd,DroppingMethod=:DroppingMethod,RateChgAnyDay=:RateChgAnyDay,PastduePftMargin=:PastduePftMargin,  FinCategory=:FinCategory, ProductCategory=:ProductCategory, AllowDrawingPower =:AllowDrawingPower, AllowRevolving =:AllowRevolving, AppliedLoanAmt =:AppliedLoanAmt, CbAmount =:CbAmount, FinIsRateRvwAtGrcEnd =:FinIsRateRvwAtGrcEnd,");
+		sql.append("CalcOfSteps =:CalcOfSteps, StepsAppliedFor =:StepsAppliedFor,");
+
 		if (!wif) {
 			sql.append(
 					" DroplineFrq= :DroplineFrq,FirstDroplineDate = :FirstDroplineDate,PftServicingODLimit = :PftServicingODLimit,");
@@ -6139,7 +6143,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinCategory, ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor");
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
-		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus");
+		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, CalcOfSteps, StepsAppliedFor");
 
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
@@ -6370,6 +6374,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setAppliedLoanAmt(rs.getBigDecimal("AppliedLoanAmt"));
 			fm.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
 			fm.setClosingStatus(rs.getString("ClosingStatus"));
+			fm.setCalcOfSteps(rs.getString("CalcOfSteps"));
+			fm.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));

@@ -54,6 +54,7 @@ import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Hbox;
@@ -313,19 +314,26 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 						wve.add(we);
 					}
 
+					// Getting EmailId
+					Textbox emailId = (Textbox) listCells.get(2).getChildren().get(0).getLastChild();
+
 					try {
-						// Getting EmailId
-						Textbox emailId = (Textbox) listCells.get(2).getChildren().get(0).getLastChild();
 						if (emailId != null) {
+							Clients.clearWrongValue(emailId);
+							String emailIdValue = emailId.getValue();
+							if (StringUtils.isNotEmpty(emailIdValue)) {
+								emailIdValue = emailIdValue.trim();
+							}
+
 							if (!emailId.isReadonly() && (emailId.getValue().isEmpty())) {
 								throw new WrongValueException(emailId, Labels.getLabel("FIELD_IS_MAND",
 										new String[] { Labels.getLabel("listheader_CustomerEmail.label") }));
 							} else if (!emailId.isReadonly()) {
-								emailId.setConstraint(new PTEmailValidator(
-										Labels.getLabel("label_CustomerEMailDialog_CustEMail.value"), true));
-								aCustomerEMail.setCustEMail(emailId.getValue());
+								PTEmailValidator emailValidator = new PTEmailValidator(
+										Labels.getLabel("listheader_CustomerEmail.label"), true);
+								emailValidator.validate(emailId, emailIdValue);
 							}
-							aCustomerEMail.setCustEMail(emailId.getValue());
+							aCustomerEMail.setCustEMail(emailIdValue);
 						}
 					} catch (WrongValueException we) {
 						wve.add(we);

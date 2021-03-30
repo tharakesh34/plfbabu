@@ -355,7 +355,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 					this.numberOfTerms_two.setValue(1);
 				}
 				this.row_stepFinance.setVisible(false);
-				this.row_manualSteps.setVisible(false);
+				//this.row_manualSteps.setVisible(false);
 			}
 
 			setDialog(DialogType.EMBEDDED);
@@ -1393,11 +1393,13 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 			this.row_stepFinance.setVisible(false);
 		}
 		this.stepFinance.setChecked(aFinanceMain.isStepFinance());
-		this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
-		this.stepPolicy.setDescription(aFinanceMain.getLovDescStepPolicyName());
-		this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
-		this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
-		fillComboBox(this.stepType, aFinanceMain.getStepType(), PennantStaticListUtil.getStepType(), "");
+		/*
+		 * this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
+		 * this.stepPolicy.setDescription(aFinanceMain.getLovDescStepPolicyName());
+		 * this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
+		 * this.noOfSteps.setValue(aFinanceMain.getNoOfSteps());
+		 */
+		//	fillComboBox(this.stepType, aFinanceMain.getStepType(), PennantStaticListUtil.getStepType(), "");
 
 		if (aFinanceMain.isNewRecord()) {
 			if (aFinanceMain.isAlwManualSteps()

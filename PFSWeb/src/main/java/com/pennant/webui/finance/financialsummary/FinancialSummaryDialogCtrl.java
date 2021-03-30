@@ -1390,8 +1390,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		SanctionConditions sanctionConditions = new SanctionConditions();
 		sanctionConditions.setNewRecord(true);
 		sanctionConditions.setWorkflowId(0);
-		if (sanctionConditionsDetailList != null && sanctionConditionsDetailList.size() > 0) {
-			idCount = sanctionConditionsDetailList.size() + 1;
+		if (CollectionUtils.isNotEmpty(sanctionConditionsDetailList)) {
+			Collections.sort(sanctionConditionsDetailList,
+					(sanction1, sanction2) -> sanction1.getSeqNo() > sanction2.getSeqNo() ? -1
+							: sanction1.getSeqNo() < sanction2.getSeqNo() ? 1 : 0);
+			idCount = sanctionConditionsDetailList.get(0).getSeqNo() + 1;
 			sanctionConditions.setSeqNo(idCount);
 		} else {
 			sanctionConditions.setSeqNo(1);

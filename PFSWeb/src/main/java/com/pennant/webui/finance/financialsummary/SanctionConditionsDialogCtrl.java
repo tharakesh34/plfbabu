@@ -205,7 +205,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		this.sanctionCondition.setMaxlength(150);
+		this.sanctionCondition.setMaxlength(500);
 		this.status.setMaxlength(40);
 
 		if (isWorkFlowEnabled()) {
@@ -447,8 +447,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + " : "
-				+ asanctionConditions.getId();
+				+ Labels.getLabel("label_SanctionConditionsDialog_SanctionCondition.value") + " : "
+				+ asanctionConditions.getSeqNo();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(asanctionConditions.getRecordType())) {
@@ -681,7 +681,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 						.getSanctionConditionsDetailList().get(i);
 
 				if (asanctionConditions.getSeqNo() == sanctionConditions.getSeqNo()) {
-
+					errParm[0] = Labels.getLabel("label_SanctionConditionsDialog_SanctionCondition.value");
+					errParm[1] = String.valueOf(sanctionConditions.getSeqNo());
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),

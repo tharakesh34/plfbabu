@@ -109,7 +109,7 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
 		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "receiptAllocations",
-		"finOCRHeader", "returnStatus" })
+		"finOCRHeader", "returnStatus", "receiptProcessingAmt", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -313,6 +313,10 @@ public class FinanceDetail implements java.io.Serializable {
 	private PricingDetail pricingDetail;
 	private List<FinFeeConfig> finFeeConfigList;
 
+	@XmlElement
+	private BigDecimal receiptProcessingAmt;
+
+
 	// used for Interfaces
 	private Long usrID;
 	private String usrLogin;
@@ -322,6 +326,9 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean vettingInitTab = false;
 	private PMAY pmay;
 
+	//Documents uploaded in DMS for already approved collateral, those documents need to synch PLF.
+	private List<CollateralSetup> dmsCollateralDocuments;
+
 	public FinanceDetail() {
 		super();
 	}
@@ -329,6 +336,7 @@ public class FinanceDetail implements java.io.Serializable {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("orderStatus");
+		excludeFields.add("receiptProcessingAmt");
 
 		return excludeFields;
 	}
@@ -1654,5 +1662,23 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setFinFeeConfigList(List<FinFeeConfig> finFeeConfigList) {
 		this.finFeeConfigList = finFeeConfigList;
 	}
+
+	public List<CollateralSetup> getDmsCollateralDocuments() {
+		return dmsCollateralDocuments;
+	}
+
+	public void setDmsCollateralDocuments(List<CollateralSetup> dmsCollateralDocuments) {
+		this.dmsCollateralDocuments = dmsCollateralDocuments;
+	}
+
+	public BigDecimal getReceiptProcessingAmt() {
+		return receiptProcessingAmt;
+	}
+
+	public void setReceiptProcessingAmt(BigDecimal receiptProcessingAmt) {
+		this.receiptProcessingAmt = receiptProcessingAmt;
+	}
+
+
 
 }

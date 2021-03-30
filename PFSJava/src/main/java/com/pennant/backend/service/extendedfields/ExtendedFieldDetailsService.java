@@ -58,6 +58,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pff.core.TableType;
 
 public class ExtendedFieldDetailsService {
@@ -1051,10 +1052,12 @@ public class ExtendedFieldDetailsService {
 				}
 				tableName.append("_ED");
 
-				details.get(i).setExtended(true);
-				detail.setReference(reference);
-				detail.setTableName(tableName.toString());
-				detail.setWorkflowId(0);
+				if (StringUtils.equals(reference, detail.getReference())) {
+					details.get(i).setExtended(true);
+					detail.setReference(reference);
+					detail.setTableName(tableName.toString());
+					detail.setWorkflowId(0);
+				}
 
 				if (tableNames.contains(detail.getTypeCode())) {
 					continue;
@@ -1800,19 +1803,28 @@ public class ExtendedFieldDetailsService {
 		return sb.toString();
 	}
 
+
 	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> extendedFieldData, String module,
 			String subModule, String event) {
 		logger.debug(Literal.ENTERING);
 
+		String extEvent = null;
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		if (!(VerificationType.TV.getValue().equals(event))) {
+			extEvent = event;
+		}
 		// get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module,
-				subModule, event, "");
+				subModule, extEvent, "");
 		List<ExtendedFieldDetail> extendedFieldDetails = null;
 
 		// based on ExtendedFieldHeader moduleId get the ExtendedFieldDetails
 		// List
-		if (extendedFieldHeader != null) {
+		if (VerificationType.TV.getValue().equals(event) && extendedFieldHeader != null) {
+			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(),
+					ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION, "");
+			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
+		} else if (extendedFieldHeader != null) {
 			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(),
 					"");
 			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);

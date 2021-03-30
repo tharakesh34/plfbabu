@@ -264,6 +264,14 @@ public class StatementOfAccount {
 	// Total Overdue amount
 	private BigDecimal totalODAmt = BigDecimal.ZERO;
 
+	// Unadjusted Amount
+	private BigDecimal unAdjAmt = BigDecimal.ZERO;
+	private String unAdjAmtInWords;
+
+	//Net receivable
+	private BigDecimal netReceivable = BigDecimal.ZERO;
+	private String netRcvbleInWords;
+
 	/**
 	 * Default Constructor
 	 */
@@ -1410,6 +1418,38 @@ public class StatementOfAccount {
 
 	public void setStateCode(String stateCode) {
 		this.stateCode = stateCode;
+	}
+
+	public BigDecimal getUnAdjAmt() {
+		return unAdjAmt;
+	}
+
+	public void setUnAdjAmt(BigDecimal unAdjAmt) {
+		this.unAdjAmt = unAdjAmt;
+	}
+
+	public BigDecimal getNetReceivable() {
+		return netReceivable;
+	}
+
+	public void setNetReceivable(BigDecimal netReceivable) {
+		this.netReceivable = netReceivable;
+	}
+
+	public String getUnAdjAmtInWords() {
+		return unAdjAmtInWords;
+	}
+
+	public void setUnAdjAmtInWords(String unAdjAmtInWords) {
+		this.unAdjAmtInWords = unAdjAmtInWords;
+	}
+
+	public String getNetRcvbleInWords() {
+		return netRcvbleInWords;
+	}
+
+	public void setNetRcvbleInWords(String netRcvbleInWords) {
+		this.netRcvbleInWords = netRcvbleInWords;
 	}
 
 }

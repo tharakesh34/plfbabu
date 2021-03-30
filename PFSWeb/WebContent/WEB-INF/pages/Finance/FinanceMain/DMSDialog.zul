@@ -20,28 +20,28 @@
 							xmlns:w="client" w:onBind="zWatch.listen({onShow: [this, this.syncSize]});" w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
 							vflex="true">
 
-							<listhead sizable="true">
+							<listhead>
 
 								<listheader id="listheader_DMS_DocumentType" label="${c:l('listheader_DMS_DocumentType.label')}"
-									sort="false" hflex="min" />
+									sort="false"  width="20%"/>
 
 								<listheader id="listheader_DMS_Reference" label="${c:l('listheader_DMS_Reference.label')}" sort="false"
-									hflex="min" />
+									width="10%" />
 
 								<listheader id="listheader_DMS_RetrievalDate" label="${c:l('listheader_DMS_RetrievalDate.label')}"
-									sort="false" hflex="min" />
+									sort="false"  width="15%" />
 
 								<listheader id="listheader_DMS_ApplicantRef" label="${c:l('listheader_DMS_ApplicantRef.label')}"
-									sort="false" hflex="min" />
+									sort="false"   width="20%"/>
 
 								<listheader id="listheader_DMS_ApplicantCategory" label="${c:l('listheader_DMS_DocCategory.label')}"
-									sort="false" hflex="min" />
+									sort="false"  width="15%"/>
 
 								<!-- <listheader id="listheader_DMS_DocCategory" label="${c:l('listheader_DMS_ApplicantCategory.label')}" sort="false"
 									hflex="min" /> -->
 
 								<listheader id="listheader_DMS_ViewButton" label="${c:l('listheader_DMS_DocView.label')}" sort="false"
-									hflex="min" />
+									width="8%" />
 
 							</listhead>
 						</listbox>

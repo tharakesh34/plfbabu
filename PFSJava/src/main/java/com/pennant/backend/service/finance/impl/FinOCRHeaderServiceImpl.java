@@ -126,56 +126,121 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	 * Configuration. by using FinOCRHeaderDAO's update method 3) Audit the record in to AuditHeader and AdtFinOCRHeader
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
+	 * @param financeDetail
+	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader, FinanceDetail financeDetail, boolean fromLoan) {
 		logger.debug(Literal.ENTERING);
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-		if (!auditHeader.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
+
+		boolean ocrRequired = true;
+		String parentRef = "";
+		if (financeDetail != null) {
+			ocrRequired = financeDetail.getFinScheduleData().getFinanceMain().isFinOcrRequired();
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			parentRef = financeMain.getParentRef();
 		}
-		String tableType = "";
 		FinOCRHeader finOCRHeader = (FinOCRHeader) auditHeader.getAuditDetail().getModelData();
 
-		if (finOCRHeader.isWorkflow()) {
-			tableType = "_Temp";
-		}
+		if (fromLoan && !ocrRequired && finOCRHeader.getHeaderID() > 0) {
+			auditHeader = deleteOCR(finOCRHeader, auditHeader);
+			auditHeaderDAO.addAudit(auditHeader);
+		} else {
+			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+			auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+			if (!auditHeader.isNextProcess()) {
+				logger.debug(Literal.LEAVING);
+				return auditHeader;
+			}
+			String tableType = "";
 
-		if (!finOCRHeader.isDefinitionApproved()) {
-			if (finOCRHeader.isNewRecord()) {
-				finOCRHeader.setHeaderID(finOCRHeaderDAO.save(finOCRHeader, tableType));
-				auditHeader.getAuditDetail().setModelData(finOCRHeader);
-				auditHeader.setAuditReference(String.valueOf(finOCRHeader.getHeaderID()));
-			} else {
-				finOCRHeaderDAO.update(finOCRHeader, tableType);
+			if (finOCRHeader.isWorkflow()) {
+				tableType = "_Temp";
 			}
 
-			// Fin OCR Step Details
-			if (!CollectionUtils.isEmpty(finOCRHeader.getOcrDetailList())) {
-				List<AuditDetail> details = finOCRHeader.getAuditDetailMap().get("FinOCRStepDetails");
-				details = processingFinOCRStepList(details, tableType, finOCRHeader);
+			if (!finOCRHeader.isDefinitionApproved()) {
+				if (finOCRHeader.isNewRecord()) {
+					finOCRHeader.setHeaderID(finOCRHeaderDAO.save(finOCRHeader, tableType));
+					auditHeader.getAuditDetail().setModelData(finOCRHeader);
+					auditHeader.setAuditReference(String.valueOf(finOCRHeader.getHeaderID()));
+				} else {
+					finOCRHeaderDAO.update(finOCRHeader, tableType);
+				}
+
+				// Fin OCR Step Details
+				if (StringUtils.isEmpty(parentRef) && CollectionUtils.isNotEmpty(finOCRHeader.getOcrDetailList())) {
+					List<AuditDetail> details = finOCRHeader.getAuditDetailMap().get("FinOCRStepDetails");
+					details = processingFinOCRStepList(details, tableType, finOCRHeader);
+					auditDetails.addAll(details);
+				}
+			}
+
+			// Fin OCR Capture Details
+			if (CollectionUtils.isNotEmpty(finOCRHeader.getFinOCRCapturesList())) {
+				List<AuditDetail> details = finOCRHeader.getAuditDetailMap().get("FinOCRCaptureDetails");
+				details = processingFinCaptureList(details, tableType, finOCRHeader);
 				auditDetails.addAll(details);
 			}
-		}
 
-		// Fin OCR Capture Details
-		if (CollectionUtils.isNotEmpty(finOCRHeader.getFinOCRCapturesList())) {
-			List<AuditDetail> details = finOCRHeader.getAuditDetailMap().get("FinOCRCaptureDetails");
-			details = processingFinCaptureList(details, tableType, finOCRHeader);
-			auditDetails.addAll(details);
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinOCRHeader(), finOCRHeader.getExcludeFields());
+			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+					finOCRHeader.getBefImage(), finOCRHeader));
+			auditHeader.setAuditDetails(auditDetails);
+			auditHeaderDAO.addAudit(auditHeader);
 		}
-
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinOCRHeader(), finOCRHeader.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				finOCRHeader.getBefImage(), finOCRHeader));
-		auditHeader.setAuditDetails(auditDetails);
-		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	private AuditHeader deleteOCR(FinOCRHeader finOCRHeader, AuditHeader auditHeader) {
+
+		FinOCRHeader existingOCR = finOCRHeaderDAO.getFinOCRHeaderByRef(finOCRHeader.getFinReference(),
+				TableType.TEMP_TAB.getSuffix());
+		if (existingOCR != null) {
+			String[] fields = null;
+			finOCRHeader.setBefImage(finOCRHeader);
+			finOCRHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			fields = PennantJavaUtil.getFieldDetails(new FinOCRHeader(), finOCRHeader.getExcludeFields());
+			auditHeader.setAuditDetail(new AuditDetail(PennantConstants.TRAN_DEL, 1, fields[0], fields[1],
+					finOCRHeader.getBefImage(), finOCRHeader));
+			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+			List<FinOCRDetail> finOCRStepDetails = finOCRHeader.getOcrDetailList();
+			if (CollectionUtils.isNotEmpty(finOCRHeader.getOcrDetailList())) {
+				FinOCRDetail ocrDetail = new FinOCRDetail();
+				FinOCRDetail finOCRDetail = null;
+				fields = PennantJavaUtil.getFieldDetails(ocrDetail, ocrDetail.getExcludeFields());
+				for (int i = 0; i < finOCRStepDetails.size(); i++) {
+					finOCRDetail = finOCRStepDetails.get(i);
+					finOCRDetail.setBefImage(finOCRDetail);
+					finOCRDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					auditDetails.add(new AuditDetail(PennantConstants.TRAN_DEL, i + 1, fields[0], fields[1],
+							finOCRDetail.getBefImage(), finOCRDetail));
+				}
+				finOCRDetailDAO.deleteList(finOCRHeader.getHeaderID(), TableType.TEMP_TAB.getSuffix());
+			}
+
+			// Fin OCR Capture Details.
+			List<FinOCRCapture> finOCRCaptureDetails = finOCRHeader.getFinOCRCapturesList();
+			if (CollectionUtils.isNotEmpty(finOCRCaptureDetails)) {
+				FinOCRCapture ocrCapture = new FinOCRCapture();
+				FinOCRCapture finOCRCapture = null;
+				fields = PennantJavaUtil.getFieldDetails(ocrCapture, ocrCapture.getExcludeFields());
+				for (int i = 0; i < finOCRCaptureDetails.size(); i++) {
+					finOCRCapture = finOCRCaptureDetails.get(i);
+					finOCRCapture.setBefImage(finOCRCapture);
+					finOCRCapture.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					auditDetails.add(new AuditDetail(PennantConstants.TRAN_DEL, i + 1, fields[0], fields[1],
+							finOCRCapture.getBefImage(), finOCRCapture));
+				}
+				finOCRCaptureDAO.deleteList(finOCRHeader.getFinReference(), TableType.TEMP_TAB.getSuffix());
+			}
+
+			finOCRHeaderDAO.delete(finOCRHeader, TableType.TEMP_TAB.getSuffix());
+			auditHeader.setAuditDetails(auditDetails);
+		}
 		return auditHeader;
 	}
 
@@ -231,74 +296,89 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	 * @return auditHeader
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) {
+	public AuditHeader doApprove(AuditHeader auditHeader, FinanceDetail financeDetail, boolean fromLoan) {
 		logger.debug(Literal.ENTERING);
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
-		if (!auditHeader.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
+
+		FinOCRHeader finOCRHeader = (FinOCRHeader) auditHeader.getAuditDetail().getModelData();
+		String parentRef = "";
+		boolean ocrRequired = true;
+		if (financeDetail != null) {
+			ocrRequired = financeDetail.getFinScheduleData().getFinanceMain().isFinOcrRequired();
+			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			parentRef = financeMain.getParentRef();
 		}
 
-		FinOCRHeader aFinOCRHeader = new FinOCRHeader();
-		BeanUtils.copyProperties((FinOCRHeader) auditHeader.getAuditDetail().getModelData(), aFinOCRHeader);
-
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(aFinOCRHeader.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					finOCRHeaderDAO.getFinOCRHeaderById(aFinOCRHeader.getHeaderID(), TableType.MAIN_TAB.getSuffix()));
-		}
-
-		if (PennantConstants.RECORD_TYPE_DEL.equals(aFinOCRHeader.getRecordType())) {
-			tranType = PennantConstants.TRAN_DEL;
-			auditDetails.addAll(listDeletion(aFinOCRHeader, TableType.MAIN_TAB.getSuffix(), tranType));
-			finOCRHeaderDAO.delete(aFinOCRHeader, TableType.MAIN_TAB.getSuffix());
-
+		if (fromLoan && !ocrRequired && finOCRHeader.getHeaderID() > 0) {
+			auditHeader = deleteOCR(finOCRHeader, auditHeader);
+			auditHeaderDAO.addAudit(auditHeader);
 		} else {
-			aFinOCRHeader.setRoleCode("");
-			aFinOCRHeader.setNextRoleCode("");
-			aFinOCRHeader.setTaskId("");
-			aFinOCRHeader.setNextTaskId("");
-			aFinOCRHeader.setWorkflowId(0);
+			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+			String tranType = "";
+			auditHeader = businessValidation(auditHeader, "doApprove");
+			if (!auditHeader.isNextProcess()) {
+				logger.debug(Literal.LEAVING);
+				return auditHeader;
+			}
 
-			if (PennantConstants.RECORD_TYPE_NEW.equals(aFinOCRHeader.getRecordType())) {
-				tranType = PennantConstants.TRAN_ADD;
-				aFinOCRHeader.setRecordType("");
-				finOCRHeaderDAO.save(aFinOCRHeader, TableType.MAIN_TAB.getSuffix());
+			FinOCRHeader aFinOCRHeader = new FinOCRHeader();
+			BeanUtils.copyProperties((FinOCRHeader) auditHeader.getAuditDetail().getModelData(), aFinOCRHeader);
+
+			if (!PennantConstants.RECORD_TYPE_NEW.equals(aFinOCRHeader.getRecordType())) {
+				auditHeader.getAuditDetail().setBefImage(finOCRHeaderDAO
+						.getFinOCRHeaderById(aFinOCRHeader.getHeaderID(), TableType.MAIN_TAB.getSuffix()));
+			}
+
+			if (PennantConstants.RECORD_TYPE_DEL.equals(aFinOCRHeader.getRecordType())) {
+				tranType = PennantConstants.TRAN_DEL;
+				auditDetails.addAll(listDeletion(aFinOCRHeader, TableType.MAIN_TAB.getSuffix(), tranType));
+				finOCRHeaderDAO.delete(aFinOCRHeader, TableType.MAIN_TAB.getSuffix());
+
 			} else {
-				tranType = PennantConstants.TRAN_UPD;
-				aFinOCRHeader.setRecordType("");
-				finOCRHeaderDAO.update(aFinOCRHeader, TableType.MAIN_TAB.getSuffix());
+				aFinOCRHeader.setRoleCode("");
+				aFinOCRHeader.setNextRoleCode("");
+				aFinOCRHeader.setTaskId("");
+				aFinOCRHeader.setNextTaskId("");
+				aFinOCRHeader.setWorkflowId(0);
+
+				if (PennantConstants.RECORD_TYPE_NEW.equals(aFinOCRHeader.getRecordType())) {
+					tranType = PennantConstants.TRAN_ADD;
+					aFinOCRHeader.setRecordType("");
+					finOCRHeaderDAO.save(aFinOCRHeader, TableType.MAIN_TAB.getSuffix());
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
+					aFinOCRHeader.setRecordType("");
+					finOCRHeaderDAO.update(aFinOCRHeader, TableType.MAIN_TAB.getSuffix());
+				}
+
+				// Fin OCR Step Details
+				if (StringUtils.isEmpty(parentRef) && CollectionUtils.isNotEmpty(aFinOCRHeader.getOcrDetailList())) {
+					List<AuditDetail> details = aFinOCRHeader.getAuditDetailMap().get("FinOCRStepDetails");
+					details = processingFinOCRStepList(details, TableType.MAIN_TAB.getSuffix(), aFinOCRHeader);
+					auditDetails.addAll(details);
+				}
+
+				// Fin OCR Capture Details
+				if (CollectionUtils.isNotEmpty(aFinOCRHeader.getFinOCRCapturesList())) {
+					List<AuditDetail> details = aFinOCRHeader.getAuditDetailMap().get("FinOCRCaptureDetails");
+					details = processingFinCaptureList(details, TableType.MAIN_TAB.getSuffix(), aFinOCRHeader);
+					auditDetails.addAll(details);
+				}
 			}
 
-			// Fin OCR Step Details
-			if (!CollectionUtils.isEmpty(aFinOCRHeader.getOcrDetailList())) {
-				List<AuditDetail> details = aFinOCRHeader.getAuditDetailMap().get("FinOCRStepDetails");
-				details = processingFinOCRStepList(details, TableType.MAIN_TAB.getSuffix(), aFinOCRHeader);
-				auditDetails.addAll(details);
+			if (!aFinOCRHeader.isNewRecord()) {
+				auditHeader.setAuditDetails(
+						listDeletion(aFinOCRHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
+				finOCRHeaderDAO.delete(aFinOCRHeader, TableType.TEMP_TAB.getSuffix());
+				auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+				auditHeaderDAO.addAudit(auditHeader);
 			}
 
-			// Fin OCR Capture Details
-			if (CollectionUtils.isNotEmpty(aFinOCRHeader.getFinOCRCapturesList())) {
-				List<AuditDetail> details = aFinOCRHeader.getAuditDetailMap().get("FinOCRCaptureDetails");
-				details = processingFinCaptureList(details, TableType.MAIN_TAB.getSuffix(), aFinOCRHeader);
-				auditDetails.addAll(details);
-			}
-		}
-
-		if (!aFinOCRHeader.isNewRecord()) {
-			auditHeader.setAuditDetails(
-					listDeletion(aFinOCRHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
-			finOCRHeaderDAO.delete(aFinOCRHeader, TableType.TEMP_TAB.getSuffix());
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+			auditHeader.setAuditTranType(tranType);
+			auditHeader.getAuditDetail().setAuditTranType(tranType);
+			auditHeader.setAuditDetails(auditDetails);
+			auditHeader.getAuditDetail().setModelData(aFinOCRHeader);
 			auditHeaderDAO.addAudit(auditHeader);
 		}
-
-		auditHeader.setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.setAuditDetails(auditDetails);
-		auditHeader.getAuditDetail().setModelData(aFinOCRHeader);
-		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -329,8 +409,6 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinOCRHeader(), finOCRHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				finOCRHeader.getBefImage(), finOCRHeader));
-		//Fin OCR Capture details deletion
-		auditDetails.addAll(listDeletion(finOCRHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		//Fin OCR Capture details deletion
 		auditDetails.addAll(listDeletion(finOCRHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		finOCRHeaderDAO.delete(finOCRHeader, TableType.TEMP_TAB.getSuffix());
@@ -476,10 +554,10 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 
 			switch (method) {
 			case "saveOrUpdate":
-				saveOrUpdate(auditHeader);
+				saveOrUpdate(auditHeader, financeDetail, true);
 				break;
 			case "doApprove":
-				doApprove(auditHeader);
+				doApprove(auditHeader, financeDetail, true);
 				break;
 			case "doReject":
 				doReject(auditHeader);

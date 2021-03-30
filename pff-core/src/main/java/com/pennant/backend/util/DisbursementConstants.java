@@ -77,6 +77,7 @@ public class DisbursementConstants {
 	public static final String STATUS_REVERSED = "REVERSED";
 	public static final String STATUS_HOLD = "HOLD";
 	public static final String STATUS_PAID_BUT_CANCELLED = "PAID BUT CANCELLED";
+	public static final String STATUS_PRINT = "PRINT";
 
 	// Payment Channels 
 	public static final String CHANNEL_PAYMENT = "P";

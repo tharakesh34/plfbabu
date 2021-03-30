@@ -727,4 +727,32 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		return vehicleDealerBranchCodeList;
 	}
 
+	@Override
+	public VehicleDealer getVehicleDealerById(Long id, String dealerType, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		VehicleDealer vehicleDealer = new VehicleDealer();
+		vehicleDealer.setDealerType(dealerType);
+		vehicleDealer.setDealerId(id);
+		vehicleDealer.setActive(true);
+		StringBuilder selectSql = new StringBuilder("SELECT DealerId, DealerName ,DealerCity");
+		selectSql.append(" From AMTVehicleDealer");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where DealerId =:DealerId AND DealerType =:DealerType AND Active =:Active");
+
+		logger.debug(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vehicleDealer);
+		RowMapper<VehicleDealer> typeRowMapper = BeanPropertyRowMapper.newInstance(VehicleDealer.class);
+
+		try {
+			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.debug(Literal.EXCEPTION,e);
+			vehicleDealer = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return vehicleDealer;
+
+	}
+
 }

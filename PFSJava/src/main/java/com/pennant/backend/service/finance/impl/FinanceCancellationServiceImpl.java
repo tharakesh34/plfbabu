@@ -91,6 +91,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.InvoiceDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -986,7 +987,12 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 			}
 		}
-
+		//vallidation for manual dues
+		List<ManualAdvise> manualAdvise = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");
+		if (CollectionUtils.isNotEmpty(manualAdvise)) {
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60022", errParm, valueParm));
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeMain.isWorkflow()) {

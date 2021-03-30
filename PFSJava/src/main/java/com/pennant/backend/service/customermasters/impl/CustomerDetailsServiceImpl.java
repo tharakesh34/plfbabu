@@ -224,6 +224,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.dms.DMSProperties;
+import com.pennanttech.pennapps.dms.DMSStorage;
 import com.pennanttech.pennapps.dms.dao.DMSQueueDAO;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -3278,7 +3280,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							daysInputlis.add(String.valueOf(subDetail.getDay()));
 						}
 					}
-					if (subDetail.getBalance() == null || subDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+					if (subDetail.getBalance() == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "BankInfoSubDetails:Balance";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("WFEE08", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					} else if (!(StringUtils.equalsIgnoreCase(custBankInfo.getAccountType(), "CC")
+							|| StringUtils.equalsIgnoreCase(custBankInfo.getAccountType(), "OD"))
+							&& subDetail.getBalance().compareTo(BigDecimal.ZERO) < 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "BankInfoSubDetails:Balance";
 						valueParm[1] = "Zero";
@@ -3454,6 +3464,29 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				return auditDetail;
 			}
 
+			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+				if (StringUtils.isBlank(customer.getCustResidentialSts())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "residentialSts";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+					return auditDetail;
+				} else {
+					boolean isResExists = false;
+					List<ValueLabel> fieldType = PennantStaticListUtil.getResidentialStsList();
+
+					for (ValueLabel fe : fieldType) {
+						if ((customer.getCustResidentialSts().equals(fe.getValue()))) {
+							isResExists = true;
+						}
+					}
+					if (!isResExists) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "residentialSts";
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm)));
+						return auditDetail;
+					}
+				}
+			}
 			auditDetail.setErrorDetail(validateMasterCode("Salutation", customer.getCustSalutationCode()));
 			auditDetail.setErrorDetail(validateMasterCode("Gender", customer.getCustGenderCode()));
 			auditDetail.setErrorDetail(validateMasterCode("MaritalStatusCode", customer.getCustMaritalSts()));
@@ -7978,7 +8011,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						dmsQueue.setReference(perfiosHeader.getTransactionId());
 						dmsQueue.setDocName(perfiosHeader.getDocName());
 						dmsQueue.setCustCif(perfiosHeader.getCustomerCIF());
-						dmsQueue.setCreatedOn(SysParamUtil.getAppDate());
+						dmsQueue.setCreatedOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
 						dmsQueue.setOfferId(perfiosHeader.getOfferId());
 						dmsQueue.setApplicationNo(perfiosHeader.getApplicationNo());
 						if (SessionUserDetails.getLogiedInUser() != null) {
@@ -8007,7 +8040,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						documentDetails.setWorkflowId(0);
 						documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 
-						dMSQueueDAO.log(dmsQueue);
+						if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))
+								|| DMSStorage.EXTERNAL == DMSStorage
+										.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+							dMSQueueDAO.log(dmsQueue);
+						}
 						documentDetailsDAO.save(documentDetails, "");
 
 						perfiosHeader.setDocRefId(docRefId);

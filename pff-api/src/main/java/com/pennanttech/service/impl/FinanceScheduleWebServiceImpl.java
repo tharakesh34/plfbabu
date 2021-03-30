@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
@@ -260,7 +261,18 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 			finDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finDetail);
 			finDetail.getFinScheduleData().getFinanceMain().setFinIsAlwMD(false);
 			if (oldfinaMain != null) {
-				finDetail.getFinScheduleData().getFinanceMain().setRepayMargin(oldfinaMain.getRepayMargin());
+
+				if (StringUtils.equals(finDetail.getFinScheduleData().getFinanceMain().getRepayRateBasis(),
+						CalculationConstants.RATE_BASIS_F)) {
+					finDetail.getFinScheduleData().getFinanceMain()
+							.setRepayProfitRate(oldfinaMain.getRepayProfitRate());
+				} else {
+					finDetail.getFinScheduleData().getFinanceMain().setRepayBaseRate(oldfinaMain.getRepayBaseRate());
+					finDetail.getFinScheduleData().getFinanceMain()
+							.setRepaySpecialRate(oldfinaMain.getRepaySpecialRate());
+					finDetail.getFinScheduleData().getFinanceMain().setRepayMargin(oldfinaMain.getRepayMargin());
+				}
+
 				finDetail.getFinScheduleData().getFinanceMain().setAlwBPI(oldfinaMain.isAlwBPI());
 				finDetail.getFinScheduleData().getFinanceMain().setBpiTreatment(oldfinaMain.getBpiTreatment());
 
@@ -269,12 +281,18 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 					//finDetail.getFinScheduleData().getFinanceMain().setGraceTerms(oldfinaMain.getGraceTerms());
 					finDetail.getFinScheduleData().getFinanceMain()
 							.setGrcPeriodEndDate(oldfinaMain.getGrcPeriodEndDate());
+
 					finDetail.getFinScheduleData().getFinanceMain().setGrcRateBasis(oldfinaMain.getGrcRateBasis());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcPftRate(oldfinaMain.getGrcPftRate());
-					finDetail.getFinScheduleData().getFinanceMain().setGraceBaseRate(oldfinaMain.getGraceBaseRate());
-					finDetail.getFinScheduleData().getFinanceMain()
-							.setGraceSpecialRate(oldfinaMain.getGraceSpecialRate());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcMargin(oldfinaMain.getGrcMargin());
+					if (StringUtils.equals(finDetail.getFinScheduleData().getFinanceMain().getGrcRateBasis(),
+							CalculationConstants.RATE_BASIS_F)) {
+						finDetail.getFinScheduleData().getFinanceMain().setGrcPftRate(oldfinaMain.getGrcPftRate());
+					} else {
+						finDetail.getFinScheduleData().getFinanceMain()
+								.setGraceBaseRate(oldfinaMain.getGraceBaseRate());
+						finDetail.getFinScheduleData().getFinanceMain()
+								.setGraceSpecialRate(oldfinaMain.getGraceSpecialRate());
+						finDetail.getFinScheduleData().getFinanceMain().setGrcMargin(oldfinaMain.getGrcMargin());
+					}
 					finDetail.getFinScheduleData().getFinanceMain()
 							.setGrcProfitDaysBasis(oldfinaMain.getGrcProfitDaysBasis());
 					finDetail.getFinScheduleData().getFinanceMain().setGrcPftFrq(oldfinaMain.getGrcPftFrq());
@@ -294,8 +312,11 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 					finDetail.getFinScheduleData().getFinanceMain().setGrcAdvMargin(oldfinaMain.getGrcAdvMargin());
 					finDetail.getFinScheduleData().getFinanceMain().setGrcAdvPftRate(oldfinaMain.getGrcAdvPftRate());
 				}
+				finDetail.getFinScheduleData().getFinanceMain().setRepayFrq(oldfinaMain.getRepayFrq());
 				finDetail.getFinScheduleData().getFinanceMain().setNextRepayDate(oldfinaMain.getNextRepayDate());
+				finDetail.getFinScheduleData().getFinanceMain().setRepayRvwFrq(oldfinaMain.getRepayRvwFrq());
 				finDetail.getFinScheduleData().getFinanceMain().setNextRepayRvwDate(oldfinaMain.getNextRepayRvwDate());
+				finDetail.getFinScheduleData().getFinanceMain().setRepayPftFrq(oldfinaMain.getRepayPftFrq());
 				finDetail.getFinScheduleData().getFinanceMain().setNextRepayPftDate(oldfinaMain.getNextRepayPftDate());
 				finDetail.getFinScheduleData().getFinanceMain()
 						.setEqualRepay(finDetail.getFinScheduleData().getFinanceType().isEqualRepayment());

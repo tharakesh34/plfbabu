@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -551,7 +552,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> list = searchProcessor.getResults(search);
 		boolean agencyChanged = false;
 		if (CollectionUtils.isNotEmpty(list)) {
-			if (list.get(0).getAgency() != null && list.get(0).getAgency() != verification.getAgency()) {
+			if (list.get(0).getAgency() != null && list.get(0).getAgency().equals(verification.getAgency())) {
 				agencyChanged = true;
 			}
 		}
@@ -630,9 +631,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			item.setRequestType(RequestType.REQUEST.getKey());
 		}
 		rcuDocument.setDocCategory(document.getCustDocCategory());
-		rcuDocument.setDocumentId(document.getCustID());
+		rcuDocument.setDocumentId(document.getId());
 		rcuDocument.setDocumentSubId(document.getCustDocCategory());
 		rcuDocument.setDocumentType(documentType.getKey());
+		rcuDocument.setReferenceId(String.valueOf(document.getCustID()));
 		item.setRcuDocument(rcuDocument);
 
 		if (initType) {
@@ -672,6 +674,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		rcuDocument.setDocumentSubId(document.getDocCategory());
 		rcuDocument.setDocumentType(documentType.getKey());
 		rcuDocument.setCollateralRef(document.getReferenceId());
+		rcuDocument.setReferenceId(document.getReferenceId());
 		item.setRcuDocument(rcuDocument);
 
 		if (initType) {
@@ -1385,8 +1388,18 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setDescColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerId" });
 		agency.setValueType(DataType.LONG);
-		Filter[] agencyFilter = new Filter[1];
+		Filter[] agencyFilter = null;
+		if (ImplementationConstants.BRANCHWISE_RCU_INITIATION) {
+			agencyFilter = new Filter[2];
+		} else {
+			agencyFilter = new Filter[1];
+		}
 		agencyFilter[0] = new Filter("DealerType", Agencies.RCUVAGENCY.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.BRANCHWISE_RCU_INITIATION && !enqiryModule) {
+			agencyFilter[1] = new Filter("Branchcode",
+					"%" + financeDetail.getFinScheduleData().getFinanceMain().getFinBranch() + "%", Filter.OP_LIKE);
+		}
+
 		agency.setFilters(agencyFilter);
 
 		logger.debug(Literal.LEAVING);
@@ -1724,7 +1737,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.userAction = userAction;
 		this.recSave = recSave;
 		if (this.verification.isSave()) {
-			return true;
+			//return true;
 		}
 
 		doClearMessage();
@@ -1879,21 +1892,21 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			if (grpByAgency) {
 				if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
-
 					if (!initType && vrf.getDecision() == Decision.RE_INITIATE.getKey() && !vrf.isIgnoreFlag()) {
 						aVerification = reInitMap.get(vrf.getReInitAgency());
 						document.setInitRemarks(vrf.getDecisionRemarks());
-						aVerification.getRcuDocuments().add(document);
+						setRcuDocumentList(aVerification, document);
 					} else if (!vrf.isInitiated() || !initType) {
 						aVerification = other.get(vrf.getAgency());
 						if (aVerification != null) {
-							aVerification.getRcuDocuments().add(document);
+							// PSD#165439:-RCU duplicate issue
+							setRcuDocumentList(aVerification, document);
 						}
 					}
 				} else if (!initType && vrf.getDecision() == Decision.RE_INITIATE.getKey()) {
 					aVerification = reInitMap.get(vrf.getReInitAgency());
 					document.setInitRemarks(vrf.getDecisionRemarks());
-					aVerification.getRcuDocuments().add(document);
+					setRcuDocumentList(aVerification, document);
 				}
 			}
 		}
@@ -1905,6 +1918,28 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		logger.debug(Literal.LEAVING);
 		return verifications;
+	}
+
+	/**
+	 * This method is created to avoid to add duplicate documents when while initiate/Re-initiate the verification
+	 * 
+	 * @param aVerification
+	 * @param document
+	 */
+	//FIXME
+	private void setRcuDocumentList(Verification aVerification, RCUDocument document) {
+		logger.debug(Literal.ENTERING);
+		List<String> rcuDocCatogory = aVerification.getRcuDocuments().stream().map(rcuDoc -> rcuDoc.getDocCategory())
+				.collect(Collectors.toList());
+		List<Integer> docTypes = aVerification.getRcuDocuments().stream().map(rcuDoc -> rcuDoc.getDocumentType())
+				.collect(Collectors.toList());
+		List<String> referenceIds = aVerification.getRcuDocuments().stream().map(rcuDoc -> rcuDoc.getReferenceId())
+				.collect(Collectors.toList());
+		if (!rcuDocCatogory.contains(document.getDocCategory()) || !docTypes.contains(document.getDocumentType())
+				|| !referenceIds.contains(document.getReferenceId())) {
+			aVerification.getRcuDocuments().add(document);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnRCUInitiateSave(Event event) {

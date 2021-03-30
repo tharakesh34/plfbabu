@@ -171,6 +171,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -449,7 +450,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				isRcdType = true;
 			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
+				// #PSD:168724-900 error for document
+				// isRcdType = true;
 			}
 
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
@@ -1238,6 +1240,68 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				finAssetTypes.setRecordStatus(recordStatus);
 			}
 			auditDetails.get(i).setModelData(finAssetTypes);
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param detail
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	public List<AuditDetail> setFinStepDetailAuditData(FinScheduleData finScheduleData, String auditTranType,
+			String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		FinanceStepPolicyDetail object = new FinanceStepPolicyDetail();
+		String[] fields = PennantJavaUtil.getFieldDetails(object, object.getExcludeFields());
+		for (int i = 0; i < finScheduleData.getStepPolicyDetails().size(); i++) {
+			FinanceStepPolicyDetail financeStepPolicyDetail = finScheduleData.getStepPolicyDetails().get(i);
+
+			if (StringUtils.isEmpty(financeStepPolicyDetail.getRecordType())) {
+				continue;
+			}
+
+			financeStepPolicyDetail.setWorkflowId(finScheduleData.getFinanceMain().getWorkflowId());
+			boolean isRcdType = false;
+
+			if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				isRcdType = true;
+			} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				financeStepPolicyDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+				financeStepPolicyDetail.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| financeStepPolicyDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			financeStepPolicyDetail.setRecordStatus(finScheduleData.getFinanceMain().getRecordStatus());
+			financeStepPolicyDetail.setUserDetails(finScheduleData.getFinanceMain().getUserDetails());
+			financeStepPolicyDetail.setLastMntOn(finScheduleData.getFinanceMain().getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					financeStepPolicyDetail.getBefImage(), financeStepPolicyDetail));
 		}
 
 		logger.debug("Leaving");
@@ -2037,6 +2101,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// VAS Recording Accounting Entries
 		if (isNew) {
+			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
+					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
+				processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
+				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+					processInsPayAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
+				}
+			}
 			installmentDueService.processbackDateInstallmentDues(financeDetail, pftDetail, SysParamUtil.getAppDate(),
 					true, auditHeader.getAuditBranchCode());
 			/*
@@ -3166,6 +3237,86 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		this.manualAdviseDAO.saveDueTaxDetail(detail);
 	}
+
+	/**
+	 * Method for Preparing List of Entries based on recordings for Insurance Payment
+	 * 
+	 * @param aeEvent
+	 * @param vasRecordingList
+	 * @return
+	 */
+	protected List<ReturnDataSet> processInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
+			boolean doPostings) throws InterfaceException {
+
+		List<ReturnDataSet> datasetList = new ArrayList<>();
+		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
+			long accountsetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
+					AccountEventConstants.ACCEVENT_INSPAY);
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+			for (VASRecording recording : vasRecordingList) {
+				recording.getDeclaredFieldValues(aeEvent.getDataMap());
+				aeEvent.setFinReference(recording.getVasReference());
+
+				//For GL Code
+				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
+				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
+				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
+				aeEvent.getDataMap().put("id_totPayAmount", recording.getFee());
+
+				aeEvent.setLinkedTranId(0);
+				aeEvent.getAcSetIDList().clear();
+				aeEvent.getAcSetIDList().add(accountsetId);
+				if (doPostings) {
+					getPostingsPreparationUtil().postAccounting(aeEvent);
+				} else {
+					engineExecution.getAccEngineExecResults(aeEvent);
+				}
+				datasetList.addAll(aeEvent.getReturnDataSet());
+			}
+		}
+		return datasetList;
+	}
+
+	/**
+	 * Method for Preparing List of Entries based on recordings for VAS
+	 * 
+	 * @param aeEvent
+	 * @param vasRecordingList
+	 * @return
+	 */
+	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
+			boolean doPostings) throws InterfaceException {
+
+		List<ReturnDataSet> datasetList = new ArrayList<>();
+		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
+
+			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+			for (VASRecording recording : vasRecordingList) {
+				recording.getDeclaredFieldValues(aeEvent.getDataMap());
+				aeEvent.getAcSetIDList().clear();
+				aeEvent.getAcSetIDList().add(recording.getFeeAccounting());
+				aeEvent.setFinReference(recording.getVasReference());
+
+				// For GL Code
+				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
+				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
+				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
+
+				aeEvent.setLinkedTranId(0);
+				if (doPostings) {
+					getPostingsPreparationUtil().postAccounting(aeEvent);
+				} else {
+					engineExecution.getAccEngineExecResults(aeEvent);
+				}
+				datasetList.addAll(aeEvent.getReturnDataSet());
+			}
+		}
+		return datasetList;
+	}
+
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
 
 	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
 		this.customerStatusCodeDAO = customerStatusCodeDAO;

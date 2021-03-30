@@ -1,7 +1,7 @@
 package com.pennanttech.pennapps.dms.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
 import com.pennanttech.model.dms.DMSModule;
 
@@ -21,7 +21,7 @@ public class DMSQueue implements Serializable {
 	private String docType;
 	private String docExt;
 	private String docUri;
-	private Date createdOn;
+	private Timestamp createdOn;
 	private long createdBy;
 	private int processingFlag;
 	private String errorCode;
@@ -147,11 +147,11 @@ public class DMSQueue implements Serializable {
 		this.docUri = docUri;
 	}
 
-	public Date getCreatedOn() {
+	public Timestamp getCreatedOn() {
 		return createdOn;
 	}
 
-	public void setCreatedOn(Date createdOn) {
+	public void setCreatedOn(Timestamp createdOn) {
 		this.createdOn = createdOn;
 	}
 

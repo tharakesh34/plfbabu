@@ -656,6 +656,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox alwLoanSplit;
 	protected Groupbox gb_autoGraceInc_Details;
 
+	//stepping changes
+	protected Combobox calcOfSteps;
+	protected Combobox stepsAppliedFor;
+	protected Space space_stepsAppliedFor;
+	protected Row row_CalcOfSteps;
+	protected Hbox hbox_stepsAppliedFor;
+	protected Label label_FinanceTypeDialog_StepsAppliedFor;
+	protected Hbox hbox_dftStepPolicy;
+	protected Label label_FinanceTypeDialog_dftStepPolicy;
+	protected Space space_calcOfSteps;
+	protected Label label_FinanceTypeDialog_CalcOfSteps;
+
 	private List<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	private List<ValueLabel> vanAllocationMethodsList = PennantStaticListUtil.getVanAllocationMethods();
 	FinanceType fintypeLTVCheck = null;
@@ -1850,7 +1862,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.specificLoanPurposes.setValue(aFinanceType.getSpecificLoanPurposes());
 		doCheckLoanPurposeproperties();
 		checkTDSApplicableChecked();
-
+		fillComboBox(this.calcOfSteps, aFinanceType.getCalcOfSteps(), PennantStaticListUtil.getCalcOfStepsList(), "");
+		fillComboBox(this.stepsAppliedFor, aFinanceType.getStepsAppliedFor(),
+				PennantStaticListUtil.getStepsAppliedFor(), "");
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
 
@@ -3820,12 +3834,36 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			try {
+				if (!this.calcOfSteps.isDisabled()
+						&& PennantConstants.List_Select.equals(getComboboxValue(this.calcOfSteps))) {
+					throw new WrongValueException(this.calcOfSteps, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps.value") }));
+				}
+
+				aFinanceType.setCalcOfSteps(this.calcOfSteps.getSelectedItem().getValue().toString());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				if (!this.stepsAppliedFor.isDisabled()
+						&& PennantConstants.List_Select.equals(getComboboxValue(this.stepsAppliedFor))) {
+					throw new WrongValueException(this.stepsAppliedFor, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_StepsAppliedFor.value") }));
+				}
+				aFinanceType.setStepsAppliedFor(this.stepsAppliedFor.getSelectedItem().getValue().toString());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
 		} else {
 			aFinanceType.setStepFinance(false);
 			aFinanceType.setSteppingMandatory(false);
 			aFinanceType.setAlwManualSteps(false);
 			aFinanceType.setAlwdStepPolicies(null);
 			aFinanceType.setDftStepPolicy(null);
+			aFinanceType.setCalcOfSteps(null);
+			aFinanceType.setStepsAppliedFor(null);
 		}
 		aFinanceType.setRemarks(this.remarks.getValue());
 		// Profit on Past Due
@@ -4107,6 +4145,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			doWriteBeanToComponents(aFinanceType);
 			if (!isOverdraft && !consumerDurable) {
 				setSteppingFieldsVisibility(aFinanceType.isStepFinance());
+			}
+			if (aFinanceType.isStepFinance()) {
+				visibilityFieldsForStepApplied(aFinanceType.getStepsAppliedFor(), aFinanceType.getCalcOfSteps(),
+						aFinanceType.isAlwManualSteps());
+				visibilityFieldsForCalcOfSteps(aFinanceType.getCalcOfSteps(), aFinanceType.isAlwManualSteps());
 			}
 			dodisableGracePeriod();
 			doDisableDepreciationDFrq(aFinanceType.isFinDepreciationReq(), isCompReadonly);
@@ -4982,6 +5025,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnMandatoryVasProduct.setDisabled(isTrue);
 		this.btnAlwReceiptModes.setDisabled(isTrue);
 		this.btnAlwVasProducts.setDisabled(isTrue);
+		this.calcOfSteps.setDisabled(isTrue);
+		this.stepsAppliedFor.setDisabled(isTrue);
 
 		// Profit on past Due
 		this.pastduePftCalMthd.setDisabled(isTrue);
@@ -7661,6 +7706,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// Stepping Details
 		this.lovDescStepPolicyCodename.setErrorMessage("");
 		this.dftStepPolicy.setErrorMessage("");
+		this.calcOfSteps.setErrorMessage("");
+		this.stepsAppliedFor.setErrorMessage("");
 
 		// Profit on Past Due
 		this.pastduePftCalMthd.setErrorMessage("");
@@ -8162,6 +8209,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 	public void onCheck$stepFinance(Event event) {
 		logger.debug("Entering : " + event.toString());
+		visibilityFieldsOnUncheckingStepFinance();
 		setSteppingFieldsVisibility(this.stepFinance.isChecked());
 		logger.debug("Leaving : " + event.toString());
 	}
@@ -8295,8 +8343,27 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.gb_SteppingDetails.setVisible(true);
 		this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(isVisible);
 		this.hbox_alwdStepPolicies.setVisible(isVisible);
+		this.calcOfSteps.setVisible(isVisible);
+		this.calcOfSteps.setDisabled(true);
+		this.label_FinanceTypeDialog_dftStepPolicy.setVisible(isVisible);
+		this.hbox_dftStepPolicy.setVisible(isVisible);
+		String stepsAppliedFor = getComboboxValue(this.stepsAppliedFor);
+		if ((StringUtils.equals(stepsAppliedFor, PennantConstants.STEPPING_APPLIED_GRC))
+				|| StringUtils.equals(stepsAppliedFor, PennantConstants.STEPPING_APPLIED_BOTH)) {
+			this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(false);
+			this.hbox_alwdStepPolicies.setVisible(false);
+		} else if (this.stepFinance.isChecked()) {
+			this.calcOfSteps.setVisible(isVisible);
+			this.calcOfSteps.setDisabled(false);
+			this.allowManualSteps.setDisabled(false);
+		}
 		this.row_isSteppingMandatory.setVisible(isVisible);
 		this.row_allowManualSteps.setVisible(isVisible);
+		this.space_stepsAppliedFor.setSclass(PennantConstants.mandateSclass);
+		this.label_FinanceTypeDialog_StepsAppliedFor.setVisible(isVisible);
+		this.hbox_stepsAppliedFor.setVisible(isVisible);
+		this.label_FinanceTypeDialog_CalcOfSteps.setVisible(isVisible);
+		this.space_calcOfSteps.setVisible(isVisible);
 		String sClass = "";
 		if (!this.allowManualSteps.isChecked()) {
 			sClass = PennantConstants.mandateSclass;
@@ -9271,6 +9338,88 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		onCheckAutoIncrGrcEndDate();
 
 		logger.debug("Leaving");
+	}
+
+	//on check event for calcOfsteps
+
+	public void onChange$calcOfSteps(Event event) {
+		logger.debug("Entering : " + event.toString());
+		String calcOfSteps = getComboboxValue(this.calcOfSteps);
+		visibilityFieldsForCalcOfSteps(calcOfSteps, false);
+		logger.debug("Leaving : " + event.toString());
+	}
+
+	private void visibilityFieldsForCalcOfSteps(String calcOfSteps, boolean alwManualStep) {
+		if (StringUtils.equals(PennantConstants.STEPPING_CALC_AMT, calcOfSteps)) {
+			this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(false);
+			this.hbox_alwdStepPolicies.setVisible(false);
+			this.hbox_dftStepPolicy.setVisible(false);
+			this.label_FinanceTypeDialog_dftStepPolicy.setVisible(false);
+			this.lovDescStepPolicyCodename.setValue("");
+			fillComboBox(this.dftStepPolicy, PennantConstants.List_Select, PennantAppUtil.getStepPoliciesList(), "");
+			this.allowManualSteps.setChecked(true);
+			this.allowManualSteps.setDisabled(true);
+		} else {
+			this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(true);
+			this.hbox_alwdStepPolicies.setVisible(true);
+			this.label_FinanceTypeDialog_dftStepPolicy.setVisible(true);
+			this.hbox_dftStepPolicy.setVisible(true);
+			if (!alwManualStep) {
+				this.sp_alwdStepPolices.setSclass(PennantConstants.mandateSclass);
+				this.sp_dftStepPolicy.setSclass(PennantConstants.mandateSclass);
+			}
+			this.allowManualSteps.setChecked(alwManualStep);
+			this.allowManualSteps.setDisabled(false);
+		}
+	}
+
+	private void visibilityFieldsOnUncheckingStepFinance() {
+
+		fillComboBox(this.stepsAppliedFor, PennantConstants.List_Select, PennantStaticListUtil.getStepsAppliedFor(),
+				"");
+		fillComboBox(this.calcOfSteps, PennantConstants.List_Select, PennantStaticListUtil.getCalcOfStepsList(), "");
+		this.lovDescStepPolicyCodename.setValue("");
+		fillComboBox(this.dftStepPolicy, PennantConstants.List_Select, PennantAppUtil.getStepPoliciesList(), "");
+		this.allowManualSteps.setChecked(false);
+	}
+
+	public void onChange$stepsAppliedFor(Event event) {
+		logger.debug("Entering : " + event.toString());
+		String stepsAppliedFor = getComboboxValue(this.stepsAppliedFor);
+		visibilityFieldsForStepApplied(stepsAppliedFor, PennantConstants.List_Select, false);
+
+		logger.debug("Leaving : " + event.toString());
+	}
+
+	private void visibilityFieldsForStepApplied(String stepsAppliedFor, String calcOfStep, boolean alwManualStep) {
+		if ((StringUtils.equals(stepsAppliedFor, PennantConstants.STEPPING_APPLIED_GRC))
+				|| StringUtils.equals(stepsAppliedFor, PennantConstants.STEPPING_APPLIED_BOTH)) {
+			this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(false);
+			this.hbox_alwdStepPolicies.setVisible(false);
+			this.hbox_dftStepPolicy.setVisible(false);
+			this.calcOfSteps.setDisabled(true);
+			this.lovDescStepPolicyCodename.setValue("");
+			fillComboBox(this.dftStepPolicy, PennantConstants.List_Select, PennantAppUtil.getStepPoliciesList(), "");
+			this.label_FinanceTypeDialog_dftStepPolicy.setVisible(false);
+			fillComboBox(this.calcOfSteps, PennantConstants.STEPPING_CALC_AMT, PennantStaticListUtil.getCalcOfStepsList(),
+					"");
+			this.allowManualSteps.setChecked(true);
+			this.allowManualSteps.setDisabled(true);
+		} else {
+			this.calcOfSteps.setDisabled(false);
+			this.space_calcOfSteps.setSclass(PennantConstants.mandateSclass);
+			fillComboBox(this.calcOfSteps, calcOfStep, PennantStaticListUtil.getCalcOfStepsList(), "");
+			this.label_FinanceTypeDialog_AllowedStepPolicies.setVisible(true);
+			this.label_FinanceTypeDialog_dftStepPolicy.setVisible(true);
+			this.hbox_alwdStepPolicies.setVisible(true);
+			this.hbox_dftStepPolicy.setVisible(true);
+			if (!this.allowManualSteps.isChecked()) {
+				this.sp_alwdStepPolices.setSclass(PennantConstants.mandateSclass);
+				this.sp_dftStepPolicy.setSclass(PennantConstants.mandateSclass);
+			}
+			this.allowManualSteps.setChecked(alwManualStep);
+			this.allowManualSteps.setDisabled(false);
+		}
 	}
 
 	public void setFinTypeAccountList(List<FinTypeAccount> finTypeAccountList) {

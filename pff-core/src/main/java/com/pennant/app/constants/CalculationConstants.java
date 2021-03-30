@@ -121,6 +121,10 @@ public class CalculationConstants {
 	public static final String RPYCHG_STEPPOS = "STEPPOS";
 	public static final String RPYCHG_STEPINST = "STEPINST";
 
+	//Step Loan Recal Types
+	public static final String RPYCHG_STEPADJTNR = "SADJTNR";
+	public static final String RPYCHG_STEPADJEMI = "SADJEMI";
+
 	// Schedule Date Event Flags
 	public static final int SCHDFLAG_PFT = 0;
 	public static final int SCHDFLAG_RVW = 1;

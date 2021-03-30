@@ -270,6 +270,13 @@ public class ImplementationConstants {
 
 		AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT = getValueAsBoolean(extensions, "AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", false);
 		RECEIPTS_SHOW_ACCOUNTING_TAB = getValueAsBoolean(extensions, "RECEIPTS_SHOW_ACCOUNTING_TAB", true);
+		BRANCHWISE_RCU_INITIATION = getValueAsBoolean(extensions, "BRANCHWISE_RCU_INITIATION", false);
+		ALLOW_NON_LAN_RECEIPTS = getValueAsBoolean(extensions, "ALLOW_NON_LAN_RECEIPTS", false);
+		ALLOW_BUILDER_BENEFICIARY_DETAILS = getValueAsBoolean(extensions, "ALLOW_BUILDER_BENEFICIARY_DETAILS", false);
+		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
+		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true);
+		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
+
 	}
 
 	public static boolean IMPLEMENTATION_CONVENTIONAL;
@@ -500,6 +507,11 @@ public class ImplementationConstants {
 	public static boolean CREATE_PRESENTMENT_RECEIPT_EOD;
 	//Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static boolean CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER;
+	public static boolean BRANCHWISE_RCU_INITIATION;
+	public static boolean ALLOW_NON_LAN_RECEIPTS;
+	public static boolean ALLOW_BUILDER_BENEFICIARY_DETAILS;
+
+	public static boolean COVENANT_ADTNL_REMARKS;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

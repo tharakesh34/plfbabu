@@ -687,7 +687,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.coOwnerCIF.setValue(getCustData(aCoOwnerDetail.getCustomerId()));
 			dosetCustAddress(aCoOwnerDetail.getCustomerId());
 		}
-		getcoOwnerIdNumber();
+//		getcoOwnerIdNumber();
 		addrCountryTemp = this.addrCountry.getValue();
 		Filter[] provinceFilters = new Filter[1];
 		provinceFilters[0] = new Filter("CPCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
@@ -791,11 +791,10 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			if (!this.bankCustomer.isChecked()) {
 				aCoOwnerDetail.setCoOwnerIDNumber(this.coOwnerIDNumber.getValue());
 			}
-			getcoOwnerIdNumber();
+//			getcoOwnerIdNumber();
 			if (this.coOwnerIDType.getSelectedIndex() != 0) {
 				if (this.coOwnerIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
-					aCoOwnerDetail.setCoOwnerIDNumber(
-							PennantApplicationUtil.unFormatEIDNumber(this.coOwnerIDNumber.getValue()));
+					aCoOwnerDetail.setCoOwnerIDNumber(this.coOwnerIDNumber.getValue());
 				}
 			}
 		} catch (WrongValueException we) {
@@ -1572,7 +1571,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 */
 	public void onChange$coOwnerIDNumber(Event event) {
 		logger.debug("Entering" + event.toString());
-		getcoOwnerIdNumber();
+//		getcoOwnerIdNumber();
 		logger.debug("Leaving" + event.toString());
 	}
 

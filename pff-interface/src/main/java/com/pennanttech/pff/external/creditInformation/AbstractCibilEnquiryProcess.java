@@ -35,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2116,39 +2117,42 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		try {
 			wait30Date = DateUtils.addMonths(date, -1);
 			wait30Date = DateUtils.addMonths(wait30Date, -6);
-			wait60Date = DateUtils.addMonths(wait30Date, -12);
-			if (paymentHistoryStDate.before(wait30Date)) {
-				List<String> ph = java.util.Arrays.asList(paymentHistory.split("(?<=\\G...)"));
-				int i = 6;
-				int count = 1;
-				for (String t : ph) {
-					if (count <= i) {
-						int delinquency = Integer.valueOf(t);
-						if (delinquency != 0 && delinquency >= 1) {
-							noOfAccountsIn30dpdL12M++;
-						}
-					}
-					count++;
+			wait60Date = DateUtils.addMonths(wait30Date, -6);
+
+			List<String> history = java.util.Arrays
+					.asList(StringUtils.trimToEmpty(paymentHistory).split("(?<=\\G...)"));
+			List<String> history1 = new ArrayList<>();
+			if (DateUtil.getMonth(paymentHistoryStDate) != DateUtil.getMonth(DateUtils.addMonths(date, -1))) {
+				for (int i = 0; i < DateUtil.getMonthsBetween(paymentHistoryStDate,
+						DateUtils.addMonths(date, -1)); i++) {
+					history1.add(i, "000");
 				}
-
 			}
-			if (noOfAccountsIn30dpdL12M == 0) {
-				if (paymentHistoryStDate.before(wait60Date)) {
-					List<String> ph = java.util.Arrays.asList(paymentHistory.split("(?<=\\G...)"));
-					int count = 1;
-					int i = 12;
+			history1.addAll(history);
+			if (history1.size() < 12) {
+				for (int i = history1.size(); i < 12; i++) {
+					history1.add("000");
+				}
+			}
+			String[] ph = history1.stream().toArray(String[]::new);
+			if (paymentHistoryStDate.after(wait30Date) && paymentHistoryStDate.before(DateUtils.addMonths(date, -1))) {
+				DateUtil.getMonthsBetween(paymentHistoryStDate, DateUtils.addMonths(wait30Date, -1));
 
-					for (String t : ph) {
-						if (count <= i) {
-							int delinquency = Integer.valueOf(t);
-							if (delinquency != 0 && delinquency >= 30) {
-								noOfAccountsIn1dpdL6M++;
-							}
-
-						}
-						count++;
+				for (int j = 0; j < 6; j++) {
+					int delinquency = NumberUtils.toInt(ph[j]);
+					if (delinquency != 0 && delinquency >= 1) {
+						noOfAccountsIn1dpdL6M++;
+						break;
 					}
-
+				}
+			}
+			if (paymentHistoryStDate.after(wait60Date)) {
+				for (int j = 6; j < 12; j++) {
+					int delinquency = NumberUtils.toInt(ph[j]);
+					if (delinquency != 0 && delinquency >= 30) {
+						noOfAccountsIn30dpdL12M++;
+						break;
+					}
 				}
 			}
 		} catch (Exception e) {

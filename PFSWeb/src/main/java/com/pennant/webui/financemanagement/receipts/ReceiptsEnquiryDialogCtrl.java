@@ -1233,6 +1233,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.knockOffType.setValue("");
 		}
 
+		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
+			this.knockOffType.setValue("Auto");
+		} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {
+			this.knockOffType.setValue("Manual");
+		} else {
+			this.knockOffType.setValue("");
+		}
+
 		if (rch.getReasonCode() != null && rch.getReasonCode() != 0) {
 			setEarlySettlementReasonData(rch.getReasonCode());
 		}

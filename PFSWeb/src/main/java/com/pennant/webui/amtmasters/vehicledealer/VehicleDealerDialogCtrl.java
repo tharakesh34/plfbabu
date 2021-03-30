@@ -1559,6 +1559,14 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.label_VehicleDealerDialog_Branch.setVisible(false);
 			this.branch.setVisible(false);
 		}
+
+		if (ImplementationConstants.BRANCHWISE_RCU_INITIATION) {
+			if (module.equals(Agencies.RCUVAGENCY.getKey())) {
+				this.label_VehicleDealerDialog_Branch.setVisible(true);
+				this.branch.setVisible(true);
+			}
+		}
+
 		this.branch.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_branch"));
 		// this.code.setReadonly(false);
 		if (isWorkFlowEnabled()) {

@@ -102,6 +102,7 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
 	public static final String RECEIPTMODE_MOBILE = "MOBILE";
 	public static final String RECEIPTMODE_DIGITAL = "DIGITAL";
+	public static final String RECEIPTMODE_BANKDEPOSIT = "BANKDEPT";
 	// 2. Back-end Process Receipt Modes
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
 	public static final String RECEIPTMODE_ADVINT = "ADVINT";
@@ -243,9 +244,19 @@ public class RepayConstants {
 	//Received from
 	public static final String RECEIVED_CUSTOMER = "Customer";
 	public static final String RECEIVED_GOVT = "GOVERMENT";
+	public static final String RECEIVED_NONLOAN = "NON LOAN";
 
 	// Waiver types
 	public static final String INTEREST_WAIVER = "I"; // Profit Waiver
 	public static final String PRINCIPAL_WAIVER = "P"; // Principle Waiver
 
+	// For Non Lan Receipt
+	public static final String NONLAN_RECEIPT_NOTAPPLICABLE = "N";
+	public static final String NONLAN_RECEIPT_CUSTOMER = "C";
+
+	public static final String RECEIPT_MODE = "RCTMODE";
+	public static final String RECEIPT_CHANNEL = "RCTCHNL";
+	public static final String SUB_RECEIPT_MODE = "SUBRCTMODE";
+	public static final String RECEIPT_SOURCE = "RCTSRC";
+	public static final String RECEIPT_CHANNEL_MOBILE = "MOB";
 }

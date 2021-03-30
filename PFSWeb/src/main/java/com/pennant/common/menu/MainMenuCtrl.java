@@ -262,6 +262,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return ImplementationConstants.ALLOW_PMAY;
 		case "menu_Item_OCR":
 			return ImplementationConstants.ALLOW_OCR;
+		case "menu_Category_NonLanReceipts":
+			return ImplementationConstants.ALLOW_NON_LAN_RECEIPTS;
 		default:
 			break;
 		}

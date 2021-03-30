@@ -74,7 +74,8 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc");
-		sql.append(", SteppedEMI, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(
+				", SteppedEMI, StepSpecifier, StepStart, StepEnd, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (isWIF) {
@@ -107,6 +108,9 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 					spd.setRateMargin(rs.getBigDecimal("RateMargin"));
 					spd.setEmiSplitPerc(rs.getBigDecimal("EmiSplitPerc"));
 					spd.setSteppedEMI(rs.getBigDecimal("SteppedEMI"));
+					spd.setStepSpecifier(rs.getString("StepSpecifier"));
+					spd.setStepStart(rs.getDate("StepStart"));
+					spd.setStepEnd(rs.getDate("StepEnd"));
 					spd.setVersion(rs.getInt("Version"));
 					spd.setLastMntBy(rs.getLong("LastMntBy"));
 					spd.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -154,12 +158,12 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+				" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, StepSpecifier,");
+		insertSql.append(" StepStart, StepEnd, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
-				" Values(:FinReference, :StepNo, :TenorSplitPerc, :Installments, :RateMargin, :EmiSplitPerc, :SteppedEMI, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
+				" Values(:FinReference, :StepNo, :TenorSplitPerc, :Installments, :RateMargin, :EmiSplitPerc, :SteppedEMI, :StepSpecifier,");
+		insertSql.append(" :StepStart, :StepEnd, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());

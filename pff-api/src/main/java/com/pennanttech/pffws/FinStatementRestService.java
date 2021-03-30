@@ -47,4 +47,7 @@ public interface FinStatementRestService {
 	@Path("/statementService/getForeclosureStmt")
 	public ForeClosureResponse getForeclosureStmt(FinStatementRequest statementRequest) throws ServiceException;
 
+	@POST
+	@Path("/statementService/getForeclosureStmtV1")
+	public FinStatementResponse getForeclosureStmtV1(FinStatementRequest statementRequest) throws ServiceException;
 }

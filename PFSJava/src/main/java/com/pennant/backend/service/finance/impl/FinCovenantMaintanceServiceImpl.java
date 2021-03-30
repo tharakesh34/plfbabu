@@ -313,7 +313,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditHeader.getAuditTranType())));
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
 				auditHeader.getAuditDetail().getBefImage(), auditHeader.getAuditDetail().getModelData()));
-
+		covenantsService.delete(covenants, TableType.TEMP_TAB, auditHeader.getAuditTranType());
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		// Audit for Before And After Images

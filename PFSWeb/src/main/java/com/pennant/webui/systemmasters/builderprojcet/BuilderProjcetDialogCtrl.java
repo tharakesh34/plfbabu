@@ -331,6 +331,13 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		this.bankBranchID.setDisplayStyle(2);
 		this.bankBranchID.setValidateColumns(new String[] { "IFSC" });
 
+		this.addressLine1.setMaxlength(50);
+		this.addressLine2.setMaxlength(50);
+		this.addressLine3.setMaxlength(50);
+		this.registrationNumber.setMaxlength(50);
+		this.landmark.setMaxlength(20);
+		this.areaOrLocality.setMaxlength(20);
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -887,7 +894,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		if (!this.registrationNumber.isReadonly()) {
 			this.registrationNumber.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_BuilderProjectDialog_registrationNumber.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, false, false));
+							PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE, false, false));
 		}
 		if (!this.addressLine1.isReadonly()) {
 			this.addressLine1.setConstraint(new PTStringValidator(

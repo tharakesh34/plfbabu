@@ -874,6 +874,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String tdsType;
 
+	private String calcOfSteps;
+	private String stepsAppliedFor;
+	private boolean isRpyStps;
+	private boolean isGrcStps;
+
+	private boolean cpzPosIntact = false;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -1110,6 +1117,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("partnerBankAcType");
 		excludeFields.add("partnerBankAc");
 		excludeFields.add("tdsType");
+		excludeFields.add("isRpyStps");
+		excludeFields.add("isGrcStps");
+		excludeFields.add("cpzPosIntact");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -5659,4 +5669,43 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.restructure = restructure;
 	}
 
+	public String getCalcOfSteps() {
+		return calcOfSteps;
+	}
+
+	public void setCalcOfSteps(String calcOfSteps) {
+		this.calcOfSteps = calcOfSteps;
+	}
+
+	public String getStepsAppliedFor() {
+		return stepsAppliedFor;
+	}
+
+	public void setStepsAppliedFor(String stepsAppliedFor) {
+		this.stepsAppliedFor = stepsAppliedFor;
+	}
+
+	public boolean isRpyStps() {
+		return isRpyStps;
+	}
+
+	public void setRpyStps(boolean isRpyStps) {
+		this.isRpyStps = isRpyStps;
+	}
+
+	public boolean isGrcStps() {
+		return isGrcStps;
+	}
+
+	public void setGrcStps(boolean isGrcStps) {
+		this.isGrcStps = isGrcStps;
+	}
+
+	public boolean isCpzPosIntact() {
+		return cpzPosIntact;
+	}
+
+	public void setCpzPosIntact(boolean cpzPosIntact) {
+		this.cpzPosIntact = cpzPosIntact;
+	}
 }

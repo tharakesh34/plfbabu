@@ -165,7 +165,11 @@ public abstract class GenericService<T> {
 		DMSQueue dmsQueue = new DMSQueue();
 		dmsQueue.setModule(dm);
 		dmsQueue.setSubModule(dsm);
-		dmsQueue.setFinReference(dd.getFinReference());
+		if(dsm == DMSModule.COVENANT){
+			dmsQueue.setFinReference(dd.getReferenceId());
+		}else {
+			dmsQueue.setFinReference(dd.getFinReference());
+		}
 		dmsQueue.setApplicationNo(dd.getApplicationNo());
 		dmsQueue.setOfferId(dd.getLeadId());
 		dmsQueue.setCustId(dd.getCustId());
@@ -177,7 +181,7 @@ public abstract class GenericService<T> {
 		dmsQueue.setDocType(dd.getDoctype());
 		dmsQueue.setDocExt(FilenameUtils.getExtension(dd.getDocName()));
 		dmsQueue.setDocImage(dd.getDocImage());
-		dmsQueue.setCreatedOn(SysParamUtil.getAppDate());
+		dmsQueue.setCreatedOn(dd.getLastMntOn());
 		dmsQueue.setAuxiloryFields1(dd.getRemarks());
 		dmsQueue.setDocUri(dd.getDocUri());
 		if (dd.getDocRefId() != null) {
@@ -222,7 +226,7 @@ public abstract class GenericService<T> {
 		dmsQueue.setDocType(cd.getCustDocType());
 		dmsQueue.setDocExt(FilenameUtils.getExtension(cd.getCustDocName()));
 		dmsQueue.setDocImage(cd.getCustDocImage());
-		dmsQueue.setCreatedOn(SysParamUtil.getAppDate());
+		dmsQueue.setCreatedOn(cd.getLastMntOn());
 		dmsQueue.setApplicationNo(cd.getApplicationNo());
 		dmsQueue.setOfferId(cd.getOfferId());
 		dmsQueue.setAuxiloryFields1(cd.getRemarks());
@@ -281,7 +285,7 @@ public abstract class GenericService<T> {
 		dmsQueue.setDocExt(FilenameUtils.getExtension(ld.getDocumentName()));
 		dmsQueue.setDocImage(ld.getDocImage());
 		ld.setDocumentReference(dMSService.save(dmsQueue));
-		dmsQueue.setCreatedOn(SysParamUtil.getAppDate());
+		dmsQueue.setCreatedOn(ld.getLastMntOn());
 
 		if (SessionUserDetails.getLogiedInUser() != null) {
 			dmsQueue.setCreatedBy(SessionUserDetails.getLogiedInUser().getUserId());

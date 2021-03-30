@@ -98,6 +98,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -752,12 +753,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			DocumentDetails dd = dMSService.getExternalDocument(custCif, docName, docUri);
 			finDocumentDetail.setDocImage(dd.getDocImage());
 			finDocumentDetail.setDocName(dd.getDocName());
-		} else {
-			if (docImage == null) {
-				if (docRefId != null && docRefId != Long.MIN_VALUE) {
-					finDocumentDetail.setDocImage(dMSService.getById(docRefId));
-				}
-			}
+		} else if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
+			DMSQueue queue = dMSService.getImageByUri(finDocumentDetail.getDocUri());
+			finDocumentDetail.setDocImage(queue.getDocImage());
+			finDocumentDetail.setDoctype(queue.getDocExt());
 		}
 
 		return finDocumentDetail;

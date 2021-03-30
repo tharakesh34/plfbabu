@@ -300,6 +300,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> receiptPaymentModes;
 	private static List<ValueLabel> subReceiptPaymentModes;
 	private static List<ValueLabel> receivedFroms;
+	private static List<ValueLabel> nonLANReceivedFroms;
 	private static List<ValueLabel> receiptChannels;
 	private static List<ValueLabel> knockOffFrom;
 	private static List<ValueLabel> knockOffPurpose;
@@ -374,6 +375,9 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> tdsTypesList;
 	private static List<ValueLabel> recalTypeList;
 	private static List<ValueLabel> receiptClearanceStatus;
+	private static List<ValueLabel> calcOfstepsList;
+	private static List<ValueLabel> stepsAppliedFor;
+	private static List<ValueLabel> stepDisbCalCodes;
 
 	/**
 	 * Gets the list of applications.
@@ -5910,5 +5914,57 @@ public class PennantStaticListUtil {
 			receiptClearanceStatus = new ArrayList<ValueLabel>(3);
 		}
 		return receiptClearanceStatus;
+	}
+	public static List<ValueLabel> getNonLoanReceivedFrom() {
+		if (nonLANReceivedFroms == null) {
+			nonLANReceivedFroms = new ArrayList<>(2);
+			/*
+			 * nonLANReceivedFroms.add(new ValueLabel(RepayConstants.RECEIVED_CUSTOMER,
+			 * Labels.getLabel("label_Receipt_ReceivedFrom_Customer")));
+			 */
+			nonLANReceivedFroms.add(new ValueLabel(RepayConstants.RECEIVED_NONLOAN,
+					Labels.getLabel("label_Receipt_ReceivedFrom_NonLoan")));
+		}
+		return nonLANReceivedFroms;
+
+	}
+
+	//Stepping Details
+	public static List<ValueLabel> getCalcOfStepsList() {
+		if (calcOfstepsList == null) {
+			calcOfstepsList = new ArrayList<ValueLabel>();
+			calcOfstepsList
+					.add(new ValueLabel(PennantConstants.STEPPING_CALC_AMT,
+							Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps_Amount.value")));
+			calcOfstepsList
+					.add(new ValueLabel(PennantConstants.STEPPING_CALC_PERC,
+							Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps_Percentage.value")));
+		}
+		return calcOfstepsList;
+	}
+	
+	public static List<ValueLabel> getStepsAppliedFor() {
+		if (stepsAppliedFor == null) {
+			stepsAppliedFor = new ArrayList<ValueLabel>();
+			stepsAppliedFor.add(new ValueLabel(PennantConstants.STEPPING_APPLIED_GRC,
+					Labels.getLabel("label_FinanceTypeDialog_StepsAppliedFor_GrcPeriodOnly.value")));
+			stepsAppliedFor.add(new ValueLabel(PennantConstants.STEPPING_APPLIED_EMI,
+					Labels.getLabel("label_FinanceTypeDialog_StepsAppliedFor_RgrEMIOnly.value")));
+			stepsAppliedFor.add(new ValueLabel(PennantConstants.STEPPING_APPLIED_BOTH,
+					Labels.getLabel("label_FinanceTypeDialog_StepsAppliedFor_Both.value")));
+		}
+		return stepsAppliedFor;
+	}
+
+	public static List<ValueLabel> getStepDisbCalCodes() {
+		if (stepDisbCalCodes == null) {
+			stepDisbCalCodes = new ArrayList<ValueLabel>();
+			stepDisbCalCodes.add(
+					new ValueLabel(CalculationConstants.RPYCHG_STEPADJTNR, Labels.getLabel("label_Step_Adj_Tenor")));
+			stepDisbCalCodes
+					.add(new ValueLabel(CalculationConstants.RPYCHG_STEPADJEMI, Labels.getLabel("label_Step_Adj_EMI")));
+		}
+		return stepDisbCalCodes;
+
 	}
 }

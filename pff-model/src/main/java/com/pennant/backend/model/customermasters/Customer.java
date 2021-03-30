@@ -68,7 +68,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "custFName", "custMName", "custLName", "custSalutationCode", "custShrtName", "custMotherMaiden",
-		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custGenderCode", "custMaritalSts",
+		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custResidentialSts", "custGenderCode","custMaritalSts",
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
 		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
@@ -359,7 +359,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String lovDescNatureOfBusiness;
 	private String entityType;
 	private String lovDescEntityType;
-	@XmlElement
+	@XmlElement(name = "residentialSts")
 	private String custResidentialSts;
 	private String lovDescCustResidentialSts;
 	private String qualification;

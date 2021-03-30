@@ -1613,41 +1613,41 @@
 													<space spacing="2px" />
 													<checkbox id="stepFinance" />
 												</hbox>
-												<label visible="false" id="label_FinanceTypeDialog_AllowedStepPolicies"
-													value="${c:l('label_FinanceTypeDialog_AllowedStepPolicies.value')}" />
-												<hbox id="hbox_alwdStepPolicies">
-													<space id="sp_alwdStepPolices" spacing="2px" />
-													<hbox>
-														<textbox id="lovDescStepPolicyCodename" width="300px"
-															readonly="true" />
-														<button id="btnSearchStepPolicy"
-															tooltiptext="${c:l('btnSearchUsrBranchCode.tooltiptext')}" image="/images/icons/LOVSearch.png"
-															autodisable="btnDelete,btnSave,btnNotes,btnHelp,btnClose
-													            ,btnSearchUsrLanguage,btnSearchUsrBranchCode,btnSearchUsrDftAppCode,btnSearchUsrDeptCode">
-														</button>
+												<label
+												    id="label_FinanceTypeDialog_StepsAppliedFor"
+												    value="${c:l('label_FinanceTypeDialog_StepsAppliedFor.value')}" />
+													<hbox id="hbox_stepsAppliedFor">
+														<space spacing="2px" id="space_stepsAppliedFor" />
+														<combobox id="stepsAppliedFor" width="155px" />
 													</hbox>
-												</hbox>
 											</row>
-											<row visible="false" id="row_isSteppingMandatory">
-												<label id="label_FinanceTypeDialog_isSteppingMandatory"
-													value="${c:l('label_FinanceTypeDialog_isSteppingMandatory.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="steppingMandatory" />
-												</hbox>
-												<label id="label_FinanceTypeDialog_dftStepPolicy"
-													value="${c:l('label_FinanceTypeDialog_dftStepPolicy.value')}" />
-												<hbox>
-													<space id="sp_dftStepPolicy" spacing="2px" />
-													<combobox id="dftStepPolicy" />
-												</hbox>
-											</row>
-											<row visible="false" id="row_allowManualSteps">
-												<label id="label_FinanceTypeDialog_allowManualSteps"
+											<row visible="false"
+												id="row_allowManualSteps">
+												<label
+													id="label_FinanceTypeDialog_allowManualSteps"
 													value="${c:l('label_FinanceTypeDialog_allowManualSteps.value')}" />
 												<hbox>
-													<space spacing="2px" />
-													<checkbox id="allowManualSteps" />
+													<space
+														spacing="2px" />
+													<checkbox
+														id="allowManualSteps" />
+												</hbox>
+												<label
+													id="label_FinanceTypeDialog_dftStepPolicy"
+													value="${c:l('label_FinanceTypeDialog_dftStepPolicy.value')}" />
+												<hbox id="hbox_dftStepPolicy">
+													<space
+														id="sp_dftStepPolicy" spacing="2px" />
+													<combobox
+														id="dftStepPolicy" />
+												</hbox>
+											</row>
+											<row id="row_CalcOfSteps">
+												<label id="label_FinanceTypeDialog_CalcOfSteps"
+													value="${c:l('label_FinanceTypeDialog_CalcOfSteps.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_calcOfSteps" />
+													<combobox id="calcOfSteps" width="155px" />
 												</hbox>
 											</row>
 										</rows>

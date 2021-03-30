@@ -217,6 +217,7 @@ public class AEAmountCodes implements Serializable {
 	private boolean alwflexi = false;
 	private String finbranch = "";
 	private String entitycode = "";
+	private String receiptChannel = "";
 
 	// Advance EMI/Interest changes
 	private boolean intAdv = false;
@@ -1982,4 +1983,11 @@ public class AEAmountCodes implements Serializable {
 		this.odPft = odPft;
 	}
 
+	public String getReceiptChannel() {
+		return receiptChannel;
+	}
+
+	public void setReceiptChannel(String receiptChannel) {
+		this.receiptChannel = receiptChannel;
+	}
 }

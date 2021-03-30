@@ -548,7 +548,9 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 	 */
 	@Override
 	public void logCustomerQueuingByCustId(long custID) {
-		String sql = "insert into CustomerQueuing_Log select * FROM CustomerQueuing Where CustID = ?";
+		String sql = "INSERT INTO CustomerQueuing_Log (custid,eoddate,threadid,starttime,endtime,progress,errorlog,status,loanexist,limitrebuild,"
+				+ "eodprocess,fincount,finrunningcount) SELECT custid,eoddate,threadid,starttime,endtime,progress,errorlog,status,loanexist,"
+				+ "limitrebuild,eodprocess,fincount,finrunningcount from CustomerQueuing Where CustID = ?";
 		logger.trace(Literal.SQL + sql);
 
 		this.jdbcOperations.update(sql, custID);

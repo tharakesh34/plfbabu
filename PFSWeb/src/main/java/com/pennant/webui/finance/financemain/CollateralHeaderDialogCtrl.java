@@ -711,7 +711,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			totalLtv = totalLtv.divide(new BigDecimal(assignedCount), 2, RoundingMode.HALF_DOWN);
 		}
 
-		this.collateralCount.setValue(PennantApplicationUtil.amountFormate(loanAssignedValue, getFormat()));
+		this.collateralCount.setValue(PennantApplicationUtil.amountFormate(loanAssignedValue, ccyFormat));
 		if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(this.finLTVCheck)
 				&& utilizedAmount.compareTo(totAssignedColValue) > 0) {
 			this.availableCollateral.setValue("Shortfall");

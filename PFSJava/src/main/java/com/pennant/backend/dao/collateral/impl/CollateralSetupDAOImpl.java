@@ -644,4 +644,33 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		}
 
 	}
+
+	@Override
+	public boolean isCollateralInMaintenance(String collatrlRef, String type) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select Count(*) from CollateralSetup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CollateralRef = :CollateralRef AND Status is null AND finreference is null");
+		logger.debug("Sql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("CollateralRef", collatrlRef);
+		try {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+		return false;
+	}
 }

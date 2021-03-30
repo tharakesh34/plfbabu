@@ -60,7 +60,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -516,18 +516,31 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setFinReference(finReference);
 
+		List<String> status = new ArrayList<>();
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+
 		StringBuilder selectSql = new StringBuilder("select COUNT(*)");
 		selectSql.append(" From FinAdvancePayments");
 		selectSql.append(type);
 		selectSql.append(" Where FinReference = :FinReference");
 
+		if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+			status.add(DisbursementConstants.STATUS_APPROVED);
+			status.add(DisbursementConstants.STATUS_AWAITCON);
+			status.add(DisbursementConstants.STATUS_PAID);
+			status.add(DisbursementConstants.STATUS_REALIZED);
+
+			selectSql.append(" AND Status  in(:Status)");
+			paramSource.addValue("Status", status);
+		}
+
 		logger.debug("selectSql: " + selectSql.toString());
 		int recordCount = 0;
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		paramSource.addValue("FinReference", finReference);
 
 		logger.debug("Leaving");
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, Integer.class);
 		} catch (Exception dae) {
 			recordCount = 0;
 		}
@@ -733,8 +746,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		StringBuilder updateSql = new StringBuilder("Update FinAdvancePayments");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set LLDate = :llDate");
-		updateSql.append("  Where FinReference = :FinReference and DisbSeq = :DisbSeq");
+		updateSql.append("  Set LLDate = :llDate, Status = :status, LinkedTranId = :linkedTranId");
+		updateSql.append("  Where FinReference = :FinReference and PaymentSeq = :paymentSeq");
 
 		logger.debug("updateSql: " + updateSql.toString());
 

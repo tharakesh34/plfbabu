@@ -172,7 +172,7 @@ public class NotificationService extends GenericService<Notification> {
 			}
 		}
 
-		if (template == null) {
+		if (template == null || !template.isActive()) {
 			return;
 		}
 
@@ -386,7 +386,7 @@ public class NotificationService extends GenericService<Notification> {
 					template = null;
 				}
 
-				if (template == null) {
+				if (template == null || !template.isActive()) {
 					continue;
 				}
 
@@ -684,6 +684,7 @@ public class NotificationService extends GenericService<Notification> {
 		MailTemplateData data = new MailTemplateData();
 		data.setFinReference(detail.getFinReference());
 		data.setCustShrtName(detail.getUserDetails().getUserName());
+		data.setQryDesc(detail.getQryNotes());
 		return data.getDeclaredFieldValues();
 	}
 

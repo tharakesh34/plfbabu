@@ -657,4 +657,39 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.LEAVING);
 		return 0;
 	}
+
+	@Override
+	public List<LVDocument> getLVDocuments(String keyReference, TableType tableType) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT VERIFICATIONID, DOCUMENTID,DOCUMENTTYPE, DOCUMENTSUBID, SEQNO ");
+		sql.append(" FROM  VERIFICATION_LV_DETAILS");
+		if (tableType == TableType.BOTH_TAB) {
+			sql.append("_view");
+		} else {
+			sql.append(tableType.getSuffix());
+		}
+		sql.append(" WHERE VERIFICATIONID IN (SELECT ID FROM VERIFICATIONS WHERE KEYREFERENCE = ?)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(), new Object[] { keyReference }, (rs, rowNum) -> {
+				LVDocument lv = new LVDocument();
+
+				lv.setSeqNo((rs.getInt("seqNo")));
+				lv.setDocumentType(rs.getInt("documentType"));
+				lv.setDocumentSubId(rs.getString("documentSubId"));
+				lv.setVerificationId(rs.getLong("verificationId"));
+
+				return lv;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
 }

@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
@@ -166,6 +167,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -7554,6 +7556,43 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
 					return errorDetails;
 				}
+				if (covenantDocument.getDocImage() != null || covenantDocument.getDocImage().length <= 0) {
+					if (StringUtils.isBlank(covenantDocument.getDocName())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Document Name";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+					if (StringUtils.isNotBlank(covenantDocument.getDocName())) {
+						String docName = covenantDocument.getDocName().toLowerCase();
+						// document name has no extension
+						String extension = FilenameUtils.getExtension(docName);
+						if (StringUtils.isEmpty(extension)) {
+							String[] valueParm = new String[1];
+							valueParm[0] = covenantDocument.getDocName();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", valueParm)));
+							return errorDetails;
+						}
+						// document name has only extension
+						else if (StringUtils.isEmpty(docName.substring(0, docName.lastIndexOf(".")))) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Document Name";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+							return errorDetails;
+						}
+						ErrorDetail errorDetail = null;
+						String errorMsg = null;
+						// document Name Extension validation
+						docName = docName.substring(docName.lastIndexOf("."));
+						errorMsg = "(Document Extension) available ext are:JPG,JPEG,PNG,PDF,MSG,DOC,DOCX,XLS,XLSX,ZIP,7Z,RAR,TXT";
+						errorDetail = docExtensionValidation(docName, errorMsg);
+						if (errorDetail != null) {
+							errorDetails.add(errorDetail);
+							return errorDetails;
+						}
+					}
+
+				}
 
 			}
 			Set<String> documentTypeSet = new HashSet<String>();
@@ -7633,6 +7672,32 @@ public class FinanceDataValidation {
 		}
 		logger.debug(Literal.LEAVING);
 		return errorDetails;
+	}
+
+	/**
+	 * @param errorDetails
+	 * @param docName
+	 */
+	private ErrorDetail docExtensionValidation(String docName, String errorMsg) {
+		ErrorDetail errorDetail = null;
+		if (!(docName.equalsIgnoreCase(DocType.PDF.getExtension())
+				|| docName.equalsIgnoreCase(DocType.JPG.getExtension())
+				|| docName.equalsIgnoreCase(DocType.JPEG.getExtension())
+				|| docName.equalsIgnoreCase(DocType.PNG.getExtension())
+				|| docName.equalsIgnoreCase(DocType.MSG.getExtension())
+				|| docName.equalsIgnoreCase(DocType.DOC.getExtension())
+				|| docName.equalsIgnoreCase(DocType.DOCX.getExtension())
+				|| docName.equalsIgnoreCase(DocType.XLS.getExtension())
+				|| docName.equalsIgnoreCase(DocType.XLSX.getExtension())
+				|| docName.equalsIgnoreCase(DocType.ZIP.getExtension())
+				|| docName.equalsIgnoreCase(DocType.Z7.getExtension())
+				|| docName.equalsIgnoreCase(DocType.RAR.getExtension())
+				|| docName.equalsIgnoreCase(DocType.TXT.getExtension()))) {
+			String[] valueParm = new String[1];
+			valueParm[0] = errorMsg;
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm));
+		}
+		return errorDetail;
 	}
 
 	private List<Date> getFrequency(final Date startDate, final Date endDate, int frequency) {

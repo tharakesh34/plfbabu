@@ -150,4 +150,7 @@ public interface FinServiceInstRESTService {
 	@Path("/loanInstructionService/partCancellation")
 	public FinanceDetail partCancellation(FinServiceInstruction finServiceInstruction) throws ServiceException;
 
+	@POST
+	@Path("/loanInstructionService/nonLanReceipt")
+	public FinanceDetail nonLanReceipt(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 }

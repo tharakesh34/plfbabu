@@ -40,4 +40,6 @@ public interface RiskContainmentUnitDAO extends BasicCrudDao<RiskContainmentUnit
 	int getRCUDocumentsCount(long verificationId);
 
 	void deleteRCUDocument(RCUDocument rcuDocument, String tableType);
+
+	List<RCUDocument> getDocuments(String keyReference, TableType tableType);
 }

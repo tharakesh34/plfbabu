@@ -8,6 +8,41 @@
 	<window id="window_FinOCRDialog" border="normal" width="100%" height="100%" apply="${finOCRDialogCtrl}" sizable="false">
 
 		<borderlayout id="borderlayoutFinOCRDetails">
+		
+		<north id="finOCRNorth" visible="false">
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_OCRMaintenance.title')}" sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
 			<center border="none" autoscroll="false">
 				<div width="100%" height="100%">
 					<groupbox style="border:none;" id="finBasicdetails" zclass="null" />
@@ -174,6 +209,16 @@
 					</tabbox>
 				</div>
 			</center>
+			<south id="finOCRSouth" sclass="south-dialog" visible="false">
+				<groupbox id="gb_Action" width="99%" closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_CustomerDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="recordStatus" style="font-weight:bold;" />
+					</hbox>
+				</groupbox>
+			</south>
 		</borderlayout>
 	</window>
 </zk>

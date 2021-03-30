@@ -682,6 +682,23 @@
 				rightName="menu_Item_ReceiptUpload" /> <menuItem id="menu_Item_ReceiptUploadApproval" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y" 
 				rightName="menu_Item_ReceiptUploadApprover" /> -->
 		</menu>
+		
+		<menu id="menu_Category_NonLanReceipts">
+			<menuItem id="menu_Item_NonLanReceiptMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/NonLanReceipt/NonLanReceiptList.zul?module=RECEIPT_MAKER"
+				rightName="menu_Item_NonLanReceipts_InitMaker" />
+			<menuItem id="menu_Item_NonLanDepositMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/NonLanReceipt/NonLanReceiptList.zul?module=DEPOSIT_MAKER"
+				rightName="menu_Item_NonLanReceipts_DepositMaker" />
+			<menuItem id="menu_Item_NonLanDepositApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/NonLanReceipt/NonLanReceiptList.zul?module=DEPOSIT_APPROVER"
+				rightName="menu_Item_NonLanReceipts_DepositApprover" />
+			<menuItem id="menu_Item_NonLanRealizationMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/NonLanReceipt/NonLanReceiptList.zul?module=REALIZATION_MAKER"
+				rightName="menu_Item_NonLanReceipts_RealizationMaker" />
+			<menuItem id="menu_Item_NonLanRealizationApprover"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/NonLanReceipt/NonLanReceiptList.zul?module=REALIZATION_APPROVER"
+				rightName="menu_Item_NonLanReceipts_RealizationApprover" />
+			<menuItem id="menu_Item_NonLanReceiptEnuiry" zulNavigation="/WEB-INF/pages/FinanceManagement/NonLanReceipt/NonLanReceiptList.zul?enqiryModule=Y"
+				rightName="menu_Item_NonLanReceiptEnuiry" />
+		</menu>
+		
 		<menu id="menu_Category_LmsManualPostings">
 			<menuItem id="menu_Item_ManualAdvise" zulNavigation="/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseList.zul"
 				rightName="menuItem_finance_ManualAdvise" />
@@ -743,6 +760,8 @@
 				rightName="menuItem_FinanceManagement_RegenerateAgreement" />
 			<menuItem id="menu_Item_NOCIssuance" zulNavigation="/WEB-INF/pages/Finance/LiabilityRequest/LiabilityRequestList.zul"
 				rightName="menuItem_FinanceManagement_NOCIssuance" />
+			<menuItem id="menu_Item_OCRMaintenance" zulNavigation="/WEB-INF/pages/Finance/OCRMaintenance/OCRMaintenanceList.zul" 
+				rightName="menuItem_FinanceManagement_OCRMaintenance" />
 		</menu>
 		<menu id="menu_Category_LmsWriteoff">
 			<menuItem id="menu_Item_WriteOff" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
@@ -1232,6 +1251,14 @@
 				rightName="menuItem_FinDeptReports_ClosedLoans" />
 			<menuItem id="menu_Item_DisbursmentHostReferenceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_CollateralHostReferenceReport" />
+			<menuItem id="menu_Item_PresentmentReport_Moratorium" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_PresentmentReport_Moratorium" />
+			<menuItem id="menu_Item_PresentmentReport_Holiday" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_PresentmentReport_Holiday" />
+			<menuItem id="menu_Item_PresentmentReport_PreEMINormal" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_PresentmentReport_PreEMINormal" />
+			<menuItem id="menu_Item_RepresentationReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_RepresentationReport" />
 
 			<!-- menuItem id="menu_Item_TrialBalanceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 				rightName="menu_Item_DAILYDISBURSALREPORT"/> <menuItem id="menu_Item_TrialBalancesByDealTypeandCurrency" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 

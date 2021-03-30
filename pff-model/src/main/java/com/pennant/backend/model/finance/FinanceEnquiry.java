@@ -141,6 +141,8 @@ public class FinanceEnquiry implements Serializable {
 	private boolean finOcrRequired;
 	private String loanStsDesc;
 	private String recordStatus;
+	// Loan Closed Date
+	private Date closedDate;
 
 	public FinanceEnquiry() {
 
@@ -837,4 +839,13 @@ public class FinanceEnquiry implements Serializable {
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
+
+	public Date getClosedDate() {
+		return closedDate;
+	}
+
+	public void setClosedDate(Date closedDate) {
+		this.closedDate = closedDate;
+	}
+
 }

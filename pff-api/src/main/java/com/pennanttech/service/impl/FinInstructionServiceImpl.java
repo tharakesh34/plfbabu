@@ -74,6 +74,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
+import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
@@ -94,6 +95,7 @@ import com.pennant.validation.ChangeInterestGroup;
 import com.pennant.validation.ChangeRepaymentGroup;
 import com.pennant.validation.DefermentsGroup;
 import com.pennant.validation.EarlySettlementGroup;
+import com.pennant.validation.NonLanReceiptGroup;
 import com.pennant.validation.PartCancellationGroup;
 import com.pennant.validation.PartialSettlementGroup;
 import com.pennant.validation.ReSchedulingGroup;
@@ -165,6 +167,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private InsuranceDetailDAO insuranceDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+	private NonLanReceiptService nonLanReceiptService;
 	private PartCancellationService partCancellationService;
 
 	/**
@@ -2979,4 +2982,69 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		this.partCancellationService = partCancellationService;
 	}
 
+	@Override
+	public FinanceDetail nonLanReceipt(FinServiceInstruction finServiceInstruction) throws ServiceException {
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+		FinanceDetail financeDetail = nonLanReceiptTransaction(finServiceInstruction, moduleDefiner);
+		return financeDetail;
+	}
+
+	private FinanceDetail nonLanReceiptTransaction(FinServiceInstruction fsi, String moduleDefiner) {
+		logger.info(Literal.ENTERING);
+
+		String eventCode = null;
+		if (!fsi.isReceiptUpload()) {
+			validationUtility.validate(fsi, NonLanReceiptGroup.class);
+		}
+
+		// Method for validate instruction details
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		finScheduleData.setFinServiceInstruction(fsi);
+		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
+
+		if (fsi.getValueDate() == null) {
+			fsi.setValueDate(fsi.getReceivedDate());
+		}
+
+		FinReceiptData receiptData = nonLanReceiptService.doReceiptValidations(financeDetail, moduleDefiner);
+		financeDetail = receiptData.getFinanceDetail();
+		finScheduleData = financeDetail.getFinScheduleData();
+
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			logger.debug("Leaving - doReceiptValidations Error");
+			return setReturnStatus(financeDetail);
+		}
+
+		receiptData = nonLanReceiptService.setReceiptData(receiptData);
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			return setReturnStatus(financeDetail);
+		}
+
+		try {
+			financeDetail = finServiceInstController.doProcessNonLanReceipt(receiptData, eventCode);
+		} catch (Exception e) {
+			e.printStackTrace();
+			finScheduleData = nonLanReceiptService.setErrorToFSD(finScheduleData, "90502", e.getMessage());
+		}
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			return setReturnStatus(financeDetail);
+		}
+		if (financeDetail.getFinScheduleData().getErrorDetails() != null
+				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+			financeDetail = setReturnStatus(financeDetail);
+		}
+
+		logger.info(Literal.LEAVING);
+		return financeDetail;
+	}
+
+	public NonLanReceiptService getNonLanReceiptService() {
+		return nonLanReceiptService;
+	}
+
+	@Autowired
+	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
+		this.nonLanReceiptService = nonLanReceiptService;
+	}
 }

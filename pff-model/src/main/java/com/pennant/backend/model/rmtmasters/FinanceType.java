@@ -373,6 +373,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String splitLoanType;
 	private boolean instBasedSchd;
 	private String tdsType;
+	private String calcOfSteps;
+	private String stepsAppliedFor;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -2989,4 +2991,19 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.tdsType = tdsType;
 	}
 
+	public String getCalcOfSteps() {
+		return calcOfSteps;
+	}
+
+	public void setCalcOfSteps(String calcOfSteps) {
+		this.calcOfSteps = calcOfSteps;
+	}
+
+	public String getStepsAppliedFor() {
+		return stepsAppliedFor;
+	}
+
+	public void setStepsAppliedFor(String stepsAppliedFor) {
+		this.stepsAppliedFor = stepsAppliedFor;
+	}
 }

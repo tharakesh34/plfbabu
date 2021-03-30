@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -224,6 +225,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public String newCustCIF;
 	public String applicationNo;
 	public String leadId;
+	private List<JointAccountDetail> tempJointAccountDetailList = null;
 
 	/**
 	 * default constructor.<br>
@@ -262,12 +264,24 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			if (arguments.containsKey("moduleType")) {
 				moduleType = (String) arguments.get("moduleType");
 			}
+
+			if (arguments.containsKey("jointAccountDetailList")) {
+				tempJointAccountDetailList = (List<JointAccountDetail>) arguments.get("jointAccountDetailList");
+			}
 			// READ OVERHANDED params !
 			if (arguments.containsKey("jountAccountDetail")) {
 				this.jountAccountDetail = (JointAccountDetail) arguments.get("jountAccountDetail");
 				JointAccountDetail befImage = new JointAccountDetail();
 				if (this.jountAccountDetail.getBefImage() == null) {
-					BeanUtils.copyProperties(this.jountAccountDetail, befImage);
+					if (jountAccountDetail.getId() < 0) {
+						BeanUtils.copyProperties(this.jountAccountDetail, befImage);
+					} else if (CollectionUtils.isNotEmpty(tempJointAccountDetailList)) {
+						for (JointAccountDetail jointAccount : tempJointAccountDetailList) {
+							if (jointAccount.getId() == this.jountAccountDetail.getId()) {
+								BeanUtils.copyProperties(jointAccount, befImage);
+							}
+						}
+					}
 					this.jountAccountDetail.setBefImage(befImage);
 				}
 				setNewContributor(true);

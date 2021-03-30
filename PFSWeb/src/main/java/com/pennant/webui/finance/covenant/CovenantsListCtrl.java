@@ -352,6 +352,9 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
+			if (finMaintainInstruction != null && StringUtils.isNotBlank(finMaintainInstruction.getRecordType())) {
+				this.btnNotes.setVisible(true);
+			}
 
 			this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 		} else {

@@ -27,6 +27,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private DocumentDetails documentDetail;
 	private String covenantType;
 	private String docCategory;
+	@XmlElement
 	private String docName;
 	@XmlElement
 	private String doctype;

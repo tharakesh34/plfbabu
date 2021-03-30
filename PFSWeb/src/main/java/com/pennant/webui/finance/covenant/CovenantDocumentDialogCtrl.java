@@ -443,10 +443,9 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 		this.docReceivedDate.setValue(aCovenantDocument.getDocumentReceivedDate());
 		this.documentName.setAttribute("data", aCovenantDocument.getDocumentDetail());
-
+		this.convDocType.setValue(StringUtils.trimToEmpty(aCovenantDocument.getDocCategory()));
 		if (aCovenantDocument.getDocumentDetail() != null
-				&& aCovenantDocument.getDocumentDetail().getDocName() != null) {
-			this.convDocType.setValue(aCovenantDocument.getDocumentDetail().getDoctype());
+				&& StringUtils.isNotEmpty(aCovenantDocument.getDocumentDetail().getDocName())) {
 			this.documentName.setValue(aCovenantDocument.getDocumentDetail().getDocName());
 		} else {
 			this.documentName.setValue(aCovenantDocument.getDocName());
@@ -525,7 +524,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			aCovenantDocument.setDocName(this.documentName.getValue());
 			if (this.documentName.getAttribute("data") != null) {
 				DocumentDetails details = (DocumentDetails) this.documentName.getAttribute("data");
-				details.setDocRefId(Long.MIN_VALUE);
+				details.setDocRefId(details.getDocRefId());
 				details.setDocReceivedDate(this.docReceivedDate.getValue());
 				details.setDocName(this.documentName.getValue());
 				aCovenantDocument.setDocumentDetail(details);
@@ -698,11 +697,15 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			if (textbox.getAttribute("data") == null) {
 				DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
 						fileName, ddaImageData);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			} else {
 				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
 				documentDetails.setDoctype(docType);
 				documentDetails.setDocImage(ddaImageData);
+				documentDetails.setLovDescNewImage(true);
+				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocUri(null);
 				textbox.setAttribute("data", documentDetails);
 				covenantDocument.setDoctype(docType);
 			}
@@ -1072,8 +1075,9 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 		if (documentDetails.getDocImage() == null) {
 			docImage = dMSService.getById(documentDetails.getDocRefId());
+		} else {
+			docImage = documentDetails.getDocImage();
 		}
-		docImage = documentDetails.getDocImage();
 
 		try (InputStream data = new ByteArrayInputStream(docImage)) {
 			String docName = documentName.getValue();

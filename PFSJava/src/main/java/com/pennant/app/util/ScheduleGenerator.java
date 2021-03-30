@@ -1334,7 +1334,8 @@ public class ScheduleGenerator {
 			if (financeMain.getNextGrcPftDate().after(financeMain.getGrcPeriodEndDate())) {
 				errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextGrcPftDate());
 				errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
-				return getErrorDetail("Schedule", "90161", errorParm2, errorParm2);
+				//System is not allowing to do Add Disbursement in Grace period
+				//return getErrorDetail("Schedule", "90161", errorParm2, errorParm2);
 			}
 
 			if (financeMain.isAllowGrcPftRvw()) {

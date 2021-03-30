@@ -100,7 +100,7 @@
 								<label id="labelRemarks" value="${c:l('label_FinOCRCaptureDialog_Remarks.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="remarks" multiline="true" height="60px" width="300px" />
+										<textbox id="remarks" multiline="true" height="60px" width="250px" />
 									</hbox>			
 							</row>
 							<row visible="false">
