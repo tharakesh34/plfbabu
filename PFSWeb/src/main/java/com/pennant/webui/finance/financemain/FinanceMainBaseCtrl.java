@@ -2096,7 +2096,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
-			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())) {
+			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
+					|| FinanceConstants.FINSER_EVENT_RATECHG.equals(financeDetail.getModuleDefiner())) {
 				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				List<FinanceStepPolicyDetail> financeStepPolicyDetailList = new ArrayList<FinanceStepPolicyDetail>();
 
@@ -2665,7 +2666,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeDetail", getFinanceDetail());
 			map.put("isWIF", false);
 			map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
-			if (StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			String moduleDefiner = getFinanceDetail().getModuleDefiner();
+			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner) || FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)) {
 				map.put("enquiryModule", true);
 			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul",

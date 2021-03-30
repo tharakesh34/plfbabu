@@ -8413,7 +8413,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// validation for Loan amount less than sum of capitalized interest & disbursement amount
 		if ((FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())
-				|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner()))
+				|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
+				|| FinanceConstants.FINSER_EVENT_RATECHG.equals(financeDetail.getModuleDefiner()))
 				&& financeMain.isStepFinance()
 				&& StringUtils.equals(financeMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
 

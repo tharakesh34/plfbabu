@@ -9842,14 +9842,22 @@ public class ScheduleCalculator {
 		
 
 		if (!fm.isGrcStps()) {
-			idxStart = idxStart + fm.getGraceTerms() > 0 ? fm.getGraceTerms() + 1 : fm.getGraceTerms();
-			if (fm.isAlwBPI() && !StringUtils.equals(fm.getBpiTreatment(), FinanceConstants.BPI_NO)) {
-				idxStart = idxStart + 1;
+			for (FinanceScheduleDetail fsd : fsdList) {
+				if (fsd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
+					idxStart = idxStart + 1;
+				}
 			}
 		}
 		
+		boolean grcEnd = false;
+		
 		for (int iSpd = 0; iSpd < spdList.size(); iSpd++) {
 			FinanceStepPolicyDetail spd = spdList.get(iSpd);
+			
+			if (grcEnd && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+				continue;
+			}
+			
 			riStart = idxStart;
 			if (riEnd == 0) {
 				riEnd = riStart + spd.getInstallments();
@@ -9863,18 +9871,26 @@ public class ScheduleCalculator {
 				if (iFsd == riStart) {
 					spd.setStepStart(fsd.getSchDate());
 				}
+				String specifier = fsd.getSpecifier();
 				if(fsd.isRepayOnSchDate()){
 					instCount= instCount +1;
-				} else if (iFsd != 0
-						&& StringUtils.equals(spd.getStepSpecifier(), PennantConstants.STEP_SPECIFIER_GRACE)
-						&& !(StringUtils.equals(fsd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI))) {
+				} else if (iFsd != 0 && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())
+						&& !(FinanceConstants.FLAG_BPI.equals(fsd.getBpiOrHoliday()))
+						&& (CalculationConstants.SCH_SPECIFIER_GRACE.equals(specifier)
+								|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier))
+						&& !fsd.isDisbOnSchDate()) {
 					instCount= instCount +1;
 				}
 				
 				//iFsd == riEnd
-				if (spd.getInstallments() == instCount) {
+				boolean flag = CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
+						&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier);
+				if (spd.getInstallments() == instCount || flag) {
+					if (flag) {
+						grcEnd = true;
+					}
 					spd.setStepEnd(fsd.getSchDate());
-					idxStart = iFsd+1;
+					idxStart = iFsd + 1;
 					break;
 				}
 			}
