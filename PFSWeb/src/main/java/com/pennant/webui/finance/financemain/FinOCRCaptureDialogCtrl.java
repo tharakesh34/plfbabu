@@ -721,6 +721,17 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_ocrPaid"), this.ocrPaid);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_ocrReceiptDate"), this.ocrReceiptDate);
 		readOnlyComponent(isReadOnly("FinOCRCaptureDialog_remarks"), this.remarks);
+
+		if (PennantConstants.RCD_STATUS_APPROVED.equals(finOCRCapture.getRecordStatus())) {
+			this.disbursementSequence.setReadonly(true);
+			this.builderDemand.setReadonly(true);
+			this.ocrPaid.setReadonly(true);
+			this.ocrReceiptDate.setReadonly(true);
+			this.remarks.setReadonly(true);
+			this.btnDelete.setDisabled(true);
+			this.btnSave.setDisabled(true);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
