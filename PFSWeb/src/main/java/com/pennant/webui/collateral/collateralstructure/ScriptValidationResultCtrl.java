@@ -1,12 +1,10 @@
 package com.pennant.webui.collateral.collateralstructure;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import javax.script.SimpleBindings;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +22,7 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -120,12 +119,7 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
 
-		// create a script engine manager
-		ScriptEngineManager factory = new ScriptEngineManager();
-		// create a JavaScript engine
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
-		// evaluate JavaScript code from String
-		Bindings bindings = new SimpleBindings();
+		Map<String, Object> bindings = new HashMap<>();
 		try {
 			for (int i = 0; i < variables.size(); i++) {
 				JSONObject variable = (JSONObject) variables.get(i);
@@ -136,12 +130,11 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 							textbox.getValue() == null ? BigDecimal.ZERO : textbox.getValue());
 				}
 			}
-			// Execute the engine
-			String rule = "function Validation(){" + scriptRule + "}Validation();";
 
 			ScriptErrors errors = new ScriptErrors();
-			bindings.put("errors", errors);
-			engine.eval(rule, bindings);
+			bindings.put("defaults", errors);
+
+			RuleExecutionUtil.executeRule(scriptRule, bindings, "defaults");
 
 			// Print the results
 
@@ -165,8 +158,6 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 			this.result.setValue(errorMessage);
 
 			bindings = null;
-			engine = null;
-			factory = null;
 
 		} catch (Exception e) {
 			MessageUtil.showMessage(Labels.getLabel("label_ExtendedFieldModule_ScriptValidation.value"));

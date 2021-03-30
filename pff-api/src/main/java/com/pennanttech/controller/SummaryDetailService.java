@@ -40,7 +40,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.util.APIConstants;
 
-public class SummaryDetailService {
+public class SummaryDetailService extends ExtendedTestClass {
 	private static final Logger logger = LogManager.getLogger(SummaryDetailService.class);
 
 	private FinanceDisbursementDAO financeDisbursementDAO;
@@ -88,7 +88,7 @@ public class SummaryDetailService {
 			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
 			// Total future Installments
-			//int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
+			// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
 			summary.setFutureInst(finPftDetail.getFutureInst());
 			summary.setFutureTenor(
 					DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));

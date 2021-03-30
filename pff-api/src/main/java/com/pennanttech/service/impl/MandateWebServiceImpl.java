@@ -43,6 +43,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.MandateController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -53,7 +54,7 @@ import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class MandateWebServiceImpl implements MandateRestService, MandateSoapService {
+public class MandateWebServiceImpl extends ExtendedTestClass implements MandateRestService, MandateSoapService {
 	private static final Logger logger = LogManager.getLogger(MandateWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
@@ -94,7 +95,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return response;
 			}
 		}
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = mandate.getCustCIF();
 		logFields[1] = mandate.getAccNumber();
@@ -107,7 +108,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			response = new Mandate();
 			response.setReturnStatus(returnStatus);
 		}
-		//for logging purpose
+		// for logging purpose
 		if (response.getMandateID() != Long.MIN_VALUE) {
 			APIErrorHandlerService.logReference(String.valueOf(response.getMandateID()));
 		}
@@ -129,7 +130,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		if (mandateID < 0) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(String.valueOf(mandateID));
 		Mandate response = mandateController.getMandate(mandateID);
 		logger.debug("Leaving");
@@ -149,7 +150,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		// beanValidation
 		validationUtility.validate(mandate, UpdateValidationGroup.class);
 
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = mandate.getCustCIF();
 		logFields[1] = mandate.getAccNumber();
@@ -159,7 +160,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		Mandate mandateDetails = mandateService.getApprovedMandateById(mandate.getMandateID());
 		WSReturnStatus returnStatus = null;
 		if (mandateDetails != null) {
-			//for logging purpose
+			// for logging purpose
 			APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
 
 			returnStatus = doMandateValidation(mandate);
@@ -212,7 +213,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		if (mandateID < 0) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(String.valueOf(mandateID));
 
 		// Mandate Id is Available or not in PLF
@@ -244,7 +245,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		if (StringUtils.isBlank(cif)) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(cif);
 
 		MandateDetial response = new MandateDetial();
@@ -276,7 +277,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 		// validate customer details as per the API specification
 		WSReturnStatus response = doValidation(mandate);
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(mandate.getFinReference());
 		if (response == null) {
 			return response = mandateController.loanMandateSwapping(mandate);
@@ -357,7 +358,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			returnStatus = APIErrorHandlerService.getFailedStatus("90320");
 			return returnStatus;
 		}
-		//validate cif
+		// validate cif
 		if (!StringUtils.equals(oldMandate.getCustCIF(), newMandate.getCustCIF())) {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90342");
 			return returnStatus;
@@ -387,7 +388,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			}
 		}
 
-		//set mandate type 
+		// set mandate type
 		mandateDetail.setMandateType(newMandate.getMandateType());
 
 		logger.debug("Leaving");
@@ -431,7 +432,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 		}
 
-		//validate finance reference
+		// validate finance reference
 		/*
 		 * if(StringUtils.isBlank(mandate.getOrgReference())){ String[] valueParm = new String[1]; valueParm[0] =
 		 * "finReference"; return getErrorDetails("90502", valueParm); }
@@ -527,7 +528,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return getErrorDetails("90308", valueParm);
 			}
 		}
-		//validate Phone number
+		// validate Phone number
 		String mobileNumber = mandate.getPhoneNumber();
 		if (StringUtils.isNotBlank(mobileNumber)) {
 			if (!(mobileNumber.matches("\\d{10}"))) {
@@ -631,7 +632,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			valueParm[0] = mandate.getMandateType();
 			return getErrorDetails("90333", valueParm);
 		}
-		//validate AccNumber length
+		// validate AccNumber length
 		if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
 			BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
 			int length = mandate.getAccNumber().length();
@@ -655,7 +656,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return getErrorDetails("90502", valueParm);
 			}
 		}
-		//validate Dates
+		// validate Dates
 		if (mandate.getExpiryDate() != null) {
 			if (mandate.getExpiryDate().compareTo(mandate.getStartDate()) <= 0
 					|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
@@ -678,7 +679,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return getErrorDetails("90318", valueParm);
 			}
 		}
-		//barCode validation
+		// barCode validation
 		if (ImplementationConstants.ALLOW_BARCODE) {
 			if (StringUtils.isBlank(mandate.getBarCodeNumber())) {
 				String[] valueParm = new String[1];
@@ -783,7 +784,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 		WSReturnStatus returnStatus = doMandateValidation(mandate);
 
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = mandate.getCustCIF();
 		logFields[1] = mandate.getAccNumber();
@@ -798,7 +799,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", paramValue));
 				return response;
 			} else {
-				//Validating duplicate UMRN 
+				// Validating duplicate UMRN
 				int count = mandateService.getMandateByMandateRef(mandate.getMandateRef());
 				if (count > 0) {
 					response = new Mandate();
@@ -817,7 +818,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return response;
 			}
 			if (mandate.isSwapIsActive()) {
-				//FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
+				// FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
 				String tableType = "";
 				if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
 					tableType = "_View";
@@ -850,7 +851,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			response = new Mandate();
 			response.setReturnStatus(returnStatus);
 		}
-		//for logging purpose
+		// for logging purpose
 		if (response.getMandateID() != Long.MIN_VALUE) {
 			APIErrorHandlerService.logReference(String.valueOf(response.getMandateID()));
 		}
@@ -914,10 +915,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			if (StringUtils.equalsIgnoreCase(mandateStatus, mandate.getStatus())) {
 				mandate.setStatus(mandate.getStatus().toUpperCase());
 				if (StringUtils.isNotBlank(aMandate.getMandateRef())) {
-					//String[] valueParm = new String[1];
-					//valueParm[0] = "mandateRef is already exist";
-					//returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-					//return returnStatus;
+					// String[] valueParm = new String[1];
+					// valueParm[0] = "mandateRef is already exist";
+					// returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					// return returnStatus;
 				}
 			}
 
@@ -935,11 +936,11 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 
 			if (StringUtils.equalsIgnoreCase(MandateConstants.MANDATE_STATUS_ACKNOWLEDGE, mandate.getStatus())
 					&& !StringUtils.equals(MandateConstants.STATUS_AWAITCON, aMandate.getStatus())) {
-				//String[] valueParm = new String[2];
-				//valueParm[0] = "Mandate current status is " + aMandate.getStatus();
-				//valueParm[1] = " not allowed to pass " + MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
-				//returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-				//return returnStatus;
+				// String[] valueParm = new String[2];
+				// valueParm[0] = "Mandate current status is " + aMandate.getStatus();
+				// valueParm[1] = " not allowed to pass " + MandateConstants.MANDATE_STATUS_ACKNOWLEDGE;
+				// returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+				// return returnStatus;
 			}
 
 			if ((StringUtils.equalsIgnoreCase(MandateConstants.STATUS_APPROVED, mandate.getStatus())

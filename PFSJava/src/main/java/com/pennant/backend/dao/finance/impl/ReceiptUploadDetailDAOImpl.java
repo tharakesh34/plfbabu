@@ -510,7 +510,8 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(" WHERE UploadHeaderId in ( ");
 		sql.append(commaJoin(uploadHeaderIdList));
 		sql.append(" )");
-		sql.append(" And ThreadId = ? And ProcessingStatus = 1");
+		sql.append(" And ThreadId = ? And ProcessingStatus = ?");
+		sql.append(" order by ValueDate");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -520,6 +521,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 				ps.setLong(index++, uploadHeader);
 			}
 			ps.setInt(index++, threadId);
+			ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
 		}, (rs, rowNum) -> {
 			ReceiptUploadDetail rud = new ReceiptUploadDetail();
 

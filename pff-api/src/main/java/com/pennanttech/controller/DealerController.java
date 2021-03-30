@@ -22,7 +22,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class DealerController {
+public class DealerController extends ExtendedTestClass {
 	Logger logger = LogManager.getLogger(DealerController.class);
 
 	VehicleDealerService vehicleDealerService;
@@ -43,11 +43,11 @@ public class DealerController {
 			vehicleDealer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vehicleDealer.setNewRecord(true);
 			vehicleDealer.setVersion(1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(vehicleDealer, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = vehicleDealerService.doApprove(auditHeader);
@@ -120,7 +120,7 @@ public class DealerController {
 				null, null, auditDetail, vehicleDealer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
-	//Setter and Getter
+	// Setter and Getter
 
 	public VehicleDealerService getVehicleDealerService() {
 		return vehicleDealerService;

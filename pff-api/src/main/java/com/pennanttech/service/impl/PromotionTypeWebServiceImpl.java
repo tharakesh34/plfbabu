@@ -13,6 +13,7 @@ import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinanceTypeController;
 import com.pennanttech.pffws.PromotionTypeRestService;
 import com.pennanttech.pffws.PromotionTypeSoapService;
@@ -21,7 +22,8 @@ import com.pennanttech.ws.model.financetype.FinanceTypeResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class PromotionTypeWebServiceImpl implements PromotionTypeRestService, PromotionTypeSoapService {
+public class PromotionTypeWebServiceImpl extends ExtendedTestClass
+		implements PromotionTypeRestService, PromotionTypeSoapService {
 
 	private static final Logger logger = LogManager.getLogger(PromotionTypeWebServiceImpl.class);
 
@@ -46,7 +48,7 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService, Pr
 				validationUtility.fieldLevelException();
 			}
 
-			//for failure case logging purpose
+			// for failure case logging purpose
 			APIErrorHandlerService.logReference(finTypeReq.getPromotionType());
 
 			// validate financeType
@@ -89,7 +91,7 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService, Pr
 		if (StringUtils.isBlank(policyCode)) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(policyCode);
 
 		StepPolicyHeader response = new StepPolicyHeader();
@@ -121,7 +123,7 @@ public class PromotionTypeWebServiceImpl implements PromotionTypeRestService, Pr
 		if (StringUtils.isBlank(finType)) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(finType);
 
 		FinanceTypeResponse response = new FinanceTypeResponse();

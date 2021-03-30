@@ -18,7 +18,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.service.impl.FinInstructionServiceImpl;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class QueryModuleController {
+public class QueryModuleController extends ExtendedTestClass {
 
 	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 
@@ -28,7 +28,7 @@ public class QueryModuleController {
 		logger.debug(Literal.ENTERING);
 		QueryDetail detail = null;
 
-		//do set document details
+		// do set document details
 		doSetDocumentDetails(queryDetail);
 
 		AuditHeader auditHeader = getAuditHeader(queryDetail, "");

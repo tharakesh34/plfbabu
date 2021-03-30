@@ -11,7 +11,7 @@ import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class SecRolesController {
+public class SecRolesController extends ExtendedTestClass {
 	private final Logger logger = LogManager.getLogger(SecRolesController.class);
 
 	private SecurityRoleService securityRoleService;

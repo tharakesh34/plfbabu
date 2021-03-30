@@ -3035,7 +3035,7 @@
 		<dropNotNullConstraint tableName="WIFFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
 	</changeSet>
 	
-	<changeSet id="PSD#164364_pre" author="sudheer.t" dbms="postgresql">
+	<changeSet id="PSD#164364.1_pre" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes');
@@ -3044,19 +3044,19 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#164364.1" author="sudheer.t">
+	<changeSet id="PSD#164364.1.1" author="sudheer.t">
 		<modifyDataType tableName="RMTFINANCETYPES" columnName="finminterm"  newDataType="int" />
 		<modifyDataType tableName="RMTFINANCETYPES" columnName="finmaxterm"  newDataType="int" />
 		<modifyDataType tableName="RMTFINANCETYPES" columnName="findftterms" newDataType="int" />
 	</changeSet>
 
-	<changeSet id="PSD#164364.2" author="sudheer.t">
+	<changeSet id="PSD#164364.2.1" author="sudheer.t">
 		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finminterm"  newDataType="int" />
 		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finmaxterm"  newDataType="int" />
 		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="findftterms" newDataType="int" />
 	</changeSet>
 
-	<changeSet id="PSD#164364_post" author="sudheer.t" dbms="postgresql">
+	<changeSet id="PSD#164364.1_post" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes');

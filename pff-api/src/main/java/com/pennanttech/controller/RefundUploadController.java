@@ -25,7 +25,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class RefundUploadController {
+public class RefundUploadController extends ExtendedTestClass {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	private UploadHeaderService uploadHeaderService;
@@ -72,7 +72,7 @@ public class RefundUploadController {
 			uploadHeader.setTransactionDate(DateUtility.getSysDate());
 			refundUploads.add(refundUpload);
 			uploadHeader.setRefundUploads(refundUploads);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			AuditHeader auditHeader = getAuditHeader(uploadHeader, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 

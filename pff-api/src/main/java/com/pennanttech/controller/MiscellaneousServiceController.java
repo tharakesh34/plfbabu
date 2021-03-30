@@ -90,7 +90,7 @@ import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class MiscellaneousServiceController {
+public class MiscellaneousServiceController extends ExtendedTestClass {
 
 	private final Logger logger = LogManager.getLogger(getClass());
 
@@ -1182,11 +1182,7 @@ public class MiscellaneousServiceController {
 		Map<String, Object> map = null;
 		try {
 			map = obj.readValue(payload, Map.class);
-		} catch (JsonParseException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} catch (JsonMappingException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);

@@ -56,9 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -115,6 +112,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -154,6 +152,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -3273,33 +3272,22 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private String executeRule(String ruleCode, CommitmentRuleData ruleObject) {
 		logger.debug("Entering");
 
-		// create a script engine manager
-		ScriptEngineManager factory = new ScriptEngineManager();
-		// create a JavaScript engine
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
-		String result = "0";
+		Map<String, Object> dataMap = new HashMap<>();
+		Object result = "0";
 		try {
 			//Add fields and values
 			for (String filed : ruleObject.getDeclaredFieldsAndValue().keySet()) {
-				engine.put(filed, ruleObject.getDeclaredFieldsAndValue().get(filed));
+				dataMap.put(filed, ruleObject.getDeclaredFieldsAndValue().get(filed));
 			}
-			// Execute the engine
-			String rule = "function Rule(){" + ruleCode + "}Rule();";
-			BigDecimal tempResult = BigDecimal.ZERO;
-			if (engine.eval(rule) != null) {
-				tempResult = new BigDecimal(engine.eval(rule).toString());
-				result = tempResult.toString();
-			} else {
-				if (engine.get("Result") != null) {
-					result = engine.get("Result").toString();
-				}
-			}
+
+			result = RuleExecutionUtil.executeRule(ruleCode, dataMap, null, RuleReturnType.DECIMAL);
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 
 		logger.debug("Leaving");
-		return result;
+		return result.toString();
 	}
 
 	private void CaluculateSummary() {

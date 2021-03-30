@@ -6798,7 +6798,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="DE#226.2" author="saisandeep.b">
+	<changeSet id="DE#226.2.1" author="saisandeep.b">
 		<sql>
 			<![CDATA[
 				Delete from BMTAEEVENTS where aeeventcode = 'WRITEBK';

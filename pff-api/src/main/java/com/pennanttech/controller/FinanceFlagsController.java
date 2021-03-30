@@ -23,7 +23,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class FinanceFlagsController {
+public class FinanceFlagsController extends ExtendedTestClass {
 	private static final Logger logger = LogManager.getLogger(FinanceFlagsController.class);
 	private FinanceFlagsService financeFlagsService;
 
@@ -85,11 +85,11 @@ public class FinanceFlagsController {
 
 		WSReturnStatus response = null;
 		try {
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(financeFlag, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = financeFlagsService.doApprove(auditHeader);
 
@@ -134,11 +134,11 @@ public class FinanceFlagsController {
 
 		WSReturnStatus response = new WSReturnStatus();
 		try {
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(financeFlag, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = financeFlagsService.deleteFinanceFlag(auditHeader);
 			if (auditHeader.getErrorMessage() != null) {

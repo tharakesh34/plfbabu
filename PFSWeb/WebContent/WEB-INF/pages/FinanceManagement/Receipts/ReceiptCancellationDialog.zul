@@ -162,13 +162,21 @@
 							</groupbox>
 
 							<groupbox id="gb_FeeDetail" style="border:0px;" visible="false">
-								<listbox id="listBoxFeeDetail" fixedLayout="false" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false" sizedByContent="true">
+								<listbox id="listBoxFeeDetail" fixedLayout="false" span="true"
+									emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false" sizedByContent="true">
 									<listhead sizable="false">
-										<listheader id="listheader_FeeDetailList_FeeType" label="${c:l('listheader_FeeDetailList_FeeType.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_NetAmountOriginal" align="right" label="${c:l('listheader_FeeDetailList_NetAmountOriginal.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_NetAmountOriginalGST" align="right" label="${c:l('listheader_FeeDetailList_NetAmountOriginalGST.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_TotNetAmountOriginalGST" align="right" label="${c:l('listheader_FeeDetailList_TotNetAmountOriginalGST.label')}" sort="false" />
-										<listheader id="listheader_FeeDetailList_AllocatedAmtTotal" align="right" label="${c:l('listheader_FeeDetailList_AllocatedAmtTotal.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_FeeType"
+											label="${c:l('listheader_FeeDetailList_FeeType.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetAmountOriginal" align="right"
+											label="${c:l('listheader_FeeDetailList_NetAmountOriginal.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetAmountOriginalGST" align="right"
+											label="${c:l('listheader_FeeDetailList_NetAmountOriginalGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_NetTdsAmount" align="right"
+											label="${c:l('listheader_FeeDetailList_NetTdsAmount.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_TotNetAmountOriginalGST" align="right"
+											label="${c:l('listheader_FeeDetailList_TotNetAmountOriginalGST.label')}" sort="false" />
+										<listheader id="listheader_FeeDetailList_AllocatedAmtTotal" align="right"
+											label="${c:l('listheader_FeeDetailList_AllocatedAmtTotal.label')}" sort="false" />
 									</listhead>
 								</listbox>
 							</groupbox>

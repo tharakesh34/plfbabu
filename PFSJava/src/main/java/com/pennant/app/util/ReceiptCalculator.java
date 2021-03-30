@@ -195,6 +195,9 @@ public class ReceiptCalculator implements Serializable {
 	public int setReceiptCategory(String receiptPurpose) {
 		receiptPurposeCtg = -1;
 
+		if (receiptPurpose == null) {
+			return receiptPurposeCtg;
+		}
 		switch (receiptPurpose) {
 		case FinanceConstants.FINSER_EVENT_SCHDRPY:
 			receiptPurposeCtg = 0;

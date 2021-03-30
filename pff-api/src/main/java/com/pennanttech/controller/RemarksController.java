@@ -16,7 +16,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class RemarksController {
+public class RemarksController extends ExtendedTestClass {
 
 	private final Logger logger = LogManager.getLogger(getClass());
 

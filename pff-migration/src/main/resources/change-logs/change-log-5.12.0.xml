@@ -2149,7 +2149,7 @@
 			    LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CLOSURE_TYPES T13 ON T13.ID = T1.CLOSURETYPEID
 			    WHERE NOT (EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP
-			     	WHERE FINRECEIPTHEADER_TEMP.RECEIPTID = T1.RECEIPTID));  
+			     	WHERE FINRECEIPTHEADER_TEMP.RECEIPTID = T1.RECEIPTID)) 
 			]]>
 		</createView>
 	</changeSet>
@@ -2170,26 +2170,26 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#214.22.1" author="" dbms="postgresql, oracle">
+	<changeSet id="ST#214.22.1" author="naveenkumar.a" dbms="postgresql, oracle">
 		<addDefaultValue columnName="WorkflowId" tableName="Closure_Types" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#214.22.1" author="" dbms="mssql">
+	<changeSet id="ST#214.22.1" author="naveenkumar.a" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE Closure_Types_Temp add constraint DK_CT_WrkflwId default 0 for WorkflowId;
+				ALTER TABLE Closure_Types add constraint DK_CT_WrkflwId default 0 for WorkflowId;
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="ST#214.23.1" author="" dbms="postgresql, oracle">
+	<changeSet id="ST#214.23.1" author="naveenkumar.a" dbms="postgresql, oracle">
 		<addDefaultValue columnName="WorkflowId" tableName="Closure_Types_Temp" defaultValue="0" />
 	</changeSet>
 
 
-	<changeSet id="ST#214.23.1" author="" dbms="mssql">
+	<changeSet id="ST#214.23.1" author="naveenkumar.a" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE Closure_Types add constraint DK_CT_T_WrkflwId default 0 for WorkflowId;
+				ALTER TABLE Closure_Types_Temp add constraint DK_CT_T_WrkflwId default 0 for WorkflowId;
 			]]>
 		</sql>
 	</changeSet>

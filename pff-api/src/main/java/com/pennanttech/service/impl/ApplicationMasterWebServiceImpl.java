@@ -22,6 +22,7 @@ import com.pennant.backend.service.applicationmaster.ReasonCodeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.ApplicationMasterRestService;
 import com.pennanttech.pffws.ApplicationMasterSoapService;
@@ -31,7 +32,8 @@ import com.pennanttech.ws.model.deviation.ManualDeviationList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class ApplicationMasterWebServiceImpl implements ApplicationMasterRestService, ApplicationMasterSoapService {
+public class ApplicationMasterWebServiceImpl extends ExtendedTestClass
+		implements ApplicationMasterRestService, ApplicationMasterSoapService {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	private ReasonCodeService reasonCodeService;
@@ -61,7 +63,7 @@ public class ApplicationMasterWebServiceImpl implements ApplicationMasterRestSer
 		if (CollectionUtils.isEmpty(reasonDetails)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "reasonTypeCode";
-			//no records founds
+			// no records founds
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
 			return response;
 		} else {

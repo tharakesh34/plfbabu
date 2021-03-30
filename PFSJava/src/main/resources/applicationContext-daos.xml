@@ -8517,9 +8517,7 @@
 	</bean>
 
 	<bean id="scriptValidationService" class="com.pennant.backend.service.collateral.impl.ScriptValidationService"
-		scope="prototype">
-		<property name="scriptEngine" ref="scriptEngine" />
-	</bean>
+	scope="prototype" />
 
 	<bean id="accountingConfigCache" class="com.pennant.cache.util.AccountingConfigCache">
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />

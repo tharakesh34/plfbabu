@@ -16,6 +16,7 @@ import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.validation.QueryDetailGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.QueryModuleController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.QueryModuleRestService;
@@ -26,7 +27,8 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
  * @author srikanth.m
  *
  */
-public class QueryModuleWebServiceImpl implements QueryModuleRestService, QueryModuleSoapService {
+public class QueryModuleWebServiceImpl extends ExtendedTestClass
+		implements QueryModuleRestService, QueryModuleSoapService {
 	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 	private QueryModuleController queryModuleController;
 	private ValidationUtility validationUtility;
@@ -63,7 +65,7 @@ public class QueryModuleWebServiceImpl implements QueryModuleRestService, QueryM
 
 		}
 
-		//status of the record validation
+		// status of the record validation
 		if (!StringUtils.equals(qryDetail.getStatus(), "Open")) {
 			returnStatus = new WSReturnStatus();
 			String[] paramValue = new String[2];
@@ -72,7 +74,7 @@ public class QueryModuleWebServiceImpl implements QueryModuleRestService, QueryM
 			return APIErrorHandlerService.getFailedStatus("90329", paramValue);
 		}
 
-		//login user validation
+		// login user validation
 		if (StringUtils.isNotBlank(qryDetail.getUsrLogin())) {
 			SecurityUser securityUser = securityUserService
 					.getSecurityUserByLogin(qryDetail.getUsrLogin().toUpperCase());
@@ -87,7 +89,7 @@ public class QueryModuleWebServiceImpl implements QueryModuleRestService, QueryM
 			// set userId
 			queryDetail.setRaisedBy(securityUser.getUsrID());
 		}
-		//set data to queryDetail for update 
+		// set data to queryDetail for update
 		queryDetail.setCloserNotes(qryDetail.getCloserNotes());
 		queryDetail.setCloserBy(qryDetail.getCloserBy());
 		queryDetail.setCloserOn(qryDetail.getCloserOn());

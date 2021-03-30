@@ -58,6 +58,24 @@
 		<description>Append CSRF token for each page</description>
 		<listener-class>com.pennanttech.pennapps.web.security.CsrfTokenAppender</listener-class>
 	</listener>
+		
+	<!-- Listener to get zk statsitc data -->
+	<!-- ====================================================== -->
+	<listener>
+		<description>Monitor the statistic</description>
+		<listener-class>org.zkoss.zk.ui.util.Statistic</listener-class>
+	</listener>
+	<listener>
+		<description>Performance Meter Listener</description>
+		<listener-class>com.pennapps.web.observability.PerformanceMeter
+		</listener-class>
+	</listener>
+	<listener>
+		<description>Event Listener</description>
+		<listener-class>com.pennapps.web.observability.listener.EventListener
+		</listener-class>
+	</listener>
+	
 
 	<!-- ====================================================== -->
 	<!-- Besides that, you have to specify what -->

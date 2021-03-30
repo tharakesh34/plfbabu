@@ -16,6 +16,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.service.NotesService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.RemarksController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.RemarksRestService;
@@ -24,7 +25,7 @@ import com.pennanttech.ws.model.remark.RemarksResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestService {
+public class RemarksWebServiceImpl extends ExtendedTestClass implements RemarksSoapService, RemarksRestService {
 
 	private final Logger logger = LogManager.getLogger(getClass());
 

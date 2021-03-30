@@ -31,7 +31,7 @@ import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.ws.model.customer.DocumentList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class DocumentController {
+public class DocumentController extends ExtendedTestClass {
 	private Logger logger = LogManager.getLogger(DocumentController.class);
 
 	private DocumentService documentService;

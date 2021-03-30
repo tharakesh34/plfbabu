@@ -21,13 +21,6 @@
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
 	</bean>
 
-	<!-- Script Engine -->
-	<bean id="scriptEngineManager" class="javax.script.ScriptEngineManager" />
-
-	<bean id="scriptEngine" class="javax.script.ScriptEngine" factory-method="getEngineByName" factory-bean="scriptEngineManager">
-		<constructor-arg value="javascript" />
-	</bean>
-
 	<!-- Calculation Util -->
 	<bean id="calculationUtil" class="com.pennant.app.util.CalculationUtil">
 		<property name="currencyDAO" ref="currencyDAO" />

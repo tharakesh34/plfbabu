@@ -32,7 +32,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.ws.model.presentment.PresentmentResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class PresentmentServiceController {
+public class PresentmentServiceController extends ExtendedTestClass {
 	private static Logger logger = LogManager.getLogger(PresentmentServiceController.class);
 
 	private PresentmentDetailService presentmentDetailService;
@@ -147,7 +147,7 @@ public class PresentmentServiceController {
 			return response;
 		}
 
-		//fetching approved Presentments Count
+		// fetching approved Presentments Count
 		Long approvedPresentments = presentmentDetailDAO.getApprovedPresentmentCount(ph.getId());
 		if (approvedPresentments <= 0) {
 			String[] valueParm = new String[4];

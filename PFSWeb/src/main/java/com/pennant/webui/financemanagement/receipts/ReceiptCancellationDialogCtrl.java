@@ -1845,6 +1845,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
+				// Net Amount TDS
+				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetTDS(), finFormatter));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
 				//Total Net Amount
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmount(), finFormatter));
 				lc.setStyle("text-align:right;");
@@ -1888,7 +1893,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		item.setId("LISTITEM_SUMMARY");
 		lc = new Listcell(Labels.getLabel("listcell_Total.label"));
 		item.setStyle("font-weight:bold;background-color: #C0EBDF;");
-		lc.setSpan(4);
+		lc.setSpan(5);
 		lc.setParent(item);
 
 		lc = new Listcell();

@@ -13,13 +13,14 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.DealerController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.DealerRestService;
 import com.pennanttech.pffws.DealerSaopService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class DealerWebServiceImpl implements DealerSaopService, DealerRestService {
+public class DealerWebServiceImpl extends ExtendedTestClass implements DealerSaopService, DealerRestService {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	private ValidationUtility validationUtility;
@@ -63,7 +64,7 @@ public class DealerWebServiceImpl implements DealerSaopService, DealerRestServic
 		validationUtility.validate(vehicleDealer, SaveValidationGroup.class);
 		VehicleDealer response = null;
 		try {
-			//bussiness validations
+			// bussiness validations
 			AuditDetail auditDetail = vehicleDealerService.doValidations(vehicleDealer);
 
 			if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -83,7 +84,7 @@ public class DealerWebServiceImpl implements DealerSaopService, DealerRestServic
 			return response;
 		}
 
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[1];
 		if (response != null) {
 			logFields[0] = String.valueOf(response.getDealerId());
@@ -109,7 +110,7 @@ public class DealerWebServiceImpl implements DealerSaopService, DealerRestServic
 		return response;
 	}
 
-	//Getter and Setter
+	// Getter and Setter
 	public VehicleDealerService getVehicleDealerService() {
 		return vehicleDealerService;
 	}

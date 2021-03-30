@@ -106,6 +106,7 @@ import com.pennant.validation.UpfrontFeesGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CreateFinanceController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -123,7 +124,8 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.pennanttech.ws.service.FinanceValidationService;
 
 @Service
-public class FinInstructionServiceImpl implements FinServiceInstRESTService, FinServiceInstSOAPService {
+public class FinInstructionServiceImpl extends ExtendedTestClass
+		implements FinServiceInstRESTService, FinServiceInstSOAPService {
 	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 
 	private FinServiceInstController finServiceInstController;
@@ -194,7 +196,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
-		// Set null for Empty values 
+		// Set null for Empty values
 		setDefaultForReferenceFields(finServiceInstruction);
 		// validate ReqType
 		returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -293,8 +295,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Open when the flexi is comes in core
+		// restrict FLEXI Finances
+		// FIXME Open when the flexi is comes in core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeRepaymentAmount"); }
 		 */
@@ -363,8 +365,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Deferments"); }
 		 */
@@ -437,8 +439,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("AddTerms"); }
@@ -525,8 +527,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("RemoveTerms"); }
 		 */
@@ -665,7 +667,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		FinanceDetail financeDetail = null;
 
-		//vlidate duplicate record
+		// vlidate duplicate record
 		boolean dedupFound = checkUpFrontDuplicateRequest(finServiceInstruction, moduleDefiner);
 		if (dedupFound) {
 			String valueParm[] = new String[1];
@@ -752,8 +754,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Recalculate"); }
@@ -827,8 +829,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeInterest"); }
 		 */
@@ -1075,8 +1077,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ReScheduling"); }
 		 */
@@ -1441,12 +1443,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Schedule Change Method"); }
 		 */
-		//Step Loan not accepted FIXME
+		// Step Loan not accepted FIXME
 		FinanceMain finMain = financeMainDAO.getFinanceMainById(finServiceInstruction.getFinReference(), "",
 				finServiceInstruction.isWif());
 		if (finMain.isStepFinance()) {
@@ -2282,7 +2284,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return returnStatus;
 	}
 
-	//cheque Validations for schedule
+	// cheque Validations for schedule
 	private FinScheduleData validateChequeDetails(FinanceDetail financeDetail) {
 		boolean date = true;
 		boolean amount = true;
@@ -2290,7 +2292,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
 		for (ChequeDetail chequeDetail : chequeDetailsList) {
-			//schedules validation
+			// schedules validation
 			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())) {
 				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : schedules) {
@@ -2299,7 +2301,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 						chequeDetail.seteMIRefNo(fsd.getInstNumber());
 						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
 							amount = false;
-							//{0} Should be equal To {1}
+							// {0} Should be equal To {1}
 							String[] valueParm = new String[2];
 							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
 							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");

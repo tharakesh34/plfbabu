@@ -1570,7 +1570,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] {finReference, "A"}, Integer.class) > 0;
+
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, "A" },
+				Integer.class) > 0;
 
 	}
 

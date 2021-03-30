@@ -105,6 +105,36 @@ public class ScriptEngine implements AutoCloseable {
 		Value result = eval(rule, dataMap);
 		return result == null ? new Object() : (Object) result;
 	}
+	
+	public Object getResultAsObject(String rule, Map<String, Object> dataMap, String reference) {
+		Value result = eval(rule, dataMap, reference);
+		return result == null ? new Object() : (Object) result;
+	}
+	
+	
+	private Value eval(String rule, Map<String, Object> dataMap, String reference) {
+		String scriptRule = getRule(rule);
+
+		Value bindings = null;
+		try {
+			bindings = context.getBindings("js");
+
+			if ("defaults".equals(reference)) {
+				bindings.putMember("defaults", dataMap.get("defaults"));
+			} else if ("errors".equals(reference)) {
+				bindings.putMember("errors", dataMap.get("errors"));
+			}
+
+			context.eval("js", scriptRule);
+			Value result = bindings.getMember("Result");
+			return result;
+		} catch (Exception e) {
+			logger.warn("{} Rule is not configured properly", rule);
+			return null;
+		} finally {
+			bindings = null;
+		}
+	}
 
 	/**
 	 * Private constructor to hide the implicit public one.
@@ -121,7 +151,9 @@ public class ScriptEngine implements AutoCloseable {
 		Value bindings = null;
 		try {
 			bindings = getBindings(rule, dataMap);
+			
 			context.eval("js", scriptRule);
+			
 			Value result = bindings.getMember("Result");
 			return result;
 		} catch (Exception e) {
@@ -155,7 +187,7 @@ public class ScriptEngine implements AutoCloseable {
 				}
 			}
 		}
-
+		
 		return bindings;
 	}
 

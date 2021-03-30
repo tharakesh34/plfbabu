@@ -45,7 +45,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class MandateController {
+public class MandateController extends ExtendedTestClass {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	private MandateService mandateService;

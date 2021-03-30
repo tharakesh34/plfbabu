@@ -32,7 +32,7 @@ import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
 import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class BeneficiaryController {
+public class BeneficiaryController extends ExtendedTestClass {
 	private final Logger logger = LogManager.getLogger(getClass());
 	private BeneficiaryService beneficiaryService;
 	private BankBranchService bankBranchService;

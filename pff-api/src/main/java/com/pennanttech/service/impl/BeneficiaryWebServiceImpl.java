@@ -22,6 +22,7 @@ import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.BeneficiaryController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pffws.BeneficiaryRestService;
 import com.pennanttech.pffws.BeneficiarySoapService;
 import com.pennanttech.util.APIConstants;
@@ -29,7 +30,8 @@ import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, BeneficiaryRestService {
+public class BeneficiaryWebServiceImpl extends ExtendedTestClass
+		implements BeneficiarySoapService, BeneficiaryRestService {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	private BeneficiaryController beneficiaryController;
@@ -59,7 +61,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 			response = new Beneficiary();
 			response.setReturnStatus(returnStatus);
 		}
-		//for Logging Purpose
+		// for Logging Purpose
 		String[] logFields = new String[1];
 		logFields[0] = String.valueOf(beneficiary.getBeneficiaryId());
 		APIErrorHandlerService.logKeyFields(logFields);
@@ -103,7 +105,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 		logFields[0] = beneficiary.getCustCIF();
 		APIErrorHandlerService.logKeyFields(logFields);
 		APIErrorHandlerService.logReference(String.valueOf(beneficiary.getBeneficiaryId()));
-		//beanValidation
+		// beanValidation
 		validationUtility.validate(beneficiary, UpdateValidationGroup.class);
 		Beneficiary beneficiaryDetails = beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
 		WSReturnStatus returnStatus = null;
@@ -231,14 +233,14 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 				beneficiary.setBankCode(bankBranch.getBankCode());
 			}
 		}
-		//validate Phone number
+		// validate Phone number
 		String mobileNumber = beneficiary.getPhoneNumber();
 		if (StringUtils.isNotBlank(mobileNumber)) {
 			if (!(mobileNumber.matches("\\d{10}"))) {
 				return getErrorDetails("90278", null);
 			}
 		}
-		//validate AccNumber length
+		// validate AccNumber length
 		/*
 		 * if(StringUtils.isNotBlank(beneficiary.getBankCode())){ int accNoLength =
 		 * bankDetailService.getAccNoLengthByCode(beneficiary.getBankCode());

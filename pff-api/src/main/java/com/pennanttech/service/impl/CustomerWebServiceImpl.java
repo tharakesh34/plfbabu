@@ -90,6 +90,7 @@ import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CustomerController;
 import com.pennanttech.controller.CustomerDetailsController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -120,7 +121,7 @@ import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAPService {
+public class CustomerWebServiceImpl extends ExtendedTestClass implements CustomerRESTService, CustomerSOAPService {
 	private static final Logger logger = LogManager.getLogger(CustomerWebServiceImpl.class);
 
 	private CustomerController customerController;

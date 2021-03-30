@@ -51,7 +51,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.collateral.CollateralDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class CollateralController {
+public class CollateralController extends ExtendedTestClass {
 	Logger logger = LogManager.getLogger(CollateralController.class);
 
 	private CollateralStructureService collateralStructureService;

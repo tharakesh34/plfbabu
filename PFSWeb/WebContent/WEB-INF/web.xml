@@ -35,7 +35,11 @@
 		<param-name>isLog4jAutoInitializationDisabled</param-name>
 		<param-value>true</param-value>
 	</context-param>
-
+	
+	<!-- Listener to get application session details -->
+	<listener>
+		<listener-class>com.pennapps.web.observability.listener.MetricesListener</listener-class>
+	</listener>
 	<listener>
 		<listener-class>com.pennant.core.EventManager</listener-class>
 	</listener>

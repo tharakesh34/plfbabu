@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.SecRolesController;
 import com.pennanttech.pffws.SecRolesRestService;
 import com.pennanttech.pffws.SecRolesSoapService;
@@ -12,7 +13,7 @@ import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class SecRolesWebServiceImpl implements SecRolesSoapService, SecRolesRestService {
+public class SecRolesWebServiceImpl extends ExtendedTestClass implements SecRolesSoapService, SecRolesRestService {
 	private final Logger logger = LogManager.getLogger(SecRolesWebServiceImpl.class);
 
 	private SecRolesController secRolesController;

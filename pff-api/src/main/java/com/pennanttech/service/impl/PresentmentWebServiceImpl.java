@@ -22,6 +22,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.PresentmentServiceController;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -32,7 +33,8 @@ import com.pennanttech.ws.model.presentment.PresentmentResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class PresentmentWebServiceImpl implements PresentmentRestService, PresentmentSoapService {
+public class PresentmentWebServiceImpl extends ExtendedTestClass
+		implements PresentmentRestService, PresentmentSoapService {
 	private static final Logger logger = LogManager.getLogger(PresentmentWebServiceImpl.class);
 
 	private PresentmentDetailService presentmentDetailService;
@@ -173,7 +175,7 @@ public class PresentmentWebServiceImpl implements PresentmentRestService, Presen
 		logger.info("Presentment Batch Reference >>{}", reference);
 		logger.info("PartnerBankId>>{}", partnerBankId);
 
-		//fetching presentment Header by presentment Header Id
+		// fetching presentment Header by presentment Header Id
 		if (headerId <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Presentment Header Id";
@@ -231,7 +233,7 @@ public class PresentmentWebServiceImpl implements PresentmentRestService, Presen
 			return response;
 		}
 
-		//calling controller to approve Presentment Details
+		// calling controller to approve Presentment Details
 		presentHeader.setPartnerBankId(presentmentHeader.getPartnerBankId());
 		response = presentmentServiceController.approvePresentments(presentHeader);
 
@@ -271,7 +273,7 @@ public class PresentmentWebServiceImpl implements PresentmentRestService, Presen
 	public WSReturnStatus uploadPresentment(Presentment presentment) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		//validating presentments	
+		// validating presentments
 		String batchId = presentment.getBatchId();
 		String status = presentment.getStatus();
 		String returnReason = presentment.getReturnReason();

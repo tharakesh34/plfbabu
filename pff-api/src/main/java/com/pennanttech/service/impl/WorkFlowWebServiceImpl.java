@@ -23,6 +23,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -33,7 +34,7 @@ import com.pennanttech.pffws.WorkFlowSOAPService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAPService {
+public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlowRESTService, WorkFlowSOAPService {
 	private static final Logger logger = LogManager.getLogger(WorkFlowWebServiceImpl.class);
 	@Autowired
 	WorkFlowDetailsService workFlowDetailsService;
@@ -54,7 +55,8 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAP
 		workFlowDetails.setWorkflowId(0);
 		workFlowDetails.setLastMntBy(userDetails.getUserId());
 		workFlowDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Create, true); // validating object
+		List<ErrorDetail> errorDetails = workFlowDetailsService.doValidations(workFlowDetails, Create, true); // validating
+																												// object
 		for (ErrorDetail errDetail : errorDetails) {// returning in case of exception
 			WSReturnStatus status = new WSReturnStatus();
 			status.setReturnCode(errDetail.getCode());
@@ -65,7 +67,10 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAP
 		// proceeding for insertion
 		workFlowDetails.setNewRecord(true);
 		workFlowDetails.setWorkFlowActive(true);
-		List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting FirstTaskOwners and Actors.
+		List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting
+																											// FirstTaskOwners
+																											// and
+																											// Actors.
 		workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
 		workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
 		AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
@@ -107,7 +112,10 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAP
 			// proceeding for updation
 			workFlowDetails.setNewRecord(false);
 			workFlowDetails.setBefImage(workFlowDetails);
-			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting FirstTaskOwners and Actors.
+			List<String> firstTaskOwnersAndActors = getFirstTaskOwnersNActors(workFlowDetails.getWorkFlowXml());// getting
+																												// FirstTaskOwners
+																												// and
+																												// Actors.
 			workFlowDetails.setFirstTaskOwner(firstTaskOwnersAndActors.get(0));
 			workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
 			workFlowDetails
@@ -251,8 +259,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAP
 	 * getRoleCodes method gives the ordered RoleCodes through activities and do the commenting steps in the
 	 * getRoleCodes method<br>
 	 * 
-	 * @param activities
-	 *            (List<Activity>)
+	 * @param activities (List<Activity>)
 	 * 
 	 * @return roles
 	 */
@@ -317,8 +324,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAP
 	/**
 	 * To get the Roles with count i.e the number of times the Respective Record has met the same Role.
 	 * 
-	 * @param activities
-	 *            (List<Activity>)
+	 * @param activities (List<Activity>)
 	 * 
 	 * @return rolesWithCount.
 	 */
@@ -392,8 +398,7 @@ public class WorkFlowWebServiceImpl implements WorkFlowRESTService, WorkFlowSOAP
 	/**
 	 * getUniqueNextRoleCodes method is to filter the unique nextRoleCodes from the activities
 	 * 
-	 * @param activities
-	 *            (List<Activity>)
+	 * @param activities (List<Activity>)
 	 * 
 	 * @return uniqueRoles.
 	 */

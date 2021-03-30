@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.pennant.backend.dao.transactionmapping.TransactionMappingDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.TransactionMappingRestService;
 import com.pennanttech.pffws.TransactionMappingSoapervice;
@@ -16,7 +17,8 @@ import com.pennanttech.ws.model.transactionMapping.TransactionMappingRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class TransactionMappingWebServiceImpl implements TransactionMappingRestService, TransactionMappingSoapervice {
+public class TransactionMappingWebServiceImpl extends ExtendedTestClass
+		implements TransactionMappingRestService, TransactionMappingSoapervice {
 
 	private static final Logger logger = LogManager.getLogger(TransactionMappingWebServiceImpl.class);
 

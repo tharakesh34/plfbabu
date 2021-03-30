@@ -43,6 +43,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinStatementController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -54,7 +55,8 @@ import com.pennanttech.ws.model.statement.FinStatementResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FinStatementWebServiceImpl implements FinStatementRestService, FinStatementSoapService {
+public class FinStatementWebServiceImpl extends ExtendedTestClass
+		implements FinStatementRestService, FinStatementSoapService {
 	private static final Logger logger = LogManager.getLogger(FinStatementWebServiceImpl.class);
 
 	private FinStatementController finStatementController;
@@ -77,7 +79,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug(Literal.ENTERING);
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[1];
 		logFields[0] = statementRequest.getCif();
 
@@ -204,7 +206,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				}
 			}
 		}
-		// call controller to get NOC details 
+		// call controller to get NOC details
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_NOC);
 
 		logger.debug(Literal.LEAVING);
@@ -252,7 +254,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("65031", valueParm));
 			return finStatementResponse;
 		}
-		// call controller to get fore-closure letter 
+		// call controller to get fore-closure letter
 		FinStatementResponse response = finStatementController.getStatement(statementRequest,
 				APIConstants.STMT_FORECLOSURE);
 		logger.debug(Literal.LEAVING);
@@ -669,7 +671,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 
 		statementRequest.setDays(1);
 
-		// call controller to get fore-closure letter 
+		// call controller to get fore-closure letter
 		FinStatementResponse finStatement = null;
 		try {
 			finStatement = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);

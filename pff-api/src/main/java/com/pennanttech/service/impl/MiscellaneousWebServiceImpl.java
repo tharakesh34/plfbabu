@@ -35,6 +35,7 @@ import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.MiscellaneousServiceController;
 import com.pennanttech.model.dms.DMSLeadDetails;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -53,7 +54,8 @@ import com.pennanttech.ws.model.miscellaneous.CovenantResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, MiscellaneousSoapService {
+public class MiscellaneousWebServiceImpl extends ExtendedTestClass
+		implements MiscellaneousRestService, MiscellaneousSoapService {
 
 	private final Logger logger = LogManager.getLogger(getClass());
 	private MiscellaneousServiceController miscellaneousController;

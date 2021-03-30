@@ -18,6 +18,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.pff.core.process.DisbursementProcess;
@@ -27,7 +28,7 @@ import com.pennanttech.pff.external.disbursement.dao.DisbursementDAO;
 import com.pennanttech.ws.model.disbursement.DisbursementRequestDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class DisbursementController {
+public class DisbursementController extends ExtendedTestClass {
 	private static final Logger logger = LogManager.getLogger(DisbursementController.class);
 
 	private DisbursementDAO disbursementDAO;

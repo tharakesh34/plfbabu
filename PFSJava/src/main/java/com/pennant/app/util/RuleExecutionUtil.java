@@ -71,6 +71,21 @@ public class RuleExecutionUtil implements Serializable {
 		super();
 	}
 
+	public static Object executeRule(String rule, Map<String, Object> dataMap, String reference) {
+		Object result = null;
+		if (dataMap == null) {
+			dataMap = new HashMap<String, Object>();
+		}
+
+		try (ScriptEngine scriptEngine = getScriptEngine()) {
+			result = scriptEngine.getResultAsObject(rule, dataMap, reference);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		return result;
+	}
+
 	public static Object executeRule(String rule, Map<String, Object> dataMap, String finccy,
 			RuleReturnType returnType) {
 		if (dataMap == null) {

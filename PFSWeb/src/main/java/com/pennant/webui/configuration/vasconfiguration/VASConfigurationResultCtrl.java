@@ -2,9 +2,9 @@ package com.pennant.webui.configuration.vasconfiguration;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +21,8 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -101,27 +103,22 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
 
-		// create a script engine manager
-		ScriptEngineManager factory = new ScriptEngineManager();
-		// create a JavaScript engine
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
-		// evaluate JavaScript code from String
+		Map<String, Object> dataMap = new HashMap<>();
+
 		try {
 			for (int i = 0; i < variables.size(); i++) {
 				JSONObject variable = (JSONObject) variables.get(i);
 				if (!"Result".equals(variable.get("name"))) {
 					textbox = (Decimalbox) rows_Fields.getFellowIfAny(variable.get("name").toString().trim());
 					// bindings to the engine
-					engine.put(textbox.getId().trim(),
+					dataMap.put(textbox.getId().trim(),
 							textbox.getValue() == null ? BigDecimal.ZERO : textbox.getValue());
 				}
 			}
 			// Execute the engine
-			String rule = "function Eligibility(){" + vasConfigurationDialogCtrl.preValidation.getValue()
-					+ "}Eligibility();";
-			engine.eval(rule);
+			String rule = vasConfigurationDialogCtrl.preValidation.getValue();
 
-			Object result = engine.get("Result");
+			Object result = RuleExecutionUtil.executeRule(rule, dataMap, null, RuleReturnType.DECIMAL);
 
 			// make result row visible and set value
 			this.rowResult.setVisible(true);

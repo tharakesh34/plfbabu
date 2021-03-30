@@ -13,6 +13,7 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinanceTypeController;
 import com.pennanttech.pffws.FinanceTypeRestService;
 import com.pennanttech.pffws.FinanceTypeSoapService;
@@ -22,7 +23,8 @@ import com.pennanttech.ws.model.financetype.ProductType;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FinanceTypeWebServiceImpl implements FinanceTypeSoapService, FinanceTypeRestService {
+public class FinanceTypeWebServiceImpl extends ExtendedTestClass
+		implements FinanceTypeSoapService, FinanceTypeRestService {
 
 	private static final Logger logger = LogManager.getLogger(FinanceTypeWebServiceImpl.class);
 

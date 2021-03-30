@@ -44,7 +44,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class LimitServiceController {
+public class LimitServiceController extends ExtendedTestClass {
 	private static Logger logger = LogManager.getLogger(LimitServiceController.class);
 
 	private LimitStructureService limitStructureService;

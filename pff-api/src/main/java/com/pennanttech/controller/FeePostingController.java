@@ -54,7 +54,7 @@ import com.pennanttech.ws.model.finance.TaxDetail;
 import com.pennanttech.ws.model.manualAdvice.ManualAdviseResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class FeePostingController {
+public class FeePostingController extends ExtendedTestClass {
 	private final Logger logger = LogManager.getLogger(getClass());
 
 	private FeePostingService feePostingService;
@@ -116,13 +116,13 @@ public class FeePostingController {
 		String taxComp = feeType.getTaxComponent();
 		manualAdvise.setFeeTypeID(feeType.getFeeTypeID());
 
-		//set BalanceAmt only when advise type is Payable
+		// set BalanceAmt only when advise type is Payable
 		if (StringUtils.equals(String.valueOf(manualAdvise.getAdviseType()),
 				String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))) {
 			manualAdvise.setBalanceAmt(manualAdvise.getAdviseAmount());
 		}
 
-		//if tax applicable , calculate GST Details
+		// if tax applicable , calculate GST Details
 		if (taxApplicable) {
 			response = calculateGST(manualAdvise, taxApplicable, taxComp);
 		}
@@ -139,7 +139,7 @@ public class FeePostingController {
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
 
-		//set Workflow details
+		// set Workflow details
 		if (!manualAdvise.isStp()) {
 			String workflowType = ModuleUtil.getWorkflowType("ManualAdvise");
 			WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workflowType);
@@ -178,7 +178,7 @@ public class FeePostingController {
 			}
 		}
 
-		//set Advise ID and GST detail to response
+		// set Advise ID and GST detail to response
 		ManualAdvise advise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
 		response.setAdviseId(advise.getAdviseID());
 
@@ -195,7 +195,7 @@ public class FeePostingController {
 	public ManualAdviseResponse validateAdviseDetail(ManualAdvise manualAdvise) {
 		ManualAdviseResponse error = new ManualAdviseResponse();
 
-		//Validate Advise Type
+		// Validate Advise Type
 		if (manualAdvise.getAdviseType() <= 0) {
 			String[] errorParam = new String[1];
 			errorParam[0] = "AdviseType ";
@@ -219,14 +219,14 @@ public class FeePostingController {
 			}
 		}
 
-		//Mandatory validation for FeeTypeCode
+		// Mandatory validation for FeeTypeCode
 		if (StringUtils.isBlank(manualAdvise.getFeeTypeCode())) {
 			String[] errorParam = new String[1];
 			errorParam[0] = "FeeTypeCode ";
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));
 			return error;
 		} else {
-			//validate FeeTypeCode
+			// validate FeeTypeCode
 			long feeId = feeTypeDAO.getFinFeeTypeIdByFeeType(manualAdvise.getFeeTypeCode(), "_AView");
 			if (feeId == Long.MIN_VALUE) {
 				String[] param = new String[2];
@@ -236,7 +236,7 @@ public class FeePostingController {
 				return error;
 			}
 
-			//Validate FeeTypeCode is Applicable for AdviseType or not
+			// Validate FeeTypeCode is Applicable for AdviseType or not
 			boolean isFeeType = false;
 			List<FeeType> feeTypes = feeTypeDAO.getManualAdviseFeeType(manualAdvise.getAdviseType(), "_AView");
 			for (FeeType feeType : feeTypes) {
@@ -254,7 +254,7 @@ public class FeePostingController {
 			}
 		}
 
-		//validate Advise Amount
+		// validate Advise Amount
 		if (manualAdvise.getAdviseAmount() == null || manualAdvise.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			String[] errorParam = new String[1];
 			errorParam[0] = "AdviseAmount ";
@@ -262,7 +262,7 @@ public class FeePostingController {
 			return error;
 		}
 
-		//validate Value Date
+		// validate Value Date
 		if (manualAdvise.getValueDate() == null) {
 			String[] errorParam = new String[1];
 			errorParam[0] = "ValueDate ";
@@ -344,7 +344,7 @@ public class FeePostingController {
 					}
 				}
 
-				//Total GST Amount 
+				// Total GST Amount
 				totalGstAmount = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
 						.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
 
@@ -355,7 +355,7 @@ public class FeePostingController {
 				taxDetail.setNetCESS(cessTax.getNetTax());
 				taxDetail.setNetTGST(totalGstAmount);
 
-				//Total Amount include GST
+				// Total Amount include GST
 				totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
 				taxDetail.setTotal(totalAmount);
 

@@ -67,6 +67,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.controller.CreateFinanceController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CreateFinanceRestService;
@@ -87,7 +88,8 @@ import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, CreateFinanceRestService {
+public class CreateFinanceWebServiceImpl extends ExtendedTestClass
+		implements CreateFinanceSoapService, CreateFinanceRestService {
 
 	private static final Logger logger = LogManager.getLogger(CreateFinanceWebServiceImpl.class);
 
@@ -795,8 +797,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	/**
 	 * Method to reject loan based on data provided by customer
 	 * 
-	 * @param financeDetail
-	 *            {@link FinanceDetail}
+	 * @param financeDetail {@link FinanceDetail}
 	 * @return {@link WSReturnStatus}
 	 */
 	@Override
@@ -844,8 +845,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	/**
 	 * Method to cancel loan based on data provided by customer
 	 * 
-	 * @param financeDetail
-	 *            {@link FinanceDetail}
+	 * @param financeDetail {@link FinanceDetail}
 	 * @return {@link WSReturnStatus}
 	 */
 	@Override

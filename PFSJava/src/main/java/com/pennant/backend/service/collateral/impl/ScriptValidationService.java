@@ -1,42 +1,32 @@
 package com.pennant.backend.service.collateral.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import javax.script.SimpleBindings;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.rits.cloning.Cloner;
 
 public class ScriptValidationService {
-
 	private static final Logger logger = LogManager.getLogger(ScriptValidationService.class);
 
-	private ScriptEngine scriptEngine;
 	private List<Object> objectList = null;
 
-	/**
-	 * Method for setting Pre Validation Script default Values to Extended field Details
-	 * 
-	 * @param script
-	 * @param paramMap
-	 * @return
-	 * @throws ScriptException
-	 */
 	public ScriptErrors setPreValidationDefaults(String script, Map<String, Object> paramMap) throws ScriptException {
 		logger.debug(Literal.ENTERING);
 
-		Bindings bindings = new SimpleBindings();
+		Map<String, Object> bindings = new HashMap<>();
 		ScriptErrors defaults = new ScriptErrors();
 
 		setObjectsTobindings(bindings);
@@ -45,18 +35,32 @@ public class ScriptValidationService {
 		if (paramMap != null) {
 			bindings.putAll(paramMap);
 		}
-		getScriptEngine().eval(script, bindings);
+
+		RuleExecutionUtil.executeRule(script, bindings, null, RuleReturnType.OBJECT);
+		RuleExecutionUtil.executeRule(script, bindings, "defaults");
 
 		logger.debug(Literal.LEAVING);
 		return defaults;
 	}
 
-	/**
-	 * Setting the multiple objects into bindings for setting the default values to components from prescript
-	 * 
-	 * @param bindings
-	 */
-	private void setObjectsTobindings(Bindings bindings) {
+	public ScriptErrors getPostValidationErrors(String script, Map<String, Object> fieldValueMap) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, Object> bindings = new HashMap<>();
+		ScriptErrors errors = new ScriptErrors();
+		bindings.put("errors", errors);
+
+		if (fieldValueMap != null) {
+			bindings.putAll(fieldValueMap);
+		}
+
+		RuleExecutionUtil.executeRule(script, bindings, "errors");
+
+		logger.debug(Literal.LEAVING);
+		return errors;
+	}
+
+	private void setObjectsTobindings(Map<String, Object> bindings) {
 		logger.debug(Literal.ENTERING);
 
 		List<Object> objectList = getObjectList();
@@ -79,40 +83,6 @@ public class ScriptValidationService {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Method for Validating user Entered Field values using Post Script Details
-	 * 
-	 * @param script
-	 * @param fieldValueMap
-	 * @return
-	 */
-	public ScriptErrors getPostValidationErrors(String script, Map<String, Object> fieldValueMap) {
-		logger.debug(Literal.ENTERING);
-
-		Bindings bindings = new SimpleBindings();
-		ScriptErrors errors = new ScriptErrors();
-		bindings.put("errors", errors);
-		if (fieldValueMap != null) {
-			bindings.putAll(fieldValueMap);
-		}
-		try {
-			getScriptEngine().eval(script, bindings);
-		} catch (ScriptException e) {
-			logger.error(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return errors;
-	}
-
-	public ScriptEngine getScriptEngine() {
-		return scriptEngine;
-	}
-
-	public void setScriptEngine(ScriptEngine scriptEngine) {
-		this.scriptEngine = scriptEngine;
 	}
 
 	public List<Object> getObjectList() {

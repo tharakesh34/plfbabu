@@ -163,6 +163,9 @@
 				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_odPri';
 				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_odPft';
 				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_prvMntAmz';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY'    and AMOUNTCODE = 'ae_isWriteOff';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' and AMOUNTCODE = 'ae_isWriteOff';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARSTMNT' and AMOUNTCODE = 'ae_isWriteOff';
 				
 				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_pftS','Total Interest as per schedule till today','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
 				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_pftSB','Total Interest due as per schedule till today','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
@@ -170,6 +173,9 @@
 				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_odPri','OverDue Principal','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
 				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_odPft','OverDue Profit','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
 				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_prvMntAmz','Previous Month Amortized interest','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_isWriteOff','Write Off',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EARLYPAY',0,'ae_isWriteOff','Write Off',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EARSTMNT',0,'ae_isWriteOff','Write Off',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
 	</changeSet>
@@ -523,7 +529,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1922.4" author="sivasai.p">
+	<changeSet id="ST#1922.4" author="sivasai.p" dbms="postgresql,mssql">
 		<createView viewName="Restructure_Details_View" replaceIfExists="true"> 
 			<![CDATA[
 				SELECT T1.ID,
@@ -675,6 +681,160 @@
 			]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="ST#1922.4" author="sivasai.p" dbms="oracle">
+		<createView viewName="Restructure_Details_View" replaceIfExists="true"> 
+			<![CDATA[
+				SELECT T1.ID,
+					FINREFERENCE,
+				    RESTRUCTURETYPE,
+				    EMIHLDPERIOD,
+				    PRIHLDPERIOD,
+				    EMIPERIODS,
+				    TOTNOOFRESTRUCTURE,
+				    RECALCULATIONTYPE,
+				    SERVICEREQUESTNO,
+				    REMARK,
+				    VERSION,
+				    LASTMNTBY,
+				    LASTMNTON,
+				    RECORDSTATUS,
+				    ROLECODE,
+				    NEXTROLECODE,
+				    TASKID,
+				    NEXTTASKID,
+				    RECORDTYPE,
+				    WORKFLOWID,
+				    OLDBUCKET,
+				    NEWBUCKET,
+				    OLDEMIOS,
+				    NEWEMIOS,
+				    OLDBALTENURE,
+				    NEWBALTENURE,
+				    OLDMATURITY,
+				    NEWMATURITY,
+				    LASTBILLEDDATE,
+				    LASTBILLEDINSTNO,
+				    ACTLOANAMOUNT,
+				    OLDTENURE,
+				    NEWTENURE,
+				    OLDINTEREST,
+				    NEWINTEREST,
+				    OLDMAXUNPLANNEDEMI,
+				    NEWMAXUNPLANNEDEMI,
+				    OLDAVAILEDUNPLANEMI,
+				    NEWAVAILEDUNPLANEMI,
+				    OLDFINALEMI,
+				    NEWFINALEMI,
+				    TENORCHANGE,
+				    EMIRECAL,
+				    RESTRUCTUREDATE,
+				    RESTRUCTUREREASON,
+				    OLDDPD,
+				    NEWDPD,
+				    OLDCPZINTEREST,
+				    NEWCPZINTEREST,
+				    EMIHLDSTARTDATE,
+				    EMIHLDENDDATE,
+				    PRIHLDSTARTDATE,
+				    PRIHLDENDDATE,
+				    OLDPOSAMOUNT, 
+				    NEWPOSAMOUNT, 
+				    OLDEMIOVERDUE, 
+				    NEWEMIOVERDUE, 
+				    BOUNCECHARGE, 
+				    OLDPENALTYAMOUNT,
+				    NEWPENALTYAMOUNT, 
+				    OTHERCHARGE, 
+				    RESTRUCTURECHARGE,
+				    APPDATE,
+					T2.RSTTYPECODE, 
+					T2.RSTTYPEDESC, 
+				    FINCURRASSETVALUE,
+				    OLDEXTODDAYS, 
+				    NEWEXTODDAYS,
+				    REPAYPROFITRATE,
+					T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS_TEMP T1 
+			  	INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS number) = T2.ID
+				UNION ALL	 
+		 		SELECT T1.ID, 
+				    FINREFERENCE,
+				    RESTRUCTURETYPE,
+				    EMIHLDPERIOD,
+				    PRIHLDPERIOD,
+				    EMIPERIODS,
+				    TOTNOOFRESTRUCTURE,
+				    RECALCULATIONTYPE,
+				    SERVICEREQUESTNO,
+				    REMARK,
+				    VERSION,
+				    LASTMNTBY,
+				    LASTMNTON,
+				    RECORDSTATUS,
+				    ROLECODE,
+				    NEXTROLECODE,
+				    TASKID,
+				    NEXTTASKID,
+				    RECORDTYPE,
+				    WORKFLOWID,
+				    OLDBUCKET,
+				    NEWBUCKET,
+				    OLDEMIOS,
+				    NEWEMIOS,
+				    OLDBALTENURE,
+				    NEWBALTENURE,
+				    OLDMATURITY,
+				    NEWMATURITY,
+				    LASTBILLEDDATE,
+				    LASTBILLEDINSTNO,
+				    ACTLOANAMOUNT,
+				    OLDTENURE,
+				    NEWTENURE,
+				    OLDINTEREST,
+				    NEWINTEREST,
+				    OLDMAXUNPLANNEDEMI,
+				    NEWMAXUNPLANNEDEMI,
+				    OLDAVAILEDUNPLANEMI,
+				    NEWAVAILEDUNPLANEMI,
+				    OLDFINALEMI,
+				    NEWFINALEMI,
+				    TENORCHANGE,
+				    EMIRECAL,
+				    RESTRUCTUREDATE,
+				    RESTRUCTUREREASON,
+				    OLDDPD,
+				    NEWDPD,
+				    OLDCPZINTEREST,
+				    NEWCPZINTEREST,
+				    EMIHLDSTARTDATE,
+				    EMIHLDENDDATE,
+				    PRIHLDSTARTDATE,
+				    PRIHLDENDDATE,
+				    OLDPOSAMOUNT, 
+				    NEWPOSAMOUNT, 
+				    OLDEMIOVERDUE, 
+				    NEWEMIOVERDUE, 
+				    BOUNCECHARGE, 
+				    OLDPENALTYAMOUNT,
+				    NEWPENALTYAMOUNT, 
+				    OTHERCHARGE, 
+				    RESTRUCTURECHARGE,
+				    APPDATE,
+					T2.RSTTYPECODE, 
+					T2.RSTTYPEDESC, 
+				    FINCURRASSETVALUE,
+				    OLDEXTODDAYS, 
+				    NEWEXTODDAYS,
+				    REPAYPROFITRATE,
+					T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS T1 
+				INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS number) = T2.ID
+				WHERE NOT EXISTS (SELECT 1 FROM RESTRUCTURE_DETAILS_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
 
 	<changeSet id="ST#1922.4_post" author="sivasai.p" dbms="postgresql">
 		<sql>
@@ -692,7 +852,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1922.5" author="sivasai.p">
+	<changeSet id="ST#1922.5" author="sivasai.p" dbms="postgresql,mssql">
 		<createView viewName="Restructure_Details_AView" replaceIfExists="true"> 
 			<![CDATA[
 		 		 SELECT T1.ID,
@@ -770,6 +930,86 @@
 			]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="ST#1922.5" author="sivasai.p" dbms="oracle">
+		<createView viewName="Restructure_Details_AView" replaceIfExists="true"> 
+			<![CDATA[
+		 		 SELECT T1.ID,
+					FINREFERENCE,
+					RESTRUCTURETYPE,
+					EMIHLDPERIOD,
+					PRIHLDPERIOD,
+					EMIPERIODS,
+					TOTNOOFRESTRUCTURE,
+					RECALCULATIONTYPE,
+					SERVICEREQUESTNO,
+					REMARK,
+					VERSION, 
+					LASTMNTBY,
+					LASTMNTON,
+					RECORDSTATUS,
+					ROLECODE,
+					NEXTROLECODE,
+					TASKID,
+					NEXTTASKID,
+					RECORDTYPE,
+					WORKFLOWID,
+					OLDBUCKET,
+					NEWBUCKET,
+					OLDEMIOS,
+					NEWEMIOS,
+					OLDBALTENURE,
+					NEWBALTENURE,
+					OLDMATURITY,
+					NEWMATURITY,
+					LASTBILLEDDATE,
+					LASTBILLEDINSTNO,
+					ACTLOANAMOUNT,
+					OLDTENURE,
+					NEWTENURE,
+					OLDINTEREST,
+					NEWINTEREST,
+					OLDMAXUNPLANNEDEMI,
+					NEWMAXUNPLANNEDEMI,
+					OLDAVAILEDUNPLANEMI,
+					NEWAVAILEDUNPLANEMI,
+					OLDFINALEMI,
+					NEWFINALEMI,
+					TENORCHANGE,
+					EMIRECAL, 
+					RESTRUCTUREDATE,
+					RESTRUCTUREREASON,
+					OLDDPD,
+					NEWDPD,
+					OLDCPZINTEREST,
+					NEWCPZINTEREST,
+					EMIHLDSTARTDATE,
+					EMIHLDENDDATE,
+					PRIHLDSTARTDATE,
+					PRIHLDENDDATE,
+					OLDPOSAMOUNT, 
+					NEWPOSAMOUNT, 
+					OLDEMIOVERDUE,
+					NEWEMIOVERDUE, 
+					BOUNCECHARGE,
+					OLDPENALTYAMOUNT, 
+					NEWPENALTYAMOUNT, 
+					OTHERCHARGE,
+					RESTRUCTURECHARGE,
+					APPDATE,
+				 	T2.RSTTYPECODE,
+				 	T2.RSTTYPEDESC,
+		    		FINCURRASSETVALUE, 
+					OLDEXTODDAYS,
+					NEWEXTODDAYS,
+					REPAYPROFITRATE,
+				 	T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS T1 
+				INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS number) = T2.ID 
+			]]>
+		</createView>
+	</changeSet>
+
 
 	<changeSet id="ST#1922.5_post" author="sivasai.p" dbms="postgresql">
 		<sql>
@@ -780,7 +1020,7 @@
 	</changeSet>
 
 	<!-- Seq_Restructure_Details -->
-	<changeSet id="ST#1922.6" author="sivasai.p" dbms="oracle,postgresql">
+	<changeSet id="ST#1922.6" author="sivasai.p" >
 		<createSequence sequenceName="Seq_Restructure_Details" startValue="1" maxValue="9223372036854775807"
 			incrementBy="1" />
 	</changeSet>
@@ -3206,12 +3446,9 @@
 	<changeSet id="ST#1952.8" author="gopalaswamy.M" dbms="oracle">
 		<sql>
 			<![CDATA[
-				MERGE INTO RECEIPTUPLOADDETAILS RUD
-	            USING(SELECT (CASE WHEN UploadStatus = 'SUCCESS' THEN 2
-						WHEN UploadStatus = 'FAILURE' THEN 3 ELSE 0
-						END) UploadStatus FROM RECEIPTUPLOADDETAILS ) RD
-	            WHEN MATCHED THEN UPDATE SET 
-	            ProcessingStatus = RD.UploadStatus;
+				UPDATE RECEIPTUPLOADDETAILS tt SET    tt.ProcessingStatus = (SELECT (CASE WHEN UploadStatus = 'SUCCESS' THEN 2
+																						  WHEN UploadStatus = 'FAILURE' THEN 3 
+                                                                                          ELSE 0 END) UploadStatus FROM RECEIPTUPLOADDETAILS);
 			]]>
 		</sql>
 	</changeSet>
@@ -3219,11 +3456,11 @@
 	<changeSet id="ST#1952.8" author="gopalaswamy.M" dbms="mssql">
 		<sql>
 			<![CDATA[
-				UPDATE RUD set RUD.ProcessingStatus = (CASE
+				UPDATE RECEIPTUPLOADDETAILS  set ProcessingStatus = (CASE
 	               				 WHEN UploadStatus = 'SUCCESS' THEN 2
 								WHEN UploadStatus = 'FAILURE' THEN 3 ELSE 0
 								END)
-					From RECEIPTUPLOADDETAILS RD
+					From RECEIPTUPLOADDETAILS RD;
 			]]>
 		</sql>
 	</changeSet>
@@ -3239,7 +3476,9 @@
 
 	<changeSet id="ST#1952.11" author="gopalaswamy.m">
 		<createTable tableName="RECEIPT_UPLOAD_LOG">
-			<column name="Id" type="bigint" />
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
 			<column name="HeaderId" type="bigint" />
 			<column name="AttemptNo" type="int" />
 			<column name="ProcessedRecords" type="int" />
@@ -3298,7 +3537,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1952.16" author="gopalaswamy.m">
+	<changeSet id="ST#1952.16" author="gopalaswamy.m" dbms="postgresql,mssql">
 		<createView viewName="RECEIPTUPLOADHEADER_TVIEW" replaceIfExists="true">
 		  <![CDATA[
 				SELECT T1.UPLOADHEADERID,
@@ -3361,4 +3600,183 @@
 
 	<!-- ST#1952 receipt upload performance improvement changes end -->
 	
+	<!-- ST#1924 Difference in Special Rate Upload functionality changes start -->
+	
+	<changeSet id="ST#1924.1" author="Gireesh.G">
+		<createTable tableName="RATECHANGE_UPLOAD_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FileName" type="varchar(100)"/>
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="TotalRecords" type="int" />
+			<column name="SucessRecords" type="int" />
+			<column name="FailureRecords" type="int" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1924.1.1" author="Gireesh.G">
+		<addPrimaryKey tableName="RATECHANGE_UPLOAD_HEADER" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.1.2" author="Gireesh.G">
+		<addUniqueConstraint tableName="RATECHANGE_UPLOAD_HEADER" columnNames="FileName"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.2" author="Gireesh.G">
+		<createTable tableName="RATECHANGE_UPLOAD_DETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="FromDate" type="datetime" />
+			<column name="ToDate" type="datetime" />
+			<column name="BaseRateCode" type="varchar(8)" />
+			<column name="Margin" type="decimal(18,2)" />
+			<column name="ActualRate" type="decimal(18,2)" />
+			<column name="ReCalType" type="varchar(8)" />
+			<column name="RecalFromDate" type="datetime" />
+			<column name="ReCalToDate" type="datetime" />
+			<column name="ServiceReqNo" type="Varchar(50)" />
+			<column name="Remarks" type="varchar(1000)" />
+			<column name="SpecialRate" type="varchar(8)" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1924.2.1" author="Gireesh.G">
+		<addPrimaryKey tableName="RATECHANGE_UPLOAD_DETAILS" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.2.2" author="Gireesh.G">
+		<addForeignKeyConstraint constraintName="FK_RATECHANGE_UPLOAD_BatchId"
+			baseTableName="RATECHANGE_UPLOAD_DETAILS" baseColumnNames="BatchId" referencedColumnNames="Id"
+			referencedTableName="RATECHANGE_UPLOAD_HEADER" />
+	</changeSet>
+	
+	<changeSet id="ST#1924.2.3" author="Gireesh.G">
+		<createIndex indexName="IDX_SR_FinRef" tableName="RATECHANGE_UPLOAD_DETAILS">
+			<column name="FinReference" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1924.2.4" author="Gireesh.G">
+		<createIndex indexName="IDX_SR_BatchId" tableName="RATECHANGE_UPLOAD_DETAILS">
+			<column name="BatchId" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#1924.3" author="Gireesh.G">
+		<createTable tableName="RATECHANGE_UPLOAD_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="DetailId" type="bigint" />
+			<column name="ErrorCode" type="varchar(10)" />
+			<column name="ErrorDescription" type="varchar(200)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1924.3.1" author="Gireesh.G">
+		<addPrimaryKey tableName="RATECHANGE_UPLOAD_LOG" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.4" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+                DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME = 'RATE_CHANGE_UPLOAD');
+				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME = 'RATE_CHANGE_UPLOAD');
+				DELETE FROM DATA_ENGINE_STATUS WHERE NAME = 'RATE_CHANGE_UPLOAD';
+             
+				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'RATE_CHANGE_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'RATE_CHANGE_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG where Name = 'RATE_CHANGE_UPLOAD';
+    
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'RATE_CHANGE_UPLOAD', 'RATE_CHANGE_UPLOAD', 12, 'RateChangeUpload', '', '', '', 0, 1, '', 'FINREFERENCE,FROMDATE,TODATE,BASERATECODE,MARGIN,ACTUALRATE,RECALTYPE,RECALFROMDATE,RECALTODATE', '', 'C', '/opt/Clix/PFF/RateChangeUpload', 'RateChangeUplaodReq', '.xlsx', 0,current_timestamp, '${SEQ_FILE},_${yyyyMMddHHmmss}', '', 0, '', 1, 1); 
+
+				INSERT INTO DATA_ENGINE_TABLE  (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select ID FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD'), 'RATECHANGE_UPLOAD_DETAILS', 1, '', null, null, null, null, null, null, null, 3, 0, 0);
+	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'BATCHID',           0, 'N', null, null, '${BATCHID}', null, 0, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'FINREFERENCE',      0, 'N', null, null, null,         null, 0, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'FROMDATE',          0, 'N', null, null, null,         null, 1, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'TODATE',     	     0, 'N', null, null, null,         null, 2, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'BASERATECODE',      0, 'N', null, null, null,         null, 3, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'MARGIN',            0, 'N', null, null, null,         null, 4, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'ACTUALRATE',        0, 'N', null, null, null,         null, 5, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'RECALTYPE',         0, 'N', null, null, null,         null, 6, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'RECALFROMDATE',     0, 'N', null, null, null,         null, 7, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'RECALTODATE',     	 0, 'N', null, null, null,         null, 8, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'SERVICEREQNO',      0, 'N', null, null, null,         null, 9, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'REMARKS',           0, 'N', null, null, null,         null, 10, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'SPECIALRATE',       0, 'N', null, null, null,         null, 11, null,null, null, null, 'O');
+ 			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1924.5" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeUpload') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeUpload';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD';
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((Select MAX(GrpID)+1 From SecGroups), 'RATECHANGE_UPLOAD', 'Group for Rate Change upload', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_RateChangeUpload', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RATECHANGE_UPLOAD'), (Select RightID from SecRights where RightName = 'menu_Item_RateChangeUpload'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- ST#1924 Difference in Special Rate Upload functionality changes end -->
+	
+	<changeSet id="1" author="Gopal.p" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+				CREATE TABLE BATCH_STEP_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_STEP_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_JOB_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_STEP_EXECUTION_SU AS SELECT * FROM BATCH_STEP_EXECUTION;
+				CREATE TABLE BATCH_JOB_EXECUTION_PARAMS_SU AS SELECT * FROM BATCH_JOB_EXECUTION_PARAMS;
+				CREATE TABLE BATCH_JOB_EXECUTION_SU AS SELECT * FROM BATCH_JOB_EXECUTION;
+				CREATE TABLE BATCH_JOB_INSTANCE_SU AS SELECT * FROM BATCH_JOB_INSTANCE;
+				
+				CREATE TABLE BATCH_JOB_EXECUTION_SEQ_SU AS SELECT * FROM BATCH_JOB_EXECUTION_SEQ;
+				CREATE TABLE BATCH_JOB_SEQ_SU AS SELECT * FROM BATCH_JOB_SEQ;
+				CREATE TABLE BATCH_STEP_EXECUTION_SEQ_SU AS SELECT * FROM BATCH_STEP_EXECUTION_SEQ;
+				
+				DELETE FROM BATCH_STEP_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_JOB_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_STEP_EXECUTION;
+				DELETE FROM BATCH_JOB_EXECUTION_PARAMS;
+				DELETE FROM BATCH_JOB_EXECUTION;
+				DELETE FROM BATCH_JOB_INSTANCE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				SELECT * INTO BATCH_STEP_EXECUTION_CONTEXT_SU FROM BATCH_STEP_EXECUTION_CONTEXT;
+				SELECT * INTO BATCH_JOB_EXECUTION_CONTEXT_SU FROM BATCH_JOB_EXECUTION_CONTEXT;
+				SELECT * INTO BATCH_STEP_EXECUTION_SU FROM BATCH_STEP_EXECUTION;
+				SELECT * INTO BATCH_JOB_EXECUTION_PARAMS_SU FROM BATCH_JOB_EXECUTION_PARAMS;
+				SELECT * INTO BATCH_JOB_EXECUTION_SU FROM BATCH_JOB_EXECUTION;
+				SELECT * INTO BATCH_JOB_INSTANCE_SU FROM BATCH_JOB_INSTANCE;
+	
+				SELECT * INTO BATCH_JOB_EXECUTION_SEQ_SU FROM BATCH_JOB_EXECUTION_SEQ;
+				SELECT * INTO BATCH_JOB_SEQ_SU FROM BATCH_JOB_SEQ;
+				SELECT * INTO BATCH_STEP_EXECUTION_SEQ_SU FROM BATCH_STEP_EXECUTION_SEQ;
+				
+				DELETE FROM BATCH_STEP_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_JOB_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_STEP_EXECUTION;
+				DELETE FROM BATCH_JOB_EXECUTION_PARAMS;
+				DELETE FROM BATCH_JOB_EXECUTION;
+				DELETE FROM BATCH_JOB_INSTANCE;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

@@ -27,7 +27,7 @@ import com.pennanttech.ws.model.login.LoginResponse;
 import com.pennanttech.ws.model.login.UserRolesResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class LoginController {
+public class LoginController extends ExtendedTestClass {
 
 	private final static Logger logger = LogManager.getLogger(LoginController.class);
 

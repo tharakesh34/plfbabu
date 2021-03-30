@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.LoginController;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.LoginRestService;
@@ -17,7 +18,7 @@ import com.pennanttech.ws.model.login.UserRolesResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class LoginWebServiceImpl implements LoginRestService, LoginSoapService {
+public class LoginWebServiceImpl extends ExtendedTestClass implements LoginRestService, LoginSoapService {
 
 	private final static Logger logger = LogManager.getLogger(LoginWebServiceImpl.class);
 

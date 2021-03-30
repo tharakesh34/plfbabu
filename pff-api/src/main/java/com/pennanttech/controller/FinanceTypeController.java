@@ -30,7 +30,7 @@ import com.pennanttech.ws.model.financetype.RepayDetail;
 import com.pennanttech.ws.model.financetype.StepDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class FinanceTypeController {
+public class FinanceTypeController extends ExtendedTestClass {
 
 	private static final Logger logger = LogManager.getLogger(FinanceTypeController.class);
 
@@ -126,7 +126,7 @@ public class FinanceTypeController {
 
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
-			//for logging purpose
+			// for logging purpose
 			APIErrorHandlerService.logReference(response.getFinType());
 		}
 

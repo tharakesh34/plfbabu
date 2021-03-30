@@ -20,6 +20,7 @@ import com.pennant.validation.DeleteValidationGroup;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinanceFlagsController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.FinanceFlagsRestService;
@@ -27,7 +28,8 @@ import com.pennanttech.pffws.FinanceFlagsSoapService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService, FinanceFlagsRestService {
+public class FinanceFlagsWebServiceImpl extends ExtendedTestClass
+		implements FinanceFlagsSoapService, FinanceFlagsRestService {
 
 	private static final Logger logger = LogManager.getLogger(FinanceFlagsWebServiceImpl.class);
 
@@ -52,7 +54,7 @@ public class FinanceFlagsWebServiceImpl implements FinanceFlagsSoapService, Fina
 			validationUtility.fieldLevelException();
 		}
 		FinanceFlag response = null;
-		// for  logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
 		// validate Reference with Origination
 		int count = financeMainDAO.getFinanceCountById(finReference, "", false);

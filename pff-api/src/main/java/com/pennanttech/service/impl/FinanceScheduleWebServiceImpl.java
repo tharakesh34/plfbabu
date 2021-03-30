@@ -22,7 +22,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
-import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinanceDetailController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -31,9 +31,11 @@ import com.pennanttech.pffws.FinanceScheduleSoapService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.EmiResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
+import com.pennant.ws.exception.ServiceException;
 
 @Service
-public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService, FinanceScheduleSoapService {
+public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
+		implements FinanceScheduleRestService, FinanceScheduleSoapService {
 	private static final Logger logger = LogManager.getLogger(FinanceScheduleWebServiceImpl.class);
 
 	private FinanceDetailController financeDetailController;
@@ -90,7 +92,7 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 				return getErrorMessage(finScheduleData);
 			}
 
-			//FIXME: PV 28AUG19 to be removed as already handled in financedatadefaulting.defaultFinance()
+			// FIXME: PV 28AUG19 to be removed as already handled in financedatadefaulting.defaultFinance()
 			// validate finance data
 			/*
 			 * FinanceDetail financeDetail = null; if
@@ -120,7 +122,7 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
-		// for  logging purpose
+		// for logging purpose
 		if (finScheduleDataNew != null) {
 			APIErrorHandlerService.logReference(finScheduleDataNew.getFinReference());
 		}

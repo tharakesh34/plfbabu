@@ -1,9 +1,9 @@
 package com.pennant.webui.rmtmasters.accountingset;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,8 +20,10 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -111,11 +113,8 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
 
-		// create a script engine manager
-		ScriptEngineManager factory = new ScriptEngineManager();
-		// create a JavaScript engine
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
-		// evaluate JavaScript code from String
+		Map<String, Object> dataMap = new HashMap<>();
+		
 		try {
 			for (int i = 0; i < variables.size(); i++) {
 				JSONObject variable = (JSONObject) variables.get(i);
@@ -130,17 +129,12 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 					compValue = PennantApplicationUtil.unFormateAmount(compValue, PennantConstants.defaultCCYDecPos);
 
 					// bindings to the engine
-					engine.put(amountValueBox.getId().trim(), compValue);
+					dataMap.put(amountValueBox.getId().trim(), compValue);
 				}
 			}
-
-			// Execute the engine
-			String rule = "function Eligibility(){" + transactionEntryDialogCtrl.amountRule.getValue()
-					+ "}Eligibility();";
-			engine.eval(rule);
-
-			// make result row visible and set value
-			Object result = engine.get("Result");
+			
+			Object result = RuleExecutionUtil.executeRule(transactionEntryDialogCtrl.amountRule.getValue(), dataMap, null, RuleReturnType.DECIMAL);
+			
 			this.rowResult.setVisible(true);
 			BigDecimal tempResult = new BigDecimal(result.toString());
 			tempResult = PennantApplicationUtil.formateAmount(tempResult, PennantConstants.defaultCCYDecPos);

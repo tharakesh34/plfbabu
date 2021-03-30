@@ -15,9 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -194,11 +191,6 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	BigDecimal totLibNetWorthValue1 = BigDecimal.ZERO;
 	BigDecimal totAsstValue2 = BigDecimal.ZERO;
 	BigDecimal totLibNetWorthValue2 = BigDecimal.ZERO;
-
-	// create a script engine manager
-	ScriptEngineManager factory = new ScriptEngineManager();
-	// create a JavaScript engine
-	ScriptEngine engine = factory.getEngineByName("JavaScript");
 
 	protected Div div_CmdBtntoolbar;
 	protected Div div_SearchBtntoolbar;
