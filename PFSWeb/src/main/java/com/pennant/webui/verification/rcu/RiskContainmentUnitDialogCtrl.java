@@ -831,6 +831,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	public void onChange$recommendations(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		this.reason.setErrorMessage("");
+		this.reason.setValue("");
 		String type = this.recommendations.getSelectedItem().getValue();
 		visibleComponent(Integer.parseInt(type));
 		logger.debug(Literal.LEAVING + event.toString());
@@ -847,6 +848,16 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		} else if (type == RCUStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
 			reasonType = StatuReasons.RCUPOSTVRTY.getKey();
+			//#PSD:168882:System displaying reason field as mandatory when select recommendation value as screened or sampled or hold
+		} else if (type == RCUStatus.HOLD.getKey()) {
+			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
+		} else if (type == RCUStatus.SAMPLED.getKey()) {
+			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
+		} else if (type == RCUStatus.SCREENED.getKey()) {
+			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
 		}
 
 		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {

@@ -67,6 +67,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -2554,5 +2555,20 @@ public class PennantAppUtil {
 			fieldCodeList.add(codeValue);
 		}
 		return fieldCodeList;
+	}
+
+	/**
+	 * This method will set the reason code filters for all verifications based on systemparam
+	 * 
+	 * @param ExtendedCombobox
+	 * @param filterCode
+	 * 
+	 */
+	public static void setReasonCodeFilters(ExtendedCombobox reason, String filterCode) {
+		Filter[] reasonFilter = new Filter[1];
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", filterCode, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
 	}
 }
