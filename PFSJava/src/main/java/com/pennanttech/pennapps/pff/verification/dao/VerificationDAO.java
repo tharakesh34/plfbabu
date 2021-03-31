@@ -98,9 +98,12 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 
 	List<Verification> getVerifications(String finReference, int verificationType, int requestType);
 
-	boolean isVerificationIdExists(String finReference, String referenceFor, String reference,
-			int verificationType, String referenceType);
+	boolean isVerificationIdExists(String finReference, String referenceFor, String reference, int verificationType,
+			String referenceType);
 
 	boolean isInitiatedVerfication(VerificationType verificationType, long verificationId, String type);
+
+	Long isVerificationExist(String finReference, String referenceFor, String reference, int verificationType,
+			String referenceType);
 
 }

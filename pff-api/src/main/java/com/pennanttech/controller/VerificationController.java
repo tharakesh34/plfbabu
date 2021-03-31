@@ -124,18 +124,18 @@ public class VerificationController {
 	 * @param financeDetail
 	 * @return {@link Verification}
 	 */
-	public Verification createFIInitaion(FinanceDetail financeDetail, VerificationType verificationType) {
+	public WSReturnStatus createFIInitaion(FinanceDetail financeDetail, VerificationType verificationType) {
 		logger.debug(Literal.ENTERING);
-		Verification verification = new Verification();
+		WSReturnStatus verification = new WSReturnStatus();
 		// prepare verificationd data
 		setVerificationData(financeDetail, verificationType);
 		// call service to save data
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.FI, "W", true);
 		} catch (Exception e) {
-			verification.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			verification = APIErrorHandlerService.getFailedStatus();
 		}
-		verification.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		verification = APIErrorHandlerService.getSuccessStatus();
 		logger.debug(Literal.LEAVING);
 		return verification;
 	}
@@ -162,6 +162,7 @@ public class VerificationController {
 		List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		verification.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		verification.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 		verification.setVersion(1);
 		verification.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		verification.setUserDetails(userDetails);
@@ -181,12 +182,16 @@ public class VerificationController {
 						vrf.setCustId(customerDetails.getCustID());
 					}
 				}
-				vrf.setNewRecord(true);
+				if (vrf.getId() == 0 || vrf.getId() == Long.MIN_VALUE) {
+					vrf.setNewRecord(true);
+				}
 			} else {
 				vrf.setReference(customerDetails.getCustomer().getCustCIF());
 				vrf.setCustomerName(customerDetails.getCustomer().getCustShrtName());
 				vrf.setCustId(customerDetails.getCustID());
-				vrf.setNewRecord(true);
+				if (vrf.getId() == 0 || vrf.getId() == Long.MIN_VALUE) {
+					vrf.setNewRecord(true);
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -268,19 +273,17 @@ public class VerificationController {
 	 * @param financeDetail
 	 * @return {@link Verification}
 	 */
-	public Verification createPDInitiation(FinanceDetail financeDetail, VerificationType verificationType) {
+	public WSReturnStatus createPDInitiation(FinanceDetail financeDetail, VerificationType verificationType) {
 		logger.debug(Literal.ENTERING);
-		Verification verification = financeDetail.getPdVerification();
-		setVerificationData(financeDetail, verificationType);
+
 		try {
+			setVerificationData(financeDetail, verificationType);
 			verificationService.saveOrUpdate(financeDetail, VerificationType.PD, "W", true);
 		} catch (Exception e) {
-			verification.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return verification;
+			return APIErrorHandlerService.getFailedStatus();
 		}
-		verification.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		logger.debug(Literal.LEAVING);
-		return verification;
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	public WSReturnStatus recordPDVerification(PersonalDiscussion personalDiscussion) {
@@ -641,9 +644,8 @@ public class VerificationController {
 	 * @param verificationType
 	 * @return
 	 */
-	public Verification createTVInitaion(FinanceDetail financeDetail, VerificationType verificationType) {
+	public WSReturnStatus createTVInitaion(FinanceDetail financeDetail, VerificationType verificationType) {
 		logger.debug(Literal.ENTERING);
-		Verification verification = new Verification();
 
 		try {
 			// set verification Data
@@ -652,12 +654,11 @@ public class VerificationController {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.TV, "W", true);
 		} catch (Exception e) {
 			APIErrorHandlerService.logUnhandledException(e);
-			verification.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return verification;
+			return APIErrorHandlerService.getFailedStatus();
 		}
-		verification.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
 		logger.debug(Literal.LEAVING);
-		return verification;
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	/**
@@ -688,7 +689,9 @@ public class VerificationController {
 				vrf.setCustId(customerDetails.getCustID());
 				vrf.setReferenceType(collateralSetup.getCollateralType());
 				vrf.setReferenceFor(collateralSetup.getCollateralRef());
-				vrf.setNewRecord(true);
+				if (vrf.getId() == 0 || vrf.getId() == Long.MIN_VALUE) {
+					vrf.setNewRecord(true);
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -698,7 +701,7 @@ public class VerificationController {
 	 * @param financeDetail
 	 * @return {@link Verification}
 	 */
-	public Verification initiateRCU(FinanceDetail financeDetail, VerificationType verificationType) {
+	public WSReturnStatus initiateRCU(FinanceDetail financeDetail, VerificationType verificationType) {
 		logger.debug(Literal.ENTERING);
 		Verification response = new Verification();
 		try {
@@ -715,12 +718,11 @@ public class VerificationController {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, "W", true);
 		} catch (Exception e) {
 			APIErrorHandlerService.logUnhandledException(e);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return response;
+			return APIErrorHandlerService.getFailedStatus();
 		}
-		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
 		logger.debug(Literal.LEAVING);
-		return response;
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	private void setRCUVerificationData(FinanceDetail financeDetail, VerificationType verificationType) {
@@ -747,7 +749,9 @@ public class VerificationController {
 			vrf.setUserDetails(userDetails);
 			vrf.setLastMntBy(userDetails.getUserId());
 			vrf.setCreatedBy(userDetails.getUserId());
-			vrf.setNewRecord(true);
+			if (vrf.getId() == 0 || vrf.getId() == Long.MIN_VALUE) {
+				vrf.setNewRecord(true);
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -1111,7 +1115,7 @@ public class VerificationController {
 	 * @param lv
 	 * @return
 	 */
-	public Verification initiateLV(FinanceDetail financeDetail, VerificationType lv) {
+	public WSReturnStatus initiateLV(FinanceDetail financeDetail, VerificationType lv) {
 		logger.debug(Literal.ENTERING);
 
 		Verification response = new Verification();
@@ -1135,13 +1139,10 @@ public class VerificationController {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.LV, "W", true);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return response;
+			return APIErrorHandlerService.getFailedStatus();
 		}
-		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-
 		logger.debug(Literal.LEAVING);
-		return response;
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	/**

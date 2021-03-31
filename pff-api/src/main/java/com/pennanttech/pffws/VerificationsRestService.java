@@ -50,6 +50,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
@@ -69,7 +70,7 @@ public interface VerificationsRestService {
 
 	@POST
 	@Path("/verificationsService/initiateFIVerification")
-	Verification initiateFIVerification(Verification verification);
+	WSReturnStatus initiateFIVerification(Verification verification);
 
 	//Common API for All the verification Types
 	@POST
@@ -78,38 +79,38 @@ public interface VerificationsRestService {
 
 	@POST
 	@Path("/verificationsService/recordFIVerification")
-	FieldInvestigation recordFiVerification(FieldInvestigation fieldInvestigation);
+	WSReturnStatus recordFiVerification(FieldInvestigation fieldInvestigation);
 
 	@POST
 	@Path("/verificationsService/initiatePDVerification")
-	Verification initiatePDVerification(Verification verification);
+	WSReturnStatus initiatePDVerification(Verification verification);
 
 	@POST
 	@Path("/verificationsService/recordPDVerification")
-	public PersonalDiscussion recordPDVerification(PersonalDiscussion personalDiscussion) throws ServiceException;
+	public WSReturnStatus recordPDVerification(PersonalDiscussion personalDiscussion) throws ServiceException;
 
 	@POST
 	@Path("/verificationsService/recordTVVerification")
-	public Verification recordTVVerification(TechnicalVerification technicalVerification) throws ServiceException;
+	public WSReturnStatus recordTVVerification(TechnicalVerification technicalVerification) throws ServiceException;
 
 	@POST
 	@Path("/verificationsService/initiateTVVerification")
-	Verification initiateTVVerification(Verification verification);
+	WSReturnStatus initiateTVVerification(Verification verification);
 
 	@POST
 	@Path("/verificationsService/initiateRCUVerification")
-	Verification initiateRCUVerification(Verification verification);
+	WSReturnStatus initiateRCUVerification(Verification verification);
 
 	@POST
 	@Path("/verificationsService/recordRCUVerification")
-	public Verification recordRCUVerification(RiskContainmentUnit riskContainmentUnit) throws ServiceException;
+	public WSReturnStatus recordRCUVerification(RiskContainmentUnit riskContainmentUnit) throws ServiceException;
 
 	@POST
 	@Path("/verificationsService/initiateLVVerification")
-	Verification initiateLVVerification(Verification verification);
-	
+	WSReturnStatus initiateLVVerification(Verification verification);
+
 	@POST
 	@Path("/verificationsService/recordLVVerification")
-	public Verification recordLVVerification(LegalVerification legalVerification) throws ServiceException;
+	public WSReturnStatus recordLVVerification(LegalVerification legalVerification) throws ServiceException;
 
 }

@@ -146,7 +146,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(entity.getId());
 	}
@@ -728,7 +728,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		logger.debug("Leaving");
 		return count > 0 ? true : false;
 	}
-	
+
 	@Override
 	public boolean isInitiatedVerfication(VerificationType verificationType, long verificationId, String type) {
 		//"verification_pd_temp"
@@ -755,4 +755,38 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		return count > 0 ? true : false;
 	}
 
+	@Override
+	public Long isVerificationExist(String finReference, String referenceFor, String reference, int verificationtype,
+			String referenceType) {
+
+		StringBuilder sql = new StringBuilder("SELECT ID FROM VERIFICATIONS");
+		sql.append(" WHERE REFERENCEFOR= :referenceFor AND verificationtype= :verificationtype");
+		sql.append(" AND KEYREFERENCE= :keyReference ");
+		if (verificationtype != 4) {
+			sql.append("and REFERENCE= :reference");
+		}
+		if (verificationtype == 4) {
+			if (referenceType.equals("CUSTOMER")) {
+				sql.append("and REFERENCE= :reference");
+			}
+			sql.append(" and ReferenceType=:referenceType");
+		}
+		logger.debug(Literal.SQL + sql);
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("referenceFor", referenceFor);
+		paramMap.addValue("verificationtype", verificationtype);
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("reference", reference);
+		if (verificationtype == 4) {
+			paramMap.addValue("referenceType", referenceType);
+		}
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+
+		return null;
+	}
 }
