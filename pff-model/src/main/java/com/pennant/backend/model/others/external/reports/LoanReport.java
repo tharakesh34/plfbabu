@@ -81,6 +81,13 @@ public class LoanReport extends AbstractWorkflowEntity {
 	private List<VASRecording> vasRecordings;
 	private List<FinanceScheduleDetail> financeScheduleDetails;
 	private List<FinFeeDetail> finFeeDetails;
+	private BigDecimal totalvasAmt = BigDecimal.ZERO;
+	private BigDecimal totalLoanAmt = BigDecimal.ZERO;
+	private BigDecimal totalDisbAmt = BigDecimal.ZERO;
+	private BigDecimal loanRatio = BigDecimal.ZERO;
+	private BigDecimal vasRatio = BigDecimal.ZERO;
+	private BigDecimal loanOutStanding = BigDecimal.ZERO;
+	private BigDecimal vasOutStanding = BigDecimal.ZERO;
 
 	public String getLovValue() {
 		return lovValue;
@@ -621,4 +628,61 @@ public class LoanReport extends AbstractWorkflowEntity {
 	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
 		this.finFeeDetails = finFeeDetails;
 	}
+
+	public BigDecimal getTotalvasAmt() {
+		return totalvasAmt;
+	}
+
+	public void setTotalvasAmt(BigDecimal totalvasAmt) {
+		this.totalvasAmt = totalvasAmt;
+	}
+
+	public BigDecimal getTotalLoanAmt() {
+		return totalLoanAmt;
+	}
+
+	public void setTotalLoanAmt(BigDecimal totalLoanAmt) {
+		this.totalLoanAmt = totalLoanAmt;
+	}
+
+	public BigDecimal getTotalDisbAmt() {
+		return totalDisbAmt;
+	}
+
+	public void setTotalDisbAmt(BigDecimal totalDisbAmt) {
+		this.totalDisbAmt = totalDisbAmt;
+	}
+
+	public BigDecimal getLoanRatio() {
+		return loanRatio;
+	}
+
+	public void setLoanRatio(BigDecimal loanRatio) {
+		this.loanRatio = loanRatio;
+	}
+
+	public BigDecimal getVasRatio() {
+		return vasRatio;
+	}
+
+	public void setVasRatio(BigDecimal vasRatio) {
+		this.vasRatio = vasRatio;
+	}
+
+	public BigDecimal getLoanOutStanding() {
+		return loanOutStanding;
+	}
+
+	public void setLoanOutStanding(BigDecimal loanOutStanding) {
+		this.loanOutStanding = loanOutStanding;
+	}
+
+	public BigDecimal getVasOutStanding() {
+		return vasOutStanding;
+	}
+
+	public void setVasOutStanding(BigDecimal vasOutStanding) {
+		this.vasOutStanding = vasOutStanding;
+	}
+
 }

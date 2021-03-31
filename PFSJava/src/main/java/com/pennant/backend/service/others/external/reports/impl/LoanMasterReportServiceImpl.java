@@ -12,7 +12,8 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -42,7 +43,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 public class LoanMasterReportServiceImpl extends GenericService<LoanReport> implements LoanMasterReportService {
-	private static final Logger logger = Logger.getLogger(LoanMasterReportServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(LoanMasterReportServiceImpl.class);
 	private static final String VAS = "VAS";
 	private static final String LOAN = "LOAN";
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -68,13 +69,6 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 
 	private List<LoanReport> process(Date appDate, List<LoanReport> loanReports) {
 		logger.debug(Literal.ENTERING);
-		BigDecimal totalvasAmt = BigDecimal.ZERO;
-		BigDecimal totalLoanAmt = BigDecimal.ZERO;
-		BigDecimal totalDisbAmt = BigDecimal.ZERO;
-		BigDecimal loanRatio = BigDecimal.ZERO;
-		BigDecimal vasRatio = BigDecimal.ZERO;
-		BigDecimal loanOutStanding = BigDecimal.ZERO;
-		BigDecimal vasOutStanding = BigDecimal.ZERO;
 
 		//Parallel calls for Performance Improve
 		IntStream.range(0, loanReports.size()).parallel().forEach(i -> {
@@ -136,8 +130,7 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 				}
 			}
 			//Amounts
-			Map<String, BigDecimal> amountsByRef = getAmountsByRef(loanReport, loanReport.getVasRecordings(),
-					totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio, vasRatio, loanOutStanding, vasOutStanding);
+			Map<String, BigDecimal> amountsByRef = getAmountsByRef(loanReport);
 			//Setting OutStanding Loan & ADV
 			loanReport.setOutstandingAmt_Loan_Adv(amountsByRef.get("LOAN"));
 			//Setting OutStanding VAS
@@ -272,12 +265,9 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 		}
 	}
 
-	public Map<String, BigDecimal> getAmountsByRef(LoanReport loanReport, List<VASRecording> vasRecordings,
-			BigDecimal totalvasAmt, BigDecimal totalLoanAmt, BigDecimal totalDisbAmt, BigDecimal loanRatio,
-			BigDecimal vasRatio, BigDecimal loanOutStanding, BigDecimal vasOutStanding) {
+	public Map<String, BigDecimal> getAmountsByRef(LoanReport loanReport) {
 		logger.debug(Literal.ENTERING);
 		Map<String, BigDecimal> outStandingAmts = new HashMap<String, BigDecimal>(1);
-		List<FinanceScheduleDetail> details = loanReport.getFinanceScheduleDetails();
 		try {
 			String finReference = loanReport.getFinReference();
 			BigDecimal finCurrAssetValue = loanReport.getDisbursementAmount();
@@ -290,30 +280,15 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 				}
 			}
 			//total disbursement amount
-			totalDisbAmt = PennantApplicationUtil.formateAmount(finCurrAssetValue, formater);
-			totalDisbAmt = totalDisbAmt.add(PennantApplicationUtil.formateAmount(remainingFee, formater));
-			totalvasAmt = processVasRecordingDetails(finReference, vasRecordings, totalvasAmt);
-			loanReport.setSanctionAmountVAS(totalvasAmt);
-			List<BigDecimal> calculateRatio = calculateRatio(totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio,
-					vasRatio);
-			if (CollectionUtils.isNotEmpty(calculateRatio)) {
-				totalLoanAmt = calculateRatio.get(0);
-				vasRatio = calculateRatio.get(1);
-				loanRatio = calculateRatio.get(2);
-			}
-			List<BigDecimal> processScheduleDetails = processScheduleDetails(finReference, details, totalvasAmt,
-					totalLoanAmt, totalDisbAmt, loanRatio, vasRatio, loanOutStanding, vasOutStanding);
-			if (CollectionUtils.isNotEmpty(processScheduleDetails)) {
-				totalvasAmt = processScheduleDetails.get(0);
-				totalLoanAmt = processScheduleDetails.get(1);
-				totalDisbAmt = processScheduleDetails.get(2);
-				loanRatio = processScheduleDetails.get(3);
-				vasRatio = processScheduleDetails.get(4);
-				loanOutStanding = processScheduleDetails.get(5);
-				vasOutStanding = processScheduleDetails.get(6);
-			}
-			outStandingAmts.put(LOAN, loanOutStanding);
-			outStandingAmts.put(VAS, vasOutStanding);
+			loanReport.setTotalDisbAmt(PennantApplicationUtil.formateAmount(finCurrAssetValue, formater));
+			loanReport.setTotalDisbAmt(
+					loanReport.getTotalDisbAmt().add(PennantApplicationUtil.formateAmount(remainingFee, formater)));
+			processVasRecordingDetails(finReference, loanReport);
+			loanReport.setSanctionAmountVAS(loanReport.getTotalvasAmt());
+			calculateRatio(loanReport);
+			processScheduleDetails(loanReport);
+			outStandingAmts.put(LOAN, loanReport.getLoanOutStanding());
+			outStandingAmts.put(VAS, loanReport.getVasOutStanding());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -321,35 +296,32 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 		return outStandingAmts;
 	}
 
-	private List<BigDecimal> calculateRatio(BigDecimal totalvasAmt, BigDecimal totalLoanAmt, BigDecimal totalDisbAmt,
-			BigDecimal loanRatio, BigDecimal vasRatio) {
-		List<BigDecimal> list = new ArrayList<>();
+	private void calculateRatio(LoanReport loanReport) {
 		//Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation
-		totalLoanAmt = totalLoanAmt.add(totalvasAmt).add(totalDisbAmt);
+		loanReport.setTotalLoanAmt(
+				loanReport.getTotalLoanAmt().add(loanReport.getTotalvasAmt()).add(loanReport.getTotalDisbAmt()));
 		//calculating the total loan ratio from total loan amount including VAS amount
-		if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (loanReport.getTotalvasAmt().compareTo(BigDecimal.ZERO) > 0
+				&& loanReport.getTotalLoanAmt().compareTo(BigDecimal.ZERO) > 0) {
 			//vas ratio
-			vasRatio = totalvasAmt.divide(totalLoanAmt, MathContext.DECIMAL64);
+			loanReport.setVasRatio(
+					loanReport.getTotalvasAmt().divide(loanReport.getTotalLoanAmt(), MathContext.DECIMAL64));
 		}
 
 		//calculating the total loan ratio from totam loan amount including VAS
-		if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (loanReport.getTotalDisbAmt().compareTo(BigDecimal.ZERO) > 0
+				&& loanReport.getTotalLoanAmt().compareTo(BigDecimal.ZERO) > 0) {
 			//loan ratio
-			loanRatio = totalDisbAmt.divide(totalLoanAmt, MathContext.DECIMAL64);
+			loanReport.setLoanRatio(
+					loanReport.getTotalDisbAmt().divide(loanReport.getTotalLoanAmt(), MathContext.DECIMAL64));
 		}
-		list.add(totalLoanAmt);
-		list.add(vasRatio);
-		list.add(loanRatio);
-		return list;
 	}
 
-	private List<BigDecimal> processScheduleDetails(String finReference, List<FinanceScheduleDetail> details,
-			BigDecimal totalvasAmt, BigDecimal totalLoanAmt, BigDecimal totalDisbAmt, BigDecimal loanRatio,
-			BigDecimal vasRatio, BigDecimal loanOutStanding, BigDecimal vasOutStanding) {
+	private void processScheduleDetails(LoanReport loanReport) {
 		logger.debug(Literal.ENTERING);
-		List<BigDecimal> list = new ArrayList<>();
 		BigDecimal schdPriPaid = BigDecimal.ZERO;
 		Date prvsDate = null;
+		List<FinanceScheduleDetail> details = loanReport.getFinanceScheduleDetails();
 		if (CollectionUtils.isNotEmpty(details)) {
 			for (int i = 0; i < details.size(); i++) {
 				FinanceScheduleDetail financeScheduleDetail = details.get(i);
@@ -359,48 +331,36 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 				prvsDate = financeScheduleDetail.getSchDate();
 				schdPriPaid = PennantApplicationUtil.formateAmount(financeScheduleDetail.getSchdPriPaid(), formater);
 				if (schdPriPaid.compareTo(BigDecimal.ZERO) > 0) {
-					List<BigDecimal> checkVASMovement = checkVASMovement(financeScheduleDetail.getSchDate(), prvsDate,
-							totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio, vasRatio);
-					if (CollectionUtils.isNotEmpty(checkVASMovement)) {
-						totalvasAmt = checkVASMovement.get(3);
-						vasRatio = checkVASMovement.get(1);
-					}
+					checkVASMovement(financeScheduleDetail.getSchDate(), prvsDate, loanReport);
 					//Considering the amount which is adjusted against the principle
-					if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0) {
-						totalDisbAmt = totalDisbAmt.subtract(schdPriPaid.multiply(loanRatio));
+					if (loanReport.getTotalDisbAmt().compareTo(BigDecimal.ZERO) > 0) {
+						loanReport.setTotalDisbAmt(
+								loanReport.getTotalDisbAmt().subtract(schdPriPaid.multiply(loanReport.getLoanRatio())));
 						//calculate total loan outstanding amount as per ratio
-						loanOutStanding = totalDisbAmt;
+						loanReport.setLoanOutStanding(loanReport.getTotalDisbAmt());
 					}
-					if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0) {
+					if (loanReport.getTotalvasAmt().compareTo(BigDecimal.ZERO) > 0) {
 						//calculate total vas outstanding amount as per ratio
-						totalvasAmt = totalvasAmt.subtract(schdPriPaid.multiply(vasRatio));
-						vasOutStanding = totalvasAmt;
+						loanReport.setTotalvasAmt(
+								loanReport.getTotalvasAmt().subtract(schdPriPaid.multiply(loanReport.getVasRatio())));
+						loanReport.setVasOutStanding(loanReport.getTotalvasAmt());
 					}
 				}
 			}
 		}
 
 		//dues not cleared at but VAS movement is available, so need to reduce the VAS movement amount from total VAS amt
-		if (loanOutStanding.compareTo(BigDecimal.ZERO) == 0 && vasOutStanding.compareTo(BigDecimal.ZERO) == 0) {
-			checkVASMovement(null, null, totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio, vasRatio);
-			loanOutStanding = totalDisbAmt;
-			vasOutStanding = totalvasAmt;
+		if (loanReport.getLoanOutStanding().compareTo(BigDecimal.ZERO) == 0
+				&& loanReport.getVasOutStanding().compareTo(BigDecimal.ZERO) == 0) {
+			checkVASMovement(null, null, loanReport);
+			loanReport.setLoanOutStanding(loanReport.getTotalDisbAmt());
+			loanReport.setVasOutStanding(loanReport.getTotalvasAmt());
 		}
-		list.add(totalvasAmt);
-		list.add(totalLoanAmt);
-		list.add(totalDisbAmt);
-		list.add(loanRatio);
-		list.add(vasRatio);
-		list.add(loanOutStanding);
-		list.add(vasOutStanding);
 		logger.debug(Literal.LEAVING);
-		return list;
 	}
 
-	private List<BigDecimal> checkVASMovement(Date schdDate, Date previousSchDate, BigDecimal totalvasAmt,
-			BigDecimal totalLoanAmt, BigDecimal totalDisbAmt, BigDecimal loanRatio, BigDecimal vasRatio) {
+	private void checkVASMovement(Date schdDate, Date previousSchDate, LoanReport loanReport) {
 		BigDecimal movementAmount = BigDecimal.ZERO;
-		List<BigDecimal> calculateRatio = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(movements)) {
 			for (VasMovementDetail vasMovementDetail : movements) {
 				if (schdDate != null && previousSchDate != null) {
@@ -418,31 +378,28 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 				}
 			}
 		}
-		if (movementAmount.compareTo(BigDecimal.ZERO) > 0 && totalvasAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (movementAmount.compareTo(BigDecimal.ZERO) > 0
+				&& loanReport.getTotalvasAmt().compareTo(BigDecimal.ZERO) > 0) {
 			movementAmount = PennantApplicationUtil.formateAmount(movementAmount, formater);
 			//Reduce the movement amount from total VAS outstanding
-			totalvasAmt = totalvasAmt.subtract(movementAmount);
-			calculateRatio = calculateRatio(totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio, vasRatio);
-			calculateRatio.add(totalvasAmt);
+			loanReport.setTotalvasAmt(loanReport.getTotalvasAmt().subtract(movementAmount));
+			calculateRatio(loanReport);
 		}
-		return calculateRatio;
-
 	}
 
-	private BigDecimal processVasRecordingDetails(String finReference, List<VASRecording> recordings,
-			BigDecimal totalvasAmt) {
+	private void processVasRecordingDetails(String finReference, LoanReport loanReport) {
 		logger.debug(Literal.ENTERING);
 		//calculate totalVasAmt
-		if (CollectionUtils.isNotEmpty(recordings)) {
-			for (VASRecording vasRecording : recordings) {
-				totalvasAmt = totalvasAmt.add(PennantApplicationUtil.formateAmount(vasRecording.getFee(), formater));
+		if (CollectionUtils.isNotEmpty(loanReport.getVasRecordings())) {
+			for (VASRecording vasRecording : loanReport.getVasRecordings()) {
+				loanReport.setTotalvasAmt(loanReport.getTotalvasAmt()
+						.add(PennantApplicationUtil.formateAmount(vasRecording.getFee(), formater)));
 			}
 		}
 		//Get VAS Movements
 		List<VasMovementDetail> details = loanMasterReportDAO.getVasMovementDetailByRef(finReference, "");
 		setMovements(details);
 		logger.debug(Literal.LEAVING);
-		return totalvasAmt;
 	}
 
 	private BigDecimal getOriginalROI(LoanReport loanReport) {
