@@ -3825,7 +3825,7 @@ public class ScheduleCalculator {
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 		int indexStart = finMain.getIndexStart();
 		boolean isManualAmtStep = false;
-		
+
 		if (finMain.isStepFinance() && finMain.isAlwManualSteps() && finMain.isGrcStps()) {
 			if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
 				isManualAmtStep = true;
@@ -4062,7 +4062,7 @@ public class ScheduleCalculator {
 				if (curSchd.isFrqDate() && DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) > 0) {
 					calTerms = calTerms + 1;
 				}
-				
+
 				// Reset Grace Terms -- PSD Ticket :136185
 				if (curSchd.isFrqDate() && DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
 					graceTerms = graceTerms + 1;
@@ -4094,9 +4094,13 @@ public class ScheduleCalculator {
 				}
 			}
 		}
-		//PSD#166759
-		finMain.setCalTerms(calTerms);
-		
+		// PSD#169262:Issue while decreasing ROI when by Adjusting terms.
+		// FIXME if Required: below condition added while decreasing the ROI for adjust terms.
+		//add rate change tenor showing wrong when rate is decreased.
+		if (!FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain.getProcMethod())) {
+			// PSD#166759
+			finMain.setCalTerms(calTerms);
+		}
 		// Ticket id:PSD Ticket :136185,resetting grace terms
 		finMain.setGraceTerms(graceTerms);//End PSD#166759
 
@@ -6674,7 +6678,7 @@ public class ScheduleCalculator {
 		String schdMethod = finMain.getScheduleMethod();
 
 		finMain.setAdjTerms(terms);
-		
+
 		if (finMain.isStepFinance() && finMain.isRpyStps()) {
 			if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_PERC)) {
 				finScheduleData = calStepSchd(finScheduleData);
@@ -9824,22 +9828,22 @@ public class ScheduleCalculator {
 		logger.debug(Literal.LEAVING);
 		return emi;
 	}
-	
+
 	/*
 	 * ________________________________________________________________________________________________________________
-	 * Method : prepareManualRepayRI Description: Prepare the repay instructions for step loan if step calculated on amount.
+	 * Method : prepareManualRepayRI Description: Prepare the repay instructions for step loan if step calculated on
+	 * amount.
 	 * ________________________________________________________________________________________________________________
 	 */
-	private void prepareManualRepayRI(FinScheduleData fsData){
+	private void prepareManualRepayRI(FinScheduleData fsData) {
 		FinanceMain fm = fsData.getFinanceMain();
 		List<FinanceStepPolicyDetail> spdList = fsData.getStepPolicyDetails();
 		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
-		
+
 		int idxStart = 0;
 		int riStart = 0;
 		int riEnd = 0;
 		String schdMethod = "";
-		
 
 		if (!fm.isGrcStps()) {
 			for (FinanceScheduleDetail fsd : fsdList) {
@@ -9848,40 +9852,40 @@ public class ScheduleCalculator {
 				}
 			}
 		}
-		
+
 		boolean grcEnd = false;
-		
+
 		for (int iSpd = 0; iSpd < spdList.size(); iSpd++) {
 			FinanceStepPolicyDetail spd = spdList.get(iSpd);
-			
+
 			if (grcEnd && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
 				continue;
 			}
-			
+
 			riStart = idxStart;
 			if (riEnd == 0) {
 				riEnd = riStart + spd.getInstallments();
 			} else {
-				riEnd = riStart + spd.getInstallments()-1;
+				riEnd = riStart + spd.getInstallments() - 1;
 			}
-			
-			int instCount  =0;
+
+			int instCount = 0;
 			for (int iFsd = idxStart; iFsd < fsdList.size(); iFsd++) {
 				FinanceScheduleDetail fsd = fsdList.get(iFsd);
 				if (iFsd == riStart) {
 					spd.setStepStart(fsd.getSchDate());
 				}
 				String specifier = fsd.getSpecifier();
-				if(fsd.isRepayOnSchDate()){
-					instCount= instCount +1;
+				if (fsd.isRepayOnSchDate()) {
+					instCount = instCount + 1;
 				} else if (iFsd != 0 && PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())
 						&& !(FinanceConstants.FLAG_BPI.equals(fsd.getBpiOrHoliday()))
 						&& (CalculationConstants.SCH_SPECIFIER_GRACE.equals(specifier)
 								|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier))
 						&& !fsd.isDisbOnSchDate()) {
-					instCount= instCount +1;
+					instCount = instCount + 1;
 				}
-				
+
 				//iFsd == riEnd
 				boolean flag = CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
 						&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier);
@@ -9896,9 +9900,8 @@ public class ScheduleCalculator {
 			}
 
 			schdMethod = fm.getScheduleMethod();
-			
-			setRpyInstructDetails(fsData, spd.getStepStart(), spd.getStepEnd(), spd.getSteppedEMI(),
-					schdMethod);
+
+			setRpyInstructDetails(fsData, spd.getStepStart(), spd.getStepEnd(), spd.getSteppedEMI(), schdMethod);
 		}
 		FinanceStepPolicyDetail spd = spdList.get(spdList.size() - 1);
 
@@ -9910,7 +9913,7 @@ public class ScheduleCalculator {
 			fm.setRecalSchdMethod(schdMethod);
 			setRpyInstructDetails(fsData, fm.getRecalFromDate(), fm.getMaturityDate(), BigDecimal.ZERO, schdMethod);
 		}
-		
+
 	}
 
 	private FinScheduleData buildRestructure(FinScheduleData fsData) {
