@@ -7235,8 +7235,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Deletion of Scoring Details
-				getScoringDetailService().deleteHeaderList(finReference, "");
-				getScoringDetailService().deleteDetailList(headerIdList, "");
+				/*
+				 * getScoringDetailService().deleteHeaderList(finReference, "");
+				 * getScoringDetailService().deleteDetailList(headerIdList, "");
+				 */
 			}
 
 			// Delete Black List Customer Data
@@ -7251,11 +7253,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), i + 1, blFields[0], blFields[1], null,
 						blackListData.get(i)));
 			}
-			getBlacklistCustomerDAO().deleteList(finReference);
+			//getBlacklistCustomerDAO().deleteList(finReference);
 
 			// Delete Finance DeDup List Data
 			// =======================================
-			getFinanceDedupeDAO().deleteList(finReference);
+			//getFinanceDedupeDAO().deleteList(finReference);
 
 			// Delete Dedup PoliceCase Data
 			// =======================================
