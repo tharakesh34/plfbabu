@@ -15,7 +15,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -45,7 +46,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(LoanMasterReportCtrl.class);
+	private final static Logger logger = LogManager.getLogger(LoanMasterReportCtrl.class);
 
 	protected Window window_LoanMasterReport;
 	protected Borderlayout borderLayout_loanMasterReport;
@@ -309,13 +310,10 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 		//OutStanding Amount loan & Adv
 		BigDecimal outstandingLoanAdv = loanReport.getOutstandingAmt_Loan_Adv();
 		outstandingLoanAdv = outstandingLoanAdv.setScale(formater, RoundingMode.valueOf(loanReport.getRoundingMode()));
+		list.add(String.valueOf(outstandingLoanAdv));
 		//OutStanding Amount LI & GI
 		BigDecimal outstandingVAS = loanReport.getOustandingAmt_LI_GI();
 		outstandingVAS = outstandingVAS.setScale(formater, RoundingMode.valueOf(loanReport.getRoundingMode()));
-		//Outstanding Amount (of Loan & Adv) è Logic of this column includes the VAS amount. 
-		//Client requested to exclude VAS amount as there is another column [Sanction amount (Insurance Loan)] that captures VAS amount.
-		outstandingLoanAdv = outstandingLoanAdv.subtract(outstandingVAS);
-		list.add(String.valueOf(outstandingLoanAdv));
 		//OutStanding Amount LI & GI
 		list.add(String.valueOf(outstandingVAS));
 		//Captalized intrest
@@ -332,8 +330,7 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 		}
 		//AUM
 		BigDecimal aum = BigDecimal.ZERO;
-		aum = aum.add(outstandingLoanAdv).add(outstandingVAS).add(new BigDecimal(interestCaptalized))
-				.add(new BigDecimal(loanPrincipal));
+		aum = aum.add(outstandingLoanAdv).add(outstandingVAS).add(new BigDecimal(interestCaptalized));
 		aum = aum.setScale(formater, RoundingMode.valueOf(loanReport.getRoundingMode()));
 		list.add(String.valueOf(aum));
 		//Interest Accrual Amount

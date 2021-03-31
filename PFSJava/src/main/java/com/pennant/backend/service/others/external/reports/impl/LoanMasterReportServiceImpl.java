@@ -279,12 +279,14 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 					}
 				}
 			}
-			//total disbursement amount
-			loanReport.setTotalDisbAmt(PennantApplicationUtil.formateAmount(finCurrAssetValue, formater));
-			loanReport.setTotalDisbAmt(
-					loanReport.getTotalDisbAmt().add(PennantApplicationUtil.formateAmount(remainingFee, formater)));
 			processVasRecordingDetails(finReference, loanReport);
+			// VAS
 			loanReport.setSanctionAmountVAS(loanReport.getTotalvasAmt());
+			// total disbursement amount
+			finCurrAssetValue = PennantApplicationUtil.formateAmount(finCurrAssetValue, formater);
+			// Reducing VAS Fee from Total Disbursement
+			finCurrAssetValue = finCurrAssetValue.subtract(loanReport.getTotalvasAmt());
+			loanReport.setTotalDisbAmt(finCurrAssetValue);
 			calculateRatio(loanReport);
 			processScheduleDetails(loanReport);
 			outStandingAmts.put(LOAN, loanReport.getLoanOutStanding());
@@ -299,8 +301,9 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 	private void calculateRatio(LoanReport loanReport) {
 		//Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation
 		BigDecimal totalvasAmt = loanReport.getTotalvasAmt();
-		BigDecimal totalLoanAmt = loanReport.getTotalLoanAmt();
+		BigDecimal totalLoanAmt = BigDecimal.ZERO;
 		BigDecimal totalDisbAmt = loanReport.getTotalDisbAmt();
+		//Total Loan Amount
 		totalLoanAmt = totalLoanAmt.add(totalvasAmt).add(totalDisbAmt);
 		loanReport.setTotalLoanAmt(totalLoanAmt);
 		//calculating the total loan ratio from total loan amount including VAS amount
@@ -355,7 +358,7 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 				&& loanReport.getVasOutStanding().compareTo(BigDecimal.ZERO) == 0) {
 			checkVASMovement(null, null, loanReport);
 			loanReport.setLoanOutStanding(totalDisbAmt);
-			loanReport.setVasOutStanding(totalvasAmt);
+			loanReport.setVasOutStanding(loanReport.getTotalvasAmt());
 		}
 		logger.debug(Literal.LEAVING);
 	}
