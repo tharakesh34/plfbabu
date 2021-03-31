@@ -24429,9 +24429,9 @@ UNION ALL
 	<changeSet id="ST#1627.13" author="kavya.n">
 		<sql>
 		   <![CDATA[
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE)values ('SUBHEAD', 'SUBHEAD', 'ae_receiptSource', 'Receipt Source For Non LANReceipts', 'nvarchar', 10, '0', '1', 'FinReceiptHeader', 'static, global, dbvalue', 'FinReceiptHeader');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE)values ('SUBHEAD', 'SUBHEAD', 'ae_receiptChannel', 'Receipt Channel ForReceipts', 'nvarchar', 20, '0', '1', 'FinReceiptHeader', 'static, global, dbvalue', 'FinReceiptHeader');
-			    INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE)values ('SUBHEAD', 'SUBHEAD', 'ae_receiptSourceAcType', 'Receipt Source Account Type ForReceipts', 'nvarchar', 50, '0', '1', 'Receipt_Source_Account_Types', 'static,global,dbvalue', 'Receipt_Source_Account_Types');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) values ('SUBHEAD', 'SUBHEAD', 'ae_receiptSource', 'Receipt Source For Non LANReceipts', 'nvarchar', 10, '0', '1', 'FinReceiptHeader', 'static, global, dbvalue', 'FinReceiptHeader');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) values ('SUBHEAD', 'SUBHEAD', 'ae_receiptChannel', 'Receipt Channel ForReceipts', 'nvarchar', 20, '0', '1', 'FinReceiptHeader', 'static, global, dbvalue', 'FinReceiptHeader');
+			    INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) values ('SUBHEAD', 'SUBHEAD', 'ae_receiptSourceAcType', 'Receipt Source Account Type ForReceipts', 'nvarchar', 50, '0', '1', 'Receipt_Source_Account_Types', 'static,global,dbvalue', 'Receipt_Source_Account_Types');
 		   ]]>
 		</sql>
 	</changeSet>
@@ -24864,6 +24864,16 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="664" author="rajesh.n">
+		<comment>ST#121,TK#176.</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE = 'BOUNCE' AND RBEVENT = 'BOUNCE' AND RBFLDNAME = 'br_presentmentType';
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('BOUNCE', 'BOUNCE', 'br_presentmentType', 'Presentment Type', 'nvarchar', '1', '0', '1', ' ', 'static', '');
+			]]>
+		</sql>
+	</changeSet>	
 	
 	<!-- Receipt Level views handle in single place starts -->
 
