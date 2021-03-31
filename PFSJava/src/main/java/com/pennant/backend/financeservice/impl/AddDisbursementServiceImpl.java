@@ -116,7 +116,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		// Step POS Case , setting Step Details to Object
 		if (StringUtils.isNotEmpty(moduleDefiner) && finScheduleData.getFinanceMain().isStepFinance()) {
 			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
-					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
+					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false), true);
 		}
 
 		//financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());

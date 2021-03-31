@@ -400,7 +400,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Step Policy Details List from main view
 		if (financeMain.isStepFinance()) {
 			scheduleData.setStepPolicyDetails(
-					financeStepDetailDAO.getFinStepDetailListByFinRef(finReference, "_TView", false));
+					financeStepDetailDAO.getFinStepDetailListByFinRef(finReference, "_AView", false));
 		}
 
 		// Finance Schedule Details from Main table
@@ -5498,7 +5498,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Step Policy Details List from main view
 		if (financeMain.isStepFinance()) {
 			scheduleData.setStepPolicyDetails(
-					getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finReference, "_TView", false));
+					getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finReference, "_AView", false));
 		}
 
 		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false,
@@ -5667,6 +5667,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (receiptPurposeCtg == 1 && StringUtils.equals(method, CalculationConstants.RPYCHG_STEPPOS)) {
 			finScheduleData.setStepPolicyDetails(
 					financeDetailService.getFinStepPolicyDetails(finScheduleData.getFinReference(), "", false));
+		} else if (aFinanceMain.isStepFinance()) {
+			finScheduleData.setStepPolicyDetails(
+					financeDetailService.getFinStepPolicyDetails(finScheduleData.getFinReference(), "", false), true);
 		}
 
 		// Calculation of Schedule Changes for Early Payment to change

@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -60,6 +61,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.pennant.backend.model.WSReturnStatus;
@@ -221,6 +223,17 @@ public class FinScheduleData implements Serializable {
 	}
 
 	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails) {
+		this.stepPolicyDetails = stepPolicyDetails;
+	}
+
+	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails, boolean sort) {
+		//Steps needs to sort based on specifier and step no for schedule calculation if step calculated on Amount.
+		if (sort && CollectionUtils.isNotEmpty(stepPolicyDetails)) {
+			stepPolicyDetails = stepPolicyDetails.stream()
+					.sorted(Comparator.comparing(FinanceStepPolicyDetail::getStepSpecifier)
+							.thenComparingInt(FinanceStepPolicyDetail::getStepNo))
+					.collect(Collectors.toList());
+		}
 		this.stepPolicyDetails = stepPolicyDetails;
 	}
 
