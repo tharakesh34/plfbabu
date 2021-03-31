@@ -24875,6 +24875,341 @@ UNION ALL
 		</sql>
 	</changeSet>	
 	
+	<changeSet id="551" author="lakshmi.n">
+	 <comment>TK#853</comment>
+		<sql>
+			<![CDATA[
+				UPDATE ERRORDETAILS SET MESSAGE = 'Number of {0} must be equal to entered Number of {1}' WHERE CODE = '30542';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="552" author="lakshmi.n">
+	 <comment>TK#853</comment>
+		<sql>
+			<![CDATA[
+				DELETE from ERRORDETAILS WHERE code='STP004';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('STP004', 'EN', 'E', 'Auto Calculate for {0} sould be false', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="553" author="lakshmi.n">
+	 <comment>TK#853</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'FinStepPolicyDetailDialog_AutoCal';
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinStepPolicyDetailDialog_AutoCal', 'FinStepPolicyDetailDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="TK#853.1" author="lakshmi.n">
+		<addColumn tableName="FINANCEMAIN_TEMP">
+			<column name="NoOfGrcSteps" type="int"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#853.1.1" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN_TEMP SET NoOfGrcSteps = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN_TEMP"/>
+	</changeSet>
+	
+	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_FM_T_NoOfGrcSteps DEFAULT 0 FOR NoOfGrcSteps;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.2" author="lakshmi.n">
+		<addColumn tableName="FINANCEMAIN">
+			<column name="NoOfGrcSteps" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#853.2.1" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN SET NoOfGrcSteps = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN"/>
+	</changeSet>
+	
+	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FM_NoOfGrcSteps DEFAULT 0 FOR NoOfGrcSteps;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.3" author="lakshmi.n">
+		<addColumn tableName="FINSTEPPOLICYDETAIL_TEMP">
+			<column name="AutoCal" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#853.3.1" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+				UPDATE FINSTEPPOLICYDETAIL_TEMP SET AutoCal = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.3.2" author="lakshmi.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL_TEMP"/>
+	</changeSet>
+	
+	<changeSet id="TK#853.3.2" author="lakshmi.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINSTEPPOLICYDETAIL_TEMP ADD CONSTRAINT DF_FSPD_T_AutoCal DEFAULT 0 FOR AutoCal;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.4" author="lakshmi.n">
+		<addColumn tableName="FINSTEPPOLICYDETAIL">
+			<column name="autocal" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#853.4.1" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+				UPDATE FINSTEPPOLICYDETAIL SET AutoCal = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.4.2" author="lakshmi.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL"/>
+	</changeSet>
+	
+	<changeSet id="TK#853.4.2" author="lakshmi.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINSTEPPOLICYDETAIL ADD CONSTRAINT DF_FSPD_AutoCal DEFAULT 0 FOR AutoCal;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="101_pre" author="lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finsteppolicydetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+  
+	<changeSet id="101" author="lakshmi.n">
+		<createView viewName="FINSTEPPOLICYDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.STEPNO,
+					T1.TENORSPLITPERC,
+					T1.INSTALLMENTS,
+					T1.RATEMARGIN,
+					T1.EMISPLITPERC,
+					T1.STEPPEDEMI,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.STEPSPECIFIER,
+					T1.STEPSTART,
+					T1.STEPEND,
+					T1.AUTOCAL
+				FROM FINSTEPPOLICYDETAIL T1
+			]]>
+		</createView>
+	</changeSet>
+  
+  	<changeSet id="101_post" author="lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finsteppolicydetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="102_pre" author="lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finsteppolicydetail_tview');
+			]]>
+		</sql>
+	</changeSet>
+  
+	<changeSet id="102" author="lakshmi.n">
+		<createView viewName="FINSTEPPOLICYDETAIL_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.STEPNO,
+					T1.TENORSPLITPERC,
+					T1.INSTALLMENTS,
+					T1.RATEMARGIN,
+					T1.EMISPLITPERC,
+					T1.STEPPEDEMI,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.STEPSPECIFIER,
+					T1.STEPSTART,
+					T1.STEPEND,
+					T1.AUTOCAL
+				FROM FINSTEPPOLICYDETAIL_TEMP T1
+			]]>
+		</createView>
+	</changeSet>
+  
+  	<changeSet id="102_post" author="lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finsteppolicydetail_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="103_pre" author="lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finsteppolicydetail_view');
+			]]>
+		</sql>
+	</changeSet>
+  
+	<changeSet id="103" author="lakshmi.n">
+		<createView viewName="FINSTEPPOLICYDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.STEPNO,
+					T1.TENORSPLITPERC,
+					T1.INSTALLMENTS,
+					T1.RATEMARGIN,
+					T1.EMISPLITPERC,
+					T1.STEPPEDEMI,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.STEPSPECIFIER,
+					T1.STEPSTART,
+					T1.STEPEND,
+					T1.AUTOCAL
+				FROM FINSTEPPOLICYDETAIL_TEMP T1
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+					T1.STEPNO,
+					T1.TENORSPLITPERC,
+					T1.INSTALLMENTS,
+					T1.RATEMARGIN,
+					T1.EMISPLITPERC,
+					T1.STEPPEDEMI,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.STEPSPECIFIER,
+					T1.STEPSTART,
+					T1.STEPEND,
+					T1.AUTOCAL
+				FROM FINSTEPPOLICYDETAIL T1
+				WHERE NOT (EXISTS ( SELECT 1 FROM FINSTEPPOLICYDETAIL_TEMP
+					WHERE FINSTEPPOLICYDETAIL_TEMP.FINREFERENCE = T1.FINREFERENCE AND FINSTEPPOLICYDETAIL_TEMP.STEPNO = T1.STEPNO))
+			]]>
+		</createView>
+	</changeSet>
+  
+	<changeSet id="103_post" author="lakshmi.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finsteppolicydetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="665" author="rajesh.n">
+		<comment>ae_manualTds Amount code for Manual TDS(EARLYSTL,EARLYPAY) </comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYSTL' and AMOUNTCODE = 'ae_manualTds';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' and AMOUNTCODE = 'ae_manualTds';
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('EARLYSTL', 0, 'ae_manualTds', 'Manual TDS on Early Settlement', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('EARLYPAY', 0, 'ae_manualTds', 'Manual TDS on Early Payment', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="666" author="rajesh.n">
+		<sql>
+			<![CDATA[
+					DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_TOTALDISBREPORT');
+					DELETE FROM REPORTCONFIGURATION WHERE MENUITEMCODE='MENU_ITEM_TOTALDISBREPORT';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="667" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO REPORTCONFIGURATION (REPORTID, REPORTNAME, REPORTHEADING, PROMPTREQUIRED, REPORTJASPERNAME, DATASOURCENAME, SHOWTEMPLIBRARY, MENUITEMCODE, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, ALWMULTIFORMAT, WHERECONDITION, SCHEDULEREQ) VALUES((select max(reportid)+1 from reportconfiguration), 'Excel:Total Disbursement Report', 'Total Disbursement Report', 1, 'Total_Disbursment_Report', 'dataSource', 1, 'menu_Item_TOTALDISBREPORT', 1, 1000, 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 0, 1, 0);
+				INSERT INTO REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_TOTALDISBREPORT'), 1, 'Entity', 'LOVSEARCH', 'Entity', 'sdd.EntityCode', '', 'Entity', 'getEntityCode', 'getEntityDesc', 0, 0, 0, 0, 1, 1, ' ', ' ', ' ', ' ', 150, 0, '=', 1, 1000, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, current_timestamp, NULL);
+				INSERT INTO REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_TOTALDISBREPORT'), 2, 'FinType', 'LOVSEARCH', 'Loan Type', 'fpd.FinType', '', 'FinanceType', 'getFinType', 'getFinTypeDesc', 1, 0, 0, 0, 2, 1, ' ', ' ', ' ', ' ', 150, 0, '=', 1, 1000, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, current_timestamp, NULL);
+				INSERT INTO REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_TOTALDISBREPORT'), 3, 'FinReference', 'LOVSEARCH', 'Loan Reference', 'FPD.FINREFERENCE', '', 'FinanceMain', 'getFinReference', 'getFinReference', 1, 0, 0, 0, 3, 0, ' ', ' ', ' ', ' ', 150, 0, '=', 1, 1000, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, current_timestamp, NULL);
+				INSERT INTO REPORTFILTERFIELDS (REPORTID, FIELDID, FIELDNAME, FIELDTYPE, FIELDLABEL, FIELDDBNAME, APPUTILMETHODNAME, MODULENAME, LOVHIDDENFIELDMETHOD, LOVTEXTFIELDMETHOD, MULTISELECTSEARCH, FIELDLENGTH, FIELDMAXVALUE, FIELDMINVALUE, SEQORDER, MANDATORY, FIELDCONSTRAINT, FIELDERRORMESSAGE, WHERECONDITION, STATICVALUE, FIELDWIDTH, FILTERREQUIRED, DEFAULTFILTER, VERSION, LASTMNTBY, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, FILTERFILEDS) VALUES ((SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_TOTALDISBREPORT'), 4, 'DisbDate', 'DATERANGE', 'Disbursement Date', 'FDD.DISBDATE', '', '---Select----', '', '', 0, 0, 0, 0, 4, 1, ' ', ' ', ' ', ' ', 150, 0, '=', 1, 1000, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, current_timestamp, NULL);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="668" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_TotalDisbReport', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- Receipt Level views handle in single place starts -->
 
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">
@@ -26787,7 +27122,10 @@ UNION ALL
 					T1.ALLOWSUBVENTION,
 					T1.TDSTYPE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM FINANCEMAIN_TEMP T1
 				INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
 				INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
@@ -27124,7 +27462,10 @@ UNION ALL
 					T1.ALLOWSUBVENTION,
 					T1.TDSTYPE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM FINANCEMAIN T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -27474,7 +27815,10 @@ UNION ALL
 					T1.ALLOWSUBVENTION,
 					T1.TDSTYPE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM FINANCEMAIN_TEMP T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -27801,7 +28145,10 @@ UNION ALL
 					T1.ALLOWSUBVENTION,
 					T1.TDSTYPE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM FINANCEMAIN T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -28153,7 +28500,10 @@ UNION ALL
 					T1.ALLOWSUBVENTION,
 					T1.TDSTYPE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM FINANCEMAIN_TEMP T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -28221,7 +28571,10 @@ UNION ALL
 					T1.ALLOWSUBVENTION,
 					T1.TDSTYPE,
 					T1.WRITEOFFLOAN,
-					T1.RESTRUCTURE
+					T1.RESTRUCTURE,
+					T1.CALCOFSTEPS,
+					T1.STEPSAPPLIEDFOR,
+					T1.NOOFGRCSTEPS
 				FROM FINANCEMAIN_TEMP T1
 				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
 				JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE

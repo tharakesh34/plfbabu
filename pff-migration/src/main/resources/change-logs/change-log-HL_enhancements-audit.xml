@@ -3271,4 +3271,56 @@
 	
 	<!-- ST#1627 Non LAN Receipt changes end -->
 	
+	 <changeSet id="TK#853.1" author="lakshmi.n">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="NoOfGrcSteps" type="int" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="TK#853.1.1" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN SET NoOfGrcSteps = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="NoOfGrcSteps" tableName="ADTFINANCEMAIN"/>
+	</changeSet>
+	
+	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_AFM_NoOfGrcSteps DEFAULT 0 FOR NoOfGrcSteps;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.2" author="lakshmi.n">
+		<addColumn tableName="ADTFINSTEPPOLICYDETAIL">
+			<column name="AutoCal" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="TK#853.2.1" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINSTEPPOLICYDETAIL SET AutoCal = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AutoCal" tableName="ADTFINSTEPPOLICYDETAIL"/>
+	</changeSet>
+	
+	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINSTEPPOLICYDETAIL ADD CONSTRAINT DF_AFSPD_AutoCal DEFAULT 0 FOR AutoCal;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
