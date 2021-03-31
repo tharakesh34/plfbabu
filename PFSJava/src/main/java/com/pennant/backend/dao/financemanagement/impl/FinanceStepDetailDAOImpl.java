@@ -76,7 +76,7 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 		sql.append(" FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc");
 		sql.append(
 				", SteppedEMI, StepSpecifier, StepStart, StepEnd, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, AutoCal");
 
 		if (isWIF) {
 			sql.append(" from WIFFinStepPolicyDetail");
@@ -121,6 +121,7 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 					spd.setNextTaskId(rs.getString("NextTaskId"));
 					spd.setRecordType(rs.getString("RecordType"));
 					spd.setWorkflowId(rs.getLong("WorkflowId"));
+					spd.setAutoCal(rs.getBoolean("AutoCal"));
 
 					return spd;
 				}
@@ -160,11 +161,11 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 		insertSql.append(
 				" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, StepSpecifier,");
 		insertSql.append(" StepStart, StepEnd, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AutoCal)");
 		insertSql.append(
 				" Values(:FinReference, :StepNo, :TenorSplitPerc, :Installments, :RateMargin, :EmiSplitPerc, :SteppedEMI, :StepSpecifier,");
 		insertSql.append(" :StepStart, :StepEnd, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AutoCal)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finStepDetailList.toArray());

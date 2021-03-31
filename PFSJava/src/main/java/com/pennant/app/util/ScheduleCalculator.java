@@ -463,6 +463,7 @@ public class ScheduleCalculator {
 		finMain.setAlwManualSteps(false);
 		finMain.setPlanDeferCount(0);
 		finMain.setDefferments(0);
+		finMain.setNoOfGrcSteps(0);
 
 		// Child List Details
 		dpScheduleData.getDisbursementDetails().get(0).setDisbAmount(finMain.getFinAmount());
@@ -4246,7 +4247,8 @@ public class ScheduleCalculator {
 		finScheduleData = fetchGraceCurRates(finScheduleData);
 		finScheduleData = fetchRepayCurRates(finScheduleData);
 
-		if (finMain.isStepFinance() && finMain.isAlwManualSteps() && isFirstRun) {
+		if (finMain.isStepFinance() && finMain.isAlwManualSteps()
+				&& (!CalculationConstants.RPYCHG_ADJMDT.equals(finMain.getRecalType()))) {
 			if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
 				prepareManualRepayRI(finScheduleData);
 				//finMain.setEqualRepay(false);
@@ -9844,6 +9846,7 @@ public class ScheduleCalculator {
 		int riStart = 0;
 		int riEnd = 0;
 		String schdMethod = "";
+		String grcSchdMethod = fm.getGrcSchdMthd();
 
 		if (!fm.isGrcStps()) {
 			for (FinanceScheduleDetail fsd : fsdList) {
@@ -9901,7 +9904,16 @@ public class ScheduleCalculator {
 
 			schdMethod = fm.getScheduleMethod();
 
-			setRpyInstructDetails(fsData, spd.getStepStart(), spd.getStepEnd(), spd.getSteppedEMI(), schdMethod);
+			if (!spd.isAutoCal()) {
+				setRpyInstructDetails(fsData, spd.getStepStart(), spd.getStepEnd(), spd.getSteppedEMI(), schdMethod);
+			} else {
+				fm.setRecalFromDate(spd.getStepStart());
+				fm.setRecalType(CalculationConstants.RPYCHG_TILLDATE);
+				fm.setCalculateRepay(true);
+				fm.setEqualRepay(true);
+				fm.setRecalSchdMethod(grcSchdMethod);
+				setRpyInstructDetails(fsData, fm.getRecalFromDate(), spd.getStepEnd(), BigDecimal.ZERO, grcSchdMethod);
+			}
 		}
 		FinanceStepPolicyDetail spd = spdList.get(spdList.size() - 1);
 

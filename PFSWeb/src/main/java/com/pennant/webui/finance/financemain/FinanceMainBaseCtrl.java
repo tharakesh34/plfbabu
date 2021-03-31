@@ -2105,7 +2105,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				financeStepPolicyDetailList = getFinanceDetailService()
 						.getFinStepPolicyDetails(financeMain.getFinReference(), "_AView", false);
 
-				getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList);
+				getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList, true);
 			}
 			// Step Policy Details
 			appendStepDetailTab(onLoad, true);
@@ -2668,7 +2668,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("isWIF", false);
 			map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
 			String moduleDefiner = getFinanceDetail().getModuleDefiner();
-			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner) || FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)) {
+			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)
+					|| FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)) {
 				map.put("enquiryModule", true);
 			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul",
@@ -7825,6 +7826,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setAlwManualSteps(false);
 			aFinanceMain.setStepType(PennantConstants.List_Select);
 			aFinanceMain.setStepPolicy("");
+			aFinanceMain.setNoOfGrcSteps(0);
 		}
 
 		// Finance Flags

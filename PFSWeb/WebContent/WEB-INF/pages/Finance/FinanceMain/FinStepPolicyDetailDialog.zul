@@ -91,6 +91,10 @@
 								<hbox>
 									<currencyBox id="steppedEMI" width="150px" />
 								</hbox>
+								<label id="label_FinStepPolicyDialog_AutoCal" value="${c:l('label_FinStepPolicyDialog_AutoCal.value')}" visible="false"/>
+								<hbox id="hbox_autoCal" visible="false">
+									<checkbox id="autoCal" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>

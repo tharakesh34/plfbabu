@@ -38,6 +38,7 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private Date stepStart;
 	private Date stepEnd;
+	private boolean autoCal = false;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -179,5 +180,12 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 	public void setStepEnd(Date stepEnd) {
 		this.stepEnd = stepEnd;
 	}
-	
+
+	public boolean isAutoCal() {
+		return autoCal;
+	}
+
+	public void setAutoCal(boolean autoCal) {
+		this.autoCal = autoCal;
+	}
 }

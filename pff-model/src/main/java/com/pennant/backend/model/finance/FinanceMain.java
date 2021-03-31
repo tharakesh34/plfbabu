@@ -882,6 +882,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String stepsAppliedFor;
 	private boolean isRpyStps;
 	private boolean isGrcStps;
+	private int noOfGrcSteps = 0;
 
 	private boolean cpzPosIntact = false;
 
@@ -5712,4 +5713,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setCpzPosIntact(boolean cpzPosIntact) {
 		this.cpzPosIntact = cpzPosIntact;
 	}
+
+	public int getNoOfGrcSteps() {
+		return noOfGrcSteps;
+	}
+
+	public void setNoOfGrcSteps(int noOfGrcSteps) {
+		this.noOfGrcSteps = noOfGrcSteps;
+	}
+
 }

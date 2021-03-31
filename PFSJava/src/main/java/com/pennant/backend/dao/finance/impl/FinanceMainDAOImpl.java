@@ -719,7 +719,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
 			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
 			sql.append(", Pmay, AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-			sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention, TdsType");
+			sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention");
+			sql.append(", TdsType, NoOfGrcSteps");
 
 		}
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -742,7 +743,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ? , ?, ?");
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?, ?, ?, ?");
 
 		}
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -1019,6 +1020,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setBoolean(index++, fm.isInstBasedSchd());
 					ps.setBoolean(index++, fm.isAllowSubvention());
 					ps.setString(index++, fm.getTdsType());
+					ps.setInt(index++, fm.getNoOfGrcSteps());
 
 				}
 				ps.setInt(index++, fm.getVersion());
@@ -1145,7 +1147,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", AlwGrcAdj = :AlwGrcAdj, EndGrcPeriodAftrFullDisb = :EndGrcPeriodAftrFullDisb");
 			sql.append(", AutoIncGrcEndDate = :AutoIncGrcEndDate, Pmay = :Pmay ");
 			sql.append(", InvestmentRef=:InvestmentRef, ParentRef=:ParentRef,LoanSplitted=:LoanSplitted ");
-			sql.append(", AlwLoanSplit = :AlwLoanSplit, InstBasedSchd=:InstBasedSchd, TdsType = :TdsType,");
+			sql.append(
+					", AlwLoanSplit = :AlwLoanSplit, InstBasedSchd=:InstBasedSchd, TdsType = :TdsType, NoOfGrcSteps =:NoOfGrcSteps,");
 		}
 		sql.append(
 				"AdvanceEMI = :AdvanceEMI, BpiPftDaysBasis = :BpiPftDaysBasis, FixedTenorRate=:FixedTenorRate, FixedRateTenor=:FixedRateTenor");
@@ -6165,7 +6168,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", BaseProduct, ProcessType, BureauTimeSeries, CampaignName, ExistingLanRefNo, OfferId");
 			sql.append(", LeadSource, PoSource, Rsa, Verification, SourcingBranch, SourChannelCategory, AsmName");
 			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate,InstBasedSchd, ParentRef");
-			sql.append(", AlwLoanSplit, LoanSplitted, Pmay, AllowSubvention, TdsType");
+			sql.append(", AlwLoanSplit, LoanSplitted, Pmay, AllowSubvention, TdsType, NoOfGrcSteps");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -6482,6 +6485,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setPmay(rs.getBoolean("Pmay"));
 				fm.setAllowSubvention(rs.getBoolean("AllowSubvention"));
 				fm.setTdsType(rs.getString("TdsType"));
+				fm.setNoOfGrcSteps(rs.getInt("NoOfGrcSteps"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {

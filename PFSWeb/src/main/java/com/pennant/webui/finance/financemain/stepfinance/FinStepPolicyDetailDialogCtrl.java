@@ -10,10 +10,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zhtml.Label;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -71,6 +74,9 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 
 	protected Row row_rateMargin;
 	protected Row row_steppedEMI;
+	protected Label label_FinStepPolicyDialog_AutoCal;
+	protected Hbox hbox_autoCal;
+	protected Checkbox autoCal;
 
 	// not auto wired variables
 	private FinanceStepPolicyDetail financeStepPolicyDetail; // overHanded per
@@ -89,13 +95,14 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	private boolean alwDeletion = true;
 	private boolean alwManualStep = false;
 	private int rpySteps = 0;
+	private int grcSteps = 0;
 
 	private FinanceDetail financeDetail = null;
 	private FinScheduleData finScheduleData = null;
 	private FinanceMain financeMain = null;
-	
+
 	private boolean isEnquiry = false;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -140,11 +147,11 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		if (arguments.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		}
-		
+
 		if (arguments.containsKey("enquiryModule")) {
 			isEnquiry = (Boolean) arguments.get("enquiryModule");
 		}
-		
+
 		if (arguments.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (Integer) arguments.get("ccyFormatter");
 		}
@@ -160,9 +167,13 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		if (arguments.containsKey("alwManualStep")) {
 			this.alwManualStep = (Boolean) arguments.get("alwManualStep");
 		}
-		
+
 		if (arguments.containsKey("rpySteps")) {
 			this.rpySteps = (int) arguments.get("rpySteps");
+		}
+
+		if (arguments.containsKey("grcSteps")) {
+			this.grcSteps = (int) arguments.get("grcSteps");
 		}
 
 		if (arguments.containsKey("stepDetailDialogCtrl")) {
@@ -184,7 +195,6 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 
 		doLoadWorkFlow(this.financeStepPolicyDetail.isWorkflow(), this.financeStepPolicyDetail.getWorkflowId(),
 				this.financeStepPolicyDetail.getNextTaskId());
-
 
 		if (isWorkFlowEnabled()) {
 			this.userAction = setListRecordStatus(this.userAction);
@@ -239,7 +249,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.btnNew.setVisible(false);
 		this.btnEdit.setVisible(false);
 
@@ -355,12 +365,11 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		this.eMIStepPerc.setValue(aFinStepPolicy.getEmiSplitPerc());
 		this.steppedEMI.setValue(PennantApplicationUtil.formateAmount(aFinStepPolicy.getSteppedEMI(), ccyFormatter));
 		this.rateMargin.setValue(aFinStepPolicy.getRateMargin());
+		this.autoCal.setChecked(aFinStepPolicy.isAutoCal());
 		this.recordStatus.setValue(aFinStepPolicy.getRecordStatus());
-		
-		if (StringUtils.equals(aFinStepPolicy.getStepSpecifier(), PennantConstants.STEP_SPECIFIER_REG_EMI)) {
-			disableComponent(aFinStepPolicy.getStepNo());
-		}
-		
+
+		disableComponent(aFinStepPolicy.getStepNo());
+
 		logger.debug("Leaving");
 	}
 
@@ -394,15 +403,19 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			wve.add(we);
 		}
 		try {
-			aFinStepPolicy
-					.setSteppedEMI(
-							PennantApplicationUtil.unFormateAmount(this.steppedEMI.getActualValue(), ccyFormatter));
+			aFinStepPolicy.setSteppedEMI(
+					PennantApplicationUtil.unFormateAmount(this.steppedEMI.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aFinStepPolicy
 					.setRateMargin(this.rateMargin.getValue() == null ? BigDecimal.ZERO : this.rateMargin.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinStepPolicy.setAutoCal(this.autoCal.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -463,7 +476,6 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			if (StringUtils.equals(calcOfSteps, PennantConstants.STEPPING_CALC_AMT)) {
 				row_rateMargin.setVisible(false);
 				row_steppedEMI.setVisible(true);
-				steppedEMI.setDisabled(false);
 			} else if (StringUtils.equals(calcOfSteps, PennantConstants.STEPPING_CALC_PERC)) {
 				row_steppedEMI.setVisible(false);
 				row_rateMargin.setVisible(true);
@@ -575,26 +587,49 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 		this.eMIStepPerc.setErrorMessage("");
 		logger.debug("Leaving");
 	}
-	
+
 	public void onChange$stepNumber(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
-		if (getFinanceStepPolicyDetail() != null && StringUtils.equals(getFinanceStepPolicyDetail().getStepSpecifier(),
-				PennantConstants.STEP_SPECIFIER_REG_EMI)) {
-			this.stepNumber.setErrorMessage("");
-			int stpNo = this.stepNumber.intValue();
-			disableComponent(stpNo);
-		}
+		this.stepNumber.setErrorMessage("");
+		int stpNo = this.stepNumber.intValue();
+		disableComponent(stpNo);
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-
 	private void disableComponent(int stpNo) {
-		if(stpNo==rpySteps){
-			this.steppedEMI.setReadonly(true);
-			this.steppedEMI.setValue(BigDecimal.ZERO);
-		}else{
-			this.steppedEMI.setReadonly(false);
+		if (getFinanceStepPolicyDetail() != null && StringUtils.equals(getFinanceStepPolicyDetail().getStepSpecifier(),
+				PennantConstants.STEP_SPECIFIER_REG_EMI)) {
+			if (stpNo == rpySteps) {
+				this.steppedEMI.setReadonly(true);
+				this.steppedEMI.setValue(BigDecimal.ZERO);
+			} else {
+				this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+			}
+		} else if (getFinanceStepPolicyDetail() != null && StringUtils
+				.equals(getFinanceStepPolicyDetail().getStepSpecifier(), PennantConstants.STEP_SPECIFIER_GRACE)) {
+			if (stpNo == grcSteps) {
+				this.label_FinStepPolicyDialog_AutoCal.setVisible(true);
+				this.hbox_autoCal.setVisible(true);
+				if (this.autoCal.isChecked()) {
+					this.steppedEMI.setReadonly(true);
+					this.steppedEMI.setValue(BigDecimal.ZERO);
+				} else {
+					this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+				}
+			} else {
+				this.label_FinStepPolicyDialog_AutoCal.setVisible(false);
+				this.hbox_autoCal.setVisible(false);
+				this.steppedEMI.setReadonly(isReadOnly("FinStepPolicyDetailDialog_SteppedEMI"));
+				this.autoCal.setChecked(false);
+			}
 		}
+	}
+
+	public void onCheck$autoCal(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		int stpNo = this.stepNumber.intValue();
+		disableComponent(stpNo);
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	// CRUD operations
@@ -658,10 +693,11 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	 */
 	private void doEdit() {
 		logger.debug("Entering ");
-		
+
 		this.stepFinTenor.setDisabled(true);
 		this.installments.setReadonly(isReadOnly("FinStepPolicyDetailDialog_Installmensts"));
 		this.rateMargin.setDisabled(isReadOnly("FinStepPolicyDetailDialog_RateMargin"));
+		this.autoCal.setDisabled(isReadOnly("FinStepPolicyDetailDialog_AutoCal"));
 
 		this.space_FinStepPolicyDialog_TenorSplitPerc.setSclass("");
 
@@ -707,7 +743,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	 */
 	public void doReadOnly() {
 		logger.debug("Entering");
-		
+
 		this.stepFinTenor.setReadonly(true);
 		this.stepNumber.setReadonly(true);
 		this.tenorSplitPerc.setDisabled(true);
@@ -838,18 +874,30 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
-		
+
+		int maxStepNo = 0;
 		if (StringUtils.equals(aFinanceStepPolicyDetail.getStepSpecifier(), PennantConstants.STEP_SPECIFIER_REG_EMI)) {
-			if (aFinanceStepPolicyDetail.getStepNo() > rpySteps) {
-				valueParm[0] = String.valueOf(aFinanceStepPolicyDetail.getStepNo());
-				errParm[0] = PennantJavaUtil.getLabel("label_StepNumber") + " " + valueParm[0];
-				valueParm[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_NumberOfSteps.value") + " " + String.valueOf(rpySteps);
-				errParm[1] = valueParm[1];
-				auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "30568", errParm, valueParm),
-						getUserWorkspace().getUserLanguage()));
-				return auditHeader;
-			}
+			maxStepNo = rpySteps;
+			valueParm[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepaySteps.value") + " "
+					+ String.valueOf(maxStepNo);
+		} else {
+			maxStepNo = grcSteps;
+			valueParm[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_GrcSteps.value") + " "
+					+ String.valueOf(maxStepNo);
+		}
+
+		if (!(PennantConstants.TRAN_DEL.equals(tranType))
+				&& !(StringUtils.equals(aFinanceStepPolicyDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+						|| StringUtils.equals(aFinanceStepPolicyDetail.getRecordType(),
+								PennantConstants.RECORD_TYPE_CAN))
+				&& (aFinanceStepPolicyDetail.getStepNo() > maxStepNo)) {
+			valueParm[0] = String.valueOf(aFinanceStepPolicyDetail.getStepNo());
+			errParm[0] = PennantJavaUtil.getLabel("label_StepNumber") + " " + valueParm[0];
+			errParm[1] = valueParm[1];
+			auditHeader.setErrorDetails(
+					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30568", errParm, valueParm),
+							getUserWorkspace().getUserLanguage()));
+			return auditHeader;
 		}
 
 		valueParm[0] = String.valueOf(aFinanceStepPolicyDetail.getStepNo());
@@ -863,7 +911,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 
 				if (financeStepPolicyDetail.getStepNo() == aFinanceStepPolicyDetail.getStepNo() && StringUtils.equals(
 						financeStepPolicyDetail.getStepSpecifier(), aFinanceStepPolicyDetail.getStepSpecifier())) { // Both Current and Existing list Steps
-																									// same
+					// same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
