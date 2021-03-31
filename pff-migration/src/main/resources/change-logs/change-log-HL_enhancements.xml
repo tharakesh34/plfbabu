@@ -25210,6 +25210,56 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="943" author="rajesh.n" dbms="postgresql">
+		<sql>    
+			<![CDATA[ 	
+				create index IX_FAP_STATUS on  finadvancepayments (lower(Status));	 
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="943" author="rajesh.n" dbms="oracle">
+		<sql>    
+			<![CDATA[ 	
+				create index IX_FAP_STATUS on  finadvancepayments (NLSSORT("STATUS",'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="943" author="rajesh.n" dbms="mssql">
+		<sql>    
+			<![CDATA[ 
+				create index IX_FAP_STATUS on  finadvancepayments (Status);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="944" author="rajesh.n" dbms="postgresql">
+		<sql>    
+			<![CDATA[ 	
+				create index IX_ACTIVE_FINTYPE_CLS_DATE_STA on  Financemain (finisactive,lower(closingstatus),lower(fintype),closeddate);
+			]]>
+		</sql>
+	</changeSet>
+		
+	
+		
+	<changeSet id="944" author="rajesh.n" dbms="oracle">
+		<sql>    
+			<![CDATA[ 	
+				create index IX_ACTIVE_FINTYPE_CLS_DATE_STA on  Financemain (FINISACTIVE,NLSSORT("CLOSINGSTATUS",'nls_sort=''BINARY_CI'''),NLSSORT("FINTYPE",'nls_sort=''BINARY_CI'''),CLOSEDDATE);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="944" author="rajesh.n" dbms="mssql">
+		<sql>    
+			<![CDATA[ 	
+				create index IX_ACTIVE_FINTYPE_CLS_DATE_STA on  Financemain (finisactive,closingstatus,fintype,closeddate);
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- Receipt Level views handle in single place starts -->
 
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">
