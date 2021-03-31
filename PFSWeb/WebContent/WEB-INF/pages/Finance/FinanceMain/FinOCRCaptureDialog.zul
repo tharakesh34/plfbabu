@@ -51,11 +51,8 @@
 						</columns>
 						<rows>
 							<row>
-								<label id="labelLoanReference" value="${c:l('label_FinOCRCaptureDialog_LoanReference.value')}" />
-								<hbox>
-									<textbox id="loanReference" readonly="true" />
-								</hbox>
-								<label id="labelReceiptSequence" value="${c:l('label_FinOCRCaptureDialog_ReceiptSequence.value')}" />
+								<label id="labelReceiptSequence"
+									value="${c:l('label_FinOCRCaptureDialog_ReceiptSequence.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<intbox id="disbursementSequence" width="155px" />
@@ -63,40 +60,31 @@
 									<decimalbox id="disbDateAmount" readonly="true" width="155px"
 										style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 								</hbox>
+								<label id="labelBuilderDemand"
+									value="${c:l('label_FinOCRCaptureDialog_BuilderDemand.value')}" />
+								<hbox>
+									<currencyBox id="builderDemand" />
+								</hbox>
 							</row>
 							<row>
-								<label id="labelBuilderDemand" value="${c:l('label_FinOCRCaptureDialog_BuilderDemand.value')}" />
-								<currencyBox id="builderDemand" />
 								<label id="labelOCRPaid" value="${c:l('label_FinOCRCaptureDialog_OCRpaid.value')}" />
-								<currencyBox id="ocrPaid" />
+								<hbox>
+									<currencyBox id="ocrPaid" />
+								</hbox>
+								<label id="label_FinOCRCaptureDialog_ReceiptDate"
+									value="${c:l('label_FinOCRCaptureDialog_OCRdate.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<datebox id="ocrReceiptDate" width="100px" />
+								</hbox>
 							</row>
-							
 							<row>
-								<label id="label_FinOCRCaptureDialog_ReceiptDate" value="${c:l('label_FinOCRCaptureDialog_OCRdate.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<datebox id="ocrReceiptDate" width="100px" />
-									</hbox>
-								<label id="label_FinTaxUploadDetailDialog_FileUpload" value="${c:l('label_FinTaxUploadDetailDialog_FileUpload.value')}" />
+							<label id="label_FinTaxUploadDetailDialog_FileUpload" value="${c:l('label_FinTaxUploadDetailDialog_FileUpload.value')}" />
 								<hbox>
 										<textbox id="uploadedfileName" width="150px" readonly="true" />
 										<button id="btnUpload" label="Browse" upload="true" autodisable="Save" />
 										<button id="btnUploadView" label="View" autodisable="Save" visible="false" />
 								</hbox>			
-								<!-- <label id="label_FinOCRCaptureDialog_ReceiptDate" value="${c:l('label_FinOCRCaptureDialog_OCRdate.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<datebox id="ocrReceiptDate1" width="100px" />
-									</hbox>-->
-							</row> 
-							<row>
-								
-								<label id="label_FinOCRCaptureDialog_FileUpload" value="${c:l('label_FinOCRCaptureDialog_FileUpload.value')}" />
-								<hbox>
-										<textbox id="uploadedfileName1" width="150px" readonly="true" />
-										<button id="btnUpload1" label="Browse" upload="true" autodisable="Save" />
-										<button id="btnUploadView1" label="View" autodisable="Save" visible="false" />
-								</hbox>	
 								<label id="labelRemarks" value="${c:l('label_FinOCRCaptureDialog_Remarks.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -104,9 +92,9 @@
 									</hbox>			
 							</row>
 							<row visible="false">
-							<label id="labelLoanReference1" value="${c:l('label_FinOCRCaptureDialog_LoanReference.value')}"  visible="false"/>
+							<label id="labelLoanReference" value="${c:l('label_FinOCRCaptureDialog_LoanReference.value')}"  visible="false"/>
 								<hbox>
-									<textbox id="loanReference1" readonly="true" visible="false" />
+									<textbox id="loanReference" readonly="true" visible="false" />
 								</hbox>
 							</row>
 						</rows>
