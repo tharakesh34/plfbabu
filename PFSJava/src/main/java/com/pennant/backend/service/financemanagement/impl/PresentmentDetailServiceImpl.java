@@ -438,6 +438,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			if (MandateConstants.TYPE_PDC.equals(paymentMode)) {
 				updateChequeStatus(presentmentDetail.getMandateId(), PennantConstants.CHEQUESTATUS_BOUNCE);
 			}
+			String presentmentType = this.presentmentDetailDAO.getPresentmentType(presentmentDetail.getId());
+			presentmentDetail.setPresentmentType(presentmentType);
 			presentmentDetail = this.receiptCancellationService.presentmentCancellation(presentmentDetail, returnCode);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);

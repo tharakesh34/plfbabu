@@ -1570,7 +1570,6 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-
 		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, "A" },
 				Integer.class) > 0;
 
@@ -1816,6 +1815,21 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		}
 
 		return Long.MIN_VALUE;
+	}
+
+	@Override
+	public String getPresentmentType(long id) {
+		String sql = "Select presentmenttype from presentmentheader Where Presentmentid = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, new Object[] { id }, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not found in presentmentheader table for the specified Presentmentid >> {}", id);
+		}
+		return null;
+
 	}
 
 }

@@ -142,4 +142,6 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	long getPresentmentId(String presentmentRef);
 
+	String getPresentmentType(long id);
+
 }

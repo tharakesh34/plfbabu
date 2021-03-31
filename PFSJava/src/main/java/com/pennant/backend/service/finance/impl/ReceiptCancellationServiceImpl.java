@@ -898,7 +898,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			return presentmentDetail;
 		}
 
-		ManualAdvise manualAdvise = getManualAdvise(receiptHeader, bounceReason, finReceiptDetail);
+		ManualAdvise manualAdvise = getManualAdvise(receiptHeader, bounceReason, finReceiptDetail,
+				presentmentDetail.getPresentmentType());
 
 		if (manualAdvise == null) {
 			presentmentDetail.setErrorDesc(
@@ -967,7 +968,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * @return ManualAdvise
 	 */
 	private ManualAdvise getManualAdvise(FinReceiptHeader receiptHeader, BounceReason bounceReason,
-			FinReceiptDetail finReceiptDetail) {
+			FinReceiptDetail finReceiptDetail, String presentmentType) {
 		logger.debug(Literal.ENTERING);
 
 		Date appDate = SysParamUtil.getAppDate();
@@ -983,6 +984,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		if (rule != null) {
 			fieldsAndValues.put("br_finType", receiptHeader.getFinType());
+			fieldsAndValues.put("br_presentmentType", presentmentType);
 			if (eventMapping != null && eventMapping.size() > 0) {
 				fieldsAndValues.put("emptype", eventMapping.get("EMPTYPE"));
 				fieldsAndValues.put("branchcity", eventMapping.get("BRANCHCITY"));
