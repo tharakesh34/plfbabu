@@ -24842,6 +24842,15 @@ UNION ALL
 	
 	<!-- ST#1627 Non LAN Receipt changes end -->
 	
+	<changeSet id="662" author="rajesh.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'TRANSACTIONREF_TXT_IN_RECEIPT';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST,SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID,NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('TRANSACTIONREF_TXT_IN_RECEIPT', 'Text to consider in Transaction Reference field at Receipts', 'String', 1, 'EXGRATIA', 20, 0, null, null, 'Text to consider in Transaction Reference field at Receipts', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	<!-- Receipt Level views handle in single place starts -->
 
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">
