@@ -26,7 +26,7 @@ public class CashFlowPreperation implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 		try {
-			Date eodDate = SysParamUtil.getAppDate();
+			Date eodDate = SysParamUtil.getLastBusinessdate();
 			Date monthEnd = DateUtil.getMonthEnd(eodDate);
 			if (DateUtil.compare(eodDate, monthEnd) == 0) {
 				getCashFlowService().processCashFlowDetails();

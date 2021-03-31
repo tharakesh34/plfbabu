@@ -27,30 +27,20 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
-import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.reports.CashFlowReportDAO;
 import com.pennant.backend.model.finance.CashFlow;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinRepayHeader;
-import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.reports.CashFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.equation.util.DateUtility;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CashFlowServiceImpl implements CashFlowService {
 	private static final Logger logger = Logger.getLogger(CashFlowServiceImpl.class);
-	private FinFeeReceiptDAO finFeeReceiptDAO;
-	private FinanceDisbursementDAO financeDisbursementDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinODDetailsDAO finODDetailsDAO;
 	private CashFlowReportDAO cashFlowReportDAO;
 	private static final String PATH = "CashFlowReport";
 	private int formater = CurrencyUtil.getFormat("");
@@ -64,7 +54,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 		logger.debug(Literal.ENTERING);
 		List<CashFlow> cashFlows = cashFlowReportDAO.getCashFlowDetails();
 		//null check
-		if (CollectionUtils.isNotEmpty(cashFlows)) {
+		if (cashFlows != null) {
 			processDetails(cashFlows);
 		}
 		logger.debug(Literal.LEAVING);
@@ -86,17 +76,9 @@ public class CashFlowServiceImpl implements CashFlowService {
 	}
 
 	private void processDisbursementDetails(CashFlow cashFlow, List<CashFlow> cashFlowList) {
-		List<FinanceDisbursement> finDisbDetails = financeDisbursementDAO
-				.getFinanceDisbursementDetails(cashFlow.getLan(), "", false);
-		if (CollectionUtils.isNotEmpty(finDisbDetails)) {
-			for (FinanceDisbursement financeDisbursement : finDisbDetails) {
-				CashFlow flow = new CashFlow();
-				flow.setDate(financeDisbursement.getDisbDate());
-				flow.setLan(financeDisbursement.getFinReference());
-				flow.setType("DisbMade");
-				flow.setDisb(financeDisbursement.getDisbAmount());
-				cashFlowList.add(flow);
-			}
+		List<CashFlow> cashFlows = cashFlowReportDAO.getFinDisbDetails(cashFlow.getLan(), "");
+		if (CollectionUtils.isNotEmpty(cashFlows)) {
+			cashFlowList.addAll(cashFlows);
 		}
 	}
 
@@ -122,12 +104,12 @@ public class CashFlowServiceImpl implements CashFlowService {
 				} else if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finRepayHeader.getFinEvent())) {
 					forclosureAmt = forclosureAmt.add(finRepayHeader.getRepayAmount());
 					if (finRepayHeader.getPriAmount().compareTo(BigDecimal.ZERO) >= 1
-							|| finRepayHeader.getPftAmount().compareTo(BigDecimal.ZERO) >= 1){
+							|| finRepayHeader.getPftAmount().compareTo(BigDecimal.ZERO) >= 1) {
 						cashFlow.setDate(finRepayHeader.getValueDate());
-					cashFlow.setLan(finRepayHeader.getFinReference());
-					cashFlow.setForClosure(forclosureAmt);
-					cashFlow.setType("Foreclosure");
-					cashFlowList.add(cashFlow);
+						cashFlow.setLan(finRepayHeader.getFinReference());
+						cashFlow.setForClosure(forclosureAmt);
+						cashFlow.setType("Foreclosure");
+						cashFlowList.add(cashFlow);
 					}
 				}
 			}
@@ -137,77 +119,78 @@ public class CashFlowServiceImpl implements CashFlowService {
 
 	private void processScheduleDetails(CashFlow cashFlowIn, List<CashFlow> cashFlowList) {
 		//Schedule Details
-		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(
-				cashFlowIn.getLan(),
-				"", false);
+		List<FinanceScheduleDetail> fsds = cashFlowReportDAO.getFinScheduleDetails(cashFlowIn.getLan(), "");
+		List<FinODDetails> fods = cashFlowReportDAO.getFinODDetailsByFinRef(cashFlowIn.getLan(), "");
 		BigDecimal schdPriPaid = BigDecimal.ZERO;
 		BigDecimal schdPftPaid = BigDecimal.ZERO;
 		BigDecimal schdPftPaidPreEmi = BigDecimal.ZERO;
-		if (CollectionUtils.isNotEmpty(scheduleDetails)) {
-			for (FinanceScheduleDetail financeScheduleDetail : scheduleDetails) {
-				FinODDetails finODDByFinRef = finODDetailsDAO.getFinODyFinRefSchDate(
-						financeScheduleDetail.getFinReference(), financeScheduleDetail.getSchDate());
+		if (CollectionUtils.isNotEmpty(fsds)) {
+			for (FinanceScheduleDetail fsd : fsds) {
 				CashFlow cashFlow = new CashFlow();
 				//Pre EMI
-				if ((CalculationConstants.SCH_SPECIFIER_GRACE.equals(financeScheduleDetail.getSpecifier())
-						|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(financeScheduleDetail.getSpecifier())
-								&& financeScheduleDetail.getPartialPaidAmt().compareTo(BigDecimal.ZERO) == 0)) {
-					if (financeScheduleDetail.getProfitSchd().compareTo(BigDecimal.ZERO) >= 1) {
-						cashFlow.setDate(financeScheduleDetail.getSchDate());
-						cashFlow.setLan(financeScheduleDetail.getFinReference());
+				if ((CalculationConstants.SCH_SPECIFIER_GRACE.equals(fsd.getSpecifier())
+						|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(fsd.getSpecifier())
+								&& fsd.getPartialPaidAmt().compareTo(BigDecimal.ZERO) == 0)) {
+					if (fsd.getProfitSchd().compareTo(BigDecimal.ZERO) >= 1) {
+						cashFlow.setDate(fsd.getSchDate());
+						cashFlow.setLan(fsd.getFinReference());
 						cashFlow.setType("IntRecdNet");
-						BigDecimal pftPaid = financeScheduleDetail.getProfitSchd()
-								.subtract(financeScheduleDetail.getSchdPftPaid());
-						if (finODDByFinRef != null) {
-							if (financeScheduleDetail.isSchPftPaid() || (pftPaid.compareTo(BigDecimal.ZERO) >= 1)) {
-								schdPftPaidPreEmi = schdPftPaidPreEmi.add(pftPaid);
-								schdPftPaid = schdPftPaid.add(pftPaid);
-							} else {
-								schdPftPaidPreEmi = BigDecimal.ZERO;
-								schdPftPaid = BigDecimal.ZERO;
-							}
-							if (!financeScheduleDetail.isSchPftPaid()) {
-								cashFlow.setInterestCollection(BigDecimal.ZERO);
-							} else {
-								cashFlow.setInterestCollection(schdPftPaidPreEmi);
+						BigDecimal pftPaid = fsd.getProfitSchd().subtract(fsd.getSchdPftPaid());
+						if (CollectionUtils.isNotEmpty(fods)) {
+							for (FinODDetails fod : fods) {
+								if (fsd.getSchDate().compareTo(fod.getFinODSchdDate()) == 0) {
+									if (fsd.isSchPftPaid() || (pftPaid.compareTo(BigDecimal.ZERO) >= 1)) {
+										schdPftPaidPreEmi = schdPftPaidPreEmi.add(pftPaid);
+										schdPftPaid = schdPftPaid.add(pftPaid);
+									} else {
+										schdPftPaidPreEmi = BigDecimal.ZERO;
+										schdPftPaid = BigDecimal.ZERO;
+									}
+									if (!fsd.isSchPftPaid()) {
+										cashFlow.setInterestCollection(BigDecimal.ZERO);
+									} else {
+										cashFlow.setInterestCollection(schdPftPaidPreEmi);
+									}
+								}
 							}
 						} else {
-							cashFlow.setInterestCollection(
-									schdPftPaidPreEmi.add(financeScheduleDetail.getProfitSchd()));
+							cashFlow.setInterestCollection(schdPftPaidPreEmi.add(fsd.getProfitSchd()));
 							schdPftPaidPreEmi = BigDecimal.ZERO;
 						}
 						cashFlowList.add(cashFlow);
 					}
 					//EMI Collection
-				} else if ((CalculationConstants.SCH_SPECIFIER_REPAY.equals(financeScheduleDetail.getSpecifier())
-						|| CalculationConstants.SCH_SPECIFIER_MATURITY.equals(financeScheduleDetail.getSpecifier()))
-						&& financeScheduleDetail.getPartialPaidAmt().compareTo(BigDecimal.ZERO) == 0) {
-					cashFlow.setDate(financeScheduleDetail.getSchDate());
-					cashFlow.setLan(financeScheduleDetail.getFinReference());
+				} else if ((CalculationConstants.SCH_SPECIFIER_REPAY.equals(fsd.getSpecifier())
+						|| CalculationConstants.SCH_SPECIFIER_MATURITY.equals(fsd.getSpecifier()))
+						&& fsd.getPartialPaidAmt().compareTo(BigDecimal.ZERO) == 0) {
+					cashFlow.setDate(fsd.getSchDate());
+					cashFlow.setLan(fsd.getFinReference());
 					cashFlow.setType("EMI collection");
-					BigDecimal pftPaid = financeScheduleDetail.getProfitSchd()
-							.subtract(financeScheduleDetail.getSchdPftPaid());
-					BigDecimal priPaid = financeScheduleDetail.getPrincipalSchd()
-							.subtract(financeScheduleDetail.getSchdPriPaid());
-					if (finODDByFinRef != null) {
-						if (financeScheduleDetail.isSchPftPaid() || (pftPaid.compareTo(BigDecimal.ZERO) >= 1
-								|| priPaid.compareTo(BigDecimal.ZERO) >= 1)) {
-							schdPftPaid = schdPftPaid.add(pftPaid);
-							schdPriPaid = schdPriPaid.add(priPaid);
-						} else {
-							schdPftPaid = BigDecimal.ZERO;
-							schdPriPaid = BigDecimal.ZERO;
-						}
-						if (!financeScheduleDetail.isSchPftPaid()) {
-							cashFlow.setInterestCollection(BigDecimal.ZERO);
-							cashFlow.setPrincipalCollection(BigDecimal.ZERO);
-						} else {
-							cashFlow.setInterestCollection(schdPftPaid);
-							cashFlow.setPrincipalCollection(schdPriPaid);
+					BigDecimal pftPaid = fsd.getProfitSchd().subtract(fsd.getSchdPftPaid());
+					BigDecimal priPaid = fsd.getPrincipalSchd().subtract(fsd.getSchdPriPaid());
+					if (CollectionUtils.isNotEmpty(fods)) {
+						for (FinODDetails fod : fods) {
+							if (fsd.getSchDate().compareTo(fod.getFinODSchdDate()) == 0) {
+								if (fsd.isSchPftPaid() || (pftPaid.compareTo(BigDecimal.ZERO) >= 1
+										|| priPaid.compareTo(BigDecimal.ZERO) >= 1)) {
+									schdPftPaid = schdPftPaid.add(pftPaid);
+									schdPriPaid = schdPriPaid.add(priPaid);
+								} else {
+									schdPftPaid = BigDecimal.ZERO;
+									schdPriPaid = BigDecimal.ZERO;
+								}
+								if (!fsd.isSchPftPaid()) {
+									cashFlow.setInterestCollection(BigDecimal.ZERO);
+									cashFlow.setPrincipalCollection(BigDecimal.ZERO);
+								} else {
+									cashFlow.setInterestCollection(schdPftPaid);
+									cashFlow.setPrincipalCollection(schdPriPaid);
+								}
+							}
 						}
 					} else {
-						cashFlow.setInterestCollection(schdPftPaid.add(financeScheduleDetail.getProfitSchd()));
-						cashFlow.setPrincipalCollection(schdPriPaid.add(financeScheduleDetail.getPrincipalSchd()));
+						cashFlow.setInterestCollection(schdPftPaid.add(fsd.getProfitSchd()));
+						cashFlow.setPrincipalCollection(schdPriPaid.add(fsd.getPrincipalSchd()));
 						schdPftPaid = BigDecimal.ZERO;
 						schdPriPaid = BigDecimal.ZERO;
 					}
@@ -219,7 +202,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 
 	private void createFile(List<CashFlow> cashFlows) {
 		logger.debug(Literal.ENTERING);
-		if (CollectionUtils.isNotEmpty(cashFlows)) {
+		if (cashFlows != null) {
 			prepareCashFlowReportSheet(cashFlows);
 		}
 		logger.debug(Literal.LEAVING);
@@ -254,7 +237,8 @@ public class CashFlowServiceImpl implements CashFlowService {
 				String DATE_FORMAT = "hh.mm.ss";
 				SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 				String time = sdf.format(Calendar.getInstance().getTime());
-				String newPath = App.getResourcePath(PATH) + "//" + appDate + "//" + "CashFlowReport_" + appDate + "_"+ time + ".xlsx";
+				String newPath = App.getResourcePath(PATH) + "//" + appDate + "//" + "CashFlowReport_" + appDate + "_"
+						+ time + ".xlsx";
 				File outFile = new File(newPath);
 				if (!outFile.exists()) {
 					outFile.getParentFile().mkdirs(); // Will create parent directories if not exists
@@ -308,14 +292,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 		}
 	}
 
-	/**
-	 * Prepare the CashFlows list
-	 * 
-	 * @param cashFlow
-	 * @param list
-	 */
 	private List<String> prepareCashFlowValuesFromObject(CashFlow cashFlow) {
-		logger.debug(Literal.ENTERING);
 		ArrayList<String> list = new ArrayList<>();
 		Date date = cashFlow.getDate();
 		if (date != null && DateUtility.formatDate(date, "dd-MM-yyyy") != null) {
@@ -339,7 +316,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 		BigDecimal foreClosure = cashFlow.getForClosure();
 		list.add(PennantApplicationUtil.amountFormate(foreClosure, formater).replace(",", ""));
 		list.add(String.valueOf(cashFlow.getType()));
-		logger.debug(Literal.LEAVING);
+
 		return list;
 	}
 
@@ -379,38 +356,6 @@ public class CashFlowServiceImpl implements CashFlowService {
 			});
 		}
 		return cashFlows;
-	}
-
-	public FinFeeReceiptDAO getFinFeeReceiptDAO() {
-		return finFeeReceiptDAO;
-	}
-
-	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
-		this.finFeeReceiptDAO = finFeeReceiptDAO;
-	}
-
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
-	}
-
-	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
-		this.financeDisbursementDAO = financeDisbursementDAO;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
-	}
-
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 	public CashFlowReportDAO getCashFlowReportDAO() {

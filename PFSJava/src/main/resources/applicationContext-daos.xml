@@ -12667,10 +12667,6 @@
 
 	<bean name="cashFlowServiceTarget" class="com.pennant.backend.service.reports.impl.CashFlowServiceImpl">
 		<property name="cashFlowReportDAO" ref="cashFlowReportDAO" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
-		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 	</bean>
 
 	<bean id="partCancellationService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
