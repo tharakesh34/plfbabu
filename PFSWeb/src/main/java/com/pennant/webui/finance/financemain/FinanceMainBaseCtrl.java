@@ -1330,7 +1330,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible) && !isOverdraft) {
-			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 8);
+			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 50);
+			this.eligibilityMethod.setTextBoxWidth(180);
 			List<Long> eligibilityIdsList = new ArrayList<>();
 			if (getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods() != null
 					&& !getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods().isEmpty()) {
