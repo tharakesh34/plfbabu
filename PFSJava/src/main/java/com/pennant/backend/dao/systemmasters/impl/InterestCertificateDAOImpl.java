@@ -61,9 +61,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
@@ -365,6 +367,68 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in FINSCHEDULEDETAILS for the  finreference >> {}");
+		}
+
+		return null;
+	}
+
+	@Override
+	public FinanceScheduleDetail getScheduleDetailsByFinReference(String finReference, Date finStartDate,
+			Date finEndDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" sum(ProfitSchd) ProfitSchd, sum(PrincipalSchd) PrincipalSchd");
+		sql.append(", sum(PartialPaidAmt) PartialPaidAmt, sum(SchdPftPaid) SchdPftPaid");
+		sql.append(", sum(SchdPriPaid) SchdPriPaid");
+		sql.append(" From finscheduledetails");
+		sql.append(" Where FinReference = ? and schdate >= ? and schdate <= ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finReference, finStartDate, finEndDate }, (rs, i) -> {
+						FinanceScheduleDetail fsd = new FinanceScheduleDetail();
+
+						fsd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+						fsd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+						fsd.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
+						fsd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+						fsd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+
+						return fsd;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(
+					"Record is not found in FinScheduleDetails table for the specified FinReference = {} and schdate >= {} and schdate <= {}",
+					finReference, finStartDate, finEndDate);
+		}
+		return null;
+	}
+
+	@Override
+	public InterestCertificate getRepayDetails(String finReference, Date startDate, Date endDate) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append("  sum(FinSchdPftPaid) FinSchdPftPaid, sum(FinSchdPriPaid) FinSchdPriPaid");
+		sql.append(" From FinRepayDetails");
+		sql.append(" Where FinReference = ? and FinSchdDate >= ? and FinSchdDate <= ? and FinValueDate > ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finReference, startDate, endDate, endDate }, (rs, i) -> {
+
+						InterestCertificate ic = new InterestCertificate();
+
+						ic.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
+						ic.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
+
+						return ic;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(
+					"Record is not found in FinRepayDetails for the specified FinReference = {} and FinSchdDate >= {} and FinSchdDate <= {} and FinValueDate > {}",
+					finReference, startDate, endDate, endDate);
 		}
 
 		return null;

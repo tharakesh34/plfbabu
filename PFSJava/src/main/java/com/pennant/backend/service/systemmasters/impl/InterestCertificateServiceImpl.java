@@ -65,16 +65,26 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.VasMovementDetailDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.AgreementDetail.CoApplicant;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
@@ -91,6 +101,10 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	private FinanceMainDAO financeMainDAO;
 	private VASRecordingDAO vASRecordingDAO;
 	private VasMovementDetailDAO vasMovementDetailDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
+	int format = 2;
 
 	public InterestCertificateServiceImpl() {
 		super();
@@ -112,13 +126,12 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			return null;
 		}
 
-		InterestCertificate certificate = null;
-		if (isProvCert) {
-			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate, endDate);
-		} else {
-			certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmountPaid(finReference, startDate,
-					endDate);
-		}
+		/*
+		 * InterestCertificate certificate = null; if (isProvCert) { certificate =
+		 * interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate, endDate); } else {
+		 * certificate = interestCertificateDAO.getSumOfPrinicipalAndProfitAmountPaid(finReference, startDate, endDate);
+		 * }
+		 */
 		// Get Co-Applicants
 
 		List<Customer> coApplicantList = interestCertificateDAO.getCoApplicantNames(finReference);
@@ -149,7 +162,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 			extendedFieldService.setExtendedFields(intCert);
 		}
 
-		int format = CurrencyUtil.getFormat(intCert.getFinCcy());
+		format = CurrencyUtil.getFormat(intCert.getFinCcy());
 		InterestCertificate summary = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate,
 				endDate);
 		Map<String, Object> amounts = interestCertificateDAO.getSumOfPriPftEmiAmount(finReference, startDate, endDate);
@@ -195,6 +208,8 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		}
 
 		intCert.setFinAmount(PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getFinAmount()), format));
+		String assetVal = intCert.getFinAssetvalue();
+		intCert.setFinAssetvalue(PennantApplicationUtil.amountFormate(new BigDecimal(assetVal), format));
 
 		if (amounts != null && !amounts.isEmpty()) {
 
@@ -277,6 +292,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 				}
 			}
 		}
+		calculatePPAmounts(intCert, finReference, startDate, endDate, isProvCert);
 
 		//Ratio based division for Loan repay amount and Insurance amount.
 		if (ImplementationConstants.ALLOW_LOAN_VAS_RATIO_CALC) {
@@ -284,40 +300,141 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 					endDate, totalvasAmt, totalLoanAmt, totalDisbAmt, loanRatio, vasRatio);
 			vasRatio = amountsByRef.get(1);
 			loanRatio = amountsByRef.get(2);
-			BigDecimal priPaid = intCert.getFinSchdPriPaid();
-			BigDecimal pftPaid = intCert.getFinSchdPftPaid();
-			String totalPaid;
-			if (summary.getFinSchdPriPaid() != null && summary.getFinSchdPftPaid() != null) {
-				totalPaid = PennantApplicationUtil
-						.amountFormate(summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format);
-			} else {
-				totalPaid = "0.00";
-			}
-			BigDecimal schdPriPaid = PennantApplicationUtil.formateAmount(summary.getFinSchdPriPaid(), format);
-			BigDecimal schdPftPaid = PennantApplicationUtil.formateAmount(summary.getFinSchdPftPaid(), format);
-			if (isProvCert) {
-				pftPaid = (BigDecimal) amounts.get("profitschd");
-				priPaid = (BigDecimal) amounts.get("principalschd");
-				pftPaid = PennantApplicationUtil.formateAmount(pftPaid, format);
-				priPaid = PennantApplicationUtil.formateAmount(priPaid, format);
-				totalPaid = String.valueOf(pftPaid.add(priPaid));
-				schdPriPaid = priPaid;
-				schdPftPaid = pftPaid;
-			}
+			BigDecimal priPaid = intCert.getPriPaidSch();
+			BigDecimal pftPaid = intCert.getPftPaidSch();
+			BigDecimal totalPaid = priPaid.add(pftPaid);
+
 			BigDecimal principalPaid = priPaid.multiply(loanRatio);
+			principalPaid = principalPaid.setScale(format, RoundingMode.HALF_UP);
 			BigDecimal principalPaidVAS = priPaid.multiply(vasRatio);
+			principalPaidVAS = principalPaidVAS.setScale(format, RoundingMode.HALF_UP);
 			BigDecimal profitPaid = pftPaid.multiply(loanRatio);
+			profitPaid = profitPaid.setScale(format, RoundingMode.HALF_UP);
 			BigDecimal profitPaidVAS = pftPaid.multiply(vasRatio);
-			intCert.setPriPaid(principalPaid.setScale(format, RoundingMode.HALF_UP));
-			intCert.setVasPriPaid(principalPaidVAS.setScale(format, RoundingMode.HALF_UP));
-			intCert.setPftPaid(profitPaid.setScale(format, RoundingMode.HALF_UP));
-			intCert.setVasPftPaid(profitPaidVAS.setScale(format, RoundingMode.HALF_UP));
-			intCert.setTotalPaid(totalPaid);
-			intCert.setSchdPftPaid(String.valueOf(schdPftPaid));
-			intCert.setSchdPriPaid(String.valueOf(schdPriPaid));
+			profitPaidVAS = profitPaidVAS.setScale(format, RoundingMode.HALF_UP);
+
+			intCert.setPriPaid(PennantApplicationUtil.amountFormate(principalPaid, format));
+			intCert.setVasPriPaid(PennantApplicationUtil.amountFormate(principalPaidVAS, format));
+			intCert.setPftPaid(PennantApplicationUtil.amountFormate(profitPaid, format));
+			intCert.setVasPftPaid(PennantApplicationUtil.amountFormate(profitPaidVAS, format));
+
+			intCert.setTotalPaid(PennantApplicationUtil.amountFormate(totalPaid, format));
+			intCert.setSchdPftPaid(PennantApplicationUtil.amountFormate(pftPaid, format));
+			intCert.setSchdPriPaid(PennantApplicationUtil.amountFormate(priPaid, format));
+
 		}
 		logger.debug(Literal.LEAVING);
 		return intCert;
+
+	}
+
+	private BigDecimal getPPAmtFromAllowcations(long receiptID) {
+		// Does we need to consider the part Pay amounts which are made with in FY?
+		// Receipt Allocations
+		BigDecimal ppAmount = BigDecimal.ZERO;
+		List<ReceiptAllocationDetail> allocationDetails = receiptAllocationDetailDAO
+				.getAllocationsByReceiptID(receiptID, "");
+		if (CollectionUtils.isNotEmpty(allocationDetails)) {
+			for (ReceiptAllocationDetail allocationDetail : allocationDetails) {
+				// Part Payment
+				if (RepayConstants.ALLOCATION_PP.equals(allocationDetail.getAllocationType())) {
+					ppAmount = ppAmount.add(allocationDetail.getPaidAmount());
+				}
+			}
+		}
+		return ppAmount;
+	}
+
+	private void calculatePPAmounts(InterestCertificate intCert, String finReference, Date fromDate, Date toDate,
+			boolean isProvCert) {
+		// Sum of PftScd,PriScd,PartPaid Amount,SchdPftPaid,SchdPriPaid
+		FinanceScheduleDetail scheduleDetail = interestCertificateDAO.getScheduleDetailsByFinReference(finReference,
+				fromDate, toDate);
+
+		if (scheduleDetail == null) {
+			return;
+		}
+
+		// Deductions: Need to get the Part Payments(Receipt Header,Details)
+		BigDecimal rcPPAmount = BigDecimal.ZERO;
+		BigDecimal rcExgAtmount = BigDecimal.ZERO;
+		BigDecimal rcPmayAmount = BigDecimal.ZERO;
+		BigDecimal rpSchdPriPaid = BigDecimal.ZERO;
+		BigDecimal rpSchdPftPaid = BigDecimal.ZERO;
+		
+		String exGratiaTxt = SysParamUtil.getValueAsString(SMTParameterConstants.TRANSACTIONREF_TXT_IN_RECEIPT);
+	
+		if (finReceiptHeaderDAO != null && finReceiptDetailDAO != null) {
+			List<FinReceiptHeader> frhs = finReceiptHeaderDAO.getReceiptHeaderByID(finReference,
+					FinanceConstants.FINSER_EVENT_EARLYRPY, fromDate, toDate, "");
+			// Receipt Header
+			if (CollectionUtils.isNotEmpty(frhs)) {
+				for (FinReceiptHeader frh : frhs) {
+					// Receipt Details
+					long receiptID = frh.getReceiptID();
+					List<FinReceiptDetail> frds = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "");
+					
+					if (CollectionUtils.isNotEmpty(frds)) {
+						for (FinReceiptDetail frd : frds) {
+							// EX Gratia
+							String transactionRef = frd.getTransactionRef();
+							if (StringUtils.isNotEmpty(transactionRef)) {
+								// Ex Gratia
+								if (transactionRef.contains(exGratiaTxt)) {
+									rcExgAtmount = rcExgAtmount.add(getPPAmtFromAllowcations(receiptID));
+								}
+								// PMAY
+							} else if (RepayConstants.RECEIVED_GOVT.equals(frh.getReceivedFrom())) {
+								rcPmayAmount = rcPmayAmount.add(getPPAmtFromAllowcations(receiptID));
+								// PP
+							} else {
+								rcPPAmount = rcPPAmount.add(getPPAmtFromAllowcations(receiptID));
+							}
+						}
+					}
+
+				}
+			}
+		}
+		// Get the total partpay amount which has been PAID next FY
+		InterestCertificate certificate = interestCertificateDAO.getRepayDetails(finReference, fromDate, toDate);
+		if (certificate != null) {
+			if (certificate.getFinSchdPriPaid() != null) {
+				// Future Principle PAID as per FY
+				rpSchdPriPaid = rpSchdPriPaid.add(certificate.getFinSchdPriPaid());
+			}
+			if (certificate.getFinSchdPftPaid() != null) {
+				// Future Profit PAID as per FY
+				rpSchdPftPaid = rpSchdPftPaid.add(certificate.getFinSchdPftPaid());
+			}
+		}
+
+		BigDecimal totPftSchd = scheduleDetail.getProfitSchd();
+		BigDecimal totPriSchd = scheduleDetail.getPrincipalSchd();
+
+		BigDecimal totPftPaid = scheduleDetail.getSchdPftPaid();
+		BigDecimal totPriPaid = scheduleDetail.getSchdPriPaid();
+		// Principal Deductions
+		BigDecimal totPriDeduction = rcPmayAmount.add(rcExgAtmount).add(rpSchdPriPaid);
+		// Profit Deductions
+		BigDecimal totPftDeduction = rpSchdPftPaid;
+
+		BigDecimal reportPriAmount = BigDecimal.ZERO;
+		BigDecimal reportPftAmount = BigDecimal.ZERO;
+		if (isProvCert) {
+			reportPriAmount = totPriSchd.subtract(totPriDeduction);
+			reportPftAmount = totPftSchd.subtract(totPftDeduction);
+		} else {
+			reportPriAmount = totPriPaid.subtract(totPriDeduction);
+			reportPftAmount = totPftPaid.subtract(totPftDeduction);
+		}
+		intCert.setPriPaidSch(reportPriAmount);
+		intCert.setPftPaidSch(reportPftAmount);
+
+		intCert.setSchdPftPaid(PennantApplicationUtil.amountFormate(intCert.getPftPaidSch(), format));
+		intCert.setSchdPriPaid(PennantApplicationUtil.amountFormate(intCert.getPriPaidSch(), format));
+		intCert.setTotalPaid(
+				PennantApplicationUtil.amountFormate(intCert.getPftPaidSch().add(intCert.getPriPaidSch()), format));
 
 	}
 
@@ -404,4 +521,20 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	public void setVasMovementDetailDAO(VasMovementDetailDAO vasMovementDetailDAO) {
 		this.vasMovementDetailDAO = vasMovementDetailDAO;
 	}
+
+	@Autowired(required = false)
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	@Autowired(required = false)
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired(required = false)
+	public void setReceiptAllocationDetailDAO(ReceiptAllocationDetailDAO receiptAllocationDetailDAO) {
+		this.receiptAllocationDetailDAO = receiptAllocationDetailDAO;
+	}
+
 }

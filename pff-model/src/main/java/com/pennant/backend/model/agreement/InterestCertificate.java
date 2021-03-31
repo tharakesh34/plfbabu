@@ -21,7 +21,7 @@ public class InterestCertificate {
 	private String custPhoneNumber = "";
 	private String finTypeDesc = "";
 	private String coApplicant = "";
-	private BigDecimal finAssetvalue = BigDecimal.ZERO;
+	private String finAssetvalue;
 	private BigDecimal finCurrAssetvalue = BigDecimal.ZERO;
 	private BigDecimal effectiveRate = BigDecimal.ZERO;
 	private String entityCode = "";
@@ -94,10 +94,15 @@ public class InterestCertificate {
 	private String grcPft = "0.00";
 	private String grcPftPaid = "0.00";
 
-	private BigDecimal priPaid = BigDecimal.ZERO;
-	private BigDecimal vasPriPaid = BigDecimal.ZERO;
-	private BigDecimal pftPaid = BigDecimal.ZERO;
-	private BigDecimal vasPftPaid = BigDecimal.ZERO;
+	private BigDecimal priPaidSch = BigDecimal.ZERO;
+	private BigDecimal vasPriPaidSch = BigDecimal.ZERO;
+	private BigDecimal pftPaidSch = BigDecimal.ZERO;
+	private BigDecimal vasPftPaidSch = BigDecimal.ZERO;
+
+	private String priPaid = "";
+	private String vasPriPaid = "";
+	private String pftPaid = "";
+	private String vasPftPaid = "";
 	private List<CoApplicant> coApplicantList = new ArrayList<CoApplicant>();
 	private String custSalutation = "";
 
@@ -198,11 +203,11 @@ public class InterestCertificate {
 		this.coApplicant = coApplicant;
 	}
 
-	public BigDecimal getFinAssetvalue() {
+	public String getFinAssetvalue() {
 		return finAssetvalue;
 	}
 
-	public void setFinAssetvalue(BigDecimal finAssetvalue) {
+	public void setFinAssetvalue(String finAssetvalue) {
 		this.finAssetvalue = finAssetvalue;
 	}
 
@@ -678,35 +683,35 @@ public class InterestCertificate {
 		this.finCurrAssetvalue = finCurrAssetvalue;
 	}
 
-	public BigDecimal getPriPaid() {
+	public String getPriPaid() {
 		return priPaid;
 	}
 
-	public void setPriPaid(BigDecimal priPaid) {
+	public void setPriPaid(String priPaid) {
 		this.priPaid = priPaid;
 	}
 
-	public BigDecimal getVasPriPaid() {
+	public String getVasPriPaid() {
 		return vasPriPaid;
 	}
 
-	public void setVasPriPaid(BigDecimal vasPriPaid) {
+	public void setVasPriPaid(String vasPriPaid) {
 		this.vasPriPaid = vasPriPaid;
 	}
 
-	public BigDecimal getPftPaid() {
+	public String getPftPaid() {
 		return pftPaid;
 	}
 
-	public void setPftPaid(BigDecimal pftPaid) {
+	public void setPftPaid(String pftPaid) {
 		this.pftPaid = pftPaid;
 	}
 
-	public BigDecimal getVasPftPaid() {
+	public String getVasPftPaid() {
 		return vasPftPaid;
 	}
 
-	public void setVasPftPaid(BigDecimal vasPftPaid) {
+	public void setVasPftPaid(String vasPftPaid) {
 		this.vasPftPaid = vasPftPaid;
 	}
 
@@ -788,5 +793,37 @@ public class InterestCertificate {
 
 	public void setCustSalutation(String custSalutation) {
 		this.custSalutation = custSalutation;
+	}
+
+	public BigDecimal getPriPaidSch() {
+		return priPaidSch;
+	}
+
+	public void setPriPaidSch(BigDecimal priPaidSch) {
+		this.priPaidSch = priPaidSch;
+	}
+
+	public BigDecimal getVasPriPaidSch() {
+		return vasPriPaidSch;
+	}
+
+	public void setVasPriPaidSch(BigDecimal vasPriPaidSch) {
+		this.vasPriPaidSch = vasPriPaidSch;
+	}
+
+	public BigDecimal getPftPaidSch() {
+		return pftPaidSch;
+	}
+
+	public void setPftPaidSch(BigDecimal pftPaidSch) {
+		this.pftPaidSch = pftPaidSch;
+	}
+
+	public BigDecimal getVasPftPaidSch() {
+		return vasPftPaidSch;
+	}
+
+	public void setVasPftPaidSch(BigDecimal vasPftPaidSch) {
+		this.vasPftPaidSch = vasPftPaidSch;
 	}
 }

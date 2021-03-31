@@ -1684,4 +1684,19 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			return request;
 		});
 	}
+	
+	@Override
+	public List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate,
+			Date endDate, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ? and ReceiptPurpose = ? and ReceiptDate >= ? and ReceiptDate <= ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinReceiptHeaderRowMaper rowMapper = new FinReceiptHeaderRowMaper(type);
+
+		return this.jdbcOperations.query(sql.toString(), new Object[] { reference, receiptPurpose, startDate, endDate },
+				rowMapper);
+
+	}
 }

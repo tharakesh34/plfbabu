@@ -50,6 +50,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 /**
  * DAO methods declaration for the <b>InterestCertificate model</b> class.<br>
@@ -81,5 +82,10 @@ public interface InterestCertificateDAO {
 
 	InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date finStartDate, Date finEndDate)
 			throws ParseException;
+	
+	FinanceScheduleDetail getScheduleDetailsByFinReference(String finReference, Date finStartDate,
+			Date finEndDate);
+
+	InterestCertificate getRepayDetails(String finReference, Date startDate, Date endDate);
 
 }

@@ -119,4 +119,7 @@ public interface FinReceiptHeaderDAO {
 	List<ReceiptAPIRequest> getCollectionAPILog();
 
 	Date getMaxReceiptDateByRef(String finrefeRence);
+
+	List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate, Date endDate,
+			String type);
 }
