@@ -400,7 +400,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						emiHoliday = emiHoliday + 1;
 					}
 
-					if (finSchdDetail.isCpzOnSchDate() && !finSchdDetail.isPftOnSchDate()) {
+					// PSD#169696 added condition to check actual installment term or not 
+					if (finSchdDetail.isCpzOnSchDate() && !finSchdDetail.isPftOnSchDate()
+							&& finSchdDetail.getInstNumber() > 0) {
 						cpzTerms = cpzTerms + 1;
 						continue;
 					}
