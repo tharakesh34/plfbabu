@@ -826,7 +826,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					LengthConstants.LEN_MASTER_CODE);
 			this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
 
-			this.eligibilityMethod.setMaxlength(7);
+			this.eligibilityMethod.setMaxlength(50);
+			this.eligibilityMethod.setTextBoxWidth(180);
 			this.eligibilityMethod.setModuleName("FinanceMain");
 			this.eligibilityMethod.setValueColumn("FieldCodeValue");
 			this.eligibilityMethod.setDescColumn("ValueDesc");
