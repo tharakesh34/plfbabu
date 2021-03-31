@@ -1138,6 +1138,8 @@
 				rightName="menu_Item_DAILYDISBURSALREPORT" />
 			<menuItem id="menu_Item_LoanwiseVoucherReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_DAILYDISBURSALREPORT" />
+			<menuItem id="menu_Item_AmortizationReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_AmortizationReport" />
 		</menu>
 		<menu id="menu_Category_Customers">
 			<menuItem id="menu_Item_CLLIMITMIS" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

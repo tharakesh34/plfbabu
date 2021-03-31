@@ -1723,6 +1723,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		if (fromDate != null) {
 			argsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
+			fromDate = "'" + DateUtility.getDBDate(fromDate).toString() + "'";
 		}
 
 		if (toDate != null) {
@@ -1822,10 +1823,15 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 				} else {
 					reportName = reportConfiguration.getReportJasperName();
-
-					ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName,
+					if (StringUtils.equals(reportMenuCode, "menu_Item_AmortizationReport")) {
+						ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
+								reportName, whereCond, searchCriteriaDesc, this.dialogWindow, true, fromDate);
+					}
+					else {
+						ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
+								reportName,
 							whereCond, searchCriteriaDesc, this.dialogWindow, true);
-
+					}
 					if (selectTab != null) {
 						// selectTab.setSelected(true);
 						// if(!reportConfiguration.isPromptRequired()){//ReOpen the Comment after Auto Refresh Fix
@@ -2527,6 +2533,19 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
+		}
+		// #PSD:152141 UAT2: Users:Report: Indaas accounting report not available -START
+		else if (StringUtils.equals(reportMenuCode, "menu_Item_AmortizationReport")) {
+			String fromDate = null;
+
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			if (filters != null) {
+				fromDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+			}
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
+					fromDate, null, null);
 		} else {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
