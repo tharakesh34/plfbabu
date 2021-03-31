@@ -726,10 +726,11 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 			this.disbursementSequence.setReadonly(true);
 			this.builderDemand.setReadonly(true);
 			this.ocrPaid.setReadonly(true);
-			this.ocrReceiptDate.setReadonly(true);
+			this.ocrReceiptDate.setDisabled(true);
 			this.remarks.setReadonly(true);
 			this.btnDelete.setDisabled(true);
 			this.btnSave.setDisabled(true);
+			this.btnUpload.setDisabled(true);
 		}
 
 		logger.debug(Literal.LEAVING);
