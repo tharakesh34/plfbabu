@@ -298,28 +298,28 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 
 	private void calculateRatio(LoanReport loanReport) {
 		//Considering the total loan amount as totalDisbAmt + totalvasAmt for calculation
-		loanReport.setTotalLoanAmt(
-				loanReport.getTotalLoanAmt().add(loanReport.getTotalvasAmt()).add(loanReport.getTotalDisbAmt()));
+		BigDecimal totalvasAmt = loanReport.getTotalvasAmt();
+		BigDecimal totalLoanAmt = loanReport.getTotalLoanAmt();
+		BigDecimal totalDisbAmt = loanReport.getTotalDisbAmt();
+		loanReport.setTotalLoanAmt(totalLoanAmt.add(totalvasAmt).add(totalDisbAmt));
 		//calculating the total loan ratio from total loan amount including VAS amount
-		if (loanReport.getTotalvasAmt().compareTo(BigDecimal.ZERO) > 0
-				&& loanReport.getTotalLoanAmt().compareTo(BigDecimal.ZERO) > 0) {
+		if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
 			//vas ratio
-			loanReport.setVasRatio(
-					loanReport.getTotalvasAmt().divide(loanReport.getTotalLoanAmt(), MathContext.DECIMAL64));
+			loanReport.setVasRatio(totalvasAmt.divide(totalLoanAmt, MathContext.DECIMAL64));
 		}
 
 		//calculating the total loan ratio from totam loan amount including VAS
-		if (loanReport.getTotalDisbAmt().compareTo(BigDecimal.ZERO) > 0
-				&& loanReport.getTotalLoanAmt().compareTo(BigDecimal.ZERO) > 0) {
+		if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
 			//loan ratio
-			loanReport.setLoanRatio(
-					loanReport.getTotalDisbAmt().divide(loanReport.getTotalLoanAmt(), MathContext.DECIMAL64));
+			loanReport.setLoanRatio(totalDisbAmt.divide(totalLoanAmt, MathContext.DECIMAL64));
 		}
 	}
 
 	private void processScheduleDetails(LoanReport loanReport) {
 		logger.debug(Literal.ENTERING);
 		BigDecimal schdPriPaid = BigDecimal.ZERO;
+		BigDecimal totalDisbAmt = loanReport.getTotalDisbAmt();
+		BigDecimal totalvasAmt = loanReport.getTotalvasAmt();
 		Date prvsDate = null;
 		List<FinanceScheduleDetail> details = loanReport.getFinanceScheduleDetails();
 		if (CollectionUtils.isNotEmpty(details)) {
@@ -333,17 +333,16 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 				if (schdPriPaid.compareTo(BigDecimal.ZERO) > 0) {
 					checkVASMovement(financeScheduleDetail.getSchDate(), prvsDate, loanReport);
 					//Considering the amount which is adjusted against the principle
-					if (loanReport.getTotalDisbAmt().compareTo(BigDecimal.ZERO) > 0) {
+					if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0) {
 						loanReport.setTotalDisbAmt(
-								loanReport.getTotalDisbAmt().subtract(schdPriPaid.multiply(loanReport.getLoanRatio())));
+								totalDisbAmt.subtract(schdPriPaid.multiply(loanReport.getLoanRatio())));
 						//calculate total loan outstanding amount as per ratio
-						loanReport.setLoanOutStanding(loanReport.getTotalDisbAmt());
+						loanReport.setLoanOutStanding(totalDisbAmt);
 					}
-					if (loanReport.getTotalvasAmt().compareTo(BigDecimal.ZERO) > 0) {
+					if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0) {
 						//calculate total vas outstanding amount as per ratio
-						loanReport.setTotalvasAmt(
-								loanReport.getTotalvasAmt().subtract(schdPriPaid.multiply(loanReport.getVasRatio())));
-						loanReport.setVasOutStanding(loanReport.getTotalvasAmt());
+						loanReport.setTotalvasAmt(totalvasAmt.subtract(schdPriPaid.multiply(loanReport.getVasRatio())));
+						loanReport.setVasOutStanding(totalvasAmt);
 					}
 				}
 			}
@@ -353,8 +352,8 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 		if (loanReport.getLoanOutStanding().compareTo(BigDecimal.ZERO) == 0
 				&& loanReport.getVasOutStanding().compareTo(BigDecimal.ZERO) == 0) {
 			checkVASMovement(null, null, loanReport);
-			loanReport.setLoanOutStanding(loanReport.getTotalDisbAmt());
-			loanReport.setVasOutStanding(loanReport.getTotalvasAmt());
+			loanReport.setLoanOutStanding(totalDisbAmt);
+			loanReport.setVasOutStanding(totalvasAmt);
 		}
 		logger.debug(Literal.LEAVING);
 	}
