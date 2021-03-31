@@ -233,16 +233,6 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 
 		getBorderLayoutHeight();
 
-		if (isWIF) {
-			this.listBoxStepdetails.setHeight(((this.borderLayoutHeight - 250 - 40) / 2) + "px");// 425px
-			this.window_StepDetailDialog.setHeight(borderLayoutHeight - 4 + "px");
-			this.listBoxStepdetailsforGrace.setHeight(((this.borderLayoutHeight - 250 - 50) / 2) + "px");// 425px
-		} else {
-			this.window_StepDetailDialog.setHeight(borderLayoutHeight - 4 + "px");
-			this.listBoxStepdetails.setHeight(((this.borderLayoutHeight - 250 - 40) / 2) + "px");// 425px
-			this.listBoxStepdetailsforGrace.setHeight(((this.borderLayoutHeight - 250 - 50) / 2) + "px");// 425px
-		}
-
 		doEditStep(financeDetail.getFinScheduleData());
 		try {
 			doWriteBeanToComponents(afinanceDetail, true);

@@ -2,150 +2,121 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window>
-		<window id="window_StepDetailDialog" border="normal" width="100%" height="100%" apply="${stepDetailDialogCtrl}"
-			sizable="false">
+	<window id="window_StepDetailDialog" border="none" width="100%" height="100%" apply="${stepDetailDialogCtrl}" 
+		sizable="false">
 
-			<borderlayout id="borderlayoutStepDetails">
-				<center border="none" autoscroll="false">
-					<div width="100%" height="100%">
-						<groupbox style="border:none;" id="finBasicdetails"></groupbox>
-						<groupbox style="border:none;">
-							<caption label="${c:l('stepDetailDefinition')}" />
-							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
-								<columns>
-									<column width="220px" />
-									<column width="360px" />
-									<column width="220px" />
-									<column width="360px" />
-								</columns>
-								<rows>
-									<row>
-										<label id="label_FinanceMainDialog_StepPolicy"
-											value="${c:l('label_FinanceMainDialog_StepPolicy.value')}" />
-										<hbox id="hbox_stepPolicy">
-											<extendedcombobox id="stepPolicy" />
-										</hbox>
-										<label id="label_FinanceMainDialog_StepType"
-											value="${c:l('label_FinanceMainDialog_StepType.value')}" />
-										<hbox id="hbox_stepType">
-											<space id="space_stepType" spacing="2px" />
-											<combobox id="stepType" width="275px" readonly="true" />
-										</hbox>
-									</row>
-									<row>
-										<label id="label_FinanceMainDialog_ManualSteps"
-											value="${c:l('label_FinanceMainDialog_ManualSteps.value')}" />
-										<hbox id="hbox_alwManualSteps">
-											<space id="space_alwManualSteps" spacing="2px" />
-											<checkbox id="alwManualSteps" />
-										</hbox>
-										<label id="label_FinanceMainDialog_numberOfSteps"
-											value="${c:l('label_FinanceMainDialog_NumberOfSteps.value')}" />
-										<hbox id="hbox_numberOfSteps">
-											<space id="space_noOfSteps" spacing="2px" />
-											<intbox id="noOfSteps" width="90px"/>
-										</hbox>
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
-						<grid  sclass="GridLayoutNoBorder" fixedLayout="true"
-							style="border:0px; padding:0px;">
+		<borderlayout id="borderlayoutStepDetails" visible="true">
+			<center border="none" autoscroll="true">
+				<div>
+					<groupbox style="border:none;" id="finBasicdetails" zclass="null" />
+					<groupbox style="border:none;">
+						<caption label="${c:l('stepDetailDefinition')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
 							<columns>
-								<column />
+								<column width="220px" />
+								<column width="360px" />
+								<column width="220px" />
+								<column width="360px" />
 							</columns>
 							<rows>
-								<row id="row_Grace">
-									<groupbox id="gb_grace">
-										<div sclass="z-toolbar" style="padding:0">
-											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-												widths="30%,40%,30%">
-
-												<!-- COMMON BUTTONS -->
-												<toolbar align="start" sclass="toolbar-start" width="300px">
-													<hbox align="center" style="padding: 0px">
-														<label value="${c:l('label_StepFinanceGrace.value')}"
-															style="font-weight:bold; font-size: 11px;" />
-													</hbox>
-												</toolbar>
-												<!-- CRUD BUTTONS -->
-												<toolbar align="end" sclass="toolbar-end">
-													<button id="btnNew_FinStepPolicyGrace" visible="false"
-														label="${c:l('label_New')}" tooltiptext="${c:l('button_StepDetailDialog_NewStepPolicy.tooltiptext')}"
-														sclass="z-toolbarbutton" />
-												</toolbar>
-											</hbox>
-										</div>
-										<listbox id="listBoxStepdetailsforGrace" fixedLayout="true"
-											sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
-											<listhead sizable="false">
-												<listheader id="listheader_StepFinanceGrace_StepNo"
-													label="${c:l('listheader_StepFinanceGrace_StepNo.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_StepFinanceGrace_TenorSplit" align="right"
-													label="${c:l('listheader_StepFinanceGrace_TenorSplit.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_StepFinanceGrace_Installments" align="right"
-													label="${c:l('listheader_StepFinanceGrace_Installments.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_StepFinanceGrace_SteppedEMI" align="right"
-													label="${c:l('listheader_StepFinanceGrace_SteppedEMI.label')}" sort="false" hflex="min" />
-											</listhead>
-										</listbox>
-									</groupbox>
+								<row>
+									<label id="label_FinanceMainDialog_StepPolicy" value="${c:l('label_FinanceMainDialog_StepPolicy.value')}" />
+									<hbox id="hbox_stepPolicy">
+										<extendedcombobox id="stepPolicy" />
+									</hbox>
+									<label id="label_FinanceMainDialog_StepType" value="${c:l('label_FinanceMainDialog_StepType.value')}" />
+									<hbox id="hbox_stepType">
+										<space id="space_stepType" spacing="2px" />
+										<combobox id="stepType" width="275px" readonly="true" />
+									</hbox>
 								</row>
-								<row id="row_EMI">
-									<groupbox id="gb_emi">
-										<div sclass="z-toolbar" style="padding:0">
-											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
-												widths="30%,40%,30%">
-
-												<!-- COMMON BUTTONS -->
-												<toolbar align="start" sclass="toolbar-start" width="300px">
-													<hbox align="center" style="padding: 0px">
-														<label value="${c:l('window_FinStepPolicyDialog.title')}"
-															style="font-weight:bold; font-size: 11px;" />
-													</hbox>
-												</toolbar>
-
-												<!-- CRUD BUTTONS -->
-												<toolbar align="end" sclass="toolbar-end">
-													<button id="btnNew_FinStepPolicy" visible="false"
-														label="${c:l('label_New')}" tooltiptext="${c:l('button_StepDetailDialog_NewStepPolicy.tooltiptext')}"
-														sclass="z-toolbarbutton" />
-												</toolbar>
-											</hbox>
-										</div>
-										<listbox id="listBoxStepdetails" fixedLayout="true" sizedByContent="true"
-											span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" multiple="false">
-											<listhead sizable="false">
-												<listheader id="listheader_StepFinance_StepNo"
-													label="${c:l('listheader_StepFinance_StepNo.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_StepFinance_TenorSplit" align="right"
-													label="${c:l('listheader_StepFinance_TenorSplit.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_StepFinance_Installments" align="right"
-													label="${c:l('listheader_StepFinance_Installments.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_StepFinance_RateMargin" align="right"
-													label="${c:l('listheader_StepFinance_RateMargin.label')}" sort="false" hflex="min" visible="false" />
-												<listheader id="listheader_StepFinance_AppliedRate" align="right"
-													label="${c:l('listheader_StepFinance_AppliedRate.label')}" sort="false" hflex="min" visible="false" />
-												<listheader id="listheader_StepFinance_EMIStepPercent" align="right"
-													label="${c:l('listheader_StepFinance_EMIStepPercent.label')}" sort="false" hflex="min"  />
-												<listheader id="listheader_StepFinance_SteppedEMI" align="right"
-													label="${c:l('listheader_StepFinance_SteppedEMI.label')}" sort="false" hflex="min" />
-												<listheader id="listheader_StepFinance_EMIDiff" align="right"
-													label="${c:l('listheader_StepFinance_EMIDiff.label')}" sort="false" hflex="min" />
-											</listhead>
-										</listbox>
-									</groupbox>
+								<row>
+									<label id="label_FinanceMainDialog_ManualSteps" value="${c:l('label_FinanceMainDialog_ManualSteps.value')}" />
+									<hbox id="hbox_alwManualSteps">
+										<space id="space_alwManualSteps" spacing="2px" />
+										<checkbox id="alwManualSteps" />
+									</hbox>
+									<label id="label_FinanceMainDialog_numberOfSteps" value="${c:l('label_FinanceMainDialog_NumberOfSteps.value')}" />
+									<hbox id="hbox_numberOfSteps">
+										<space id="space_noOfSteps" spacing="2px" />
+										<intbox id="noOfSteps" width="90px" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>
-					</div>
-				</center>
-			</borderlayout>
-		</window>
+					</groupbox>
+
+					<groupbox id="gb_grace" sclass="gb_dialog">
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								width="100%">
+								<toolbar align="start" style="border:none;">
+									<label value="${c:l('label_StepFinanceGrace.value')}" sclass="listboxHeading"/>
+								</toolbar>
+								<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+									<button
+										id="btnNew_FinStepPolicyGrace" label="${c:l('label_New')}" visible="false"
+										tooltiptext="${c:l('button_StepDetailDialog_NewStepPolicy.tooltiptext')}" />
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxStepdetailsforGrace" span="true" sizedByContent="true" fixedLayout="true"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="false">
+								<listheader id="listheader_StepFinanceGrace_StepNo" label="${c:l('listheader_StepFinanceGrace_StepNo.label')}" 
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinanceGrace_TenorSplit" align="right" label="${c:l('listheader_StepFinanceGrace_TenorSplit.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinanceGrace_Installments" align="right" label="${c:l('listheader_StepFinanceGrace_Installments.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinanceGrace_SteppedEMI" align="right" label="${c:l('listheader_StepFinanceGrace_SteppedEMI.label')}"
+									sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
+
+					<groupbox id="gb_emi" sclass="gb_dialog">
+						<div sclass="z-toolbar" style="padding:0">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+								width="100%">
+								<toolbar align="start" style="border:none;">
+									<label value="${c:l('window_FinStepPolicyDialog.title')}"
+										sclass="listboxHeading">
+									</label>
+								</toolbar>
+								<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+									<button id="btnNew_FinStepPolicy" visible="false" label="${c:l('label_New')}"
+										tooltiptext="${c:l('button_StepDetailDialog_NewStepPolicy.tooltiptext')}"/>
+								</toolbar>
+							</hbox>
+						</div>
+						<listbox id="listBoxStepdetails" span="true" sizedByContent="true" fixedLayout="true" tooltiptext="${c:l('listbox.tooltiptext')}" 
+							width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="false">
+								<listheader id="listheader_StepFinance_StepNo" label="${c:l('listheader_StepFinance_StepNo.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinance_TenorSplit" align="right" label="${c:l('listheader_StepFinance_TenorSplit.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinance_Installments" align="right" label="${c:l('listheader_StepFinance_Installments.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinance_RateMargin" align="right" label="${c:l('listheader_StepFinance_RateMargin.label')}"
+									sort="false" hflex="min" visible="false" />
+								<listheader id="listheader_StepFinance_AppliedRate" align="right" label="${c:l('listheader_StepFinance_AppliedRate.label')}"
+									sort="false" hflex="min" visible="false" />
+								<listheader id="listheader_StepFinance_EMIStepPercent" align="right" label="${c:l('listheader_StepFinance_EMIStepPercent.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinance_SteppedEMI" align="right" label="${c:l('listheader_StepFinance_SteppedEMI.label')}"
+									sort="false" hflex="min" />
+								<listheader id="listheader_StepFinance_EMIDiff" align="right" label="${c:l('listheader_StepFinance_EMIDiff.label')}"
+									sort="false" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
+				</div>
+			</center>
+		</borderlayout>
 	</window>
 </zk>
