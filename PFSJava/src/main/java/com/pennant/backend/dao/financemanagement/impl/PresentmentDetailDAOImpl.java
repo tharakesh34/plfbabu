@@ -1819,14 +1819,14 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public String getPresentmentType(long id) {
-		String sql = "Select presentmenttype from presentmentheader Where Presentmentid = ?";
+		String sql = "Select presentmenttype from presentmentheader Where ID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, new Object[] { id }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in presentmentheader table for the specified Presentmentid >> {}", id);
+			logger.warn("Record is not found in presentmentheader table for the specified ID >> {}", id);
 		}
 		return null;
 
