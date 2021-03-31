@@ -123,6 +123,16 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 		FinScheduleData fsData = financeDetail.getFinScheduleData();
 		FinanceMain finMain = fsData.getFinanceMain();
+
+		if (finMain == null) {
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			String[] valueParm = new String[1];
+			valueParm[0] = "financeDetail";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+
 		finMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
 		// do Basic mandatory validations using hibernate validator
@@ -132,15 +142,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			for (CollateralSetup setup : financeDetail.getCollaterals()) {
 				validationUtility.validate(setup, CreateFinanceWithCollateral.class);
 			}
-		}
-
-		if (finMain == null) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			String[] valueParm = new String[1];
-			valueParm[0] = "financeDetail";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return response;
 		}
 
 		if (StringUtils.isBlank(finMain.getCustCIF()) && StringUtils.isBlank(finMain.getCoreBankId())) {
@@ -797,7 +798,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * Method to reject loan based on data provided by customer
 	 * 
-	 * @param financeDetail {@link FinanceDetail}
+	 * @param financeDetail
+	 *            {@link FinanceDetail}
 	 * @return {@link WSReturnStatus}
 	 */
 	@Override
@@ -845,7 +847,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * Method to cancel loan based on data provided by customer
 	 * 
-	 * @param financeDetail {@link FinanceDetail}
+	 * @param financeDetail
+	 *            {@link FinanceDetail}
 	 * @return {@link WSReturnStatus}
 	 */
 	@Override
