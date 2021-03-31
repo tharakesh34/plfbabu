@@ -10,8 +10,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
- * @author rahul.k This class uses for generating report for
- *         EarlySettlement(Closing the loan before maturity date)
+ * @author rahul.k This class uses for generating report for EarlySettlement(Closing the loan before maturity date)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ForeClosureReport implements Serializable {
@@ -33,6 +32,7 @@ public class ForeClosureReport implements Serializable {
 	private String finAssetValueInWords = "";
 	private String disbursalDate;
 	private String chrgTillDate;
+	private String receiptDate;
 	private BigDecimal outstandingPri = BigDecimal.ZERO;
 	private String outstandingPriInWords = "Zero Only";
 	private BigDecimal latePayCharges = BigDecimal.ZERO;
@@ -443,6 +443,14 @@ public class ForeClosureReport implements Serializable {
 		this.chrgTillDate = chrgTillDate;
 	}
 
+	public String getReceiptDate() {
+		return receiptDate;
+	}
+
+	public void setReceiptDate(String receiptDate) {
+		this.receiptDate = receiptDate;
+	}
+
 	public BigDecimal getIntPerday() {
 		return intPerday;
 	}
@@ -746,7 +754,7 @@ public class ForeClosureReport implements Serializable {
 	public void setCollAddressList(List<Map<String, Object>> collAddressList) {
 		this.collAddressList = collAddressList;
 	}
-	
+
 	public BigDecimal getOneDayInterest() {
 		return oneDayInterest;
 	}
@@ -762,6 +770,5 @@ public class ForeClosureReport implements Serializable {
 	public void setValueDate(String valueDate) {
 		this.valueDate = valueDate;
 	}
-
 
 }

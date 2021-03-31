@@ -3621,14 +3621,16 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			Date chrgTillDate;
 
 			Date prvEmiDate = receiptData.getOrgFinPftDtls().getPrvRpySchDate();
+			Date receiptDate = this.receiptDate.getValue();
 			if (RepayConstants.RECEIPTMODE_CHEQUE.equals(this.receiptMode.getSelectedItem().getValue())
 					|| RepayConstants.RECEIPTMODE_DD.equals(this.receiptMode.getSelectedItem().getValue())) {
 				chrgTillDate = this.interestTillDate.getValue();
 			} else {
-				chrgTillDate = this.receiptDate.getValue();
+				chrgTillDate = receiptDate;
 			}
 			int noOfIntDays = DateUtility.getDaysBetween(chrgTillDate, prvEmiDate);
 
+			closureReport.setReceiptDate(DateFormatUtils.format(receiptDate, "dd-MMM-yyyy"));
 			closureReport.setCalDate(appDate);
 			closureReport.setFinReference(financeMain.getFinReference());
 			closureReport.setVanNumber(financeMain.getVanCode() == null ? "" : financeMain.getVanCode());
@@ -4599,7 +4601,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		oneDayIntrst = oneDayIntrst.setScale(0, RoundingMode.valueOf(roundingMode));
 		return oneDayIntrst;
 	}
-	
+
 	public Map<String, BigDecimal> getTaxPercMap() {
 		return taxPercMap;
 	}
