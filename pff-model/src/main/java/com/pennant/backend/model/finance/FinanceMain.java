@@ -93,7 +93,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate",
 		"eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor", "offerProduct", "offerAmount",
 		"custSegmentation", "baseProduct", "processType", "bureauTimeSeries", "campaignName", "existingLanRefNo",
-		"leadSource", "poSource", "rsa", "verification", "sourChannelCategory", "offerId" })
+		"leadSource", "poSource", "rsa", "verification", "sourChannelCategory", "offerId", "endGrcPeriodAftrFullDisb",
+		"autoIncGrcEndDate" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -856,7 +857,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// Under Construction Details
 	@XmlElement
 	private boolean alwGrcAdj;
+	@XmlElement
 	private boolean endGrcPeriodAftrFullDisb;
+	@XmlElement
 	private boolean autoIncGrcEndDate;
 	private int pendingCovntCount = 0;
 	private String custEmpType = "";
