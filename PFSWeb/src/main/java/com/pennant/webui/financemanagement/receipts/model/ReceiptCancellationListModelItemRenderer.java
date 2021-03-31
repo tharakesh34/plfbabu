@@ -45,6 +45,7 @@ package com.pennant.webui.financemanagement.receipts.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -104,6 +105,8 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(DateUtility.formatToLongDate(header.getReceiptDate()));
 		lc.setParent(item);
 		lc = new Listcell(header.getCustShrtName());
+		lc.setParent(item);
+		lc = new Listcell(StringUtils.trimToEmpty(header.getExtReference()));
 		lc.setParent(item);
 		lc = new Listcell(header.getRecordStatus());
 		lc.setParent(item);

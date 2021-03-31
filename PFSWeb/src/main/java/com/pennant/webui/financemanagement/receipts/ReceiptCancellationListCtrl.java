@@ -82,6 +82,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Listheader listheader_ReceiptCancellationCusomer;
 	protected Listheader listheader_ReceiptCancellationCustName;
 	protected Listheader listheader_ReceiptCancellationReceivedDate;
+	protected Listheader listheader_ReceiptExtReference;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -94,6 +95,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Textbox finType;
 	protected Textbox finBranch;
 	protected Uppercasebox transactionRef;
+	protected Uppercasebox externalReference;
 
 	protected Listbox sortOperator_ReceiptCancellationReference;
 	protected Listbox sortOperator_ReceiptCancellationCustomer;
@@ -103,6 +105,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Listbox sortOperator_ReceiptCancellationFinType;
 	protected Listbox sortOperator_ReceiptCancellationFinBranch;
 	protected Listbox sortOperator_ReceiptCancellationTranRef;
+	protected Listbox sortOperator_ExternalReference;
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -195,6 +198,8 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		registerField("promotionCode", listheader_ReceiptCancellation_PromotionCode, SortOrder.NONE);
 		registerField("receiptDate", listheader_ReceiptCancellation_ReceiptDate, SortOrder.NONE);
 		registerField("productCategory");
+		registerField("ExtReference", listheader_ReceiptExtReference, SortOrder.NONE, externalReference,
+				sortOperator_ExternalReference, Operators.STRING);
 
 		// Render the page and display the data.
 		doRenderPage();
