@@ -789,7 +789,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 
 		if (isQDPProcess(financeDetail)
-				|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				&& FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())) {
 			processDisbursments(financeDetail);
 			// Postings preparation
 			if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
