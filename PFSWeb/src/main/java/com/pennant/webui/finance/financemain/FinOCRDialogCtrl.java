@@ -61,6 +61,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.systemmasters.OCRHeaderService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -1074,9 +1075,14 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		List<FinanceMain> fmlist = null;
 		//Current Loan disbursment amount
 		if (CollectionUtils.isNotEmpty(finAdvancePayments)) {
-       	 for(FinAdvancePayments disb: finAdvancePayments){
-       		 finAmount = finAmount.add(disb.getAmtToBeReleased());
-       	 }
+			for (FinAdvancePayments disb : finAdvancePayments) {
+				String status = disb.getStatus();
+				if (!(DisbursementConstants.STATUS_REJECTED.equals(status)
+						|| DisbursementConstants.STATUS_CANCEL.equals(status)
+						|| DisbursementConstants.STATUS_REVERSED.equals(status))) {
+					finAmount = finAmount.add(disb.getAmtToBeReleased());
+				}
+			}
 		}else{
 			finAmount.add(financeMain.getFinAmount());
 		}
@@ -1231,10 +1237,16 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	}
 	
 	private List<FinAdvancePayments> getFinAdvancePaymentsObject(String parentRef) {
+		String[] status = new String[3];
+		status[0] = DisbursementConstants.STATUS_REJECTED;
+		status[1] = DisbursementConstants.STATUS_CANCEL;
+		status[2] = DisbursementConstants.STATUS_REVERSED;
+		
 		Search search = new Search(FinAdvancePayments.class);
 		search.addField("AmtToBeReleased");
 		search.addTabelName("FinAdvancePayments_view");
 		search.addFilter(new Filter("FinReference", parentRef, Filter.OP_EQUAL));
+		search.addFilter(new Filter("Status", status, Filter.OP_NOT_IN));
 		List<FinAdvancePayments> list = searchProcessor.getResults(search);
 		return list;
 	}

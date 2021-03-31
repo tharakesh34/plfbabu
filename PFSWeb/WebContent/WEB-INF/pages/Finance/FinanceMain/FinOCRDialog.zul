@@ -125,7 +125,7 @@
 											<!-- CRUD BUTTONS -->
 											<toolbar align="end" sclass="toolbar-end">
 												<button id="btnNew_FinOCRStep" label="${c:l('label_New')}" tooltiptext="${c:l('button_FinOCRDialog_NewStep.tooltiptext')}"
-													sclass="z-toolbarbutton" />
+													sclass="z-toolbarbutton" autodisable="btnNew_FinOCRStep"/>
 											</toolbar>
 										</hbox>
 									</div>
