@@ -34,5 +34,7 @@ public interface FinAutoApprovalDetailDAO {
 	boolean getAutoApprovalFlag(String finType);
 
 	List<FinAutoApprovalDetails> getUploadedDisbursementsFinRefBatchId(long batchId);
+	
+	boolean isQDPCase(String finReference, String type);
 
 }

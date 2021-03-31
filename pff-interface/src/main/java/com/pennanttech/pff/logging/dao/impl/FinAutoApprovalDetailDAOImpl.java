@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -303,5 +304,18 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 		}
 
 		return autoApprove;
+	}
+	
+	@Override
+	public boolean isQDPCase(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select COUNT(1)");
+		sql.append(" From FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ? And QuickDisb = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1 }, Integer.class) > 0
+				? true : false;
 	}
 }
