@@ -94,7 +94,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor", "offerProduct", "offerAmount",
 		"custSegmentation", "baseProduct", "processType", "bureauTimeSeries", "campaignName", "existingLanRefNo",
 		"leadSource", "poSource", "rsa", "verification", "sourChannelCategory", "offerId", "endGrcPeriodAftrFullDisb",
-		"autoIncGrcEndDate" })
+		"autoIncGrcEndDate", "noOfSteps" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -254,6 +254,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescStepPolicyName;
 	@XmlElement
 	private boolean alwManualSteps;
+	@XmlElement
 	private int noOfSteps = 0;
 	private boolean shariaApprovalReq;
 	private String shariaStatus;
