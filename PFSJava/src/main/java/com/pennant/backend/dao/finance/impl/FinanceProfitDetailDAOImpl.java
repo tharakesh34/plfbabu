@@ -391,7 +391,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, TotalPftPaidInAdv");
 		sql.append(", TotalPriPaidInAdv, AmzTillLBD, LpiTillLBD, LppTillLBD, GstLpiTillLBD, GstLppTillLBD");
 		sql.append(", TdSchdPftPaid, ExcessAmt, EmiInAdvance, PayableAdvise, GapIntAmzLbd, SvAmount");
-		sql.append(", CbAmount, PenaltyDue, BounceAmtDue");
+		sql.append(", CbAmount, PenaltyDue, BounceAmtDue, LatestDisbDate, FirstDisbDate");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinReference = ?");
 
@@ -442,6 +442,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 							fpd.setCbAmount(rs.getBigDecimal("CbAmount"));
 							fpd.setPenaltyDue(rs.getBigDecimal("PenaltyDue"));
 							fpd.setBounceAmtDue(rs.getBigDecimal("BounceAmtDue"));
+							fpd.setLatestDisbDate(rs.getTimestamp("LatestDisbDate"));
+							fpd.setFirstDisbDate(rs.getTimestamp("FirstDisbDate"));
 
 							return fpd;
 						}
