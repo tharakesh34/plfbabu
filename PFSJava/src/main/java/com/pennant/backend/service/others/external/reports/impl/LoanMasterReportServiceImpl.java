@@ -301,7 +301,8 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 		BigDecimal totalvasAmt = loanReport.getTotalvasAmt();
 		BigDecimal totalLoanAmt = loanReport.getTotalLoanAmt();
 		BigDecimal totalDisbAmt = loanReport.getTotalDisbAmt();
-		loanReport.setTotalLoanAmt(totalLoanAmt.add(totalvasAmt).add(totalDisbAmt));
+		totalLoanAmt = totalLoanAmt.add(totalvasAmt).add(totalDisbAmt);
+		loanReport.setTotalLoanAmt(totalLoanAmt);
 		//calculating the total loan ratio from total loan amount including VAS amount
 		if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0 && totalLoanAmt.compareTo(BigDecimal.ZERO) > 0) {
 			//vas ratio
@@ -334,14 +335,15 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 					checkVASMovement(financeScheduleDetail.getSchDate(), prvsDate, loanReport);
 					//Considering the amount which is adjusted against the principle
 					if (totalDisbAmt.compareTo(BigDecimal.ZERO) > 0) {
-						loanReport.setTotalDisbAmt(
-								totalDisbAmt.subtract(schdPriPaid.multiply(loanReport.getLoanRatio())));
+						totalDisbAmt = totalDisbAmt.subtract(schdPriPaid.multiply(loanReport.getLoanRatio()));
+						loanReport.setTotalDisbAmt(totalDisbAmt);
 						//calculate total loan outstanding amount as per ratio
 						loanReport.setLoanOutStanding(totalDisbAmt);
 					}
 					if (totalvasAmt.compareTo(BigDecimal.ZERO) > 0) {
 						//calculate total vas outstanding amount as per ratio
-						loanReport.setTotalvasAmt(totalvasAmt.subtract(schdPriPaid.multiply(loanReport.getVasRatio())));
+						totalvasAmt = totalvasAmt.subtract(schdPriPaid.multiply(loanReport.getVasRatio()));
+						loanReport.setTotalvasAmt(totalvasAmt);
 						loanReport.setVasOutStanding(totalvasAmt);
 					}
 				}
