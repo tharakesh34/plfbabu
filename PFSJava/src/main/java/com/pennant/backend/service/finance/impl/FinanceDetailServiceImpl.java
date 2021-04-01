@@ -113,7 +113,6 @@ import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
-import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.DealRecommendationMeritsDAO;
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
@@ -222,8 +221,6 @@ import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.TATDetail;
-import com.pennant.backend.model.finance.TaxHeader;
-import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -520,7 +517,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PostExteranalServiceHook postExteranalServiceHook;
 
 	private RestructureService restructureService;
-	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -12887,11 +12883,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	private void processPricingLoans(FinanceDetail financeDetail) {
-		
-		
 		PricingDetail pricingDetail = financeDetail.getPricingDetail();
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
-		
 		if (pricingDetail != null) {
 
 			List<FinanceMain> financeMains = pricingDetail.getFinanceMains();
@@ -13016,24 +13009,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 				}
 
-				String event = FinanceConstants.FINSER_EVENT_ORG;
-				String module = PennantConstants.WORFLOW_MODULE_FINANCE;
-				List<FinFeeDetail> topUpFinFeeDetails = pricingDetail.getTopUpFinFeeDetails();
-				for (FinFeeDetail feeDetail : topUpFinFeeDetails) {
+				FinTaxDetails finTaxDetails = null;
+				for (FinFeeDetail feeDetail : pricingDetail.getTopUpFinFeeDetails()) {
 					feeDetail.setRecordType(main.getRecordType());
 					feeDetail.setRecordStatus(main.getRecordStatus());
+					feeDetail.setLastMntOn(main.getLastMntOn());
 					feeDetail.setLastMntBy(main.getLastMntBy());
-					
 					String finType = financeMainDAO.getFinanceTypeFinReference(feeDetail.getFinReference(), "_Temp");
-					FinanceWorkFlow wrkflw = financeWorkFlowService.getApprovedFinanceWorkFlowById(finType, event,
-							module);
-					
-					if (wrkflw != null) {
-						WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(wrkflw.getWorkFlowType());
+					FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
+							finType, FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
+					if (financeWorkFlow != null) {
+						WorkFlowDetails workFlowDetails = WorkFlowUtil
+								.getDetailsByType(financeWorkFlow.getWorkFlowType());
 						if (workFlowDetails != null) {
 							WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
 							String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
-
 							feeDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 							feeDetail.setRoleCode(workflow.firstTaskOwner());
 							feeDetail.setNextRoleCode(workflow.firstTaskOwner());
@@ -13049,14 +13039,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						feeDetail.setNextTaskId(main.getNextTaskId());
 						feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					}
-					
-					Long taxHeaderId = feeDetail.getTaxHeaderId();
-					if (taxHeaderId != null) {
-						TaxHeader header = taxHeaderDetailsDAO.getTaxHeaderDetailsById(taxHeaderId, "_Temp");
-						if (header != null) {
-							header.setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, "_Temp"));
+					finTaxDetails = feeDetail.getFinTaxDetails();
+					if (feeDetail.isNewRecord()) {
+						feeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(feeDetail, false, "_Temp") + 1);
+						long feeId = getFinFeeDetailDAO().save(feeDetail, false, "_Temp");
+						if (finTaxDetails != null) {
+							finTaxDetails.setFeeID(feeId);
+							finTaxDetailsDAO.save(finTaxDetails, "_Temp");
 						}
-						feeDetail.setTaxHeader(header);
+					} else {
+						if (StringUtils.equals(feeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+							getFinFeeDetailDAO().delete(feeDetail, false, "_Temp");
+							finTaxDetailsDAO.deleteByFeeID(feeDetail.getFeeID(), "_Temp");
+						} else {
+							getFinFeeDetailDAO().update(feeDetail, false, "_Temp");
+							if (finTaxDetails != null && finTaxDetails.getFinTaxID() > 0) {
+								finTaxDetailsDAO.update(finTaxDetails, "_Temp");
+							}
+						}
 					}
 				}
 
