@@ -108,10 +108,10 @@
 											image="/images/icons/LOVSearch.png"
 											autodisable="btnSearchCustCIF,btnSearchFinType,btnSearchFinCcy,btnSearchBranch,btnSearchSchdMethod,btnSearchPftDaysBasis,btnSearchFinRef" />
 									</hbox>
-									<label id="label_FinanceMainSelect_AllowPreMaturedCases" value="${c:l('label_FinanceMainSelect_AllowPreMaturedCases.value')}" />
+									<label id="label_FinanceMainSelect_AllowPreMaturedCases" value="${c:l('label_FinanceMainSelect_AllowPreMaturedCases.value')}" visible="false" />
 									<hbox>
 										<space spacing="2px" />
-										<checkbox id="allowPreMaturedCases" checked="false" />
+										<checkbox id="allowPreMaturedCases" checked="false" visible="false" />
 									</hbox>
 								</row>
 							</rows>

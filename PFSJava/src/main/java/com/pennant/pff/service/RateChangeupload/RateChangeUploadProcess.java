@@ -191,37 +191,40 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 	}
 
-	private AuditHeader preFinSchdData(FinServiceInstruction finInst, FinanceDetail financeDetail)
+	private AuditHeader preFinSchdData(FinServiceInstruction fsi, FinanceDetail fd)
 			throws InterfaceException, JaxenException {
-		logger.debug(Literal.ENTERING);
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		finMain.setEventFromDate(finInst.getFromDate());
-		finMain.setEventToDate(finInst.getToDate());
-		finMain.setRecalFromDate(finInst.getRecalFromDate());
-		finMain.setRecalType(finInst.getRecalType());
+		FinScheduleData fsd = fd.getFinScheduleData();
+		FinanceMain finMain = fsd.getFinanceMain();
+		
+		finMain.setEventFromDate(fsi.getFromDate());
+		finMain.setEventToDate(fsi.getToDate());
+		finMain.setRecalFromDate(fsi.getRecalFromDate());
+		finMain.setRecalType(fsi.getRecalType());
 		finMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		finMain.setRecalSchdMethod(finMain.getScheduleMethod());
 		finMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RATECHG);
-		if (CalculationConstants.RPYCHG_TILLMDT.equals(finInst.getRecalType())) {
+		
+		if (CalculationConstants.RPYCHG_TILLMDT.equals(fsi.getRecalType())) {
 			finMain.setRecalToDate(finMain.getMaturityDate());
-		} else if (CalculationConstants.RPYCHG_TILLDATE.equals(finInst.getRecalType())) {
-			finMain.setRecalToDate(finInst.getRecalToDate());
+		} else if (CalculationConstants.RPYCHG_TILLDATE.equals(fsi.getRecalType())) {
+			finMain.setRecalToDate(fsi.getRecalToDate());
 		}
-		if (StringUtils.isBlank(finInst.getPftDaysBasis())) {
-			finInst.setPftDaysBasis(finMain.getProfitDaysBasis());
+		
+		if (StringUtils.isBlank(fsi.getPftDaysBasis())) {
+			fsi.setPftDaysBasis(finMain.getProfitDaysBasis());
 		}
 
-		finInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
+		fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
 
 		// call schedule calculator for Rate change
-		finScheduleData = rateChangeService.getRateChangeDetails(finScheduleData, finInst,
+		fsd = rateChangeService.getRateChangeDetails(fsd, fsi,
 				FinanceConstants.FINSER_EVENT_RATECHG);
-		financeDetail.setFinScheduleData(finScheduleData);
-		int version = financeDetail.getFinScheduleData().getFinanceMain().getVersion();
+		fd.setFinScheduleData(fsd);
+		int version = fd.getFinScheduleData().getFinanceMain().getVersion();
 		finMain.setVersion(version + 1);
 		finMain.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-		finScheduleData.setSchduleGenerated(true);
+		fsd.setSchduleGenerated(true);
+		
 		LoggedInUser user = null;
 		if (SessionUserDetails.getLogiedInUser() != null) {
 			user = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -230,19 +233,18 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			user.setLoginUsrID(0);
 			user.setUsrLanguage(SysParamUtil.getValueAsString("APP_LNG"));
 		}
-		financeDetail.setUserDetails(user);
+		
+		fd.setUserDetails(user);
 		finMain.setUserDetails(user);
-		BigDecimal pftChg = finScheduleData.getPftChg();
-		finInst.setPftChg(pftChg);
-		finScheduleData.getFinServiceInstructions().add(finInst);
+		BigDecimal pftChg = fsd.getPftChg();
+		fsi.setPftChg(pftChg);
+		fsd.getFinServiceInstructions().add(fsi);
 		// Saving and updating the existing
-		financeDetail.setDirectFinalApprove(true);
+		fd.setDirectFinalApprove(true);
 
-		AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
+		AuditHeader auditHeader = getAuditHeader(fd, PennantConstants.TRAN_WF);
 
-		auditHeader = financeDetailService.doApprove(auditHeader, finInst.isWif());
-
-		logger.debug(Literal.LEAVING);
+		auditHeader = financeDetailService.doApprove(auditHeader, fsi.isWif());
 
 		return auditHeader;
 	}
@@ -253,51 +255,32 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 				financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
-	/**
-	 * Prepare FinServiceInstruction Object from the upload detail.
-	 * 
-	 * @param uploadFRR
-	 * @return
-	 * @throws ParseException
-	 */
 	private FinServiceInstruction prepareFinServiceInstruction(RateChangeUpload rcu) throws ParseException {
-		logger.debug(Literal.ENTERING);
-		FinServiceInstruction finServInst = new FinServiceInstruction();
-		finServInst.setFinReference(rcu.getFinReference());
-		finServInst.setBaseRate(rcu.getBaseRateCode());
-		finServInst.setSplRate(String.valueOf(rcu.getSpecialRate()));
-		finServInst.setMargin(rcu.getMargin());
-		finServInst.setActualRate(rcu.getActualRate());
-		finServInst.setRecalType(rcu.getRecalType());
-		finServInst.setRemarks(rcu.getUploadStatusRemarks());
-		finServInst.setServiceReqNo(rcu.getServiceReqNo());
-		finServInst.setReqFrom(UploadConstants.RATE_CHANGE_UPLOAD);
-		finServInst.setFinEvent(UploadConstants.RATE_CHANGE_UPLOAD);
-		finServInst.setReference(String.valueOf(rcu.getId()));
+		FinServiceInstruction fsi = new FinServiceInstruction();
+	
+		fsi.setFinReference(rcu.getFinReference());
+		fsi.setBaseRate(rcu.getBaseRateCode());
+		fsi.setSplRate(String.valueOf(rcu.getSpecialRate()));
+		fsi.setMargin(rcu.getMargin());
+		fsi.setActualRate(rcu.getActualRate());
+		fsi.setRecalType(rcu.getRecalType());
+		fsi.setRemarks(rcu.getUploadStatusRemarks());
+		fsi.setServiceReqNo(rcu.getServiceReqNo());
+		fsi.setReqFrom(UploadConstants.RATE_CHANGE_UPLOAD);
+		fsi.setFinEvent(UploadConstants.RATE_CHANGE_UPLOAD);
+		fsi.setReference(String.valueOf(rcu.getId()));
+		fsi.setRecalFromDate(parseDate(rcu.getRecalFromDate()));
+		fsi.setRecalToDate(parseDate(rcu.getRecalToDate()));
+		fsi.setFromDate(parseDate(rcu.getFromDate()));
+		fsi.setToDate(parseDate(rcu.getToDate()));
 
-		if (rcu.getRecalFromDate() != null) {
-			finServInst.setRecalFromDate(parseDate(rcu.getRecalFromDate()));
-		}
-
-		if (rcu.getRecalToDate() != null) {
-			finServInst.setRecalToDate(parseDate(rcu.getRecalToDate()));
-		}
-
-		if (rcu.getFromDate() != null) {
-			finServInst.setFromDate(parseDate(rcu.getFromDate()));
-		}
-
-		if (rcu.getToDate() != null) {
-			finServInst.setToDate(parseDate(rcu.getToDate()));
-		}
-
-		finServInst.setFromDate(rcu.getFromDate());
-		finServInst.setToDate(rcu.getToDate());
-
-		return finServInst;
+		return fsi;
 	}
 
 	private Date parseDate(Date date) throws ParseException {
+		if (date == null) {
+			return null;
+		}
 		SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
 		return dateFormat.parse(date.toString());
 	}
@@ -311,7 +294,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 	private void setFinancedetails(RateChangeUploadHeader header) {
 		List<FinanceMain> finMain = rateChangeUploadDAO.getFinanceMain(header.getId());
+		
 		logger.info("Extracting finance details...");
+		
 		String error = "Loan is Not Active.";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getRemarks()));
@@ -348,6 +333,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 	private void validate(RateChangeUploadHeader rateChangeUploadHeader) {
 		logger.info("Validationg the records...");
+		
 		for (RateChangeUpload rateChange : rateChangeUploadHeader.getRateChangeUpload()) {
 			StringBuilder remarks = new StringBuilder(rateChange.getRemarks());
 

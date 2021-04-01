@@ -574,27 +574,30 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		rut.setHeaderId(ruh.getId());
 		rut.setImportStatusMap(importStatusMap);
 		rut.setTotalProcesses(5);
-
-		validateFileData(workbook, fileName, rudList, rut, ruh.getUploadHeaderId());
-
-		prepareAllocations(workbook, uadList, rut);
-
-		linkReceiptAllocations(rudList, uadList, rut);
-
-		ruh.setBefImage(ruh);
-
-		validateReceipt(ruh, rudList, rut);
-
-		ruh.setReceiptUploadList(rudList);
-
 		try {
-			fileImport.backUpFile();
-		} catch (IOException e) {
-			e.printStackTrace();
+			validateFileData(workbook, fileName, rudList, rut, ruh.getUploadHeaderId());
+
+			prepareAllocations(workbook, uadList, rut);
+
+			linkReceiptAllocations(rudList, uadList, rut);
+
+			ruh.setBefImage(ruh);
+
+			validateReceipt(ruh, rudList, rut);
+
+			ruh.setReceiptUploadList(rudList);
+
+			try {
+				fileImport.backUpFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			saveRecord(ruh, rut);
+		} catch (Exception e) {
+			receiptUploadHeaderDAO.updateUploadProgress(ruh.getId(), ReceiptUploadConstants.RECEIPT_IMPORTFAILED);
+			logger.error(Literal.EXCEPTION, e);
 		}
-
-		saveRecord(ruh, rut);
-
 		importStatusMap.remove(ruh.getId());
 	}
 

@@ -104,7 +104,6 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.util.ErrorControl;
@@ -674,9 +673,26 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			} else
 				lc = new Listcell(upldHdr.getRecordStatus());
 
+			String uploadStatus = null;
+
+			switch (upldHdr.getUploadProgress()) {
+			case ReceiptUploadConstants.RECEIPT_IMPORTED:
+				uploadStatus = "Imported";
+				break;
+			case ReceiptUploadConstants.RECEIPT_IMPORTINPROCESS:
+				uploadStatus = "Importing..";
+				break;
+			case ReceiptUploadConstants.RECEIPT_IMPORTFAILED:
+				uploadStatus = "Import Failed";
+				break;
+
+			default:
+				uploadStatus = upldHdr.getRecordStatus();
+				break;
+			}
+			lc = new Listcell(uploadStatus);
 			lc.setParent(item);
-			lc = new Listcell(PennantJavaUtil.getLabel(upldHdr.getRecordType()));
-			lc.setParent(item);
+
 			item.setAttribute("id", upldHdr.getUploadHeaderId());
 			ComponentsCtrl.applyForward(item, "onDoubleClick=onReceiptUploadItemDoubleClicked");
 		});

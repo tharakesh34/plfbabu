@@ -1,7 +1,6 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,9 +30,9 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 	@Override
 	public List<RateChangeUpload> getRateChangeUploadDetails(long batchId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				"SELECT Id, BatchId, FINREFERENCE, BaseRateCode, Margin, ActualRate, ReCalculationType, RecalFromDate, RecalToDate, SpecialRate");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, BatchId, FinReference, BaseRateCode, Margin, ActualRate, ReCalType");
+		sql.append(", RecalFromDate, RecalToDate, SpecialRate, Remarks, FromDate, ToDate");
 		sql.append(" FROM RATECHANGE_UPLOAD_DETAILS");
 		sql.append(" WHERE BATCHID = ?");
 
@@ -48,10 +47,13 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			rateChange.setBaseRateCode(rs.getString("BaseRateCode"));
 			rateChange.setMargin(rs.getBigDecimal("Margin"));
 			rateChange.setActualRate(rs.getBigDecimal("ActualRate"));
+			rateChange.setRecalType(rs.getString("ReCalType"));
 			rateChange.setRecalFromDate(rs.getDate("RecalFromDate"));
 			rateChange.setRecalToDate(rs.getDate("RecalToDate"));
-			rateChange.setRecalType(rs.getString("ReCalculationType"));
 			rateChange.setSpecialRate(rs.getString("SpecialRate"));
+			rateChange.setRemarks(rs.getString("Remarks"));
+			rateChange.setFromDate(JdbcUtil.getDate(rs.getDate("FromDate")));
+			rateChange.setToDate(JdbcUtil.getDate(rs.getDate("ToDate")));
 
 			return rateChange;
 		});
@@ -156,34 +158,6 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		}
 	}
 
-	@Override
-	public int saveRateChangeUpload(List<RateChangeUpload> rateChangeUpload, long id) {
-		StringBuilder sql = new StringBuilder("Insert into RATECHANGE_UPLOAD_DETAILS");
-		sql.append(" ( BatchId, Finreference, BaseRateCodce, Margin, EffectiveFrom,SpecialRate) ");
-		sql.append(" values");
-		sql.append(" ( ?, ?, ?, ?, ?,?)");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
-
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				int i = 1;
-				RateChangeUpload frr = rateChangeUpload.get(index);
-
-				ps.setLong(i++, id);
-				ps.setString(i++, frr.getFinReference());
-				ps.setString(i++, frr.getBaseRateCode());
-				ps.setBigDecimal(i++, frr.getMargin());
-				ps.setDate(index++, (Date) frr.getEffectiveFrom());
-				ps.setString(index++, frr.getSpecialRate());
-			}
-
-			public int getBatchSize() {
-				return rateChangeUpload.size();
-			}
-		}).length;
-	}
 
 	@Override
 	public boolean getRateCodes(String brCode) {

@@ -1870,6 +1870,7 @@
 		<property name="changeTDSService" ref="changeTDSService" />
 		<property name="loanDownSizingService" ref="loanDownSizingService" />
 		<property name="finOCRHeaderService" ref="finOCRHeaderService"/>
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->

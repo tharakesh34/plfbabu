@@ -65,6 +65,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
@@ -82,6 +83,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -214,6 +216,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private List<Filter> filterList;
 	protected Button btnClear;
 	protected Button btnNew;
+	protected Label label_FinanceMainSelect_AllowPreMaturedCases;
 	private transient FinanceDetailService financeDetailService;
 	private transient ManualPaymentService manualPaymentService;
 	private transient ReceiptService receiptService;
@@ -237,6 +240,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private List<String> usrfinRolesList = new ArrayList<String>();
 	private transient ChangeTDSService changeTDSService;// Clix Requirement added new change TDS Service
 	private transient LoanDownSizingService loanDownSizingService;
+	private transient FinServiceInstrutionDAO finServiceInstructionDAO;
 
 	/**
 	 * Default constructor
@@ -1927,13 +1931,21 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
+			
+			//check if payable amount present
+			List<ManualAdvise> manualAdvise = financeWriteoffService
+					.getManualAdviseByRef(aFinanceMain.getFinReference(), FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
+			if (CollectionUtils.isNotEmpty(manualAdvise)) {
+				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
+				return;
+			}
 
 			String userRole = aFinanceMain.getNextRoleCode();
 			if (StringUtils.isEmpty(userRole)) {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 
-			final FinanceWriteoffHeader writeoffHeader = getFinanceWriteoffService()
+			final FinanceWriteoffHeader writeoffHeader = financeWriteoffService
 					.getFinanceWriteoffDetailById(aFinanceMain.getFinReference(), "_View", userRole, moduleDefiner);
 
 			// Role Code State Checking
@@ -1959,6 +1971,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
 				maintainSts = StringUtils.trimToEmpty(
 						writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+			}
+			
+			List<String> finEvents = finServiceInstructionDAO.getFinEventByFinRef(aFinanceMain.getFinReference(), "_Temp");
+			if (CollectionUtils.isNotEmpty(finEvents)) {
+				maintainSts = finEvents.get(0);
 			}
 
 			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
@@ -3327,10 +3344,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					setDialogCtrl("FinanceWriteoffDialogCtrl");
 					workflowCode = FinanceConstants.FINSER_EVENT_WRITEOFF;
 					eventCodeRef = AccountEventConstants.ACCEVENT_WRITEOFF;
+					this.allowPreMaturedCases.setVisible(true);
+					this.label_FinanceMainSelect_AllowPreMaturedCases.setVisible(true);
 				} else if ("tab_WriteoffPayment".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_WRITEOFFPAY;
 					eventCodeRef = AccountEventConstants.ACCEVENT_WRITEBK;
 					workflowCode = FinanceConstants.FINSER_EVENT_WRITEOFFPAY;
+					this.allowPreMaturedCases.setVisible(true);
+					this.label_FinanceMainSelect_AllowPreMaturedCases.setVisible(true);
 				} else if ("tab_CancelRepay".equals(tab.getId())) {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_CANCELRPY;
 					setDialogCtrl("CancelRepayDialogCtrl");
@@ -3972,4 +3993,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.finOCRHeaderService = finOCRHeaderService;
 	}
 
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
 }

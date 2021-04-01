@@ -3589,6 +3589,59 @@
    			]]>
 		</createView>
 	</changeSet>
+	
+	<changeSet id="ST#1952.16" author="gopalaswamy.m" dbms="oracle">
+		<createView viewName="RECEIPTUPLOADHEADER_TVIEW" replaceIfExists="true">
+		  <![CDATA[
+				SELECT T1.UPLOADHEADERID,
+					T1.FILENAME,
+					T1.TRANSACTIONDATE,
+					T1.TOTALRECORDS,
+					T1.SUCCESSCOUNT,
+					T1.FAILEDCOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					cast(T1.RECORDSTATUS as varchar2(100)) RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.ENTITYCODE,
+					T1.UPLOADPROGRESS,
+					0 ATTEMPTSTATUS,
+					0 ATTEMPTNO,
+					0 PROCESSEDRECORDS
+			  	FROM RECEIPTUPLOADHEADER_TEMP T1
+				UNION ALL
+				SELECT T2.UPLOADHEADERID,
+					T2.FILENAME,
+					T2.TRANSACTIONDATE,
+					T2.TOTALRECORDS,
+					T1.SUCCESSCOUNT,
+					T1.FAILEDCOUNT,
+					T2.VERSION,
+					T2.LASTMNTBY,
+					T2.LASTMNTON,
+					'Attempt' RECORDSTATUS,
+					T2.ROLECODE,
+					T2.NEXTROLECODE,
+					T2.TASKID,
+					T2.NEXTTASKID,
+					T2.RECORDTYPE,
+					T2.WORKFLOWID,
+					T2.ENTITYCODE,
+					T2.UPLOADPROGRESS,
+					T1.ATTEMPTSTATUS,
+					T1.ATTEMPTNO,
+					T1.PROCESSEDRECORDS
+				FROM RECEIPT_UPLOAD_LOG T1
+			   INNER JOIN RECEIPTUPLOADHEADER_TEMP T2 ON T2.UPLOADHEADERID = T1.HEADERID
+   			]]>
+		</createView>
+	</changeSet>
 
 	<changeSet id="ST#1952.16_post" author="gopalaswamy.m" dbms="postgresql">
 		<sql>
@@ -3624,7 +3677,7 @@
 		<addUniqueConstraint tableName="RATECHANGE_UPLOAD_HEADER" columnNames="FileName"/>
 	</changeSet>
 	
-	<changeSet id="ST#1924.2" author="Gireesh.G">
+	<changeSet id="ST#1924.2.1" author="Gireesh.G">
 		<createTable tableName="RATECHANGE_UPLOAD_DETAILS">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
@@ -3634,8 +3687,8 @@
 			<column name="FromDate" type="datetime" />
 			<column name="ToDate" type="datetime" />
 			<column name="BaseRateCode" type="varchar(8)" />
-			<column name="Margin" type="decimal(18,2)" />
-			<column name="ActualRate" type="decimal(18,2)" />
+			<column name="Margin" type="decimal(13,9)" />
+			<column name="ActualRate" type="decimal(13,9)" />
 			<column name="ReCalType" type="varchar(8)" />
 			<column name="RecalFromDate" type="datetime" />
 			<column name="ReCalToDate" type="datetime" />
@@ -3643,26 +3696,27 @@
 			<column name="Remarks" type="varchar(1000)" />
 			<column name="SpecialRate" type="varchar(8)" />
 			<column name="Status" type="char(1)" />
+			<column name="UploadStatusRemarks" type="varchar(2000)" />
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="ST#1924.2.1" author="Gireesh.G">
+	<changeSet id="ST#1924.2.1.1" author="Gireesh.G">
 		<addPrimaryKey tableName="RATECHANGE_UPLOAD_DETAILS" columnNames="Id"/>
 	</changeSet>
 	
-	<changeSet id="ST#1924.2.2" author="Gireesh.G">
+	<changeSet id="ST#1924.2.2.1" author="Gireesh.G">
 		<addForeignKeyConstraint constraintName="FK_RATECHANGE_UPLOAD_BatchId"
 			baseTableName="RATECHANGE_UPLOAD_DETAILS" baseColumnNames="BatchId" referencedColumnNames="Id"
 			referencedTableName="RATECHANGE_UPLOAD_HEADER" />
 	</changeSet>
 	
-	<changeSet id="ST#1924.2.3" author="Gireesh.G">
+	<changeSet id="ST#1924.2.3.1" author="Gireesh.G">
 		<createIndex indexName="IDX_SR_FinRef" tableName="RATECHANGE_UPLOAD_DETAILS">
 			<column name="FinReference" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="ST#1924.2.4" author="Gireesh.G">
+	<changeSet id="ST#1924.2.4.1" author="Gireesh.G">
 		<createIndex indexName="IDX_SR_BatchId" tableName="RATECHANGE_UPLOAD_DETAILS">
 			<column name="BatchId" />
 		</createIndex>
@@ -3696,7 +3750,7 @@
     
 				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'RATE_CHANGE_UPLOAD', 'RATE_CHANGE_UPLOAD', 12, 'RateChangeUpload', '', '', '', 0, 1, '', 'FINREFERENCE,FROMDATE,TODATE,BASERATECODE,MARGIN,ACTUALRATE,RECALTYPE,RECALFROMDATE,RECALTODATE', '', 'C', '/opt/Clix/PFF/RateChangeUpload', 'RateChangeUplaodReq', '.xlsx', 0,current_timestamp, '${SEQ_FILE},_${yyyyMMddHHmmss}', '', 0, '', 1, 1); 
 
-				INSERT INTO DATA_ENGINE_TABLE  (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select ID FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD'), 'RATECHANGE_UPLOAD_DETAILS', 1, '', null, null, null, null, null, null, null, 3, 0, 0);
+				INSERT INTO DATA_ENGINE_TABLE  (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select ID FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD'), 'RATECHANGE_UPLOAD_DETAILS', 1, ' ', null, null, null, null, null, null, null, 3, 0, 0);
 	
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'BATCHID',           0, 'N', null, null, '${BATCHID}', null, 0, null,null, null, null, 'M');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'FINREFERENCE',      0, 'N', null, null, null,         null, 0, null,null, null, null, 'M');
@@ -3731,7 +3785,7 @@
 	
 	<!-- ST#1924 Difference in Special Rate Upload functionality changes end -->
 	
-	<changeSet id="1" author="Gopal.p" dbms="postgresql,oracle">
+	<changeSet id="1" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				CREATE TABLE BATCH_STEP_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_STEP_EXECUTION_CONTEXT;
@@ -3745,6 +3799,30 @@
 				CREATE TABLE BATCH_JOB_SEQ_SU AS SELECT * FROM BATCH_JOB_SEQ;
 				CREATE TABLE BATCH_STEP_EXECUTION_SEQ_SU AS SELECT * FROM BATCH_STEP_EXECUTION_SEQ;
 				
+				DELETE FROM BATCH_STEP_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_JOB_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_STEP_EXECUTION;
+				DELETE FROM BATCH_JOB_EXECUTION_PARAMS;
+				DELETE FROM BATCH_JOB_EXECUTION;
+				DELETE FROM BATCH_JOB_INSTANCE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE TABLE BTCH_STEP_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_STEP_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_JOB_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_STEP_EXECUTION_SU AS SELECT * FROM BATCH_STEP_EXECUTION;
+				CREATE TABLE BATCH_JOB_EXECUTION_PARAMS_SU AS SELECT * FROM BATCH_JOB_EXECUTION_PARAMS;
+				CREATE TABLE BATCH_JOB_EXECUTION_SU AS SELECT * FROM BATCH_JOB_EXECUTION;
+				CREATE TABLE BATCH_JOB_INSTANCE_SU AS SELECT * FROM BATCH_JOB_INSTANCE;
+				
+				CREATE TABLE BATCH_JOB_EXECUTION_SEQ_SU AS SELECT BATCH_JOB_EXECUTION_SEQ.nextval from dual;
+				CREATE TABLE BATCH_JOB_SEQ_SU AS SELECT  BATCH_JOB_SEQ.nextval from dual;
+				CREATE TABLE BATCH_STEP_EXECUTION_SEQ_SU AS SELECT BATCH_STEP_EXECUTION_SEQ.nextval from dual;
+
 				DELETE FROM BATCH_STEP_EXECUTION_CONTEXT;
 				DELETE FROM BATCH_JOB_EXECUTION_CONTEXT;
 				DELETE FROM BATCH_STEP_EXECUTION;
@@ -3777,6 +3855,46 @@
 				DELETE FROM BATCH_JOB_INSTANCE;
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.1" author="saranya.s">
+		<sql>
+			<![CDATA[
+				UPDATE FINFEERECEIPTS SET PaidTds = 0 WHERE PaidTds is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.2" author="saranya.s" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINFEERECEIPTS ADD CONSTRAINT DF_FR_PaidTds DEFAULT 0 FOR PaidTds;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.2" author="saranya.s" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PaidTds" tableName="FINFEERECEIPTS" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="PSD#161936.3" author="saranya.s">
+		<sql>
+			<![CDATA[
+				UPDATE FINFEERECEIPTS_TEMP SET PaidTds = 0 WHERE PaidTds is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.4" author="saranya.s" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINFEERECEIPTS_TEMP ADD CONSTRAINT DF_FR_T_PaidTds DEFAULT 0 FOR PaidTds;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.4" author="saranya.s" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PaidTds" tableName="FINFEERECEIPTS_TEMP" defaultValue="0" />
 	</changeSet>
 
 </databaseChangeLog>

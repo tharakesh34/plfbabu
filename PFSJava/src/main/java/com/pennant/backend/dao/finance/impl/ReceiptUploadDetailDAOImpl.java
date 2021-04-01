@@ -624,12 +624,12 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(" Where UploadHeaderId IN (");
 		sql.append(" Select UploadHeaderId From ReceiptUploadDetails");
 		sql.append(" Where Reference = ?  AND ValueDate = ? AND ReceiptAmount = ?");
-		sql.append(" AND UploadHeaderId <> ? AND ProcessingStatus = ?)");
+		sql.append(" AND UploadHeaderId <> ? AND ProcessingStatus = ?");
 
 		if (isOnline) {
 			sql.append(" AND TransactionRef = ? ");
 		}
-
+		sql.append(")");
 		logger.trace(Literal.SQL + sql);
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;

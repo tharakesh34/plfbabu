@@ -106,7 +106,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", FinStartDate, MaturityDate, ProductCategory, ExcessAmt, EmiInAdvance, PrvMthAmz");
 		sql.append(", PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid");
 		sql.append(", PenaltyDue, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount");
-		sql.append(", CbAmount, NOAutoIncGrcEnd, FirstRepayDate, PrvMthAcr");
+		sql.append(", CbAmount, NOAutoIncGrcEnd, FirstRepayDate, PrvMthAcr, WriteoffLoan");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinReference = ?");
 
@@ -187,6 +187,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				fpd.setNOAutoIncGrcEnd(rs.getInt("NOAutoIncGrcEnd"));
 				fpd.setFirstRepayDate(rs.getTimestamp("FirstRepayDate"));
 				fpd.setPrvMthAcr(rs.getBigDecimal("PrvMthAcr"));
+				fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 				return fpd;
 			});
@@ -237,7 +238,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", PrvRpySchPft, LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate");
 		sql.append(", PrvODDate, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, FullPaidDate");
 		sql.append(", ExcessAmt, EmiInAdvance, PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
-		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst, NOAutoIncGrcEnd");
+		sql.append(
+				", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount, NOPaidInst, NOAutoIncGrcEnd, WriteoffLoan");
 		sql.append(" from FinPftDetails");
 		return sql;
 	}
@@ -391,7 +393,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, TotalPftPaidInAdv");
 		sql.append(", TotalPriPaidInAdv, AmzTillLBD, LpiTillLBD, LppTillLBD, GstLpiTillLBD, GstLppTillLBD");
 		sql.append(", TdSchdPftPaid, ExcessAmt, EmiInAdvance, PayableAdvise, GapIntAmzLbd, SvAmount");
-		sql.append(", CbAmount, PenaltyDue, BounceAmtDue, LatestDisbDate, FirstDisbDate");
+		sql.append(", CbAmount, PenaltyDue, BounceAmtDue, LatestDisbDate, FirstDisbDate, WriteoffLoan");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinReference = ?");
 
@@ -444,6 +446,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 							fpd.setBounceAmtDue(rs.getBigDecimal("BounceAmtDue"));
 							fpd.setLatestDisbDate(rs.getTimestamp("LatestDisbDate"));
 							fpd.setFirstDisbDate(rs.getTimestamp("FirstDisbDate"));
+							fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 							return fpd;
 						}
@@ -1334,7 +1337,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued, PftAccrueSusp");
 		sql.append(", PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ClosingStatus");
 		sql.append(", FinCategory, TotalWriteoff, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate");
-		sql.append(", MaturityDate, LatestRpyDate, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz");
+		sql.append(", MaturityDate, LatestRpyDate, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, WriteoffLoan");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where MaturityDate >= ?");
 
@@ -1391,6 +1394,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 					fpd.setGapIntAmz(rs.getBigDecimal("GapIntAmz"));
 					fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
 					fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
+					fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 					return fpd;
 				}
@@ -1416,7 +1420,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, TdSchdPftBal, PftAccrued, PftAccrueSusp");
 		sql.append(", PftAmz, PftAmzSusp, TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ClosingStatus");
 		sql.append(", FinCategory, TotalWriteoff, ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate");
-		sql.append(", MaturityDate, LatestRpyDate, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz");
+		sql.append(", MaturityDate, LatestRpyDate, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, WriteoffLoan");
 		sql.append(" from FinPftDetails");
 		sql.append(" Where FinReference = ?");
 
@@ -1468,6 +1472,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 							fpd.setGapIntAmz(rs.getBigDecimal("GapIntAmz"));
 							fpd.setGapIntAmzLbd(rs.getBigDecimal("GapIntAmzLbd"));
 							fpd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
+							fpd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 							return fpd;
 						}
@@ -1592,6 +1597,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			pftd.setCbAmount(rs.getBigDecimal("CbAmount"));
 			pftd.setNOPaidInst(rs.getInt("NOPaidInst"));
 			pftd.setNOAutoIncGrcEnd(rs.getInt("NOAutoIncGrcEnd"));
+			pftd.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 			return pftd;
 		}

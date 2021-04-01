@@ -69,6 +69,7 @@ public class ReceiptUploadConstants {
 	public static final int RECEIPT_IMPORTED = 5;
 	public static final int RECEIPT_INPROCESS = 6;
 	public static final int RECEIPT_PROCESSFAILED = 7;
+	public static final int RECEIPT_IMPORTFAILED = 8;
 
 	// Configured in amz-batch-config.xml file
 	public static final String RU_JOB_NAME = "plfRUJob";

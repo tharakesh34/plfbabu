@@ -396,8 +396,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		String recalType = CalculationConstants.RST_RECAL_ADDTERM_RECALEMI;
-		if (StringUtils.equals("Scenario8", restructureType.getRstTypeCode())
-				|| StringUtils.equals("Scenario9", restructureType.getRstTypeCode())) {
+		if (StringUtils.equals("Scenario7", restructureType.getRstTypeCode())
+				|| StringUtils.equals("Scenario8", restructureType.getRstTypeCode())) {
 			recalType = CalculationConstants.RST_RECAL_ADJUSTTENURE;
 		}
 		fillComboBox(this.recalculationType, recalType, PennantStaticListUtil.getRecalTypeList(), "");
@@ -451,7 +451,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finStatus = "0";
 		} else if (finStatus.startsWith("DPD ")) {
 			finStatus = finStatus.replace("DPD ", "");
-		} else if (finStatus.startsWith("M0")) {
+		} else if (finStatus.startsWith("M")) {
 			finStatus = finStatus.replace("M", "");
 		}
 

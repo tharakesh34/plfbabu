@@ -20,8 +20,6 @@ public interface RateChangeUploadDAO {
 
 	void updateRemarks(RateChangeUploadHeader rateChangeUploadHeader);
 
-	int saveRateChangeUpload(List<RateChangeUpload> rateChangeUploads, long id);
-
 	List<FinanceMain> getFinanceMain(long batchId);
 
 	boolean getRateCodes(String brCode);

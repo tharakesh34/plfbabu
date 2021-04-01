@@ -401,7 +401,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" ft.FinType, FinReference, CustID, GrcPeriodEndDate, NextRepayPftDate, NextRepayRvwDate");
 		sql.append(", FinStatus, FinAmount, FeeChargeAmt, FinRepaymentAmount, fm.FinCcy, FinBranch");
 		sql.append(", ProfitDaysBasis, FinStartDate, FinAssetValue, LastRepayPftDate, LastRepayRvwDate");
-		sql.append(", FinCurrAssetValue, MaturityDate, PromotionCode, e.EntityCode");
+		sql.append(", FinCurrAssetValue, MaturityDate, PromotionCode, e.EntityCode, WriteoffLoan");
 		sql.append(" from Financemain fm");
 		sql.append(" inner join RmtFinanceTypes ft on ft.Fintype = fm.Fintype");
 		sql.append(" inner join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
@@ -438,6 +438,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
 							fm.setPromotionCode(rs.getString("PromotionCode"));
 							fm.setEntityCode(rs.getString("EntityCode"));
+							fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 							return fm;
 						}
@@ -2679,7 +2680,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, CustID, FinAmount, FinType, FinCcy");
+		sql.append(" FinReference, CustID, FinAmount, FinType, FinCcy, WriteoffLoan");
 		sql.append(" from FinanceMain");
 		sql.append(" Where CustID = ?");
 
@@ -2702,6 +2703,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setFinAmount(rs.getBigDecimal("FinAmount"));
 					fm.setFinType(rs.getString("FinType"));
 					fm.setFinCcy(rs.getString("FinCcy"));
+					fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 					return fm;
 				}
@@ -2971,7 +2973,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				", AvailedDefFrqChange, FinIsActive, AlwBPI, BpiTreatment, PlanEMIHAlw, PlanEMIHAlwInGrace, PlanEMIHMethod");
 		sql.append(", PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, AlwMultiDisb");
 		sql.append(", UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays");
-		sql.append(", AvailedUnPlanEmi, AvailedReAgeH, PromotionCode, AllowedDefFrqChange");
+		sql.append(", AvailedUnPlanEmi, AvailedReAgeH, PromotionCode, AllowedDefFrqChange, WriteoffLoan");
 		sql.append(" from FinanceMain_View");
 		sql.append(" Where FinReference = ?");
 
@@ -3009,6 +3011,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setAvailedUnPlanEmi(rs.getInt("AvailedUnPlanEmi"));
 							fm.setAvailedReAgeH(rs.getInt("AvailedReAgeH"));
 							fm.setPromotionCode(rs.getString("PromotionCode"));
+							fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 							return fm;
 						}
@@ -3038,7 +3041,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.NumberOfTerms, fm.MaturityDate, fm.finStatus, fm.FinStartDate");
 		sql.append(", fm.FirstRepay, ft.FinCategory lovDescFinProduct, fm.ClosingStatus");
 		sql.append(", fm.RecordStatus, fm.ProductCategory, fm.FinBranch, fm.FinApprovedDate, fm.FinIsActive");
-		sql.append(" from FinanceMain");
+		sql.append(", fm.WriteoffLoan from FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" fm INNER JOIN RMTFinanceTypes ft ON fm.FinType = ft.FinType ");
 		sql.append(" Where CustID = ?");
@@ -3073,6 +3076,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setFinBranch(rs.getString("FinBranch"));
 					fm.setFinApprovedDate(rs.getTimestamp("FinApprovedDate"));
 					fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+					fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 					return fm;
 				}
@@ -3100,7 +3104,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				"SELECT FM.FinReference, FM.FinAmount, FM.FinType, FM.FinCcy,FM.ClosingStatus,");
 		selectSql.append(
 				" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,FM.FinStartDate, FM.FirstRepay,");
-		selectSql.append(" FT.FinCategory lovDescFinProduct, CA.CollateralRef From FinanceMain FM INNER JOIN ");
+		selectSql.append(
+				" FT.FinCategory lovDescFinProduct, CA.CollateralRef, FM.WriteoffLoan From FinanceMain FM INNER JOIN ");
 		selectSql.append(" CollateralAssignment CA On FM.FinReference = CA.Reference INNER JOIN ");
 		selectSql.append(" RMTFinanceTypes FT ON FM.FinType = FT.FinType");
 		selectSql.append(" Where CollateralRef =:CollateralRef");
@@ -3392,7 +3397,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", RateChgAnyDay, PastduePftMargin, FinRepayMethod, MigratedFinance, ScheduleMaintained");
 		sql.append(", ScheduleRegenerated, MandateID, FinStatus, FinStsReason, BankName, Iban, AccountType");
 		sql.append(", DdaReferenceNo, PromotionCode, FinCategory, ProductCategory, ReAgeBucket, TDSApplicable");
-		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, TdsType");
+		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, TdsType, WriteoffLoan");
 
 		if (orgination) {
 			sql.append(" , 1 LimitValid  ");
@@ -4470,7 +4475,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinStartDate, FinApprovedDate, ClosingStatus, FinIsActive, ClosedDate");
-		sql.append(" from FinanceMain");
+		sql.append(", WriteoffLoan from FinanceMain");
 		sql.append(" Where MaturityDate >= ?");
 		sql.append(" ORDER BY FinReference ");
 
@@ -4494,6 +4499,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setClosingStatus(rs.getString("ClosingStatus"));
 					fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 					fm.setClosedDate(rs.getTimestamp("ClosedDate"));
+					fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 					return fm;
 				}
@@ -5230,8 +5236,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(" FinStartDate, FinApprovedDate, MaturityDate, FinAssetValue, FinCurrAssetValue, FinAmount, ");
 		selectSql.append(" FinCategory, ProductCategory, FinStatus, ");
 		selectSql.append(" CalRoundingMode, RoundingTarget, ProfitDaysBasis, ");
-		selectSql.append(" ClosingStatus, FinIsActive, EntityCode ");
-
+		selectSql.append(" ClosingStatus, FinIsActive, EntityCode, WriteoffLoan");
+		selectSql.append(" From FinanceMain");
 		selectSql.append(" WHERE FinApprovedDate >= :FinApprovalStartDate And FinApprovedDate <= :FinApprovalEndDate");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -5262,7 +5268,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate");
-		sql.append(" from FinanceMain");
+		sql.append(", WriteoffLoan from FinanceMain");
 		sql.append(" Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -5281,6 +5287,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
 							fm.setClosedDate(rs.getTimestamp("ClosedDate"));
+							fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 							return fm;
 						}
@@ -5309,7 +5316,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(" FinStartDate, FinApprovedDate, MaturityDate, FinAssetValue, FinCurrAssetValue, FinAmount, ");
 		selectSql.append(" FinCategory, ProductCategory, FinStatus, ");
 		selectSql.append(" CalRoundingMode, RoundingTarget, ProfitDaysBasis, ");
-		selectSql.append(" ClosingStatus, FinIsActive, EntityCode, ClosedDate ");
+		selectSql.append(" ClosingStatus, FinIsActive, EntityCode, ClosedDate, WriteoffLoan");
 
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" WHERE MaturityDate >= :MonthStartDate ");
@@ -5626,10 +5633,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, PromotionCode, ApplicationNo, AlwBPI,");
 		sql.append(" CalRoundingMode , AlwMultiDisb, BpiAmount, PastduePftMargin,FinCategory,ProductCategory,");
 		sql.append(" DeviationApproval,FinPreApprovedRef,MandateID,FirstDroplineDate,PftServicingODLimit,");
-		sql.append(
-				" UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi,BpiTreatment, PlanEMIHAlw, PlanEMIHAlwInGrace, InsuranceAmt,");
-		sql.append(
-				" RpyAdvPftRate, StepType, DroplineFrq,RpyAdvBaseRate,NoOfSteps,StepFinance,FinContractDate, TdsType");
+		sql.append(" UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi,BpiTreatment, PlanEMIHAlw, PlanEMIHAlwInGrace");
+		sql.append(", InsuranceAmt, RpyAdvPftRate, StepType, DroplineFrq,RpyAdvBaseRate,NoOfSteps");
+		sql.append(", StepFinance, FinContractDate, TdsType, WriteoffLoan");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" , lovDescFinTypeName, lovDescFinBranchName, ");
@@ -5939,7 +5945,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
 		sql.append(", Version, LastMntOn, ReferralId, GraceTerms");
 		sql.append(", FinAssetValue, FinCurrAssetValue");
-		sql.append(", NumberOfTerms, Alwmultidisb, TdsType");
+		sql.append(", NumberOfTerms, Alwmultidisb, TdsType, WriteoffLoan");
 		sql.append(" from FinanceMain");
 		return sql;
 	}
@@ -6058,6 +6064,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setGraceTerms(rs.getInt("GraceTerms"));
 			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 			fm.setAlwMultiDisb(rs.getBoolean("Alwmultidisb"));
+			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 			return fm;
 
@@ -6146,7 +6153,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinCategory, ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor");
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
-		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, CalcOfSteps, StepsAppliedFor");
+		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, CalcOfSteps, StepsAppliedFor, WriteoffLoan");
 
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
@@ -6379,6 +6386,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setClosingStatus(rs.getString("ClosingStatus"));
 			fm.setCalcOfSteps(rs.getString("CalcOfSteps"));
 			fm.setStepsAppliedFor(rs.getString("StepsAppliedFor"));
+			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));
@@ -6805,7 +6813,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", TDSApplicable, DroplineFrq, FirstDroplineDate, AlwBPI, BpiTreatment, CalRoundingMode");
 		sql.append(", RoundingTarget, MaxUnplannedEmi, AvailedUnPlanEmi, BpiAmount, DroppingMethod");
 		sql.append(", FinCategory, ProductCategory, BpiPftDaysBasis,FinCcy,AdvTerms, AdvStage,AdvType, AdvanceEMI");
-		sql.append(", FinIsActive, LastRepayRvwDate, PastduePftCalMthd, FinAssetValue, DueBucket, TdsType");
+		sql.append(
+				", FinIsActive, LastRepayRvwDate, PastduePftCalMthd, FinAssetValue, DueBucket, TdsType, WriteoffLoan");
 		sql.append(" from FinanceMain");
 		sql.append(" Where FinReference = ?");
 
@@ -6884,6 +6893,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 							fm.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
 							fm.setDueBucket(rs.getInt("DueBucket"));
 							fm.setTdsType(rs.getString("TdsType"));
+							fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 							return fm;
 						}
 					});
