@@ -3103,47 +3103,6 @@
 		<modifyDataType tableName="adtfinocrheader" columnName="customerportion" newDataType="decimal(5,2)" />
 	</changeSet>	
 	
-	<changeSet id="243" author="Lakshmi.N">
-		<addColumn tableName="adtfinblacklistdetail">
-			<column name="sourcecif" type="varchar(20)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="244" author="naga.g">
-		<renameColumn tableName="AdtOCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
-	</changeSet>
-
-	<changeSet id="245" author="naga.g">
-		<dropColumn columnName="splitapplicable" tableName="AdtOCRHEADER " />
-	</changeSet>
-
-
-	<changeSet id="246" author="naga.g">
-		<renameColumn tableName="AdtFINOCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
-	</changeSet>
-
-	<changeSet id="247" author="naga.g">
-		<dropColumn columnName="splitapplicable" tableName="AdtFINOCRHEADER " />
-	</changeSet>	
-
-	<changeSet id="248" author="naga.g">
-	<addColumn tableName="AdtFINOCRHEADER">
-		<column name="totaldemand" type="bigint"  />
-	</addColumn>
-	</changeSet>
-		
-	<changeSet id="249" author="naga.g">
-		<addColumn tableName="ADTFINOCRCAPTURE">
-		<column name="receiptdate" type="datetime" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="250" author="naga.g">
-		<addColumn tableName="ADTFINOCRCAPTURE">
-			<column name="filename" type="varchar(50)"/>
-		</addColumn>
-	</changeSet>
-	
 	<changeSet id="251" author="Lakshmi.n">
 		<comment>registrationNumber length changed to 50 instead of 20</comment>
 		<modifyDataType tableName="adtbuilderprojcet" columnName="registrationNumber" newDataType="varchar(50)" />
@@ -3262,13 +3221,6 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="ST#1627.3" author="kavya.n">
-		<addColumn tableName="AdtFinReceiptHeader">
-			<column name="ReceiptSource" type="Varchar(50)" />
-			<column name="TransactionRef" type="Varchar(50)" />
-		</addColumn>
-	</changeSet>
-	
 	<!-- ST#1627 Non LAN Receipt changes end -->
 	
 	 <changeSet id="TK#853.1" author="lakshmi.n">
@@ -3286,7 +3238,7 @@
 	</changeSet>
 	
 	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="NoOfGrcSteps" tableName="ADTFINANCEMAIN"/>
+		<addDefaultValue columnName="NoOfGrcSteps" tableName="ADTFINANCEMAIN" defaultValue="0"/>
 	</changeSet>
 	
 	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="mssql">
@@ -3312,7 +3264,7 @@
 	</changeSet>
 	
 	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AutoCal" tableName="ADTFINSTEPPOLICYDETAIL"/>
+		<addDefaultValue columnName="AutoCal" tableName="ADTFINSTEPPOLICYDETAIL" defaultValue="0"/>
 	</changeSet>
 	
 	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="mssql">

@@ -10341,163 +10341,6 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-	<changeSet id="HL_46" author="rajesh.n">
-		<createView viewName="verification_tv_view" replaceIfExists="true">
-		<![CDATA[
-				SELECT tv.verificationid,
-				    tv.agentcode,
-				    tv.agentname,
-				    tv.type,
-				    tv.verifieddate,
-				    tv.status,
-				    cs.collateraltype,
-				    cs.collateralccy,
-				    cs.collateralloc,
-				    tv.reason,
-				    tv.valuationamount,
-				    r1.code AS reasoncode,
-				    r1.description AS reasondesc,
-				    tv.summaryremarks,
-				    tv.sourceformname,
-				    tv.verificationformname,
-				    tv.documentname,
-				    tv.documentref,
-				    tv.version,
-				    tv.lastmntby,
-				    tv.lastmnton,
-				    tv.recordstatus,
-				    tv.rolecode,
-				    tv.nextrolecode,
-				    tv.taskid,
-				    tv.nexttaskid,
-				    tv.recordtype,
-				    tv.workflowid,
-				    tv.observationremarks,
-				    c.custcif AS cif,
-				    v.keyreference,
-				    v.createdon,
-				    v.agency,
-				    a.dealername AS agencyname,
-				    a.dealercity AS agencycity,
-				    v.custid,
-				    c.custshrtname AS custname,
-				    v.verificationcategory,
-				    cs.collateralref,
-				    cpnh.phonenumber AS contactnumber1,
-				    cpnl.phonenumber AS contactnumber2,
-				    tv.valasperpe,
-				    tv.finalvalamt,
-				    tv.decisiononval,
-				    tv.finalvalremarks,
-				    fm.productcategory,
-				fm.fintype as loanType,
-				fm.lovDescFinTypeName as lovDescLoanTypeName,
-				fm.sourcingBranch,
-				fm.lovDescSourcingBranch
-				   FROM verification_tv_temp tv
-				     JOIN verifications v ON v.id = tv.verificationid
-				     JOIN ( SELECT collateralsetup_temp.collateraltype,
-				            collateralsetup_temp.collateralccy,
-				            collateralsetup_temp.collateralloc,
-				            collateralsetup_temp.collateralref
-				           FROM collateralsetup_temp
-				        UNION
-				         SELECT csp.collateraltype,
-				            csp.collateralccy,
-				            csp.collateralloc,
-				            csp.collateralref
-				           FROM collateralsetup csp
-				          WHERE NOT (EXISTS ( SELECT 1
-				                   FROM collateralsetup_temp
-				                  WHERE collateralsetup_temp.collateralref = csp.collateralref))) cs ON cs.collateralref = v.referencefor
-				     JOIN collateralstructure cst ON cst.collateraltype = cs.collateraltype
-				     LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
-				     LEFT JOIN customers c ON c.custid = v.custid
-				     LEFT JOIN customerphonenumbers cpnh ON cpnh.phonecustid = c.custid AND cpnh.phonetypepriority = 5
-				     LEFT JOIN customerphonenumbers cpnl ON cpnl.phonecustid = c.custid AND cpnl.phonetypepriority = 4
-				     LEFT JOIN reasons r1 ON r1.id = tv.reason
-				     JOIN financemain_view fm ON fm.finreference = v.keyreference
-				UNION ALL
-				SELECT tv.verificationid,
-				    tv.agentcode,
-				    tv.agentname,
-				    tv.type,
-				    tv.verifieddate,
-				    tv.status,
-				    cs.collateraltype,
-				    cs.collateralccy,
-				    cs.collateralloc,
-				    tv.reason,
-				    tv.valuationamount,
-				    r1.code AS reasoncode,
-				    r1.description AS reasondesc,
-				    tv.summaryremarks,
-				    tv.sourceformname,
-				    tv.verificationformname,
-				    tv.documentname,
-				    tv.documentref,
-				    tv.version,
-				    tv.lastmntby,
-				    tv.lastmnton,
-				    tv.recordstatus,
-				    tv.rolecode,
-				    tv.nextrolecode,
-				    tv.taskid,
-				    tv.nexttaskid,
-				    tv.recordtype,
-				    tv.workflowid,
-				    tv.observationremarks,
-				    c.custcif AS cif,
-				    v.keyreference,
-				    v.createdon,
-				    v.agency,
-				    a.dealername AS agencyname,
-				    a.dealercity AS agencycity,
-				    v.custid,
-				    c.custshrtname AS custname,
-				    v.verificationcategory,
-				    cs.collateralref,
-				    cpnh.phonenumber AS contactnumber1,
-				    cpnl.phonenumber AS contactnumber2,
-				    tv.valasperpe,
-				    tv.finalvalamt,
-				    tv.decisiononval,
-				    tv.finalvalremarks,
-				fm.productcategory,
-				fm.fintype as loanType,
-				fm.lovDescFinTypeName as lovDescLoanTypeName,
-				fm.sourcingBranch,
-				fm.lovDescSourcingBranch
-				   FROM verification_tv tv
-				     JOIN verifications v ON v.id = tv.verificationid
-				     JOIN ( SELECT collateralsetup_temp.collateraltype,
-				            collateralsetup_temp.collateralccy,
-				            collateralsetup_temp.collateralloc,
-				            collateralsetup_temp.collateralref
-				           FROM collateralsetup_temp
-				        UNION
-				         SELECT csp.collateraltype,
-				            csp.collateralccy,
-				            csp.collateralloc,
-				            csp.collateralref
-				           FROM collateralsetup csp
-				          WHERE NOT (EXISTS ( SELECT 1
-				                   FROM collateralsetup_temp
-				                  WHERE collateralsetup_temp.collateralref = csp.collateralref))) cs ON cs.collateralref = v.referencefor
-				     JOIN collateralstructure cst ON cst.collateraltype = cs.collateraltype
-				     LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
-				     LEFT JOIN customers c ON c.custid = v.custid
-				     LEFT JOIN customerphonenumbers cpnh ON cpnh.phonecustid = c.custid AND cpnh.phonetypepriority = 5
-				     LEFT JOIN customerphonenumbers cpnl ON cpnl.phonecustid = c.custid AND cpnl.phonetypepriority = 4
-				     LEFT JOIN reasons r1 ON r1.id = tv.reason
-				     JOIN financemain_view fm ON fm.finreference = v.keyreference
-				  WHERE NOT (EXISTS ( SELECT 1
-				           FROM verification_tv_temp
-				          WHERE verification_tv_temp.verificationid = tv.verificationid))
-				]]>
-		</createView>
-	</changeSet>
-
 	<changeSet id="HL_47" author="rohith">
 		<createView viewName="CustTypePANMapping_AVIEW" replaceIfExists="true">
 		<![CDATA[
@@ -18127,178 +17970,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.9_pre" author="Gopal.p" dbms="postgresql">
-		<sql> 
-			<![CDATA[ 
-				select deps_save_and_drop_dependencies ('plf', 'verification_tv_view'); 
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.9" author="Gopal.p">
-		<createView viewName="VERIFICATION_TV_VIEW" replaceIfExists="true">
-			<![CDATA[	 
-				SELECT TV.VERIFICATIONID,
-				    TV.AGENTCODE,
-				    TV.AGENTNAME,
-				    TV.TYPE,
-				    TV.VERIFIEDDATE,
-				    TV.STATUS,
-				    CS.COLLATERALTYPE,
-				    CS.COLLATERALCCY,
-				    CS.COLLATERALLOC,
-				    TV.REASON,
-				    TV.VALUATIONAMOUNT,
-				    R1.CODE AS REASONCODE,
-				    R1.DESCRIPTION AS REASONDESC,
-				    TV.SUMMARYREMARKS,
-				    TV.SOURCEFORMNAME,
-				    TV.VERIFICATIONFORMNAME,
-				    TV.DOCUMENTNAME,
-				    TV.DOCUMENTREF,
-				    TV.VERSION,
-				    TV.LASTMNTBY,
-				    TV.LASTMNTON,
-				    TV.RECORDSTATUS,
-				    TV.ROLECODE,
-				    TV.NEXTROLECODE,
-				    TV.TASKID,
-				    TV.NEXTTASKID,
-				    TV.RECORDTYPE,
-				    TV.WORKFLOWID,
-				    TV.OBSERVATIONREMARKS,
-				    C.CUSTCIF AS CIF,
-				    V.KEYREFERENCE,
-				    V.CREATEDON,
-				    V.AGENCY,
-				    A.DEALERNAME AS AGENCYNAME,
-				    A.DEALERCITY AS AGENCYCITY,
-				    V.CUSTID,
-				    C.CUSTSHRTNAME AS CUSTNAME,
-				    V.VERIFICATIONCATEGORY,
-				    CS.COLLATERALREF,
-				    CPNH.PHONENUMBER AS CONTACTNUMBER1,
-				    CPNL.PHONENUMBER AS CONTACTNUMBER2,
-				    TV.VALASPERPE,
-				    TV.FINALVALAMT,
-				    TV.DECISIONONVAL,
-				    TV.FINALVALREMARKS,
-				    FM.PRODUCTCATEGORY,
-				    FM.FINTYPE AS LOANTYPE,
-				    FM.LOVDESCFINTYPENAME AS LOVDESCLOANTYPENAME,
-				    FM.SOURCINGBRANCH,
-				    FM.LOVDESCSOURCINGBRANCH
-				FROM VERIFICATION_TV_TEMP TV
-				JOIN VERIFICATIONS V ON V.ID = TV.VERIFICATIONID
-				JOIN ( SELECT COLLATERALSETUP_TEMP.COLLATERALTYPE,
-				            COLLATERALSETUP_TEMP.COLLATERALCCY,
-				            COLLATERALSETUP_TEMP.COLLATERALLOC,
-				            COLLATERALSETUP_TEMP.COLLATERALREF
-				        FROM COLLATERALSETUP_TEMP
-				    UNION
-				        SELECT CSP.COLLATERALTYPE,
-				            CSP.COLLATERALCCY,
-				            CSP.COLLATERALLOC,
-				            CSP.COLLATERALREF
-				           FROM COLLATERALSETUP CSP
-				        WHERE NOT (EXISTS ( SELECT 1
-				                   FROM COLLATERALSETUP_TEMP
-				                  WHERE COLLATERALSETUP_TEMP.COLLATERALREF = CSP.COLLATERALREF))) CS ON CS.COLLATERALREF = V.REFERENCEFOR
-				JOIN COLLATERALSTRUCTURE CST ON CST.COLLATERALTYPE = CS.COLLATERALTYPE
-				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
-				LEFT JOIN CUSTOMERS C ON C.CUSTID = V.CUSTID
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNH ON CPNH.PHONECUSTID = C.CUSTID AND CPNH.PHONETYPEPRIORITY = 5
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNL ON CPNL.PHONECUSTID = C.CUSTID AND CPNL.PHONETYPEPRIORITY = 4
-				LEFT JOIN REASONS R1 ON R1.ID = TV.REASON
-				JOIN FINANCEMAIN_VIEW FM ON FM.FINREFERENCE = V.KEYREFERENCE
-				UNION ALL
-				SELECT TV.VERIFICATIONID,
-					TV.AGENTCODE,
-					TV.AGENTNAME,
-					TV.TYPE,
-					TV.VERIFIEDDATE,
-					TV.STATUS,
-					CS.COLLATERALTYPE,
-					CS.COLLATERALCCY,
-					CS.COLLATERALLOC,
-					TV.REASON,
-					TV.VALUATIONAMOUNT,
-					R1.CODE AS REASONCODE,
-					R1.DESCRIPTION AS REASONDESC,
-					TV.SUMMARYREMARKS,
-					TV.SOURCEFORMNAME,
-					TV.VERIFICATIONFORMNAME,
-					TV.DOCUMENTNAME,
-					TV.DOCUMENTREF,
-					TV.VERSION,
-					TV.LASTMNTBY,
-					TV.LASTMNTON,
-					TV.RECORDSTATUS,
-					TV.ROLECODE,
-					TV.NEXTROLECODE,
-					TV.TASKID,
-					TV.NEXTTASKID,
-					TV.RECORDTYPE,
-					TV.WORKFLOWID,
-					TV.OBSERVATIONREMARKS,
-					C.CUSTCIF AS CIF,
-					V.KEYREFERENCE,
-					V.CREATEDON,
-					V.AGENCY,
-					A.DEALERNAME AS AGENCYNAME,
-					A.DEALERCITY AS AGENCYCITY,
-					V.CUSTID,
-					C.CUSTSHRTNAME AS CUSTNAME,
-					V.VERIFICATIONCATEGORY,
-					CS.COLLATERALREF,
-					CPNH.PHONENUMBER AS CONTACTNUMBER1,
-					CPNL.PHONENUMBER AS CONTACTNUMBER2,
-					TV.VALASPERPE,
-					TV.FINALVALAMT,
-					TV.DECISIONONVAL,
-					TV.FINALVALREMARKS,
-					FM.PRODUCTCATEGORY,
-					FM.FINTYPE AS LOANTYPE,
-					FM.LOVDESCFINTYPENAME AS LOVDESCLOANTYPENAME,
-					FM.SOURCINGBRANCH,
-					FM.LOVDESCSOURCINGBRANCH
-				FROM VERIFICATION_TV TV
-				JOIN VERIFICATIONS V ON V.ID = TV.VERIFICATIONID
-				JOIN ( SELECT COLLATERALSETUP_TEMP.COLLATERALTYPE,
-				            COLLATERALSETUP_TEMP.COLLATERALCCY,
-				            COLLATERALSETUP_TEMP.COLLATERALLOC,
-				            COLLATERALSETUP_TEMP.COLLATERALREF
-				           FROM COLLATERALSETUP_TEMP
-				    UNION
-				      SELECT CSP.COLLATERALTYPE,
-				            CSP.COLLATERALCCY,
-				            CSP.COLLATERALLOC,
-				            CSP.COLLATERALREF
-				      FROM COLLATERALSETUP CSP
-				      WHERE NOT (EXISTS ( SELECT 1
-				                   FROM COLLATERALSETUP_TEMP
-				                  WHERE COLLATERALSETUP_TEMP.COLLATERALREF = CSP.COLLATERALREF))) CS ON CS.COLLATERALREF = V.REFERENCEFOR
-				JOIN COLLATERALSTRUCTURE CST ON CST.COLLATERALTYPE = CS.COLLATERALTYPE
-				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
-				LEFT JOIN CUSTOMERS C ON C.CUSTID = V.CUSTID
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNH ON CPNH.PHONECUSTID = C.CUSTID AND CPNH.PHONETYPEPRIORITY = 5
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNL ON CPNL.PHONECUSTID = C.CUSTID AND CPNL.PHONETYPEPRIORITY = 4
-				LEFT JOIN REASONS R1 ON R1.ID = TV.REASON
-				JOIN FINANCEMAIN_VIEW FM ON FM.FINREFERENCE = V.KEYREFERENCE
-				WHERE NOT (EXISTS ( SELECT 1 FROM VERIFICATION_TV_TEMP
-				    WHERE VERIFICATION_TV_TEMP.VERIFICATIONID = TV.VERIFICATIONID))
-		  		]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.9_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_restore_dependencies ('plf', 'verification_tv_view');	
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="ST#1211.100.12_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -22374,7 +22045,7 @@ UNION ALL
 		<addDefaultValue columnName="allowSubvention" tableName="financemain" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="888_pre" author="rajesh.n">
+	<changeSet id="888_pre" author="rajesh.n" dbms="mysql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE financemain ADD CONSTRAINT DF_FM_allowSubvention DEFAULT 0 FOR AllowSubvention;
@@ -22400,7 +22071,7 @@ UNION ALL
 		<addDefaultValue columnName="allowSubvention" tableName="financemain_temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="889_pre" author="rajesh.n">
+	<changeSet id="889_pre" author="rajesh.n" dbms="mysql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE financemain_temp ADD CONSTRAINT DF_FMT_allowSubvention DEFAULT 0 FOR AllowSubvention;
@@ -23315,8 +22986,8 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="656" author="madhuri.n">
 		<sql>
 			<![CDATA[		
@@ -23332,7 +23003,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="658" author="sivasai.p">
 		<sql>
 			<![CDATA[
@@ -23342,13 +23013,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="915" author="madhuri.n">
 		<addColumn tableName="RejectFinanceMain">
 			<column name="tdsType" type="varchar(8)" defaultValue="#" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="916" author="madhuri.n">
 		<sql>
 			<![CDATA[
@@ -23356,24 +23027,24 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="659" author="Rajesh.N">
-	<comment>New Frequency Added</comment>
+		<comment>New Frequency Added</comment>
 		<sql>
 			<![CDATA[
 				INSERT INTO BMTINTRATEBASISCODES (INTRATEBASISCODE, INTRATEBASISDESC, INTRATEBASISISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('15E360IA', '15E/360 ISDA OR Actual/365 Fixed', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="660" author="madhuri.n">
 		<sql>
 			<![CDATA[
 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_ReceiptclearancestsRpt', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="661" author="madhuri.n">
 		<sql>
             <![CDATA[
@@ -23406,8 +23077,8 @@ UNION ALL
 				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('VERIFICATIONS_CUSTOMERVIEW', 'VERIFICATIONS CIF Button VISIBILITY', 'String', 1, 'Y', 1, 0, null, null, 'VERIFICATIONS CIF Button VISIBILITY', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="527" author="Lakshmi.n">
 		<sql>
 			<![CDATA[
@@ -23415,7 +23086,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="528" author="Mangapathi">
 	<comment> TK#332 </comment>
 		<sql>
@@ -23424,7 +23095,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="529" author="Venkatesh.ch">
 	<comment> TK#158845 </comment>
 		<sql>
@@ -23434,7 +23105,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="531" author="Lakshmi.n">
 		<comment>PSD#159645 </comment>
 		<sql>
@@ -23444,7 +23115,7 @@ UNION ALL
 			]]>
 		</sql> 	
 	</changeSet>
-		
+
 	<changeSet id="532" author="mangapathi.s">
 		<comment>Message corrections </comment>
 		<sql>
@@ -23452,18 +23123,18 @@ UNION ALL
 				UPDATE ERRORDETAILS set MESSAGE = '{0} is less than or equals to {1} .' WHERE CODE = '90220';
 				UPDATE ERRORDETAILS set MESSAGE = '{0} is less than required value {1}' WHERE CODE = '30557';
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="533" author="Lakshmi.N">
 		<comment>PSD#160182 </comment>
 		<sql>
 			<![CDATA[
 				INSERT INTO SMTPARAMETERS(SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL', 'Repay postings required at loan cancel', 'String', 1, 'Y', 50, 0, null, null, 'Repay postings required at loan cancel', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="534" author="Venkatesh.ch">
 		<comment>ST#223 </comment>
 		<sql>
@@ -23471,18 +23142,18 @@ UNION ALL
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerDocumentDialog_btnUploadDoc';
 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) VALUES ((select max(RIGHTID)+1 from SecRights), 2, 'button_CustomerDocumentDialog_btnUploadDoc', 'CustomerDocumentDialog', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="535" author="Lakshmi.N">
 		<comment>PSD#160296</comment>
-			<sql>
+		<sql>
 				<![CDATA[
 					INSERT INTO ERRORDETAILS(CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('99028', 'EN', 'W', 'PRINT Instruction status will be marked as Rejected if resubmit the case. Do you want to proceed?', 'PRINT Disbursement Instruction status will be marked as Rejected if resubmit the case.', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 1);
 				]]>
-			</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="536" author="Lakshmi.N">
 		<comment>PSD#164431</comment>
 		<sql>
@@ -23520,20 +23191,20 @@ UNION ALL
 				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='OCRStep_MAKER'), (Select RoleID From SecRoles Where RoleCd='OCRMAINTENANCE_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
 				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode='OCRMaintenance_APPROVER'), (Select RoleID From SecRoles Where RoleCd='OCRMAINTENANCE_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="538" author="Lakshmi.S">
 		<comment>PSD#164431</comment>
-			<sql>
+		<sql>
 				<![CDATA[	
 					DELETE FROM REPORTLIST WHERE MODULE = 'FinOCRHeader';
 					INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('FinOCRHeader', 'FinOCRHeader', 'listheader_OCRMaintenanceLoanReference.label,listheader_OCRMaintenanceTotalDemand.label,listheader_OCRMaintenanceOCRType.label', 'finReference,totalDemand,ocrType', 'String,BigDecimal,String', '', 'ReportList03','FinOCR Header', 'Application Masters', 1, 1000, null,'Approved', '', '', '', '', '', 0, '0');
 
 				]]>
-			</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="539" author="Lakshmi.N">
 		<comment>PSD#164431</comment>
 		<sql>
@@ -23543,36 +23214,36 @@ UNION ALL
 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinOCRDialog_TotalReceivable', 'FinOCRDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE,TASKID, NEXTTASKID,RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinOCRDialog_OCRType', 'FinOCRDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="540" author="Lakshmi.N">
 		<comment>PSD#165186 </comment>
 		<sql>
 			<![CDATA[
 				INSERT INTO SMTPARAMETERS(SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('CHECK_COLL_MAINTENANCE', 'Check Collateral in maintenance', 'String', 1, 'N', 50, 0, null, null, 'Repay postings required at loan cancel', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="541" author="Lakshmi.N">
 		<comment>PSD#165151 </comment>
 		<sql>
 			<![CDATA[
 				INSERT INTO SMTPARAMETERS(SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('CIBIL_DEFAULT_AMOUNT', 'Cibil default amount', 'int', 0, '1', 1, 0, null, null, 'Cibil default amount', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="543" author="praveena.v">
 		<comment>PSD#149000 </comment>
 		<sql>
 			<![CDATA[
 				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('60022', 'EN', 'W', 'LAN has outstanding Receivable DUE, Do you want to proceed ?', '', 'Approved', '', '', '', '', '', 0, current_timestamp, 1000, 1);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="544" author="Praveena.p">
 		<sql>
 			<![CDATA[
@@ -23581,7 +23252,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="545" author="lakshmi.N">
 		<comment>PSD#163130</comment>
 		<sql>
@@ -23592,8 +23263,8 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="546" author="praveena.v">
+
+	<changeSet id="546" author="praveena.v">
 		<sql>
 			<![CDATA[
 				UPDATE ERRORDETAILS SET MESSAGE = 'Number of Repay Steps must be equal to entered Number of Repay Steps' WHERE CODE = '30542';
@@ -23602,19 +23273,19 @@ UNION ALL
 				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('STP001', 'EN', 'I', 'Grace Schedule method will be overridden by Repay Schedule Method  as it is a graded schedule even in Grace period', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
 			]]>
 		</sql>
-	</changeSet>	
-	
-	 <changeSet id="548" author="lakshmi.N">
+	</changeSet>
+
+	<changeSet id="548" author="lakshmi.N">
 		<sql>
 			<![CDATA[
 				UPDATE ERRORDETAILS SET MESSAGE = '{1} are not allowed for Disbursement Type : {0}' WHERE CODE = '41101';
 				UPDATE ERRORDETAILS SET MESSAGE = '{0} should be greater than {1}.' WHERE CODE = '91121';
 			]]>
 		</sql>
-	</changeSet>	
+	</changeSet>
 
 	<changeSet id="549" author="Lakshmi.N">
-	<comment>PSD # 169092</comment>
+		<comment>PSD # 169092</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM ERRORDETAILS WHERE CODE = 'STP002';
@@ -23622,9 +23293,9 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="550" author="Lakshmi.N">
-	<comment>TK#705</comment>
+		<comment>TK#705</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM ERRORDETAILS WHERE CODE = 'STP003';
@@ -23632,7 +23303,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="294" author="Swetha.s">
 		<sql>
 			<![CDATA[	
@@ -23641,13 +23312,11 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="705" author="Lakshmi.N">
-		<addColumn tableName="FINBLACKLISTDETAIL">
-			<column name="sourcecif" type="nvarchar(50)" />
-		</addColumn>
+
+	<changeSet id="706" author="Lakshmi.N">
+		<modifyDataType tableName="finblacklistdetail" columnName="sourcecif" newDataType="nvarchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="707.0" author="Lakshmi.N">
 		<sql>
 			<![CDATA[
@@ -23668,118 +23337,24 @@ UNION ALL
 		<addPrimaryKey columnNames="finreference, custcif, sourcecif" constraintName="pk_finblacklistdetail"
 			tableName="finblacklistdetail" />
 	</changeSet>
-	
+
 	<changeSet id="710" author="Lakshmi.N">
-		<addColumn tableName="RejectFinBlackListDetail">
-			<column name="sourcecif" type="varchar(20)" />
-		</addColumn>
+		<modifyDataType tableName="RejectFinBlackListDetail" columnName="sourcecif" newDataType="nvarchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="711" author="Lakshmi.N">
-		<addNotNullConstraint tableName="finblacklistdetail"
-			columnName="sourcecif" columnDataType="nvarchar(50)" />
+		<addNotNullConstraint tableName="RejectFinBlackListDetail" columnName="sourcecif" columnDataType="nvarchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="712" author="Lakshmi.N">
-    	<dropPrimaryKey constraintName="pk_rejectfinblacklistdetail"
-                    tableName="RejectFinBlackListDetail"/>
+		<dropPrimaryKey constraintName="pk_rejectfinblacklistdetail" tableName="RejectFinBlackListDetail" />
 	</changeSet>
 
 	<changeSet id="713" author="Lakshmi.N">
-    	<addPrimaryKey 
-            columnNames="finreference, custcif, sourcecif"
-            constraintName="pk_rejectfinblacklistdetail"
-            tableName="RejectFinBlackListDetail"/>
-	</changeSet>
-	
-	<changeSet id="714" author="naga.g">
-		<renameColumn tableName="OCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
+		<addPrimaryKey columnNames="finreference, custcif, sourcecif" constraintName="pk_rejectfinblacklistdetail"
+			tableName="RejectFinBlackListDetail" />
 	</changeSet>
 
-	<changeSet id="715" author="naga.g">
-		<renameColumn tableName="OCRHEADER_TEMP" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
-	</changeSet>
-	
-	<changeSet id="717" author="naga.g">
-		<dropColumn columnName="splitapplicable" tableName="OCRHEADER " />
-	</changeSet>
-	
-	<changeSet id="718" author="naga.g">
-		<dropColumn columnName="splitapplicable" tableName="OCRHEADER_TEMP " />
-	</changeSet>
-
-	<changeSet id="719" author="naga.g">
-		<renameColumn tableName="FINOCRHEADER" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
-	</changeSet>
-
-	<changeSet id="720" author="naga.g">
-		<renameColumn tableName="FINOCRHEADER_TEMP" oldColumnName="ocrapplicable" newColumnName="ocrtype" />
-	</changeSet>
-
-	<changeSet id="721.0_pre" author="naga.g" dbms="postgresql">
-		<sql>
-				<![CDATA[
-						select deps_save_and_drop_dependencies ('plf', 'finocrheader_view');
-				]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="721" author="naga.g">
-		<dropColumn columnName="splitapplicable" tableName="FinOCRHeader " />
-	</changeSet>
-	
-	<changeSet id="722" author="naga.g">
-		<dropColumn columnName="splitapplicable" tableName="FINOCRHEADER_TEMP " />
-	</changeSet>
-	
-	<changeSet id="723" author="naga.g">
-		<addColumn tableName="FinOCRHeader">
-		<column name="totaldemand" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="724" author="naga.g">
-		<addColumn tableName="FINOCRHEADER_TEMP">
-			<column name="totaldemand" type="bigint" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="725" author="naga.g">
-		<addColumn tableName="FINOCRCAPTURE">
-			<column name="receiptdate" type="datetime" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="726" author="naga.g">
-		<addColumn tableName="FINOCRCAPTURE_TEMP">
-			<column name="receiptdate" type="datetime" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="727" author="naga.g">
-		<addColumn tableName="FINOCRCAPTURE">
-			<column name="filename" type="VARCHAR(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="728" author="naga.g">
-		<addColumn tableName="FINOCRCAPTURE_TEMP">
-			<column name="filename" type="VARCHAR(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="729" author="naga.g">
-		<addColumn tableName="FINOCRCAPTURE">
-			<column name="documentref" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="730" author="naga.g">
-		<addColumn tableName="FINOCRCAPTURE_TEMP">
-			<column name="documentref" type="bigint" />
-		</addColumn>
-	</changeSet>
-	
 	<changeSet id="731_pre" author="Lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -23788,17 +23363,17 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="731" author="Lakshmi.n">
 		<comment>registrationNumber length changed to 50 instead of 20</comment>
 		<modifyDataType tableName="builderprojcet" columnName="registrationNumber" newDataType="varchar(50)" />
 	</changeSet>
-		
+
 	<changeSet id="732" author="Lakshmi.n">
 		<comment>registrationNumber length changed to 50 instead of 20</comment>
 		<modifyDataType tableName="builderprojcet_temp" columnName="registrationNumber" newDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="732_post" author="Lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -23807,21 +23382,21 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="733" author="venkatesh.ch">
+
+	<changeSet id="733" author="venkatesh.ch">
 		<addForeignKeyConstraint constraintName="FK_finocrheader" referencedTableName="ocrheader"
 			referencedColumnNames="ocrid" baseTableName="finocrheader" baseColumnNames="ocrid" />
 	</changeSet>
-	
+
 	<changeSet id="734" author="Lakshmi.N">
 		<comment>PSD#164067</comment>
 		<addUniqueConstraint tableName="FinMaintainInstructions_temp" columnNames="finreference,event" />
 	</changeSet>
-	
+
 	<changeSet id="739" author="Lakshmi">
 		<sql>
-			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
-			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='OCRMAINTENANCE';
+			UPDATE WorkFlowDetails SET
+			WorkFlowActive= 0 where WorkFlowType='OCRMAINTENANCE';
 		</sql>
 		<insert tableName="WorkFlowDetails">
 			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
@@ -23951,11 +23526,8 @@ UNION ALL
 			<where>workflowtype='OCRMAINTENANCE' and workflowactive=1
 			</where>
 		</update>
-		<sql>
-			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
-		</sql>
 	</changeSet>
-	
+
 	<changeSet id="909_pre" author="venkates.ch" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -23964,15 +23536,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="909" author="PAVAN.C">
 		<modifyDataType tableName="collectionagencies" columnName="code" newDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="910" author="PAVAN.C">
 		<modifyDataType tableName="collectionagencies_temp" columnName="code" newDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="910_post" author="venkates.ch" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -23981,7 +23553,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="911" author="Lakshmi.N">
 		<comment>PSD#163130</comment>
 		<addColumn tableName="COVENANTS">
@@ -23995,8 +23567,8 @@ UNION ALL
 			<column name="remarks1" type="blob" />
 		</addColumn>
 	</changeSet>
-	
-		<changeSet id="913_pre" author="lakshmi.N" dbms="postgresql">
+
+	<changeSet id="913_pre" author="lakshmi.N" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'sanction_conditions');
@@ -24007,11 +23579,11 @@ UNION ALL
 	<changeSet id="913" author="lakshmi.N">
 		<modifyDataType tableName="sanction_conditions" columnName="sanctioncondition" newDataType="varchar(600)" />
 	</changeSet>
-	
+
 	<changeSet id="914" author="lakshmi.N">
 		<modifyDataType tableName="sanction_conditions_temp" columnName="sanctioncondition" newDataType="varchar(600)" />
 	</changeSet>
-	
+
 	<changeSet id="914_post" author="lakshmi.N" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -24020,69 +23592,69 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="915" author="praveena.v">
 		<addColumn tableName="rmtfinancetypes">
 			<column name="calcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="916" author="praveena.v">
 		<addColumn tableName="rmtfinancetypes_temp">
 			<column name="calcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="917" author="praveena.v">
 		<addColumn tableName="rmtfinancetypes">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="918" author="praveena.v">
 		<addColumn tableName="rmtfinancetypes_temp">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="919" author="praveena.v">
 		<addColumn tableName="financemain">
 			<column name="calcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="920" author="praveena.v">
 		<addColumn tableName="financemain_temp">
 			<column name="calcOfSteps" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="921" author="praveena.v">
 		<addColumn tableName="financemain">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="922" author="praveena.v">
 		<addColumn tableName="financemain_temp">
 			<column name="StepsAppliedFor" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="923" author="praveena.v">
 		<addColumn tableName="finsteppolicydetail">
-			<column name="stepSpecifier" type="varchar(5)" >  
+			<column name="stepSpecifier" type="varchar(5)">
 			</column>
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="924" author="praveena.v">
 		<addColumn tableName="finsteppolicydetail_temp">
-			<column name="stepSpecifier" type="varchar(5)" > 
-			    </column>
+			<column name="stepSpecifier" type="varchar(5)">
+			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="924.1" author="praveena.v">
 		<sql>
 			<![CDATA[
@@ -24091,135 +23663,129 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="924.2" author="praveena.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="stepSpecifier" tableName="finsteppolicydetail" defaultValue="R" />
 	</changeSet>
-	
+
 	<changeSet id="924.3" author="praveena.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="stepSpecifier" tableName="finsteppolicydetail_temp" defaultValue="R" />
 	</changeSet>
-		
+
 	<changeSet id="925" author="praveena.v">
-    	<dropPrimaryKey constraintName="pk_financesteppolicydetail"
-                    tableName="finsteppolicydetail"/>
-	</changeSet> 
-	
+		<dropPrimaryKey constraintName="pk_financesteppolicydetail" tableName="finsteppolicydetail" />
+	</changeSet>
+
 	<changeSet id="926" author="praveena.v">
-    	<addPrimaryKey 
-            columnNames="stepSpecifier,finreference,stepno"
-            constraintName="pk_financesteppolicydetail"
-            tableName="finsteppolicydetail"/>
+		<addPrimaryKey columnNames="stepSpecifier,finreference,stepno" constraintName="pk_financesteppolicydetail"
+			tableName="finsteppolicydetail" />
 	</changeSet>
-	
+
 	<changeSet id="927" author="praveena.v">
-    	<dropPrimaryKey constraintName="pk_finsteppolicydetail_temp"
-                    tableName="finsteppolicydetail_temp"/>
+		<dropPrimaryKey constraintName="pk_finsteppolicydetail_temp" tableName="finsteppolicydetail_temp" />
 	</changeSet>
-	 
+
 	<changeSet id="928" author="praveena.v">
-    	<addPrimaryKey 
-            columnNames="stepSpecifier,finreference,stepno"
-            constraintName="pk_finsteppolicydetail_temp"
-            tableName="finsteppolicydetail_temp"/>
-	</changeSet> 
-	
+		<addPrimaryKey columnNames="stepSpecifier,finreference,stepno" constraintName="pk_finsteppolicydetail_temp"
+			tableName="finsteppolicydetail_temp" />
+	</changeSet>
+
 	<changeSet id="929" author="praveena.v">
 		<addColumn tableName="finsteppolicydetail">
-			<column name="stepstart" type="datetime" >  
+			<column name="stepstart" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="930" author="praveena.v">
 		<addColumn tableName="finsteppolicydetail_temp">
-			<column name="stepstart" type="datetime" >  
+			<column name="stepstart" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="931" author="praveena.v">
 		<addColumn tableName="WIFFinStepPolicyDetail">
-			<column name="stepstart" type="datetime" >  
+			<column name="stepstart" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="932" author="praveena.v">
 		<addColumn tableName="WIFFinStepPolicyDetail_temp">
-			<column name="stepstart" type="datetime" >  
+			<column name="stepstart" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="933" author="praveena.v">
 		<addColumn tableName="finsteppolicydetail">
-			<column name="stepend" type="datetime" >  
+			<column name="stepend" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="934" author="praveena.v">
 		<addColumn tableName="finsteppolicydetail_temp">
-			<column name="stepend" type="datetime" >  
+			<column name="stepend" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="935" author="praveena.v">
 		<addColumn tableName="WIFFinStepPolicyDetail">
-			<column name="stepend" type="datetime" >  
+			<column name="stepend" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="936" author="praveena.v">
 		<addColumn tableName="WIFFinStepPolicyDetail_temp">
-			<column name="stepend" type="datetime" >  
+			<column name="stepend" type="datetime">
 			</column>
 		</addColumn>
 	</changeSet>
-			
+
 	<changeSet id="937" author="praveena.v">
 		<addColumn tableName="WIFFinStepPolicyDetail">
-			<column name="stepSpecifier" type="varchar(5)" >  
+			<column name="stepSpecifier" type="varchar(5)">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="938" author="praveena.v">
 		<addColumn tableName="WIFFinStepPolicyDetail_temp">
-			<column name="stepSpecifier" type="varchar(5)" >  
+			<column name="stepSpecifier" type="varchar(5)">
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="293" author="Swetha.s">
-	<comment>PSD#165575</comment>
-	<createTable tableName="cibil_member_details_bk">
-		<column name="ID" type="bigint" autoIncrement="true" />
-		<column name="Type" type="varchar(1)" />
-		<column name="segment_type" type="varchar(10)" >
-		<constraints nullable="false" />
-		</column>
-		<column name="member_code" type="varchar(10)" >
-		<constraints nullable="false" />
-		</column>
-		<column name="member_id" type="varchar(30)" >
-		<constraints nullable="false" />
-		</column>
-		<column name="previous_member_id" type="varchar(30)" />
-		<column name="member_short_name" type="varchar(20)" >
-		<constraints nullable="false" />
-		</column>
-		<column name="member_password" type="varchar(1000)" >
-		<constraints nullable="false" />
-		</column>
-		<column name="file_path" type="varchar(100)" >
-		<constraints nullable="false" />
-		</column>
-		<column name="file_formate" type="varchar(10)" />
-	</createTable>
+		<comment>PSD#165575</comment>
+		<createTable tableName="cibil_member_details_bk">
+			<column name="ID" type="bigint" autoIncrement="true" />
+			<column name="Type" type="varchar(1)" />
+			<column name="segment_type" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="member_code" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="member_id" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="previous_member_id" type="varchar(30)" />
+			<column name="member_short_name" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="member_password" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="file_path" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="file_formate" type="varchar(10)" />
+		</createTable>
 	</changeSet>
 
 	<changeSet id="293.1" author="Swetha.s">
@@ -24244,14 +23810,14 @@ UNION ALL
 				DROP TABLE CIBIL_MEMBER_DETAILS;
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="293.5" author="Swetha.s">
 		<renameTable newTableName="Cibil_member_details" oldTableName="Cibil_member_details_bk" />
 	</changeSet>
-	
+
 	<!-- ST#1627 Non LAN Receipt changes start -->
-	
+
 	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -24271,17 +23837,17 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="ST#1627.2.1" author="kavya.n">
-	<createTable tableName="COLLECTION_AGENCIES">
-		<column name="ID" type="bigint" autoIncrement="true">
-			<constraints nullable="false" />
-		</column>
-		<column name="Code" type="varchar(20)">
-			<constraints nullable="false" />
-		</column>
-		<column name="Description" type="varchar(50)" />
-	</createTable>
-    </changeSet>
-	
+		<createTable tableName="COLLECTION_AGENCIES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+
 	<changeSet id="ST#1627.2.2" author="kavya.n">
 		<addPrimaryKey tableName="COLLECTION_AGENCIES" columnNames="ID" constraintName="PK_COLLECTION_AGENCIES" />
 	</changeSet>
@@ -24393,30 +23959,6 @@ UNION ALL
 			<column name="LinkedTranId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="ST#1627.10.3" author="kavya.n">
-		<addColumn tableName="FinReceiptHeader">
-			<column name="ReceiptSource" type="Varchar(50)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="ST#1627.11.3" author="kavya.n">
-		<addColumn tableName="FinReceiptHeader_Temp">
-			<column name="ReceiptSource" type="Varchar(50)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="ST#1627.10.4" author="kavya.n">
-		<addColumn tableName="FinReceiptHeader">
-			<column name="TransactionRef" type="Varchar(50)" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="ST#1627.11.4" author="kavya.n">
-		<addColumn tableName="FinReceiptHeader_Temp">
-			<column name="TransactionRef" type="Varchar(50)" />
-		</addColumn>
-	</changeSet>
 
 	<changeSet id="ST#1627.13.1_pre" author="kavya.n">
 		<modifyDataType tableName="RBFIELDDETAILS" columnName="RbFldTableName" newDataType="varchar(30)" />
@@ -24476,7 +24018,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.17" author="kavya.n">
 		<createTable tableName="COLLECTION_MOB_AGENCY_LIMITS">
 			<column name="ID" type="bigInt" autoIncrement="true" />
@@ -24515,7 +24057,7 @@ UNION ALL
 		<addForeignKeyConstraint constraintName="FK_RCAL_ILD_MID" referencedTableName="INTERFACELOGDETAILS"
 			baseColumnNames="Message_Id" baseTableName="COLLECTION_MOB_AGENCY_LIMITS" referencedColumnNames="SeqId" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.17.8.1" author="kavya.n">
 		<modifyDataType tableName="COLLECTION_MOB_AGENCY_LIMITS" columnName="Response_Code" newDataType="clob" />
 	</changeSet>
@@ -24535,7 +24077,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.24.2" author="kavya.n">
 		<sql>
 			<![CDATA[
@@ -24567,7 +24109,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.27.1_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -24782,7 +24324,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.29_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -24790,7 +24332,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.29" author="kavya.n">
 		<createView viewName="PARTNERBANKMODES_RVIEW" replaceIfExists="true">
 	        <![CDATA[
@@ -24824,7 +24366,7 @@ UNION ALL
 		    ]]>
 	    </createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.29_post" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -24838,10 +24380,10 @@ UNION ALL
 			<column name="CANCELREMARKS" type="Varchar(500)" />
 		</addColumn>
 	</changeSet>
-	
-	
+
+
 	<!-- ST#1627 Non LAN Receipt changes end -->
-	
+
 	<changeSet id="662" author="rajesh.n">
 		<sql>
 			<![CDATA[
@@ -24850,7 +24392,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="663" author="Swamy.p">
 		<comment>PSD:152141</comment>
 		<sql>
@@ -24864,7 +24406,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="664" author="rajesh.n">
 		<comment>ST#121,TK#176.</comment>
 		<sql>
@@ -24873,10 +24415,10 @@ UNION ALL
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('BOUNCE', 'BOUNCE', 'br_presentmentType', 'Presentment Type', 'nvarchar', '1', '0', '1', ' ', 'static', '');
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="551" author="lakshmi.n">
-	 <comment>TK#853</comment>
+		<comment>TK#853</comment>
 		<sql>
 			<![CDATA[
 				UPDATE ERRORDETAILS SET MESSAGE = 'Number of {0} must be equal to entered Number of {1}' WHERE CODE = '30542';
@@ -24885,7 +24427,7 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="552" author="lakshmi.n">
-	 <comment>TK#853</comment>
+		<comment>TK#853</comment>
 		<sql>
 			<![CDATA[
 				DELETE from ERRORDETAILS WHERE code='STP004';
@@ -24895,21 +24437,21 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="553" author="lakshmi.n">
-	 <comment>TK#853</comment>
+		<comment>TK#853</comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'FinStepPolicyDetailDialog_AutoCal';
 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE,VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SecRights), 3, 'FinStepPolicyDetailDialog_AutoCal', 'FinStepPolicyDetailDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="TK#853.1" author="lakshmi.n">
 		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="NoOfGrcSteps" type="int"/>
+			<column name="NoOfGrcSteps" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.1.1" author="lakshmi.n">
 		<sql>
 			<![CDATA[
@@ -24917,11 +24459,11 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN_TEMP"/>
+		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="TK#853.1.2" author="lakshmi.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -24929,13 +24471,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.2" author="lakshmi.n">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="NoOfGrcSteps" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.2.1" author="lakshmi.n">
 		<sql>
 			<![CDATA[
@@ -24943,11 +24485,11 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN"/>
+		<addDefaultValue columnName="NoOfGrcSteps" tableName="FINANCEMAIN" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="TK#853.2.2" author="lakshmi.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -24955,13 +24497,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.3" author="lakshmi.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL_TEMP">
 			<column name="AutoCal" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.3.1" author="lakshmi.n">
 		<sql>
 			<![CDATA[
@@ -24969,11 +24511,11 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.3.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL_TEMP"/>
+		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="TK#853.3.2" author="lakshmi.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -24981,13 +24523,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.4" author="lakshmi.n">
 		<addColumn tableName="FINSTEPPOLICYDETAIL">
 			<column name="autocal" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.4.1" author="lakshmi.n">
 		<sql>
 			<![CDATA[
@@ -24995,11 +24537,11 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#853.4.2" author="lakshmi.n" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL"/>
+		<addDefaultValue columnName="AutoCal" tableName="FINSTEPPOLICYDETAIL" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="TK#853.4.2" author="lakshmi.n" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -25007,7 +24549,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="101_pre" author="lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -25015,7 +24557,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-  
+
 	<changeSet id="101" author="lakshmi.n">
 		<createView viewName="FINSTEPPOLICYDETAIL_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -25044,15 +24586,15 @@ UNION ALL
 			]]>
 		</createView>
 	</changeSet>
-  
-  	<changeSet id="101_post" author="lakshmi.n" dbms="postgresql">
+
+	<changeSet id="101_post" author="lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finsteppolicydetail_aview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="102_pre" author="lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -25060,7 +24602,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-  
+
 	<changeSet id="102" author="lakshmi.n">
 		<createView viewName="FINSTEPPOLICYDETAIL_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -25089,15 +24631,15 @@ UNION ALL
 			]]>
 		</createView>
 	</changeSet>
-  
-  	<changeSet id="102_post" author="lakshmi.n" dbms="postgresql">
+
+	<changeSet id="102_post" author="lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finsteppolicydetail_tview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="103_pre" author="lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -25105,7 +24647,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-  
+
 	<changeSet id="103" author="lakshmi.n">
 		<createView viewName="FINSTEPPOLICYDETAIL_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -25159,7 +24701,7 @@ UNION ALL
 			]]>
 		</createView>
 	</changeSet>
-  
+
 	<changeSet id="103_post" author="lakshmi.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -25167,7 +24709,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="665" author="rajesh.n">
 		<comment>ae_manualTds Amount code for Manual TDS(EARLYSTL,EARLYPAY) </comment>
 		<sql>
@@ -25180,7 +24722,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="666" author="rajesh.n">
 		<sql>
 			<![CDATA[
@@ -25189,7 +24731,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="667" author="rajesh.n">
 		<sql>
 			<![CDATA[
@@ -25209,7 +24751,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="943" author="rajesh.n" dbms="postgresql">
 		<sql>    
 			<![CDATA[ 	
@@ -25217,7 +24759,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="943" author="rajesh.n" dbms="oracle">
 		<sql>    
 			<![CDATA[ 	
@@ -25225,7 +24767,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="943" author="rajesh.n" dbms="mssql">
 		<sql>    
 			<![CDATA[ 
@@ -25233,7 +24775,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="944" author="rajesh.n" dbms="postgresql">
 		<sql>    
 			<![CDATA[ 	
@@ -25241,9 +24783,9 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-		
-	
-		
+
+
+
 	<changeSet id="944" author="rajesh.n" dbms="oracle">
 		<sql>    
 			<![CDATA[ 	
@@ -25259,7 +24801,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<!-- Receipt Level views handle in single place starts -->
 
 	<changeSet id="RLV_1_pre" author="Gopal.p" dbms="postgresql">
@@ -25590,7 +25132,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T14.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER_TEMP T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -25603,7 +25145,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
 				UNION ALL
 				SELECT T1.RECEIPTID,
 					T1.RECEIPTDATE,
@@ -25696,7 +25238,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T14.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -25709,7 +25251,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
 				WHERE NOT EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP 
 					WHERE RECEIPTID = T1.RECEIPTID )
 			]]>
@@ -25827,7 +25369,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T14.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER_TEMP T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -25840,7 +25382,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
 				UNION ALL
 				SELECT
 					T1.RECEIPTID,
@@ -25935,7 +25477,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T14.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -25948,7 +25490,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
 				WHERE NOT EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
 			]]>
 		</createView>
@@ -26065,7 +25607,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T16.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER_TEMP T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -26080,7 +25622,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T13 ON T1.CASHIERBRANCH = T13.BRANCHCODE
 				LEFT JOIN RMTFINANCETYPES T14 ON T1.FINTYPE = T14.FINTYPE
 				LEFT JOIN RMTCURRENCIES T15 ON T14.FINCCY= T15.CCYCODE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T16 ON T16.ID = T1.CLOSURETYPEID
 			]]>
 		</createView>
 	</changeSet>
@@ -26195,7 +25737,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T15.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER_TEMP T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -26209,7 +25751,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
 				LEFT JOIN RMTFINANCETYPES T14 ON T1.FINTYPE = T14.FINTYPE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T15 ON T15.ID = T1.CLOSURETYPEID
 				UNION ALL
 				SELECT T1.RECEIPTID,
 					T1.RECEIPTDATE,
@@ -26302,7 +25844,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T15.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -26316,7 +25858,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
 				LEFT JOIN RMTFINANCETYPES T14 ON T1.FINTYPE = T14.FINTYPE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T15 ON T15.ID = T1.CLOSURETYPEID
 				WHERE NOT EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP
 					WHERE RECEIPTID = T1.RECEIPTID)
 			]]>
@@ -26436,7 +25978,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T14.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER_TEMP T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -26449,7 +25991,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
 				UNION ALL
 				SELECT T1.RECEIPTID,
 					T1.RECEIPTDATE,
@@ -26545,7 +26087,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T14.CODE CLOSURETYPEDESC
 					FROM FINRECEIPTHEADER T1
 					LEFT JOIN
 						(SELECT FINREFERENCE,
@@ -26586,7 +26128,7 @@ UNION ALL
 				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
 				WHERE NOT EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP
 					WHERE RECEIPTID = T1.RECEIPTID )
 			]]>
@@ -26706,7 +26248,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T16.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER_TEMP T1
 				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
 				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -26721,7 +26263,7 @@ UNION ALL
 				LEFT JOIN RMTBranches T13 ON T1.CASHIERBRANCH = T13.BranchCode
 				LEFT JOIN RMTFINANCETYPES T15 ON T1.FINTYPE = T15.FINTYPE
 				LEFT JOIN RMTCURRENCIES T14 ON T14.CCYCODE= T3.CUSTBASECCY
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T16 ON T16.ID = T1.CLOSURETYPEID
 			]]>
 		</createView>
 	</changeSet>
@@ -26831,7 +26373,7 @@ UNION ALL
 					T1.SOURCEOFFUND,
 					T1.TDSAMOUNT,
 					T1.CLOSURETYPEID,
-	      			T13.CODE CLOSURETYPEDESC
+	      			T14.CODE CLOSURETYPEDESC
 				FROM FINRECEIPTHEADER_TEMP T1
 				INNER JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
 				INNER JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
@@ -26843,7 +26385,7 @@ UNION ALL
 				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
 				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
-				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
 			]]>
 		</createView>
 	</changeSet>
@@ -30614,5 +30156,179 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<!-- Dependency with Finance Main /Receipt Views -->
+
+	<changeSet id="ST#1211.100.9_pre" author="Gopal.p" dbms="postgresql">
+		<sql> 
+			<![CDATA[ 
+				select deps_save_and_drop_dependencies ('plf', 'verification_tv_view'); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1211.100.9" author="Gopal.p">
+		<createView viewName="VERIFICATION_TV_VIEW" replaceIfExists="true">
+			<![CDATA[	 
+				SELECT TV.VERIFICATIONID,
+				    TV.AGENTCODE,
+				    TV.AGENTNAME,
+				    TV.TYPE,
+				    TV.VERIFIEDDATE,
+				    TV.STATUS,
+				    CS.COLLATERALTYPE,
+				    CS.COLLATERALCCY,
+				    CS.COLLATERALLOC,
+				    TV.REASON,
+				    TV.VALUATIONAMOUNT,
+				    R1.CODE AS REASONCODE,
+				    R1.DESCRIPTION AS REASONDESC,
+				    TV.SUMMARYREMARKS,
+				    TV.SOURCEFORMNAME,
+				    TV.VERIFICATIONFORMNAME,
+				    TV.DOCUMENTNAME,
+				    TV.DOCUMENTREF,
+				    TV.VERSION,
+				    TV.LASTMNTBY,
+				    TV.LASTMNTON,
+				    TV.RECORDSTATUS,
+				    TV.ROLECODE,
+				    TV.NEXTROLECODE,
+				    TV.TASKID,
+				    TV.NEXTTASKID,
+				    TV.RECORDTYPE,
+				    TV.WORKFLOWID,
+				    TV.OBSERVATIONREMARKS,
+				    C.CUSTCIF AS CIF,
+				    V.KEYREFERENCE,
+				    V.CREATEDON,
+				    V.AGENCY,
+				    A.DEALERNAME AS AGENCYNAME,
+				    A.DEALERCITY AS AGENCYCITY,
+				    V.CUSTID,
+				    C.CUSTSHRTNAME AS CUSTNAME,
+				    V.VERIFICATIONCATEGORY,
+				    CS.COLLATERALREF,
+				    CPNH.PHONENUMBER AS CONTACTNUMBER1,
+				    CPNL.PHONENUMBER AS CONTACTNUMBER2,
+				    TV.VALASPERPE,
+				    TV.FINALVALAMT,
+				    TV.DECISIONONVAL,
+				    TV.FINALVALREMARKS,
+				    FM.PRODUCTCATEGORY,
+				    FM.FINTYPE AS LOANTYPE,
+				    FM.LOVDESCFINTYPENAME AS LOVDESCLOANTYPENAME,
+				    FM.SOURCINGBRANCH,
+				    FM.LOVDESCSOURCINGBRANCH
+				FROM VERIFICATION_TV_TEMP TV
+				JOIN VERIFICATIONS V ON V.ID = TV.VERIFICATIONID
+				JOIN ( SELECT COLLATERALSETUP_TEMP.COLLATERALTYPE,
+				            COLLATERALSETUP_TEMP.COLLATERALCCY,
+				            COLLATERALSETUP_TEMP.COLLATERALLOC,
+				            COLLATERALSETUP_TEMP.COLLATERALREF
+				        FROM COLLATERALSETUP_TEMP
+				    UNION
+				        SELECT CSP.COLLATERALTYPE,
+				            CSP.COLLATERALCCY,
+				            CSP.COLLATERALLOC,
+				            CSP.COLLATERALREF
+				           FROM COLLATERALSETUP CSP
+				        WHERE NOT (EXISTS ( SELECT 1
+				                   FROM COLLATERALSETUP_TEMP
+				                  WHERE COLLATERALSETUP_TEMP.COLLATERALREF = CSP.COLLATERALREF))) CS ON CS.COLLATERALREF = V.REFERENCEFOR
+				JOIN COLLATERALSTRUCTURE CST ON CST.COLLATERALTYPE = CS.COLLATERALTYPE
+				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
+				LEFT JOIN CUSTOMERS C ON C.CUSTID = V.CUSTID
+				LEFT JOIN CUSTOMERPHONENUMBERS CPNH ON CPNH.PHONECUSTID = C.CUSTID AND CPNH.PHONETYPEPRIORITY = 5
+				LEFT JOIN CUSTOMERPHONENUMBERS CPNL ON CPNL.PHONECUSTID = C.CUSTID AND CPNL.PHONETYPEPRIORITY = 4
+				LEFT JOIN REASONS R1 ON R1.ID = TV.REASON
+				JOIN FINANCEMAIN_VIEW FM ON FM.FINREFERENCE = V.KEYREFERENCE
+				UNION ALL
+				SELECT TV.VERIFICATIONID,
+					TV.AGENTCODE,
+					TV.AGENTNAME,
+					TV.TYPE,
+					TV.VERIFIEDDATE,
+					TV.STATUS,
+					CS.COLLATERALTYPE,
+					CS.COLLATERALCCY,
+					CS.COLLATERALLOC,
+					TV.REASON,
+					TV.VALUATIONAMOUNT,
+					R1.CODE AS REASONCODE,
+					R1.DESCRIPTION AS REASONDESC,
+					TV.SUMMARYREMARKS,
+					TV.SOURCEFORMNAME,
+					TV.VERIFICATIONFORMNAME,
+					TV.DOCUMENTNAME,
+					TV.DOCUMENTREF,
+					TV.VERSION,
+					TV.LASTMNTBY,
+					TV.LASTMNTON,
+					TV.RECORDSTATUS,
+					TV.ROLECODE,
+					TV.NEXTROLECODE,
+					TV.TASKID,
+					TV.NEXTTASKID,
+					TV.RECORDTYPE,
+					TV.WORKFLOWID,
+					TV.OBSERVATIONREMARKS,
+					C.CUSTCIF AS CIF,
+					V.KEYREFERENCE,
+					V.CREATEDON,
+					V.AGENCY,
+					A.DEALERNAME AS AGENCYNAME,
+					A.DEALERCITY AS AGENCYCITY,
+					V.CUSTID,
+					C.CUSTSHRTNAME AS CUSTNAME,
+					V.VERIFICATIONCATEGORY,
+					CS.COLLATERALREF,
+					CPNH.PHONENUMBER AS CONTACTNUMBER1,
+					CPNL.PHONENUMBER AS CONTACTNUMBER2,
+					TV.VALASPERPE,
+					TV.FINALVALAMT,
+					TV.DECISIONONVAL,
+					TV.FINALVALREMARKS,
+					FM.PRODUCTCATEGORY,
+					FM.FINTYPE AS LOANTYPE,
+					FM.LOVDESCFINTYPENAME AS LOVDESCLOANTYPENAME,
+					FM.SOURCINGBRANCH,
+					FM.LOVDESCSOURCINGBRANCH
+				FROM VERIFICATION_TV TV
+				JOIN VERIFICATIONS V ON V.ID = TV.VERIFICATIONID
+				JOIN ( SELECT COLLATERALSETUP_TEMP.COLLATERALTYPE,
+				            COLLATERALSETUP_TEMP.COLLATERALCCY,
+				            COLLATERALSETUP_TEMP.COLLATERALLOC,
+				            COLLATERALSETUP_TEMP.COLLATERALREF
+				           FROM COLLATERALSETUP_TEMP
+				    UNION
+				      SELECT CSP.COLLATERALTYPE,
+				            CSP.COLLATERALCCY,
+				            CSP.COLLATERALLOC,
+				            CSP.COLLATERALREF
+				      FROM COLLATERALSETUP CSP
+				      WHERE NOT (EXISTS ( SELECT 1
+				                   FROM COLLATERALSETUP_TEMP
+				                  WHERE COLLATERALSETUP_TEMP.COLLATERALREF = CSP.COLLATERALREF))) CS ON CS.COLLATERALREF = V.REFERENCEFOR
+				JOIN COLLATERALSTRUCTURE CST ON CST.COLLATERALTYPE = CS.COLLATERALTYPE
+				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
+				LEFT JOIN CUSTOMERS C ON C.CUSTID = V.CUSTID
+				LEFT JOIN CUSTOMERPHONENUMBERS CPNH ON CPNH.PHONECUSTID = C.CUSTID AND CPNH.PHONETYPEPRIORITY = 5
+				LEFT JOIN CUSTOMERPHONENUMBERS CPNL ON CPNL.PHONECUSTID = C.CUSTID AND CPNL.PHONETYPEPRIORITY = 4
+				LEFT JOIN REASONS R1 ON R1.ID = TV.REASON
+				JOIN FINANCEMAIN_VIEW FM ON FM.FINREFERENCE = V.KEYREFERENCE
+				WHERE NOT (EXISTS ( SELECT 1 FROM VERIFICATION_TV_TEMP
+				    WHERE VERIFICATION_TV_TEMP.VERIFICATIONID = TV.VERIFICATIONID))
+		  		]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1211.100.9_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'verification_tv_view');	
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
