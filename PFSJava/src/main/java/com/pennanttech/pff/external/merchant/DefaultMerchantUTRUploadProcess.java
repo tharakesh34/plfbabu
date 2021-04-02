@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -40,7 +41,7 @@ import com.pennanttech.pff.model.merchant.MerchantUTRUpload;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 public class DefaultMerchantUTRUploadProcess extends AbstractInterface implements MerchantUTRProcess {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 	private DataEngineImport dataEngine;
 	String localLocation = "";
 	String job = "";

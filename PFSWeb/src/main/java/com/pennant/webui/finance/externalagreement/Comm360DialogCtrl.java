@@ -12,7 +12,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
@@ -45,7 +46,7 @@ import net.minidev.json.JSONArray;
 public class Comm360DialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 	private static final long serialVersionUID = 1698046844035290444L;
-	private static final Logger logger = Logger.getLogger(Comm360DialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(Comm360DialogCtrl.class);
 
 	protected Window window_FetchExternalAgreementDialog;
 	protected Groupbox finBasicdetails;

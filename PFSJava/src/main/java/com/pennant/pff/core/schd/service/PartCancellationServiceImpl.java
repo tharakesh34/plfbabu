@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
@@ -56,7 +57,7 @@ import com.pennanttech.pff.external.service.PartCancellationSchd;
 
 public class PartCancellationServiceImpl extends GenericService<FinServiceInstruction>
 		implements PartCancellationService {
-	private static final Logger logger = Logger.getLogger(PartCancellationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PartCancellationServiceImpl.class);
 
 	private PartCancellationSchd partCancellationSchd;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.cibil.CIBILDAO;
@@ -22,7 +23,7 @@ import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public class CIBILServiceImpl implements CIBILService {
-	private static Logger logger = Logger.getLogger(CIBILServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CIBILServiceImpl.class);
 
 	@Autowired
 	private CIBILDAO cibildao;

@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -81,7 +82,7 @@ import com.rits.cloning.Cloner;
 public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(SelectNonLanReceiptDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectNonLanReceiptDialogCtrl.class);
 
 	protected Window window_SelectNonLanReceiptDialog;
 	protected ExtendedCombobox fundingAccount;
@@ -886,7 +887,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	}
 
 	class MultiReceiptRunnable implements Runnable {
-		private final Logger logger_ = Logger.getLogger(MultiReceiptRunnable.class);
+		private final Logger logger_ = LogManager.getLogger(MultiReceiptRunnable.class);
 		private List<AuditHeader> auditHeaderList;
 		Map<Long, FinReceiptHeader> finReceiptHeaderMap;
 		long batchId;

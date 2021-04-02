@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -22,7 +23,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class SubventionService {
 
-	private static final Logger logger = Logger.getLogger(SubventionService.class);
+	private static final Logger logger = LogManager.getLogger(SubventionService.class);
 	private SubventionDetailDAO subventionDetailDAO;
 
 	/**

@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -41,7 +42,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MerchantUTRUploadCtrl extends GFCBaseCtrl<Configuration> {
 	private static final long serialVersionUID = 1297405999029019920L;
-	private static final Logger logger = Logger.getLogger(MerchantUTRUploadCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MerchantUTRUploadCtrl.class);
 	protected Window window_MerchantUTRUploadCtrl;
 	protected Button btnImport;
 	protected Button btnFileUpload;

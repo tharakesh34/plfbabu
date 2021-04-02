@@ -16,7 +16,8 @@ import java.util.List;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -40,7 +41,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CashFlowServiceImpl implements CashFlowService {
-	private static final Logger logger = Logger.getLogger(CashFlowServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CashFlowServiceImpl.class);
 	private CashFlowReportDAO cashFlowReportDAO;
 	private static final String PATH = "CashFlowReport";
 	private int formater = CurrencyUtil.getFormat("");

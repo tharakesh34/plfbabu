@@ -3,7 +3,8 @@ package com.pennanttech.pff.jobs;
 import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 @PersistJobDataAfterExecution
 public class MobAgencyReciptLimitUpdateJob implements Job, Serializable {
 	private static final long serialVersionUID = -6372080104335048313L;
-	private static final Logger logger = Logger.getLogger(MobAgencyReciptLimitUpdateJob.class);
+	private static final Logger logger = LogManager.getLogger(MobAgencyReciptLimitUpdateJob.class);
 
 	public static final String JOB_KEY = "MOB_AGENCY_RECEIPT_LIMIT_UPDATE";
 	public static final String JOB_KEY_DESCRIPTION = "Updating Collection Agency Limit for Receipt Source Mobile";

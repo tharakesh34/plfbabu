@@ -2,7 +2,8 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -15,7 +16,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CashFlowPreperation implements Tasklet {
-	private Logger logger = Logger.getLogger(CashFlowPreperation.class);
+	private Logger logger = LogManager.getLogger(CashFlowPreperation.class);
 
 	private CashFlowService cashFlowService;
 

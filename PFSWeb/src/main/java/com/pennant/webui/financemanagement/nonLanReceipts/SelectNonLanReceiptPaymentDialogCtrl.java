@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -58,7 +59,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(SelectNonLanReceiptPaymentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectNonLanReceiptPaymentDialogCtrl.class);
 
 	protected Window window_SelectNonLanReceiptPaymentDialog;
 	protected ExtendedCombobox division;

@@ -5,7 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CashFlowReportDAOImpl extends BasicDao<CashFlow> implements CashFlowReportDAO {
-	private static Logger logger = Logger.getLogger(CashFlowReportDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CashFlowReportDAOImpl.class);
 
 	@Override
 	public List<CashFlow> getCashFlowDetails() {
