@@ -12007,7 +12007,6 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 
 	<bean id="cashBackDetailDAO" class="com.pennant.backend.dao.finance.impl.CashBackDetailDAOImpl" parent="basicDao" />
@@ -12561,18 +12560,9 @@
 		</property>
 	</bean>
 
-	<bean name="loanMasterReportServiceTarget" class="com.pennant.backend.service.reports.impl.LoanMasterReportServiceImpl">
+	<bean name="loanMasterReportServiceTarget" class="com.pennant.backend.service.others.external.reports.impl.LoanMasterReportServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
-		<property name="vasMovementDetailDAO" ref="vasMovementDetailDAO" />
 		<property name="loanMasterReportDAO" ref="loanMasterReportDAO" />
-		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
-		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="vASRecordingService" ref="vASRecordingService" />
-		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
-		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
-		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 	</bean>
 
 	<bean id="eventPropertiesService" class="com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl" />
@@ -12726,32 +12716,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!--============ LoanTypeKNOCKOFF Details ============== -->
-	<bean id="loanTypeKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeKnockOffDAOImpl"
-		parent="basicDao" />
-
-	<bean id="loanTypeKnockOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="loanTypeKnockOffTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="loanTypeKnockOffTarget" class="com.pennant.backend.service.applicationmaster.impl.LoanTypeKnockOffServiceImpl">
-		<property name="loanTypeKnockOffDAO" ref="loanTypeKnockOffDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-	</bean>
 
 	<bean id="defaultMerchantUTRProcess" class="com.pennanttech.pff.external.merchant.DefaultMerchantUTRUploadProcess"
 		parent="abstractInterface" />

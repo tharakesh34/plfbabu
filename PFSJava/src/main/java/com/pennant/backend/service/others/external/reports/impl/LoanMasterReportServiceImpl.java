@@ -22,6 +22,14 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.VasMovementDetailDAO;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.others.external.reports.LoanMasterReportDAO;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -32,6 +40,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.VasMovementDetail;
 import com.pennant.backend.model.others.external.reports.LoanReport;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.others.external.reports.LoanMasterReportService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -44,13 +53,17 @@ import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 public class LoanMasterReportServiceImpl extends GenericService<LoanReport> implements LoanMasterReportService {
 	private static final Logger logger = LogManager.getLogger(LoanMasterReportServiceImpl.class);
+	
 	private static final String VAS = "VAS";
 	private static final String LOAN = "LOAN";
-	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private List<VasMovementDetail> movements = new ArrayList<VasMovementDetail>();
+	
+	
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private LoanMasterReportDAO loanMasterReportDAO;
 	@Autowired(required = false)
 	private ExtendedFieldService extendedFieldServiceHook;
+	private List<VasMovementDetail> movements = new ArrayList<VasMovementDetail>();
+	
 	private int formater = 2;
 
 	@Override
