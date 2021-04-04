@@ -221,6 +221,7 @@ import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.TATDetail;
+import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -276,6 +277,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
+import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.service.finance.financialsummary.DealRecommendationMeritsService;
 import com.pennant.backend.service.finance.financialsummary.DueDiligenceDetailsService;
 import com.pennant.backend.service.finance.financialsummary.RecommendationNotesDetailsService;
@@ -503,8 +505,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CashBackProcessService cashBackProcessService;
 
 	private long tempWorkflowId;
-	private BigDecimal disbAmt;
-	private BigDecimal totalAmt;
 
 	@Autowired(required = false)
 	private FinOCRHeaderService finOCRHeaderService;
@@ -517,6 +517,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PostExteranalServiceHook postExteranalServiceHook;
 
 	private RestructureService restructureService;
+	private TaxHeaderDetailsService taxHeaderDetailsService;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -3284,7 +3285,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<String> splittedLoans = getFinanceMainDAO().getParentRefifAny(financeMain.getFinReference(), "_view",
 				false);
 		if (CollectionUtils.isEmpty(splittedLoans)) {
-			processPricingLoans(financeDetail);
+			processPricingLoans(financeDetail, tableType.getSuffix(), auditTranType);
 		}
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -12882,249 +12883,252 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeDetail;
 	}
 
-	private void processPricingLoans(FinanceDetail financeDetail) {
+	private void processPricingLoans(FinanceDetail financeDetail, String tableType, String auditTranType) {
 		PricingDetail pricingDetail = financeDetail.getPricingDetail();
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
-		if (pricingDetail != null) {
 
-			List<FinanceMain> financeMains = pricingDetail.getFinanceMains();
+		if (pricingDetail == null) {
+			return;
+		}
 
-			BigDecimal totalLoanAmt = main.getFinAssetValue();
-			if (CollectionUtils.isNotEmpty(financeMains)) {
-				for (FinanceMain financeMain : financeMains) {
-					totalLoanAmt = totalLoanAmt.add(financeMain.getFinAssetValue());
-				}
+		List<FinanceMain> financeMains = pricingDetail.getFinanceMains();
+
+		if (CollectionUtils.isEmpty(financeMains)) {
+			return;
+		}
+
+		BigDecimal totalLoanAmt = main.getFinAssetValue();
+		if (CollectionUtils.isNotEmpty(financeMains)) {
+			for (FinanceMain financeMain : financeMains) {
+				totalLoanAmt = totalLoanAmt.add(financeMain.getFinAssetValue());
 			}
+		}
 
-			if (CollectionUtils.isNotEmpty(financeMains)) {
-				CollateralAssignment collateralAssignment = null;
-				if (CollectionUtils.isNotEmpty(financeMains) && pricingDetail.isSplit()) {
-					for (FinanceMain financeMain : financeMains) {
-						if (CollectionUtils.isNotEmpty(financeDetail.getCollateralAssignmentList())) {
-							for (CollateralAssignment parentColAssignment : financeDetail
-									.getCollateralAssignmentList()) {
-								collateralAssignment = new CollateralAssignment();
-								collateralAssignment.setReference(financeMain.getFinReference());
-								collateralAssignment.setCollateralRef(parentColAssignment.getCollateralRef());
+		CollateralAssignment collateralAssignment = null;
+		if (CollectionUtils.isNotEmpty(financeMains) && pricingDetail.isSplit()) {
+			for (FinanceMain financeMain : financeMains) {
+				if (CollectionUtils.isNotEmpty(financeDetail.getCollateralAssignmentList())) {
+					for (CollateralAssignment parentColAssignment : financeDetail.getCollateralAssignmentList()) {
+						collateralAssignment = new CollateralAssignment();
+						collateralAssignment.setReference(financeMain.getFinReference());
+						collateralAssignment.setCollateralRef(parentColAssignment.getCollateralRef());
 
-								collateralAssignment.setAssignPerc(setCollateralAssignmenForChildLoans(financeMain,
-										totalLoanAmt, parentColAssignment.getAssignPerc()));
-								parentColAssignment.setAssignPerc(parentColAssignment.getAssignPerc()
-										.subtract(collateralAssignment.getAssignPerc()));
-								collateralAssignment.setModule(FinanceConstants.MODULE_NAME);
-								collateralAssignment.setWorkflowId(0);
-								collateralAssignment.setVersion(main.getVersion());
-								collateralAssignment.setLastMntBy(main.getLastMntBy());
-								collateralAssignment.setLastMntOn(main.getLastMntOn());
-								collateralAssignment.setRecordStatus(main.getRecordStatus());
-								collateralAssignment.setRecordType(main.getRecordType());
+						collateralAssignment.setAssignPerc(setCollateralAssignmenForChildLoans(financeMain,
+								totalLoanAmt, parentColAssignment.getAssignPerc()));
+						parentColAssignment.setAssignPerc(
+								parentColAssignment.getAssignPerc().subtract(collateralAssignment.getAssignPerc()));
+						collateralAssignment.setModule(FinanceConstants.MODULE_NAME);
+						collateralAssignment.setWorkflowId(0);
+						collateralAssignment.setVersion(main.getVersion());
+						collateralAssignment.setLastMntBy(main.getLastMntBy());
+						collateralAssignment.setLastMntOn(main.getLastMntOn());
+						collateralAssignment.setRecordStatus(main.getRecordStatus());
+						collateralAssignment.setRecordType(main.getRecordType());
 
-								getCollateralAssignmentDAO().save(collateralAssignment, "_Temp");
+						getCollateralAssignmentDAO().save(collateralAssignment, "_Temp");
 
-								getCollateralAssignmentDAO().update(parentColAssignment, "_Temp");
+						getCollateralAssignmentDAO().update(parentColAssignment, "_Temp");
 
-							}
-						}
-						List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
-						if (CollectionUtils.isNotEmpty(jountAccountDetailList)) {
-							for (JointAccountDetail details : jountAccountDetailList) {
-								Cloner cloner = new Cloner();
-								JointAccountDetail jointAccountDetail = cloner.deepClone(details);
-								jointAccountDetail.setId(Long.MIN_VALUE);
-								jointAccountDetail.setFinReference(financeMain.getFinReference());
-								jointAccountDetail.setNewRecord(true);
-								if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-									try {
-										getJountAccountDetailDAO().save(jointAccountDetail, "_Temp");
-									} catch (Exception e) {
-										logger.error(Literal.EXCEPTION, e);
-									}
-								}
+					}
+				}
+				List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
+				if (CollectionUtils.isNotEmpty(jountAccountDetailList)) {
+					for (JointAccountDetail details : jountAccountDetailList) {
+						Cloner cloner = new Cloner();
+						JointAccountDetail jointAccountDetail = cloner.deepClone(details);
+						jointAccountDetail.setId(Long.MIN_VALUE);
+						jointAccountDetail.setFinReference(financeMain.getFinReference());
+						jointAccountDetail.setNewRecord(true);
+						if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+							try {
+								jountAccountDetailDAO.save(jointAccountDetail, "_Temp");
+							} catch (Exception e) {
+								logger.error(Literal.EXCEPTION, e);
 							}
 						}
 					}
-
-				}
-
-				for (FinanceMain financeMain : financeMains) {
-					logger.debug("Ser FinReference :: " + StringUtils.trimToEmpty(financeMain.getFinReference()));
-					logger.debug("Ser Investment Ref :: " + StringUtils.trimToEmpty(financeMain.getInvestmentRef()));
-					logger.debug("Ser Parent Ref :: " + StringUtils.trimToEmpty(financeMain.getParentRef()));
-					logger.debug("Ser Role Code :: " + StringUtils.trimToEmpty(financeMain.getRoleCode()));
-					logger.debug("Ser Next RoleCode :: " + StringUtils.trimToEmpty(financeMain.getNextRoleCode()));
-					logger.debug("Ser Record Status :: " + StringUtils.trimToEmpty(financeMain.getRecordStatus()));
-					financeMain.setFinStartDate(main.getFinStartDate());
-
-					String finType = financeMainDAO.getFinanceTypeFinReference(financeMain.getFinReference(), "_Temp");
-					FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-							finType, FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
-					if (financeWorkFlow != null) {
-						WorkFlowDetails workFlowDetails = WorkFlowUtil
-								.getDetailsByType(financeWorkFlow.getWorkFlowType());
-						if (workFlowDetails != null) {
-							WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-							String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
-							financeMain.setWorkflowId(workFlowDetails.getWorkFlowId());
-							financeMain.setRoleCode(workflow.firstTaskOwner());
-							financeMain.setNextRoleCode(workflow.firstTaskOwner());
-							financeMain.setTaskId(taskid);
-							financeMain.setNextTaskId(taskid + ";");
-						}
-					} else {
-						financeMain.setRoleCode(main.getRoleCode());
-						financeMain.setNextRoleCode(main.getNextRoleCode());
-						financeMain.setTaskId(main.getTaskId());
-						financeMain.setNextTaskId(main.getNextTaskId());
-					}
-					financeMain.setLastMntBy(main.getLastMntBy());
-					financeMain.setLastMntOn(main.getLastMntOn());
-					financeMain.setRecordStatus(main.getRecordStatus());
-					financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					if (StringUtils.isNotBlank(financeMain.getParentRef())) {
-						financeMain.setInvestmentRef("");
-					}
-					if (financeMain.isNewRecord()) {
-						getFinanceMainDAO().save(financeMain, TableType.TEMP_TAB, false);
-					} else {
-						if (StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-							// getFinanceMainDAO().delete(financeMain,
-							// TableType.TEMP_TAB, false, true);
-						} else {
-							String[] roles = StringUtils.trimToEmpty(SysParamUtil.getValueAsString("BRANCH_OPS_ROLE"))
-									.split(",");
-							boolean update = false;
-							update = true;
-							for (String role : roles) {
-								if (StringUtils.equals(
-										financeDetail.getFinScheduleData().getFinanceMain().getRoleCode(), role)) {
-									update = true;
-									break;
-								}
-							}
-
-							if (financeMain.getParentRef() == null || update) {
-								getFinanceMainDAO().update(financeMain, TableType.TEMP_TAB, false);
-							}
-						}
-					}
-				}
-
-				FinTaxDetails finTaxDetails = null;
-				for (FinFeeDetail feeDetail : pricingDetail.getTopUpFinFeeDetails()) {
-					feeDetail.setRecordType(main.getRecordType());
-					feeDetail.setRecordStatus(main.getRecordStatus());
-					feeDetail.setLastMntOn(main.getLastMntOn());
-					feeDetail.setLastMntBy(main.getLastMntBy());
-					String finType = financeMainDAO.getFinanceTypeFinReference(feeDetail.getFinReference(), "_Temp");
-					FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-							finType, FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
-					if (financeWorkFlow != null) {
-						WorkFlowDetails workFlowDetails = WorkFlowUtil
-								.getDetailsByType(financeWorkFlow.getWorkFlowType());
-						if (workFlowDetails != null) {
-							WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-							String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
-							feeDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
-							feeDetail.setRoleCode(workflow.firstTaskOwner());
-							feeDetail.setNextRoleCode(workflow.firstTaskOwner());
-							feeDetail.setTaskId(taskid);
-							feeDetail.setNextTaskId(taskid + ";");
-							feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						}
-					} else {
-						feeDetail.setWorkflowId(main.getWorkflowId());
-						feeDetail.setRoleCode(main.getRoleCode());
-						feeDetail.setNextRoleCode(main.getNextRoleCode());
-						feeDetail.setTaskId(main.getTaskId());
-						feeDetail.setNextTaskId(main.getNextTaskId());
-						feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					}
-					finTaxDetails = feeDetail.getFinTaxDetails();
-					if (feeDetail.isNewRecord()) {
-						feeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(feeDetail, false, "_Temp") + 1);
-						long feeId = getFinFeeDetailDAO().save(feeDetail, false, "_Temp");
-						if (finTaxDetails != null) {
-							finTaxDetails.setFeeID(feeId);
-							finTaxDetailsDAO.save(finTaxDetails, "_Temp");
-						}
-					} else {
-						if (StringUtils.equals(feeDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-							getFinFeeDetailDAO().delete(feeDetail, false, "_Temp");
-							finTaxDetailsDAO.deleteByFeeID(feeDetail.getFeeID(), "_Temp");
-						} else {
-							getFinFeeDetailDAO().update(feeDetail, false, "_Temp");
-							if (finTaxDetails != null && finTaxDetails.getFinTaxID() > 0) {
-								finTaxDetailsDAO.update(finTaxDetails, "_Temp");
-							}
-						}
-					}
-				}
-
-				for (VASRecording vasRecording : pricingDetail.getTopUpVasDetails()) {
-					vasRecording.setRecordType(main.getRecordType());
-					vasRecording.setRecordStatus(main.getRecordStatus());
-					vasRecording.setLastMntOn(main.getLastMntOn());
-					vasRecording.setLastMntBy(main.getLastMntBy());
-
-					String finType = financeMainDAO.getFinanceTypeFinReference(vasRecording.getPrimaryLinkRef(),
-							"_Temp");
-					FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-							finType, FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
-					if (financeWorkFlow != null) {
-						WorkFlowDetails workFlowDetails = WorkFlowUtil
-								.getDetailsByType(financeWorkFlow.getWorkFlowType());
-						if (workFlowDetails != null) {
-							WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-							String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
-							vasRecording.setWorkflowId(workFlowDetails.getWorkFlowId());
-							vasRecording.setRoleCode(workflow.firstTaskOwner());
-							vasRecording.setNextRoleCode(workflow.firstTaskOwner());
-							vasRecording.setTaskId(taskid);
-							vasRecording.setNextTaskId(taskid + ";");
-						}
-					} else {
-						vasRecording.setRoleCode(main.getRoleCode());
-						vasRecording.setNextRoleCode(main.getNextRoleCode());
-						vasRecording.setTaskId(main.getTaskId());
-						vasRecording.setNextTaskId(main.getNextTaskId());
-						vasRecording.setWorkflowId(main.getWorkflowId());
-					}
-
-					if (vasRecording.isNewRecord()) {
-						getVasRecordingDAO().save(vasRecording, "_Temp");
-					} else {
-						if (StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-							getVasRecordingDAO().delete(vasRecording, "_Temp");
-						} else {
-							getVasRecordingDAO().update(vasRecording, "_Temp");
-						}
-					}
-				}
-
-				// Delete parent data
-				for (FinanceMain financeMain : financeMains) {
-					if (!financeMain.isNewRecord()
-							&& StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-						getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
-					}
-				}
-			}
-
-			if (CollectionUtils.isNotEmpty(financeMains)) {
-				for (FinanceMain financeMain : financeMains) {
-					financeMain.setRecordType(main.getRecordType());
-					financeMain.setRecordStatus(main.getRecordStatus());
-					financeMain.setVersion(main.getVersion());
-					financeMain.setLastMntOn(main.getLastMntOn());
-					financeMain.setLastMntBy(main.getLastMntBy());
-					financeMain.setRoleCode(main.getRoleCode());
-					financeMain.setNextRoleCode(main.getNextRoleCode());
-					financeMain.setTaskId(main.getTaskId());
-					financeMain.setNextTaskId(main.getNextTaskId());
 				}
 			}
 
 		}
+
+		for (FinanceMain fm : financeMains) {
+			logger.debug("Ser FinReference :: " + StringUtils.trimToEmpty(fm.getFinReference()));
+			logger.debug("Ser Investment Ref :: " + StringUtils.trimToEmpty(fm.getInvestmentRef()));
+			logger.debug("Ser Parent Ref :: " + StringUtils.trimToEmpty(fm.getParentRef()));
+			logger.debug("Ser Role Code :: " + StringUtils.trimToEmpty(fm.getRoleCode()));
+			logger.debug("Ser Next RoleCode :: " + StringUtils.trimToEmpty(fm.getNextRoleCode()));
+			logger.debug("Ser Record Status :: " + StringUtils.trimToEmpty(fm.getRecordStatus()));
+			fm.setFinStartDate(main.getFinStartDate());
+
+			String finType = financeMainDAO.getFinanceTypeFinReference(fm.getFinReference(), "_Temp");
+			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
+					FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
+			if (financeWorkFlow != null) {
+				WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+				if (workFlowDetails != null) {
+					WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+					String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
+					fm.setWorkflowId(workFlowDetails.getWorkFlowId());
+					fm.setRoleCode(workflow.firstTaskOwner());
+					fm.setNextRoleCode(workflow.firstTaskOwner());
+					fm.setTaskId(taskid);
+					fm.setNextTaskId(taskid + ";");
+				}
+			} else {
+				fm.setRoleCode(main.getRoleCode());
+				fm.setNextRoleCode(main.getNextRoleCode());
+				fm.setTaskId(main.getTaskId());
+				fm.setNextTaskId(main.getNextTaskId());
+			}
+			fm.setLastMntBy(main.getLastMntBy());
+			fm.setLastMntOn(main.getLastMntOn());
+			fm.setRecordStatus(main.getRecordStatus());
+			fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (StringUtils.isNotBlank(fm.getParentRef())) {
+				fm.setInvestmentRef("");
+			}
+			if (fm.isNewRecord()) {
+				getFinanceMainDAO().save(fm, TableType.TEMP_TAB, false);
+			} else {
+				if (StringUtils.equals(fm.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					// getFinanceMainDAO().delete(financeMain,
+					// TableType.TEMP_TAB, false, true);
+				} else {
+					String[] roles = StringUtils.trimToEmpty(SysParamUtil.getValueAsString("BRANCH_OPS_ROLE"))
+							.split(",");
+					boolean update = false;
+					update = true;
+					for (String role : roles) {
+						if (StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getRoleCode(),
+								role)) {
+							update = true;
+							break;
+						}
+					}
+
+					if (fm.getParentRef() == null || update) {
+						financeMainDAO.update(fm, TableType.TEMP_TAB, false);
+					}
+				}
+			}
+		}
+
+		for (FinFeeDetail finFeeDetail : pricingDetail.getTopUpFinFeeDetails()) {
+			if (finFeeDetail.getTaxHeaderId() == null) {
+				finFeeDetail.setTaxHeaderId(0L);
+			}
+			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
+					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {
+				taxHeader.setRecordType(finFeeDetail.getRecordType());
+				taxHeader.setNewRecord(finFeeDetail.isNew());
+				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
+				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
+				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
+
+				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+				if (taxHeaderId != null && taxHeaderId > 0) {
+					taxHeader.setHeaderId(taxHeaderId);
+				}
+				if (finFeeDetail.isTaxApplicable()) {
+					TaxHeader txHeader = taxHeaderDetailsService.saveOrUpdate(taxHeader, tableType, auditTranType);
+					finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
+				}
+			}
+		}
+
+		for (FinFeeDetail feeDetail : pricingDetail.getTopUpFinFeeDetails()) {
+			feeDetail.setRecordType(main.getRecordType());
+			feeDetail.setRecordStatus(main.getRecordStatus());
+			feeDetail.setLastMntOn(main.getLastMntOn());
+			feeDetail.setLastMntBy(main.getLastMntBy());
+			String finType = financeMainDAO.getFinanceTypeFinReference(feeDetail.getFinReference(), "_Temp");
+			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(finType,
+					FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
+			if (financeWorkFlow != null) {
+				WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+				if (workFlowDetails != null) {
+					WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+					String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
+					feeDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
+					feeDetail.setRoleCode(workflow.firstTaskOwner());
+					feeDetail.setNextRoleCode(workflow.firstTaskOwner());
+					feeDetail.setTaskId(taskid);
+					feeDetail.setNextTaskId(taskid + ";");
+					feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				}
+			} else {
+				feeDetail.setWorkflowId(main.getWorkflowId());
+				feeDetail.setRoleCode(main.getRoleCode());
+				feeDetail.setNextRoleCode(main.getNextRoleCode());
+				feeDetail.setTaskId(main.getTaskId());
+				feeDetail.setNextTaskId(main.getNextTaskId());
+				feeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			}
+		}
+
+		for (VASRecording vasRecording : pricingDetail.getTopUpVasDetails()) {
+			vasRecording.setRecordType(main.getRecordType());
+			vasRecording.setRecordStatus(main.getRecordStatus());
+			vasRecording.setLastMntOn(main.getLastMntOn());
+			vasRecording.setLastMntBy(main.getLastMntBy());
+
+			String finType = financeMainDAO.getFinanceTypeFinReference(vasRecording.getPrimaryLinkRef(), "_Temp");
+			FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(finType,
+					FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
+			if (financeWorkFlow != null) {
+				WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+				if (workFlowDetails != null) {
+					WorkflowEngine workflow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+					String taskid = workflow.getUserTaskId(workflow.firstTaskOwner());
+					vasRecording.setWorkflowId(workFlowDetails.getWorkFlowId());
+					vasRecording.setRoleCode(workflow.firstTaskOwner());
+					vasRecording.setNextRoleCode(workflow.firstTaskOwner());
+					vasRecording.setTaskId(taskid);
+					vasRecording.setNextTaskId(taskid + ";");
+				}
+			} else {
+				vasRecording.setRoleCode(main.getRoleCode());
+				vasRecording.setNextRoleCode(main.getNextRoleCode());
+				vasRecording.setTaskId(main.getTaskId());
+				vasRecording.setNextTaskId(main.getNextTaskId());
+				vasRecording.setWorkflowId(main.getWorkflowId());
+			}
+
+			if (vasRecording.isNewRecord()) {
+				getVasRecordingDAO().save(vasRecording, "_Temp");
+			} else {
+				if (StringUtils.equals(vasRecording.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					getVasRecordingDAO().delete(vasRecording, "_Temp");
+				} else {
+					getVasRecordingDAO().update(vasRecording, "_Temp");
+				}
+			}
+		}
+
+		// Delete parent data
+		for (FinanceMain financeMain : financeMains) {
+			if (!financeMain.isNewRecord()
+					&& StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(financeMains)) {
+			for (FinanceMain financeMain : financeMains) {
+				financeMain.setRecordType(main.getRecordType());
+				financeMain.setRecordStatus(main.getRecordStatus());
+				financeMain.setVersion(main.getVersion());
+				financeMain.setLastMntOn(main.getLastMntOn());
+				financeMain.setLastMntBy(main.getLastMntBy());
+				financeMain.setRoleCode(main.getRoleCode());
+				financeMain.setNextRoleCode(main.getNextRoleCode());
+				financeMain.setTaskId(main.getTaskId());
+				financeMain.setNextTaskId(main.getNextTaskId());
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 
