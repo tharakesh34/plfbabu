@@ -3496,6 +3496,7 @@
 		<property name="finFeeConfigService" ref="finFeeConfigService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
