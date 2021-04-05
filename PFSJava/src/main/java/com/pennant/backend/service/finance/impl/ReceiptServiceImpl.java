@@ -2595,9 +2595,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader = getAuditDetails(auditHeader, method);
 
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
+		FinReceiptHeader receiptHeader = repayData.getReceiptHeader();
 		// String usrLanguage = auditHeader.getUsrLanguage();
 		// Need to check with kranthi
-		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
+		String usrLanguage = receiptHeader.getUserDetails().getLanguage();
 		// Extended field details Validation
 		if (financeDetail.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
@@ -2606,16 +2607,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			auditDetails.addAll(details);
 		}
 
-		//Dedup Check
+		// Dedup Check
 		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(repayData.getReceiptHeader().getReceiptModeStatus())
-				&& !RepayConstants.PAYSTATUS_CANCEL.equals(repayData.getReceiptHeader().getReceiptModeStatus())) {
+				&& !RepayConstants.PAYSTATUS_CANCEL.equals(repayData.getReceiptHeader().getReceiptModeStatus())
+				&& receiptHeader.isDedupCheckRequied()) {
 			FinServiceInstruction fsi = new FinServiceInstruction();
-			FinReceiptHeader receiptHeader = repayData.getReceiptHeader();
 			FinReceiptDetail finReceiptDetail = receiptHeader.getReceiptDetails().get(0);
 			fsi.setFinReference(receiptHeader.getReference());
 			fsi.setValueDate(receiptHeader.getValueDate());
 			fsi.setAmount(receiptHeader.getReceiptAmount());
 			fsi.setTransactionRef(finReceiptDetail.getTransactionRef());
+			fsi.setFavourNumber(finReceiptDetail.getFavourNumber());
 			fsi.setPaymentMode(receiptHeader.getReceiptMode());
 			List<ErrorDetail> errors = dedupCheck(fsi);
 			if (CollectionUtils.isNotEmpty(errors)) {

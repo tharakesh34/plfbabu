@@ -686,6 +686,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (isForeClosure || isEarlySettle) {
 				this.gb_Payable.setVisible(true);
 			}
+			if (isForeClosure || isKnockOff) {
+				receiptData.getReceiptHeader().setDedupCheckRequied(false);
+			}
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);

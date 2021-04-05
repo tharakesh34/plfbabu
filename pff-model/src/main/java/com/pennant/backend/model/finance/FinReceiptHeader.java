@@ -113,7 +113,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Date nextRepayRvwDate;
 	private long knockOffRefId = 0;
 
-	//Upfront Fees
+	// Upfront Fees
 	private String finDivision;
 	private String customerCIF;
 	private String customerName;
@@ -187,6 +187,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private Long closureTypeId;
 	private String closureTypeDesc;
+	private boolean dedupCheckRequied = true;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -315,6 +316,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("receiptSourceAcType");
 		excludeFields.add("receiptSourceAcDesc");
 		excludeFields.add("sourceId");
+		excludeFields.add("dedupCheckRequied");
 
 		return excludeFields;
 	}
@@ -1785,5 +1787,13 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	public boolean isDedupCheckRequied() {
+		return dedupCheckRequied;
+	}
+
+	public void setDedupCheckRequied(boolean dedupCheckRequied) {
+		this.dedupCheckRequied = dedupCheckRequied;
 	}
 }
