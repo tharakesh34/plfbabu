@@ -13384,4 +13384,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.restructureService = restructureService;
 	}
 
+	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
+		this.taxHeaderDetailsService = taxHeaderDetailsService;
+	}
+
 }
