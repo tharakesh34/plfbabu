@@ -2654,7 +2654,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			listDeletion(scheduleData, financeDetail.getModuleDefiner(), tableType.getSuffix(), isWIF);
-			getFinServiceInstructionDAO().deleteList(scheduleData.getFinReference(), financeDetail.getModuleDefiner(),
+			finServiceInstructionDAO.deleteList(scheduleData.getFinReference(), financeDetail.getModuleDefiner(),
 					"_Temp");
 			listSave(scheduleData, tableType.getSuffix(), isWIF, 0, serviceUID);
 			saveFeeChargeList(scheduleData, financeDetail.getModuleDefiner(), isWIF, tableType.getSuffix());
@@ -4647,6 +4647,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// Schedule Details
 				// =======================================
+				finServiceInstructionDAO.deleteList(financeMain.getFinReference(), moduleDefiner, "_Temp");
 				listSave(finScheduleData, "", isWIF, 0, serviceUID);
 				getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), moduleDefiner, "_Temp");
 
@@ -4876,7 +4877,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				saveLMSServiceLogs(finScheduleData, "");
 
 				listDeletion(finScheduleData, moduleDefiner, "", isWIF);
-				getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), moduleDefiner, "_Temp");
+				finServiceInstructionDAO.deleteList(financeMain.getFinReference(), moduleDefiner, "_Temp");
 				listSave(finScheduleData, "", isWIF, 0, serviceUID);
 
 				// Fee Charge Details

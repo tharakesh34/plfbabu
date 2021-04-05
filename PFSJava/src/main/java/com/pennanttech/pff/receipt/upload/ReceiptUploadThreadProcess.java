@@ -16,8 +16,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.receiptuploadqueue.ReceiptUploadQueuing;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -124,7 +122,6 @@ public class ReceiptUploadThreadProcess implements Runnable {
 			if (error.length() > 1999) {
 				error = error.substring(0, 1999);
 			}
-			updateFailed(headerId, detailId, error);
 			updateAttempt(rud.getUploadheaderId(), u -> u.incFailRecords());
 
 			rud.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
@@ -159,15 +156,6 @@ public class ReceiptUploadThreadProcess implements Runnable {
 			rud.setProcessingStatus(ReceiptDetailStatus.SUCCESS.getValue());
 			rud.setReason("");
 		}
-	}
-
-	private void updateFailed(long uploadHeaderId, long uploadDetailId, String errorLog) {
-		ReceiptUploadQueuing ruQueuing = new ReceiptUploadQueuing();
-
-		ruQueuing.setUploadHeaderId(uploadHeaderId);
-		ruQueuing.setUploadDetailId(uploadDetailId);
-		ruQueuing.setEndTime(DateUtility.getSysDate());
-		ruQueuing.setErrorLog(errorLog);
 	}
 
 	private void initilize() {

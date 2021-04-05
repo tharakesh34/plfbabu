@@ -171,21 +171,17 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 	@Override
 	public void deleteList(String finReference, String finEvent, String type) {
-		logger.debug("Entering");
+		
+		StringBuilder sql = new StringBuilder("Delete From ");
+		sql.append(" FinServiceInstruction");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append("  Where  FinReference = ?");
+		logger.trace(Literal.SQL + sql.toString());
 
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(finReference);
-		finServiceInstruction.setFinEvent(finEvent);
-
-		StringBuilder deleteSql = new StringBuilder("Delete From ");
-		deleteSql.append(" FinServiceInstruction");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append("  Where  FinReference = :FinReference ");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+		});
 	}
 
 	/**

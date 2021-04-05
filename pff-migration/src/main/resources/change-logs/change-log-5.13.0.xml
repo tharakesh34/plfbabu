@@ -3896,5 +3896,660 @@
 	<changeSet id="PSD#161936.4" author="saranya.s" dbms="postgresql, oracle">
 		<addDefaultValue columnName="PaidTds" tableName="FINFEERECEIPTS_TEMP" defaultValue="0" />
 	</changeSet>
+	
+	<!-- eod performance testing indexes start -->
+	
+	<changeSet id="1" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+               	CREATE INDEX IX_FTAD_FINREF ON FINTAXDETAIL(lower(FINREFERENCE));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     CREATE INDEX IDX_FIDTL_FINF_FINS ON FINREPAYDETAILS(lower(FINREFERENCE),FINSCHDDATE);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     create index ix_frd_fref_shd on finrepaydetails(lower(finreference),finschddate,finvaluedate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IDX_CCD_AGGRN ON CF_CONTROL_DUMP(lower(AGREEMENTNO));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="5" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_PD_STATUS ON PRESENTMENTDETAILS(lower(STATUS));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+ 				create index IX_PMTD_SCHST on PRESENTMENTDETAILS(lower(FINREFERENCE),schdate,lower(STATUS));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     CREATE  INDEX ix_Pd_SchDt_Status on PresentmentDetails(lower(FINREFERENCE),SchDate,ExcludeReason,lower(STATUS),PresentmentID);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_FSD_FRSCD ON FINSCHEDULEDETAILS(lower(FINREFERENCE),SCHDATE,SCHSEQ);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="9" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     CREATE INDEX IX_FINTYPACCG_TYP_EVT_MDID ON FINTYPEACCOUNTING(lower(FINTYPE), lower(EVENT),ModuleId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="11" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_phd_id_stst_ref on presentmentheader(id,status,lower(reference));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="12" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fodd_finref on finoddetails(lower(finreference),FinODSchdDate);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="13" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_md_mdty on mandates(lower(mandatetype));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="14" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fm_mid_fis_fty on financemain(mandateid,finisactive,lower(fintype));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="15" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fm_cuid_fisa on financemain(CustID,finisactive);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fm_FINREF ON financemain(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fiexamt_FINREF ON finexcessamount(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fgd_grcif on finguarantorsdetails(lower(guarantorcif));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     create index ix_fgdt_grcif on finguarantorsdetails_temp(lower(guarantorcif));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fipftd_FINREF ON FinPftDetails(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="21" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_finodprat_FINREF ON FinODPenaltyRates(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="22" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_finrpyinst_FINREF ON FinRepayInstruction(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="23" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fmt_FINREF ON financemain_temp(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="24" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_manad_FINREF ON manualadvise(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="25" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index finr_ad on manualadvise(lower(finreference),advisetype,adviseamount,paidamount,waivedamount);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="26" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_ad_fin on manualadvise(advisetype,lower(finreference));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="27" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_cu_custcif on customers(lower(custcif));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="28" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_FTAD_FINREF ON FINTAXDETAIL(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="29" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IDX_FIDTL_FINF_FINS ON FINREPAYDETAILS(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),FINSCHDDATE);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="30" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_frd_fref_shd on finrepaydetails(NLSSORT(finreference,'nls_sort=''BINARY_CI'''),finschddate,finvaluedate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="31" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IDX_CCD_AGGRN ON CF_CONTROL_DUMP(NLSSORT(AGREEMENTNO,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="32" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_PD_STATUS ON PRESENTMENTDETAILS(NLSSORT(STATUS,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="33" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index IX_PMTD_SCHST on PRESENTMENTDETAILS(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),schdate,NLSSORT(STATUS,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="34" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE  INDEX ix_Pd_SchDt_Status on PresentmentDetails(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),SchDate,ExcludeReason,NLSSORT(STATUS,'nls_sort=''BINARY_CI'''),PresentmentID);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="35" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_FSD_FRSCD ON FINSCHEDULEDETAILS(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),SCHDATE,SCHSEQ);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="36" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_FINTYPACCG_TYP_EVT_MDID ON FINTYPEACCOUNTING(NLSSORT(FINTYPE,'nls_sort=''BINARY_CI'''), NLSSORT(EVENT,'nls_sort=''BINARY_CI'''),ModuleId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="37" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="38" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_phd_id_stst_ref on presentmentheader(id,status,NLSSORT(reference,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="39" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fodd_finref on finoddetails(NLSSORT(finreference,'nls_sort=''BINARY_CI'''),FinODSchdDate);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="40" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_md_mdty on mandates(NLSSORT(mandatetype,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="41" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fm_mid_fis_fty on financemain(mandateid,finisactive,NLSSORT(fintype,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="42" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fm_cuid_fisa on financemain(CustID,finisactive);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="43" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fm_FINREF ON financemain(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="44" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fiexamt_FINREF ON finexcessamount(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="45" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fgd_grcif on finguarantorsdetails(NLSSORT(guarantorcif,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="46" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fgdt_grcif on finguarantorsdetails_temp(NLSSORT(guarantorcif,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="47" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fipftd_FINREF ON FinPftDetails(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="48" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_finodprat_FINREF ON FinODPenaltyRates(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="49" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_finrpyinst_FINREF ON FinRepayInstruction(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="50" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fmt_FINREF ON financemain_temp(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="51" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_manad_FINREF ON manualadvise(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="52" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index finr_ad on manualadvise(NLSSORT(finreference,'nls_sort=''BINARY_CI'''),advisetype,adviseamount,paidamount,waivedamount);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="53" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_ad_fin on manualadvise(advisetype,NLSSORT(finreference,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="54" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_cu_custcif on customers(NLSSORT(custcif,'nls_sort=''BINARY_CI'''));    
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="55" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_ftad_finref on fintaxdetail (finreference);
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="56" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index idx_fidtl_finf_fins on finrepaydetails (finreference,finschddate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="57" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_frd_fref_shd on finrepaydetails (finreference,finschddate,finvaluedate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="58" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index idx_ccd_aggrn on cf_control_dump (agreementno);
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="59" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_pd_status on presentmentdetails (status);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="60" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_pmtd_schst on presentmentdetails (finreference,schdate,status);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="61" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_pd_schdt_status on presentmentdetails (finreference,schdate,excludereason,status,presentmentid);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="62" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fsd_frscd on finscheduledetails (finreference,schdate,schseq);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="63" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fintypaccg_typ_evt_mdid on fintypeaccounting (fintype,event,moduleid);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="64" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_prtheader_temp_id_pid on presentmentheader_temp (id,partnerbankid);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="65" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_phd_id_stst_ref on presentmentheader (id,status,reference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="66" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fodd_finref on finoddetails (finreference,finodschddate);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="67" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_md_mdty on mandates (mandatetype);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="68" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fm_mid_fis_fty on financemain (mandateid,finisactive,fintype);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="69" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fm_cuid_fisa on financemain (custid,finisactive);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="70" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fm_finref on financemain (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="71" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fiexamt_finref on finexcessamount (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="72" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fgd_grcif on finguarantorsdetails (guarantorcif);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="73" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fgdt_grcif on finguarantorsdetails_temp (guarantorcif);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="74" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fipftd_finref on finpftdetails (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="75" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_finodprat_finref on finodpenaltyrates (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="76" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_finrpyinst_finref on finrepayinstruction (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="77" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fmt_finref on financemain_temp (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="78" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_manad_finref on manualadvise (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="79" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index finr_ad on manualadvise (finreference,advisetype,adviseamount,paidamount,waivedamount);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="80" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_ad_fin on manualadvise (advisetype,finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="81" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_cu_custcif on customers (custcif);		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- eod performance testing indexes end -->
 
 </databaseChangeLog>

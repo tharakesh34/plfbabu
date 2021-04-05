@@ -13,6 +13,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -36,6 +37,8 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceStepDetailDAO financeStepDetailDAO;
 	private FinanceMainDAO financeMainDAO;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	
 
 	/**
 	 * Method for perform the Rate change action
@@ -126,6 +129,16 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		// validate Instruction details
 		boolean isWIF = finSrvInst.isWif();
 		String finReference = finSrvInst.getFinReference();
+
+		boolean instExists = finServiceInstructionDAO.isFinServiceInstExists(finReference, "_Temp");
+
+		if (instExists) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;//Some one else processed this record {finReference} 
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41005", "", valueParm), lang));
+			return auditDetail;
+		}
+
 
 		FinanceMain financeMain = financeMainDAO.getFinanceBasicDetailByRef(finReference, isWIF);
 
@@ -396,6 +409,14 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 
 	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
 		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
+		return finServiceInstructionDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
 
 }

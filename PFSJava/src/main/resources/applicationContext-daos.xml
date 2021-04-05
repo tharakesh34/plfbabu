@@ -7066,6 +7066,7 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<bean id="addRepaymentService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

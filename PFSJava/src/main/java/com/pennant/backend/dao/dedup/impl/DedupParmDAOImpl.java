@@ -386,7 +386,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			fieldNames = this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, null);
+			fieldNames = this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			fieldNames = new ArrayList<String>();

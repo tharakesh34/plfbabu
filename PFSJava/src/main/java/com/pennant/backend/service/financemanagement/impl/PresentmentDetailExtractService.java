@@ -60,12 +60,10 @@ public class PresentmentDetailExtractService {
 			String key = null;
 			if (ph.isGroupByBank() && isGroupByPartnerBank(ph)) {
 				key = getKeyByPBAndBank(pd);
-			} else if (ph.isGroupByBank() && !isGroupByPartnerBank(ph)) {
-				key = getKeyByPB(pd);
-			} else if (isGroupByPartnerBank(ph)) {
-				key = getKeyByPBAndBank(pd);
 			} else if (ph.isGroupByBank()) {
 				key = getKeyByBank(pd);
+			} else if (isGroupByPartnerBank(ph)) {
+				key = getKeyByPB(pd);
 			} else {
 				key = getDefaultGroupKey(pd);
 			}
@@ -74,6 +72,10 @@ public class PresentmentDetailExtractService {
 
 			if (headerId == null) {
 				ph.setId(Long.MIN_VALUE);
+				ph.setSchdate(pd.getDefSchdDate());
+				ph.setEntityCode(pd.getEntityCode());
+				ph.setBankCode(pd.getBankCode());
+				ph.setPartnerBankId(pd.getPartnerBankId());
 				headerId = savePresentmentHeaderDetails(ph);
 				ph.getGroups().put(key, headerId);
 			}
@@ -536,8 +538,7 @@ public class PresentmentDetailExtractService {
 		}
 
 		BigDecimal advAmount = pd.getAdvAdjusted();
-		BigDecimal presentmentAmt = pd.getPresentmentAmt().add(pd.gettDSAmount());
-		pd.setPresentmentAmt(presentmentAmt.subtract(advAmount));
+		pd.setPresentmentAmt(pd.getPresentmentAmt().subtract(advAmount));
 		pd.setAdvanceAmt(pd.getAdvanceAmt().add(advAmount));
 
 		logger.debug(Literal.LEAVING);

@@ -569,7 +569,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		//Execute Accounting Details Process
 		//=======================================
-		FinanceMain fm = header.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceDetail financeDetail = header.getFinanceDetail();
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = fm.getFinReference();
 
 		long serviceUID = Long.MIN_VALUE;
@@ -747,7 +748,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		// Save Document Details
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
-			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, "",
 					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
 					header.getFinanceDetail().getModuleDefiner(), serviceUID);

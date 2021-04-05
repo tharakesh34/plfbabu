@@ -409,12 +409,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK) && isGroupByPartnerBank(ph)) {
 			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
-		} else if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK) && !isGroupByPartnerBank(ph)) {
+		} else if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
 			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
 		} else if (isGroupByPartnerBank(ph)) {
 			sql.append("ORDER BY  T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
-		} else if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
-			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
 		} else {
 			sql.append("ORDER BY  T1.DEFSCHDDATE, T7.EntityCode");
 		}
@@ -422,11 +420,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	private boolean isGroupByPartnerBank(PresentmentHeader ph) {
-		if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK
-				&& !MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
-			return true;
-		}
-		return false;
+		return (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK
+				&& !MandateConstants.TYPE_PDC.equals(ph.getMandateType()));
 	}
 
 	@Override

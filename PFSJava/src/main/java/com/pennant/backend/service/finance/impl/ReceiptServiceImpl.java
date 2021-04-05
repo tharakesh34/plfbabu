@@ -4561,6 +4561,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (fsi.isReceiptUpload()) {
 			rch.setReceiptDate(rcd.getReceivedDate());
+			rch.setPanNumber(fsi.getPanNumber());
+			rch.setExtReference(fsi.getExternalReference());
 		} else {
 			rcd.setValueDate(rcd.getReceivedDate());
 			rch.setReceiptDate(SysParamUtil.getAppDate());

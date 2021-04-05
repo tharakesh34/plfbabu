@@ -260,7 +260,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 	
 		fsi.setFinReference(rcu.getFinReference());
 		fsi.setBaseRate(rcu.getBaseRateCode());
-		fsi.setSplRate(String.valueOf(rcu.getSpecialRate()));
+		fsi.setSplRate(null);
 		fsi.setMargin(rcu.getMargin());
 		fsi.setActualRate(rcu.getActualRate());
 		fsi.setRecalType(rcu.getRecalType());
@@ -317,15 +317,28 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		}
 
 		error = "Loan not exists.";
-		for (RateChangeUpload subv : header.getRateChangeUpload()) {
-			StringBuilder remarks = new StringBuilder(subv.getRemarks());
-			if (subv.getFinanceMain() == null) {
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			StringBuilder remarks = new StringBuilder(rcu.getRemarks());
+			if (rcu.getFinanceMain() == null) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");
 				}
 				remarks.append(error);
-				subv.setRemarks(remarks.toString());
-				subv.setErrorDetail(getErrorDetail("RCU002", error));
+				rcu.setRemarks(remarks.toString());
+				rcu.setErrorDetail(getErrorDetail("RCU002", error));
+			}
+		}
+ 
+		error = "Entity Code is Invalid.";
+		for(RateChangeUpload rcu : header.getRateChangeUpload()) {
+			StringBuilder remarks = new StringBuilder(rcu.getRemarks());
+			if(!StringUtils.equals(rcu.getFinanceMain().getEntityCode(), header.getEntityCode())) {
+				if(remarks.length() > 0) {
+					remarks.append(",");
+				}
+				remarks.append(error);
+				rcu.setRemarks(remarks.toString());
+				rcu.setErrorDetail(getErrorDetail("RCU003", error));
 			}
 		}
 
@@ -371,6 +384,21 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			error = "Either Base Rate or Actual Rate Should be Entered";
 			if (rateChange.getMargin().compareTo(BigDecimal.ZERO) > 0
 					&& rateChange.getActualRate().compareTo(BigDecimal.ZERO) > 0) {
+				if (remarks.length() > 0) {
+					remarks.append(", ");
+				}
+				remarks.append(error);
+				rateChange.setRemarks(remarks.toString());
+				rateChange.setStatus("F");
+				rateChange.setErrorDetail(getErrorDetail("RCU001", error));
+				rateChange.setRemarks(remarks.toString());
+				continue;
+
+			}
+			
+			error = "Either Base Rate or Actual Rate Should be Entered";
+			if (StringUtils.isBlank(rateChange.getBaseRateCode())
+					&& rateChange.getActualRate().compareTo(BigDecimal.ZERO) <= 0 && rateChange.getMargin().compareTo(BigDecimal.ZERO)<= 0) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");
 				}
