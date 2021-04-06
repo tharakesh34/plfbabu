@@ -170,7 +170,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
-		sql.append(" and PaidAmount > ?");
+		sql.append(" and PaidAmount > 0");
 		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {

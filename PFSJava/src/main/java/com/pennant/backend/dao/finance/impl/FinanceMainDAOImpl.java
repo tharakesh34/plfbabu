@@ -719,8 +719,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
 			sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
 			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
-			sql.append(", Pmay, AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate");
-			sql.append(", parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention");
+			sql.append(", Pmay, parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention");
 			sql.append(", TdsType, NoOfGrcSteps");
 
 		}
@@ -743,8 +742,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ? , ?, ?");
 			sql.append(", ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?");
 
 		}
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -1009,12 +1007,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setString(index++, fm.getVerification());
 					ps.setString(index++, fm.getSourcingBranch());
 					ps.setString(index++, fm.getSourChannelCategory());
-					ps.setLong(index++, fm.getAsmName());
+					ps.setObject(index++, fm.getAsmName());
 					ps.setString(index++, fm.getOfferId());
 					ps.setBoolean(index++, fm.isPmay());
-					ps.setBoolean(index++, fm.isAlwGrcAdj());
-					ps.setBoolean(index++, fm.isEndGrcPeriodAftrFullDisb());
-					ps.setBoolean(index++, fm.isAutoIncGrcEndDate());
 					ps.setString(index++, fm.getParentRef());
 					ps.setBoolean(index++, fm.isLoanSplitted());
 					ps.setBoolean(index++, fm.isAlwLoanSplit());

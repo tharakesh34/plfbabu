@@ -50,7 +50,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -215,9 +214,10 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rh.getReceiptSource());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
+			ps.setObject(index++, JdbcUtil.getLong(rh.getClosureTypeId()));
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
-			ps.setObject(index++, JdbcUtil.getLong(rh.getClosureTypeId()));
+			ps.setString(index++, rh.getEntityCode());
 		});
 
 		return rh.getId();

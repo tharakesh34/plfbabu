@@ -66,6 +66,7 @@ import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
+import com.pennant.webui.legal.legaldetail.LegalDetailLoanListCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -82,6 +83,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ConvFinanceMainDialog; // autoWired
+	private LegalDetailLoanListCtrl legalDetailLoanListCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -340,6 +342,14 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("Entering " + event.toString());
 		super.onCheckmanualSchedule();
 		logger.debug("Leaving " + event.toString());
+	}
+
+	public LegalDetailLoanListCtrl getLegalDetailLoanListCtrl() {
+		return legalDetailLoanListCtrl;
+	}
+
+	public void setLegalDetailLoanListCtrl(LegalDetailLoanListCtrl legalDetailLoanListCtrl) {
+		this.legalDetailLoanListCtrl = legalDetailLoanListCtrl;
 	}
 
 }
