@@ -3382,6 +3382,43 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1923.46_pre" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_dataview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.46" author="sudheer.t">
+		<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true"> 
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINTYPE,
+					T2.CUSTCIF AS LOVDESCCUSTCIF,
+					T1.CUSTID,
+					T1.CLOSINGSTATUS,
+					T1.FINISACTIVE,
+					T1.MATURITYDATE,
+					T1.PRODUCTCATEGORY,
+					T1.WRITEOFFLOAN
+				FROM FINANCEMAIN T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
+				WHERE T1.CLOSINGSTATUS IS NULL OR T1.CLOSINGSTATUS <> 'C'
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1923.46_post" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_dataview');
+			]]>
+		</sql>
+	</changeSet>
+	
 
 	<!-- ST#1923 write off loan and ST#1922 Restructure functionality in LMS views are handling in single place changes end -->
 	
@@ -4552,4 +4589,20 @@
 	
 	<!-- eod performance testing indexes end -->
 
+	<changeSet id="PSD#170585.2" author="gopal.p" >
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_CLLIMITMIS') AND FIELDDBNAME = 'T7.Branchcode';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#141.3" author="gopal.p" >
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME IN ('menuItem_FinDeptReports_PastDue', 'menuItem_FinDeptReports_DisbursmentReport', 'menu_Item_ReceiptDetails'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -60,6 +60,7 @@ import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.FinanceConstants;
@@ -409,32 +410,31 @@ public class ApprovalScreenEventHistory {
 				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(finEvent)) {
 					Listitem item = new Listitem();
 					Listcell lc;
-
-					lc = new Listcell(DateUtil.formatToLongDate(finScheduleData.getRestructureDetail().getAppDate()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finScheduleData.getRestructureDetail().getRestructureReason()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finScheduleData.getRestructureDetail().getRstTypeDesc()));
-					lc.setParent(item);
-					lc = new Listcell(
-							DateUtil.formatToLongDate(finScheduleData.getRestructureDetail().getRestructureDate()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finScheduleData.getRestructureDetail().getEmiHldPeriod()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finScheduleData.getRestructureDetail().getPriHldPeriod()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finScheduleData.getRestructureDetail().getEmiPeriods()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finScheduleData.getRestructureDetail().getTotNoOfRestructure()));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finScheduleData.getRestructureDetail().getRecalculationType()));
-					lc.setParent(item);
-					lc = new Listcell(
-							DateUtil.formatToLongDate(finScheduleData.getRestructureDetail().getOldMaturity()));
-					lc.setParent(item);
-					listBox.appendChild(item);
+					RestructureDetail restructureDetail = finScheduleData.getRestructureDetail();
+					if (restructureDetail != null) {
+						lc = new Listcell(DateUtil.formatToLongDate(restructureDetail.getAppDate()));
+						lc.setParent(item);
+						lc = new Listcell(String.valueOf(restructureDetail.getRestructureReason()));
+						lc.setParent(item);
+						lc = new Listcell(String.valueOf(restructureDetail.getRstTypeDesc()));
+						lc.setParent(item);
+						lc = new Listcell(DateUtil.formatToLongDate(restructureDetail.getRestructureDate()));
+						lc.setParent(item);
+						lc = new Listcell(String.valueOf(restructureDetail.getEmiHldPeriod()));
+						lc.setParent(item);
+						lc = new Listcell(String.valueOf(restructureDetail.getPriHldPeriod()));
+						lc.setParent(item);
+						lc = new Listcell(String.valueOf(restructureDetail.getEmiPeriods()));
+						lc.setParent(item);
+						lc = new Listcell(String.valueOf(restructureDetail.getTotNoOfRestructure()));
+						lc.setParent(item);
+						lc = new Listcell(String.valueOf(restructureDetail.getRecalculationType()));
+						lc.setParent(item);
+						lc = new Listcell(DateUtil.formatToLongDate(restructureDetail.getOldMaturity()));
+						lc.setParent(item);
+						listBox.appendChild(item);
+					}
 				}
-
 			}
 		}
 	}

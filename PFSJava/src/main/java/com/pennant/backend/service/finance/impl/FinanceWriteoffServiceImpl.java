@@ -89,6 +89,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -565,7 +566,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
-		Date curBDay = SysParamUtil.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
+		Date curBDay = appDate;
 
 		//Execute Accounting Details Process
 		//=======================================
@@ -574,8 +576,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		String finReference = fm.getFinReference();
 
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : header.getFinanceDetail().getFinScheduleData()
-				.getFinServiceInstructions()) {
+		FinScheduleData finScheduleData = header.getFinanceDetail().getFinScheduleData();
+		for (FinServiceInstruction finServInst : finScheduleData.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
 		}
 
@@ -591,47 +593,58 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		if (CollectionUtils.isNotEmpty(finExcessAmountList)) {
 
-			//validate Total Amount customer to be  paid
-			FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference,
-					AccountEventConstants.ACCEVENT_WRITEOFF, FinanceConstants.FINSER_EVENT_RECEIPT, "");
-			receiptData.getReceiptHeader().setValueDate(curBDay);
-			receiptData = receiptService.calcuateDues(receiptData);
-			FinReceiptHeader rch = receiptData.getReceiptHeader();
-			BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
-					.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue());
+			for (FinExcessAmount finExcessAmount : finExcessAmountList) {
 
-			BigDecimal closingBal = receiptService.getClosingBalance(finReference, curBDay);
+				// Excluding Advance EMI
+				if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(finExcessAmount.getAmountType())) {
+					continue;
+				}
 
-			if (totalDues == null) {
-				totalDues = BigDecimal.ZERO;
+				// validate Total Amount customer to be paid
+				FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference,
+						AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINSER_EVENT_RECEIPT, "");
+				receiptData.getReceiptHeader().setValueDate(appDate);
+				receiptData = receiptService.calcuateDues(receiptData);
+				FinReceiptHeader rch = receiptData.getReceiptHeader();
+				BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
+						.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue());
+
+				BigDecimal closingBal = receiptService.getClosingBalance(finReference, appDate);
+
+				if (totalDues == null) {
+					totalDues = BigDecimal.ZERO;
+				}
+
+				if (closingBal == null) {
+					closingBal = BigDecimal.ZERO;
+				}
+
+				BigDecimal overAllDue = totalDues;
+
+				if (overAllDue.compareTo(BigDecimal.ZERO) == 0) {
+					break;
+				}
+
+				if (overAllDue.compareTo(finExcessAmount.getBalanceAmt()) < 0) {
+					//setting overdue amount in excess amount,To create receipt
+					finExcessAmount.setBalanceAmt(overAllDue);
+				}
+
+				String event = FinanceConstants.FINSER_EVENT_SCHDRPY;
+
+				// Start transaction Management
+				DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+				txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+				try {
+					processReceipts(finExcessAmount, finReference, event, fm);
+
+				} catch (Exception e) {
+					logger.error("Exception : ", e);
+				}
+				// End Transaction
 			}
 
-			if (closingBal == null) {
-				closingBal = BigDecimal.ZERO;
-			}
-
-			BigDecimal overAllDue = closingBal.add(totalDues);
-
-			BigDecimal totalPayAmount = BigDecimal.ZERO;
-			for (FinExcessAmount finExAmount : finExcessAmountList) {
-				totalPayAmount = totalPayAmount.add(finExAmount.getBalanceAmt());
-			}
-
-			if (totalPayAmount.compareTo(overAllDue) >= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Total Paybale amount is Equal/Greater than Outstanding Amount";
-				aAuditHeader.getAuditDetail()
-						.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm)));
-				return aAuditHeader;
-			}
-
-			String event = FinanceConstants.FINSER_EVENT_SCHDRPY;
-
-			// Start transaction Managment
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			processReceipts(finExcessAmountList, finReference, event);
-			// End Transaction
 		}
 
 		if (CollectionUtils.isNotEmpty(finExcessAmountList)) {
@@ -640,26 +653,29 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 					fm.getNextRoleCode(), FinanceConstants.FINSER_EVENT_WRITEOFF);
 
 			//set writeOff Amount 
-			List<FinanceScheduleDetail> financeScheduleDetaills = doSetWriteOffAmount(
-					writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+			FinScheduleData fsd = writeoffHeader.getFinanceDetail().getFinScheduleData();
+			List<FinanceScheduleDetail> financeScheduleDetaills = doSetWriteOffAmount(fsd.getFinanceScheduleDetails());
 
-			writeoffHeader.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(financeScheduleDetaills);
+			fsd.setFinanceScheduleDetails(financeScheduleDetaills);
+			int version = fsd.getFinanceMain().getVersion();
+			writeoffHeader.setFinReference(finReference);
+			fsd.getFinanceMain().setVersion(version + 1);
 			aAuditHeader = getAuditHeader(writeoffHeader, PennantConstants.TRAN_UPD);
 			auditHeader = cloner.deepClone(aAuditHeader);
+			writeoffHeader.getFinanceWriteoff().setFinReference(finReference);
 			header = writeoffHeader;
 		} else if (FinanceConstants.FINSER_EVENT_WRITEOFF.equalsIgnoreCase(fm.getFinWriteoffAc())) {
 			//set writeOff Amount 
-			List<FinanceScheduleDetail> financeScheduleDetaills = doSetWriteOffAmount(
-					header.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+			List<FinanceScheduleDetail> schdList = doSetWriteOffAmount(finScheduleData.getFinanceScheduleDetails());
 
-			header.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(financeScheduleDetaills);
+			finScheduleData.setFinanceScheduleDetails(schdList);
 			aAuditHeader = getAuditHeader(header, PennantConstants.TRAN_UPD);
 			auditHeader = cloner.deepClone(aAuditHeader);
 		}
 
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
 		FinanceScheduleDetail orgNextSchd = getFinanceScheduleDetailDAO().getNextSchPayment(finReference, curBDay);
-		fm = header.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		fm = finScheduleData.getFinanceMain();
 		fm.setRcdMaintainSts("");
 		fm.setRoleCode("");
 		fm.setNextRoleCode("");
@@ -667,7 +683,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		fm.setNextTaskId("");
 		fm.setWorkflowId(0);
 
-		FinScheduleData scheduleData = header.getFinanceDetail().getFinScheduleData();
+		FinScheduleData scheduleData = finScheduleData;
 
 		// Finance Write off Posting Process Execution
 		// =====================================
@@ -741,16 +757,14 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		listSave(scheduleData, "", 0);
 
 		// Save Fee Charges List
-		//=======================================
-		saveFeeChargeList(header.getFinanceDetail().getFinScheduleData(), header.getFinanceDetail().getModuleDefiner(),
-				false, "");
+		// =======================================
+		saveFeeChargeList(finScheduleData, header.getFinanceDetail().getModuleDefiner(), false, "");
 
 		// Save Document Details
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "",
-					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+			details = processingDocumentDetailsList(details, "", finScheduleData.getFinanceMain(),
 					header.getFinanceDetail().getModuleDefiner(), serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(header.getFinanceDetail(), "_Temp");
@@ -804,7 +818,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		auditHeader.getAuditDetail().setModelData(header);
 
 		// Save Salaried Posting Details
-		saveFinSalPayment(header.getFinanceDetail().getFinScheduleData(), orgNextSchd, true);
+		saveFinSalPayment(finScheduleData, orgNextSchd, true);
 		// updating the processed with 1 in finstageAccountingLog
 		finStageAccountingLogDAO.update(fm.getFinReference(), header.getFinanceDetail().getModuleDefiner(), false);
 
@@ -812,7 +826,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		return auditHeader;
 	}
 
-	public void processReceipts(List<FinExcessAmount> finExcessAmount, String finReference, String finevent) {
+	public void processReceipts(FinExcessAmount finExcessAmoun, String finReference, String finevent,
+			FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptData finReceiptData = new FinReceiptData();
@@ -821,37 +836,80 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 		FinReceiptDetail receiptDetail = new FinReceiptDetail();
 
-		BigDecimal totalAmt = BigDecimal.ZERO;
-		for (FinExcessAmount finExcessAmoun : finExcessAmount) {
-			totalAmt = totalAmt.add(finExcessAmoun.getBalanceAmt());
+		BigDecimal totalAmt = finExcessAmoun.getBalanceAmt();
 
-			receiptDetail = new FinReceiptDetail();
-			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_WRITEOFF);
-			receiptDetail.setPayAgainstID(finExcessAmoun.getExcessID());
-			receiptDetail.setAmount(finExcessAmoun.getBalanceAmt());
-			receiptDetail.setDueAmount(finExcessAmoun.getBalanceAmt());
-			receiptDetail.setValueDate(appDate);
-			receiptDetail.setReceivedDate(appDate);
-			receiptDetail.setNoReserve(true);
-			receiptDetails.add(receiptDetail);
+		receiptDetail = new FinReceiptDetail();
+		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+
+		switch (finExcessAmoun.getAmountType()) {
+		case RepayConstants.EXAMOUNTTYPE_EMIINADV:
+			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
+			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			header.setSubReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			break;
+		case RepayConstants.EXAMOUNTTYPE_EXCESS:
+			receiptDetail.setPaymentType(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			header.setSubReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			break;
+		case RepayConstants.EXAMOUNTTYPE_ADVINT:
+			receiptDetail.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVINT);
+			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			header.setSubReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			break;
+		case RepayConstants.RECEIPTMODE_PAYABLE:
+			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PAYABLE);
+			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			header.setSubReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			break;
+		case RepayConstants.EXAMOUNTTYPE_CASHCLT:
+			receiptDetail.setPaymentType(RepayConstants.EXAMOUNTTYPE_CASHCLT);
+			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			header.setSubReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			break;
+		case RepayConstants.EXAMOUNTTYPE_DSF:
+			receiptDetail.setPaymentType(RepayConstants.EXAMOUNTTYPE_DSF);
+			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			header.setSubReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+			break;
 		}
 
-		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
+		receiptDetail.setPayAgainstID(finExcessAmoun.getExcessID());
+		receiptDetail.setAmount(finExcessAmoun.getBalanceAmt());
+		receiptDetail.setDueAmount(finExcessAmoun.getBalanceAmt());
+		receiptDetail.setValueDate(appDate);
+		receiptDetail.setReceivedDate(appDate);
+		receiptDetail.setNoReserve(true);
+		receiptDetails.add(receiptDetail);
+
+		XcessPayables xcessPayable = new XcessPayables();
+		xcessPayable.setPayableType(finExcessAmoun.getAmountType());
+		xcessPayable.setAmount(totalAmt);
+		xcessPayable.setTotPaidNow(totalAmt);
+		header.getXcessPayables().add(xcessPayable);
+
 		header.setReference(finReference);
+		//header.setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(header.getReference()));
 		header.setReceiptDate(appDate);
+		header.setWriteoffLoan(true);
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReceiptID(receiptId);
 		header.setReceiptPurpose(finevent);
 		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(totalAmt);
 		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
-		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 		header.setLogSchInPresentment(false);
+		header.setVersion(1);
+		header.setLastMntBy(financeMain.getLastMntBy());
+		header.setLastMntOn(financeMain.getLastMntOn());
+		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		header.setRealizationDate(appDate);
+		header.setFinType(financeMain.getFinType());
+		header.setFinBranch(financeMain.getFinBranch());
+		header.setActFinReceipt(true);
 
 		header.setReceiptDetails(receiptDetails);
 

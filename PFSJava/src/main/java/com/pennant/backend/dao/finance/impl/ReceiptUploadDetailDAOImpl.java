@@ -60,7 +60,6 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.ThreadAllocation;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
-import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -252,13 +251,8 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		StringBuilder sql = new StringBuilder("Delete From ReceiptUploaddetails");
 		sql.append(" Where UploadHeaderId = ?");
 
-		int recordCount = 0;
-		logger.trace(Literal.SQL, sql.toString());
-		recordCount = jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, uploadHeaderId));
+		jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, uploadHeaderId));
 
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
 	}
 
 	@Override

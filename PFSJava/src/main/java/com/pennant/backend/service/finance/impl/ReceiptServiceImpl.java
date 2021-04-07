@@ -3485,6 +3485,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
 						return receiptData;
 					}
+
+					try {
+						if (!receiptData.getFinanceDetail().getFinScheduleData().getFinanceType().isAlwCloBefDUe()) {
+							Date firstInstDate = getFirstInstDate(
+									receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+							if (firstInstDate != null && fsi.getValueDate().compareTo(firstInstDate) < 0) {
+								finScheduleData = setErrorToFSD(finScheduleData, "21005",
+										"Not allowed to do Early Settlement before first installment");
+								receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
+								return receiptData;
+							}
+						}
+					} catch (NullPointerException e) {
+						logger.error(Literal.EXCEPTION, e);
+					}
 				}
 			}
 			receiptData.setFinanceDetail(financeDetail);
@@ -3506,6 +3521,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finScheduleData.setErrorDetails(dedupCheck(fsi));
 		if (CollectionUtils.isNotEmpty(finScheduleData.getErrorDetails())) {
 			logger.info("Dedup Validation Failed.");
+			return receiptData;
+		}
+
+		// WriteoffLoan
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		if (fm.isWriteoffLoan() && !FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)) {
+			finScheduleData = setErrorToFSD(finScheduleData, "90204", receiptPurpose,
+					"WriteoffLoan " + fm.getFinReference());
 			return receiptData;
 		}
 
@@ -7336,7 +7359,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptQueueLog finReceiptQueue = new FinReceiptQueueLog();
 		finReceiptQueue.setStartTime(LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":"
 				+ LocalDateTime.now().getSecond()); // Thread Processing Start
-																																						// Time
+																																								// Time
 
 		Map<String, String> valueMap = new HashMap<>();
 		FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();

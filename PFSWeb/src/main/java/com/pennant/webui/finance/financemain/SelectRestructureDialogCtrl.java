@@ -266,18 +266,18 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			financeDetail.setFinTypeFeesList(new ArrayList<FinTypeFees>());
 		}
 
-		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if (aFinanceMain.getWorkflowId() == 0 && isWorkFlowEnabled()) {
-			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
+		if (fm.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			fm.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		financeDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
+		financeDetail.getFinScheduleData().setFinanceMain(fm);
 
 		// Role Code State Checking
 		String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getId();
+			valueParm[0] = fm.getId();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
@@ -298,7 +298,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getId();
+			valueParm[0] = fm.getId();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
@@ -309,7 +309,6 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("financeMain", finMain);
 		map.put("financeSelectCtrl", financeSelectCtrl);
 		map.put("financeDetail", financeDetail);
 		map.put("moduleDefiner", moduleDefiner);

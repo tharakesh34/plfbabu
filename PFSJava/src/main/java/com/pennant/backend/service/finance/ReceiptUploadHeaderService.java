@@ -114,8 +114,7 @@ public interface ReceiptUploadHeaderService {
 
 	Map<Long, ReceiptUploadLog> updateProgress(List<ReceiptUploadHeader> uploadHeaderList);
 
-	void initiateImportProcess(ReceiptUploadHeader receiptUploadHeader, Workbook workbook, String value,
-			List<ReceiptUploadDetail> rudList, List<UploadAlloctionDetail> uadList, Map<Long, Integer> importStatusMap,
+	void initiateImport(ReceiptUploadHeader receiptUploadHeader, Workbook workbook, Map<Long, Integer> importStatusMap,
 			ExcelFileImport fileImport);
 
 	void updateStatus(List<Long> headerIdList, Map<Long, ReceiptUploadLog> attemptMap);

@@ -143,6 +143,7 @@ public class FinanceEnquiry implements Serializable {
 	private String recordStatus;
 	// Loan Closed Date
 	private Date closedDate;
+	private boolean writeoffLoan;
 
 	public FinanceEnquiry() {
 
@@ -848,4 +849,11 @@ public class FinanceEnquiry implements Serializable {
 		this.closedDate = closedDate;
 	}
 
+	public boolean isWriteoffLoan() {
+		return writeoffLoan;
+	}
+
+	public void setWriteoffLoan(boolean writeoffLoan) {
+		this.writeoffLoan = writeoffLoan;
+	}
 }

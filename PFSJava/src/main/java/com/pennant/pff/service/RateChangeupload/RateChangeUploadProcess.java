@@ -398,7 +398,8 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			
 			error = "Either Base Rate or Actual Rate Should be Entered";
 			if (StringUtils.isBlank(rateChange.getBaseRateCode())
-					&& rateChange.getActualRate().compareTo(BigDecimal.ZERO) <= 0 && rateChange.getMargin().compareTo(BigDecimal.ZERO)<= 0) {
+					&& rateChange.getActualRate().compareTo(BigDecimal.ZERO) <= 0
+					&& rateChange.getMargin().compareTo(BigDecimal.ZERO) == 0) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");
 				}

@@ -72,6 +72,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
@@ -566,13 +570,15 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public void initiateImportProcess(ReceiptUploadHeader ruh, Workbook workbook, String fileName,
-			List<ReceiptUploadDetail> rudList, List<UploadAlloctionDetail> uadList, Map<Long, Integer> importStatusMap,
+	public void initiateImport(ReceiptUploadHeader ruh, Workbook workbook, Map<Long, Integer> statusMap,
 			ExcelFileImport fileImport) {
+		List<ReceiptUploadDetail> rudList = new ArrayList<>();
+		List<UploadAlloctionDetail> uadList = new ArrayList<>();
+		String fileName = ruh.getFileName();
 
 		ReceiptUploadTracker rut = new ReceiptUploadTracker();
 		rut.setHeaderId(ruh.getId());
-		rut.setImportStatusMap(importStatusMap);
+		rut.setImportStatusMap(statusMap);
 		rut.setTotalProcesses(5);
 		try {
 			validateFileData(workbook, fileName, rudList, rut, ruh.getUploadHeaderId());
@@ -595,10 +601,19 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 			saveRecord(ruh, rut);
 		} catch (Exception e) {
-			receiptUploadHeaderDAO.updateUploadProgress(ruh.getId(), ReceiptUploadConstants.RECEIPT_IMPORTFAILED);
+			updateImportFail(ruh);
 			logger.error(Literal.EXCEPTION, e);
 		}
-		importStatusMap.remove(ruh.getId());
+		statusMap.remove(ruh.getId());
+	}
+
+	private void updateImportFail(ReceiptUploadHeader ruh) {
+		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus transactionStatus = transactionManager.getTransaction(txDef);
+		updateUploadProgress(ruh.getId(), ReceiptUploadConstants.RECEIPT_IMPORTFAILED);
+		transactionManager.commit(transactionStatus);
 	}
 
 	private void saveRecord(ReceiptUploadHeader ruh, ReceiptUploadTracker rut) {

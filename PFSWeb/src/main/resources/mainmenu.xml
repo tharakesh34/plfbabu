@@ -1136,8 +1136,6 @@
 				rightName="menu_Item_AccountMappingReport" />
 			<menuItem id="menu_Item_LoanwiseVoucherDetail" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_DAILYDISBURSALREPORT" />
-			<menuItem id="menu_Item_LoanwiseVoucherReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menu_Item_DAILYDISBURSALREPORT" />
 			<menuItem id="menu_Item_AmortizationReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_AmortizationReport" />
 		</menu>
@@ -1171,8 +1169,8 @@
 			<menuItem id="menu_Item_GST_InvoiceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" /> <!-- rightName="menu_Item_GST_InvoiceReport" -->
 			<!-- This menu items should enable in veritas. -->
-			<menuItem id="menu_Item_ForeclosureTerminationReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menuItem_CustomerTemplates_ForeclosureTerminationReport" />
+			<!-- <menuItem id="menu_Item_ForeclosureTerminationReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menuItem_CustomerTemplates_ForeclosureTerminationReport" /> -->
 			<menuItem id="menu_Item_IndemnityReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_IndemnityReport" />
 			<menuItem id="menu_Item_ProvisionalCertificate" zulNavigation="/WEB-INF/pages/Reports/InterestCertificateGenerationDialog.zul?module=provisional"

@@ -4919,7 +4919,7 @@ public class ScheduleCalculator {
 		finMain.setPftCpzFromReset(BigDecimal.ZERO);
 
 		boolean isRepayComplete = false;
-		boolean isSanctionBasedSchd = finScheduleData.getFinanceMain().isSanBsdSchdle();
+		boolean isSanctionBasedSchd = finMain.isSanBsdSchdle();
 
 		finMain.setCalTerms(0);
 
@@ -4953,6 +4953,10 @@ public class ScheduleCalculator {
 		} else {
 			finMain.setNewMaturityIndex(schdDetails.size() - 1);
 			derivedMDT = schdDetails.get(schdDetails.size() - 1).getSchDate();
+		}
+		// common issue 16
+		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finMain.getReceiptPurpose())) {
+			derivedMDT = finMain.getEventFromDate();
 		}
 
 		int recalIdx = finMain.getRecalIdx();

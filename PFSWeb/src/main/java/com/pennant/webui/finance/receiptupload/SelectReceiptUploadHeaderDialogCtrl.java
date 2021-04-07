@@ -269,8 +269,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		rudList = new ArrayList<>();
-		uadList = new ArrayList<>();
 		final Set<String> setRowIds = new HashSet<String>();
 
 		validateFileName();
@@ -330,8 +328,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 			logger.info("Initiating Import Process For the HeaderID{}", receiptUploadHeader.getId());
 			new Thread(() -> {
-				receiptUploadHeaderService.initiateImportProcess(receiptUploadHeader, workbook, fileName.getValue(),
-						rudList, uadList, ReceiptUploadHeaderListCtrl.importStatusMap, fileImport);
+				receiptUploadHeaderService.initiateImport(receiptUploadHeader, workbook,
+						ReceiptUploadHeaderListCtrl.importStatusMap, fileImport);
 			}).start();
 
 			ReceiptUploadHeaderListCtrl.importStatusMap.put(receiptUploadHeader.getId(), 0);

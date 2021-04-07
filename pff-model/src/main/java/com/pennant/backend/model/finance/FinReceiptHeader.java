@@ -188,6 +188,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Long closureTypeId;
 	private String closureTypeDesc;
 	private boolean dedupCheckRequied = true;
+	private boolean writeoffLoan;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -317,6 +318,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("receiptSourceAcDesc");
 		excludeFields.add("sourceId");
 		excludeFields.add("dedupCheckRequied");
+		excludeFields.add("writeoffLoan");
 
 		return excludeFields;
 	}
@@ -1796,4 +1798,12 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public void setDedupCheckRequied(boolean dedupCheckRequied) {
 		this.dedupCheckRequied = dedupCheckRequied;
 	}
+	public boolean isWriteoffLoan() {
+		return writeoffLoan;
+	}
+
+	public void setWriteoffLoan(boolean writeoffLoan) {
+		this.writeoffLoan = writeoffLoan;
+	}
+
 }

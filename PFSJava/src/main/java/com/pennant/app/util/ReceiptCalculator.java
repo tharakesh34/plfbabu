@@ -1315,7 +1315,9 @@ public class ReceiptCalculator implements Serializable {
 		List<FinExcessAmount> excessList = receiptData.getReceiptHeader().getExcessAmounts();
 
 		if (CollectionUtils.isEmpty(excessList)) {
-			receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
+			if (!receiptData.getReceiptHeader().isWriteoffLoan()) {
+				receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
+			}
 			return receiptData;
 		}
 
@@ -2663,10 +2665,11 @@ public class ReceiptCalculator implements Serializable {
 				}
 			} else if (repayTo == RepayConstants.REPAY_PROFIT) {
 				receiptData = intApportion(receiptData);
-				if (receiptData.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getFutPftIdx() > -1
-						&& rch.getPftIdx() > -1 && rch.getAllocations().get(rch.getPftIdx()).getPaidAvailable()
+				// common issue 16
+				if (receiptData.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getPftIdx() != -1
+						&& rch.getFutPftIdx() != -1 && rch.getAllocations().get(rch.getPftIdx()).getPaidAvailable()
 								.compareTo(BigDecimal.ZERO) <= 0) {
-					receiptData = intApportion(receiptData);
+					receiptData = repayIntApportion(receiptData);
 				}
 			} else if (!rch.isPenalSeparate() && repayTo == RepayConstants.REPAY_PENALTY) {
 				receiptData = penalApportion(receiptData);

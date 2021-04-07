@@ -1614,4 +1614,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.rcuDocumentsList = rcuDocumentsList;
 	}
 
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
+	}
+
 }

@@ -10402,8 +10402,9 @@
 				<prop key="update*">PROPAGATION_REQUIRED</prop>
 				<prop key="updateThread">PROPAGATION_REQUIRED</prop>
 				<prop key="executeThreads">PROPAGATION_REQUIRED</prop>
-				<prop key="initiateImportProcess">PROPAGATION_REQUIRED</prop>
+				<prop key="initiateImport">PROPAGATION_REQUIRED</prop>
 				<prop key="createAttempLog">PROPAGATION_REQUIRED</prop>
+				<prop key="updateImportFail">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>

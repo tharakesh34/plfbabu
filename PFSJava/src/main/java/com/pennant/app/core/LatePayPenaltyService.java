@@ -196,7 +196,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
 
-		//fod.setTotPenaltyAmt(BigDecimal.ZERO);
+		fod.setTotPenaltyAmt(BigDecimal.ZERO);
 		fod.setTotPenaltyPaid(BigDecimal.ZERO);
 		fod.setTotPenaltyBal(BigDecimal.ZERO);
 		fod.setTotWaived(BigDecimal.ZERO);
@@ -246,9 +246,14 @@ public class LatePayPenaltyService extends ServiceHelper {
 			totPenaltyPaid = totPenaltyPaid.add(rpd.getPenaltyPaid());
 			totWaived = totWaived.add(rpd.getPenaltyWaived());
 
-			if (finValueDate.compareTo(valueDate) > 0) {
-				continue;
-			}
+			/*
+			 * PSD#169647 Removing This Condition as We need to consider past paid value date receipts as well in LPP
+			 * calculation
+			 */
+			// common issue 20
+			/*
+			 * if (finValueDate.compareTo(valueDate) > 0) { continue; }
+			 */
 
 			if (schdDate.compareTo(finValueDate) == 0 || grcDate.compareTo(finValueDate) > 0) {
 				continue;
@@ -330,13 +335,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 		OverdueChargeRecovery odcrPrv = null;
 		fod.setLpCurCpzBal(BigDecimal.ZERO);
 		fod.setLpCpzAmount(BigDecimal.ZERO);
+		fod.setTotPenaltyAmt(BigDecimal.ZERO);
 
 		// Calculate the Penalty
 		for (int iOdcr = 1; iOdcr < odcrList.size(); iOdcr++) {
 			odcrCur = odcrList.get(iOdcr);
 			odcrPrv = odcrList.get(iOdcr - 1);
-
-			fod.setTotPenaltyAmt(BigDecimal.ZERO);
 
 			// Calculate the Penalty
 			BigDecimal balanceForCal = BigDecimal.ZERO;

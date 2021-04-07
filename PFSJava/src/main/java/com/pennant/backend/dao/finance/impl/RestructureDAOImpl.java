@@ -153,13 +153,12 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RestructureDetail rd = new RestructureDetail();
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
 					new RowMapper<RestructureDetail>() {
 						@Override
 						public RestructureDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-
+							RestructureDetail rd = new RestructureDetail();
 							rd.setId(rs.getLong("Id"));
 							rd.setFinReference(rs.getString("FinReference"));
 							rd.setRestructureType(rs.getString("RestructureType"));
@@ -236,7 +235,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in Restructure_Details for the specified Id >> {}", id);
 		}
-		return rd;
+		return null;
 	}
 
 	@Override
@@ -349,13 +348,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		int recordCount = 0;
-
-		recordCount = this.jdbcOperations.update(sql.toString(), new Object[] { id });
-
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
+		this.jdbcOperations.update(sql.toString(), new Object[] { id });
 	}
 
 	@Override
@@ -381,14 +374,12 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RestructureDetail rd = new RestructureDetail();
-
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
 					new RowMapper<RestructureDetail>() {
 						@Override
 						public RestructureDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-
+							RestructureDetail rd = new RestructureDetail();
 							rd.setId(rs.getLong("Id"));
 							rd.setFinReference(rs.getString("FinReference"));
 							rd.setRestructureType(rs.getString("RestructureType"));
@@ -466,6 +457,6 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in Restructure_Details for the specified reference >> {}", finReference);
 		}
-		return rd;
+		return null;
 	}
 }
