@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceRepaymentsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceRepaymentsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.receipts.impl;
@@ -479,7 +461,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		BigDecimal amount = BigDecimal.ZERO;
 
 		StringBuilder sql = new StringBuilder("Select Sum(Amount) from FinReceiptDetail");
-		//selectSql.append(type);	//check this case when we are submit the cancel request Details not effected to Temp table
+		// selectSql.append(type); //check this case when we are submit the cancel request Details not effected to Temp
+		// table
 		sql.append(" Where PaymentType = :PaymentType And ReceiptId In (SELECT ReceiptId FROM FinReceiptHeader");
 		sql.append(type);
 		sql.append(" Where ReceiptModeStatus = :ReceiptModeStatus And RecordType != :RecordType");
@@ -515,7 +498,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		int count = 0;
 
 		StringBuilder sql = new StringBuilder("Select Count(ReceiptId) from FinReceiptDetail");
-		//selectSql.append(type);	//check this case when we are submit the cancel request Details not effected to Temp table
+		// selectSql.append(type); //check this case when we are submit the cancel request Details not effected to Temp
+		// table
 		sql.append(" Where PaymentType In (:PaymentType) And ReceiptId In (");
 		sql.append(" SELECT ReceiptId FROM FinReceiptHeader");
 		sql.append(type);
@@ -977,7 +961,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		//SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
+		// SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
 		this.jdbcTemplate.update(sql.toString(), source);
 		logger.debug(Literal.LEAVING);
 	}
@@ -1226,7 +1210,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setReference(rs.getString("Reference"));
 			rh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			rh.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
-			//rh.setInstructionUID(rs.getLong("InstructionUID")); ( column is not available in bean)
+			// rh.setInstructionUID(rs.getLong("InstructionUID")); ( column is not available in bean)
 			rh.setReceiptMode(rs.getString("ReceiptMode"));
 			rh.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
 			rh.setAllocationType(rs.getString("AllocationType"));
@@ -1446,9 +1430,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(" AND ReceiptModeStatus = ?");
 
 		if (isOnline) {
-			sql.append(" AND FRD.TransactionRef = ?");
-		} else if (isChequeOrDD) {
-			sql.append(" AND FRD.FavourNumber = ?");
+			sql.append(" AND TransactionRef = ?");
 		}
 		logger.trace(Literal.SQL + sql);
 		return this.jdbcOperations.query(sql.toString(), ps -> {
@@ -1459,8 +1441,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, RepayConstants.PAYSTATUS_REALIZED);
 			if (isOnline) {
 				ps.setString(index++, fsi.getTransactionRef());
-			} else if (isChequeOrDD) {
-				ps.setString(index++, fsi.getFavourNumber());
 			}
 
 		}, (rs, roNum) -> {
@@ -1487,7 +1467,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			sql.append(", CancelRemarks, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
 			sql.append(", CashierBranchDesc, EntityDesc, TransactionRef");
 		}
-		
+
 		sql.append(" From NonLanFinReceiptHeader");
 		sql.append(StringUtils.trim(type));
 		sql.append(" Where ReceiptID = ? ");
@@ -1691,7 +1671,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			return request;
 		});
 	}
-	
+
 	@Override
 	public List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate,
 			Date endDate, String type) {
