@@ -100,6 +100,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -359,7 +360,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				if (customer == null) {
 					newRecord = true;
-					customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
+					customerDetails = customerInterfaceService.getCustomerInfoByInterface(cif, "");
 					if (customerDetails == null) {
 						throw new AppException("9999", Labels.getLabel("Cust_NotFound"));
 					}
@@ -466,7 +467,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 					if (customer == null) {
 						newRecord = true;
-						customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
+						customerDetails = customerInterfaceService.getCustomerInfoByInterface(cif, "");
 
 						if (customerDetails == null) {
 							throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
@@ -579,59 +580,65 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public CustomerDetails proceedAsNewCustomer(CustomerDetails customerDetails, String ctgType, String primaryIdNumber,
 			String primaryIdName, boolean newRecord, String ctgTypeDesc) {
+
+		User userDetails = getUserWorkspace().getUserDetails();
+
 		if (newRecord) {
-			customerDetails = getCustomerDetailsService().getNewCustomer(true, customerDetails);
+			customerDetails = customerDetailsService.getNewCustomer(true, customerDetails);
 		}
-		if (customerDetails.getCustomer().getLovDescCustCtgType() == null
-				&& customerDetails.getCustomer().getCustCtgCode() == null
-				&& customerDetails.getCustomer().getLovDescCustCtgCodeName() == null) {
-			customerDetails.getCustomer().setLovDescCustCtgType(ctgType);
-			customerDetails.getCustomer().setCustCtgCode(ctgType);
-			customerDetails.getCustomer().setLovDescCustCtgCodeName(ctgTypeDesc);
-		}
-		customerDetails.getCustomer().setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
-		customerDetails.getCustomer().setCustCRCPR(primaryIdNumber);
-		customerDetails.getCustomer().setPrimaryIdName(primaryIdName);
+		Customer customer = customerDetails.getCustomer();
 
-		if (customerDetails.getCustomer().getCustNationality() == null) {
-			customerDetails.getCustomer().setCustNationality(custNationality.getValue());
+		if (customer.getLovDescCustCtgType() == null && customer.getCustCtgCode() == null
+				&& customer.getLovDescCustCtgCodeName() == null) {
+			customer.setLovDescCustCtgType(ctgType);
+			customer.setCustCtgCode(ctgType);
+			customer.setLovDescCustCtgCodeName(ctgTypeDesc);
 		}
 
-		if (customerDetails.getCustomer().getLovDescCustNationalityName() == null) {
-			customerDetails.getCustomer().setLovDescCustNationalityName(custNationality.getDescription());
+		customer.setCustCIF(customerDetailsService.getNewProspectCustomerCIF());
+		customer.setCustCRCPR(primaryIdNumber);
+		customer.setPrimaryIdName(primaryIdName);
+
+		if (customer.getCustNationality() == null) {
+			customer.setCustNationality(custNationality.getValue());
+		}
+
+		if (customer.getLovDescCustNationalityName() == null) {
+			customer.setLovDescCustNationalityName(custNationality.getDescription());
 		}
 
 		// Setting Primary Relation Ship Officer
-		RelationshipOfficer officer = getRelationshipOfficerService()
-				.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
-		if (officer != null && String.valueOf(customerDetails.getCustomer().getCustRO1()) == null) {
-			customerDetails.getCustomer().setCustRO1(Long.parseLong(officer.getROfficerCode()));
-			customerDetails.getCustomer().setLovDescCustRO1Name(officer.getROfficerDesc());
+
+		RelationshipOfficer officer = relationshipOfficerService
+				.getApprovedRelationshipOfficerById(userDetails.getUsername());
+
+		if (officer != null && String.valueOf(customer.getCustRO1()) == null) {
+			customer.setCustRO1(Long.parseLong(officer.getROfficerCode()));
+			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 
 		// Setting User Branch to Customer Branch
-		Branch branch = getBranchService()
-				.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
-		if (branch != null && customerDetails.getCustomer().getCustDftBranch() == null) {
-			customerDetails.getCustomer().setCustDftBranch(branch.getBranchCode());
-			customerDetails.getCustomer().setLovDescCustDftBranchName(branch.getBranchDesc());
+		Branch branch = branchService.getApprovedBranchById(userDetails.getSecurityUser().getUsrBranchCode());
+		if (branch != null && customer.getCustDftBranch() == null) {
+			customer.setCustDftBranch(branch.getBranchCode());
+			customer.setLovDescCustDftBranchName(branch.getBranchDesc());
 		}
 
 		// Reset Data from WIF Details if Exists
 		String custCPRCR = "";
 
 		if (!(StringUtils.isEmpty(custCPRCR))) {
-			WIFCustomer wifCustomer = getCustomerService().getWIFCustomerByID(0, custCPRCR);
+			WIFCustomer wifCustomer = customerService.getWIFCustomerByID(0, custCPRCR);
 			if (wifCustomer != null) {
-				BeanUtils.copyProperties(wifCustomer, customerDetails.getCustomer());
-				customerDetails.getCustomer().setCustID(Long.MIN_VALUE);
-				customerDetails.setCustomerIncomeList(
-						getCustomerIncomeService().getCustomerIncomes(wifCustomer.getCustID(), true));
+				BeanUtils.copyProperties(wifCustomer, customer);
+				customer.setCustID(Long.MIN_VALUE);
+				List<CustomerIncome> incomeList = customerIncomeService.getCustomerIncomes(wifCustomer.getCustID(),
+						true);
+				customerDetails.setCustomerIncomeList(incomeList);
 
-				if (customerDetails.getCustomerIncomeList() != null
-						&& !customerDetails.getCustomerIncomeList().isEmpty()) {
+				if (CollectionUtils.isNotEmpty(customerDetails.getCustomerIncomeList())) {
 					for (CustomerIncome income : customerDetails.getCustomerIncomeList()) {
-						income.setCustCif(customerDetails.getCustomer().getCustCIF());
+						income.setCustCif(customer.getCustCIF());
 					}
 				}
 			}
@@ -797,10 +804,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.relationshipOfficerService = relationshipOfficerService;
 	}
 
-	public BranchService getBranchService() {
-		return branchService;
-	}
-
 	public void setBranchService(BranchService branchService) {
 		this.branchService = branchService;
 	}
@@ -811,10 +814,6 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setCustomerTypeService(CustomerTypeService customerTypeService) {
 		this.customerTypeService = customerTypeService;
-	}
-
-	public com.pennant.Interface.service.CustomerInterfaceService getCustomerInterfaceService() {
-		return customerInterfaceService;
 	}
 
 	public void setCustomerInterfaceService(

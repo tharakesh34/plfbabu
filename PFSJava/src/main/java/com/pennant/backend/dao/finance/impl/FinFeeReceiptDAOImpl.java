@@ -170,7 +170,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
-		sql.append(" and PaidAmount > 0");
+		sql.append(" and PaidAmount > ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
@@ -178,6 +179,8 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 			for (Long feeId : feeIds) {
 				ps.setLong(index++, feeId);
 			}
+			ps.setInt(index, 0);
+
 		}, (rs, rowNum) -> {
 			FinFeeReceipt gstD = new FinFeeReceipt();
 
