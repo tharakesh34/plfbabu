@@ -19,7 +19,7 @@
 	<include file="change-logs/change-log-security-seq-reseed.xml" />
 	<include file="change-logs/change-log-5.12.0.xml" />
 	<include file="change-logs/change-log-5.13.0.xml" />
-	<include file="change-logs/change-log-HL_enhancements.xml" />
+	<include file="change-logs/change-log-6.0.0.xml" />
 	<include file="change-logs/change-log-security-seq-reseed.xml" />
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />

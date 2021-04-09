@@ -5585,13 +5585,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="909" author="kiran.p">
+	<!-- <changeSet id="909" author="kiran.p">
 		<createIndex tableName="financemain" indexName="ix_fm_mid_fis_fty">
 			<column name="mandateid" />
 			<column name="finisactive" />
 			<column name="fintype" />
 		</createIndex>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="709_1" author="suman babu.t" dbms="mssql">
 		<createIndex tableName="FINANCEMAIN" indexName="idx_financemain_fintype">
@@ -10590,7 +10590,7 @@
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="907" author="kiran.p">
+	<!-- <changeSet id="907" author="kiran.p">
 		<createIndex tableName="PresentmentDetails" indexName="ix_Pd_SchDt_Status">
 			<column name="FINREFERENCE" />
 			<column name="SchDate" />
@@ -10604,7 +10604,7 @@
 		<createIndex tableName="mandates" indexName="ix_md_mdty">
 			<column name="mandatetype" />
 		</createIndex>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="909" author="Ranga babu.t" dbms="mssql">
 		<createIndex tableName="FinODDetails" indexName="ix_FinODDetails_fincur_totpb">
@@ -10621,7 +10621,7 @@
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="911" author="kiran.p">
+	<!-- <changeSet id="911" author="kiran.p">
 		<createIndex tableName="presentmentheader" indexName="ix_phd_id_stst_ref">
 			<column name="id" />
 			<column name="status" />
@@ -10635,7 +10635,7 @@
 			<column name="finschddate" />
 			<column name="finvaluedate" />
 		</createIndex>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="913" author="kiran.p">
 		<createIndex tableName="customerqueuing" indexName="ix_cque_cuid_prg">
@@ -10644,7 +10644,7 @@
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="914" author="kiran.p">
+	<!-- <changeSet id="914" author="kiran.p">
 		<createIndex tableName="finguarantorsdetails" indexName="ix_fgd_grcif">
 			<column name="guarantorcif" />
 		</createIndex>
@@ -10654,7 +10654,7 @@
 		<createIndex tableName="finguarantorsdetails_temp" indexName="ix_fgdt_grcif">
 			<column name="guarantorcif" />
 		</createIndex>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="916" author="kiran.p">
 		<createIndex tableName="finpftdetails" indexName="ix_fpd_fia_cyd_fcy">
