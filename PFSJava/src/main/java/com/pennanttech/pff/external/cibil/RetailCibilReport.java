@@ -1890,10 +1890,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public PromotionDAO getPromotionDAO() {
-		return promotionDAO;
-	}
-
 	@Autowired
 	public void setPromotionDAO(PromotionDAO promotionDAO) {
 		this.promotionDAO = promotionDAO;

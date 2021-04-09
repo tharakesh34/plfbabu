@@ -910,4 +910,7 @@
 	</bean>
 
 	<bean id="cashFlowReportDAO" class="com.pennant.backend.dao.reports.impl.CashFlowReportDAOImpl" parent="basicDao" />
+	<bean id="externalInterfaceService" class="com.pennanttech.pff.external.service.impl.ExternalInterfaceServiceImpl" />
+	<bean id="mandateProcessdao" class="com.pennanttech.pff.external.mandate.dao.impl.MandateProcessDAOImpl" parent="sequenceDao" />
+	<bean id="promotionDAO" class="com.pennant.backend.dao.rmtmasters.impl.PromotionDAOImpl" parent="sequenceDao" />
 </beans>
