@@ -672,37 +672,24 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 	@Override
 	public int getFeeSeq(FinFeeDetail finFeeDetail, boolean isWIF, String type) {
-		logger.debug(Literal.ENTERING);
-
-		int finSeq = 0;
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Max(FeeSeq) From ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Coalesce(Max(FeeSeq), 0) From");
 
 		if (isWIF) {
-			sql.append("WIFFinFeeDetail");
+			sql.append(" WIFFinFeeDetail");
 		} else {
-			sql.append("FinFeeDetail");
+			sql.append(" FinFeeDetail");
 		}
-
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference AND FinEvent = :FinEvent");
+		sql.append(" Where FinReference = ? and FinEvent = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
-		MapSqlParameterSource parameter = new MapSqlParameterSource();
-		parameter.addValue("FinReference", finFeeDetail.getFinReference());
-		parameter.addValue("FinEvent", finFeeDetail.getFinEvent());
+		Object[] obj = new Object[] { finFeeDetail.getFinReference(), finFeeDetail.getFinEvent() };
 
-		try {
-			finSeq = this.jdbcTemplate.queryForObject(sql.toString(), parameter, Integer.class);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} finally {
-
-		}
-
-		return finSeq;
+		return this.jdbcOperations.queryForObject(sql.toString(), obj, (rs, i) -> {
+			return rs.getInt(1);
+		});
 	}
 
 	/**

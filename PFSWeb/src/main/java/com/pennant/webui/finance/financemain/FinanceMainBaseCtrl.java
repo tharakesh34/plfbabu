@@ -15753,75 +15753,78 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 
-			try {
-				lowerTxDeduction.setStartDate(this.tDSStartDate.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				if (!this.tDSStartDate.isReadonly()
-						&& DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0
-						&& this.row_tDSEndDate.isVisible()) {
-					wve.add(new WrongValueException(this.tDSStartDate,
-							Labels.getLabel("FRQ_DATE_MISMATCH",
-									new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
-											Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") })));
+			if (this.row_tDSEndDate.isVisible()) {
+				try {
+					lowerTxDeduction.setStartDate(this.tDSStartDate.getValue());
+				} catch (WrongValueException we) {
+					wve.add(we);
 				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
 
-			try {
-				lowerTxDeduction.setEndDate(this.tDSEndDate.getValue());
-			} catch (WrongValueException we) {
-				wve.add(we);
+				try {
+					if (!this.tDSStartDate.isReadonly()
+							&& DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0
+							&& this.row_tDSEndDate.isVisible()) {
+						wve.add(new WrongValueException(this.tDSStartDate,
+								Labels.getLabel("FRQ_DATE_MISMATCH",
+										new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
+												Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") })));
+					}
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					lowerTxDeduction.setEndDate(this.tDSEndDate.getValue());
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					int startDatemonth = DateUtility.getMonth(this.tDSStartDate.getValue());
+					int startDateyear = DateUtility.getYear(this.tDSStartDate.getValue());
+					Date tdsformateEndDate = null;
+					Date tdsEndDate = null;
+					Date tdsStartDate = null;
+					if (startDatemonth > 3) {
+						try {
+							tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy")
+									.parse("31/03/" + (startDateyear + 1));
+						} catch (ParseException e) {
+							logger.error(Literal.EXCEPTION, e);
+						}
+					} else {
+						try {
+							tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear));
+						} catch (ParseException e) {
+							logger.error(Literal.EXCEPTION, e);
+						}
+					}
+					
+					tdsEndDate = this.tDSEndDate.getValue();
+					tdsStartDate = this.tDSStartDate.getValue();
+					if ((DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
+							|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
+							|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1)
+							&& this.row_tDSEndDate.isVisible()) {
+						wve.add(new WrongValueException(this.tDSEndDate,
+								"End Date must be after" + " "
+										+ DateUtil.format(this.tDSStartDate.getValue(), "dd/MM/yyyy") + " " + "before"
+										+ " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy")));
+					}
+
+					lowerTaxdedecutions.add(lowerTxDeduction);
+					aFinanceSchData.setLowerTaxDeductionDetails(lowerTaxdedecutions);
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
 			}
+			
 			try {
 				lowerTxDeduction.setLimitAmt(
 						PennantApplicationUtil.unFormateAmount(this.tDSLimitAmt.getActualValue(), formatter));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-
-			try {
-
-				int startDatemonth = DateUtility.getMonth(this.tDSStartDate.getValue());
-				int startDateyear = DateUtility.getYear(this.tDSStartDate.getValue());
-				Date tdsformateEndDate = null;
-				Date tdsEndDate = null;
-				Date tdsStartDate = null;
-				if (startDatemonth > 3) {
-					try {
-						tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear + 1));
-					} catch (ParseException e) {
-						logger.error(Literal.EXCEPTION, e);
-					}
-				} else {
-
-					try {
-						tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear));
-					} catch (ParseException e) {
-						logger.error(Literal.EXCEPTION, e);
-
-					}
-				}
-				tdsEndDate = this.tDSEndDate.getValue();
-				tdsStartDate = this.tDSStartDate.getValue();
-				if ((DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
-						|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
-						|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1) && this.row_tDSEndDate.isVisible()) {
-					wve.add(new WrongValueException(this.tDSEndDate,
-							"End Date must be after" + " " + DateUtil.format(this.tDSStartDate.getValue(), "dd/MM/yyyy")
-									+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy")));
-				}
-
-				lowerTaxdedecutions.add(lowerTxDeduction);
-				aFinanceSchData.setLowerTaxDeductionDetails(lowerTaxdedecutions);
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
 		} else {
 			List<LowerTaxDeduction> ltDetails = getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails();
 
