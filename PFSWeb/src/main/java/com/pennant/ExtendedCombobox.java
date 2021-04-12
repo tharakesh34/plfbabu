@@ -194,9 +194,7 @@ public class ExtendedCombobox extends Hbox {
 		Clients.clearWrongValue(this.button);
 		selctedValue = "";
 
-		if (!StringUtils.isEmpty(textbox.getValue())) {
-			setObject();
-		}
+		setObject();
 
 		if (list == null && inputAllowed && !this.textbox.isReadonly()) {
 			validateValue(false);

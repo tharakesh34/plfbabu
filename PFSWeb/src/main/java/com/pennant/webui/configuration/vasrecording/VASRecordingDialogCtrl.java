@@ -1739,7 +1739,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 
 			if (fieldValuesMap != null) {
-				generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
+				generator.setFieldValueMap((Map<String, Object>) fieldValuesMap);
 			}
 			try {
 				generator.renderWindow(extendedFieldHeader, newRecord);
