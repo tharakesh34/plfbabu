@@ -4263,42 +4263,20 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 */
 	@Override
 	public boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity) {
-		logger.debug("Entering");
-
-		int entityCount = 0;
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FINREFERENCE", finReference);
-		source.addValue("ENTITYCODE", entity);
-
-		StringBuilder sql = new StringBuilder("SELECT COUNT(t4.ENTITYCODE) FROM ");
-		sql.append("FinanceMain");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" count(T4.EntityCode)");
+		sql.append(" From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" t1");
+		sql.append(" T1");
+		sql.append(" Inner Join RMTFinanceTypes T2 ON T2.FinType = T1.FinType");
+		sql.append(" Inner Join SMTDivisionDetail T3 ON T3.DivisionCode = T2.FinDivision");
+		sql.append(" Inner Join Entity T4 on T4.Entitycode = T3.Entitycode");
+		sql.append(" Where T1.FinReference = ? and T4.EntityCode = ?");
 
-		sql.append(" inner JOIN");
-		sql.append(" RMTFinanceTypes  T2 ON T1.FinType = T2.FinType  inner JOIN");
-		sql.append(" SMTDIVISIONDETAIL T3 ON T2.FinDivision=T3.DIVISIONCODE inner join");
-		sql.append(" ENTITY t4 on t4.entitycode = t4.entitycode");
+		logger.trace(Literal.SQL + sql);
 
-		sql.append(" Where t1.FINREFERENCE = :FINREFERENCE");
-		sql.append(" and t4.ENTITYCODE = :ENTITYCODE");
-
-		logger.debug("selectSql: " + sql.toString());
-
-		try {
-			entityCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			entityCount = 0;
-		}
-
-		if (entityCount > 0) {
-			return true;
-		}
-
-		logger.debug("Leaving");
-		return false;
+		return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, entity },
+				(rs, rowNum) -> rs.getLong(1)) > 0;
 	}
 
 	/**

@@ -1910,7 +1910,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+			String finRef = aFinanceMain.getId();
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finRef, "_View");
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -1931,10 +1932,16 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
-			
+
+			boolean isPending = receiptService.isReceiptsPending(finRef, Long.MIN_VALUE);
+			if (isPending) {
+				MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
+				return;
+			}
+
 			//check if payable amount present
-			List<ManualAdvise> manualAdvise = financeWriteoffService
-					.getManualAdviseByRef(aFinanceMain.getFinReference(), FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
+			List<ManualAdvise> manualAdvise = financeWriteoffService.getManualAdviseByRef(finRef,
+					FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
 			if (CollectionUtils.isNotEmpty(manualAdvise)) {
 				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
 				return;
@@ -1945,8 +1952,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 
-			final FinanceWriteoffHeader writeoffHeader = financeWriteoffService
-					.getFinanceWriteoffDetailById(aFinanceMain.getFinReference(), "_View", userRole, moduleDefiner);
+			final FinanceWriteoffHeader writeoffHeader = financeWriteoffService.getFinanceWriteoffDetailById(finRef,
+					"_View", userRole, moduleDefiner);
 
 			// Role Code State Checking
 			String nextroleCode = writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain()
@@ -1954,7 +1961,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getId();
+				valueParm[0] = finRef;
 				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
@@ -1972,16 +1979,18 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				maintainSts = StringUtils.trimToEmpty(
 						writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
 			}
-			
-			List<String> finEvents = finServiceInstructionDAO.getFinEventByFinRef(aFinanceMain.getFinReference(), "_Temp");
+
+			List<String> finEvents = finServiceInstructionDAO.getFinEventByFinRef(finRef, "_Temp");
 			if (CollectionUtils.isNotEmpty(finEvents)) {
-				maintainSts = finEvents.get(0);
+				rcdMaintainSts = finEvents.get(0);
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
 			}
 
 			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getId();
+				valueParm[0] = finRef;
 				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(

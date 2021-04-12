@@ -49,7 +49,6 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
-import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -85,7 +84,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	private String errorMsg = null;
 	private ExcelFileImport fileImport = null;
 
-	private ReceiptUploadHeader receiptUploadHeader = new ReceiptUploadHeader();
+	private ReceiptUploadHeader ruh = new ReceiptUploadHeader();
 	private ReceiptUploadHeaderService receiptUploadHeaderService;
 
 	private ReceiptUploadHeaderListCtrl receiptUploadHeaderListCtrl;
@@ -93,10 +92,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	private String filePath = null;
 	private File file;
 
-	private List<ReceiptUploadDetail> rudList = new ArrayList<>();
 	private FormulaEvaluator objFormulaEvaluator = null;
-	private List<ReceiptUploadDetail> uploadNewList = new ArrayList<>();
-	List<UploadAlloctionDetail> uadList = new ArrayList<>();
 
 	private ReceiptService receiptService;
 	private ReceiptUploadHeaderDAO receiptUploadHeaderDAO;
@@ -122,7 +118,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			}
 
 			if (arguments.containsKey("receiptUploadHeader")) {
-				this.receiptUploadHeader = (ReceiptUploadHeader) arguments.get("receiptUploadHeader");
+				this.ruh = (ReceiptUploadHeader) arguments.get("receiptUploadHeader");
 			}
 
 			doSetFieldProperties();
@@ -170,7 +166,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.receiptUploadHeader.isNew()) {
+		if (this.ruh.isNew()) {
 			this.btnBrowse.setVisible(true);
 			this.btnBrowse.setDisabled(false);
 		}
@@ -216,7 +212,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			return;
 		}
 
-		uploadNewList = new ArrayList<>();
 		String fileName = media.getName();
 
 		filePath = SysParamUtil.getValueAsString("UPLOAD_FILEPATH");
@@ -326,13 +321,13 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			logger.info("Saving Record as import in progress in ReceiptUploadHeader table before validating records");
 			saveUploadHeader();
 
-			logger.info("Initiating Import Process For the HeaderID{}", receiptUploadHeader.getId());
+			logger.info("Initiating Import Process For the HeaderID{}", ruh.getId());
 			new Thread(() -> {
-				receiptUploadHeaderService.initiateImport(receiptUploadHeader, workbook,
+				receiptUploadHeaderService.initiateImport(ruh, workbook,
 						ReceiptUploadHeaderListCtrl.importStatusMap, fileImport);
 			}).start();
 
-			ReceiptUploadHeaderListCtrl.importStatusMap.put(receiptUploadHeader.getId(), 0);
+			ReceiptUploadHeaderListCtrl.importStatusMap.put(ruh.getId(), 0);
 			receiptUploadHeaderListCtrl.search();
 
 			Clients.showNotification("Receipt Import is in Progress", "info", null, null, 2000);
@@ -348,11 +343,11 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	private void saveUploadHeader() throws FactoryConfigurationError {
-		doLoadWorkFlow(true, receiptUploadHeader.getWorkflowId(), "");
-		receiptUploadHeader.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-		receiptUploadHeader.setTransactionDate(SysParamUtil.getAppDate());
-		receiptUploadHeader.setNewRecord(true);
-		receiptUploadHeader.setUploadProgress(ReceiptUploadConstants.RECEIPT_IMPORTINPROCESS);
+		doLoadWorkFlow(true, ruh.getWorkflowId(), "");
+		ruh.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+		ruh.setTransactionDate(SysParamUtil.getAppDate());
+		ruh.setNewRecord(true);
+		ruh.setUploadProgress(ReceiptUploadConstants.RECEIPT_IMPORTINPROCESS);
 		String taskId = getTaskId(getRole());
 		nextTaskId = taskId + ";";
 		if (StringUtils.isNotBlank(nextTaskId)) {
@@ -371,15 +366,15 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			}
 		}
 
-		receiptUploadHeader.setTaskId(taskId);
-		receiptUploadHeader.setNextTaskId(nextTaskId);
-		receiptUploadHeader.setRoleCode(getRole());
-		receiptUploadHeader.setNextRoleCode(nextRoleCode);
-		receiptUploadHeader.setVersion(0);
-		receiptUploadHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		receiptUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		receiptUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		receiptUploadHeaderDAO.save(receiptUploadHeader, TableType.TEMP_TAB);
+		ruh.setTaskId(taskId);
+		ruh.setNextTaskId(nextTaskId);
+		ruh.setRoleCode(getRole());
+		ruh.setNextRoleCode(nextRoleCode);
+		ruh.setVersion(0);
+		ruh.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ruh.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		ruh.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		receiptUploadHeaderDAO.save(ruh, TableType.TEMP_TAB);
 	}
 
 	/**
@@ -404,7 +399,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 							this.fileName.getValue() + ": file name already Exist.");
 				}
 			}
-			this.receiptUploadHeader.setFileName(this.fileName.getValue());
+			this.ruh.setFileName(this.fileName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -413,8 +408,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			if (!this.entity.isReadonly()) {
 				this.entity.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_ReceiptUpload_entity.value"), null, true, true));
-				this.receiptUploadHeader.setEntityCode(this.entity.getValue());
-				this.receiptUploadHeader.setEntityCodeDesc(this.entity.getDescription());
+				this.ruh.setEntityCode(this.entity.getValue());
+				this.ruh.setEntityCodeDesc(this.entity.getDescription());
 			}
 
 		} catch (WrongValueException we) {
@@ -422,7 +417,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		}
 
 		// set uploadprocess value to zero
-		this.receiptUploadHeader.setUploadProgress(PennantConstants.RECEIPT_DEFAULT);
+		this.ruh.setUploadProgress(PennantConstants.RECEIPT_DEFAULT);
 
 		if (wve.size() > 0) {
 			doRemoveValidation();
@@ -566,54 +561,16 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		logger.debug(Literal.LEAVING);
 	}
 
-	@SuppressWarnings("unused")
-	private boolean checkDedupCondition(ReceiptUploadDetail receiptUploadDetail) {
-		logger.debug(Literal.ENTERING);
-
-		for (int i = 0; i < uploadNewList.size(); i++) {
-
-			if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
-					DisbursementConstants.PAYMENT_TYPE_NEFT)
-					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
-							DisbursementConstants.PAYMENT_TYPE_RTGS)
-					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
-							DisbursementConstants.PAYMENT_TYPE_IMPS)) {
-				if (uploadNewList.get(i).getReference().equals(receiptUploadDetail.getReference())
-						&& uploadNewList.get(i).getReceiptMode().equals(receiptUploadDetail.getReceiptMode())
-						&& uploadNewList.get(i).getTransactionRef().equals(receiptUploadDetail.getTransactionRef())) {
-
-					logger.debug(Literal.LEAVING);
-					return true;
-				}
-			} else if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
-					DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
-							DisbursementConstants.PAYMENT_TYPE_DD)) {
-				if (uploadNewList.get(i).getReference().equals(receiptUploadDetail.getReference())
-						&& uploadNewList.get(i).getReceiptMode().equals(receiptUploadDetail.getReceiptMode())
-						&& uploadNewList.get(i).getBankCode().equals(receiptUploadDetail.getBankCode())
-						&& uploadNewList.get(i).getFavourNumber().equals(receiptUploadDetail.getFavourNumber())) {
-
-					logger.debug(Literal.LEAVING);
-					return true;
-				}
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-		return false;
-	}
-
 	public void onClick$btnClose(Event event) {
 		this.window_ReceiptUpload.onClose();
 	}
 
 	public ReceiptUploadHeader getReceiptUploadHeader() {
-		return receiptUploadHeader;
+		return ruh;
 	}
 
 	public void setReceiptUploadHeader(ReceiptUploadHeader receiptUploadHeader) {
-		this.receiptUploadHeader = receiptUploadHeader;
+		this.ruh = receiptUploadHeader;
 	}
 
 	public ReceiptUploadHeaderService getReceiptUploadHeaderService() {

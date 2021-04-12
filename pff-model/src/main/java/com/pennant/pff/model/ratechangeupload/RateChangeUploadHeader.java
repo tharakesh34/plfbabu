@@ -8,7 +8,6 @@ import org.zkoss.util.media.Media;
 
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
-
 public class RateChangeUploadHeader {
 
 	private long userId;
@@ -22,6 +21,9 @@ public class RateChangeUploadHeader {
 	private int failureRecords;
 	private String status;
 	private String entityCode;
+	private String fileName;
+	private String lovValue;
+
 	private List<RateChangeUpload> rateChangeUpload = new ArrayList<>();
 	private DataEngineStatus deStatus = new DataEngineStatus();
 	public long getUserId() {
@@ -102,6 +104,21 @@ public class RateChangeUploadHeader {
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
 	}
-	
-	
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getLovValue() {
+		return lovValue;
+	}
+
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
+	}
+
 }

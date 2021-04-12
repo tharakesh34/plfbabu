@@ -205,7 +205,7 @@ public class ImplementationConstants {
 		ALLOW_NEGATIVE_VALUES_EXTFIELDS = getValueAsBoolean(extensions, "ALLOW_NEGATIVE_VALUES_EXTFIELDS", false);
 		FINREFERENCE_ALW_SWIFT_CODE = getValueAsBoolean(extensions, "FINREFERENCE_ALW_SWIFT_CODE", false);
 		DEFAULT_PRESENTMENT_UPLOAD = getValueAsBoolean(extensions, "DEFAULT_PRESENTMENT_UPLOAD", true);
-		DISB_PAID_CANCELLATION_ALLOW = getValueAsBoolean(extensions, "DISB_PAID_CANCELLATION_ALLOW", false);
+		DISB_PAID_CANCELLATION_REQ = getValueAsBoolean(extensions, "DISB_PAID_CANCELLATION_REQ", false);
 		MANDATE_PTNRBNK_IN_DWNLD = getValueAsBoolean(extensions, "MANDATE_PTNRBNK_IN_DWNLD", false);
 		PRESENTMENT_STAGE_ACCOUNTING_REQ = getValueAsBoolean(extensions, "PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
 		ALLOW_LOAN_VAS_RATIO_CALC = getValueAsBoolean(extensions, "ALLOW_LOAN_VAS_RATIO_CALC", false);
@@ -457,7 +457,7 @@ public class ImplementationConstants {
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;
 	 */
 	public static boolean ALLOW_EOD_INTERVAL_VALIDATION;
-	public static boolean DISB_PAID_CANCELLATION_ALLOW;
+	public static boolean DISB_PAID_CANCELLATION_REQ;
 	public static boolean MANDATE_PTNRBNK_IN_DWNLD;
 	public static boolean ALLOW_LOAN_VAS_RATIO_CALC;
 	public static boolean ALLOW_ED_FIELDS_IN_NPA;

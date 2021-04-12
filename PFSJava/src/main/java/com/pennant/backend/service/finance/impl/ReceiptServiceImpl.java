@@ -52,6 +52,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -186,6 +188,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
@@ -1749,7 +1752,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
-		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
+		FinServiceInstruction fsi = scheduleData.getFinServiceInstruction();
+		if ((fsi != null && fsi.isReceiptUpload())
+				|| !StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
 			//rch.setReceivedDate(rch.getValueDate());
 			rch.setReceivedDate(rch.getReceiptDate());
@@ -3524,14 +3529,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
-		// WriteoffLoan
-		FinanceMain fm = finScheduleData.getFinanceMain();
-		if (fm.isWriteoffLoan() && !FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)) {
-			finScheduleData = setErrorToFSD(finScheduleData, "90204", receiptPurpose,
-					"WriteoffLoan " + fm.getFinReference());
-			return receiptData;
-		}
-
 		if (fsi.isReceiptUpload() && !StringUtils.equals(fsi.getReqType(), "Post")) {
 			logger.debug("Leaving");
 			return receiptData;
@@ -3873,7 +3870,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		Date finStartDate = financeMain.getFinStartDate();
 
-		if (fsi.isReceiptUpload() && fsi.getValueDate().compareTo(finStartDate) < 0) {
+		boolean receiptUpload = fsi.isReceiptUpload();
+		if (receiptUpload && fsi.getValueDate().compareTo(finStartDate) < 0) {
 			finScheduleData = setErrorToFSD(finScheduleData, "RU0048", null);
 			return receiptData;
 		}
@@ -3900,6 +3898,33 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+
+		if (receiptUpload && SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
+
+			BigDecimal recAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), formatter);
+			BigDecimal cashLimit = new BigDecimal(
+					SysParamUtil.getSystemParameterObject("RECEIPT_CASH_PAN_LIMIT").getSysParmValue());
+			if (recAmount.compareTo(cashLimit) > 0
+					&& StringUtils.equals(fsi.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
+
+				String panNumber = fsi.getPanNumber();
+				String valueParm = "PanNumber";
+				if (StringUtils.isEmpty(panNumber)) {
+					finScheduleData = setErrorToFSD(finScheduleData, "30561", valueParm);
+					return receiptData;
+				}
+
+				Pattern pattern = Pattern
+						.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
+				Matcher matcher = pattern.matcher(panNumber);
+				if (!matcher.matches()) {
+					finScheduleData = setErrorToFSD(finScheduleData, "90251", panNumber);
+					return receiptData;
+				}
+			}
+		}
+		
 		if (finScheduleData.getFinanceMain() != null) {
 			if (fsi.getTdsAmount().compareTo(BigDecimal.ZERO) > 0 && !StringUtils
 					.equalsIgnoreCase(finScheduleData.getFinanceMain().getTdsType(), PennantConstants.TDS_MANUAL)) {

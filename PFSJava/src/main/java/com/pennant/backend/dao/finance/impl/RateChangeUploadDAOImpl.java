@@ -32,7 +32,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 	public List<RateChangeUpload> getRateChangeUploadDetails(long batchId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, BatchId, FinReference, BaseRateCode, Margin, ActualRate, ReCalType");
-		sql.append(", RecalFromDate, RecalToDate, SpecialRate, Remarks, FromDate, ToDate");
+		sql.append(", RecalFromDate, RecalToDate, SpecialRate, Remarks, FromDate, ToDate, UploadStatusRemarks ");
 		sql.append(" FROM RATECHANGE_UPLOAD_DETAILS");
 		sql.append(" WHERE BATCHID = ?");
 
@@ -54,6 +54,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			rateChange.setRemarks(rs.getString("Remarks"));
 			rateChange.setFromDate(JdbcUtil.getDate(rs.getDate("FromDate")));
 			rateChange.setToDate(JdbcUtil.getDate(rs.getDate("ToDate")));
+			rateChange.setUploadStatusRemarks((rs.getString("UploadStatusRemarks")));
 
 			return rateChange;
 		});
@@ -219,7 +220,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 	public void updateRateChangeDetails(RateChangeUpload rcUpload) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update RATECHANGE_UPLOAD_DETAILS Set ");
-		sql.append(" REMARKS = ? , STATUS = ?");
+		sql.append(" UploadStatusRemarks = ? , STATUS = ?");
 		sql.append(" Where Id = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -228,7 +229,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 				//ps.setObject(index++, rcUpload.getFinServInstId());
-				ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getRemarks()));
+				ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getUploadStatusRemarks()));
 				ps.setString(index++, rcUpload.getStatus());
 				ps.setLong(index++, rcUpload.getId());
 

@@ -249,7 +249,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// validation for not allowing Restructure when presentation is in progress.
 		boolean isPending = receiptService.isReceiptsPending(this.finReference.getValidatedValue(), Long.MIN_VALUE);
 		if (isPending) {
-			MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_inprogress_In_Restructure"));
+			MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
 			return;
 		}
 

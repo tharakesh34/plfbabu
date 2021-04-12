@@ -120,6 +120,11 @@ public class RateChangeUploadDialogCtrl extends GFCBaseCtrl<Configuration> {
 
 	public void onClick$btnImport(Event event) throws InterruptedException {
 		this.btnImport.setDisabled(true);
+
+		if (getComboboxValue(this.entityType).equals(PennantConstants.List_Select)) {
+			MessageUtil.showError("Please Select Entity Code.");
+			return;
+		}
 		if (media == null) {
 			MessageUtil.showError("Please upload file.");
 			return;

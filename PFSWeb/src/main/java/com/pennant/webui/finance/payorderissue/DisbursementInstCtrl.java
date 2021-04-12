@@ -770,7 +770,7 @@ public class DisbursementInstCtrl {
 		 * !StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType()))) { return
 		 * false; }
 		 */
-		if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW) {
+		if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ) {
 			if (DisbursementConstants.STATUS_PAID.equals(status)) {
 				return true;
 			}

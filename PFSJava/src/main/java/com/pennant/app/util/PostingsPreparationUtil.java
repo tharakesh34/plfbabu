@@ -497,8 +497,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 		engineExecution.getAccEngineExecResults(aeEvent);
 
-		validateCreditandDebitAmounts(aeEvent);
-
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		if (!aeEvent.isPostingSucess()) {
 			return aeEvent;
@@ -507,6 +505,8 @@ public class PostingsPreparationUtil implements Serializable {
 		if (CollectionUtils.isEmpty(returnDatasetList) || aeEvent.isSimulateAccounting()) {
 			return aeEvent;
 		}
+
+		validateCreditandDebitAmounts(aeEvent);
 
 		String entityCode = aeEvent.getEventProperties().getEntityCode();
 

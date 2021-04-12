@@ -12601,6 +12601,7 @@
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="rateChangeService" ref="rateChangeService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="baseRateDAO" ref="baseRateDAO" />
 	</bean>
 
 	<!--============ Restructure Details ============== -->

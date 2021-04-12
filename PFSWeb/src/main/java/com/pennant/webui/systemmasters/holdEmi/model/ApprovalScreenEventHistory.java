@@ -407,7 +407,8 @@ public class ApprovalScreenEventHistory {
 					listBox.appendChild(item);
 				}
 
-				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(finEvent)) {
+				if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(finEvent)
+						&& !StringUtils.isEmpty(finServiceInstruction.getRecalType())) {
 					Listitem item = new Listitem();
 					Listcell lc;
 					RestructureDetail restructureDetail = finScheduleData.getRestructureDetail();

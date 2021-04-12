@@ -766,8 +766,6 @@
 		<menu id="menu_Category_LmsWriteoff">
 			<menuItem id="menu_Item_WriteOff" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menuItem_FinanceManagement_WriteOff" />
-			<menuItem id="menu_Item_WriteoffPayment" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-				rightName="menuItem_FinanceManagement_WriteoffPayment" />
 		</menu>
 		<menu id="menu_Category_LmsCancellation">
 			<menuItem id="menu_Item_CancelFinance" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
@@ -1074,6 +1072,8 @@
 				rightName="menuItem_PresentmentDetail_PresentmentEnquiry" />
 			<menuItem id="menu_Item_PresentmentFileImport_Report" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
+				<menuItem id="menu_Item_RateChangeuploadReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_RateChangeuploadReport" />
 		</menu>
 
 		<!--NPA Provision Enquiry -->

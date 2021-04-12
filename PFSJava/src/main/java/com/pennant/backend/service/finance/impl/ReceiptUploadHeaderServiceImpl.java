@@ -432,8 +432,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public boolean isFinReferenceExitsWithEntity(String reference, String type, String validatedValue) {
-		return this.financeMainDAO.isFinReferenceExitsWithEntity(reference, type, validatedValue);
+	public boolean isFinRefExitsWithEntity(String reference, String type, String entity) {
+		return this.financeMainDAO.isFinReferenceExitsWithEntity(reference, type, entity);
 	}
 
 	@Override
@@ -574,14 +574,13 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			ExcelFileImport fileImport) {
 		List<ReceiptUploadDetail> rudList = new ArrayList<>();
 		List<UploadAlloctionDetail> uadList = new ArrayList<>();
-		String fileName = ruh.getFileName();
 
 		ReceiptUploadTracker rut = new ReceiptUploadTracker();
 		rut.setHeaderId(ruh.getId());
 		rut.setImportStatusMap(statusMap);
 		rut.setTotalProcesses(5);
 		try {
-			validateFileData(workbook, fileName, rudList, rut, ruh.getUploadHeaderId());
+			validateFileData(workbook, ruh, rudList, rut);
 
 			prepareAllocations(workbook, uadList, rut);
 
@@ -655,8 +654,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		}
 	}
 
-	private void validateReceipt(ReceiptUploadHeader receiptUploadHeader, List<ReceiptUploadDetail> rudList,
-			ReceiptUploadTracker rut) {
+	private void validateReceipt(ReceiptUploadHeader ruh, List<ReceiptUploadDetail> rudList, ReceiptUploadTracker rut) {
 		logger.info("Receipt validation process started..");
 
 		rut.setBatchSize(rudList.size());
@@ -673,8 +671,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				return;
 			}
 
-			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud,
-					receiptUploadHeader.getEntityCode());
+			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, ruh.getEntityCode());
 			fsi.setReqType("Inquiry");
 			fsi.setReceiptUpload(true);
 			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi, fsi.getReceiptPurpose());
@@ -696,9 +693,12 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		logger.info("Receipt validation process completed..");
 	}
 
-	private boolean validateFileData(Workbook workbook, String fileName, List<ReceiptUploadDetail> rudList,
-			ReceiptUploadTracker rut, long headerId) {
+	private boolean validateFileData(Workbook workbook, ReceiptUploadHeader ruh, List<ReceiptUploadDetail> rudList,
+			ReceiptUploadTracker rut) {
 		logger.info("Validating File Data and Preparing ReceiptUploadDetails...");
+
+		String fileName = ruh.getFileName();
+		long headerId = ruh.getId();
 
 		final Set<String> setTxnKeys = new HashSet<String>();
 		final Set<String> setTxnKeysCheque = new HashSet<String>();
@@ -708,6 +708,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		String txnKey = "";
 		String errorMsg = "";
 		rut.setBatchSize(rowCount);
+		Date appDate = SysParamUtil.getAppDate();
+		boolean dedupCheck = SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTUPLOAD_DEDUPCHECK);
 
 		for (int i = 1; i <= rowCount; i++) {
 			Row rchRow = rchSheet.getRow(i);
@@ -716,13 +718,17 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				continue;
 			}
 
-			boolean dedupCheck = SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTUPLOAD_DEDUPCHECK);
-			ReceiptUploadDetail rud = prepareReceiptUploadDetail(rchRow, headerId);
+			ReceiptUploadDetail rud = prepareReceiptUploadDetail(rchRow, headerId, appDate);
 
 			if (rud.getFavourNumber() != null && rud.getFavourNumber().length() > 6) {
 				errorMsg = "Favour Number more than 6 digits";
 				setErrorToRUD(rud, "90405", errorMsg);
 			}
+
+			if (!isFinRefExitsWithEntity(rud.getReference(), "", ruh.getEntityCode())) {
+				setErrorToRUD(rud, "RU0004", rud.getReference());
+			}
+
 			if (dedupCheck) {
 
 				if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
@@ -845,8 +851,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 	}
 
-	private ReceiptUploadDetail prepareReceiptUploadDetail(Row rchRow, long headerId) {
-		Date appDate = SysParamUtil.getAppDate();
+	private ReceiptUploadDetail prepareReceiptUploadDetail(Row rchRow, long headerId, Date appDate) {
+
 		ReceiptUploadDetail rud = new ReceiptUploadDetail();
 		String strValue = "";
 		long longValue = 0;

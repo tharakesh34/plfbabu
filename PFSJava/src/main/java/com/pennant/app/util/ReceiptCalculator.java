@@ -1315,10 +1315,10 @@ public class ReceiptCalculator implements Serializable {
 		List<FinExcessAmount> excessList = receiptData.getReceiptHeader().getExcessAmounts();
 
 		if (CollectionUtils.isEmpty(excessList)) {
-			if (!receiptData.getReceiptHeader().isWriteoffLoan()) {
-				receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
-			}
-			return receiptData;
+				if(!receiptData.getReceiptHeader().isWriteoffLoan()){
+					receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
+				}
+				return receiptData;
 		}
 
 		List<FinExcessAmountReserve> excessAmtRev = receiptData.getReceiptHeader().getExcessReserves();

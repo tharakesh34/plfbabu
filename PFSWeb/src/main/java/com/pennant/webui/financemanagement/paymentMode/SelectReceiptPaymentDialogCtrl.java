@@ -980,9 +980,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				} else {
 					this.finReference.setDescription(financeMain.getFinType() + " - " + finIsActive);
 				}
-				if(financeMain.isWriteoffLoan()) {
-					this.finReference.setDescription(financeMain.getFinType() + " - " + "[Write-Off]");
-				}
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
 				resetDefaults(financeMain);
 				if (FinanceConstants.RECEIPT_MAKER.equals(this.module)
@@ -1212,7 +1209,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		if (!financeMain.isFinIsActive()
-				|| DateUtility.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0 || financeMain.isWriteoffLoan()) {
+				|| DateUtility.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
 			fillComboBox(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY,
 					PennantStaticListUtil.getReceiptPurpose(), ",EarlyPayment, EarlySettlement, FeePayment,");
 			receiptPurpose.setDisabled(true);

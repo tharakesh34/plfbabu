@@ -868,7 +868,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				finAdvpay.setRecordType("");
 				// other
 				if (rcdType.equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW
+					if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ
 							&& DisbursementConstants.STATUS_PAID.equals(finAdvpay.getStatus())) {
 						finAdvpay.setStatus(DisbursementConstants.STATUS_PAID_BUT_CANCELLED);
 					} else {
@@ -884,7 +884,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			}
 
 			// Reverse the disbursement instruction postings for PAID BUT CANCEL Case.
-			if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW
+			if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ
 					&& DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(finAdvpay.getStatus())) {
 				postingsPreparationUtil.postReversalsByLinkedTranID(finAdvpay.getLinkedTranId());
 			}

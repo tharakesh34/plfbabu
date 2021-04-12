@@ -667,7 +667,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.btnSave.setVisible(true);
 				this.btnGetCustBeneficiary.setVisible(false);
 				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement);
-				if (ImplementationConstants.DISB_PAID_CANCELLATION_ALLOW
+				if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ
 						&& DisbursementConstants.STATUS_PAID.equals(aFinAdvancePayments.getStatus())) {
 					this.btnDelete.setVisible(false);
 					this.btnSave.setVisible(false);

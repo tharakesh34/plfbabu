@@ -845,7 +845,6 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		restructureDetail.setRecordStatus(finMain.getRecordStatus());
 		restructureDetail.setLastMntBy(finMain.getLastMntBy());
 		restructureDetail.setLastMntOn(finMain.getLastMntOn());
-		restructureDetail.setNewRecord(finMain.isNewRecord());
 
 		if (restructureDetail.isNewRecord()) {
 			restructureDAO.save(restructureDetail, type);

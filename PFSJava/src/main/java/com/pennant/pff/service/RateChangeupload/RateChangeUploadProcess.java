@@ -18,16 +18,20 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.finance.RateChangeUploadDAO;
 import com.pennant.backend.financeservice.RateChangeService;
+import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -47,6 +51,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 	private PlatformTransactionManager transactionManager;
 	private RateChangeService rateChangeService;
 	private FinanceDetailService financeDetailService;
+	private static BaseRateDAO baseRateDAO;
 
 	public void process(RateChangeUploadHeader header) throws Exception {
 		header.setStatus(header.getDeStatus().getStatus());
@@ -118,7 +123,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 				finInst = prepareFinServiceInstruction(rcu);
 			} catch (Exception e) {
 				rcu.setStatus("F");
-				rcu.setRemarks("Error While Preparing Service Instructions");
+				rcu.setUploadStatusRemarks("Error While Preparing Service Instructions");
 				rateChangeUploadDAO.updateRateChangeDetails(rcu);
 				transactionManager.commit(txStatus);
 				logger.debug(Literal.EXCEPTION, e);
@@ -131,7 +136,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
 				rcu.setStatus("F");
-				rcu.setRemarks(auditDetail.getErrorDetails().get(0).getError());
+				rcu.setUploadStatusRemarks(auditDetail.getErrorDetails().get(0).getError());
 				rateChangeUploadDAO.updateRateChangeDetails(rcu);
 				transactionManager.commit(txStatus);
 				fail = fail + 1;
@@ -150,9 +155,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 				txStatus = transactionManager.getTransaction(txDef);
 				rcu.setStatus("F");
 				if (StringUtils.isNotBlank(e.getMessage())) {
-					rcu.setRemarks(e.getMessage().substring(0, 1999));
+					rcu.setUploadStatusRemarks(e.getMessage().substring(0, 1999));
 				} else {
-					rcu.setRemarks("Un-Handled Exception");
+					rcu.setUploadStatusRemarks("Un-Handled Exception");
 				}
 				rateChangeUploadDAO.updateRateChangeDetails(rcu);
 				logger.debug(Literal.EXCEPTION, e);
@@ -170,15 +175,13 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			if (StringUtils.isNotEmpty(errorMsg)) {
 				rcu.setStatus("F");
-				rcu.setRemarks(code + " : " + errorMsg);
+				rcu.setUploadStatusRemarks(code + " : " + errorMsg);
 				fail = fail + 1;
 			} else {
 				rcu.setStatus("S");
-				rcu.setRemarks("");
+				rcu.setUploadStatusRemarks("");
 				sucess = sucess + 1;
 			}
-			// rcu.setStatus("S");
-			// sucess++;
 			rateChangeUploadDAO.updateRateChangeDetails(rcu);
 
 			this.transactionManager.commit(txStatus);
@@ -299,7 +302,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		
 		String error = "Loan is Not Active.";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
-			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getRemarks()));
+			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
 			for (FinanceMain fm : finMain) {
 				if (rcu.getFinReference().equals(fm.getFinReference())) {
 					rcu.setFinanceMain(fm);
@@ -313,32 +316,137 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 					break;
 				}
 			}
-			rcu.setRemarks(remarks.toString());
+			rcu.setUploadStatusRemarks(remarks.toString());
 		}
 
 		error = "Loan not exists.";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
-			StringBuilder remarks = new StringBuilder(rcu.getRemarks());
+			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
 			if (rcu.getFinanceMain() == null) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");
 				}
 				remarks.append(error);
-				rcu.setRemarks(remarks.toString());
+				rcu.setUploadStatusRemarks(remarks.toString());
 				rcu.setErrorDetail(getErrorDetail("RCU002", error));
 			}
 		}
  
 		error = "Entity Code is Invalid.";
-		for(RateChangeUpload rcu : header.getRateChangeUpload()) {
-			StringBuilder remarks = new StringBuilder(rcu.getRemarks());
-			if(!StringUtils.equals(rcu.getFinanceMain().getEntityCode(), header.getEntityCode())) {
-				if(remarks.length() > 0) {
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+			if (!StringUtils.equals(rcu.getFinanceMain().getEntityCode(), header.getEntityCode())) {
+				if (remarks.length() > 0) {
 					remarks.append(",");
 				}
 				remarks.append(error);
-				rcu.setRemarks(remarks.toString());
+				rcu.setUploadStatusRemarks(remarks.toString());
 				rcu.setErrorDetail(getErrorDetail("RCU003", error));
+			}
+		}
+
+		error = " RateChange From Date should be after ";
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			if (rcu.getFromDate() != null) {
+				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				Date lastPaidDate = fd.getFinScheduleData().getFinanceMain().getFinStartDate();
+				List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
+				for (FinanceScheduleDetail fsd : finSchdDetails) {
+					if (fsd.getPresentmentId() > 0) {
+						lastPaidDate = fsd.getSchDate();
+					}
+					if (DateUtility.compare(rcu.getFromDate(), lastPaidDate) < 0) {
+						if (remarks.length() > 0) {
+							remarks.append(",");
+						}
+						remarks.append(error + DateUtility.formatToShortDate(lastPaidDate));
+						rcu.setUploadStatusRemarks(remarks.toString());
+						rcu.setErrorDetail(getErrorDetail("RCU003", error));
+						break;
+					}
+				}
+			}
+
+		}
+		error = " RateChange To Date should be after ";
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			if (rcu.getToDate() != null) {
+				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				Date lastPaidDate = fd.getFinScheduleData().getFinanceMain().getFinStartDate();
+				List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
+				for (FinanceScheduleDetail fsd : finSchdDetails) {
+					if (fsd.getPresentmentId() > 0) {
+						lastPaidDate = fsd.getSchDate();
+					}
+					if (DateUtility.compare(rcu.getToDate(), lastPaidDate) < 0) {
+						if (remarks.length() > 0) {
+							remarks.append(",");
+						}
+						remarks.append(error + DateUtility.formatToShortDate(lastPaidDate));
+						rcu.setUploadStatusRemarks(remarks.toString());
+						rcu.setErrorDetail(getErrorDetail("RCU003", error));
+						break;
+					}
+				}
+			}
+		}
+
+		error = "Recal From Date Should Be Selected Proper Schedule Date";
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			if (StringUtils.equals(rcu.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+				Date befinst = DateUtility.addMonths(fm.getMaturityDate(), -1);
+				if (DateUtility.compare(rcu.getRecalFromDate(), fm.getMaturityDate()) == 0
+						|| DateUtility.compare(rcu.getRecalFromDate(), befinst) == 0) {
+					if (remarks.length() > 0) {
+						remarks.append(",");
+					}
+					remarks.append(error);
+					rcu.setUploadStatusRemarks(remarks.toString());
+					rcu.setErrorDetail(getErrorDetail("RCU0004", error));
+					break;
+
+				}
+			}
+		}
+
+		error = "Recal To Date Should not be Maturity Date when Recal Type is Till Date ";
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			if (StringUtils.equals(rcu.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+				if (DateUtility.compare(rcu.getRecalToDate(), fm.getMaturityDate()) == 0) {
+					if (remarks.length() > 0) {
+						remarks.append(",");
+					}
+					remarks.append(error);
+					rcu.setUploadStatusRemarks(remarks.toString());
+					rcu.setErrorDetail(getErrorDetail("RCU0004", error));
+					break;
+				}
+			}
+		}
+
+		error = "Recal From Date Sholud not be MaturityDate when Recal Type is Till maturity";
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			if (StringUtils.equals(rcu.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+				if (DateUtility.compare(rcu.getRecalFromDate(), fm.getMaturityDate()) == 0) {
+					if (remarks.length() > 0) {
+						remarks.append(",");
+					}
+					remarks.append(error);
+					rcu.setUploadStatusRemarks(remarks.toString());
+					rcu.setErrorDetail((getErrorDetail("RCU0005", error)));
+					break;
+				}
 			}
 		}
 
@@ -348,7 +456,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		logger.info("Validationg the records...");
 		
 		for (RateChangeUpload rateChange : rateChangeUploadHeader.getRateChangeUpload()) {
-			StringBuilder remarks = new StringBuilder(rateChange.getRemarks());
+			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rateChange.getUploadStatusRemarks()));
 
 			String error = "BaseRate Code is not valid";
 			if (StringUtils.isNotEmpty(rateChange.getBaseRateCode())) {
@@ -358,10 +466,41 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 						remarks.append(", ");
 					}
 					remarks.append(error);
-					rateChange.setRemarks(remarks.toString());
+					rateChange.setUploadStatusRemarks(remarks.toString());
 					rateChange.setStatus("F");
 					rateChange.setErrorDetail(getErrorDetail("RCU001", error));
-					rateChange.setRemarks(remarks.toString());
+					continue;
+				}
+			}
+
+			error = "Margin Not Allowed With Out base Rate";
+			if (StringUtils.isBlank(rateChange.getBaseRateCode())
+					&& rateChange.getMargin().compareTo(BigDecimal.ZERO) != 0 && rateChange.getMargin() != null) {
+				if (remarks.length() > 0) {
+					remarks.append(", ");
+				}
+				remarks.append(error);
+				rateChange.setUploadStatusRemarks(remarks.toString());
+				rateChange.setStatus("F");
+				rateChange.setErrorDetail(getErrorDetail("RCU001", error));
+				continue;
+			}
+
+			if (StringUtils.isNotBlank(rateChange.getBaseRateCode())) {
+				error = "Interest Rate Codes not available for the Schedule date.";
+				FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(rateChange.getFinReference(),
+						"_AView", false);
+				FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+				List<BaseRate> baseRatesHist = baseRateDAO.getBaseRateHistByType(rateChange.getBaseRateCode(),
+						finMain.getFinCcy(), finMain.getFinStartDate());
+				if (baseRatesHist.isEmpty()) {
+					if (remarks.length() > 0) {
+						remarks.append(", ");
+					}
+					remarks.append(error);
+					rateChange.setUploadStatusRemarks(remarks.toString());
+					rateChange.setStatus("F");
+					rateChange.setErrorDetail(getErrorDetail("RCU001", error));
 					continue;
 				}
 			}
@@ -373,10 +512,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 					remarks.append(", ");
 				}
 				remarks.append(error);
-				rateChange.setRemarks(remarks.toString());
+				rateChange.setUploadStatusRemarks(remarks.toString());
 				rateChange.setStatus("F");
 				rateChange.setErrorDetail(getErrorDetail("RCU001", error));
-				rateChange.setRemarks(remarks.toString());
 				continue;
 
 			}
@@ -388,10 +526,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 					remarks.append(", ");
 				}
 				remarks.append(error);
-				rateChange.setRemarks(remarks.toString());
+				rateChange.setUploadStatusRemarks(remarks.toString());
 				rateChange.setStatus("F");
 				rateChange.setErrorDetail(getErrorDetail("RCU001", error));
-				rateChange.setRemarks(remarks.toString());
 				continue;
 
 			}
@@ -404,10 +541,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 					remarks.append(", ");
 				}
 				remarks.append(error);
-				rateChange.setRemarks(remarks.toString());
+				rateChange.setUploadStatusRemarks(remarks.toString());
 				rateChange.setStatus("F");
 				rateChange.setErrorDetail(getErrorDetail("RCU001", error));
-				rateChange.setRemarks(remarks.toString());
 				continue;
 
 			}
@@ -439,7 +575,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			}
 
 			if (remarks.length() > 0) {
-				rateChange.setRemarks(remarks.toString());
+				rateChange.setUploadStatusRemarks(remarks.toString());
 				rateChange.setStatus("F");
 			}
 		}
@@ -459,6 +595,10 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
+	}
+
+	public static void setBaseRateDAO(BaseRateDAO baseRateDAO) {
+		RateChangeUploadProcess.baseRateDAO = baseRateDAO;
 	}
 
 }

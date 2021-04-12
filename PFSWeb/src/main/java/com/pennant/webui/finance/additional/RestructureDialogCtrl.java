@@ -427,8 +427,10 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (getFinScheduleData().getRestructureDetail() != null) {
 			rstDetail = getFinScheduleData().getRestructureDetail();
+			rstDetail.setNewRecord(financeMain.isNewRecord());
 		} else {
 			rstDetail = new RestructureDetail();
+			rstDetail.setNewRecord(true);
 		}
 
 		getFinScheduleData().setFinPftDeatil(fpd);

@@ -97,7 +97,7 @@ public interface ReceiptUploadHeaderService {
 
 	int getFinanceCountById(String reference, String string, boolean b);
 
-	boolean isFinReferenceExitsWithEntity(String reference, String string, String validatedValue);
+	boolean isFinRefExitsWithEntity(String reference, String string, String validatedValue);
 
 	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber,
 			String type);

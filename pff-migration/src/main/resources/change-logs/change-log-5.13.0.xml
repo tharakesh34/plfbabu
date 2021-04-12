@@ -3383,7 +3383,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1923.46_pre" author="sudheer.t" dbms="postgresql">
+	<changeSet id="ST#1923.46.1_pre" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_dataview');
@@ -3391,7 +3391,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1923.46" author="sudheer.t">
+	<changeSet id="ST#1923.46.1" author="sudheer.t">
 		<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true"> 
 			<![CDATA[
 				SELECT T1.FINREFERENCE,
@@ -3411,7 +3411,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#1923.46_post" author="sudheer.t" dbms="postgresql">
+	<changeSet id="ST#1923.46.1_post" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_dataview');
@@ -3419,6 +3419,174 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1923.47_pre" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.47" author="sudheer.t">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView replaceIfExists="true" viewName="FINANCEMAINTENANCE_VIEW">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT,
+					T1.GRACETERMS,
+					T1.ALLOWGRCPERIOD,
+					T1.GRCPERIODENDDATE,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.NEXTROLECODE,
+					T1.RECORDSTATUS,
+					T1.RECORDTYPE,
+					T1.ALLOWGRCPFTRVW,
+					T1.ALLOWREPAYRVW,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.RCDMAINTAINSTS,
+					T1.MIGRATEDFINANCE,
+					T1.CLOSINGSTATUS,
+					T1.REPAYRATEBASIS,
+					T1.MANUALSCHEDULE,
+					T1.FINCURRASSETVALUE,
+					T1.TAKEOVERFINANCE,
+					T1.NEXTROLLOVERDATE,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.DOWNPAYMENT,
+					T1.PLANEMIHALW,
+					T1.CALTERMS,
+					T1.RATECHGANYDAY,
+					T1.FINASSETVALUE,
+					T2.CUSTCIF LOVDESCCUSTCIF,
+					T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.FINDIVISION LOVDESCFINDIVISION,
+					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T4.PRODUCTCATEGORY,
+					COALESCE(T5.ROLEDESC,  ${ADD.SCHEMA}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+					COALESCE(T9.NOINST, 0) NOINST,
+					T1.SAMPLINGREQUIRED,
+					T1.ADVEMITERMS,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					T1.REPAYPFTFRQ,
+					T1.TOTALCPZ,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN_TEMP T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT,
+					T1.GRACETERMS,
+					T1.ALLOWGRCPERIOD,
+					T1.GRCPERIODENDDATE,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.NEXTROLECODE,
+					T1.RECORDSTATUS,
+					T1.RECORDTYPE,
+					T1.ALLOWGRCPFTRVW,
+					T1.ALLOWREPAYRVW,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.RCDMAINTAINSTS,
+					T1.MIGRATEDFINANCE,
+					T1.CLOSINGSTATUS,
+					T1.REPAYRATEBASIS,
+					T1.MANUALSCHEDULE,
+					T1.FINCURRASSETVALUE,
+					T1.TAKEOVERFINANCE,
+					T1.NEXTROLLOVERDATE,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.DOWNPAYMENT,
+					T1.PLANEMIHALW,
+					T1.CALTERMS,
+					T1.RATECHGANYDAY,
+					T1.FINASSETVALUE,
+					T2.CUSTCIF LOVDESCCUSTCIF,
+					T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.FINDIVISION LOVDESCFINDIVISION,
+					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T4.PRODUCTCATEGORY,
+					COALESCE(T5.ROLEDESC,  ${ADD.SCHEMA}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+					COALESCE(T9.NOINST, 0) NOINST,
+					T1.SAMPLINGREQUIRED,
+					T1.ADVEMITERMS,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					T1.REPAYPFTFRQ,
+					T1.TOTALCPZ,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+				WHERE NOT (EXISTS ( SELECT 1 AS EXPR1 FROM FINANCEMAIN_TEMP
+					WHERE FINANCEMAIN_TEMP.FINREFERENCE = T1.FINREFERENCE))
+		  	]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1923.47_post" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
 
 	<!-- ST#1923 write off loan and ST#1922 Restructure functionality in LMS views are handling in single place changes end -->
 	
@@ -4047,6 +4215,13 @@
     		]]>
 		</sql>
 	</changeSet>
+		
+	<changeSet id="15_pre" author="murthy.y" >
+		<preConditions onFail="MARK_RAN">
+			<indexExists indexName="IX_FM_CUST_ID" />
+		</preConditions>
+		<dropIndex indexName="IX_FM_CUST_ID" tableName="FINANCEMAIN"/>
+	</changeSet>
 
 	<changeSet id="15" author="murthy.y" dbms="postgresql">
 		<sql>
@@ -4601,6 +4776,32 @@
 		<sql>
 			<![CDATA[
 				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME IN ('menuItem_FinDeptReports_PastDue', 'menuItem_FinDeptReports_DisbursmentReport', 'menu_Item_ReceiptDetails'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1924.6" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM reportfilterfields where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_RateChangeuploadReport');
+				DELETE FROM REPORTCONFIGURATION where menuitemcode='menu_Item_RateChangeuploadReport';
+
+				INSERT INTO REPORTCONFIGURATION VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Rate Change Upload Report','Rate Change Upload Report',1,'RateChangeuploadReport','dataSource',1,'menu_Item_RateChangeuploadReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+				INSERT INTO reportfilterfields VALUES ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_RateChangeuploadReport'),1,'File Name','LOVSEARCH','File Name','t.filename','','RateChangeUploadFileStatus','getFileName','getFileName','0',0,0,0,1,1,'','','','',250,'0','>=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+			]]>
+		</sql>
+   </changeSet>
+   
+   <changeSet id="ST#1924.7" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeuploadReport') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD_REPORT');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeuploadReport';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD_REPORT';
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((Select MAX(GrpID)+1 From SecGroups), 'RATECHANGE_UPLOAD_REPORT', 'Group for Rate Change upload Report', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_RateChangeuploadReport', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RATECHANGE_UPLOAD_REPORT'), (Select RightID from SecRights where RightName = 'menu_Item_RateChangeuploadReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
 			]]>
 		</sql>
 	</changeSet>
