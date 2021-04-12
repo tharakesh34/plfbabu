@@ -1,7 +1,7 @@
 # Dockerfile
 FROM tomcat_8.5.12
 MAINTAINER  Pennant Infra-Team <itsupport@pennanttech.com>
-RUN sed -i '103i export JAVA_HOME=/opt/jdk1.8.0_121\n export PATH=$JAVA_HOME/bin:$PATH\n export PATH=$JAVA_HOME/jre/lib:$PATH\n export APP_ROOT_PATH=/opt\n export APP_ENCRYPTION_PASSWORD=mysalt123\n export PFF_HOME=/opt/PFF/BASE\n export PFF_PASSWORD=mysalt123\n export DESIGNER_HOME=/opt/PFF/BASE\n JAVA_OPTS="$JAVA_OPTS -Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseStringDeduplication" \n systemctl start filebeat' /opt/tomcat/bin/catalina.sh
+RUN sed -i '103i export JAVA_HOME=/opt/jdk1.8.0_121\n export PATH=$JAVA_HOME/bin:$PATH\n export PATH=$JAVA_HOME/jre/lib:$PATH\n export APP_ROOT_PATH=/opt\n export APP_ENCRYPTION_PASSWORD=mysalt123\n export PFF_HOME=/opt/PFF/BASE\n export PFF_PASSWORD=mysalt123\n export DESIGNER_HOME=/opt/PFF/BASE\n JAVA_OPTS="$JAVA_OPTS -Xms1024m -Xmx2048m -XX:+UseG1GC -XX:+UseStringDeduplication" \n systemctl start filebeat' /opt/tomcat/bin/catalina.sh
 EXPOSE 8080
 RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/PLF/Core/QC3/Docker-config/context.xml /opt/tomcat/conf/
 RUN sftp -rp -o StrictHostKeyChecking=no  root@sftpserver:/Pennant/PLF/Core/QC3/PFF /opt/
