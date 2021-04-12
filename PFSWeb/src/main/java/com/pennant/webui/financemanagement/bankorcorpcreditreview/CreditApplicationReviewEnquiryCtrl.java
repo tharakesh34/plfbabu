@@ -1084,8 +1084,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		map.put("finHeaderList", getFinBasicDetails());
 		map.put("financeDetail", getFinanceDetail());
 		map.put("isFinanceProcess", true);
-		map.put("ccyFormatter",
-				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+		if (onLoad) {
+			map.put("ccyFormatter",
+					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+		}
 		map.put("creditReviewDetails", creditReviewDetails);
 		map.put("creditReviewData", creditReviewData);
 		map.put("externalLiabilities", extLiabilities);

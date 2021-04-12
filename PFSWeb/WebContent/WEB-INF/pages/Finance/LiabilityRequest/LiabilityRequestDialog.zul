@@ -1269,18 +1269,7 @@
 															<checkbox id="odTDSApplicable" checked="false" />
 														</hbox>
 													</row>
-													<row id="row_AllowLoanTypes" visible="false">
-												       <label id="label_FinanceTypeDialog_AllowLoanSplit" value="${c:l('label_FinanceTypeDialog_AllowLoanSplit.value')}" />
-												       <hbox>
-													      <space spacing="2px" />
-													      <checkbox id="alwLoanSplit" checked="false" />
-												       </hbox>
-												       <label id="label_FinanceMainDialog_ParentLoanReference" value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
-													   <hbox>
-														  <space spacing="2px" />
-														  <extendedcombobox id="parentLoanReference" />
-													   </hbox>
-												   </row>
+													
 												</rows>
 											</grid>
 										</groupbox>

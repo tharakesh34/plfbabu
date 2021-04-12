@@ -178,7 +178,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listbox sortOperator_offerId; // autowired
 	protected Textbox offerId; // autowired
 	protected Listbox sortOperator_passPort;
-	protected Combobox betaReq;
 
 	// List headers
 	protected Listheader listheader_CustomerCIF; // autoWired
@@ -490,11 +489,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else {
 			fromEligibleScreen = false;
 			finEligibility = null;
-		}
-
-		if (requestSource.equals("Origination")) {
-			betaReq.setVisible(true);
-			fillComboBox(this.betaReq, "Beta", betaConfig, "");
 		}
 		logger.debug("Leaving " + event.toString());
 	}
@@ -1647,15 +1641,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setFinChangeCustomerService(FinChangeCustomerService finChangeCustomerService) {
 		this.finChangeCustomerService = finChangeCustomerService;
-	}
-
-	public void onSelect$betaReq(Event event) {
-		String betaReq = getComboboxValue(this.betaReq);
-		if (betaReq.equals("Old")) {
-			betaDialog = "";
-		} else {
-			betaDialog = "_Beta";
-		}
 	}
 
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
