@@ -361,8 +361,6 @@ public class SMTParameterConstants {
 	//	FORECLOSURE_VALIDITY_DAYS
 	//	To define number of calendar days that foreclosure letter will be valid from the date of generation.
 	public static final String FORECLOSURE_VALIDITY_DAYS = "FORECLOSURE_VALIDITY_DAYS";
-	//Create Presentment Report at EOD process
-	public static final String CREATE_PRESENTMENT_RECEIPT_EOD = "CREATE_PRESENTMENT_RECEIPT_EOD";
 	//Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static final String CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER";
 	public static final String EOD_INTERVAL_TIME = "EOD_INTERVAL_TIME";

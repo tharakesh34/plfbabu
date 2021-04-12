@@ -250,7 +250,6 @@ public class ImplementationConstants {
 		DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL = getValueAsBoolean(extensions, "DISB_REVERSAL_REQ_IN_LOAN_CANCEL", false);
 		UPDATE_METADATA_IN_DMS = getValueAsBoolean(extensions, "UPDATE_METADATA_IN_DMS", false);
 		CHEQUENO_MANDATORY_DISB_INS = getValueAsBoolean(extensions, "CHEQUENO_MANDATORY_DISB_INS", false);
-		CREATE_PRESENTMENT_RECEIPT_EOD = getValueAsBoolean(extensions, "CREATE_PRESENTMENT_RECEIPT_EOD", true);
 		ALW_QDP_CUSTOMIZATION = getValueAsBoolean(extensions, "ALW_QDP_CUSTOMIZATION", false);
 		ALLOW_OLDEST_DUE = getValueAsBoolean(extensions, "ALLOW_OLDEST_DUE", false);
 		CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = getValueAsBoolean(extensions, "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER",
@@ -276,6 +275,7 @@ public class ImplementationConstants {
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true);
 		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
+		PRESEMENT_STOP_RECEIPTS_ON_EOD = getValueAsBoolean(extensions, "PRESEMENT_STOP_RECEIPTS_ON_EOD", false);
 
 	}
 
@@ -503,15 +503,13 @@ public class ImplementationConstants {
 	public static boolean UPDATE_METADATA_IN_DMS;
 	public static boolean CHEQUENO_MANDATORY_DISB_INS;
 	public static boolean ALW_QDP_CUSTOMIZATION;
-	//Create Presentment Receipt in EOD Process
-	public static boolean CREATE_PRESENTMENT_RECEIPT_EOD;
 	//Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static boolean CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER;
 	public static boolean BRANCHWISE_RCU_INITIATION;
 	public static boolean ALLOW_NON_LAN_RECEIPTS;
 	public static boolean ALLOW_BUILDER_BENEFICIARY_DETAILS;
-
 	public static boolean COVENANT_ADTNL_REMARKS;
+	public static boolean PRESEMENT_STOP_RECEIPTS_ON_EOD;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

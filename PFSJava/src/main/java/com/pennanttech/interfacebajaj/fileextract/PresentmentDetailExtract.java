@@ -650,7 +650,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						}
 
 						boolean processReceipt = false;
-						if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)) {
+						if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD) {
 							processReceipt = processInactiveLoan(presentmentRef);
 						} else {
 							processReceipt = processPresentmentReceipt(presentmentRef);

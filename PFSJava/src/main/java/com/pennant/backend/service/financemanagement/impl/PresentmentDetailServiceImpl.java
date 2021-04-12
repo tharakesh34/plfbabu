@@ -57,6 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
@@ -98,7 +99,6 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -499,7 +499,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 						processAdvaceEMI(detail, false);
 						idExcludeEmiList.add(detailID);
 					} else {
-						if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)
+						if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD
 								&& detail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 							processReceipts(detail, false);
 						}
@@ -839,7 +839,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
 		header.setReference(presentmentDetail.getFinReference());
 		header.setPresentmentSchDate(presentmentDetail.getSchDate());
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)) {
+		if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD) {
 			header.setReceiptDate(presentmentDetail.getSchDate());
 		} else {
 			header.setReceiptDate(SysParamUtil.getAppDate());
@@ -881,7 +881,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
 			receiptDetail.setDueAmount(presentmentDetail.getPresentmentAmt());
 			receiptDetail.setValueDate(presentmentDetail.getSchDate());
-			if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)) {
+			if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD) {
 				receiptDetail.setValueDate(presentmentDetail.getSchDate());
 			} else if (StringUtils.equals(presentmentDetail.getPresentmentType(),
 					PennantConstants.PROCESS_REPRESENTMENT)) {

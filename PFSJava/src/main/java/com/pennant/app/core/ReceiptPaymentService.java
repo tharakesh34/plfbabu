@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
@@ -30,7 +31,6 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReceiptPaymentService extends ServiceHelper {
@@ -204,8 +204,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			processAdvanceEMi(pd, finEODEvent, customer, businessDate, noReserve);
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CREATE_PRESENTMENT_RECEIPT_EOD)
-				&& presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD && presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
