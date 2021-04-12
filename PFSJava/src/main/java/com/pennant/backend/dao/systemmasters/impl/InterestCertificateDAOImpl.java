@@ -65,7 +65,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
@@ -376,13 +375,13 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 	public FinanceScheduleDetail getScheduleDetailsByFinReference(String finReference, Date finStartDate,
 			Date finEndDate) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" sum(ProfitSchd) ProfitSchd, sum(PrincipalSchd) PrincipalSchd");
-		sql.append(", sum(PartialPaidAmt) PartialPaidAmt, sum(SchdPftPaid) SchdPftPaid");
-		sql.append(", sum(SchdPriPaid) SchdPriPaid");
+		sql.append(" coalesce(sum(ProfitSchd), 0) ProfitSchd, coalesce(sum(PrincipalSchd), 0) PrincipalSchd");
+		sql.append(", coalesce(sum(PartialPaidAmt), 0) PartialPaidAmt, coalesce(sum(SchdPftPaid), 0) SchdPftPaid");
+		sql.append(", coalesce(sum(SchdPriPaid), 0) SchdPriPaid");
 		sql.append(" From finscheduledetails");
 		sql.append(" Where FinReference = ? and schdate >= ? and schdate <= ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(),
