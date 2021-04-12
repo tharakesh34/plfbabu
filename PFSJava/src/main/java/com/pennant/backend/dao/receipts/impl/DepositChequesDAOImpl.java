@@ -233,7 +233,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, FavourNumber, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
+				" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, TransactionRef, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
 		sql.append(" FROM FinReceiptHeader_DView");
 		sql.append(" WHERE DepositBranch = :DepositBranch");
 
