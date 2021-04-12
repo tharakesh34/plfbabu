@@ -5128,6 +5128,33 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return fm.getRcdMaintainSts();
 	}
 
+	@Override 
+	public FinanceMain getRcdMaintenanceByRef(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RcdMaintainSts, MaturityDate");
+		sql.append(" from FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					(rs, i) -> {
+							FinanceMain fm = new FinanceMain();
+
+							fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+
+							return fm;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not found in FinanceMain{} for the specified finreference >> {}", type,
+					finReference);
+		}
+		return null;
+	}
+	
 	@Override
 	public void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize) {
 		logger.debug(Literal.ENTERING);

@@ -11311,6 +11311,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceMainDAO().getFinanceMainByRcdMaintenance(reference, type);
 	}
 
+	@Override 
+	public FinanceMain getRcdMaintenanceByRef(String reference, String type) {
+		return financeMainDAO.getRcdMaintenanceByRef(reference, type);
+	}
+
 	@Override
 	public List<FinanceDisbursement> getFinanceDisbursements(String finReferecne, String type, boolean isWIF) {
 		List<FinanceDisbursement> fdd = financeDisbursementDAO.getFinanceDisbursementDetails(finReferecne, type, isWIF);

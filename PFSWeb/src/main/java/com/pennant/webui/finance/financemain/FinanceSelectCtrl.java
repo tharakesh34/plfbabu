@@ -1202,8 +1202,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING)) {
 			whereClause.append(" AND FinAssetvalue > FinCurrAssetValue ");
 		} else if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
-			whereClause.append(
-					" AND RcdMaintainSts = 'Restructure' AND FinIsActive = 1 AND  MaturityDate > '" + appDate + "'");
+			whereClause.append(" AND RcdMaintainSts = 'Restructure' AND FinIsActive = 1 ");
 		}
 
 		// Written Off Finance Reference Details Condition

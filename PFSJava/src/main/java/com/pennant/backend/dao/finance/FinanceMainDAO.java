@@ -373,6 +373,8 @@ public interface FinanceMainDAO {
 
 	String getFinanceMainByRcdMaintenance(String finReference, String type);
 
+	FinanceMain getRcdMaintenanceByRef(String finReference, String type);
+
 	void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize);
 
 	// Income Amortization

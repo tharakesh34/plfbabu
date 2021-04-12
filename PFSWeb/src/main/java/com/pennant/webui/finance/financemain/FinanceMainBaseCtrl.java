@@ -7574,7 +7574,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isNotBlank(moduleDefiner)) {
 			List<FinServiceInstruction> finServiceInstructions = null;
 
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)
+					|| FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)) {
 				finServiceInstructions = getFinanceDetail().getFinScheduleData().getFinServiceInstructions();
 
 				if (CollectionUtils.isEmpty(finServiceInstructions)) {

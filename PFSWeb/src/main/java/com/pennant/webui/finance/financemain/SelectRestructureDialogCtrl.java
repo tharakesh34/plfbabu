@@ -42,6 +42,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,6 +62,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -75,6 +77,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -231,22 +234,30 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMaintainSts = financeDetailService
-				.getFinanceMainByRcdMaintenance(this.finReference.getValidatedValue(), "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
-			return;
-		}
-
-		// Set Workflow Details
+		// Validate Workflow Details
 		setWorkflowDetails(finMain.getFinType(), StringUtils.isNotEmpty(finMain.getLovDescFinProduct()));
 		if (workFlowDetails == null) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			return;
 		}
 
-		// validation for not allowing Restructure when presentation is in progress.
+		// Validate Loan is MATURED or INPROGRESS in any Other Servicing option or NOT ?
+		FinanceMain financeMain = financeDetailService.getRcdMaintenanceByRef(this.finReference.getValidatedValue(), "_View");
+		String rcdMaintainSts = financeMain.getRcdMaintainSts();
+		Date maturityDate = financeMain.getMaturityDate();
+		Date appDate = SysParamUtil.getAppDate();
+
+		if (DateUtil.compare(maturityDate, appDate) < 0) {
+			MessageUtil.showError(PennantJavaUtil.getLabel("Finance_Matured_Restructure"));
+			return;
+		}
+
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			MessageUtil.showError(PennantJavaUtil.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+			return;
+		}
+
+		// Validation for not allowing Restructure when Presentment/Receipt's are in process.
 		boolean isPending = receiptService.isReceiptsPending(this.finReference.getValidatedValue(), Long.MIN_VALUE);
 		if (isPending) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
@@ -257,6 +268,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isEmpty(userRole)) {
 			userRole = workFlowDetails.getFirstTaskOwner();
 		}
+
+		// Getting FinanceDetail Data
 		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finMain.getId(), eventCode, null,
 				userRole);
 		financeDetail.setModuleDefiner(moduleDefiner);
@@ -273,7 +286,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeDetail.getFinScheduleData().setFinanceMain(fm);
 
 		// Role Code State Checking
-		String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
+		String nextroleCode = fm.getNextRoleCode();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
@@ -290,9 +303,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		String maintainSts = "";
-		if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
-			maintainSts = StringUtils
-					.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+		if (fm != null) {
+			maintainSts = StringUtils.trimToEmpty(fm.getRcdMaintainSts());
 		}
 
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
