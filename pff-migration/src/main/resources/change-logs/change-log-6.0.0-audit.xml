@@ -38,15 +38,45 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
-	<changeSet id="1" author="saiDurga.v">
+
+	<changeSet id="1.1" author="saiDurga.v">
 		<addColumn tableName="adtcustomers">
 			<column name="OtherCaste" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="1.2" author="saiDurga.v">
+		<addColumn tableName="adtcustomers">
 			<column name="OtherReligion" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+ 
+	<changeSet id="1.3" author="saiDurga.v">
+		<addColumn tableName="adtcustomers">
 			<column name="NatureOfBusiness" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="1.4" author="saiDurga.v">
+		<addColumn tableName="adtcustomers">
 			<column name="EntityType" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="1.5" author="saiDurga.v">
+		<addColumn tableName="adtcustomers">
 			<column name="CustResidentialSts" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="1.6" author="saiDurga.v">
+		<addColumn tableName="adtcustomers">
 			<column name="Qualification" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="1.7" author="saiDurga.v">
+		<addColumn tableName="adtcustomers">
 			<column name="CustFlag" type="varchar(6)" />
 		</addColumn>
 	</changeSet>
@@ -2874,7 +2904,7 @@
 	
 	<changeSet id="320" author="rajesh.n">
 		<addColumn tableName="adtfinancemain">
-			<column name="allowSubvention" type="boolean" defaultValue="0" />
+			<column name="allowSubvention" type="boolean" />
 		</addColumn>
 	</changeSet>
 	
