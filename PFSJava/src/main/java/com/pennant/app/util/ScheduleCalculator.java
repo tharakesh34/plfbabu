@@ -9031,6 +9031,8 @@ public class ScheduleCalculator {
 		LowerTaxDeduction ltd = null;
 
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+		String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 
 		/*
 		 * int recalIdx = finMain.getRecalIdx(); if (recalIdx < 0) { finScheduleData = setRecalIndex(finScheduleData);
@@ -9061,8 +9063,7 @@ public class ScheduleCalculator {
 					if (ltd != null) {
 						tdsAmount = (curSchd.getProfitSchd().multiply(ltd.getPercentage())).divide(new BigDecimal(100),
 								0, RoundingMode.HALF_DOWN);
-						tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
-								finMain.getRoundingTarget());
+						tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
 						if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) > 0
 								&& ltd.getLimitAmt().compareTo(ltdLimitByRcd.add(tdsAmount)) >= 0) {
 							taxOnSysPerc = false;
@@ -9077,8 +9078,7 @@ public class ScheduleCalculator {
 				if (taxOnSysPerc) {
 					BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
 							RoundingMode.HALF_DOWN);
-					tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
-							finMain.getRoundingTarget());
+					tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
 					curSchd.setTDSAmount(tdsAmount);
 				}
 			}

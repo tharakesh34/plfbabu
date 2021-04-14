@@ -25,8 +25,6 @@
 
 package com.pennant.backend.dao.smtmasters.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -69,51 +67,46 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 */
 	@Override
 	public PFSParameter getPFSParameterById(final String id, String type) {
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength");
 		sql.append(", SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntOn");
 		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId");
-		sql.append(" from SMTparameters");
+		sql.append(" From SMTParameters");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where SysParmCode = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<PFSParameter>() {
-						@Override
-						public PFSParameter mapRow(ResultSet rs, int rowNum) throws SQLException {
-							PFSParameter smtp = new PFSParameter();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, i) -> {
+				PFSParameter smtp = new PFSParameter();
 
-							smtp.setSysParmCode(rs.getString("SysParmCode"));
-							smtp.setSysParmDesc(rs.getString("SysParmDesc"));
-							smtp.setSysParmType(rs.getString("SysParmType"));
-							smtp.setSysParmMaint(rs.getBoolean("SysParmMaint"));
-							smtp.setSysParmValue(rs.getString("SysParmValue"));
-							smtp.setSysParmLength(rs.getInt("SysParmLength"));
-							smtp.setSysParmDec(rs.getInt("SysParmDec"));
-							smtp.setSysParmList(rs.getString("SysParmList"));
-							smtp.setSysParmValdMod(rs.getString("SysParmValdMod"));
-							smtp.setSysParmDescription(rs.getString("SysParmDescription"));
-							smtp.setVersion(rs.getInt("Version"));
-							smtp.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							smtp.setLastMntBy(rs.getLong("LastMntBy"));
-							smtp.setRecordStatus(rs.getString("RecordStatus"));
-							smtp.setRoleCode(rs.getString("RoleCode"));
-							smtp.setNextRoleCode(rs.getString("NextRoleCode"));
-							smtp.setTaskId(rs.getString("TaskId"));
-							smtp.setNextTaskId(rs.getString("NextTaskId"));
-							smtp.setRecordType(rs.getString("RecordType"));
-							smtp.setWorkflowId(rs.getLong("WorkflowId"));
+				smtp.setSysParmCode(rs.getString("SysParmCode"));
+				smtp.setSysParmDesc(rs.getString("SysParmDesc"));
+				smtp.setSysParmType(rs.getString("SysParmType"));
+				smtp.setSysParmMaint(rs.getBoolean("SysParmMaint"));
+				smtp.setSysParmValue(rs.getString("SysParmValue"));
+				smtp.setSysParmLength(rs.getInt("SysParmLength"));
+				smtp.setSysParmDec(rs.getInt("SysParmDec"));
+				smtp.setSysParmList(rs.getString("SysParmList"));
+				smtp.setSysParmValdMod(rs.getString("SysParmValdMod"));
+				smtp.setSysParmDescription(rs.getString("SysParmDescription"));
+				smtp.setVersion(rs.getInt("Version"));
+				smtp.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				smtp.setLastMntBy(rs.getLong("LastMntBy"));
+				smtp.setRecordStatus(rs.getString("RecordStatus"));
+				smtp.setRoleCode(rs.getString("RoleCode"));
+				smtp.setNextRoleCode(rs.getString("NextRoleCode"));
+				smtp.setTaskId(rs.getString("TaskId"));
+				smtp.setNextTaskId(rs.getString("NextTaskId"));
+				smtp.setRecordType(rs.getString("RecordType"));
+				smtp.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return smtp;
-						}
-					});
+				return smtp;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in SMTParameters{} for the specified SysParmCode >> {}", type, id);
 		}
 
 		return null;

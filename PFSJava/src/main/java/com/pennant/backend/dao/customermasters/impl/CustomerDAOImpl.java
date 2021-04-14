@@ -792,33 +792,27 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	public Customer checkCustomerByCIF(String cif, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustCIF");
-		sql.append(" from Customers");
+		sql.append(" From Customers");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CustCIF = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cif }, new RowMapper<Customer>() {
-				@Override
-				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Customer c = new Customer();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cif }, (rs, i) -> {
+				Customer c = new Customer();
 
-					c.setCustID(rs.getLong("CustID"));
-					c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustID(rs.getLong("CustID"));
+				c.setCustCIF(rs.getString("CustCIF"));
 
-					return c;
-				}
+				return c;
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in Customers{} for the specified CustCIF >> {}", type, cif);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

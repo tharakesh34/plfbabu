@@ -1,7 +1,6 @@
 package com.pennant.backend.dao.limit.impl;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -154,8 +153,6 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 */
 	@Override
 	public LimitHeader getLimitHeaderByCustomerGroupCode(final long groupCode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" HeaderId, CustomerGroup, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate");
 		sql.append(", LimitStructureCode, LimitSetupRemarks, Active, Rebuild, ValidateMaturityDate");
@@ -166,60 +163,55 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 			sql.append(", CustMName, CustFullName, CustGrpCode, GroupName, CustGrpRO1");
 		}
 
-		sql.append(" from LimitHeader");
+		sql.append(" From LimitHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where CustomerGroup = ?");
+		sql.append(" Where CustomerGroup = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { groupCode },
-					new RowMapper<LimitHeader>() {
-						@Override
-						public LimitHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
-							LimitHeader lh = new LimitHeader();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { groupCode }, (rs, i) -> {
+				LimitHeader lh = new LimitHeader();
 
-							lh.setHeaderId(rs.getLong("HeaderId"));
-							lh.setCustomerGroup(rs.getLong("CustomerGroup"));
-							lh.setResponsibleBranch(rs.getString("ResponsibleBranch"));
-							lh.setLimitCcy(rs.getString("LimitCcy"));
-							lh.setLimitExpiryDate(rs.getTimestamp("LimitExpiryDate"));
-							lh.setLimitRvwDate(rs.getTimestamp("LimitRvwDate"));
-							lh.setLimitStructureCode(rs.getString("LimitStructureCode"));
-							lh.setLimitSetupRemarks(rs.getString("LimitSetupRemarks"));
-							lh.setActive(rs.getBoolean("Active"));
-							lh.setRebuild(rs.getBoolean("Rebuild"));
-							lh.setValidateMaturityDate(rs.getBoolean("ValidateMaturityDate"));
-							lh.setRecordStatus(rs.getString("RecordStatus"));
-							lh.setRoleCode(rs.getString("RoleCode"));
-							lh.setNextRoleCode(rs.getString("NextRoleCode"));
-							lh.setTaskId(rs.getString("TaskId"));
-							lh.setNextTaskId(rs.getString("NextTaskId"));
-							lh.setRecordType(rs.getString("RecordType"));
-							lh.setWorkflowId(rs.getLong("WorkflowId"));
+				lh.setHeaderId(rs.getLong("HeaderId"));
+				lh.setCustomerGroup(rs.getLong("CustomerGroup"));
+				lh.setResponsibleBranch(rs.getString("ResponsibleBranch"));
+				lh.setLimitCcy(rs.getString("LimitCcy"));
+				lh.setLimitExpiryDate(rs.getTimestamp("LimitExpiryDate"));
+				lh.setLimitRvwDate(rs.getTimestamp("LimitRvwDate"));
+				lh.setLimitStructureCode(rs.getString("LimitStructureCode"));
+				lh.setLimitSetupRemarks(rs.getString("LimitSetupRemarks"));
+				lh.setActive(rs.getBoolean("Active"));
+				lh.setRebuild(rs.getBoolean("Rebuild"));
+				lh.setValidateMaturityDate(rs.getBoolean("ValidateMaturityDate"));
+				lh.setRecordStatus(rs.getString("RecordStatus"));
+				lh.setRoleCode(rs.getString("RoleCode"));
+				lh.setNextRoleCode(rs.getString("NextRoleCode"));
+				lh.setTaskId(rs.getString("TaskId"));
+				lh.setNextTaskId(rs.getString("NextTaskId"));
+				lh.setRecordType(rs.getString("RecordType"));
+				lh.setWorkflowId(rs.getLong("WorkflowId"));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								lh.setShowLimitsIn(rs.getString("ShowLimitsIn"));
-								lh.setQueryDesc(rs.getString("QueryDesc"));
-								lh.setResponsibleBranchName(rs.getString("ResponsibleBranchName"));
-								lh.setStructureName(rs.getString("StructureName"));
-								lh.setCustCIF(rs.getString("CustCIF"));
-								lh.setCustFName(rs.getString("CustFName"));
-								lh.setCustMName(rs.getString("CustMName"));
-								lh.setCustFullName(rs.getString("CustFullName"));
-								lh.setCustGrpCode(rs.getString("CustGrpCode"));
-								lh.setGroupName(rs.getString("GroupName"));
-								//lh.setCustGrpRO1(rs.getString("CustGrpRO1"));
-							}
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					lh.setShowLimitsIn(rs.getString("ShowLimitsIn"));
+					lh.setQueryDesc(rs.getString("QueryDesc"));
+					lh.setResponsibleBranchName(rs.getString("ResponsibleBranchName"));
+					lh.setStructureName(rs.getString("StructureName"));
+					lh.setCustCIF(rs.getString("CustCIF"));
+					lh.setCustFName(rs.getString("CustFName"));
+					lh.setCustMName(rs.getString("CustMName"));
+					lh.setCustFullName(rs.getString("CustFullName"));
+					lh.setCustGrpCode(rs.getString("CustGrpCode"));
+					lh.setGroupName(rs.getString("GroupName"));
+					// lh.setCustGrpRO1(rs.getString("CustGrpRO1"));
+				}
 
-							return lh;
-						}
-					});
+				return lh;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in LimitHeader{} for the specified CustomerGroup >> {}", type, groupCode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

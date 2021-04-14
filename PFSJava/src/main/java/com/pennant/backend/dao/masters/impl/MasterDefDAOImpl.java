@@ -81,27 +81,24 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 	 */
 	@Override
 	public String getMasterCode(String masterType, String keyType) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Key_Code");
+		sql.append(" From Master_Def");
+		sql.append(" Where Master_Type = ? and Key_type = ?");
 
-		MasterDef masterDef = new MasterDef();
-		masterDef.setMasterType(masterType);
-		masterDef.setKeyType(keyType);
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder("Select Key_Code ");
-		selectSql.append(" From Master_Def");
-		selectSql.append(" Where Master_Type =:MasterType and Key_type=:KeyType ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
-		logger.debug("Leaving");
-		String keyCode = "";
 		try {
-			keyCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			return "";
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { masterType, keyType }, (rs, i) -> {
+				return rs.getString(1);
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(
+					"Record is not found in Master_Def table for the specified Master_Type >> {} and Key_type >> {}",
+					masterType, keyType);
 		}
-		return keyCode;
+
+		return "";
 	}
 
 	/**

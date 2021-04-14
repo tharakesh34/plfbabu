@@ -26,31 +26,45 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 
 	@Override
 	public FinOCRHeader getFinOCRHeaderByRef(String reference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType, TotalDemand,");
-		sql.append("FinReference");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderID, OcrID, OcrDescription, CustomerPortion, OcrType");
+		sql.append(", TotalDemand, FinReference");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinOCRHeader");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference= :FinReference");
+		sql.append(" Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		FinOCRHeader finOCRHeader = new FinOCRHeader();
-		finOCRHeader.setFinReference(reference);
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRHeader);
-		RowMapper<FinOCRHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOCRHeader.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference }, (rs, i) -> {
+				FinOCRHeader ocrh = new FinOCRHeader();
+
+				ocrh.setHeaderID(rs.getLong("HeaderID"));
+				ocrh.setOcrID(rs.getString("OcrID"));
+				ocrh.setOcrDescription(rs.getString("OcrDescription"));
+				ocrh.setCustomerPortion(rs.getBigDecimal("CustomerPortion"));
+				ocrh.setOcrType(rs.getString("OcrType"));
+				ocrh.setTotalDemand(rs.getBigDecimal("TotalDemand"));
+				ocrh.setFinReference(rs.getString("FinReference"));
+				ocrh.setVersion(rs.getInt("Version"));
+				ocrh.setLastMntBy(rs.getLong("LastMntBy"));
+				ocrh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ocrh.setRecordStatus(rs.getString("RecordStatus"));
+				ocrh.setRoleCode(rs.getString("RoleCode"));
+				ocrh.setNextRoleCode(rs.getString("NextRoleCode"));
+				ocrh.setTaskId(rs.getString("TaskId"));
+				ocrh.setNextTaskId(rs.getString("NextTaskId"));
+				ocrh.setRecordType(rs.getString("RecordType"));
+				ocrh.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return ocrh;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in FinOCRHeader{} for the specifed FinReference >> {}", type, reference);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.collateral.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -55,7 +54,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -407,29 +405,18 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 */
 	@Override
 	public List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where DepositorId = ? and Status is null");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		CollateralSetupRowMapper rowMapper = new CollateralSetupRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, depositorId);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, depositorId);
+		}, rowMapper);
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	/**
@@ -587,7 +574,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			sql.append(", CollateralType, DepositorCif, DepositorName, CollateralTypeName");
 		}
 
-		sql.append(" from CollateralSetup");
+		sql.append(" From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}

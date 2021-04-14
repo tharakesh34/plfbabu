@@ -1,12 +1,8 @@
 package com.pennant.backend.dao.pennydrop;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -63,37 +59,30 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 
 	@Override
 	public BankAccountValidation getPennyDropStatusByAcc(String accNum, String ifsc) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ID, AcctNum, IFSC, InitiateType, Status, Reason");
 		sql.append(" from PENNY_DROP_STATUS");
 		sql.append(" Where AcctNum = ? And IFSC = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { accNum, ifsc },
-					new RowMapper<BankAccountValidation>() {
-						@Override
-						public BankAccountValidation mapRow(ResultSet rs, int rowNum) throws SQLException {
-							BankAccountValidation pds = new BankAccountValidation();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { accNum, ifsc }, (rs, i) -> {
+				BankAccountValidation pds = new BankAccountValidation();
 
-							pds.setID(rs.getLong("ID"));
-							pds.setAcctNum(rs.getString("AcctNum"));
-							pds.setiFSC(rs.getString("IFSC"));
-							pds.setInitiateType(rs.getString("InitiateType"));
-							pds.setStatus(rs.getBoolean("Status"));
-							pds.setReason(rs.getString("Reason"));
+				pds.setID(rs.getLong("ID"));
+				pds.setAcctNum(rs.getString("AcctNum"));
+				pds.setiFSC(rs.getString("IFSC"));
+				pds.setInitiateType(rs.getString("InitiateType"));
+				pds.setStatus(rs.getBoolean("Status"));
+				pds.setReason(rs.getString("Reason"));
 
-							return pds;
-						}
-					});
+				return pds;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in PENNY_DROP_STATUS  AcctNum >> {}, IFSC >> {}", accNum, ifsc);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

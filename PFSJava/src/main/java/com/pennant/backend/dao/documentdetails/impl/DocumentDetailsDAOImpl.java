@@ -379,34 +379,54 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 	@Override
 	public DocumentDetails getDocumentDetails(long id, String type) {
-		logger.debug("Entering");
-		DocumentDetails documentDetails = new DocumentDetails();
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DocId, DocModule, DocCategory, DocReceivedDate, DocReceived, DocOriginal, DocBarcode");
+		sql.append(", Remarks, Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, InstructionUID");
+		sql.append(" From DocumentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DocId = ?");
 
-		documentDetails.setId(id);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select DocId, DocModule, DocCategory, DocReceivedDate, DocReceived, DocOriginal,DocBarcode, Remarks,");
-		selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
-		selectSql.append(" From DocumentDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DocId =:DocId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, i) -> {
+				DocumentDetails dd = new DocumentDetails();
+
+				dd.setDocId(rs.getLong("DocId"));
+				dd.setDocModule(rs.getString("DocModule"));
+				dd.setDocCategory(rs.getString("DocCategory"));
+				dd.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+				dd.setDocReceived(rs.getBoolean("DocReceived"));
+				dd.setDocOriginal(rs.getBoolean("DocOriginal"));
+				dd.setDocBarcode(rs.getString("DocBarcode"));
+				dd.setRemarks(rs.getString("Remarks"));
+				dd.setDoctype(rs.getString("Doctype"));
+				dd.setDocName(rs.getString("DocName"));
+				dd.setDocRefId(rs.getLong("DocRefId"));
+				dd.setReferenceId(rs.getString("ReferenceId"));
+				dd.setFinEvent(rs.getString("FinEvent"));
+				dd.setDocUri(rs.getString("DocUri"));
+				dd.setVersion(rs.getInt("Version"));
+				dd.setLastMntBy(rs.getLong("LastMntBy"));
+				dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				dd.setRecordStatus(rs.getString("RecordStatus"));
+				dd.setRoleCode(rs.getString("RoleCode"));
+				dd.setNextRoleCode(rs.getString("NextRoleCode"));
+				dd.setTaskId(rs.getString("TaskId"));
+				dd.setNextTaskId(rs.getString("NextTaskId"));
+				dd.setRecordType(rs.getString("RecordType"));
+				dd.setWorkflowId(rs.getLong("WorkflowId"));
+				dd.setInstructionUID(rs.getLong("InstructionUID"));
+
+				return dd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			documentDetails = null;
+			logger.warn("Record is not found in DocumentDetails{} for the specified DocId >> {}", id);
 		}
 
-		logger.debug("Leaving");
-
-		return documentDetails;
+		return null;
 	}
 
 	@Override
@@ -462,34 +482,58 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 */
 	@Override
 	public DocumentDetails getDocumentDetails(String referenceId, String category, String module, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DocId, DocModule, DocCategory, Doctype, DocName, ReferenceId, FinEvent, DocPurpose");
+		sql.append(", DocUri, DocReceivedDate, DocReceived, DocOriginal, DocBarcode, Remarks, Version");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, InstructionUID, DocRefId");
+		sql.append(" From DocumentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ReferenceId = ? and DocCategory = ? and DocModule = ?");
 
-		DocumentDetails documentDetails = new DocumentDetails();
-		documentDetails.setReferenceId(referenceId);
-		documentDetails.setDocCategory(category);
-		documentDetails.setDocModule(module);
-
-		StringBuilder selectSql = new StringBuilder("Select DocId, DocModule, DocCategory, ");
-		selectSql.append(
-				" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID, DocRefId ");
-		selectSql.append(" From DocumentDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ReferenceId =:ReferenceId AND DocCategory =:DocCategory AND DocModule =:DocModule");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { referenceId, category, module },
+					(rs, i) -> {
+						DocumentDetails dd = new DocumentDetails();
+
+						dd.setDocId(rs.getLong("DocId"));
+						dd.setDocModule(rs.getString("DocModule"));
+						dd.setDocCategory(rs.getString("DocCategory"));
+						dd.setDoctype(rs.getString("Doctype"));
+						dd.setDocName(rs.getString("DocName"));
+						dd.setReferenceId(rs.getString("ReferenceId"));
+						dd.setFinEvent(rs.getString("FinEvent"));
+						dd.setDocPurpose(rs.getString("DocPurpose"));
+						dd.setDocUri(rs.getString("DocUri"));
+						dd.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+						dd.setDocReceived(rs.getBoolean("DocReceived"));
+						dd.setDocOriginal(rs.getBoolean("DocOriginal"));
+						dd.setDocBarcode(rs.getString("DocBarcode"));
+						dd.setRemarks(rs.getString("Remarks"));
+						dd.setVersion(rs.getInt("Version"));
+						dd.setLastMntBy(rs.getLong("LastMntBy"));
+						dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+						dd.setRecordStatus(rs.getString("RecordStatus"));
+						dd.setRoleCode(rs.getString("RoleCode"));
+						dd.setNextRoleCode(rs.getString("NextRoleCode"));
+						dd.setTaskId(rs.getString("TaskId"));
+						dd.setNextTaskId(rs.getString("NextTaskId"));
+						dd.setRecordType(rs.getString("RecordType"));
+						dd.setWorkflowId(rs.getLong("WorkflowId"));
+						dd.setInstructionUID(rs.getLong("InstructionUID"));
+						dd.setDocRefId(rs.getLong("DocRefId"));
+
+						return dd;
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			documentDetails = null;
+			logger.warn(
+					"Record is not found in DocumentDetails{} for the specified ReferenceId >> ? and DocCategory >> ? and DocModule >> ?",
+					type, referenceId, category, module);
 		}
-		logger.debug("Leaving");
-		return documentDetails;
+
+		return null;
 	}
 
 	@Override

@@ -46,10 +46,7 @@ package com.pennant.backend.dao.finance.impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.AdvancePaymentDetailDAO;
@@ -73,21 +70,29 @@ public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> 
 	 */
 	@Override
 	public AdvancePaymentDetail getAdvancePaymentDetailBalByRef(String finReference) {
-		StringBuilder sql = new StringBuilder("Select FinReference, SUM(AdvInt) AdvInt");
-		sql.append(", SUM(AdvIntTds) AdvIntTds, SUM(AdvEMI) AdvEMI, SUM(AdvEMITds) AdvEMITds");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, SUM(AdvInt) AdvInt, SUM(AdvIntTds) AdvIntTds");
+		sql.append(", SUM(AdvEMI) AdvEMI, SUM(AdvEMITds) AdvEMITds");
 		sql.append(" From AdvancePaymentDetails");
-		sql.append(" Where FinReference = :FinReference group by FinReference");
+		sql.append(" Where FinReference = ? Group by FinReference");
 
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("FinReference", finReference);
-
-		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<AdvancePaymentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(AdvancePaymentDetail.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, i) -> {
+				AdvancePaymentDetail apd = new AdvancePaymentDetail();
+
+				apd.setFinReference(rs.getString("FinReference"));
+				apd.setAdvInt(rs.getBigDecimal("AdvInt"));
+				apd.setAdvIntTds(rs.getBigDecimal("AdvIntTds"));
+				apd.setAdvEMI(rs.getBigDecimal("AdvEMI"));
+				apd.setAdvEMITds(rs.getBigDecimal("AdvEMITds"));
+
+				return apd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in AdvancePaymentDetails table for the specified FinReference >> {}",
+					finReference);
 		}
 		return null;
 	}
