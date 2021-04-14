@@ -340,7 +340,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.shortCode.setMaxlength(3);
 		this.email.setMaxlength(100);
 
-		this.dealerPoBox.setMaxlength(6);
+		this.dealerPoBox.setMaxlength(8);
 
 		this.zipCode.setMaxlength(50);
 		this.zipCode.setTextBoxWidth(121);
@@ -407,7 +407,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.branch.setMandatoryStyle(true);
 
 		this.iBANnumber.setMaxlength(23);
-		this.dealerPoBox.setMaxlength(6);
+		this.dealerPoBox.setMaxlength(8);
 		if (module.equals("DSA")) {
 			this.space_dealerPoBox.setSclass("");
 			this.space_Code.setClass(PennantConstants.mandateSclass);
