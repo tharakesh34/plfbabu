@@ -587,14 +587,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(
 					PennantAppUtil.formateDate(finReceiptHeader.getReceiptDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
-			
-			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finReceiptHeader.getKnockOffType())) {
-				lc = new Listcell("Auto");
-			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(finReceiptHeader.getKnockOffType())) {
-				lc = new Listcell("Manual");
-			} else {
-				lc = new Listcell("");
-			}
+
 			lc.setParent(item);
 			lc = new Listcell(
 					PennantAppUtil.formateDate(finReceiptHeader.getReceivedDate(), DateFormat.SHORT_DATE.getPattern()));
