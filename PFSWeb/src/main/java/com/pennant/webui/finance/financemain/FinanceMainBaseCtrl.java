@@ -3912,6 +3912,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 		}
 
+		doSetTdsDetails();
+
 		if (aFinanceMain.isNew()) {
 			if (financeType.isTdsApplicable() && ImplementationConstants.ALLOW_TDS_ON_FEE) {
 				this.row_odAllowTDS.setVisible(true);
