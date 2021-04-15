@@ -469,7 +469,7 @@ public class ExtendedFieldDetailsService {
 			}
 
 			// Add Common Fields
-			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
 					mapValues.put("Reference", extendedFieldRender.getReference());
@@ -1002,7 +1002,7 @@ public class ExtendedFieldDetailsService {
 			}
 
 			// Audit Details Preparation
-			HashMap<String, Object> auditMapValues = (HashMap<String, Object>) fieldRender.getMapValues();
+			Map<String, Object> auditMapValues = (Map<String, Object>) fieldRender.getMapValues();
 			auditMapValues.put("Reference", reference);
 			auditMapValues.put("SeqNo", fieldRender.getSeqNo());
 			auditMapValues.put("Version", fieldRender.getVersion());
