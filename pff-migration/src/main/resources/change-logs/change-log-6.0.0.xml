@@ -32241,5 +32241,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="171309.1" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BFSD_ORIGINATION_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerDocumentDialog_btnUploadDoc'), 1, 1, 10000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CUSTOMERDOCUMENT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerDocumentDialog_btnUploadDoc'), 1, 1, 10000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
