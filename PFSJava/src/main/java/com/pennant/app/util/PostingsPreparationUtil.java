@@ -674,6 +674,11 @@ public class PostingsPreparationUtil implements Serializable {
 
 		List<ReturnDataSet> returnDataSets = postingsDAO.getPostingsByPostRef(postRef);
 
+		if (returnDataSets.isEmpty()) {
+			logger.debug(Literal.LEAVING);
+			return returnDataSets;
+		}
+
 		engineExecution.getReversePostings(returnDataSets, newLinkedTranID, postingId);
 
 		logger.debug(Literal.LEAVING);
