@@ -60,6 +60,7 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -122,7 +123,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				e.setRecordType(rs.getString("RecordType"));
 				e.setWorkflowId(rs.getLong("WorkflowId"));
 				e.setcINNumber(rs.getString("CINNumber"));
-				e.setPinCodeId(rs.getLong("PinCodeId"));
+				e.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					e.setCountryName(rs.getString("CountryName"));

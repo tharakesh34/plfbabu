@@ -2970,7 +2970,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("UploadHeader",
 				new ModuleMapping("UploadHeader", UploadHeader.class,
-						new String[] { "uploadheader", "UPLOADHEADER_AVIEW" }, WF_EXPENSEUPLOAD,
+						new String[] { "uploadheader", "UPLOADHEADER_AVIEW" }, masterWF,
 						new String[] { "UploadId", "FileName" }, null, 600));
 
 		ModuleUtil.register("LoanTypeExpenseUpload",

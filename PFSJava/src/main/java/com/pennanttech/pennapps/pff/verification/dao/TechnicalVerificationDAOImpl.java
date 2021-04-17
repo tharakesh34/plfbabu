@@ -382,7 +382,6 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 
 	@Override
 	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column) {
-
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select T.").append(column).append(" from (select T1.");
 		sql.append(column).append(", T1.reference from collateral_");
@@ -406,6 +405,10 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		try {
 			return jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not found in Collateral{}_ed main and tables for the specified Reference >> {}",
+					subModuleName, collRef);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return new HashMap<>();

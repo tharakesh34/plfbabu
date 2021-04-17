@@ -140,8 +140,8 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	 */
 	@Override
 	public InterfaceMapping getInterfaceMappingById(long id) {
-		InterfaceMapping interfaceMapping = getInterfaceMappingDAO().getInterfaceMappingById(id, "_View");
-
+		InterfaceMapping interfaceMapping = interfaceMappingDAO.getInterfaceMappingById(id, "_View");
+		interfaceMapping.setMasterMappingList(new ArrayList<>());
 		/*
 		 * if (interfaceMapping != null && StringUtils.equalsIgnoreCase(interfaceMapping.getMappingType(),
 		 * CollectionConstants.INTERFACEMAPPING_MASTER)) {

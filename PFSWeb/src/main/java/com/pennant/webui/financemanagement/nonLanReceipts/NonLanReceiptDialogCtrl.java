@@ -1064,7 +1064,9 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (!recReject) {
 
 				FinReceiptData data = receiptData;
-				List<FinReceiptDetail> receiptDetails = data.getReceiptHeader().getReceiptDetails();
+
+				FinReceiptHeader rch = data.getReceiptHeader();
+				List<FinReceiptDetail> receiptDetails = rch.getReceiptDetails();
 
 				FinReceiptDetail receiptDetail = new FinReceiptDetail();
 				receiptDetail.setAmount(PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(),
@@ -1113,6 +1115,9 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				} else {
 					receiptData.getReceiptHeader().setTransactionRef(this.transactionRef.getValue());
 				}
+
+				receiptData.getReceiptHeader().setValueDate(this.valueDate.getValue());
+				receiptData.getReceiptHeader().setPartnerBankId(receiptDetail.getFundingAc());
 
 				receiptDetails.clear();
 				receiptDetails.add(receiptDetail);

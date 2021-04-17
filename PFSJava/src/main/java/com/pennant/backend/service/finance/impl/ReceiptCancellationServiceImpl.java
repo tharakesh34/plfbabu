@@ -3300,7 +3300,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		aAuditHeader.setAuditDetails(tempAuditDetailList);
 		aAuditHeader.setAuditModule("Receipt");
-		getAuditHeaderDAO().addAudit(aAuditHeader);
+		auditHeaderDAO.addAudit(aAuditHeader);
 
 		if (orgReceiptData.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			tranType = PennantConstants.TRAN_ADD;
@@ -3332,7 +3332,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("Receipt");
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;

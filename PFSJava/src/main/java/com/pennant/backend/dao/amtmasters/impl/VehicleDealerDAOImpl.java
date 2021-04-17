@@ -67,6 +67,7 @@ import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -188,7 +189,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 					vd.setWorkflowId(rs.getLong("WorkflowId"));
 					vd.setSellerType(rs.getString("SellerType"));
 					vd.setBranchCode(rs.getString("BranchCode"));
-					vd.setPinCodeId(rs.getLong("PinCodeId"));
+					vd.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						vd.setLovDescCountry(rs.getString("LovDescCountry"));
@@ -307,7 +308,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 							vd.setWorkflowId(rs.getLong("WorkflowId"));
 							vd.setSellerType(rs.getString("SellerType"));
 							vd.setBranchCode(rs.getString("BranchCode"));
-							vd.setPinCodeId(rs.getLong("PinCodeId"));
+							vd.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 							if (StringUtils.trimToEmpty(type).contains("View")) {
 								vd.setLovDescCountry(rs.getString("LovDescCountry"));
@@ -747,7 +748,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		try {
 			vehicleDealer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug(Literal.EXCEPTION,e);
+			logger.debug(Literal.EXCEPTION, e);
 			vehicleDealer = null;
 		}
 		logger.debug(Literal.LEAVING);

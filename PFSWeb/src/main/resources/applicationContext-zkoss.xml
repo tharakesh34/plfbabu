@@ -4801,6 +4801,10 @@
 
 	<bean id="fiInitiationListCtrl" class="com.pennant.webui.verification.fieldinvestigation.FIInitiationListCtrl"
 		parent="basisListCtrl" scope="prototype" />
+		
+	<bean id="fieldVerificationDialogCtrl" class="com.pennanttech.webui.verification.FieldVerificationDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 
 	<!--============ Technical Verification Module ============== -->
 	<bean id="technicalVerificationListCtrl" class="com.pennant.webui.verification.tv.TechnicalVerificationListCtrl"

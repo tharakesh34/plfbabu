@@ -308,7 +308,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (!collateralCOP.containsKey(collRef.concat(DOCVALUE))) {
 				Map<String, Object> valAmounts = new HashMap<>();
 				if (StringUtils.isNotEmpty(veri.getCollateralType())) {
-					valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef, veri.getCollateralType(), DOCVALUE);
+					valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef, veri.getCollateralType(),
+							TOTALVALUATIONASPE);
 				}
 				if (!valAmounts.isEmpty()) {
 					if (valAmounts.get(DOCVALUE) != null) {
