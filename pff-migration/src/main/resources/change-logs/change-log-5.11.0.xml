@@ -8001,7 +8001,7 @@
 	</createView>
 	</changeSet>
 
-	<changeSet id="DE#58.1" author="DurgaPrasad G">
+	<!-- <changeSet id="DE#58.1" author="DurgaPrasad G">
 		<sql>
 		<![CDATA[
 		
@@ -8022,12 +8022,12 @@
 		    and FieldName In ('From Date','Date');
 		    
 		    Insert into reportfilterfields values((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport'),3,'From Date','DATERANGE',
-		    'From Date','T1.MONTHENDDATE','','---Select----','','',0,0,0,0,3,0,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+		    'From Date','T1.MONTHENDDATE','','Select','','',0,0,0,0,3,0,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
 		    
 		    Insert into reportfilterfields values((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport'),3,'From Date','DATERANGE',
-		    'From Date','T1.MONTHENDDATE','','---Select----','','',0,0,0,0,3,0,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+		    'From Date','T1.MONTHENDDATE','','Select','','',0,0,0,0,3,0,'','','','',150,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
 		]]>
 		</sql>
 	</changeSet>
-
+ -->
 </databaseChangeLog>
