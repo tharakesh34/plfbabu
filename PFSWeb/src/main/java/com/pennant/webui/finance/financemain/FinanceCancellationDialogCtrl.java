@@ -678,7 +678,14 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		try {
 			ArrayList<ReasonDetails> reasonList = new ArrayList<>();
-			for (String reasonId : this.reasons.getValue().split(",")) {
+			String reasonCode = this.reasons.getValue();
+
+			if (reasonCode == null || "".equals(reasonCode) || reasonCode.isEmpty()) {
+				throw new WrongValueException(this.reasons, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_FinanceMainDialog_CancelReason.value") }));
+			}
+
+			for (String reasonId : reasonCode.split(",")) {
 				ReasonDetails reasonDetails = new ReasonDetails();
 				reasonDetails.setReasonId(Long.valueOf(reasonId));
 				reasonList.add(reasonDetails);
@@ -774,12 +781,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				this.noOfTermsRow.setVisible(false);
 			}
 
+			readOnlyComponent(true, this.reasons);
 			if (this.recordStatus.getValue().equals("Submitted")) {
-				readOnlyComponent(true, this.reasons);
 				readOnlyComponent(true, this.btnReasons);
 				readOnlyComponent(true, this.cancelRemarks);
 			} else {
-				readOnlyComponent(false, this.reasons);
 				readOnlyComponent(false, this.btnReasons);
 				readOnlyComponent(false, this.cancelRemarks);
 			}
