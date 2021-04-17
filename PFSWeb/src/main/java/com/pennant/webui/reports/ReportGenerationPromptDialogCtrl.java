@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.reports;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -61,6 +62,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -78,6 +80,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
@@ -118,7 +121,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -137,8 +139,13 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
+import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.export.AbstractXlsReportConfiguration;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 /**
  * This is the controller class for the /WEB-INF/pages/reports/ReportGenerationPromptDialog.zul file.
@@ -1822,16 +1829,29 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					// call the ZUL-file with the parameters packed in a map
 					Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 				} else {
-					reportName = reportConfiguration.getReportJasperName();
-					if (StringUtils.equals(reportMenuCode, "menu_Item_AmortizationReport")) {
-						ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-								reportName, whereCond, searchCriteriaDesc, this.dialogWindow, true, fromDate);
-					}
-					else {
-						ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-								reportName,
-							whereCond, searchCriteriaDesc, this.dialogWindow, true);
-					}
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+					String printfileName = JasperFillManager.fillReportToFile(reportSrc, argsMap, con);
+					reportName = reportConfiguration.getReportHeading();
+
+					JRXlsExporter excelExporter = new JRXlsExporter();
+					excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
+					AbstractXlsReportConfiguration configuration = new AbstractXlsReportConfiguration();
+					configuration.setDetectCellType(true);
+					configuration.setWhitePageBackground(false);
+					configuration.setRemoveEmptySpaceBetweenColumns(true);
+					configuration.setRemoveEmptySpaceBetweenRows(true);
+					configuration.setIgnoreGraphics(false);
+					configuration.setIgnoreCellBorder(false);
+					configuration.setCollapseRowSpan(true);
+					configuration.setImageBorderFixEnabled(false);
+					SimpleOutputStreamExporterOutput outputStreamExporterOutput = new SimpleOutputStreamExporterOutput(
+							outputStream);
+					excelExporter.setExporterOutput(outputStreamExporterOutput);
+					excelExporter.setConfiguration(configuration);
+					excelExporter.exportReport();
+					Filedownload.save(
+							new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+
 					if (selectTab != null) {
 						// selectTab.setSelected(true);
 						// if(!reportConfiguration.isPromptRequired()){//ReOpen the Comment after Auto Refresh Fix
@@ -2376,7 +2396,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			StringBuilder whereCond2 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			StringBuilder whereCond = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 
-			ReportFilterFields rff = reportConfiguration.getListReportFieldsDetails().get(2);
+			ReportFilterFields rff = reportConfiguration.getListReportFieldsDetails().stream()
+					.filter(e -> e.getFieldType().equals("DATE")).findAny().orElse(null);
+
 			if (!(rff != null && rff.getFieldType().equals(FIELDTYPE.DATERANGE.toString()))) {
 				Component component = dymanicFieldsRows.getFellow(Long.toString(rff.getFieldID()));
 				Date value = ((Datebox) component).getValue();
