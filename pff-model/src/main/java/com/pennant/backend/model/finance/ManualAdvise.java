@@ -210,6 +210,7 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 		entity.setLinkedTranId(this.linkedTranId);
 		entity.setHoldDue(this.holdDue);
 		entity.setFeeType(this.feeType == null ? null : this.feeType.copyEntity());
+		this.documentDetails.stream().forEach(e -> entity.getDocumentDetails().add(e == null ? null : e.copyEntity()));
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());

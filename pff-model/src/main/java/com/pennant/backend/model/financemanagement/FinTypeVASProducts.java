@@ -73,6 +73,8 @@ public class FinTypeVASProducts extends AbstractWorkflowEntity {
 		entity.setProductCtgDesc(this.productCtgDesc);
 		entity.setManufacturerDesc(this.manufacturerDesc);
 		entity.setVasFee(this.vasFee);
+		entity.setFeePaymentMode(this.feePaymentMode);
+		entity.setVasReference(this.vasReference);
 		this.auditDetailMap.entrySet().stream().forEach(e -> {
 			List<AuditDetail> newList = new ArrayList<AuditDetail>();
 			if (e.getValue() != null) {

@@ -187,8 +187,10 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 			entity.setSubventionSchedules(new ArrayList<SubventionScheduleDetail>());
 			this.subventionSchedules.stream()
 					.forEach(e -> entity.getSubventionSchedules().add(e == null ? null : e.copyEntity()));
-			entity.setSubventionAmount(this.subventionAmount);
 		}
+		entity.setSubventionAmount(this.subventionAmount);
+		entity.setInstCalReq(this.instCalReq);
+		entity.setLinkedDisbId(this.linkedDisbId);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());

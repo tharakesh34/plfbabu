@@ -467,6 +467,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		entity.setBounceId(this.bounceId);
 		entity.setCustBaseCcy(this.custBaseCcy);
 		entity.setReasonCode(this.reasonCode);
+		this.documentDetails.stream().forEach(e -> entity.getDocumentDetails().add(e == null ? null : e.copyEntity()));
+
 		entity.setPrvReceiptPurpose(this.prvReceiptPurpose);
 		entity.setPartnerBankId(this.partnerBankId);
 		entity.setReceiptSource(this.receiptSource);
@@ -476,9 +478,18 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		entity.setRecAppDate(this.recAppDate);
 		entity.setReceivedDate(this.receivedDate);
 		entity.setBankCode(this.bankCode);
+		entity.setPresentmentSchDate(this.presentmentSchDate);
 		entity.setFinTDSApplicable(this.finTDSApplicable);
 		entity.setSourceofFund(this.sourceofFund);
 		entity.setTdsAmount(this.tdsAmount);
+		entity.setClosureTypeId(this.closureTypeId);
+		entity.setClosureTypeDesc(this.closureTypeDesc);
+		entity.setDedupCheckRequied(this.dedupCheckRequied);
+		entity.setWriteoffLoan(this.writeoffLoan);
+		entity.setReceiptSourceAcType(this.receiptSourceAcType);
+		entity.setReceiptSourceAcDesc(this.receiptSourceAcDesc);
+		entity.setEntityDesc(this.entityDesc);
+		entity.setSourceId(this.sourceId);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());

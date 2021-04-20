@@ -92,20 +92,27 @@ public class FinEODEvent implements Serializable {
 		FinEODEvent entity = new FinEODEvent();
 		entity.setFinanceMain(this.financeMain == null ? null : this.financeMain.copyEntity());
 		entity.setFinType(this.finType == null ? null : this.finType.copyEntity());
-		this.financeScheduleDetails.stream().forEach(e -> entity.getFinanceScheduleDetails().add(e.copyEntity()));
-		this.RepayInstructions.stream().forEach(e -> entity.getRepayInstructions().add(e.copyEntity()));
+		this.financeScheduleDetails.stream()
+				.forEach(e -> entity.getFinanceScheduleDetails().add(e == null ? null : e.copyEntity()));
+		this.RepayInstructions.stream()
+				.forEach(e -> entity.getRepayInstructions().add(e == null ? null : e.copyEntity()));
 		entity.setFinProfitDetail(this.finProfitDetail == null ? null : this.finProfitDetail.copyEntity());
-		this.finODDetails.stream().forEach(e -> entity.getFinODDetails().add(e.copyEntity()));
-		this.finODDetailsLBD.stream().forEach(e -> entity.getFinODDetailsLBD().add(e.copyEntity()));
-		this.odcRecoveries.stream().forEach(e -> entity.getOdcRecoveries().add(e.copyEntity()));
+		this.finODDetails.stream().forEach(e -> entity.getFinODDetails().add(e == null ? null : e.copyEntity()));
+		this.finODDetailsLBD.stream().forEach(e -> entity.getFinODDetailsLBD().add(e == null ? null : e.copyEntity()));
+		this.odcRecoveries.stream().forEach(e -> entity.getOdcRecoveries().add(e == null ? null : e.copyEntity()));
 		entity.setPenaltyrate(this.penaltyrate == null ? null : this.penaltyrate.copyEntity());
-		this.financeDisbursements.stream().forEach(e -> entity.getFinanceDisbursements().add(e.copyEntity()));
-		this.finFeeScheduleDetails.stream().forEach(e -> entity.getFinFeeScheduleDetails().add(e.copyEntity()));
-		this.finSchFrqInsurances.stream().forEach(e -> entity.getFinSchFrqInsurances().add(e.copyEntity()));
-		this.presentmentDetails.stream().forEach(e -> entity.getPresentmentDetails().add(e.copyEntity()));
-		this.returnDataSet.stream().forEach(e -> entity.getReturnDataSet().add(e.copyEntity()));
-		this.provisions.stream().forEach(e -> entity.getProvisions().add(e.copyEntity()));
-		this.finExcessAmounts.stream().forEach(e -> entity.getFinExcessAmounts().add(e.copyEntity()));
+		this.financeDisbursements.stream()
+				.forEach(e -> entity.getFinanceDisbursements().add(e == null ? null : e.copyEntity()));
+		this.finFeeScheduleDetails.stream()
+				.forEach(e -> entity.getFinFeeScheduleDetails().add(e == null ? null : e.copyEntity()));
+		this.finSchFrqInsurances.stream()
+				.forEach(e -> entity.getFinSchFrqInsurances().add(e == null ? null : e.copyEntity()));
+		this.presentmentDetails.stream()
+				.forEach(e -> entity.getPresentmentDetails().add(e == null ? null : e.copyEntity()));
+		this.returnDataSet.stream().forEach(e -> entity.getReturnDataSet().add(e == null ? null : e.copyEntity()));
+		this.provisions.stream().forEach(e -> entity.getProvisions().add(e == null ? null : e.copyEntity()));
+		this.finExcessAmounts.stream()
+				.forEach(e -> entity.getFinExcessAmounts().add(e == null ? null : e.copyEntity()));
 		entity.setEventFromDate(this.eventFromDate);
 		entity.setEventToDate(this.eventToDate);
 		entity.setRecalFromDate(this.recalFromDate);
@@ -132,17 +139,20 @@ public class FinEODEvent implements Serializable {
 		entity.setUpdLBDPostings(this.updLBDPostings);
 		entity.setUpdMonthEndPostings(this.updMonthEndPostings);
 		this.finMainUpdateFields.stream().forEach(e -> entity.getFinMainUpdateFields().add(e));
-		this.projectedAccrualList.stream().forEach(e -> entity.getProjectedAccrualList().add(e.copyEntity()));
-		this.incomeAMZList.stream().forEach(e -> entity.getIncomeAMZList().add(e.copyEntity()));
+		this.projectedAccrualList.stream()
+				.forEach(e -> entity.getProjectedAccrualList().add(e == null ? null : e.copyEntity()));
+		this.incomeAMZList.stream().forEach(e -> entity.getIncomeAMZList().add(e == null ? null : e.copyEntity()));
 		entity.setAppDate(this.appDate);
 		entity.setUpdFinSchdForChangeGrcEnd(this.updFinSchdForChangeGrcEnd);
-		this.orgRepayInsts.stream().forEach(e -> entity.getOrgRepayInsts().add(e.copyEntity()));
-		this.orgFinSchdDetails.stream().forEach(e -> entity.getOrgFinSchdDetails().add(e.copyEntity()));
-		this.finServiceInstructions.stream().forEach(e -> entity.getFinServiceInstructions().add(e.copyEntity()));
+		this.orgRepayInsts.stream().forEach(e -> entity.getOrgRepayInsts().add(e == null ? null : e.copyEntity()));
+		this.orgFinSchdDetails.stream()
+				.forEach(e -> entity.getOrgFinSchdDetails().add(e == null ? null : e.copyEntity()));
+		this.finServiceInstructions.stream()
+				.forEach(e -> entity.getFinServiceInstructions().add(e == null ? null : e.copyEntity()));
 		entity.setSubventionDetail(this.subventionDetail == null ? null : this.subventionDetail.copyEntity());
-
 		return entity;
 	}
+
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;

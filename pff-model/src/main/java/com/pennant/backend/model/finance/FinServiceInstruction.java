@@ -414,9 +414,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.manualAllocMap.entrySet().stream().forEach(e -> entity.getManualAllocMap().put(e.getKey(), e.getValue()));
 		this.manualWaiverMap.entrySet().stream()
 				.forEach(e -> entity.getManualWaiverMap().put(e.getKey(), e.getValue()));
-		entity.setValidateAddRateChange(this.validateAddRateChange);
 		entity.setReceiptUpload(this.isReceiptUpload);
-		entity.setValidateChangeRepayment(this.validateChangeRepayment);
 		entity.setFinType(this.finType);
 		entity.setCurrency(this.currency);
 		this.finTypeFeeList.stream().forEach(e -> entity.getFinTypeFeeList().add(e == null ? null : e.copyEntity()));
@@ -444,6 +442,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		entity.setLoggedInUser(this.loggedInUser);
 		entity.setFlexiDisb(this.isFlexiDisb);
 		entity.setNormalLoanClosure(this.normalLoanClosure);
+		entity.setPaymentId(this.paymentId);
+		entity.setCustID(this.custID);
+		entity.setCustCIF(this.custCIF);
+		entity.setTdsAmount(this.tdsAmount);
+		entity.setReceiptSource(this.receiptSource);
+		entity.setRecAgainst(this.recAgainst);
+		entity.setCollectionAgency(this.collectionAgency);
+		entity.setDivision(this.division);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());

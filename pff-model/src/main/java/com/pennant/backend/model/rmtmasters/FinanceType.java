@@ -595,8 +595,15 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setAlwSanctionAmtOverride(this.alwSanctionAmtOverride);
 		entity.setFinIsRateRvwAtGrcEnd(this.finIsRateRvwAtGrcEnd);
 		entity.setSchdOnPMTCal(this.schdOnPMTCal);
+		entity.setOcrRequired(this.ocrRequired);
+		entity.setAllowedOCRS(this.allowedOCRS);
+		entity.setDefaultOCR(this.defaultOCR);
+		entity.setAllowedLoanPurposes(this.allowedLoanPurposes);
+		entity.setSpecificLoanPurposes(this.specificLoanPurposes);
 		entity.setUserDetails(this.userDetails);
-		this.lovDescAERule.entrySet().stream().forEach(e -> entity.getLovDescAERule().put(e.getKey(), e.getValue()));
+		this.lovDescAERule.entrySet().stream().forEach(e -> entity.getLovDescAERule().put(e.getKey(),
+				e.getValue() == null ? null : e.getValue().copyEntity()));
+
 		this.auditDetailMap.entrySet().stream().forEach(e -> {
 			List<AuditDetail> newList = new ArrayList<AuditDetail>();
 			if (e.getValue() != null) {
@@ -671,6 +678,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setGrcAutoIncrMonths(this.grcAutoIncrMonths);
 		entity.setMaxAutoIncrAllowed(this.maxAutoIncrAllowed);
 		entity.setThrldtoMaintainGrcPrd(this.thrldtoMaintainGrcPrd);
+		entity.setAlwLoanSplit(this.alwLoanSplit);
+		entity.setSplitLoanType(this.splitLoanType);
+		entity.setInstBasedSchd(this.instBasedSchd);
+		entity.setTdsType(this.tdsType);
+		entity.setCalcOfSteps(this.calcOfSteps);
+		entity.setStepsAppliedFor(this.stepsAppliedFor);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());

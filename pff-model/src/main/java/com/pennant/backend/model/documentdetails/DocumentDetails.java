@@ -125,6 +125,67 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		this.newRecord = true;
 	}
 
+	public DocumentDetails copyEntity() {
+		DocumentDetails entity = new DocumentDetails();
+		entity.setDocId(this.docId);
+		entity.setDocModule(this.docModule);
+		entity.setReferenceId(this.referenceId);
+		entity.setFinEvent(this.finEvent);
+		entity.setDocCategory(this.docCategory);
+		entity.setDoctype(this.doctype);
+		entity.setDocName(this.docName);
+		entity.setDocImage(this.docImage);
+		entity.setCategoryCode(this.categoryCode);
+		entity.setCustDocTitle(this.custDocTitle);
+		entity.setCustDocSysName(this.custDocSysName);
+		entity.setCustDocRcvdOn(this.custDocRcvdOn);
+		entity.setCustDocExpDate(this.custDocExpDate);
+		entity.setCustDocIssuedOn(this.custDocIssuedOn);
+		entity.setCustDocIssuedCountry(this.custDocIssuedCountry);
+		entity.setDocPurpose(this.docPurpose);
+		entity.setDocUri(this.docUri);
+		entity.setLovDescCustDocIssuedCountry(this.lovDescCustDocIssuedCountry);
+		entity.setCustDocIsVerified(this.custDocIsVerified);
+		entity.setCustDocVerifiedBy(this.custDocVerifiedBy);
+		entity.setCustDocIsAcrive(this.custDocIsAcrive);
+		entity.setLovDescCustCIF(this.lovDescCustCIF);
+		entity.setLovDescDocCategoryName(this.lovDescDocCategoryName);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setNewRecord(this.newRecord);
+		entity.setDocReceivedDate(this.docReceivedDate);
+		entity.setDocReceived(this.docReceived);
+		entity.setDocOriginal(this.docOriginal);
+		entity.setDocBarcode(this.docBarcode);
+		entity.setPassword(this.password);
+		entity.setDocIsPasswordProtected(this.docIsPasswordProtected);
+		entity.setPdfMappingRef(this.pdfMappingRef);
+		entity.setPdfPassWord(this.pdfPassWord);
+		entity.setDocIsPdfExtRequired(this.docIsPdfExtRequired);
+		entity.setRemarks(this.remarks);
+		entity.setReturnStatus(this.returnStatus == null ? null : this.returnStatus.copyEntity());
+		entity.setDocRefId(this.docRefId);
+		entity.setDoumentType(this.doumentType);
+		entity.setInstructionUID(this.instructionUID);
+		entity.setCustomerCif(this.customerCif);
+		entity.setFinReference(this.finReference);
+		entity.setState(this.state);
+		entity.setStatus(this.status);
+		entity.setDocDesc(this.docDesc);
+		entity.setDocExt(this.docExt);
+		entity.setCreatedOn(this.createdOn);
+		entity.setRetryCount(this.retryCount);
+		entity.setErrorDesc(this.errorDesc);
+		entity.setCustId(this.custId);
+		entity.setApplicationNo(this.applicationNo);
+		entity.setLeadId(this.leadId);
+		entity.setLovDescNewImage(this.lovDescNewImage);
+		entity.setLovDescCustShrtName(this.lovDescCustShrtName);
+		entity.setRefId(this.refId);
+		entity.setDocTypeId(this.docTypeId);
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("custDocTitle");

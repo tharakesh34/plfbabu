@@ -3248,7 +3248,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			movement.setReceiptID(receiptHeader.getReceiptID());
 			movement.setReceiptSeqID(recSeqId);
 			movement.setWaiverID(0);
-			movement.setInsReceiptID(0);
+			long zero = 0;
+			movement.setInsReceiptID(zero);
 			movement.setPaidCGST(BigDecimal.ZERO);
 			movement.setPaidIGST(BigDecimal.ZERO);
 			movement.setPaidSGST(BigDecimal.ZERO);

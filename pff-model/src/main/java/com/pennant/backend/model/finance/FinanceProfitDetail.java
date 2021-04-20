@@ -407,6 +407,8 @@ public class FinanceProfitDetail implements Serializable {
 		entity.setSvAmount(this.svAmount);
 		entity.setCbAmount(this.cbAmount);
 		entity.setAMZMethod(this.aMZMethod);
+		entity.setWriteoffLoan(this.writeoffLoan);
+		entity.setExtODDays(this.extODDays);
 		entity.setEventProperties(this.eventProperties);
 		return entity;
 	}

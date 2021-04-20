@@ -288,7 +288,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		entity.setPartnerBankName(this.partnerBankName);
 		entity.setFinType(this.finType);
 		if (financeDisbursements != null) {
-			entity.setFinanceDisbursements(new ArrayList<>());
+			entity.setFinanceDisbursements(new ArrayList<FinanceDisbursement>());
 			this.financeDisbursements.stream()
 					.forEach(e -> entity.getFinanceDisbursements().add(e == null ? null : e.copyEntity()));
 		}
@@ -302,6 +302,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		entity.setFileNamePrefix(this.fileNamePrefix);
 		entity.setChannel(this.channel);
 		entity.setEntityCode(this.entityCode);
+		entity.setVasReference(this.vasReference);
 		entity.setProviderId(this.providerId);
 		entity.setPaymentProcReq(this.paymentProcReq);
 		entity.setTempSeq(this.tempSeq);
@@ -317,6 +318,15 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		entity.setRealizationDate(this.realizationDate);
 		entity.setOnlineProcReq(this.onlineProcReq);
 		entity.setHoldDisbursement(this.holdDisbursement);
+		entity.setPostDate(this.postDate);
+		entity.setDealerShortCode(this.dealerShortCode);
+		entity.setProductShortCode(this.productShortCode);
+		entity.setPostingQdp(this.postingQdp);
+		entity.setFromDate(this.fromDate);
+		entity.setToDate(this.toDate);
+		entity.setDocumentName(this.documentName);
+		entity.setDocImage(this.docImage);
+		entity.setDocType(this.docType);
 		entity.setVasProductCode(this.vasProductCode);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());

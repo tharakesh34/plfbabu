@@ -97,6 +97,7 @@ public class ManualAdviseMovements implements Serializable {
 		entity.setLppAmzReqonME(this.lppAmzReqonME);
 		entity.setCurrWaiverGst(this.currWaiverGst);
 		entity.setTdsReq(this.tdsReq);
+		entity.setInsReceiptID(this.insReceiptID);
 		return entity;
 	}
 
@@ -380,11 +381,11 @@ public class ManualAdviseMovements implements Serializable {
 		this.tdsReq = tdsReq;
 	}
 
-	public long getInsReceiptID() {
+	public Long getInsReceiptID() {
 		return insReceiptID;
 	}
 
-	public void setInsReceiptID(long insReceiptID) {
+	public void setInsReceiptID(Long insReceiptID) {
 		this.insReceiptID = insReceiptID;
 	}
 

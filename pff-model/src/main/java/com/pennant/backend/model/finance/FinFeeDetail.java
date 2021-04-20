@@ -225,6 +225,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		entity.setCalculatedOn(this.calculatedOn);
 		entity.setRefundable(this.refundable);
 		entity.setAlwPreIncomization(this.alwPreIncomization);
+		entity.setValidateFinFeeDetail(
+				this.validateFinFeeDetail);
 		this.finFeeScheduleDetailList.stream()
 				.forEach(e -> entity.getFinFeeScheduleDetailList().add(e == null ? null : e.copyEntity()));
 		entity.setTaxApplicable(this.taxApplicable);
@@ -243,6 +245,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		entity.setWaivedGST(this.waivedGST);
 		entity.setTaxHeaderId(this.taxHeaderId);
 		entity.setTaxHeader(this.taxHeader == null ? null : this.taxHeader.copyEntity());
+		entity.setPaidFromUpfront(this.isPaidFromUpfront);
 		entity.setVasProductCode(this.vasProductCode);
 		entity.setPaidFromLoanApproval(this.isPaidFromLoanApproval);
 		entity.setPaidCalcReq(this.paidCalcReq);
@@ -880,6 +883,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public boolean isPaidFromUpfront() {
 		return isPaidFromUpfront;
+	}
+
+	public void setPaidFromUpfront(boolean isPaidFromUpfront) {
+		this.isPaidFromUpfront = isPaidFromUpfront;
+	}
+
+	public void setValidateFinFeeDetail(FinFeeDetail validateFinFeeDetail) {
+		this.validateFinFeeDetail = validateFinFeeDetail;
 	}
 
 	public boolean isPaidFromLoanApproval() {

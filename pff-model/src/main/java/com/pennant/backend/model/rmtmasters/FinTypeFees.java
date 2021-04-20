@@ -123,6 +123,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public FinTypeFees copyEntity() {
 		FinTypeFees entity = new FinTypeFees();
+		entity.setFinTypeFeeId(this.finTypeFeeId);
 		entity.setFinType(this.finType);
 		entity.setOriginationFee(this.originationFee);
 		entity.setFinEvent(this.finEvent);
@@ -135,6 +136,8 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		entity.setCalculationType(this.calculationType);
 		entity.setRuleCode(this.ruleCode);
 		entity.setRuleDesc(this.ruleDesc);
+		entity.setPercType(this.percType);
+		entity.setPercRule(this.percRule);
 		entity.setAmount(this.amount);
 		entity.setPercentage(this.percentage);
 		entity.setCalculateOn(this.calculateOn);

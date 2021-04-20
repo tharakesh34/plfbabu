@@ -32,6 +32,7 @@ public class FinExcessAmount implements Serializable {
 		entity.setReservedAmt(this.reservedAmt);
 		entity.setBalanceAmt(this.balanceAmt);
 		entity.setRcdAction(this.rcdAction);
+		entity.setExcessMovement(this.excessMovement == null ? null : this.excessMovement.copyEntity());
 		return entity;
 	}
 

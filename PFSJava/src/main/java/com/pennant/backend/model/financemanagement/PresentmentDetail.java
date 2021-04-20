@@ -160,6 +160,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		PresentmentDetail entity = new PresentmentDetail();
 		entity.setId(this.id);
 		entity.setPresentmentId(this.presentmentId);
+		entity.setBatchReference(this.batchReference);
 		entity.setPresentmentRef(this.presentmentRef);
 		entity.setFinReference(this.finReference);
 		entity.setSchDate(this.schDate);
@@ -185,6 +186,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		entity.setStatus(this.status);
 		entity.setNewRecord(this.newRecord);
 		entity.setCustomerName(this.customerName);
+		entity.setCustCif(this.custCif);
 		entity.setFinType(this.finType);
 		entity.setFinTypeDesc(this.finTypeDesc);
 		entity.setMandateType(this.mandateType);
@@ -208,6 +210,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		entity.setAppDate(this.appDate);
 		entity.setBpiOrHoliday(this.bpiOrHoliday);
 		entity.setBpiTreatment(this.bpiTreatment);
+		entity.setExcessAmount(this.excessAmount == null ? null : this.excessAmount.copyEntity());
+		entity.setExcessAmountReversal(
+				this.excessAmountReversal == null ? null : this.excessAmountReversal.copyEntity());
+		this.presements.stream().forEach(e -> entity.getPresements().add(e == null ? null : e.copyEntity()));
+		entity.setBankCode(this.bankCode);
+		entity.setEmiInAdvance(this.emiInAdvance == null ? null : this.emiInAdvance.copyEntity());
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setPresentmentType(this.presentmentType);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 		entity.setUserDetails(this.userDetails);
 		entity.setRecordStatus(super.getRecordStatus());
