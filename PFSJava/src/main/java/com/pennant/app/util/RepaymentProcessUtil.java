@@ -1565,6 +1565,8 @@ public class RepaymentProcessUtil {
 
 		// Save Receipt Detail List by setting Receipt Header ID
 		List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
+		Date appValueDate = SysParamUtil.getAppValueDate();
+
 		for (FinReceiptDetail rcd : rcdList) {
 			rcd.setReceiptID(receiptID);
 			if (isApproval) {
@@ -1708,7 +1710,7 @@ public class RepaymentProcessUtil {
 
 			FinRepayHeader rph = rcd.getRepayHeader();
 			rph.setReceiptSeqID(receiptSeqID);
-			rph.setValueDate(SysParamUtil.getAppValueDate());
+			rph.setValueDate(appValueDate);
 			rph.setFinReference(rch.getReference());
 			rph.setFinEvent(rch.getReceiptPurpose());
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {

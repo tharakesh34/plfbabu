@@ -317,6 +317,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 		if (lppAccountingID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(lppAccountingID);
 			aeEvent.setAccountingEvent(lppEventCode);
+			aeEvent.setEventProperties(fm.getEventProperties());
 			postAccountingEOD(aeEvent);
 
 			linkedTranId = aeEvent.getLinkedTranId();
