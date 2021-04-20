@@ -377,7 +377,11 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		aWIFFinanceMain.setNewRecord(aFinanceDetail.isNewRecord());
-		aFinanceDetail.getCustomer().setNewRecord(aFinanceDetail.isNewRecord());
+
+		if (aFinanceDetail.getCustomer() != null) {
+			aFinanceDetail.getCustomer().setNewRecord(aFinanceDetail.isNewRecord());
+		}
+
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aWIFFinanceMain);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeDetail", aFinanceDetail);
