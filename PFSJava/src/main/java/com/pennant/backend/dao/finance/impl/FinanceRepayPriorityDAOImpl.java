@@ -46,13 +46,14 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.model.finance.FinanceRepayPriority;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> implements FinanceRepayPriorityDAO {
-	private static Logger logger = Logger.getLogger(FinanceRepayPriorityDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceRepayPriorityDAOImpl.class);
 
 	public FinanceRepayPriorityDAOImpl() {
 		super();
@@ -100,8 +101,7 @@ public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayPriority);
-		RowMapper<FinanceRepayPriority> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceRepayPriority.class);
+		RowMapper<FinanceRepayPriority> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceRepayPriority.class);
 
 		try {
 			financeRepayPriority = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -252,8 +252,7 @@ public class FinanceRepayPriorityDAOImpl extends BasicDao<FinanceRepayPriority> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayPriority);
-		RowMapper<FinanceRepayPriority> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceRepayPriority.class);
+		RowMapper<FinanceRepayPriority> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceRepayPriority.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

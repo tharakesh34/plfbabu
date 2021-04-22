@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,8 +32,8 @@ import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
 import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class BeneficiaryController {
-	private final Logger logger = Logger.getLogger(getClass());
+public class BeneficiaryController extends ExtendedTestClass {
+	private final Logger logger = LogManager.getLogger(getClass());
 	private BeneficiaryService beneficiaryService;
 	private BankBranchService bankBranchService;
 	private CustomerDetailsService customerDetailsService;

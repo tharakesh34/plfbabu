@@ -43,7 +43,8 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class IncomeTypeServiceImpl extends GenericService<IncomeType> implements IncomeTypeService {
 
-	private static Logger logger = Logger.getLogger(IncomeTypeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(IncomeTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private IncomeTypeDAO incomeTypeDAO;

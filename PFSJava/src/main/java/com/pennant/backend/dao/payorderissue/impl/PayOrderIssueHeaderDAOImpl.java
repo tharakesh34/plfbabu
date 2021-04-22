@@ -107,8 +107,6 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 
 	@Override
 	public PayOrderIssueHeader getPayOrderIssueByHeaderRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, TotalPOAmount, TotalPOCount, IssuedPOAmount, IssuedPOCount, PODueAmount");
 		sql.append(", PODueCount, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
@@ -165,10 +163,9 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Pay Order Details not available for specified FinReference Id {}", finReference);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

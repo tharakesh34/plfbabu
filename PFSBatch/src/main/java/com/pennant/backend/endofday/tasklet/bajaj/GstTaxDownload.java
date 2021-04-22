@@ -6,7 +6,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -26,7 +27,7 @@ import com.pennanttech.pff.external.TaxDownloadProcess;
 import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
 
 public class GstTaxDownload implements Tasklet {
-	private Logger logger = Logger.getLogger(GstTaxDownload.class);
+	private Logger logger = LogManager.getLogger(GstTaxDownload.class);
 
 	private Date valueDate;
 	private Date appDate;
@@ -59,7 +60,7 @@ public class GstTaxDownload implements Tasklet {
 
 			DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new GSTTaxProcessThread(Long.valueOf(1000))).start();
+			new Thread(new GSTTaxProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 
@@ -96,7 +97,7 @@ public class GstTaxDownload implements Tasklet {
 			try {
 				TaxDownloadProcess process = null;
 
-				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
+				if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("GST_TAX_DOWNLOAD_DAILY"))) {
 					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate, appDate, appDate);
 				} else {
 					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate,

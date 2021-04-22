@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -69,7 +70,7 @@ import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.rits.cloning.Cloner;
 
 public class IRRCalculator {
-	private static final Logger logger = Logger.getLogger(IRRCalculator.class);
+	private static final Logger logger = LogManager.getLogger(IRRCalculator.class);
 	private static IRRFeeTypeDAO iRRFeeTypeDAO;
 	private static IRRFinanceTypeDAO irrFinanceTypeDAO;
 

@@ -49,7 +49,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -59,7 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.rits.cloning.Cloner;
 
 public class DesiredProfitCalculation {
-	private static final Logger logger = Logger.getLogger(DesiredProfitCalculation.class);
+	private static final Logger logger = LogManager.getLogger(DesiredProfitCalculation.class);
 
 	private BigDecimal totDesiredProfit = BigDecimal.ZERO;
 
@@ -73,6 +74,7 @@ public class DesiredProfitCalculation {
 	 * a) Planned Deferment
 	 * </ul>
 	 * <ul>
+	 * b) Down Payment Support program(DPSP)
 	 * </ul>
 	 * </i> </b>
 	 * 
@@ -83,9 +85,9 @@ public class DesiredProfitCalculation {
 	 * </p>
 	 * 
 	 * <p>
-	 * For <b style="color:red;"></b> process , need to clear the Down payment amount which was shared to Bank account
-	 * and calculate the Total profit amount without DownpayBank value. Setting DownpayBank to ZERO and proceed further
-	 * calculation as same
+	 * For <b style="color:red;">DPSP</b> process , need to clear the Down payment amount which was shared to Bank
+	 * account and calculate the Total profit amount without DownpayBank value. Setting DownpayBank to ZERO and proceed
+	 * further calculation as same
 	 * </p>
 	 * 
 	 * @param orgFinSchdData
@@ -134,7 +136,8 @@ public class DesiredProfitCalculation {
 		logger.debug("Entering");
 
 		// proceed only at least any one case is exists
-		if (orgFinSchdData.getFinanceMain().getPlanDeferCount() <= 0) {
+		if (orgFinSchdData.getFinanceMain().getPlanDeferCount() <= 0
+				&& !orgFinSchdData.getFinanceType().isAllowDownpayPgm()) {
 			return;
 		}
 
@@ -189,6 +192,11 @@ public class DesiredProfitCalculation {
 		BigDecimal downpayment = financeMain.getDownPayment();
 		Date finStartDate = financeMain.getFinStartDate();
 		Date maturityDate = financeMain.getMaturityDate();
+
+		//Check Down Payment Program Setup
+		if (orgFinSchdData.getFinanceType().isAllowDownpayPgm()) {
+			downpayment = downpayment.subtract(financeMain.getDownPayBank());
+		}
 
 		//Check Planned deferment Program Setup
 		int minCheckDays = orgFinSchdData.getFinanceType().getFddLockPeriod();
@@ -271,6 +279,12 @@ public class DesiredProfitCalculation {
 		Cloner cloner = new Cloner();
 		FinScheduleData planDeferSchdData = cloner.deepClone(orgFinSchdData);
 		FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
+
+		//Check Down Payment Program Setup
+		if (planDeferSchdData.getFinanceType().isAllowDownpayPgm()) {
+			planFinMain.setDownPayment(planFinMain.getDownPayment().subtract(planFinMain.getDownPayBank()));
+			planFinMain.setDownPayBank(BigDecimal.ZERO);
+		}
 
 		//Maturity Date Recalculation using Number of Terms
 		int minCheckDays = planDeferSchdData.getFinanceType().getFddLockPeriod();

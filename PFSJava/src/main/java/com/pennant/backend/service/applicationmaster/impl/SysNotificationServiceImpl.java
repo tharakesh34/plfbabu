@@ -42,7 +42,8 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.applicationmaster.SysNotificationDAO;
 import com.pennant.backend.model.applicationmaster.SysNotification;
@@ -54,7 +55,7 @@ import com.pennant.backend.service.applicationmaster.SysNotificationService;
  * 
  */
 public class SysNotificationServiceImpl extends GenericService<SysNotification> implements SysNotificationService {
-	private static final Logger logger = Logger.getLogger(SysNotificationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SysNotificationServiceImpl.class);
 
 	private SysNotificationDAO sysNotificationDAO;
 

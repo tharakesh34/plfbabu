@@ -46,13 +46,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SplRateCodeDAO;
 import com.pennant.backend.model.applicationmaster.BaseRate;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRateCodeDAO {
-	private static Logger logger = Logger.getLogger(SplRateCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SplRateCodeDAOImpl.class);
 
 	public SplRateCodeDAOImpl() {
 		super();
@@ -96,7 +97,7 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRateCode);
-		RowMapper<SplRateCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRateCode.class);
+		RowMapper<SplRateCode> typeRowMapper = BeanPropertyRowMapper.newInstance(SplRateCode.class);
 
 		try {
 			splRateCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -124,7 +125,7 @@ public class SplRateCodeDAOImpl extends BasicDao<SplRateCode> implements SplRate
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(baseRate);
-		RowMapper<BaseRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BaseRate.class);
+		RowMapper<BaseRate> typeRowMapper = BeanPropertyRowMapper.newInstance(BaseRate.class);
 
 		List<BaseRate> baseRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 

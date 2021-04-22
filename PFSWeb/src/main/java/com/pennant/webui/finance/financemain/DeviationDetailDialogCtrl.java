@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -31,6 +32,7 @@ import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -39,7 +41,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	private static final long serialVersionUID = 2290501784830847866L;
-	private static final Logger logger = Logger.getLogger(DeviationDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DeviationDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -49,6 +51,8 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	protected Borderlayout borderlayoutDeviationDetail; // autoWired
 	protected North northdeviationDetailDialog;
 	protected Button btnProceed;
+	protected Button btnApprove;
+	protected Button btnReject;
 
 	protected Listbox listBoxAutoDeviations; // autoWired
 	protected Listbox listBoxManualDeviations; // autoWired
@@ -92,7 +96,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "";
+		super.pageRightName = "DeviationDetailDialog";
 	}
 
 	/**
@@ -165,7 +169,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			} else {
 				appendFinBasicDetails(null);
 			}
-			if (!loanEnquiry && !enquiry) {
+			if (!loanEnquiry) {
 				doCheckRight();
 			}
 			if (loanEnquiry || enquiry) {
@@ -181,8 +185,12 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	}
 
 	private void doCheckRight() {
+		getUserWorkspace().allocateAuthorities(super.pageRightName);
+
 		boolean alloowd = deviationHelper.checkInputAllowed(financeMain.getFinType(), roleCode);
 		this.btnNew_ManualDeviation.setVisible(alloowd);
+		this.btnApprove.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnApprove"));
+		this.btnReject.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnReject"));
 
 	}
 
@@ -458,6 +466,70 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 		logger.debug(" Leaving ");
 
+	}
+
+	public void onClick$btnApprove() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		List<FinanceDeviations> autoDeviations = new ArrayList<>();
+		List<FinanceDeviations> manualDeviations = new ArrayList<>();
+		autoDeviations.addAll(getFinanceDetail().getFinanceDeviations());
+		manualDeviations.addAll(getFinanceDetail().getManualDeviations());
+
+		autoDeviations.forEach(deviation -> {
+			setApprovalStatus(deviation, true);
+		});
+
+		manualDeviations.forEach(deviation -> {
+			setApprovalStatus(deviation, true);
+		});
+
+		//Rendering
+		doFillAutoDeviationDetails(autoDeviations);
+		doFillManualDeviations(manualDeviations);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$btnReject() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		List<FinanceDeviations> autoDeviations = new ArrayList<>();
+		List<FinanceDeviations> manualDeviations = new ArrayList<>();
+		autoDeviations.addAll(getFinanceDetail().getFinanceDeviations());
+		manualDeviations.addAll(getFinanceDetail().getManualDeviations());
+
+		autoDeviations.forEach(deviation -> {
+			setApprovalStatus(deviation, false);
+		});
+
+		manualDeviations.forEach(deviation -> {
+			setApprovalStatus(deviation, false);
+		});
+
+		//Rendering
+		doFillAutoDeviationDetails(autoDeviations);
+		doFillManualDeviations(manualDeviations);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setApprovalStatus(FinanceDeviations deviation, boolean approve) {
+		String status = "";
+		if (approve) {
+			status = PennantConstants.RCD_STATUS_APPROVED;
+		} else {
+			status = PennantConstants.RCD_STATUS_REJECTED;
+		}
+
+		if (getUserWorkspace().getUserRoles().contains(deviation.getDelegationRole())
+				&& !StringUtils.equalsIgnoreCase(deviation.getApprovalStatus(), PennantConstants.RCD_STATUS_APPROVED)
+				&& !StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, deviation.getRecordType())
+				&& !StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, deviation.getRecordType())) {
+			long userId = getUserWorkspace().getLoggedInUser().getUserId();
+			deviation.setDelegatedUserId(String.valueOf(userId));
+			deviation.setApprovalStatus(status);
+		}
 	}
 
 	private String getReference(FinanceDeviations deviations) {

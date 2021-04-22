@@ -22,14 +22,14 @@ public class WebRequestUtil {
 
 	public static Object getSessionAttributeIfOk(WebRequest request, String attribute) {
 		if (isSessionOk(request)) {
-			return request.getAttribute(attribute, WebRequest.SCOPE_GLOBAL_SESSION);
+			return request.getAttribute(attribute, WebRequest.SCOPE_SESSION);
 		}
 		return null;
 	}
 
 	public static boolean setSessionAttributeIfOk(WebRequest request, String attribute, Object value) {
 		if (isSessionOk(request)) {
-			request.setAttribute(attribute, value, WebRequest.SCOPE_GLOBAL_SESSION);
+			request.setAttribute(attribute, value, WebRequest.SCOPE_SESSION);
 			return true;
 		}
 		return false;

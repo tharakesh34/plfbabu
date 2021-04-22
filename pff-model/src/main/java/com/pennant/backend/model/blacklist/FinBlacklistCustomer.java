@@ -32,6 +32,9 @@ public class FinBlacklistCustomer implements Serializable {
 	private long lastMntBy;
 	private String roleCode;
 	private String recordStatus;
+	private String source;
+	private String reasonCode;
+	private String sourceCIF;
 
 	public FinBlacklistCustomer() {
 
@@ -208,4 +211,29 @@ public class FinBlacklistCustomer implements Serializable {
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
 	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+	}
+
+	public String getSourceCIF() {
+		return sourceCIF;
+	}
+
+	public void setSourceCIF(String sourceCIF) {
+		this.sourceCIF = sourceCIF;
+	}
+
 }

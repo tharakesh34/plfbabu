@@ -50,7 +50,7 @@
 								<column width="15%" />
 								<column width="35%" />
 								<column width="15%" />
-								<column width="35%" />
+								<column width="20%" />
 							</columns>
 							<rows>
 								<row id="row_FinRef">
@@ -66,6 +66,8 @@
 									</hbox>
 									<label id="label_custRef" value="${c:l('label_FinanceTaxDetailDialog_CustRef.value')}" />
 									<extendedcombobox id="custRef" />
+									<button id="btnAddressCopy" label="${c:l('label_FinanceTaxDetailDialog_AddressCopy.value')}"
+										tooltiptext="${c:l('btnAddressCopy.tooltiptext')}"/>
 								</row>
 								<row id="row_custID" visible="false">
 

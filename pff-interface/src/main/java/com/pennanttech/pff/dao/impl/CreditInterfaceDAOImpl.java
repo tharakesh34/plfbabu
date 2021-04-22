@@ -7,13 +7,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -38,7 +39,7 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
 
 public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implements CreditInterfaceDAO {
-	private static final Logger logger = Logger.getLogger(CreditInterfaceDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(CreditInterfaceDAOImpl.class);
 
 	protected DefaultTransactionDefinition transDef;
 	private PlatformTransactionManager transactionManager;
@@ -65,8 +66,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		paramMap.addValue("fieldNames", fieldNames);
 		logger.debug("selectSql: " + sql.toString());
 		try {
-			RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(ExtendedFieldDetail.class);
+			RowMapper<ExtendedFieldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
 			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
 
@@ -179,7 +179,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		paramMap.addValue("customerIds", customerIds);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			logger.debug("Leaving");
@@ -216,7 +216,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
 		List<CustomerAddres> customerAddresses = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -245,7 +245,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+		RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
 		List<CustomerEMail> customerEMails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -281,8 +281,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerPhoneNumber.class);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 
 		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -317,8 +316,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerDocument.class);
+			RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
@@ -345,8 +343,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldHeader.class);
+		RowMapper<ExtendedFieldHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -389,7 +386,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		txStatus = transactionManager.getTransaction(txDef);
 
 		if (serviceTaskDetail.getId() == Long.MIN_VALUE) {
-			//serviceTaskDetail.setId(getNextId("SeqBMTAcademics"));
+			//serviceTaskDetail.setId(getNextValue("SeqBMTAcademics"));
 		}
 
 		StringBuilder insertSql = new StringBuilder();
@@ -435,8 +432,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug(Literal.LEAVING);
 		try {
-			RowMapper<ServiceTaskDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(ServiceTaskDetail.class);
+			RowMapper<ServiceTaskDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ServiceTaskDetail.class);
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(dae);
@@ -473,7 +469,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(city);
-		RowMapper<City> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(City.class);
+		RowMapper<City> typeRowMapper = BeanPropertyRowMapper.newInstance(City.class);
 
 		try {
 			city = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -580,13 +576,48 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		logger.debug("selectSql: " + str.toString());
 		logger.debug(Literal.LEAVING);
 		try {
-			RowMapper<InterfaceMappingDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+			RowMapper<InterfaceMappingDetails> typeRowMapper = BeanPropertyRowMapper
 					.newInstance(InterfaceMappingDetails.class);
 			return (List<InterfaceMappingDetails>) this.jdbcTemplate.query(str, paramMap, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception :", e);
 		}
 		return null;
+	}
+
+	public String getStateCode(String custAddrProvince) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder(
+				"select taxstatecode from RMTCOUNTRYVSPROVINCE where CPPROVINCE =:CPPROVINCE");
+		MapSqlParameterSource mapParam = new MapSqlParameterSource();
+		mapParam.addValue("CPPROVINCE", custAddrProvince);
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), mapParam, String.class);
+		} catch (Exception e) {
+			logger.warn(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+
+	}
+
+	public String getEnquiryPurpose(String finType) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("select key_Code from master_def where key_Type =:key_Type");
+		MapSqlParameterSource mapParam = new MapSqlParameterSource();
+		mapParam.addValue("key_Type", finType);
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), mapParam, String.class);
+		} catch (Exception e) {
+			logger.warn(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {

@@ -53,6 +53,8 @@ import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinFeeRefundDetails;
+import com.pennant.backend.model.finance.FinFeeRefundHeader;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -140,4 +142,17 @@ public interface SOAReportGenerationDAO {
 
 	Map<Long, List<ReceiptAllocationDetail>> getReceiptAllocationDetailsMap(String finReference);
 
+	List<FinAdvancePayments> getFinAdvPaymentsForCancelLoan(String finReference);
+
+	List<FinFeeRefundHeader> getFinFeeRefundHeader(String finReference);
+
+	List<FinFeeRefundDetails> getFinFeeRefundDetails(String finReference);
+
+	String getFinGSTINDetails(String stateCode, String entityCode);
+
+	StatementOfAccount getFinEntity(String finType);
+
+	StatementOfAccount getCustGSTINDetails(String finReference);
+
+	Map<Long, Integer> getInstNumber(String finReference);
 }

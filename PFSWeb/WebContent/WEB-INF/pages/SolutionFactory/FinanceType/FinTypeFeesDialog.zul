@@ -84,6 +84,17 @@
 									<combobox id="calculationOn" readonly="true" width="170px" />
 								</hbox>
 							</row>
+							<row id="row_PercentageType" visible="false">
+								<label id="label_FinTypeFeesDialog_PercentageType" value="${c:l('label_FinTypeFeesDialog_PercentageTyp.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="percType" />
+								</hbox>
+								<label id="label_FinTypeFeesDialog_PercRule" value="${c:l('label_FinTypeFeesDialog_PercRule.value')}" />
+								<hbox>
+									<extendedcombobox id="percRule" />
+								</hbox>
+							</row>
 							<row id="row_FeeScheduleMethod">
 								<label id="label_FinTypeFeesDialog_FeeScheduleMethod" value="${c:l('label_FinTypeFeesDialog_FeeScheduleMethod.value')}" />
 								<hbox id="hbox_feeScheduleMethod">

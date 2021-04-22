@@ -50,7 +50,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -83,7 +84,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 4583907397986780542L;
-	private static final Logger logger = Logger.getLogger(CancelDisbursementDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CancelDisbursementDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -258,6 +259,8 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0
+							|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0
 							|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
 						continue;
 

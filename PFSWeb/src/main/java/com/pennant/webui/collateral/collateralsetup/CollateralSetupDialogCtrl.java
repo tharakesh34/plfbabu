@@ -53,9 +53,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -96,7 +96,6 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -160,7 +159,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  */
 public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CollateralSetupDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralSetupDialogCtrl.class);
 
 	protected Window window_CollateralSetupDialog;
 
@@ -235,7 +234,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private CollateralSetup collateralSetup;
 	private transient CollateralSetupListCtrl collateralSetupListCtrl;
 	private transient CollateralSetupService collateralSetupService;
-	private transient RuleExecutionUtil ruleExecutionUtil;
 	private NotificationService notificationService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
 
@@ -820,7 +818,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 
 		try {
-			ruleResult = getRuleExecutionUtil().executeRule(structure.getSQLRule(), declaredMap,
+			ruleResult = RuleExecutionUtil.executeRule(structure.getSQLRule(), declaredMap,
 					aCollateralSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -2117,27 +2115,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	private AuditHeader newCollateralProcess(CollateralSetup aCollateralSetup, String tranType) {
 		AuditHeader auditHeader = getAuditHeader(aCollateralSetup, tranType);
-		String[] valueParm = new String[1];
-		String[] errParm = new String[1];
-
-		valueParm[0] = aCollateralSetup.getCollateralType();
-		errParm[0] = PennantJavaUtil.getLabel("label_CollateralType") + ":" + valueParm[0];
-
-		List<CollateralSetup> collaterals = getFinanceDetail().getCollaterals();
-		if (CollectionUtils.isNotEmpty(collaterals)) {
-			for (int i = 0; i < collaterals.size(); i++) {
-				CollateralSetup collateralSetup = collaterals.get(i);
-
-				if (collateralSetup.getCollateralType().equals(aCollateralSetup.getCollateralType())) {
-					if (this.newRecord) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
-								getUserWorkspace().getUserLanguage()));
-						return auditHeader;
-					}
-				}
-			}
-		}
 		return auditHeader;
 	}
 
@@ -2172,6 +2149,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		final CollateralSetup aCollateralSetup = new CollateralSetup();
 		BeanUtils.copyProperties(getCollateralSetup(), aCollateralSetup);
 		boolean isNew = false;
+		boolean recSave = false;
 
 		if (isWorkFlowEnabled()) {
 			aCollateralSetup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -2680,7 +2658,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				Listcell lc;
 
 				String moduleName = assignmentDetail.getModule();
-				if (FinanceConstants.MODULE_NAME.equals(moduleName)) {
+				if (FinanceConstants.MODULE_NAME.equals(moduleName)
+						&& ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 					moduleName = Labels.getLabel("label_Finance");
 				}
 				lc = new Listcell(moduleName);
@@ -2817,7 +2796,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				Listcell lc;
 
 				String moduleName = movement.getModule();
-				if (FinanceConstants.MODULE_NAME.equals(moduleName)) {
+				if (FinanceConstants.MODULE_NAME.equals(moduleName)
+						&& ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 					moduleName = Labels.getLabel("label_Finance");
 				}
 				lc = new Listcell(moduleName);
@@ -3226,14 +3206,6 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	public void setSelectedAnsCountMap(HashMap<Long, Long> selectedAnsCountMap) {
 		this.selectedAnsCountMap = selectedAnsCountMap;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public List<FinFlagsDetail> getFinFlagsDetailList() {

@@ -51,14 +51,15 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-import com.pennant.app.util.SysParamUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class BeforeAMZProcess implements Tasklet {
 	private Logger logger = LogManager.getLogger(BeforeAMZProcess.class);
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date appDate = SysParamUtil.getAppDate();
+		Date appDate = EODUtil.getDate("APP_DATE", context);
+
 		logger.info("START Amortization on {} ", appDate);
 
 		logger.debug("COMPLETE Amortization on : " + appDate);

@@ -3,7 +3,8 @@ package com.pennant.webui.dms;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -30,7 +31,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetails> {
 
 	private static final long serialVersionUID = -296172461658303162L;
-	private static final Logger logger = Logger.getLogger(DmsDocumentDetailListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DmsDocumentDetailListCtrl.class);
 
 	@Autowired
 	private DMSIdentificationService dmsIdentificationService;

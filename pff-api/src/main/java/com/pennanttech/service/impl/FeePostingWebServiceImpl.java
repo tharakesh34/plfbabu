@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FeePostingController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -28,8 +30,9 @@ import com.pennanttech.ws.model.manualAdvice.ManualAdviseResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FeePostingWebServiceImpl implements FeePostingRestService, FeePostingSoapService {
-	private final Logger logger = Logger.getLogger(getClass());
+public class FeePostingWebServiceImpl extends ExtendedTestClass
+		implements FeePostingRestService, FeePostingSoapService {
+	private final Logger logger = LogManager.getLogger(getClass());
 	private FeePostingController feePostingController;
 	private ValidationUtility validationUtility;
 	private FeePostingService feePostingService;
@@ -77,7 +80,7 @@ public class FeePostingWebServiceImpl implements FeePostingRestService, FeePosti
 
 		ManualAdviseResponse response = null;
 
-		//Validate FinReference
+		// Validate FinReference
 		if (StringUtils.isBlank(advise.getFinReference())) {
 			response = new ManualAdviseResponse();
 			String[] param = new String[1];
@@ -94,19 +97,19 @@ public class FeePostingWebServiceImpl implements FeePostingRestService, FeePosti
 			return response;
 		}
 
-		//validate Manual Advise Detail
+		// validate Manual Advise Detail
 		response = feePostingController.validateAdviseDetail(advise);
 		if (response != null && response.getReturnStatus() != null) {
 			return response;
 		}
 
-		//proceed Manual Advise Detail
+		// proceed Manual Advise Detail
 		response = feePostingController.doCreateAdvise(advise);
 		if (response != null && response.getReturnStatus() != null) {
 			return response;
 		}
 
-		//If there is no error set Success Return Status to response
+		// If there is no error set Success Return Status to response
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 		logger.debug(Literal.LEAVING);

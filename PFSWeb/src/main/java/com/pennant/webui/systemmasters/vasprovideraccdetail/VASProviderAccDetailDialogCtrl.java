@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -66,6 +67,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -86,6 +88,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -95,7 +98,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDetail> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(VASProviderAccDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(VASProviderAccDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -207,12 +210,17 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.providerId.setMandatoryStyle(true);
-		this.providerId.setModuleName("VehicleDealer");
-		this.providerId.setValueColumn("DealerId");
-		this.providerId.setDescColumn("DealerName");
-		this.providerId.setValueType(DataType.LONG);
-		this.providerId.setValidateColumns(new String[] { "DealerId" });
+		/*
+		 * this.providerId.setMandatoryStyle(true); this.providerId.setModuleName("VehicleDealer");
+		 * this.providerId.setValueColumn("DealerId"); this.providerId.setDescColumn("DealerName");
+		 * this.providerId.setValueType(DataType.LONG); this.providerId.setValidateColumns(new String[] { "DealerId" });
+		 */
+		//Filter to display only VAS Manufacturers
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("DealerType", "VASM", Filter.OP_EQUAL);
+		this.providerId.setFilters(filter);
+
+		this.providerId.setProperties("VASManufacturer", "DealerName", "DealerCity", true, 8);
 
 		this.accountNumber.setMaxlength(20);
 		this.ifscCode.setMaxlength(20);
@@ -380,7 +388,19 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 
 	public void onFulfill$providerId(Event event) {
 		logger.debug(Literal.ENTERING);
-
+		Object dataObject = providerId.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.providerId.setValue("");
+			this.providerId.setDescription("");
+			this.providerId.setAttribute("providerId", null);
+		} else {
+			VehicleDealer details = (VehicleDealer) dataObject;
+			if (details != null) {
+				this.providerId.setValue(String.valueOf(details.getId()));
+				this.providerId.setDescription(details.getDealerName());
+				this.providerId.setAttribute("providerId", details.getId());
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -418,6 +438,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 
 		this.providerId.setValue(String
 				.valueOf(aVASProviderAccDetail.getProviderId() == 0 ? "" : aVASProviderAccDetail.getProviderId()));
+		this.providerId.setAttribute("providerId", aVASProviderAccDetail.getProviderId());
 		this.entityCode.setValue(aVASProviderAccDetail.getEntityCode());
 		this.bankName.setValue(aVASProviderAccDetail.getBankCode());
 		List<String> excludeFiles = new ArrayList<String>();
@@ -478,6 +499,18 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			Object object = this.providerId.getAttribute("providerId");
+			if (object != null) {
+				aVASProviderAccDetail.setProviderId((Long.valueOf(object.toString())));
+			} else {
+				aVASProviderAccDetail.setProviderId(0);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		// Payment Mode
 		try {
 			String strPaymentMode = null;
@@ -1077,7 +1110,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 			PartnerBank partnerbank = (PartnerBank) dataObject;
 			if (partnerbank != null) {
 				this.partnerBankId.setValue(partnerbank.getPartnerBankCode());
-				this.partnerBankId.setDescription(partnerbank.getPartnerBankName());
+				//this.partnerBankId.setDescription(partnerbank.getPartnerBankName());
 				this.partnerBankId.setAttribute("PartnerBank", partnerbank);
 			}
 		}

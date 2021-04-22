@@ -1,6 +1,7 @@
 package com.pennant.backend.service.transactionmapping.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -20,7 +21,7 @@ import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 public class TransactionMappingServiceImpl extends GenericService<TransactionMapping>
 		implements TransactionMappingService {
 
-	private static final Logger logger = Logger.getLogger(TransactionMappingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(TransactionMappingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private TransactionMappingDAO transactionMappingDAO;

@@ -51,7 +51,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -97,7 +98,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ContributorDetailsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ContributorDetailsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -208,6 +209,12 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		// set Field Properties
 		doSetFieldProperties();
 
+		// set Label Properties
+		productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+		if (FinanceConstants.PRODUCT_MUSHARAKA.equals(productCode)) {
+			doSetLabels();
+		}
+
 		doShowDialog(this.financeDetail);
 		logger.debug("Leaving " + event.toString());
 	}
@@ -242,6 +249,12 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		this.avgMudaribRate.setMaxlength(13);
 		this.avgMudaribRate.setScale(9);
 		this.avgMudaribRate.setFormat(PennantConstants.rateFormate9);
+		if (financeDetail.getFinScheduleData().getFinanceType().getFinCategory()
+				.equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
+			this.avgMudaribRate.setVisible(false);
+			this.label_FinanceMainDialog_AvgMudaribRate.setVisible(false);
+			this.listheader_MudaribPerc.setVisible(false);
+		}
 
 		logger.debug("Leaving");
 	}

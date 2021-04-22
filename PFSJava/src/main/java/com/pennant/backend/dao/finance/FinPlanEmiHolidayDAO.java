@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinPlanEmiHolidayDAO.java                                                   * 	  
+ * FileName    		:  BundledProductsDetailDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -48,7 +48,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 
 /**
- * DAO methods declaration for the <b>FinPlanEmiHolidayDAO</b> class.<br>
+ * DAO methods declaration for the <b>BundledProductsDetail model</b> class.<br>
  */
 public interface FinPlanEmiHolidayDAO {
 

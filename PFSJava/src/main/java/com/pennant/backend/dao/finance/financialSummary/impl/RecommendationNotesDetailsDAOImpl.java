@@ -42,23 +42,18 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
@@ -70,7 +65,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class RecommendationNotesDetailsDAOImpl extends SequenceDao<RecommendationNotesDetailsDAO>
 		implements RecommendationNotesDetailsDAO {
-	private static Logger logger = Logger.getLogger(RecommendationNotesDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RecommendationNotesDetailsDAOImpl.class);
 
 	public RecommendationNotesDetailsDAOImpl() {
 		super();
@@ -78,8 +73,6 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 
 	@Override
 	public List<RecommendationNotes> getRecommendationNotesDetails(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("  t1.Id, t1.FinReference, t1.ParticularId,t3.Particulars,t1.Remarks");
 		sql.append(", t1.Version, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
@@ -100,44 +93,31 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<RecommendationNotes>() {
-				@Override
-				public RecommendationNotes mapRow(ResultSet rs, int rowNum) throws SQLException {
-					RecommendationNotes rn = new RecommendationNotes();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			ps.setString(index++, finReference);
+		}, (rs, rowNum) -> {
+			RecommendationNotes rn = new RecommendationNotes();
 
-					rn.setId(rs.getLong("Id"));
-					rn.setFinReference(rs.getString("FinReference"));
-					rn.setParticularId(rs.getLong("ParticularId"));
-					rn.setParticulars(rs.getString("Particulars"));
-					rn.setRemarks(rs.getString("Remarks"));
-					rn.setVersion(rs.getInt("Version"));
-					rn.setLastMntBy(rs.getLong("LastMntBy"));
-					rn.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					rn.setRecordStatus(rs.getString("RecordStatus"));
-					rn.setRoleCode(rs.getString("RoleCode"));
-					rn.setNextRoleCode(rs.getString("NextRoleCode"));
-					rn.setTaskId(rs.getString("TaskId"));
-					rn.setNextTaskId(rs.getString("NextTaskId"));
-					rn.setRecordType(rs.getString("RecordType"));
-					rn.setWorkflowId(rs.getLong("WorkflowId"));
+			rn.setId(rs.getLong("Id"));
+			rn.setFinReference(rs.getString("FinReference"));
+			rn.setParticularId(rs.getLong("ParticularId"));
+			rn.setParticulars(rs.getString("Particulars"));
+			rn.setRemarks(rs.getString("Remarks"));
+			rn.setVersion(rs.getInt("Version"));
+			rn.setLastMntBy(rs.getLong("LastMntBy"));
+			rn.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			rn.setRecordStatus(rs.getString("RecordStatus"));
+			rn.setRoleCode(rs.getString("RoleCode"));
+			rn.setNextRoleCode(rs.getString("NextRoleCode"));
+			rn.setTaskId(rs.getString("TaskId"));
+			rn.setNextTaskId(rs.getString("NextTaskId"));
+			rn.setRecordType(rs.getString("RecordType"));
+			rn.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return rn;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return rn;
+		});
 	}
 
 	@Override
@@ -265,7 +245,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recommendationNotesConfigurationDetails);
-		RowMapper<RecommendationNotesConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<RecommendationNotesConfiguration> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(RecommendationNotesConfiguration.class);
 
 		List<RecommendationNotesConfiguration> recommendationNotesConfigurationList = this.jdbcTemplate

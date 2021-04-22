@@ -47,7 +47,8 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class EligibilityEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEligibilityDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(EligibilityEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(EligibilityEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

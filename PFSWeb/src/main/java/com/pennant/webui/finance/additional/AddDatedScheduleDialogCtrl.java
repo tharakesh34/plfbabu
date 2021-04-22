@@ -49,7 +49,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -77,7 +78,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 4583907397986780542L;
-	private final static Logger logger = Logger.getLogger(AddDatedScheduleDialogCtrl.class);
+	private final static Logger logger = LogManager.getLogger(AddDatedScheduleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

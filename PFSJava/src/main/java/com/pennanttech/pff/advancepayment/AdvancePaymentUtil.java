@@ -64,7 +64,7 @@ public class AdvancePaymentUtil {
 				}
 
 				if ((AdvanceType.UF == type || AdvanceType.UT == type || AdvanceType.AF == type)
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_INT)) {
+						&& !ImplementationConstants.ALLOW_ADV_INT) {
 					continue;
 				}
 
@@ -76,12 +76,12 @@ public class AdvancePaymentUtil {
 		public static List<Property> getRepayList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceType type : values()) {
-				if (AdvanceType.AE == type && !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI)) {
+				if (AdvanceType.AE == type && !ImplementationConstants.ALLOW_ADV_EMI) {
 					continue;
 				}
 
 				if ((AdvanceType.UF == type || AdvanceType.UT == type || AdvanceType.AF == type)
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_INT)) {
+						&& !ImplementationConstants.ALLOW_ADV_INT) {
 					continue;
 				}
 				list.add(new Property(type.code, type.value));
@@ -142,14 +142,11 @@ public class AdvancePaymentUtil {
 		public static List<Property> getList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceStage type : values()) {
-				if (AdvanceStage.FE == type
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_FRONT_END)) {
+				if (AdvanceStage.FE == type && !ImplementationConstants.ADV_EMI_STAGE_FRONT_END) {
 					continue;
-				} else if (AdvanceStage.RE == type
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_REARE_END)) {
+				} else if (AdvanceStage.RE == type && !ImplementationConstants.ADV_EMI_STAGE_REAR_END) {
 					continue;
-				} else if (AdvanceStage.RT == type
-						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS)) {
+				} else if (AdvanceStage.RT == type && !ImplementationConstants.ADV_EMI_STAGE_REPAY_TERMS) {
 					continue;
 				}
 
@@ -722,6 +719,7 @@ public class AdvancePaymentUtil {
 		case FinanceConstants.FINSER_EVENT_ORG:
 		case FinanceConstants.FINSER_EVENT_ADDDISB:
 		case FinanceConstants.FINSER_EVENT_RATECHG:
+		case FinanceConstants.BULK_RATE_CHG:
 		case FinanceConstants.FINSER_EVENT_ADDTERM:
 		case FinanceConstants.FINSER_EVENT_RMVTERM:
 		case FinanceConstants.FINSER_EVENT_CANCELDISB:

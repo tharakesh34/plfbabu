@@ -44,6 +44,7 @@
 package com.pennant.backend.service.applicationmaster;
 
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 
 public interface RelationshipOfficerService {
@@ -58,4 +59,6 @@ public interface RelationshipOfficerService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	AuditDetail doValidations(RelationshipOfficer relationshipOfficer);
 }

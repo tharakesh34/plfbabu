@@ -47,18 +47,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -76,7 +80,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> implements JountAccountDetailDAO {
-	private static Logger logger = Logger.getLogger(JountAccountDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(JountAccountDetailDAOImpl.class);
 
 	public JountAccountDetailDAOImpl() {
 		super();
@@ -145,8 +149,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
 			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -297,8 +300,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
 			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -336,8 +338,6 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 	@Override
 	public List<JointAccountDetail> getJountAccountDetailByFinnRef(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" JointAccountId, FinReference, CustCIF");
 		sql.append(" from FinJointAccountDetails");
@@ -345,31 +345,18 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<JointAccountDetail>() {
-				@Override
-				public JointAccountDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					JointAccountDetail ad = new JointAccountDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+		}, (rs, rowNum) -> {
+			JointAccountDetail ad = new JointAccountDetail();
 
-					ad.setJointAccountId(rs.getLong("JointAccountId"));
-					ad.setFinReference(rs.getString("FinReference"));
-					ad.setCustCIF(rs.getString("CustCIF"));
+			ad.setJointAccountId(rs.getLong("JointAccountId"));
+			ad.setFinReference(rs.getString("FinReference"));
+			ad.setCustCIF(rs.getString("CustCIF"));
 
-					return ad;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ad;
+		});
 	}
 
 	@Override
@@ -465,7 +452,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -487,8 +474,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		paramSource.addValue("CUSTCIF", listCIF);
 		paramSource.addValue("ACTIVE", true);
 
-		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceExposure.class);
+		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 		;
 		StringBuilder query = new StringBuilder();
 		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
@@ -547,7 +533,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -569,8 +555,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CUSTCIF", listCIF);
 		paramSource.addValue("ACTIVE", true);
-		RowMapper<FinanceExposure> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceExposure.class);
+		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 		;
 
 		StringBuilder query = null;
@@ -632,7 +617,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		try {
@@ -662,7 +647,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + query.toString());
 		beanParameters = new BeanPropertySqlParameterSource(exposer);
-		typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceExposure.class);
+		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
 
 		logger.debug("Leaving");
 		FinanceExposure exposure = null;
@@ -699,8 +684,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jountAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		try {
 			jountAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -730,8 +714,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 				" Where F.FinReference =:FinReference and C.CustCtgCode !=:CustCtgCode and IncludeIncome =:IncludeIncome");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(JointAccountDetail.class);
+		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
 
 		logger.debug("Leaving");
 		try {
@@ -740,6 +723,40 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			logger.error("Exception: ", e);
 		}
 		return null;
+	}
+
+	@Override
+	public Map<String, Integer> getCustCtgCount(String finRef) {
+		logger.trace(Literal.ENTERING);
+
+		MapSqlParameterSource sqlScource = new MapSqlParameterSource();
+		sqlScource.addValue("FinReference", finRef);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select custctgcode ,count(*) count ");
+		selectSql.append(" from FinJointAccountDetails_View F ");
+		selectSql.append(
+				" Inner Join Customers C on C.CustCIF =  F.CustCIF where finreference=:FinReference group by custctgcode  ");
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		try {
+			map = this.jdbcTemplate.query(selectSql.toString(), sqlScource,
+					new ResultSetExtractor<Map<String, Integer>>() {
+						Map<String, Integer> map = new HashMap<String, Integer>();
+
+						@Override
+						public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+							while (rs.next()) {
+								map.put(rs.getString(1), rs.getInt(2));
+							}
+							return map;
+						}
+
+					});
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
 	}
 
 }

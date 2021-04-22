@@ -42,7 +42,8 @@
  */
 package com.pennant.backend.service.customermasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -60,7 +61,7 @@ import com.pennant.backend.util.PennantConstants;
  */
 public class CorporateCustomerDetailServiceImpl extends GenericService<CorporateCustomerDetail>
 		implements CorporateCustomerDetailService {
-	private static final Logger logger = Logger.getLogger(CorporateCustomerDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CorporateCustomerDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CorporateCustomerDetailDAO corporateCustomerDetailDAO;

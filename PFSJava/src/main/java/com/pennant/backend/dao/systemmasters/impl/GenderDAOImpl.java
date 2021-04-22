@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.GenderDAO;
 import com.pennant.backend.model.systemmasters.Gender;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Gender</code> with set of CRUD operations.
  */
 public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
-	private static Logger logger = Logger.getLogger(GenderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GenderDAOImpl.class);
 
 	public GenderDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class GenderDAOImpl extends BasicDao<Gender> implements GenderDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(gender);
-		RowMapper<Gender> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Gender.class);
+		RowMapper<Gender> typeRowMapper = BeanPropertyRowMapper.newInstance(Gender.class);
 
 		try {
 			gender = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

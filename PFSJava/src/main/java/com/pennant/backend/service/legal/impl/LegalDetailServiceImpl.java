@@ -49,7 +49,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -118,7 +119,7 @@ import com.rits.cloning.Cloner;
  * Service implementation for methods that depends on <b>LegalDetail</b>.<br>
  */
 public class LegalDetailServiceImpl extends GenericService<LegalDetail> implements LegalDetailService {
-	private static final Logger logger = Logger.getLogger(LegalDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(LegalDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private LegalDetailDAO legalDetailDAO;
@@ -388,6 +389,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -620,6 +622,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 *            legalId of the LegalDetail. (String)
 	 * @return LegalDetails
 	 */
+	@Override
 	public LegalDetail getApprovedLegalDetail(long legalId) {
 		return getLegalDetailDAO().getLegalDetail(legalId, "_AView");
 	}

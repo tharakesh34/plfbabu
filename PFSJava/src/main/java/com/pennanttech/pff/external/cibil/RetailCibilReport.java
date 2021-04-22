@@ -31,15 +31,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
+import com.pennant.backend.dao.finance.RepayInstructionDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.rmtmasters.PromotionDAO;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.cibil.CIBILService;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.Event;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -69,8 +94,23 @@ public class RetailCibilReport extends BasicDao<Object> {
 	private long successCount;
 	private long failedCount;
 	private int xlsxRowCount = 3;
+	private FinScheduleData finScheduleData;
+	public static boolean executing;
 
 	private CIBILService cibilService;
+	
+	private FinanceMainDAO financeMainDAO;
+	private OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceDisbursementDAO financeDisbursementDAO;
+	private RepayInstructionDAO repayInstructionDAO;
+	private FinODPenaltyRateDAO finODPenaltyRateDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private PromotionDAO promotionDAO;
+	private FinanceSuspHeadDAO financeSuspHeadDAO;
+	private FinanceProfitDetailDAO profitDetailsDAO;
+	private FinODDetailsDAO finODDetailsDAO;
+	private VehicleDealerDAO vehicleDealerDAO;
 
 	public RetailCibilReport() {
 		super();
@@ -129,12 +169,14 @@ public class RetailCibilReport extends BasicDao<Object> {
 		// Move the File into S3 bucket
 		try {
 			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT");
-			if (properties.getStorageType().equalsIgnoreCase("MOVE_TO_S3_BUCKET")) {
-				DataEngineUtil.postEvents(Event.MOVE_TO_S3_BUCKET.name(), properties, cibilFile);
-			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_SFTP")) {
-				DataEngineUtil.postEvents(Event.COPY_TO_SFTP.name(), properties, cibilFile);
-			} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_FTP")) {
-				DataEngineUtil.postEvents(Event.COPY_TO_FTP.name(), properties, cibilFile);
+			if (properties != null) {
+				if (properties.getStorageType().equalsIgnoreCase("MOVE_TO_S3_BUCKET")) {
+					DataEngineUtil.postEvents(Event.MOVE_TO_S3_BUCKET.name(), properties, cibilFile);
+				} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_SFTP")) {
+					DataEngineUtil.postEvents(Event.COPY_TO_SFTP.name(), properties, cibilFile);
+				} else if (properties.getStorageType().equalsIgnoreCase("COPY_TO_FTP")) {
+					DataEngineUtil.postEvents(Event.COPY_TO_FTP.name(), properties, cibilFile);
+				}
 			}
 			EXTRACT_STATUS.setStatus("S");
 		} catch (Exception e) {
@@ -227,7 +269,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 					StringBuilder sql = new StringBuilder();
 					sql.append("select CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
-					sql.append(" where segment_type = :segment_type ");
+					sql.append(" where segment_type = :segment_type");
 					MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 					parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
 					jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
@@ -279,22 +321,19 @@ public class RetailCibilReport extends BasicDao<Object> {
 		cell = row.createCell(1);
 
 		cell.setCellValue(getDateOfBirth(customer.getCustDOB()));
-
 		cell = row.createCell(2);
 
-		cell.setCellValue(getCustGenCode(customer.getCustGenderCode()));
+		cell.setCellValue(getCustGenCode(customer));
+		
+		cell = row.createCell(3);
+		cell.setCellValue(customer.getCustCRCPR());
 
 		String docCategory;
 		String docTitle;
 		for (CustomerDocument document : documents) {
-
 			docCategory = document.getCustDocCategory();
 			docTitle = document.getCustDocTitle();
 
-			if (StringUtils.equals(docCategory, "01")) {
-				cell = row.createCell(3);
-				cell.setCellValue(docTitle);
-			}
 			/* MasterDefUtil.getDocCode(DocType.PASSPORT) */
 			if (StringUtils.equals(docCategory, "02")) {
 				cell = row.createCell(4);
@@ -335,10 +374,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		/* Additional ID #1 */
-		row.createCell(13);
+		cell = row.createCell(13);
 
 		/* Additional ID #2 */
-		row.createCell(14);
+		cell = row.createCell(14);
 
 		for (CustomerPhoneNumber phoneNum : customerPhoneNumbers) {
 			String phoneNumber = phoneNum.getPhoneNumber();
@@ -360,13 +399,13 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		/* Extension Office */
-		row.createCell(18);
+		cell = row.createCell(18);
 
 		/* Telephone No.Other */
-		row.createCell(19);
+		cell = row.createCell(19);
 
 		/* Extension Other */
-		row.createCell(20);
+		cell = row.createCell(20);
 
 		if (customerDetal.getCustomerEMailList() != null) {
 			int count = 0;
@@ -384,7 +423,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				}
 			}
 		}
-
+		
 		int count = 0;
 		for (CustomerAddres custAddr : addressList) {
 			count++;
@@ -433,46 +472,47 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		/* Current New Member Code */
 		cell = row.createCell(33);
-		cell.setCellValue(memberDetails.getMemberCode());
+		cell.setCellValue(memberDetails.getMemberId().substring(0, memberDetails.getMemberId().lastIndexOf("_")));
 
 		/* Current New Member Name */
 		cell = row.createCell(34);
-		cell.setCellValue(memberDetails.getMemberName());
+		cell.setCellValue(memberDetails.getMemberShortName());
 
 		/* Ownership Indicator */
-		row.createCell(37);
+		cell = row.createCell(37);
 
 		/* Old Member Code */
-		row.createCell(46);
+		cell = row.createCell(46);
 
 		/* Old Member ShortName */
-		row.createCell(48);
+		cell = row.createCell(48);
 
 		/* Old AccType */
-		row.createCell(49);
+		cell = row.createCell(49);
 
 		/* Old Ownership Indicator */
-		row.createCell(50);
+		cell = row.createCell(50);
 
 		/* Suit Filed Willful Default */
-		row.createCell(51);
+		cell = row.createCell(51);
 
 		/* Written-off and Settled Status */
-		row.createCell(52);
+		cell = row.createCell(52);
 
 		if (customerDetal.getCustomerFinance() != null) {
 			FinanceEnquiry finance = customerDetal.getCustomerFinance();
+			
 			/* Current New Account No */
 			cell = row.createCell(35);
 			cell.setCellValue(finance.getFinReference());
 
 			/* Account Type */
 			cell = row.createCell(36);
-			cell.setCellValue(finance.getFinType());
+			cell.setCellValue(finance.getFinType().trim());
 
 			/* DateOpened/Disbursed */
 			cell = row.createCell(38);
-			cell.setCellValue(DateUtil.format(finance.getFinApprovedDate(), DATE_FORMAT));
+			cell.setCellValue(DateUtil.format(finance.getFinStartDate(), DATE_FORMAT));
 
 			/* Ownership Indicator */
 			cell = row.createCell(37);
@@ -482,21 +522,31 @@ public class RetailCibilReport extends BasicDao<Object> {
 			cell = row.createCell(39);
 			cell.setCellValue(DateUtil.format(finance.getLatestRpyDate(), DATE_FORMAT));
 
+			BigDecimal currBal = currentBalance(finance);
 			/* Date Closed */
 			cell = row.createCell(40);
+			if (currBal.compareTo(BigDecimal.ZERO) == 0) {
+				cell.setCellValue(DateUtil.format(finance.getClosedDate(), DATE_FORMAT));
+			}
 			cell.setCellValue(DateUtil.format(finance.getMaturityDate(), DATE_FORMAT));
 
 			/* Date Reported */
 			cell = row.createCell(41);
-			cell.setCellValue(SysParamUtil.getAppDate(DATE_FORMAT));
+			cell.setCellValue(DateUtil.getSysDate(DATE_FORMAT));
 
 			/* High Credit/Sanctioned Amount */
 			cell = row.createCell(42);
-			cell.setCellValue(String.valueOf(finance.getFinAssetValue()));
+			String val = PennantApplicationUtil.amountFormate(finance.getFinAssetValue(), 2);
+			val = val.replace(",", "");
+			val = val.substring(0, val.indexOf("."));
+			cell.setCellValue(val);
 
 			/* Current Balance */
 			cell = row.createCell(43);
-			cell.setCellValue(String.valueOf(currentBalance(finance)));
+			String curBal = PennantApplicationUtil.amountFormate(currBal, 2);
+			curBal = curBal.replace(",", "");
+			curBal = curBal.substring(0, curBal.indexOf("."));
+			cell.setCellValue(curBal);
 
 			/* Amount Overdue */
 			cell = row.createCell(44);
@@ -504,7 +554,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			/* Number Of Days PastDue */
 			cell = row.createCell(45);
-			cell.setCellValue(finance.getCurODDays());
+			cell.setCellValue(getOdDays(finance.getCurODDays()));
 
 			/* Rate of Interest */
 			cell = row.createCell(58);
@@ -516,31 +566,93 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			/* EMI Amount */
 			cell = row.createCell(60);
-			cell.setCellValue(String.valueOf(finance.getInstalmentDue()));
+			BigDecimal emi = PennantApplicationUtil.formateAmount(getEmiAmount(finance.getFinReference()), 2).setScale(
+					0,
+					RoundingMode.HALF_DOWN);
+			cell.setCellValue(String.valueOf(emi));
 
-			/* Written off AmountTotal */
-			cell = row.createCell(61);
-			BigDecimal writnAmount = writtenOffAmount(finance);
-			cell.setCellValue(String.valueOf(writnAmount));
+			/* Written-off and Settled Status */
+			String closingstatus = StringUtils.trimToEmpty(finance.getClosingStatus());
+			int status = 0;
+			/* Account Status */
+			if ("W".equals(closingstatus)) {
+				cell = row.createCell(51);
+				status = 2;
+				cell.setCellValue("02");
 
-			/* Written off Principal Amount */
-			cell = row.createCell(62);
-			BigDecimal writnPrincpl = writtenOffPrincipal(finance);
-			cell.setCellValue(String.valueOf(writnPrincpl));
+				/* Written off AmountTotal */
+				cell = row.createCell(61);
+				BigDecimal writnAmount = writtenOffAmount(finance);
+				if (writnAmount.compareTo(BigDecimal.ZERO) > 0) {
+					String wa = PennantApplicationUtil.amountFormate(writnAmount, 2);
+					wa = wa.replace(",", "");
+					wa = wa.substring(0, wa.indexOf(".") - 1);
+					cell.setCellValue(wa);
+				} else {
+					cell.setCellValue(String.valueOf(writnAmount));
+				}
+
+
+				/* Written off Principal Amount */
+				cell = row.createCell(62);
+				BigDecimal writnPrincpl = writtenOffPrincipal(finance);
+				if (writnPrincpl.compareTo(BigDecimal.ZERO) > 0) {
+					String wp = PennantApplicationUtil.amountFormate(writnPrincpl, 2);
+					wp = wp.replace(",", "");
+					wp = wp.substring(0, wp.indexOf(".") - 1);
+					cell.setCellValue(wp);
+				} else {
+					cell.setCellValue(String.valueOf(writnPrincpl));
+				}
+			}
 
 			/* Income */
 			cell = row.createCell(67);
 			cell.setCellValue("");
-		}
 
-		/* Asset Classification */
-		row.createCell(53);
+			/* Asset Classification */
+			int pastDues = 0;
+			Date odStartDate = null;
+			if (finance.getFinOdDetails() != null) {
+				for (FinODDetails od : finance.getFinOdDetails()) {
+					if (od.getFinCurODAmt() != null && od.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+
+						if (pastDues < od.getFinCurODDays()) {
+							pastDues = od.getFinCurODDays();
+						}
+
+						if (odStartDate == null && od.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
+							odStartDate = od.getFinODSchdDate();
+							continue;
+						}
+
+						if (DateUtility.compare(od.getFinODSchdDate(), odStartDate) < 0
+								&& od.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
+							odStartDate = od.getFinODSchdDate();
+						}
+					}
+				}
+			}
+
+			String code = "";
+
+			if (pastDues == 0) {
+				code = "01"; // Standard
+			} else{
+				code = "  ";
+			}
+			row.createCell(53);
+			//cell.setCellValue(code);
+		}
 
 		/* Value of Collateral */
 		row.createCell(54);
 
 		/* Type of Collateral */
 		row.createCell(55);
+
+		/* Rate of Interest */
+		row.createCell(58);
 
 		/* Payment Frequency */
 		row.createCell(64);
@@ -565,23 +677,27 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		/* Monthly/Annual Income Indicator */
 		row.createCell(69);
+		
+		logger.info(Literal.LEAVING);
 	}
 
 	private String getAddrTypeCode(String custAddrType) {
+		logger.info(Literal.ENTERING);
+
 		String addrsCode = "";
-		if (custAddrType != null) {
-			if ("01".equals(custAddrType)) {
-				addrsCode = "1";
-			} else if ("02".equals(custAddrType)) {
-				addrsCode = "2";
-			} else if ("03".equals(custAddrType)) {
-				addrsCode = "3";
-			}
+		if (StringUtils.trimToNull(custAddrType) != null) {
+			addrsCode = custAddrType;
+		} else {
+			addrsCode = "04";
 		}
+
+		logger.info(Literal.LEAVING);
 		return addrsCode;
 	}
 
 	private String getCustomerFullName(Customer customer) {
+		logger.info(Literal.ENTERING);
+
 		StringBuilder builder = new StringBuilder();
 
 		if (customer.getCustFName() != null) {
@@ -609,69 +725,69 @@ public class RetailCibilReport extends BasicDao<Object> {
 		return DateUtil.format(custDOB, DATE_FORMAT);
 	}
 
-	private String getCustGenCode(String custGenCode) {
+	private String getCustGenCode(Customer customer) {
+		logger.info(Literal.ENTERING);
+
 		String genderCode = "";
-		if ("M".equals(custGenCode) || "MALE".equals(custGenCode)) {
+		if ("M".equals(customer.getCustGenderCode()) || "MALE".equals(customer.getCustGenderCode())) {
 			genderCode = "2";
-		} else if ("F".equals(custGenCode) || "FEMALE".equals(custGenCode)) {
+		} else if ("F".equals(customer.getCustGenderCode()) || "FEMALE".equals(customer.getCustGenderCode())) {
 			genderCode = "1";
-		} else {
-			genderCode = "3";
 		}
+		
+		logger.info(Literal.LEAVING);
 		return genderCode;
 	}
 
-	private BigDecimal writtenOffAmount(FinanceEnquiry fm) {
-		BigDecimal writtenOffAmount = BigDecimal.ZERO;
-		if (PennantConstants.FIN_CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
-			BigDecimal excessBal = (fm.getExcessAmount().subtract(fm.getExcessAmtPaid()));
-			BigDecimal unpaidEmi = (fm.getTotalPriSchd().subtract(fm.getTotalPriPaid())
-					.add(fm.getTotalPftSchd().subtract(fm.getTotalPftPaid())));
-			writtenOffAmount = unpaidEmi.subtract(excessBal);
-		}
+	private BigDecimal writtenOffAmount(FinanceEnquiry customerFinance) {
+		logger.info(Literal.ENTERING);
+
+		BigDecimal writtenOffAmount = (customerFinance.getTotalPriSchd().subtract(customerFinance.getTotalPriPaid())
+				.add(customerFinance.getTotalPftSchd().subtract(customerFinance.getTotalPftPaid())
+						.subtract(customerFinance.getExcessAmount().subtract(customerFinance.getExcessAmtPaid()))));
 
 		if (writtenOffAmount.compareTo(BigDecimal.ZERO) < 0) {
 			writtenOffAmount = BigDecimal.ZERO;
 		}
 
+		logger.info(Literal.LEAVING);
 		return writtenOffAmount;
 	}
 
-	private BigDecimal writtenOffPrincipal(FinanceEnquiry fm) {
-		BigDecimal writtenOffPrincipal = BigDecimal.ZERO;
-		if (PennantConstants.FIN_CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
-			BigDecimal excessBal = (fm.getExcessAmount().subtract(fm.getExcessAmtPaid()));
-			BigDecimal unpaidPrincipal = (fm.getTotalPriSchd().subtract(fm.getTotalPriPaid()));
-			writtenOffPrincipal = unpaidPrincipal.subtract(excessBal);
-		}
+	private BigDecimal writtenOffPrincipal(FinanceEnquiry customerFinance) {
+		logger.info(Literal.ENTERING);
+
+		BigDecimal writtenOffPrincipal = (customerFinance.getTotalPriSchd().subtract(customerFinance.getTotalPriPaid())
+				.subtract(customerFinance.getExcessAmount().subtract(customerFinance.getExcessAmtPaid())));
 
 		if (writtenOffPrincipal.compareTo(BigDecimal.ZERO) < 0) {
 			writtenOffPrincipal = BigDecimal.ZERO;
 		}
+		logger.info(Literal.LEAVING);
 
 		return writtenOffPrincipal;
 	}
 
-	private BigDecimal amountOverDue(FinanceEnquiry fm) {
-		BigDecimal amountOverdue;
-		int odDays = Integer.parseInt(getOdDays(fm.getCurODDays()));
+	private BigDecimal amountOverDue(FinanceEnquiry customerFinance) {
+		logger.info(Literal.ENTERING);
+		
+		BigDecimal amountOverdue = BigDecimal.ZERO;
+		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
 		if (odDays > 0) {
-			BigDecimal installmentDue = getAmount(fm.getInstalmentDue());
-			BigDecimal installmentPaid = getAmount(fm.getInstalmentPaid());
-			BigDecimal bounceDue = getAmount(fm.getBounceDue());
-			BigDecimal bouncePaid = getAmount(fm.getBouncePaid());
-			BigDecimal penaltyDue = getAmount(fm.getLatePaymentPenaltyDue());
-			BigDecimal penaltyPaid = getAmount(fm.getLatePaymentPenaltyPaid());
-			BigDecimal excessAmount = getAmount(fm.getExcessAmount());
-			BigDecimal excessAmountPaid = getAmount(fm.getExcessAmtPaid());
-			amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
-					.add(penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid))));
+			//finScheduleData = financeDetailService.getFinSchDataById(customerFinance.getFinReference(), "_AView", true);
+			finScheduleData = getFinSchDataById(customerFinance.getFinReference(), "_AView", true);
+			FinanceSummary finSummary=finScheduleData.getFinanceSummary();
+			FinanceSummary summary = cibilService.getFinanceProfitDetails(customerFinance.getFinReference());
+			int formatter = CurrencyUtil.getFormat(summary.getFinCcy());
+			amountOverdue = PennantApplicationUtil.formateAmount(summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal()), formatter);
 		} else {
 			amountOverdue = BigDecimal.ZERO;
 		}
 		if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
 			amountOverdue = BigDecimal.ZERO;
 		}
+
+		logger.info(Literal.LEAVING);
 		return amountOverdue;
 	}
 
@@ -690,8 +806,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			BigDecimal excessAmount = getAmount(fm.getExcessAmount());
 			BigDecimal excessAmountPaid = getAmount(fm.getExcessAmtPaid());
 			currentBalance = futureSchedulePrincipal
-					.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid)
-							.add(penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid)))));
+					.add(bounceDue.subtract(bouncePaid).subtract(excessAmount.subtract(excessAmountPaid)));
 
 		} else {
 			currentBalance = getAmount(fm.getFutureSchedulePrin());
@@ -703,6 +818,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 		if (StringUtils.equals("C", closingstatus)) {
 			currentBalance = BigDecimal.ZERO;
 		}
+
+		logger.info(Literal.LEAVING);
 		return currentBalance;
 	}
 
@@ -713,7 +830,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrHNbr()));
 			if (custAddr.getCustFlatNbr() != null || custAddr.getCustAddrStreet() != null
 					|| custAddr.getCustAddrLine1() != null || custAddr.getCustAddrLine2() != null) {
-				builder.append(",");
+				builder.append(", ");
 			}
 		}
 
@@ -721,34 +838,34 @@ public class RetailCibilReport extends BasicDao<Object> {
 			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrStreet()));
 			if (custAddr.getCustFlatNbr() != null || custAddr.getCustAddrLine1() != null
 					|| custAddr.getCustAddrLine2() != null) {
-				builder.append(",");
+				builder.append(", ");
 			}
 		}
 
 		if (custAddr.getCustFlatNbr() != null) {
 			builder.append(StringUtils.trimToEmpty(custAddr.getCustFlatNbr()));
 			if (custAddr.getCustAddrLine1() != null || custAddr.getCustAddrLine2() != null) {
-				builder.append(",");
+				builder.append(", ");
 			}
 		}
 
 		if (custAddr.getCustAddrLine1() != null) {
 			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrLine1()));
 			if (custAddr.getCustAddrLine2() != null) {
-				builder.append(",");
+				builder.append(", ");
 			}
 		}
 		if (custAddr.getCustAddrCity() != null) {
 			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrCity()));
 			if (custAddr.getCustAddrCity() != null) {
-				builder.append(",");
+				builder.append(", ");
 			}
 		}
 
 		if (custAddr.getCustAddrProvince() != null) {
-			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrProvince()));
+			builder.append(StringUtils.trimToEmpty(custAddr.getLovDescCustAddrProvinceName()));
 			if (custAddr.getCustAddrProvince() != null) {
-				builder.append(",");
+				builder.append(", ");
 			}
 		}
 
@@ -765,7 +882,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 				builder.append(" ");
 			}
 		}
-		return builder.toString();
+		String custAddress = builder.toString();
+
+		logger.info(Literal.LEAVING);
+		return custAddress;
 	}
 
 	private String getMemberDetails() {
@@ -773,7 +893,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		detais.append(memberDetails.getMemberId()).append(",");
 		detais.append(memberDetails.getMemberShortName()).append(",");
 		detais.append("").append(",");
-		detais.append(DateUtil.format(SysParamUtil.getAppDate(), DATE_FORMAT)).append(",");
+		detais.append(DateUtil.getSysDate(DATE_FORMAT)).append(",");
 		detais.append(memberDetails.getMemberPassword()).append(",");
 		detais.append("").append(",");
 		detais.append(memberDetails.getMemberCode());
@@ -832,10 +952,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 		StringBuilder builder = new StringBuilder(reportLocation);
 		builder.append(File.separator);
 		builder.append(memberId);
-		builder.append("-");
+		builder.append("_");
 		builder.append(DateUtil.getSysDate("ddMMYYYY"));
-		builder.append("-");
-		builder.append(DateUtil.getSysDate("Hms"));
+		//builder.append("_");
+		//builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".txt");
 		reportName = new File(builder.toString());
 		reportName.createNewFile();
@@ -854,10 +974,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 		StringBuilder builder = new StringBuilder(reportLocation);
 		builder.append(File.separator);
 		builder.append(memberId);
-		builder.append("-");
+		builder.append("_");
 		builder.append(DateUtil.getSysDate("ddMMYYYY"));
-		builder.append("-");
-		builder.append(DateUtil.getSysDate("Hms"));
+		//builder.append("_");
+		//builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".xlsx");
 		reportName = new File(builder.toString());
 		reportName.createNewFile();
@@ -1364,9 +1484,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 		amount = amount.setScale(0, RoundingMode.HALF_DOWN);
 		writeValue(builder, fieldTag, amount.toString(), maxLength, segment);
 	}
-
+	
+	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	private void initlize() {
-		memberDetails = cibilService.getMemberDetails(PennantConstants.PFF_CUSTCTG_INDIV);
+		memberDetails = cibilService.getMemberDetailsByType(PennantConstants.PFF_CUSTCTG_INDIV,
+				PennantConstants.PFF_CIBIL_TYPE_GENERATE);
 		totalRecords = 0;
 		processedRecords = 0;
 		successCount = 0;
@@ -1556,9 +1678,257 @@ public class RetailCibilReport extends BasicDao<Object> {
 		return remarks.toString();
 	}
 
+	public FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired) {
+		logger.debug(Literal.ENTERING);
+
+		FinScheduleData finSchData = new FinScheduleData();
+		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, type, false);
+		setDasAndDmaData(financeMain);
+		if (financeMain == null) {
+			return finSchData;
+		}
+
+		finSchData.setFinReference(financeMain.getFinReference());
+		finSchData.setFinanceMain(financeMain);
+
+		// Overdraft Schedule Details
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+			finSchData.setOverdraftScheduleDetails(
+					getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "_Temp", false));
+		}
+
+		// Schedule details
+		//finSchData.setFinanceScheduleDetails(
+		//	getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+
+		// Disbursement Details
+		//finSchData.setDisbursementDetails(
+		//	getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+
+		// Repay instructions
+		//finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
+
+		// od penality details
+		//finSchData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
+
+		if (summaryRequired) {
+
+			// Finance Type
+			// finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType()));
+			// Finance Type Details
+			FinanceType financeType = null;//getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType());
+			if (financeType != null && StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+				// Fetching Promotion Details
+				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(),
+						"_AView");
+				financeType.setFInTypeFromPromotiion(promotion);
+			}
+			//finSchData.setFinanceType(financeType);
+
+			// Suspense
+			finSchData.setFinPftSuspended(false);
+			FinanceSuspHead financeSuspHead = null;//getFinanceSuspHeadDAO().getFinanceSuspHeadById(finReference, "");
+			if (financeSuspHead != null && financeSuspHead.isFinIsInSusp()) {
+				finSchData.setFinPftSuspended(true);
+				finSchData.setFinSuspDate(financeSuspHead.getFinSuspDate());
+			}
+
+			// Finance Summary Details Preparation
+			final Date curBussDate = SysParamUtil.getAppDate();
+			FinanceSummary summary = new FinanceSummary();
+			summary.setFinReference(financeMain.getFinReference());
+			summary.setSchDate(curBussDate);
+
+			if (financeMain.isAllowGrcPeriod() && curBussDate.compareTo(financeMain.getNextGrcPftDate()) <= 0) {
+				summary.setNextSchDate(financeMain.getNextGrcPftDate());
+			} else if (financeMain.getNextRepayDate().compareTo(financeMain.getNextRepayPftDate()) < 0) {
+				summary.setNextSchDate(financeMain.getNextRepayDate());
+			} else {
+				summary.setNextSchDate(financeMain.getNextRepayPftDate());
+			}
+
+			// commented because we are fetching total fees from FinfeeDeatail
+			// table
+			/*
+			 * summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary); summary =
+			 * getFinFeeDetailDAO().getTotalFeeCharges(summary);
+			 */
+			//summary.setFinCurODDays(getProfitDetailsDAO().getCurOddays(finReference, ""));
+			finSchData.setFinanceSummary(summary);
+
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference);
+			if (finODDetails != null) {
+				summary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
+				summary.setFinODTotWaived(finODDetails.getTotWaived());
+				summary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
+				summary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return finSchData;
+	}
+	
+	private BigDecimal getEmiAmount(String finReference) {
+		List<FinanceScheduleDetail> list = getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", 0);
+		BigDecimal emiAmount = BigDecimal.ZERO;
+		for (FinanceScheduleDetail schd : list) {
+			if ((schd.isRepayOnSchDate() || schd.isPftOnSchDate())
+					&& schd.getPartialPaidAmt().compareTo(BigDecimal.ZERO) == 0) {
+				emiAmount = schd.getRepayAmount();
+			}
+			if (schd.getSchDate().compareTo(SysParamUtil.getAppDate()) > 0) {
+				break;
+			}
+		}
+		return emiAmount;
+	}
+
+	private void setDasAndDmaData(FinanceMain financeMain) {
+		logger.debug(Literal.ENTERING);
+		List<Long> dealerIds = new ArrayList<Long>();
+		long dsaCode = 0;
+		long dmaCode = 0;
+		long connectorCode = 0;
+		if (StringUtils.isNotBlank(financeMain.getDsaCode()) && StringUtils.isNumeric(financeMain.getDsaCode())) {
+			dsaCode = Long.parseLong(financeMain.getDsaCode());
+			dealerIds.add(dsaCode);
+		}
+		if (StringUtils.isNotBlank(financeMain.getDmaCode()) && StringUtils.isNumeric(financeMain.getDmaCode())) {
+			dmaCode = Long.parseLong(financeMain.getDmaCode());
+			dealerIds.add(dmaCode);
+		}
+		if (financeMain.getConnector() > 0) {
+			connectorCode = financeMain.getConnector();
+			dealerIds.add(financeMain.getConnector());
+		}
+		if (dealerIds.size() > 0) {
+			List<VehicleDealer> vehicleDealerList = getVehicleDealerDAO().getVehicleDealerById(dealerIds);
+			if (vehicleDealerList != null && !vehicleDealerList.isEmpty()) {
+				for (VehicleDealer dealer : vehicleDealerList) {
+					if (dealer.getDealerId() == dmaCode) {
+						financeMain.setDmaName(dealer.getDealerName());
+						financeMain.setDmaCodeDesc(dealer.getCode());
+					} else if (dealer.getDealerId() == dsaCode) {
+						financeMain.setDsaName(dealer.getDealerName());
+						financeMain.setDsaCodeDesc(dealer.getCode());
+					} else if (dealer.getDealerId() == connectorCode) {
+						financeMain.setConnectorCode(dealer.getDealerName());
+						financeMain.setConnectorDesc(dealer.getCode());
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	@Autowired
 	public void setCibilService(CIBILService cibilService) {
 		this.cibilService = cibilService;
+	}
+	
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public OverdraftScheduleDetailDAO getOverdraftScheduleDetailDAO() {
+		return overdraftScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setOverdraftScheduleDetailDAO(OverdraftScheduleDetailDAO overdraftScheduleDetailDAO) {
+		this.overdraftScheduleDetailDAO = overdraftScheduleDetailDAO;
+	}
+
+	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
+		return financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
+		return financeDisbursementDAO;
+	}
+
+	@Autowired
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
+	public RepayInstructionDAO getRepayInstructionDAO() {
+		return repayInstructionDAO;
+	}
+
+	@Autowired
+	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
+		this.repayInstructionDAO = repayInstructionDAO;
+	}
+
+	public FinODPenaltyRateDAO getFinODPenaltyRateDAO() {
+		return finODPenaltyRateDAO;
+	}
+
+	@Autowired
+	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
+		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	@Autowired
+	public void setPromotionDAO(PromotionDAO promotionDAO) {
+		this.promotionDAO = promotionDAO;
+	}
+
+	public FinanceSuspHeadDAO getFinanceSuspHeadDAO() {
+		return financeSuspHeadDAO;
+	}
+
+	@Autowired
+	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
+		this.financeSuspHeadDAO = financeSuspHeadDAO;
+	}
+
+	public FinanceProfitDetailDAO getProfitDetailsDAO() {
+		return profitDetailsDAO;
+	}
+
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	public VehicleDealerDAO getVehicleDealerDAO() {
+		return vehicleDealerDAO;
+	}
+
+	@Autowired
+	public void setVehicleDealerDAO(VehicleDealerDAO vehicleDealerDAO) {
+		this.vehicleDealerDAO = vehicleDealerDAO;
 	}
 
 }

@@ -31,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zkplus.spring.SpringUtil;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 
 public class DeviationHelper {
-	private static final Logger logger = Logger.getLogger(DeviationHelper.class);
+	private static final Logger logger = LogManager.getLogger(DeviationHelper.class);
 
 	@Autowired
 	private SecurityRoleDAO securityRoleDAO;
@@ -349,7 +350,8 @@ public class DeviationHelper {
 		boolean allowed = false;
 		int finRefType = FinanceConstants.PROCEDT_LIMIT;
 		String quickDisbCode = FinanceConstants.MANUAL_DEVIATION;
-		String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode);
+		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode, finEvent);
 
 		if (StringUtils.isNotBlank(roles)) {
 			String[] roleCodes = roles.split(PennantConstants.DELIMITER_COMMA);

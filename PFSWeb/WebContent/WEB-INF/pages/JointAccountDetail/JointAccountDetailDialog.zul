@@ -55,15 +55,15 @@
 											<space id="space_CustCIF" spacing="2px" sclass="mandatory" />
 											<textbox id="custCIF" width="180px" />
 											<longbox id="custID" width="150px" maxlength="26" visible="false" />
-											<button id="btnSearchCustCIF" visible="false" image="/images/icons/LOVSearch.png" />
+											<button id="btnSearchCustCIF" visible="false" image="/images/icons/LOVSearch.png" autodisable="btnSearchCustCIF" />
 											<space spacing="2px" />
 											<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
 											<space spacing="2px" />
 											<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}"
-												tooltiptext="${c:l('tooltip_NewCust')}" />
+												tooltiptext="${c:l('tooltip_NewCust')}" autodisable="btn_NewCust,btn_EditCust" />
 											<space spacing="2px" />
 											<button id="btn_EditCust" label="${c:l('label_JountAccountDetailDialog_BtnEditCust.value')}"
-												tooltiptext="${c:l('tooltip_EditCust')}" />
+												tooltiptext="${c:l('tooltip_EditCust')}" autodisable="btn_EditCust,btn_NewCust" />
 										</hbox>
 									</cell>
 								</row>
@@ -71,7 +71,7 @@
 									<label id="label_CustCIFName" value="${c:l('label_JountAccountDetailDialog_CustCIFName.value')}" />
 									<hbox id="hbox_CustCIFName">
 										<space id="space_CustCIFName" spacing="2px" sclass="mandatory" />
-										<textbox id="custCIFName" maxlength="50" width="250px" />
+										<textbox id="custCIFName" maxlength="200" width="250px" />
 									</hbox>
 								</row>
 								<row id="row1" visible="false">

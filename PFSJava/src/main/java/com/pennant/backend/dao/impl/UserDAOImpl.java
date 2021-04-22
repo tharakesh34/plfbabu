@@ -48,14 +48,15 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.UserDAO;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>SecUser model</b> class.<br>
  */
 public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
-	private static final Logger logger = Logger.getLogger(UserDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(UserDAOImpl.class);
 
 	public UserDAOImpl() {
 		super();
@@ -118,8 +119,6 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	}
 
 	public void updateInvalidTries(String userName) {
-		logger.debug(Literal.ENTERING);
-
 		//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
 		int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1;
 
@@ -150,8 +149,6 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 			logger.trace(Literal.SQL + sql.toString());
 			this.jdbcTemplate.update(sql.toString(), parameterSource);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -168,7 +165,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("USRLOGIN", usrLogin);
 
-		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+		RowMapper<SecurityUser> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
@@ -188,8 +185,6 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	 */
 	@Override
 	public SecurityUser getUserByLogin(final String usrLogin) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSecurityUser();
 		sql.append(" Where USRLOGIN = ?");
 
@@ -200,10 +195,9 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrLogin }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("SecUser not exist's for for the specified UsrLogin >> {}", usrLogin);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -304,30 +298,20 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	 */
 	@Override
 	public List<SecurityRole> getUserRolesByUserID(final long userID) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("UsrID", userID);
-
 		StringBuilder sql = new StringBuilder("select RoleCd, RoleDesc, RoleCategory");
 		sql.append(" from SecUserOperations uo");
 		sql.append(" inner join SecOperationRoles opr on opr.OprID = uo.OprID");
 		sql.append(" inner join SecRoles r on r.RoleID = opr.RoleID");
-		sql.append(" where uo.UsrID = :UsrID");
+		sql.append(" where uo.UsrID = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.LEAVING);
-
-		return this.jdbcTemplate.query(sql.toString(), paramSource, new RowMapper<SecurityRole>() {
-
-			@Override
-			public SecurityRole mapRow(ResultSet rs, int rowNum) throws SQLException {
-				SecurityRole role = new SecurityRole();
-				role.setRoleCd(rs.getString("RoleCd"));
-				role.setRoleDesc(rs.getString("RoleDesc"));
-				role.setRoleCategory(rs.getString("RoleCategory"));
-				return role;
-			}
+		return this.jdbcOperations.query(sql.toString(), new Object[] { userID }, (rs, rowNum) -> {
+			SecurityRole role = new SecurityRole();
+			role.setRoleCd(rs.getString("RoleCd"));
+			role.setRoleDesc(rs.getString("RoleDesc"));
+			role.setRoleCategory(rs.getString("RoleCategory"));
+			return role;
 		});
 	}
 

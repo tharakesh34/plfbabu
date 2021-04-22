@@ -44,7 +44,8 @@ package com.pennant.webui.customermasters.customeraddres;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerAddresListCtrl extends GFCBaseListCtrl<CustomerAddres> {
 	private static final long serialVersionUID = -3065680573751828336L;
-	private static final Logger logger = Logger.getLogger(CustomerAddresListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerAddresListCtrl.class);
 
 	protected Window window_CustomerAddresList;
 	protected Borderlayout borderLayout_CustomerAddresList;

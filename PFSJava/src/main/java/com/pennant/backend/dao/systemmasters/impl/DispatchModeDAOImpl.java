@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.DispatchModeDAO;
 import com.pennant.backend.model.systemmasters.DispatchMode;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements DispatchModeDAO {
-	private static Logger logger = Logger.getLogger(DispatchModeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DispatchModeDAOImpl.class);
 
 	public DispatchModeDAOImpl() {
 		super();
@@ -94,7 +95,7 @@ public class DispatchModeDAOImpl extends BasicDao<DispatchMode> implements Dispa
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dispatchMode);
-		RowMapper<DispatchMode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DispatchMode.class);
+		RowMapper<DispatchMode> typeRowMapper = BeanPropertyRowMapper.newInstance(DispatchMode.class);
 
 		try {
 			dispatchMode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

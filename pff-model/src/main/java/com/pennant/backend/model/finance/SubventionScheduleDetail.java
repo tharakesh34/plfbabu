@@ -32,6 +32,21 @@ public class SubventionScheduleDetail implements Serializable {
 		return excludeFields;
 	}
 
+	public SubventionScheduleDetail copyEntity() {
+		SubventionScheduleDetail entity = new SubventionScheduleDetail();
+		entity.setFinReference(this.finReference);
+		entity.setDisbSeqID(this.disbSeqID);
+		entity.setSchDate(this.schDate);
+		entity.setNoOfDays(this.noOfDays);
+		entity.setDiscountedPft(this.discountedPft);
+		entity.setPresentValue(this.presentValue);
+		entity.setFutureValue(this.futureValue);
+		entity.setClosingBal(this.closingBal);
+		entity.setFvPftFraction(this.fvPftFraction);
+		entity.setCbPftFraction(this.cbPftFraction);
+		return entity;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}

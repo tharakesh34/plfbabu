@@ -5,11 +5,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -23,9 +24,14 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
@@ -53,6 +59,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private TVerificationDialogCtrl tVerificationDialogCtrl;
 	private List<Verification> valuationList = new ArrayList<>();
 	List<ValueLabel> decisionOnValList = new ArrayList<>();
+	private FinanceDetail financeDetail;
 
 	public FinalValuationDialogCtrl() {
 		super();
@@ -75,6 +82,10 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		if (arguments.get("enqiryModule") != null) {
 			enqiryModule = (Boolean) arguments.get("enqiryModule");
+		}
+
+		if (arguments.get("financeDetail") != null) {
+			this.setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
 		}
 
 		doSetFieldProperties();
@@ -118,6 +129,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 	public void onClick$btnSave(Event event) throws ParseException {
 		logger.debug(Literal.ENTERING);
 		doSave();
+		renderFinalValuationInExtendedDetails();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -148,6 +160,49 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.valuationList.add(verification);
 		closeDialog();
 		logger.debug(Literal.ENTERING);
+	}
+
+	private void validateRemarks() {
+		this.finalValRemarks.setConstraint("");
+		this.finalValRemarks.setErrorMessage("");
+		BigDecimal minValAmount = (BigDecimal) finalValuationAmount.getAttribute("minValue");
+		if (minValAmount.compareTo(BigDecimal.ZERO) > 0) {
+			minValAmount = PennantApplicationUtil.formateAmount(minValAmount, PennantConstants.defaultCCYDecPos);
+		}
+		BigDecimal finValAmount = this.finalValuationAmount.getActualValue();
+		if (!this.finalValRemarks.isReadonly() && !this.finalValuationAmount.isReadonly()
+				&& minValAmount.compareTo(finValAmount) != 0 && StringUtils.isBlank(finalValRemarks.getValue())) {
+			throw new WrongValueException(finalValRemarks, Labels.getLabel("FIELD_NO_EMPTY",
+					new Object[] { Labels.getLabel("label_FieldInvestigationDialog_FinalValRemarks.value") }));
+		}
+
+	}
+
+	@SuppressWarnings("deprecation")
+	private void renderFinalValuationInExtendedDetails() {
+		String collaRef = this.finalValuationCollateral.getSelectedItem().getValue();
+		for (CollateralSetup collateralSetup : financeDetail.getCollaterals()) {
+			if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
+				ExtendedFieldRender extendedFieldRender = collateralSetup.getExtendedFieldRenderList().get(0);
+				if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
+					Map<String, Object> map = extendedFieldRender.getMapValues();
+					List<Verification> verifications = getVerificationsByReference(collaRef);
+					if (CollectionUtils.isNotEmpty(verifications)) {
+						for (int i = 0; i < verifications.size(); i++) {
+							if (i == 0) {
+								map.put("valamt1", PennantAppUtil.amountFormate(
+										verifications.get(i).getValuationAmount(), PennantConstants.defaultCCYDecPos));
+							} else if (i == 1) {
+								map.put("valamt2", PennantAppUtil.amountFormate(
+										verifications.get(i).getValuationAmount(), PennantConstants.defaultCCYDecPos));
+							}
+							map.put("finvalamt", PennantAppUtil.amountFormate(verifications.get(i).getFinalValAmt(),
+									PennantConstants.defaultCCYDecPos));
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void doSetValidation() {
@@ -189,6 +244,10 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 			wve.add(we);
 		}
 		try {
+			//PSD#155631
+			if (ImplementationConstants.TV_FINALVAL_AMOUNT_VALD) {
+				validateRemarks();
+			}
 			verification.setFinalValRemarks(this.finalValRemarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -273,7 +332,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				this.valuationAsPerCOP.setValue(verification.getValueForCOP());
 				this.valuationAmountAsPerPE.setValue(verification.getFinalValAsPerPE());
-
+				this.finalValRemarks.setValue(StringUtils.trimToEmpty(verification.getFinalValRemarks()));
 				if (!isApproved
 						&& StringUtils.equals(verification.getTvRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
 					isApproved = true;
@@ -283,13 +342,14 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 					fillComboBox(this.decisionOnVal, verification.getFinalValDecision(), decisionOnValList, "");
 
-					this.finalValRemarks.setValue(StringUtils.trimToEmpty(verification.getFinalValRemarks()));
 				}
 			}
 
 			if (CollectionUtils.isNotEmpty(verificationAmountsList)) {
-				this.finalValuationAmount.setValue(PennantApplicationUtil
-						.formateAmount(Collections.min(verificationAmountsList), PennantConstants.defaultCCYDecPos));
+				if (StringUtils.isBlank(this.finalValRemarks.getValue())) {
+					this.finalValuationAmount.setValue(PennantApplicationUtil.formateAmount(
+							Collections.min(verificationAmountsList), PennantConstants.defaultCCYDecPos));
+				}
 			}
 		}
 	}
@@ -319,4 +379,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.tVerificationDialogCtrl = tVerificationDialogCtrl;
 	}
 
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
 }

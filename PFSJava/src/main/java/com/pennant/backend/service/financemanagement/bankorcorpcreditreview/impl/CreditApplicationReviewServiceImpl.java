@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.NotesDAO;
@@ -24,6 +25,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
+import com.pennant.backend.model.finance.ExtBreDetails;
+import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevType;
@@ -40,7 +43,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CreditApplicationReviewServiceImpl extends GenericService<FinCreditReviewSummary>
 		implements CreditApplicationReviewService {
-	private static Logger logger = Logger.getLogger(CreditApplicationReviewServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CreditApplicationReviewServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CreditApplicationReviewDAO creditApplicationReviewDAO;
@@ -1653,4 +1656,13 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		this.creditReviewDetailDAO = creditReviewDetailDAO;
 	}
 
+	@Override
+	public ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewDetail) {
+		return getCreditReviewDetailDAO().getExtCreditReviewConfigDetails(extCreditReviewDetail);
+	}
+
+	@Override
+	public ExtBreDetails getExtBreDetailsByRef(String finReference) {
+		return getCreditReviewDetailDAO().getExtBreDetailsByRef(finReference);
+	}
 }

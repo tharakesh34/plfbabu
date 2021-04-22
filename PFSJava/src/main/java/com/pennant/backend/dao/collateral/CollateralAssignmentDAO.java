@@ -82,6 +82,10 @@ public interface CollateralAssignmentDAO {
 
 	int getAssignedCollateralCountByRef(String collateralRef, String reference, String type);
 
+	int getAssignedCollateralCountByRef(String finReference);
+
 	boolean isSecuredLoan(String finReference, TableType tableType);
+
+	BigDecimal getCollateralValue(String finReference);
 
 }

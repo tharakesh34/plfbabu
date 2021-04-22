@@ -3,18 +3,24 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -23,7 +29,7 @@ import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.financemanagement.ProvisionAmount;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -32,121 +38,118 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
-	private static Logger logger = Logger.getLogger(LoadFinanceData.class);
+	private static Logger logger = LogManager.getLogger(LoadFinanceData.class);
 
 	private static final long serialVersionUID = -281578785120363314L;
 
-	public CustEODEvent prepareFinEODEvents(CustEODEvent custEODEvent, long custID) throws Exception {
-		logger.debug(" Entering ");
+	public void prepareFinEODEvents(CustEODEvent custEODEvent, long custID) throws Exception {
+		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(custID, true);
+		List<FinanceProfitDetail> custpftDet = financeProfitDetailDAO.getFinProfitDetailsByCustId(custID, true);
 
-		List<FinanceMain> custFinMains = getFinanceMainDAO().getFinMainsForEODByCustId(custID, true);
-		// List<FinanceScheduleDetail> custSchdDetails =
-		// getFinanceScheduleDetailDAO().getFinScheduleDetails(custID, true);
-		List<FinanceProfitDetail> custpftDet = getFinanceProfitDetailDAO().getFinProfitDetailsByCustId(custID, true);
+		EventProperties eventProperties = custEODEvent.getEventProperties();
 
-		for (FinanceMain main : custFinMains) {
+		logger.info("Total Finances >> {}", custFinMains.size());
+
+		for (FinanceMain fm : custFinMains) {
+			String finReference = fm.getFinReference();
+
+			logger.info("Loading finance details for the FinReference >> {} started...", finReference);
+
 			FinEODEvent finEODEvent = new FinEODEvent();
 
-			// FINANCE MAIN
-			finEODEvent.setFinanceMain(main);
-			String finType = finEODEvent.getFinanceMain().getFinType();
-			String finReference = finEODEvent.getFinanceMain().getFinReference();
+			fm.setEventProperties(eventProperties);
 
-			// FINANCE TYPE
-			FinanceType financeType = getFinanceType(finType);
-			finEODEvent.setFinType(financeType);
+			finEODEvent.setFinanceMain(fm);
 
-			// FINPROFIT DETAILS
-			finEODEvent.setFinProfitDetail(getFinPftDetailRef(finReference, custpftDet));
+			finEODEvent.setFinType(getFinanceType(fm.getFinType()));
 
-			// FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
-					TableType.MAIN_TAB.getSuffix(), false);
-			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
+			FinanceProfitDetail pfd = getFinPftDetailRef(finReference, custpftDet);
+			pfd.setEventProperties(eventProperties);
 
-			// Fin Excess Amounts
-			finEODEvent.setFinExcessAmounts(
-					finExcessAmountDAO.getAllExcessAmountsByRef(finReference, TableType.MAIN_TAB.getSuffix()));
+			finEODEvent.setFinProfitDetail(pfd);
+
+			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "",
+					false);
+			finEODEvent.setFinanceScheduleDetails(schedules);
+
+			List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<>();
+			for (FinanceScheduleDetail schd : schedules) {
+				orgFinSchdDetails.add(schd.copyEntity());
+			}
+
+			finEODEvent.setOrgFinSchdDetails(orgFinSchdDetails);
+
+			finEODEvent.setFinExcessAmounts(finExcessAmountDAO.getAllExcessAmountsByRef(finReference, ""));
+
+			if (fm.isAllowSubvention()) {
+				finEODEvent.setSubventionDetail(subventionDetailDAO.getSubventionDetail(finReference, ""));
+			}
 
 			setEventFlags(custEODEvent, finEODEvent);
 			custEODEvent.getFinEODEvents().add(finEODEvent);
+
+			logger.info("Loading finance details for the FinReference >> {} completed.", finReference);
 		}
 
-		// clear temporary data
 		custpftDet.clear();
 		custFinMains.clear();
-		// custSchdDetails.clear();
-		logger.debug(" Leaving ");
-		return custEODEvent;
 	}
 
-	/**
-	 * 
-	 * @param custEODEvent
-	 * @param finReference
-	 * @param custID
-	 * @return
-	 * @throws Exception
-	 */
 	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, String finReference) throws Exception {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		FinEODEvent finEODEvent = new FinEODEvent();
 
-		FinanceMain finMain = getFinanceMainDAO().getFinMainsForEODByFinRef(finReference, false);
-		FinanceProfitDetail finPftDetail = getFinanceProfitDetailDAO().getFinProfitDetailsByFinRef(finReference, false);
+		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finReference, false);
+		FinanceProfitDetail pfd = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finReference, false);
 
 		// FINANCE MAIN
-		finEODEvent.setFinanceMain(finMain);
-		String finType = finEODEvent.getFinanceMain().getFinType();
+		finEODEvent.setFinanceMain(fm);
 
 		// FINANCE TYPE
-		FinanceType financeType = getFinanceType(finType);
-		finEODEvent.setFinType(financeType);
+		finEODEvent.setFinType(getFinanceType(fm.getFinType()));
 
 		// FINPROFIT DETAILS
-		finEODEvent.setFinProfitDetail(finPftDetail);
+		finEODEvent.setFinProfitDetail(pfd);
 
 		// FINSCHDULE DETAILS
-		List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference,
-				TableType.MAIN_TAB.getSuffix(), false);
-		finEODEvent.setFinanceScheduleDetails(finSchdDetails);
+		finEODEvent.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
 
 		custEODEvent.getFinEODEvents().add(finEODEvent);
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return custEODEvent;
 	}
 
-	public void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) throws Exception {
-
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+	private void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) throws Exception {
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		Date valueDate = custEODEvent.getEodValueDate();
-		Date businessDate = DateUtility.addDays(custEODEvent.getEodValueDate(), 1);
+		Date businessDate = custEODEvent.getEventProperties().getBusinessDate();
 
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		boolean provisionExists = provisionDAO.isProvisionExists(finReference, TableType.MAIN_TAB);
 		boolean isAmountDue = false;
 
 		// Place schedule dates to Map
-		for (int i = 0; i < finSchdDetails.size(); i++) {
-			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
-
+		for (int i = 0; i < schedules.size(); i++) {
+			FinanceScheduleDetail schd = schedules.get(i);
 			// Find various events required today or not
-			if (curSchd.getSchDate().compareTo(businessDate) == 0) {
+			if (schd.getSchDate().compareTo(businessDate) == 0) {
 				// Disbursement Exist
-				if (curSchd.isDisbOnSchDate()) {
+				if (schd.isDisbOnSchDate()) {
 					finEODEvent.setIdxDisb(i);
 					custEODEvent.setDisbExist(true);
 				}
 
 				// Fee Due Exist
-				BigDecimal dueAmount = curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid());
+				BigDecimal dueAmount = schd.getFeeSchd().subtract(schd.getSchdFeePaid());
 				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 					finEODEvent.setIdxDue(i);
 					custEODEvent.setDueExist(true);
 				}
 
 				// Insurance Due Exist
-				dueAmount = curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid());
+				dueAmount = schd.getInsSchd().subtract(schd.getSchdInsPaid());
 
 				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 					finEODEvent.setIdxDue(i);
@@ -154,8 +157,8 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 
 				// Installment Due Exist
-				dueAmount = curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()).subtract(curSchd.getSchdPriPaid())
-						.subtract(curSchd.getSchdPftPaid());
+				dueAmount = schd.getPrincipalSchd().add(schd.getProfitSchd()).subtract(schd.getSchdPriPaid())
+						.subtract(schd.getSchdPftPaid());
 
 				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 					finEODEvent.setIdxDue(i);
@@ -163,28 +166,27 @@ public class LoadFinanceData extends ServiceHelper {
 				}
 
 				// Installment Due Exist
-				dueAmount = curSchd.getCpzAmount();
+				dueAmount = schd.getCpzAmount().subtract(schd.getCpzBalance());
 				if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 					finEODEvent.setIdxDue(i);
 					custEODEvent.setDueExist(true);
 				}
 
 				// Presentment Required
-				if (curSchd.getDefSchdDate().compareTo(businessDate) == 0) {
+				if (schd.getDefSchdDate().compareTo(businessDate) == 0) {
 					finEODEvent.setIdxPresentment(i);
 					custEODEvent.setCheckPresentment(true);
 				}
 			}
 
 			// Is Provision exists
-			if (custEODEvent.isDueExist() && ImplementationConstants.ALLOW_NPA_PROVISION && provisionDAO
-					.isProvisionExists(finEODEvent.getFinanceMain().getFinReference(), TableType.MAIN_TAB)) {
+			if (custEODEvent.isDueExist() && ImplementationConstants.ALLOW_NPA_PROVISION && provisionExists) {
 				finEODEvent.getFinProfitDetail().setProvision(true);
 			}
 
 			// Date Rollover Setting
-			if (curSchd.getSchDate().compareTo(businessDate) == 0) {
-				setDateRollover(custEODEvent, finEODEvent, curSchd.getSchDate(), i);
+			if (schd.getSchDate().compareTo(businessDate) == 0) {
+				setDateRollover(custEODEvent, finEODEvent, schd.getSchDate(), i);
 			}
 
 			// PastDue Index Setting
@@ -194,18 +196,20 @@ public class LoadFinanceData extends ServiceHelper {
 
 			// Do not Include Today Late payment Calculation
 			if (ImplementationConstants.LP_MARK_FIRSTDAY) {
-				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
+				if (schd.getSchDate().compareTo(valueDate) > 0) {
 					continue;
 				}
 			} else {
-				if (curSchd.getSchDate().compareTo(valueDate) >= 0) {
+				if (schd.getSchDate().compareTo(valueDate) >= 0) {
 					continue;
 				}
 			}
 
+			isAmountDue = isOldestDueOverDue(schd);
+
 			// Paid Principal OR Paid Interest Less than scheduled amounts
-			if (curSchd.getSchdPriPaid().compareTo(curSchd.getPrincipalSchd()) < 0
-					|| curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) < 0) {
+			if (schd.getSchdPriPaid().compareTo(schd.getPrincipalSchd()) < 0
+					|| schd.getSchdPftPaid().compareTo(schd.getProfitSchd()) < 0) {
 				isAmountDue = true;
 			}
 
@@ -214,54 +218,45 @@ public class LoadFinanceData extends ServiceHelper {
 				custEODEvent.setPastDueExist(true);
 			}
 
-			if (curSchd.getSchDate().compareTo(businessDate) >= 0) {
+			if (schd.getSchDate().compareTo(businessDate) >= 0) {
 				break;
 			}
 		}
 
 		// Check If LPP Method on capitalization basis and Due Index not exists
 		if (finEODEvent.getIdxPD() <= 0) {
-			boolean pipdMthdCount = getFinODDetailsDAO()
-					.isLppMethodOnMinPenalBalSchdExsts(finEODEvent.getFinanceMain().getFinReference());
-			if (pipdMthdCount) {
+			if (isLPPCpzReq(finEODEvent)) {
 				finEODEvent.setIdxPD(1);
 				custEODEvent.setPastDueExist(true);
 			}
 		}
 	}
 
-	/**
-	 * @param custEODEvent
-	 * @param finEODEvent
-	 * @param schdDate
-	 * @param iSchd
-	 * @throws Exception
-	 */
-	public void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd)
+	private void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd)
 			throws Exception {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
+		FinanceMain fm = finEODEvent.getFinanceMain();
 
-		Date grcEndDate = finMain.getGrcPeriodEndDate();
+		Date grcEndDate = fm.getGrcPeriodEndDate();
 
-		if (finMain.isAllowGrcPeriod() && schdDate.compareTo(grcEndDate) < 0) {
+		if (fm.isAllowGrcPeriod() && schdDate.compareTo(grcEndDate) < 0) {
 			// Set Next Grace Capitalization Date
-			Date nextGrcCpzDate = finMain.getNextGrcCpzDate();
-			if (finMain.isAllowGrcCpz() && nextGrcCpzDate.compareTo(grcEndDate) < 0
+			Date nextGrcCpzDate = fm.getNextGrcCpzDate();
+			if (fm.isAllowGrcCpz() && nextGrcCpzDate.compareTo(grcEndDate) < 0
 					&& schdDate.compareTo(nextGrcCpzDate) == 0) {
 				finEODEvent.setIdxGrcCpz(iSchd);
 				custEODEvent.setDateRollover(true);
 			}
 
 			// Set Next Grace Profit Date
-			Date nextGrcPftDate = finMain.getNextGrcPftDate();
+			Date nextGrcPftDate = fm.getNextGrcPftDate();
 			if (nextGrcPftDate.compareTo(grcEndDate) < 0 && schdDate.compareTo(nextGrcPftDate) == 0) {
 				finEODEvent.setIdxGrcPft(iSchd);
 				custEODEvent.setDateRollover(true);
 			}
 
 			// Set Next Grace Profit Review Date
-			Date nextGrcPftRvwDate = finMain.getNextGrcPftRvwDate();
-			if (finMain.isAllowGrcPftRvw() && nextGrcPftRvwDate.compareTo(grcEndDate) < 0
+			Date nextGrcPftRvwDate = fm.getNextGrcPftRvwDate();
+			if (fm.isAllowGrcPftRvw() && nextGrcPftRvwDate.compareTo(grcEndDate) < 0
 					&& schdDate.compareTo(nextGrcPftRvwDate) == 0) {
 				finEODEvent.setIdxGrcPftRvw(iSchd);
 				custEODEvent.setDateRollover(true);
@@ -270,44 +265,44 @@ public class LoadFinanceData extends ServiceHelper {
 
 		// Set Next Repay Capitalization Date
 
-		if (finMain.isAllowRepayCpz() && schdDate.compareTo(finMain.getNextRepayCpzDate()) == 0) {
+		if (fm.isAllowRepayCpz() && schdDate.compareTo(fm.getNextRepayCpzDate()) == 0) {
 			finEODEvent.setIdxRpyCpz(iSchd);
 			custEODEvent.setDateRollover(true);
 		}
 
 		// Set Next Repayment Date
-		if (schdDate.compareTo(finMain.getNextRepayDate()) == 0) {
+		if (schdDate.compareTo(fm.getNextRepayDate()) == 0) {
 			finEODEvent.setIdxRpy(iSchd);
 			custEODEvent.setDateRollover(true);
 		}
 
 		// Set Next Repayment Profit Date
-		if (schdDate.compareTo(finMain.getNextRepayPftDate()) == 0) {
+		if (schdDate.compareTo(fm.getNextRepayPftDate()) == 0) {
 			finEODEvent.setIdxRpyPft(iSchd);
 			custEODEvent.setDateRollover(true);
 		}
 
 		// Set Next Repayment Profit Review Date
-		if (finMain.isAllowRepayRvw()) {
-			if (schdDate.compareTo(finMain.getNextRepayRvwDate()) == 0) {
+		if (fm.isAllowRepayRvw()) {
+			if (schdDate.compareTo(fm.getNextRepayRvwDate()) == 0) {
 				finEODEvent.setIdxRpyPftRvw(iSchd);
 				custEODEvent.setDateRollover(true);
 			}
 		}
 
 		// Set Next Depreciation Date
-		Date nextDepDate = finMain.getNextDepDate();
-		String deprFrq = finMain.getDepreciationFrq();
+		Date nextDepDate = fm.getNextDepDate();
+		String deprFrq = fm.getDepreciationFrq();
 		if (nextDepDate != null && schdDate.compareTo(nextDepDate) == 0) {
 			if (!StringUtils.isEmpty(deprFrq)) {
-				if (nextDepDate.compareTo(finMain.getMaturityDate()) < 0) {
+				if (nextDepDate.compareTo(fm.getMaturityDate()) < 0) {
 					Date nextFrqDate = FrequencyUtil.getNextDate(deprFrq, 1, schdDate, "A", false)
 							.getNextFrequencyDate();
-					finMain.setNextDepDate(nextFrqDate);
+					fm.setNextDepDate(nextFrqDate);
 				}
 
-				if (nextDepDate.compareTo(finMain.getMaturityDate()) > 0) {
-					finMain.setNextDepDate(finMain.getMaturityDate());
+				if (nextDepDate.compareTo(fm.getMaturityDate()) > 0) {
+					fm.setNextDepDate(fm.getMaturityDate());
 				}
 
 				finEODEvent.setUpdFinMain(true);
@@ -318,70 +313,72 @@ public class LoadFinanceData extends ServiceHelper {
 	}
 
 	public void updateFinEODEvents(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
+		long custID = custEODEvent.getCustomer().getCustID();
+		logger.info("Updating EOD Events for the CustID >> {} started...", custID);
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>(1);
+		List<ReturnDataSet> returnDataSets = new ArrayList<>(1);
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
+			FinanceMain fm = finEODEvent.getFinanceMain();
 
-			FinanceMain finMain = finEODEvent.getFinanceMain();
-
-			String finRef = finMain.getFinReference();
+			String finRef = fm.getFinReference();
+			boolean updFinMain = finEODEvent.isUpdFinMain();
 			boolean rateReview = finEODEvent.isupdFinSchdForRateRvw();
 			boolean monthEnd = finEODEvent.isUpdMonthEndPostings();
 			boolean lbdPosted = finEODEvent.isUpdLBDPostings();
+			boolean changeGraceEnd = finEODEvent.isUpdFinSchdForChangeGrcEnd();
+			boolean updRepayInstruct = finEODEvent.isUpdRepayInstruct();
 
-			// update finance main
-			if (finEODEvent.isUpdFinMain()) {
-				// finEODEvent.getFinanceMain().setVersion(finEODEvent.getFinanceMain().getVersion()
-				// + 1);
-				getFinanceMainDAO().updateFinanceInEOD(finMain, finEODEvent.getFinMainUpdateFields(), rateReview);
+			logger.info("FinReference >> {}", finRef);
+			logger.info("UpdFinMain >> {}", updFinMain);
+			logger.info("SchdForRateRvw >> {}", rateReview);
+			logger.info("MonthEndPostings >> {}", monthEnd);
+			logger.info("UpdLBDPostings >> {}", lbdPosted);
+			logger.info("UpdFinSchdForChangeGrcEnd >> {}", changeGraceEnd);
+			logger.info("UpdRepayInstruct >> {}", updRepayInstruct);
+
+			if (updFinMain && !changeGraceEnd) {
+				logger.info("Updating FinanceMain...");
+				financeMainDAO.updateFinanceInEOD(fm, finEODEvent.getFinMainUpdateFields(), rateReview);
 			}
 
-			// update profit details
-			getFinanceProfitDetailDAO().updateEOD(finEODEvent.getFinProfitDetail(), lbdPosted, monthEnd);
+			logger.info("Updating FinPftDetails...");
+			financeProfitDetailDAO.updateEOD(finEODEvent.getFinProfitDetail(), lbdPosted, monthEnd);
 
-			// update schedule details
 			if (rateReview) {
+				logger.info("Updating FinScheduleDetails to effect rate review.");
 				saveLMSServiceLog(finEODEvent);
-				getFinanceScheduleDetailDAO().updateForRateReview(finEODEvent.getFinanceScheduleDetails());
+				int schedules = financeScheduleDetailDAO.updateForRateReview(finEODEvent.getFinanceScheduleDetails());
+				logger.info("{} Schedules effected for the rate review", schedules);
 			}
 
-			// Update overdue details
-			//			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
-			//			if (odDetails != null && !odDetails.isEmpty()) {
-			//				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
-			//				// delete and insert based on the current OD index
-			//				if (odschd != null) {
-			//					getFinODDetailsDAO().deleteAfterODDate(finRef, odschd.getSchDate());
-			//					List<FinODDetails> listSave = new ArrayList<FinODDetails>();
-			//					for (FinODDetails finODDetails : odDetails) {
-			//						if (finODDetails.getFinODSchdDate().compareTo(odschd.getSchDate()) >= 0) {
-			//							listSave.add(finODDetails);
-			//						}
-			//					}
-			//					if (!listSave.isEmpty()) {
-			//						getFinODDetailsDAO().saveList(listSave);
-			//					}
-			//					listSave = null;
-			//				}
-			//			}
+			if (changeGraceEnd) {
+				logger.info("Updating FinanceMain for change grace end.");
+				fm.setVersion(fm.getVersion() + 1);
+				financeMainDAO.update(fm, TableType.MAIN_TAB, false);
 
-			//insert or Update
+				logger.info("Logging Fin Log Entry Detail into FinLogEntryDetail table...");
+				long logKey = saveFinLogEntryDetail(fm);
+				logger.info("FinLogEntryDetail LogKey >> {}", logKey);
+
+				listSave(finEODEvent, "_Log", logKey);
+
+				listDeletion(finEODEvent, FinanceConstants.FINSER_EVENT_CHGGRCEND, "");
+
+				listSave(finEODEvent, "", 0);
+			}
+
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
 			List<FinODDetails> odDetailsLBD = finEODEvent.getFinODDetailsLBD();
 			if (odDetails != null && !odDetails.isEmpty()) {
 
 				if (finEODEvent.getIdxPD() > 1) {
-					boolean pipdMthdCount = getFinODDetailsDAO()
-							.isLppMethodOnMinPenalBalSchdExsts(finEODEvent.getFinanceMain().getFinReference());
-					if (pipdMthdCount) {
+					if (isLPPCpzReq(finEODEvent)) {
 						finEODEvent.setIdxPD(1);
 					}
 				}
 				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
 
-				// delete and insert based on the current OD index
 				if (odschd != null) {
 					List<FinODDetails> listSave = new ArrayList<FinODDetails>();
 					List<FinODDetails> listupdate = new ArrayList<FinODDetails>();
@@ -398,61 +395,78 @@ public class LoadFinanceData extends ServiceHelper {
 						}
 					}
 
+					int savedCount = 0;
+					int updateCount = 0;
 					if (!listSave.isEmpty()) {
-						getFinODDetailsDAO().saveList(listSave);
+						logger.info("Saving overdue details into FinODDetails table...");
+						savedCount = finODDetailsDAO.saveList(listSave);
+						logger.info("{} Overdue details are created", savedCount);
 					}
+
 					listSave = null;
 					if (!listupdate.isEmpty()) {
-						getFinODDetailsDAO().updateODDetailsBatch(listupdate);
+						logger.info("updating existing overdue details into FinODDetails table...");
+						updateCount = finODDetailsDAO.updateODDetailsBatch(listupdate);
+
+						logger.info("{} overdue details are created", updateCount);
 					}
 					listupdate = null;
+
+					logger.info("{} are the total overdue", savedCount + updateCount);
 				}
 			}
 
-			// update repay instruction
-			if (finEODEvent.isUpdRepayInstruct()) {
-				// delete
-				getRepayInstructionDAO().deleteInEOD(finRef);
-				// Add repay instructions
+			if (updRepayInstruct) {
+				logger.info("Deleting Repay Instructions from the FinRepayInstruction table...");
+				int count = repayInstructionDAO.deleteInEOD(finRef);
+
+				logger.info("{}  Repay Instructions deleted.", count);
+
 				List<RepayInstruction> lisRepayIns = finEODEvent.getRepayInstructions();
 				for (RepayInstruction repayInstruction : lisRepayIns) {
 					repayInstruction.setFinReference(finRef);
 				}
-				getRepayInstructionDAO().saveListInEOD(lisRepayIns);
+
+				logger.info("Saving Repay Instructions into FinRepayInstruction table...");
+				count = repayInstructionDAO.saveListInEOD(lisRepayIns);
+				logger.info("{}  Repay Instructions saved.", count);
 			}
 
-			// provisions
-			if (!finEODEvent.getProvisions().isEmpty()) {
+			if (CollectionUtils.isNotEmpty(finEODEvent.getProvisions())) {
 				saveProvisions(finEODEvent);
 			}
 
-			// disbursement postings
+			logger.info("Updating existing DisbursementDetails into FinDisbursementDetails table...");
+			List<FinanceDisbursement> disbList = new ArrayList<>();
+
 			for (FinanceDisbursement disbursement : finEODEvent.getFinanceDisbursements()) {
 				if (disbursement.isPosted()) {
-					getFinanceDisbursementDAO().updateBatchDisb(disbursement, "");
+					disbList.add(disbursement);
 				}
 			}
+			int count = financeDisbursementDAO.updateBatchDisb(disbList, "");
+			logger.info("{}  DisbursementDetails updated.", count);
 
-			// group all the posting
-			returnDataSets.addAll(finEODEvent.getReturnDataSet());
+			if (!fm.isWriteoffLoan()) {
+				returnDataSets.addAll(finEODEvent.getReturnDataSet());
+			}
 		}
 
-		// save or update ACCRUALS
+		logger.info("Saving Projected Accruals Started...");
 		saveProjAccruals(custEODEvent);
+		logger.info("Saving Projected Accruals Completed.");
 
-		// save postings
+		String entityCode = custEODEvent.getEventProperties().getEntityCode();
+
+		returnDataSets.stream().forEach(r -> r.setEntityCode(entityCode));
+
+		logger.info("Saving the {} - Acoounting Entries into Postings table...", returnDataSets.size());
 		saveAccountingEOD(returnDataSets);
+		logger.info("EOD Acoounting Entries Saved Successfully.", returnDataSets.size());
 
-		// update accounts
-		// getAccountProcessUtil().procAccountUpdate(returnDataSets);
-
-		/*
-		 * //update customer if (custEODEvent.isUpdCustomer()) { Customer customer = custEODEvent.getCustomer(); long
-		 * custID = customer.getCustID(); String custSts = customer.getCustSts(); Date stsChgDate =
-		 * customer.getCustStsChgDate(); getCustomerDAO().updateCustStatus(custSts, stsChgDate, custID); }
-		 */
-		logger.debug(" Leaving ");
 		returnDataSets.clear();
+
+		logger.info("Updating EOD Events for the CustID >> {} completed.", custID);
 	}
 
 	private boolean checkExsistInList(FinODDetails finODDetails, List<FinODDetails> odDetails_PRV) {
@@ -466,6 +480,25 @@ public class LoadFinanceData extends ServiceHelper {
 		return false;
 	}
 
+	private boolean isLPPCpzReq(FinEODEvent finEODEvent) {
+		List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
+
+		if (CollectionUtils.isEmpty(odDetails)) {
+			return false;
+		}
+
+		for (FinODDetails finODDetail : odDetails) {
+			String odChargeCalOn = finODDetail.getODChargeCalOn();
+			if ((finODDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) == 0)
+					&& (finODDetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0)
+					&& (FinanceConstants.ODCALON_PIPD_FRQ.equals(odChargeCalOn)
+							|| FinanceConstants.ODCALON_PIPD_EOM.equals(odChargeCalOn))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Save Provisions and Provision Movements
 	 * 
@@ -474,12 +507,58 @@ public class LoadFinanceData extends ServiceHelper {
 	private void saveProvisions(FinEODEvent finEODEvent) {
 		for (Provision provision : finEODEvent.getProvisions()) {
 
-			provisionDAO.delete(provision, TableType.MAIN_TAB.getSuffix());
-			provisionDAO.save(provision, TableType.MAIN_TAB.getSuffix());
+			String finReference = provision.getFinReference();
+			logger.warn("Checking Old provision Details in PROVISIONS table..");
+			Provision oldProvision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB, false);
 
-			if (provision.getProvisionMovement() != null) {
-				provisionMovementDAO.save(provision.getProvisionMovement(), TableType.MAIN_TAB.getSuffix());
+			long provisionId = Long.MIN_VALUE;
+			int count = 0;
+			if (oldProvision != null) {
+				provisionId = oldProvision.getId();
+				provision.setId(provisionId);
+				logger.warn("Updating the existing Provision in PROVISIONS table..");
+				count = provisionDAO.update(provision, TableType.MAIN_TAB);
+				logger.warn("{} Record updated in PROVISIONS table..", count);
+			} else {
+				logger.warn("Saving the Provision in PROVISIONS table..");
+				provisionId = provisionDAO.save(provision, TableType.MAIN_TAB);
+				logger.warn("Provision with Id{} saved in PROVISIONS table..", provisionId);
 			}
+
+			provision.setId(Long.MIN_VALUE);
+			provision.setProvisionId(provisionId);
+			logger.warn("Saving the Provision Movements in PROVISION_MOVEMENTS table..");
+			provisionDAO.saveMovements(provision, TableType.MAIN_TAB);
+
+			List<ProvisionAmount> list = provision.getProvisionAmounts();
+			for (ProvisionAmount provisionAmount : list) {
+				provisionAmount.setProvisionId(provisionId);
+			}
+
+			if (oldProvision != null) {
+				logger.warn("Getting Old provision Amounts from PROVISION_AMOUNTS table..");
+				List<ProvisionAmount> oldAmounts = provisionDAO.getProvisionAmounts(oldProvision.getId(),
+						TableType.MAIN_TAB);
+				List<ProvisionAmount> provisionAmounts = provision.getProvisionAmounts();
+				for (ProvisionAmount oldAmount : oldAmounts) {
+					for (ProvisionAmount provisionAmount : provisionAmounts) {
+						if (StringUtils.equals(oldAmount.getProvisionType(), provisionAmount.getProvisionType())) {
+							provisionAmount.setId(oldAmount.getId());
+						}
+					}
+				}
+				logger.warn("Updating Old provision Amounts in PROVISION_AMOUNTS table..");
+				count = provisionDAO.updateAmounts(provisionAmounts, TableType.MAIN_TAB);
+				logger.warn("{} ProvisionAmounts updated in PROVISION_AMOUNTS table..", count);
+			} else {
+				logger.warn("Saving provision Amounts in PROVISION_AMOUNTS table..");
+				count = provisionDAO.saveAmounts(list, TableType.MAIN_TAB, false);
+				logger.warn("{} ProvisionAmounts saved in PROVISION_AMOUNTS table..", count);
+			}
+			logger.warn("Saving provision Amounts in PROVISION_MOVMENT_AMOUNTS table..");
+			count = provisionDAO.saveAmounts(list, TableType.MAIN_TAB, true);
+			logger.warn("{} ProvisionAmounts saved in PROVISION_MOVMENT_AMOUNTS table..", count);
+
 		}
 	}
 
@@ -490,13 +569,16 @@ public class LoadFinanceData extends ServiceHelper {
 	public void saveProjAccruals(CustEODEvent custEODEvent) {
 
 		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
+			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
 			List<ProjectedAccrual> projAccrualList = finEODEvent.getProjectedAccrualList();
-
-			// Monthly ACCRUALS and POS
-			if (projAccrualList != null && !projAccrualList.isEmpty()) {
-				getProjectedAmortizationDAO().saveBatchProjAccruals(projAccrualList);
+			if (CollectionUtils.isEmpty(projAccrualList)) {
+				logger.info("ProjectedAccruals not available for the FinReference >> {}", finReference);
+				continue;
 			}
+			logger.info("Saving into ProjectedAccruals table for the FinReference >> {}...", finReference);
+			int count = projectedAmortizationDAO.saveBatchProjAccruals(projAccrualList);
+			logger.info("{} saved in ProjectedAccruals table for the FinReference >> {}", count, finReference);
 		}
 	}
 
@@ -514,7 +596,7 @@ public class LoadFinanceData extends ServiceHelper {
 			List<ProjectedAmortization> incomeAMZList = finEODEvent.getIncomeAMZList();
 
 			// Income Amortizations
-			if (incomeAMZList != null && !incomeAMZList.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(incomeAMZList)) {
 
 				for (ProjectedAmortization projectedAMZ : incomeAMZList) {
 					if (projectedAMZ.isUpdProjAMZ()) {
@@ -527,61 +609,59 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 			if (!projSaveAMZList.isEmpty()) {
-				getProjectedAmortizationDAO().saveBatchIncomeAMZ(projSaveAMZList);
+				projectedAmortizationDAO.saveBatchIncomeAMZ(projSaveAMZList);
 			}
 
 			if (!projUpdateAMZList.isEmpty()) {
-				getProjectedAmortizationDAO().updateBatchIncomeAMZ(projUpdateAMZList);
+				projectedAmortizationDAO.updateBatchIncomeAMZ(projUpdateAMZList);
 			}
 		}
 	}
 
-	public void updateCustomerDate(long custId, Date date, String newCustStatus) {
-		logger.debug(" Entering ");
-		Date nextDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
-		getCustomerDAO().updateCustAppDate(custId, nextDate, newCustStatus);
-		logger.debug(" Leaving ");
+	public void updateCustomerDate(long custId, Date date, String newCustStatus, Date nextDate) {
+		customerDAO.updateCustAppDate(custId, nextDate, newCustStatus);
 	}
-	//
-	// public void updateCustQueueStatus(int threadId, long custId, int
-	// progress, boolean start) {
-	// CustomerQueuing customerQueuing = new CustomerQueuing();
-	// customerQueuing.setCustID(custId);
-	// customerQueuing.setThreadId(threadId);
-	// customerQueuing.setStartTime(DateUtility.getSysDate());
-	// customerQueuing.setEndTime(DateUtility.getSysDate());
-	// customerQueuing.setProgress(progress);
-	// getCustomerQueuingDAO().update(customerQueuing, start);
-	// }
-	//
-	// public void updateFailed(int threadId, long custId) {
-	// CustomerQueuing customerQueuing = new CustomerQueuing();
-	// customerQueuing.setCustID(custId);
-	// customerQueuing.setEndTime(DateUtility.getSysDate());
-	// //reset thread for reallocation
-	// customerQueuing.setThreadId(0);
-	// customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
-	// getCustomerQueuingDAO().updateFailed(customerQueuing);
-	// }
 
-	/*
-	 * Saving the LMS service log notifications , we will change this method once Service instructions saved in EOD.
-	 */
+	private long saveFinLogEntryDetail(FinanceMain fm) {
+		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+
+		entryDetail.setReversalCompleted(false);
+		entryDetail.setPostDate(fm.getEventProperties().getAppDate());
+		entryDetail.setFinReference(fm.getFinReference());
+		entryDetail.setSchdlRecal(fm.isScheduleChange());
+		entryDetail.setEventAction(AccountEventConstants.ACCEVENT_GRACEEND);
+
+		return finLogEntryDetailDAO.save(entryDetail);
+	}
+
 	public void saveLMSServiceLog(FinEODEvent finEODEvent) {
-		logger.debug(Literal.ENTERING);
 		try {
-			String lmsServiceLogReq = SysParamUtil.getValueAsString(SMTParameterConstants.LMS_SERVICE_LOG_REQ);
-			if (!StringUtils.equals(lmsServiceLogReq, PennantConstants.YES)) {
+
+			String lmsServiceLogReq = null;
+			Date appDate = null;
+
+			FinanceMain fm = finEODEvent.getFinanceMain();
+
+			EventProperties eventProperties = fm.getEventProperties();
+			String finReference = fm.getFinReference();
+
+			if (eventProperties.isParameterLoaded()) {
+				lmsServiceLogReq = eventProperties.getLmsServiceLogReq();
+				appDate = eventProperties.getAppDate();
+			} else {
+				lmsServiceLogReq = SysParamUtil.getValueAsString(SMTParameterConstants.LMS_SERVICE_LOG_REQ);
+				appDate = SysParamUtil.getAppDate();
+			}
+
+			if (!PennantConstants.YES.equals(lmsServiceLogReq)) {
 				return;
 			}
 
 			List<LMSServiceLog> lmsServiceLogs = new ArrayList<>();
 
-			String finReference = finEODEvent.getFinanceMain().getFinReference();
-			Date appDate = DateUtility.getAppDate();
-			FinanceScheduleDetail financeScheduleDetail = null;
-
+			logger.info("Fetching Old Rate from FinScheduleDetails table...");
 			BigDecimal oldRate = finServiceInstructionDAO.getOldRate(finReference, appDate);
+			logger.info("The Old Rate is {}", oldRate);
 
 			List<FinanceScheduleDetail> scheduleDetail = finEODEvent.getFinanceScheduleDetails();
 
@@ -589,20 +669,21 @@ public class LoadFinanceData extends ServiceHelper {
 				return;
 			}
 
+			FinanceScheduleDetail curSchd = null;
 			for (FinanceScheduleDetail detail : scheduleDetail) {
 				if (detail.getSchDate().compareTo(appDate) >= 0) {
-					financeScheduleDetail = detail;
+					curSchd = detail;
 					break;
 				}
 			}
 
-			if (financeScheduleDetail == null) {
+			if (curSchd == null) {
 				return;
 			}
 
 			LMSServiceLog lmsServiceLog = new LMSServiceLog();
 			lmsServiceLog.setOldRate(oldRate);
-			lmsServiceLog.setNewRate(financeScheduleDetail.getCalculatedRate());
+			lmsServiceLog.setNewRate(curSchd.getCalculatedRate());
 			lmsServiceLog.setEvent(FinanceConstants.FINSER_EVENT_RATECHG);
 			lmsServiceLog.setFinReference(finReference);
 			lmsServiceLog.setNotificationFlag(PennantConstants.NO);
@@ -610,12 +691,104 @@ public class LoadFinanceData extends ServiceHelper {
 			lmsServiceLogs.add(lmsServiceLog);
 
 			if (CollectionUtils.isNotEmpty(lmsServiceLogs)) {
+				logger.info("Saving {} service event into LMSServiceLog table...",
+						FinanceConstants.FINSER_EVENT_RATECHG);
 				finServiceInstructionDAO.saveLMSServiceLOGList(lmsServiceLogs);
 			}
 		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
+
 	}
 
+	private void listSave(FinEODEvent finEODEvent, String tableType, long logKey) {
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+		if (CollectionUtils.isNotEmpty(schedules)) {
+			if (logKey != 0) {
+				schedules = finEODEvent.getOrgFinSchdDetails();
+			}
+
+			for (FinanceScheduleDetail schd : schedules) {
+				schd.setLastMntBy(fm.getLastMntBy());
+				schd.setFinReference(fm.getFinReference());
+				int seqNo = 0;
+
+				if (mapDateSeq.containsKey(schd.getSchDate())) {
+					seqNo = mapDateSeq.get(schd.getSchDate());
+					mapDateSeq.remove(schd.getSchDate());
+				}
+
+				seqNo = seqNo + 1;
+				mapDateSeq.put(schd.getSchDate(), seqNo);
+				schd.setSchSeq(seqNo);
+				schd.setLogKey(logKey);
+			}
+
+			if (logKey != 0) {
+				logger.info("Taking backup of current RPS into FinScheduleDetails_Log table...");
+			} else {
+				logger.info("Saving the efected RPS into FinScheduleDetails table...");
+			}
+
+			int count = financeScheduleDetailDAO.saveList(schedules, tableType, false);
+			logger.info("{} schedules saved.", count);
+		}
+
+		List<RepayInstruction> repayInstructions = finEODEvent.getRepayInstructions();
+		if (CollectionUtils.isNotEmpty(repayInstructions) && finEODEvent.isUpdRepayInstruct()) {
+			if (logKey != 0) {
+				repayInstructions = finEODEvent.getOrgRepayInsts();
+			}
+
+			for (RepayInstruction rpayIns : repayInstructions) {
+				rpayIns.setFinReference(fm.getFinReference());
+				rpayIns.setLogKey(logKey);
+			}
+
+			if (logKey != 0) {
+				logger.info("Taking backup of current RPI into FinRepayInstruction_Log table...");
+			} else {
+				logger.info("Saving the efected RPI into FinRepayInstruction table...");
+			}
+
+			int count = repayInstructionDAO.saveList(repayInstructions, tableType, false);
+			logger.info("{} repay instructions saved.", count);
+		}
+
+		List<FinServiceInstruction> finServiceInstructions = finEODEvent.getFinServiceInstructions();
+		if (CollectionUtils.isNotEmpty(finServiceInstructions) && logKey == 0) {
+			logger.info("Saving FinServiceInstructions into FinServiceInstruction table...");
+			int count = finServiceInstructionDAO.saveList(finServiceInstructions, tableType);
+			logger.info("{} FinServiceInstructions saved.", count);
+		}
+	}
+
+	private void listDeletion(FinEODEvent finEODEvent, String finEvent, String tableType) {
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		String finReference = fm.getFinReference();
+
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+		if (CollectionUtils.isNotEmpty(schedules)) {
+			logger.info("Deleting FinScheduleDetails{} for the FinEvent >> {}", tableType, finEvent);
+			financeScheduleDetailDAO.deleteByFinReference(finReference, tableType, false, 0);
+		}
+
+		List<RepayInstruction> repayInstructions = finEODEvent.getRepayInstructions();
+		if (CollectionUtils.isNotEmpty(repayInstructions) && finEODEvent.isUpdRepayInstruct()) {
+			logger.info("Deleting FinRepayInstruction{} for the FinEvent >> {}", tableType, finEvent);
+			repayInstructionDAO.deleteByFinReference(finReference, tableType, false, 0);
+		}
+	}
+
+	private FinanceProfitDetail getFinPftDetailRef(String finReference, List<FinanceProfitDetail> list) {
+		for (FinanceProfitDetail pfd : list) {
+			if (finReference.equals(pfd.getFinReference())) {
+				return pfd;
+			}
+		}
+		return null;
+	}
 }

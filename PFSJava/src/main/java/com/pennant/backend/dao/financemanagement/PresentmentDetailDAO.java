@@ -46,32 +46,26 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennanttech.pff.core.TableType;
+import com.pennant.backend.service.financemanagement.impl.PresentmentDetailExtractService;
+import com.pennanttech.model.presentment.Presentment;
 
 public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	PresentmentHeader getPresentmentHeader(long id, String type);
 
-	long save(PresentmentDetail presentmentDetail, TableType tableType);
-
 	long getSeqNumber(String tableName);
-
-	List<Object> getPresentmentDetails(PresentmentHeader detailHeader) throws Exception;
-
-	List<Object> getPDCPresentmentDetails(PresentmentHeader detailHeader) throws Exception;
 
 	long savePresentmentHeader(PresentmentHeader presentmentHeader);
 
 	List<PresentmentDetail> getPresentmentDetailsList(long presentmentId, boolean isExclude, boolean isApprove,
 			String type);
 
-	void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
+	int updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude);
 
 	void updatePresentmentHeader(long presentmentId, int pexcBatchCreated, long partnerBankId);
-
-	void updateFinScheduleDetails(long id, String finReference, Date schDate, int schSeq);
 
 	void updatePresentmentIdAsZero(long presentmentId);
 
@@ -100,18 +94,6 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentDetail> getPresentmensByExcludereason(long presentmentId, int excludeReason);
 
-	List<PresentmentDetail> getDMPresentmentDetailsByRef(String finReference, String type);
-
-	List<PresentmentHeader> getPresentmentHeadersByRef(String reference, String type);
-
-	List<PresentmentDetail> getExcludeDetails(long presentmentId);
-
-	List<Object> getPDCRePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
-
-	List<Object> getRePresentmentDetails(PresentmentHeader detailHeader) throws Exception;
-
-	List<PresentmentHeader> getDMPresentmentHeadersByRef(String reference, String type);
-
 	PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId, String string);
 
 	boolean searchIncludeList(long presentmentId, int excludereason);
@@ -125,5 +107,41 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 	List<Long> getIncludeList(long id);
 
 	List<Long> getExcludeList(long id);
+
+	boolean isPresentmentInProcess(String finReference);
+
+	String getPresentmentReference(long presentmentid, String finreference);
+
+	Long getApprovedPresentmentCount(long presentmentId);
+
+	Presentment getPresentmentByBatchId(String batchId, String type);
+
+	long saveList(List<PresentmentDetail> presentments);
+
+	void extactPDCPresentments(PresentmentHeader ph, PresentmentDetailExtractService service);
+
+	int updateSchdWithPresentmentId(List<PresentmentDetail> presenetments);
+
+	void extactPDCRePresentments(PresentmentHeader ph, PresentmentDetailExtractService service);
+
+	void extactPresentments(PresentmentHeader ph, PresentmentDetailExtractService presentmentDetailExtractService);
+
+	void extactRePresentments(PresentmentHeader ph, PresentmentDetailExtractService presentmentDetailExtractService);
+
+	List<PresentmentDetail> getIncludePresentments(List<Long> headerIdList);
+
+	FinanceMain getDefualtPostingDetails(String finReference, Date schDates);
+
+	String getPresementStatus(String presentmentRef);
+
+	PresentmentDetail getPresentmentDetail(String batchId);
+
+	void updatePresentmentDetail(String presentmentRef, String status);
+
+	void updatePresentmentDetail(String presentmentRef, String status, Long linkedTranId);
+
+	long getPresentmentId(String presentmentRef);
+
+	String getPresentmentType(long id);
 
 }

@@ -86,6 +86,7 @@ public class SMTParameterConstants {
 	public static final String DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE = "DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE";
 	public static final String CUST_CHANGE_ROLES = "CUST_CHANGE_ROLES";
 	public static final String CREDITREVIEW_TAB = "CREDITREVIEW_TAB";
+	public static final String CUST_EXT_DEVIATIONS = "CUST_EXT_DEVIATIONS";
 
 	/**
 	 * NO_ADJ = No Adjustment, leave the Profit Fraction ADJ_LAST_INST = All Profit Fractions adjust to last schedule
@@ -108,6 +109,7 @@ public class SMTParameterConstants {
 	public static final String ADD_DISB_DUES_WARNG = "ADD_DISB_DUES_WARNG";
 	public static final String LMS_SERVICE_LOG_REQ = "LMS_SERVICE_LOG_REQ";
 	public static final String ALLOW_LOWER_TAX_DED_REQ = "ALLOW_LOWER_TAX_DED_REQ";
+	public static final String ALLOW_OD_TAX_DED_REQ = "ALLOW_OD_TAX_DED_REQ";
 
 	public static final String UDC_ALLOW_ZERO_AMT = "UDC_ALLOW_ZERO_AMT";
 	public static final String GROUP_BATCH_BY_BANK = "GROUP_BATCH_BY_BANK";
@@ -208,12 +210,6 @@ public class SMTParameterConstants {
 	public static final String RECEIPT_CASH_PAN_MANDATORY = "RECEIPT_CASH_PAN_MANDATORY";
 	public static final String HOLD_INS_INST_POST = "HOLD_INS_INST_POST";// LMS
 
-	// Constants for advance Payment
-	public static final String ADVANCE_PAYMENT_INT = "ADVANCE_PAYMENT_INT";
-	public static final String ADVANCE_PAYMENT_EMI = "ADVANCE_PAYMENT_EMI";
-	public static final String ADVANCE_PAYMENT_EMI_STAGE_FRONT_END = "ADVANCE_PAYMENT_EMI_STAGE_FRONT_END";
-	public static final String ADVANCE_PAYMENT_EMI_STAGE_REARE_END = "ADVANCE_PAYMENT_EMI_STAGE_REARE_END";
-	public static final String ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS = "ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS";
 	public static final String RECEIPTUPLOAD_DEDUPCHECK = "RECEIPTUPLOAD_DEDUPCHECK";
 
 	public static final String CUST_CARD_SALES_REQ = "CUST_CARD_SALES_REQ";
@@ -221,7 +217,7 @@ public class SMTParameterConstants {
 	public static final String CUST_PAN_VALIDATION = "CUST_PAN_VALIDATION";
 	public static final String CUSTOM_DEVIATION_FILE_PATH = "CUSTOM_DEVIATION_FILE_PATH";
 	public static final String ALLOW_CIBIL_REQUEST = "ALLOW_CIBIL_REQUEST";
-	public static final String VERIFICATIONS_CUSTOMERVIEW = "CLIX_VERIFICATIONS_CUSTOMERVIEW";
+	public static final String VERIFICATIONS_CUSTOMERVIEW = "VERIFICATIONS_CUSTOMERVIEW";
 
 	public static final String BPI_MONTHWISE_REQ = "BPI_MONTHWISE_REQ";
 
@@ -251,11 +247,9 @@ public class SMTParameterConstants {
 	public static final String CET_LAEP = "CET_LAEP";
 	public static final String ALLOW_CIBIL_VALIDATION_RULE = "ALLOW_CIBIL_VALIDATION_RULE";
 	public static final String INSURANCE_CAL_REQUEST_URL = "INSURANCE_CAL_REQUEST_URL";
-	public static final String CUST_DIALOG_EXT = "CUST_DIALOG_EXT";
 	public static final String CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ = "CUSTOMER_BANKINFOTAB_ACCBEHAVIOR_DAYBALANCE_REQ";
 	public static final String MANDATE_DOWNLOAD_STOP_CIF_VALIDATION = "MANDATE_DOWNLOAD_STOP_CIF_VALIDATION";
-	//For Verification tabs in Loan Queue
-	public static final String VERIFICATION_INTIATION_FROM_OUTSIDE = "VERIFICATION_INTIATION_FROM_OUTSIDE";
+	// For Verification tabs in Loan Queue
 	public static final String EXTERNAL_DOCUMENT_VERIFICATION_REQUIRED = "EXT_DOC_VER_REQ";
 	public static final String FINANCE_DEVIATION_CHECK = "FINANCE_DEVIATION_CHECK";
 	public static final String QUERY_NOTIFICATION_REQ = "QUERY_NOTIFICATION_REQ";
@@ -269,10 +263,11 @@ public class SMTParameterConstants {
 	public static final String CUST_LASTNAME_MANDATORY = "CUST_LASTNAME_MANDATORY";
 	public static final String VERIFICATION_CATEGORY_REQUIRED = "VERIFICATION_CATEGORY_REQUIRED";
 	public static final String DISB_DOWNLOAD_JOB_TIME = "DISB_DOWNLOAD_JOB_TIME";
-	// If TRUE Capitalize amount will not be capitalized to POS amount. It will  be used only for interest calculation
+	// If TRUE Capitalize amount will not be capitalized to POS amount. It will
+	// be used only for interest calculation
 	public static final String CPZ_POS_INTACT = "CPZ_POS_INTACT";
 	public static final String BEN_ACTNAME_LENGTH = "BEN_ACTNAME_LENGTH";
-	//TDS reversal entried required or not in SOA.
+	// TDS reversal entried required or not in SOA.
 	public static final String DISPLAY_TDS_REV_SOA = "DISPLAY_TDS_REV_SOA";
 	public static final String ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ = "ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ";
 	public static final String RPYHCY_ON_DPD_BUCKET = "RPYHCY_ON_DPD_BUCKET";
@@ -280,13 +275,16 @@ public class SMTParameterConstants {
 
 	public static final String CHECK_USER_ACCESS_AUTHORITY = "CHECK_USER_ACCESS_AUTHORITY";
 
+	// FIXME HL SMT Parameters
+	public static final String CREDIT_ELG_PARAMS = "CREDIT_ELG_PARAMS";
+	public static final String VER_RCU_VALIDITY_DAYS = "VER_RCU_VALIDITY_DAYS";
+	public static final String VER_FI_VALIDITY_DAYS = "FI_VERIFICATION_VALIDITY_DAYS";
+	public static final String CUSTOMIZED_SOAREPORT = "CUSTOMIZED_SOAREPORT";
+	public static final String GST_DETAILS_TAB_REQUIRED_FOR_RETAIL = "GST_DETAILS_TAB_REQUIRED_FOR_RETAIL";
+
 	public static final String ALLOW_DEFAULT_MANDATE_REQ = "ALLOW_DEFAULT_MANDATE_REQ";
-
-	public static final String LIST_RENDER_ON_LOAD = "LIST_RENDER_ON_LOAD";
-
 	public static final String USER_NOTIFICATION_PUBLISH = "USER_NOTIFICATION_PUBLISH";
 	public static final String ALLOW_GST_RETAIL_CUSTOMER = "ALLOW_GST_RETAIL_CUSTOMER";
-
 	public static final String MANDATE_EMANDATE_REQUIRED = "MANDATE_EMANDATE_REQUIRED";
 
 	public static final String CD_CASHBACK_JOB_REQUIRED = "CD_CASHBACK_JOB_REQUIRED";
@@ -336,9 +334,53 @@ public class SMTParameterConstants {
 	public static final String ALLOW_MULITIPLE_EODS_ON_SAME_DAY = "ALLOW_MULITIPLE_EODS_ON_SAME_DAY";
 	public static final String AUTO_KNOCKOFF_THRESHOLD = "AUTO_KNOCKOFF_THRESHOLD";
 
+	//Parameter to configure the loan types for provisional certificate
+	public static final String PROVCERT_LOANTYPES = "PROVCERT_LOANTYPES";
+
+	//Allow Instruction Based Schedule
+	public static final String IS_INST_BASED_SCHD_REQ = "IS_INST_BASED_SCHD_REQ";
+
+	//External BRE credit review details 
+	public static final String EXTCREDITREVIEW_TAB = "EXTCREDITREVIEW_TAB";
+	public static final String PDF_OWNER_PASSWORD = "PDF_OWNER_PASSWORD";
+	public static final String PDF_PASSWORD_FORMAT = "PDF_PASSWORD_FORMAT";
+
 	public static final String NPA_TAGGING = "NPA_TAGGING";
 	public static final String RPYHCY_ON_NPA = "RPYHCY_ON_NPA";
 	public static final String PROVISION_BOOKS = "PROVISION_BOOKS";
 	public static final String PROVISION_EFF_POSTDATE = "PROVISION_EFF_POSTDATE";
 
+	//TODO:GANESH need to Remove once provide the data in Finadvpayments
+	public static final String INSURANCE_INST_ON_INSPAYINST = "INSURANCE_INST_ON_INSPAYINST";
+	public static final String ALW_ALGOFUSION_DATA_EXTRACTION = "ALW_ALGOFUSION_DATA_EXTRACTION";
+	public static final String CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION = "CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION";
+
+	public static final String PURG_CONFIG_JOB_REQUIRED = "PURG_CONFIG_JOB_REQUIRED";
+	public static final String PURG_CONFIG_CRON_EXPRESSION = "PURG_CONFIG_CRON_EXPRESSION";
+
+	//	FORECLOSURE_VALIDITY_DAYS
+	//	To define number of calendar days that foreclosure letter will be valid from the date of generation.
+	public static final String FORECLOSURE_VALIDITY_DAYS = "FORECLOSURE_VALIDITY_DAYS";
+	//Update the Manual Cheque Receipt status as paid at Deposit approver
+	public static final String CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER = "CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER";
+	public static final String EOD_INTERVAL_TIME = "EOD_INTERVAL_TIME";
+	public static final String EOD_SKIP_LATE_PAY_MARKING = "EOD_SKIP_LATE_PAY_MARKING";
+	public static final String GST_INV_ON_DUE = "GST_INV_ON_DUE";
+	public static final String ALLOW_ZERO_POSTINGS = "ALLOW_ZERO_POSTINGS";
+	public static final String PROVISION_RULE = "PROVISION_RULE";
+	public static final String EOM_ON_EOD = "EOM_ON_EOD";
+	public static final String MONTHENDACC_FROMFINSTARTDATE = "MONTHENDACC_FROMFINSTARTDATE";
+	public static final String DPD_CALC_INCLUDE_EXCESS = "DPD_CALC_INCLUDE_EXCESS";
+	public static final String ALW_PROV_EOD = "ALW_PROV_EOD";
+	public static final String ENTITY_CODE = "ENTITYCODE";
+
+	public static final String RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE = "RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE";
+	public static final String RECEIPT_UPLOAD_THREAD_SIZE = "RECEIPT_UPLOAD_THREAD_SIZE";
+	public static final String RECEIPT_UPLOAD_THREAD_BATCH_SIZE = "RECEIPT_UPLOAD_THREAD_BATCH_SIZE";
+
+	public static final String ALW_CASHFLOW_REPORT = "ALW_CASHFLOW_REPORT";
+	public static final String TRANSACTIONREF_TXT_IN_RECEIPT = "TRANSACTIONREF_TXT_IN_RECEIPT";
+	public static final String REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL = "REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL";
+	public static final String CHECK_COLL_MAINTENANCE = "CHECK_COLL_MAINTENANCE";
+	public static final String CIBIL_DEFAULT_AMOUNT = "CIBIL_DEFAULT_AMOUNT";
 }

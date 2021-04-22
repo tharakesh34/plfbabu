@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ReportListHeader {
 
-	private static Logger logger = Logger.getLogger(ReportListHeader.class);
+	private static Logger logger = LogManager.getLogger(ReportListHeader.class);
 	private String fieldLabel01;
 	private String fieldLabel02;
 	private String fieldLabel03;

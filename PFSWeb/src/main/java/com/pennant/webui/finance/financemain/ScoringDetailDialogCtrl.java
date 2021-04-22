@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -93,7 +94,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -103,7 +103,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ScoringDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ScoringDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -161,8 +161,6 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private CustomerService customerService;
 	private RatingCodeService ratingCodeService;
 	private CreditReviewSummaryData creditReviewSummaryData;
-	private RuleExecutionUtil ruleExecutionUtil;
-
 	private Object financeMainDialogCtrl;
 	private BigDecimal[] scores = null;
 	String userRole = "";
@@ -735,7 +733,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		if (StringUtils.equals("I", categoryValue)) {
 			metricExecScore = scoringMetric.getLovDescExecutedScore();
 			finExecScoreMap.put(key, metricExecScore);
-			lc = new Listcell(PennantAppUtil.amountFormate(metricExecScore, 0));
+			lc = new Listcell(PennantApplicationUtil.formatAmount(metricExecScore, 2));
 			lc.setStyle("text-align:right;font-weight:bold;color:#ff7300;");
 
 		} else if ("F".equals(categoryValue)) {
@@ -1023,7 +1021,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			listgroupfoot.appendChild(cell);
 		}
 
-		cell = new Listcell(PennantAppUtil.amountFormate(totalMaxGrpScore, 0));
+		cell = new Listcell(PennantApplicationUtil.formatAmount(totalMaxGrpScore, 2));
 		cell.setStyle("font-weight:bold;text-align:right;");
 		listgroupfoot.appendChild(cell);
 
@@ -1031,7 +1029,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		 * if("N".equals(ctgType)){ cell = new Listcell(""); }else{
 		 */
 		cell = new Listcell();
-		Label label = new Label(PennantAppUtil.amountFormate(totalExecGrpScore, 0));
+		Label label = new Label(PennantApplicationUtil.formatAmount(totalExecGrpScore, 2));
 		label.setStyle("font-weight:bold;float:right;");
 		cell.appendChild(label);
 		if ("I".equals(ctgType)) {
@@ -1070,8 +1068,8 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 							fieldValuesMap.put(fields[j], BigDecimal.ONE);
 						}
 					}
-					code = String.valueOf(this.ruleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap,
-							null, RuleReturnType.INTEGER)); //FIXME Code should be checked
+					code = String.valueOf(RuleExecutionUtil.executeRule("Result = " + code + ";", fieldValuesMap, null,
+							RuleReturnType.INTEGER)); //FIXME Code should be checked
 				}
 
 				if (new BigDecimal(code.trim()).compareTo(max) > 0) {
@@ -1649,10 +1647,6 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 
 	public boolean isScoreExecuted() {
 		return scoreExecuted;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	private String getUserRole() {

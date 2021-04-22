@@ -84,6 +84,7 @@
 									<button id="btnSearchFinanceDedupe" image="/images/icons/LOVSearch.png" visible="false" />
 									<button id="btnSearchCustomerDedupe" image="/images/icons/LOVSearch.png" visible="false" />
 									<button id="btnSearchBlackListDedupe" image="/images/icons/LOVSearch.png" visible="false" />
+									<button id="btnSearchPoliceDedupe" image="/images/icons/LOVSearch.png" visible="false" />
 									<button id="btnSearchLimitService" image="/images/icons/LOVSearch.png" visible="false" />
 									<button id="btnSearchTatNotification" image="/images/icons/LOVSearch.png" visible="false" />
 									<button id="btnSearchReturnCheque" image="/images/icons/LOVSearch.png" visible="false" />

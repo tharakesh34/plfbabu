@@ -10,13 +10,15 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -25,6 +27,7 @@ import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -39,11 +42,12 @@ import com.pennant.backend.service.finance.MiscPostingUploadService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUpload>
 		implements MiscPostingUploadService {
-	private static final Logger logger = Logger.getLogger(MiscPostingUploadServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(MiscPostingUploadServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MiscPostingUploadDAO miscPostingUploadDAO;
@@ -54,6 +58,11 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 	private JVPostingDAO jVPostingDAO;
 	private JVPostingService jVPostingService;
 	private DivisionDetailDAO divisionDetailDAO;
+	private EntityDAO entityDAO;
+	private static final String DATE_FORMAT = "HH:mm:ss.SSS";
+	private static final String REGIX = "[/:.\\s]";
+
+	private long tempData = 0;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -247,7 +256,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 		for (MiscPostingUpload miscPostingUpload : miscPostingUploadList) {
 			JVPostingEntry jVPostingEntry = new JVPostingEntry();
 			// creating JVPostingEntry Bean
-			jVPostingEntry.setBatchReference(Long.valueOf(miscPostingUpload.getBatch()));
+			jVPostingEntry.setBatchReference(Long.valueOf(miscPostingUpload.getMiscPostingId()));
 			jVPostingEntry.setAccount(miscPostingUpload.getAccount());
 			jVPostingEntry.setAccCCy(currency);
 			accountMapping = accountMappingDAO.getAccountMapping(miscPostingUpload.getAccount(), "_AView");
@@ -280,7 +289,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 
 		jVPosting.setJVPostingEntrysList(jVPostingEntryList);
 		// creating JVPosting Bean
-		jVPosting.setBatchReference(Long.valueOf(miscPostingUploadList.get(0).getBatch()));
+		jVPosting.setBatchReference(Long.valueOf(miscPostingUploadList.get(0).getMiscPostingId()));
 		jVPosting.setReference(miscPostingUploadList.get(0).getReference());
 		jVPosting.setBatch(miscPostingUploadList.get(0).getBatch());
 		jVPosting.setCurrency(currency);
@@ -343,24 +352,33 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 
 		if (uploadHeader.isNewRecord()) {
 			if (miscPostingUploadList != null && !miscPostingUploadList.isEmpty()) {
-				String dateAsNumber = getBatchSeq(com.pennant.app.util.DateUtility.getAppDate("dd-MM-yy"), "dd-MM-yy");
-				String refernceNo = String.valueOf(jVPostingDAO.getReferenceSequence());
-				String var = String.valueOf(miscPostingUploadDAO.getMiscPostingBranchSeq());
-				String var_ = "";
-				if (var.length() < 5) {
-					var_ = StringUtils.leftPad(var, 4, "0");
-				} else {
-					var_ = var.substring(var.length() - 4);
+
+				String date = DateUtil.getSysDate(DATE_FORMAT);
+				date = date.replaceAll(REGIX, "");
+				long jobid = Long.valueOf(date);
+				String stngValId = String.valueOf(jobid);
+
+				String var_ = stngValId;
+				if (stngValId.length() > 5) {
+					var_ = stngValId.substring(0, 5);
 				}
 
-				dateAsNumber = dateAsNumber.concat(var_);
+				if (tempData == 0) {
+					tempData = Long.valueOf(var_);
+				}
+
+				if (tempData == Long.valueOf(var_)) {
+					var_ = String.valueOf(tempData + 1);
+				}
+
+				tempData = Long.valueOf(var_);
 
 				for (MiscPostingUpload upload : miscPostingUploadList) {
 					if (StringUtils.equals(miscPostingUploadList.get(0).getPostAgainst(), "N")) {
-						upload.setReference(refernceNo);
+						upload.setReference(var_);
 					}
-					upload.setBatchSeq(dateAsNumber);
-					upload.setBatch(dateAsNumber);
+					upload.setBatchSeq(var_);
+					upload.setBatch(var_);
 				}
 			}
 		}
@@ -588,6 +606,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 		Branch branch = new Branch();
 		FinanceMain finMain = new FinanceMain();
 		Customer customer = new Customer();
+		Entity entity = new Entity();
 		AccountMapping account = new AccountMapping();
 
 		// Value Date
@@ -601,7 +620,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 				errorCount++;
 				reason = "Post Against is mandatory, it should not be empty.";
 			} else {
-				if (String.join("|", "L", "N", "C").contains(miscPostingUpload.getPostAgainst())) {
+				if (String.join("|", "L", "N", "C", "E").contains(miscPostingUpload.getPostAgainst())) {
 					if (miscPostingUpload.getPostAgainst().equalsIgnoreCase("N")) {
 						if (StringUtils.isBlank(miscPostingUpload.getBranch())) {
 							errorCount++;
@@ -657,6 +676,52 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 								miscPostingUpload.setPostingDivision(null);
 							}
 						}
+					} else if (miscPostingUpload.getPostAgainst().equalsIgnoreCase("E")) {
+
+						if (StringUtils.isBlank(miscPostingUpload.getReference())) {
+							errorCount++;
+							reason = "Entity(Reference) is mandatory, it should not be empty.";
+						} else {
+							entity = entityDAO.getEntity(miscPostingUpload.getReference(), "");
+							if (entity != null) {
+								//miscPostingUpload.setBranch(customer.getCustDftBranch());
+							} else {
+								errorCount++;
+								reason = " Entity(Reference): " + miscPostingUpload.getReference()
+										+ " is not available in the system.";
+								miscPostingUpload.setBranch(null);
+							}
+						}
+
+						// Posting Division
+						if (errorCount == 0) {
+							if (StringUtils.isBlank(miscPostingUpload.getPostingDivision())) {
+								errorCount++;
+								reason = " Posting Division is mandatory, it should not be empty.";
+								miscPostingUpload.setPostingDivision(null);
+							} else {
+								DivisionDetail divisionDetails = getDivisionDetailDAO()
+										.getDivisionDetailById(miscPostingUpload.getPostingDivision(), "");
+								if (divisionDetails != null && divisionDetails.isActive()) {
+								} else {
+									errorCount++;
+									reason = " Posting Division is invalid/Inactive.";
+								}
+							}
+
+							if (errorCount == 0) {
+								if (!StringUtils.isBlank(miscPostingUpload.getBranch())) {
+									branch = branchDAO.getBranchById(miscPostingUpload.getBranch(), "");
+									if (branch != null && branch.isBranchIsActive()) {
+										miscPostingUpload.setBranch(branch.getBranchCode());
+									} else {
+										errorCount++;
+										reason = " Branch is invalid/Inactive.";
+									}
+								}
+							}
+						}
+
 					} else {
 						if (StringUtils.isBlank(miscPostingUpload.getReference())) {
 							errorCount++;
@@ -690,7 +755,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 					}
 				} else {
 					errorCount++;
-					reason = " Post Against allowed values are L,N and C.";
+					reason = " Post Against allowed values are L,N,C and E.";
 				}
 			}
 		}
@@ -777,6 +842,14 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 		return miscPostingUploadDAO.getMiscPostingUploadsByMiscId(miscPostingId, "");
 	}
 
+	public EntityDAO getEntityDAO() {
+		return entityDAO;
+	}
+
+	public void setEntityDAO(EntityDAO entityDAO) {
+		this.entityDAO = entityDAO;
+	}
+
 	@Override
 	public void updateList(List<MiscPostingUpload> miscPostingUploads) {
 		logger.debug("Entering");
@@ -838,11 +911,11 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 		return auditDetails;
 	}
 
-	public JVPostingService getjVPostingService() {
+	public JVPostingService getJVPostingService() {
 		return jVPostingService;
 	}
 
-	public void setjVPostingService(JVPostingService jVPostingService) {
+	public void setJVPostingService(JVPostingService jVPostingService) {
 		this.jVPostingService = jVPostingService;
 	}
 

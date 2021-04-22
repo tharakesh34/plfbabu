@@ -43,6 +43,8 @@ public class DisbursementConstants {
 	public static final String PAYMENT_DETAIL_VENDOR = "VD";
 	public static final String PAYMENT_DETAIL_CUSTOMER = "CS";
 	public static final String PAYMENT_DETAIL_THIRDPARTY = "TP";
+	public static final String PAYMENT_DETAIL_BUILDER = "BD";
+	public static final String PAYMENT_DETAIL_VAS = "VAS";
 
 	// Disbursement Payment Types
 	public static final String PAYMENT_TYPE_RTGS = "RTGS";
@@ -62,6 +64,7 @@ public class DisbursementConstants {
 	public static final String PAYMENT_TYPE_BTTP = "BTTP";
 	public static final String PAYMENT_TYPE_MOBILE = "MOBILE";
 	public static final String RECEIPT_CHANNEL_POR = "POR";
+	public static final String PAYMENT_TYPE_DIGITAL = "DIGITAL";
 
 	// Disbursement Status
 	public static final String STATUS_NEW = "NEW";
@@ -73,14 +76,21 @@ public class DisbursementConstants {
 	public static final String STATUS_REALIZED = "REALIZED";
 	public static final String STATUS_REVERSED = "REVERSED";
 	public static final String STATUS_HOLD = "HOLD";
+	public static final String STATUS_PAID_BUT_CANCELLED = "PAID BUT CANCELLED";
+	public static final String STATUS_PRINT = "PRINT";
 
-	// Payment Channels
+	// Payment Channels 
 	public static final String CHANNEL_PAYMENT = "P";
+	public static final String CHANNEL_FLEXIDISBURSEMENT = "F";
 	public static final String CHANNEL_DISBURSEMENT = "D";
 	public static final String CHANNEL_INSURANCE = "I";
+	public static final String CHANNEL_VAS = "V";
 
 	// Auto Disbursement Status
 	public static final String AUTODISB_STATUS_PENDING = "P";
 	public static final String AUTODISB_STATUS_SUCCESS = "S";
 	public static final String AUTODISB_STATUS_FAILED = "F";
+
+	public static final String DISB_MODULE = "DISBINST";
+	public static final String DISB_DOC_TYPE = "DISBDOC";
 }

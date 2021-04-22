@@ -36,4 +36,8 @@ public interface CreditInterfaceDAO {
 			String tableName);
 
 	List<InterfaceMappingDetails> getInterfaceMappingDetails(String inerfaceReference, String moduleValue);
+
+	String getStateCode(String cpProvice);
+
+	String getEnquiryPurpose(String finType);
 }

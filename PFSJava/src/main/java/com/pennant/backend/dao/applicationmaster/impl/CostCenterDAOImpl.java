@@ -42,15 +42,16 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CostCenterDAO;
 import com.pennant.backend.model.applicationmaster.CostCenter;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>CostCenter</code> with set of CRUD operations.
  */
 public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCenterDAO {
-	private static Logger logger = Logger.getLogger(CostCenterDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CostCenterDAOImpl.class);
 
 	public CostCenterDAOImpl() {
 		super();
@@ -92,7 +93,7 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		costCenter.setCostCenterID(costCenterID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(costCenter);
-		RowMapper<CostCenter> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CostCenter.class);
+		RowMapper<CostCenter> rowMapper = BeanPropertyRowMapper.newInstance(CostCenter.class);
 
 		try {
 			costCenter = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -158,7 +159,7 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (costCenter.getCostCenterID() <= 0) {
-			costCenter.setCostCenterID(getNextId("SeqCostCenters"));
+			costCenter.setCostCenterID(getNextValue("SeqCostCenters"));
 		}
 
 		// Execute the SQL, binding the arguments.

@@ -2,7 +2,8 @@ package com.pennanttech.pff.logging.dao.impl;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> implements InterfaceLoggingDAO {
-	private static final Logger logger = Logger.getLogger(InterfaceLoggingDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(InterfaceLoggingDAOImpl.class);
 
 	protected DefaultTransactionDefinition transDef;
 	private DataSourceTransactionManager transactionManager;
@@ -39,17 +40,21 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
-		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
+		TransactionStatus txStatus = null;
 		try {
 			// begin transaction
+			txStatus = transactionManager.getTransaction(transDef);
 			this.jdbcTemplate.update(sql.toString(), beanParameters, keyHolder, new String[] { "seqid" });
 			interfaceLogDetail.setSeqId(keyHolder.getKey().longValue());
 			transactionManager.commit(txStatus);
-			txStatus.flush();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			transactionManager.rollback(txStatus);
 			throw e;
+		} finally {
+			if (txStatus != null) {
+				txStatus.flush();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -65,16 +70,20 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
-		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
+		TransactionStatus txStatus = null;
 		try {
 			// begin transaction
+			txStatus = transactionManager.getTransaction(transDef);
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
 			transactionManager.commit(txStatus);
-			txStatus.flush();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			transactionManager.rollback(txStatus);
 			throw e;
+		} finally {
+			if (txStatus != null) {
+				txStatus.flush();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}

@@ -76,4 +76,15 @@ public interface FinExcessAmountDAO {
 	FinExcessAmount getFinExcessAmount(String finreference, long receiptId);
 
 	void batchUpdateExcessAmount(List<PresentmentDetail> presentmentDetails);
+
+	int updateExcessAmtList(List<FinExcessAmount> excess);
+
+	int updateExcessReserveList(List<FinExcessAmount> excessRevarsal);
+
+	long saveExcessMovements(List<FinExcessMovement> excessMovement);
+
+	int updateExcessEMIAmount(List<FinExcessAmount> emiInAdvance, String amtType);
+
+	List<FinExcessAmount> getFinExcessDetailsByRef(String finReference);
+
 }

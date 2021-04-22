@@ -42,17 +42,19 @@
 */
 package com.pennant.backend.dao.finance.covenant.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.model.finance.covenant.CovenantType;
@@ -64,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements CovenantTypeDAO {
-	private static Logger logger = Logger.getLogger(CovenantTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CovenantTypeDAOImpl.class);
 
 	public CovenantTypeDAOImpl() {
 		super();
@@ -94,7 +96,7 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		covenantType.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(covenantType);
-		RowMapper<CovenantType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CovenantType.class);
+		RowMapper<CovenantType> rowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
 
 		try {
 			covenantType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -254,7 +256,7 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 		sql.append(type);
 		sql.append(" Where code = :code and category=:category ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(covenant);
-		RowMapper<CovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CovenantType.class);
+		RowMapper<CovenantType> typeRowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
 
 		try {
 			covenant = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -266,6 +268,40 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 
 		logger.debug(Literal.LEAVING);
 		return covenant;
+	}
+
+	@Override
+	public List<CovenantType> getCvntTypesByCatgy(String CategoryName, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Id, Code, Description, CovenantType, Category, DocType");
+		sql.append(", AllowPostPonement, MaxAllowedDays, AllowedPaymentModes");
+		sql.append(", AlertsRequired, Frequency, GraceDays, AlertDays, AlertType");
+		sql.append(", AlertToRoles, UserTemplate, CustomerTemplate");
+
+		if (type.contains("View")) {
+			sql.append(", DocTypeName, UserTemplateName, CustomerTemplateName, userTemplateCode, customerTemplateCode");
+		}
+
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From COVENANT_TYPES");
+		sql.append(type);
+		sql.append(" Where Category = :Category");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("Category", CategoryName);
+
+		RowMapper<CovenantType> rowMapper = BeanPropertyRowMapper.newInstance(CovenantType.class);
+		List<CovenantType> covenantType = new ArrayList<>();
+		try {
+			covenantType = jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return covenantType;
 	}
 
 	@Override
@@ -282,4 +318,5 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
 	}
+
 }

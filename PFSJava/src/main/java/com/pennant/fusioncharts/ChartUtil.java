@@ -9,13 +9,14 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 
 public class ChartUtil {
-	private static final Logger logger = Logger.getLogger(ChartUtil.class);
+	private static final Logger logger = LogManager.getLogger(ChartUtil.class);
 
 	/**
 	 * This is basic XML content string formation method It Forms XML tag for each element of chart e.g. if data in

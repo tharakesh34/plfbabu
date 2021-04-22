@@ -72,35 +72,38 @@ public class FinanceDataDefaulting {
 		finMain.setUserDetails(userDetails);
 
 		//customer Defaulting
-		if (StringUtils.isNotBlank(finMain.getCoreBankId())) {
-			customer = customerDAO.getCustomerByCoreBankId(finMain.getCoreBankId(), "");
-			if (customer != null) {
-				finMain.setLovDescCustCIF(customer.getCustCIF());
-				finMain.setLovDescCustCIF(customer.getCustCIF());
-			} else {
-				String[] valueParm = new String[2];
-				valueParm[0] = "CoreBankId";
-				valueParm[1] = finMain.getCoreBankId();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-				finScheduleData.setErrorDetails(errorDetails);
-				return finDetail;
+		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
+			if (StringUtils.isNotBlank(finMain.getCoreBankId())) {
+				customer = customerDAO.getCustomerByCoreBankId(finMain.getCoreBankId(), "");
+				if (customer != null) {
+					finMain.setLovDescCustCIF(customer.getCustCIF());
+					finMain.setLovDescCustCIF(customer.getCustCIF());
+				} else {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CoreBankId";
+					valueParm[1] = finMain.getCoreBankId();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+					finScheduleData.setErrorDetails(errorDetails);
+					return finDetail;
+				}
+			}
+
+			//Get Customer information
+			if (!StringUtils.equals("CRTSCHD", vldGroup)) {
+				if (customer == null) {
+					customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
+					if (customer == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = finMain.getLovDescCustCIF();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
+						finScheduleData.setErrorDetails(errorDetails);
+						return finDetail;
+					}
+				}
+				finMain.setCustID(customer.getCustID());
+				finDetail.getCustomerDetails().setCustomer(customer);
 			}
 		}
-
-		//Get Customer information
-		if (customer == null) {
-			customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
-			if (customer == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getLovDescCustCIF();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
-				finScheduleData.setErrorDetails(errorDetails);
-				return finDetail;
-			}
-		}
-
-		finMain.setCustID(customer.getCustID());
-		finDetail.getCustomerDetails().setCustomer(customer);
 
 		// Date formats
 		setDefaultDateFormats(finMain);
@@ -183,6 +186,10 @@ public class FinanceDataDefaulting {
 		if (financeMain.getMaturityDate() != null) {
 			financeMain.setMaturityDate(DateUtility
 					.getDBDate(DateUtility.format(financeMain.getMaturityDate(), PennantConstants.DBDateFormat)));
+		}
+		if (financeMain.getNextRolloverDate() != null) {
+			financeMain.setNextRolloverDate(DateUtility
+					.getDBDate(DateUtility.format(financeMain.getNextRolloverDate(), PennantConstants.DBDateFormat)));
 		}
 	}
 
@@ -285,9 +292,11 @@ public class FinanceDataDefaulting {
 		}
 
 		// If Finance Branch is NULL get it from customer (Without customer it
-		// would not have reached this point)		
-		if (StringUtils.isBlank(finMain.getFinBranch())) {
-			finMain.setFinBranch(finDeail.getCustomerDetails().getCustomer().getCustDftBranch());
+		// would not have reached this point)	
+		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
+			if (StringUtils.isBlank(finMain.getFinBranch())) {
+				finMain.setFinBranch(finDeail.getCustomerDetails().getCustomer().getCustDftBranch());
+			}
 		}
 
 		// validate finance branch
@@ -491,6 +500,17 @@ public class FinanceDataDefaulting {
 			}
 		}
 
+		// Validate Rollover Frequency
+		if (StringUtils.isNotBlank(finMain.getRolloverFrq())) {
+			ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getRolloverFrq());
+			if (tempError != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Rollover";
+				valueParm[1] = finMain.getRolloverFrq();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90160", valueParm)));
+			}
+		}
+
 		// BPI Treatment
 		if (StringUtils.isNotBlank(finMain.getBpiTreatment())) {
 			if (!StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_NO)
@@ -572,8 +592,10 @@ public class FinanceDataDefaulting {
 		finMain.setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
 		finMain.setInitiateUser(finMain.getUserDetails().getUserId());
 		finMain.setInitiateDate(SysParamUtil.getAppDate());
+		finMain.setShariaStatus(PennantConstants.SHARIA_STATUS_NOTREQUIRED);
 		finMain.setCalRoundingMode(financeType.getRoundingMode());
 		finMain.setRoundingTarget(financeType.getRoundingTarget());
+		finMain.setTDSApplicable(financeType.isTdsApplicable());
 
 		// tasks # >>Start Advance EMI and DSF
 		if (financeType.isGrcAdvIntersetReq()) {
@@ -597,6 +619,13 @@ public class FinanceDataDefaulting {
 		}
 		// tasks # >>End Advance EMI and DSF
 
+		//Setting Default TDS Type
+		if (StringUtils.isBlank(finMain.getTdsType())
+				&& !PennantConstants.TDS_USER_SELECTION.equals(financeType.getTdsType())) {
+			finMain.setTdsType(financeType.getTdsType());
+		}
+
+		finMain.setInstBasedSchd(financeType.isInstBasedSchd());
 	}
 
 	/*
@@ -633,6 +662,9 @@ public class FinanceDataDefaulting {
 			finMain.setGrcSchdMthd(null);
 			finMain.setGrcMinRate(zeroValue);
 			finMain.setGrcMaxRate(zeroValue);
+			finMain.setGrcAdvBaseRate(null);
+			finMain.setGrcAdvMargin(zeroValue);
+			finMain.setGrcAdvPftRate(zeroValue);
 			finMain.setCalGrcEndDate(finMain.getFinStartDate());
 			finMain.setGrcRateBasis(PennantConstants.List_Select);
 			return;
@@ -874,8 +906,10 @@ public class FinanceDataDefaulting {
 		//Set Default Next Repayment Date
 		if (isValidRpyFrq && finMain.getNextRepayDate() == null) {
 			//	Date nextDate = getNextDftDate(finMain.getRepayFrq(), finMain.getCalGrcEndDate(),financeType.getFddLockPeriod());
-			Date nextDate = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getCalGrcEndDate(),
-					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
+			Date nextDate = FrequencyUtil
+					.getNextDate(finMain.getRepayFrq(), 1, finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE,
+							false, finMain.isAllowGrcPeriod() ? 0 : financeType.getFddLockPeriod())
+					.getNextFrequencyDate();
 			nextDate = DateUtility.getDBDate(DateUtility.format(nextDate, PennantConstants.DBDateFormat));
 			finMain.setNextRepayDate(nextDate);
 		}
@@ -897,8 +931,10 @@ public class FinanceDataDefaulting {
 
 		//Next Profit Date
 		if (isValidOtherFrq && finMain.getNextRepayPftDate() == null) {
-			Date nextRpyPftDate = FrequencyUtil.getNextDate(finMain.getRepayPftFrq(), 1, finMain.getCalGrcEndDate(),
-					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
+			Date nextRpyPftDate = FrequencyUtil
+					.getNextDate(finMain.getRepayPftFrq(), 1, finMain.getCalGrcEndDate(), HolidayHandlerTypes.MOVE_NONE,
+							false, finMain.isAllowGrcPeriod() ? 0 : financeType.getFddLockPeriod())
+					.getNextFrequencyDate();
 			nextRpyPftDate = DateUtility.getDBDate(DateUtility.format(nextRpyPftDate, PennantConstants.DBDateFormat));
 
 			if (finMain.getCalMaturity() != null && nextRpyPftDate != null) {
@@ -996,6 +1032,18 @@ public class FinanceDataDefaulting {
 
 		finMain.setFixedRateTenor(financeType.getFixedRateTenor());
 		finMain.setEqualRepay(financeType.isEqualRepayment());
+		//UnPlanned EMI Holiday defaulting
+		if (financeType.isAlwUnPlanEmiHoliday()) {
+			if (finMain.getMaxUnplannedEmi() <= 0) {
+				finMain.setMaxUnplannedEmi(financeType.getMaxUnplannedEmi());
+			}
+			if (finMain.getUnPlanEMIHLockPeriod() <= 0) {
+				finMain.setUnPlanEMIHLockPeriod(financeType.getUnPlanEMIHLockPeriod());
+			}
+			if (!finMain.isUnPlanEMICpz()) {
+				finMain.setUnPlanEMICpz(financeType.isUnPlanEMICpz());
+			}
+		}
 
 		//UnPlanned EMI Holiday defaulting
 		if (financeType.isAlwUnPlanEmiHoliday()) {
@@ -1111,6 +1159,7 @@ public class FinanceDataDefaulting {
 	public static boolean isValidateIDB(String IDB) {
 		if (!StringUtils.equals(IDB, CalculationConstants.IDB_30E360)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30E360I)
+				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30E360IH)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30EP360)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30U360)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_ACT_360)
@@ -1118,6 +1167,8 @@ public class FinanceDataDefaulting {
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_ACT_365LEAP)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_ACT_365LEAPS)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_ACT_ISDA)
+				&& !StringUtils.equals(IDB, CalculationConstants.IDB_30E360IA)
+				&& !StringUtils.equals(IDB, CalculationConstants.IDB_15E360IA)
 				&& !StringUtils.equals(IDB, CalculationConstants.IDB_BY_PERIOD)) {
 			return false;
 		}

@@ -13,7 +13,8 @@ package com.pennant.webui.financemanagement.receipts;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -57,7 +58,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = Logger.getLogger(ReceiptRealizationListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptRealizationListCtrl.class);
 
 	protected Window window_ReceiptRealizationList;
 	protected Borderlayout borderLayout_ReceiptRealizationList;

@@ -12,14 +12,15 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -38,7 +39,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
-	private static final Logger logger = Logger.getLogger(InvokeSysNotifications.class);
+	private static final Logger logger = LogManager.getLogger(InvokeSysNotifications.class);
 
 	protected DataSourceTransactionManager transManager;
 	protected DefaultTransactionDefinition transDef;
@@ -225,8 +226,8 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								} else if ("AMOUNT".equals(attr.getType())) {
 									if (rs.getBigDecimal(columnName) != null) {
 										BigDecimal amount = rs.getBigDecimal(columnName);
-										BigDecimal formattedamount = PennantApplicationUtil.formateAmount(amount, 2);
-										map.put(columnName, formattedamount.toString());
+										String formattedamount = PennantApplicationUtil.amountFormate(amount, 2);
+										map.put(columnName, formattedamount);
 									}
 								} else {
 									map.put(columnName, rs.getString(columnName));
@@ -298,8 +299,7 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 		sql.append("Select * from Sys_Notifications where active = :active");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(systemNotifications);
-		RowMapper<SystemNotifications> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SystemNotifications.class);
+		RowMapper<SystemNotifications> typeRowMapper = BeanPropertyRowMapper.newInstance(SystemNotifications.class);
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}

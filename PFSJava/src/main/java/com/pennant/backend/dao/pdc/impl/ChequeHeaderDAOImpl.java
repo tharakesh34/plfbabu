@@ -42,15 +42,16 @@
 */
 package com.pennant.backend.dao.pdc.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ChequeHeader</code> with set of CRUD operations.
  */
 public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeHeaderDAO {
-	private static Logger logger = Logger.getLogger(ChequeHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ChequeHeaderDAOImpl.class);
 
 	public ChequeHeaderDAOImpl() {
 		super();
@@ -92,7 +93,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		chequeHeader.setHeaderID(headerID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
-		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
+		RowMapper<ChequeHeader> rowMapper = BeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
 			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -126,7 +127,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		chequeHeader.setFinReference(finReference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
-		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
+		RowMapper<ChequeHeader> rowMapper = BeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
 			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -141,7 +142,6 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 
 	@Override
 	public ChequeHeader getChequeHeaderByRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
@@ -160,17 +160,16 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		chequeHeader.setFinReference(finReference);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeHeader);
-		RowMapper<ChequeHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeHeader.class);
+		RowMapper<ChequeHeader> rowMapper = BeanPropertyRowMapper.newInstance(ChequeHeader.class);
 
 		try {
-			chequeHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			chequeHeader = null;
+			logger.warn("Record not found in CHEQUEHEADER{} table for the specified FinReference >> {}", type,
+					finReference);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return chequeHeader;
+		return null;
 	}
 
 	@Override

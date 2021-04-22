@@ -43,14 +43,15 @@
 package com.pennant.backend.dao.others.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.others.JVPostingDAO;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostingDAO {
-	private static Logger logger = Logger.getLogger(JVPostingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(JVPostingDAOImpl.class);
 
 	public JVPostingDAOImpl() {
 		super();
@@ -136,7 +137,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		RowMapper<JVPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPosting.class);
+		RowMapper<JVPosting> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPosting.class);
 
 		try {
 			jVPosting = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -159,7 +160,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
-		RowMapper<JVPosting> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(JVPosting.class);
+		RowMapper<JVPosting> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPosting.class);
 
 		logger.debug("Leaving");
 		try {
@@ -197,9 +198,9 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPosting);
 		try {
 			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				//throw new ConcurrencyException();
-			}
+			/*
+			 * if (recordCount <= 0) { //throw new ConcurrencyException(); }
+			 */
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -221,7 +222,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	 */
 	public long getReferenceSequence() {
 		// Fetching the sequence number for reference.
-		return getNextValue("SeqMscPostRef");
+		return getNextId("SeqMscPostRef");
 	}
 
 	@Override
@@ -258,7 +259,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 
 	@Override
 	public long createBatchReference() {
-		return getNextId("SeqJVpostings");
+		return getNextValue("SeqJVpostings");
 	}
 
 	/**

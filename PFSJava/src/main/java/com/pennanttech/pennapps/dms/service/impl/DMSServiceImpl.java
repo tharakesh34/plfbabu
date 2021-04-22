@@ -1,8 +1,12 @@
 package com.pennanttech.pennapps.dms.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -11,6 +15,7 @@ import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
@@ -22,6 +27,7 @@ import com.pennanttech.pennapps.dms.filesystem.DocumentFileSystem;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 public class DMSServiceImpl implements DMSService {
 	private static Logger logger = LogManager.getLogger(DMSServiceImpl.class);
@@ -35,6 +41,8 @@ public class DMSServiceImpl implements DMSService {
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentFileSystem documentFileSystem;
 	private VASRecordingDAO vASRecordingDAO;
+	private SimpleAsyncTaskExecutor taskExecutor;
+	private ExternalDocumentManager externalDocumentManager;
 
 	@Override
 	public long save(DMSQueue dmsQueue) {
@@ -44,12 +52,25 @@ public class DMSServiceImpl implements DMSService {
 		documentManager.setDocImage(dmsQueue.getDocImage());
 		documentManager.setCustId(dmsQueue.getCustId());
 		documentManager.setDocURI(StringUtils.trimToNull(dmsQueue.getDocUri()));
+		boolean insert = false;
 
-		long docManagerId = documentManagerDAO.save(documentManager);
+		if (dmsQueue.getDocManagerID() == 0 || dmsQueue.getDocManagerID() == Long.MIN_VALUE) {
+			long docManagerId = documentManagerDAO.save(documentManager);
+			dmsQueue.setDocManagerID(docManagerId);
+			insert = true;
+		} else if (dmsQueue.getDocManagerID() > 0 && dmsQueue.getDocUri() != null) {
+			documentManagerDAO.update(dmsQueue.getDocManagerID(), dmsQueue.getCustId(), dmsQueue.getDocUri());
+		}
 
-		dmsQueue.setDocManagerID(docManagerId);
-		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			dMSQueueDAO.log(dmsQueue);
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))
+				|| DMSStorage.EXTERNAL == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			if (insert && dmsQueue.getDocImage() != null) {
+				dMSQueueDAO.log(dmsQueue);
+			} else if (insert && dmsQueue.getDocUri() != null) {
+				dMSQueueDAO.log(dmsQueue);
+			} else if (dmsQueue.getDocManagerID() > 0) {
+				dMSQueueDAO.update(dmsQueue);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -100,7 +121,67 @@ public class DMSServiceImpl implements DMSService {
 	public void processDocuments() {
 		logger.debug(Literal.ENTERING);
 
-		dMSQueueDAO.processDMSQueue(this);
+		List<Long> queueList = new ArrayList<>();
+		queueList = dMSQueueDAO.processDMSQueue();
+		long[][] identifiers = null;
+
+		taskExecutor = new SimpleAsyncTaskExecutor("Send-DMS");
+
+		int threadCount = App.getIntegerProperty("dms.fs.thread.size");
+		int batchSize = App.getIntegerProperty("dms.fs.batch.size");
+
+		int threadNum = 0;
+		int queuIDNum = 0;
+
+		for (long id : queueList) {
+			if (identifiers == null) {
+				identifiers = new long[threadCount][batchSize];
+			}
+
+			identifiers[threadNum++][queuIDNum] = id;
+
+			if (threadNum == threadCount) {
+				threadNum = 0;
+				queuIDNum++;
+			}
+
+			if (queuIDNum == batchSize) {
+				break;
+			}
+		}
+
+		DocumentStorageProcessThread.usedThreads.set(identifiers.length);
+		for (int i = 0; i < identifiers.length; i++) {
+			DocumentStorageProcessThread thread = new DocumentStorageProcessThread(identifiers[i]);
+
+			thread.setCustomerDocumentDAO(customerDocumentDAO);
+			thread.setdMSQueueDAO(dMSQueueDAO);
+			thread.setDocumentDetailsDAO(documentDetailsDAO);
+			thread.setDocumentFileSystem(documentFileSystem);
+			thread.setDocumentManagerDAO(documentManagerDAO);
+
+			taskExecutor.execute(thread);
+		}
+
+		identifiers = null;
+
+		while (true) {
+			if (DocumentStorageProcessThread.usedThreads.get() > 0) {
+				logger.info("Waiting for designated threads' execution completion.");
+				if (DocumentStorageProcessThread.usedThreads.get() > 0) {
+					logger.info("Waiting for designated threads' execution completion.");
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						logger.error("Exception: {}", e.getMessage());
+					}
+				} else {
+					break;
+				}
+			} else {
+				break;
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -173,6 +254,28 @@ public class DMSServiceImpl implements DMSService {
 	}
 
 	@Override
+	public DMSQueue getImageByUri(String docUri) {
+		logger.debug(Literal.ENTERING);
+		DMSQueue queue = new DMSQueue();
+		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			String docURI = StringUtils.trimToNull(docUri);
+			if (docURI != null) {
+				queue = documentFileSystem.retriveDMS(docURI);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return queue;
+	}
+
+	@Override
+	public void updateDMSQueue(DMSQueue dmsQueue) {
+		logger.debug(Literal.ENTERING);
+		dMSQueueDAO.updateDMSQueue(dmsQueue);
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
 	public Long getCustomerIdByFin(String FinReference) {
 		return financeMainDAO.getCustomerIdByFin(FinReference);
 	}
@@ -183,8 +286,22 @@ public class DMSServiceImpl implements DMSService {
 	}
 
 	@Override
+	public DocumentDetails getExternalDocument(String custCIF, String docName, String docUri) {
+		DocumentDetails detail = externalDocumentManager.getExternalDocument(docName, docUri, custCIF);
+		if (detail == null) {
+			detail = new DocumentDetails();
+		}
+		return detail;
+	}
+
+	@Override
 	public Long getCustomerIdByCollateral(String collateralRef) {
 		return collateralSetupDAO.getCustomerIdByCollateral(collateralRef);
+	}
+
+	@Override
+	public DMSQueue getOfferIdByFin(DMSQueue dmsQueue) {
+		return financeMainDAO.getOfferIdByFin(dmsQueue);
 	}
 
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
@@ -223,4 +340,7 @@ public class DMSServiceImpl implements DMSService {
 		this.vASRecordingDAO = vASRecordingDAO;
 	}
 
+	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
+		this.externalDocumentManager = externalDocumentManager;
+	}
 }

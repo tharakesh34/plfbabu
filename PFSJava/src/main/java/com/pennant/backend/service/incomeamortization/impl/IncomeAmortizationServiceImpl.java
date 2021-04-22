@@ -48,7 +48,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ProjectedAmortizationService;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class IncomeAmortizationServiceImpl implements IncomeAmortizationService {
-	private static Logger logger = Logger.getLogger(IncomeAmortizationServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(IncomeAmortizationServiceImpl.class);
 
 	private FinLogEntryDetailDAO finLogEntryDetailDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;

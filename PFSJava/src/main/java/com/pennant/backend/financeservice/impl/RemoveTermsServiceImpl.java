@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
@@ -26,7 +27,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RemoveTermsServiceImpl extends GenericService<FinServiceInstruction> implements RemoveTermsService {
 
-	private static Logger logger = Logger.getLogger(RemoveTermsServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(RemoveTermsServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;

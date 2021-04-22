@@ -9,8 +9,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.bre.BREResponse;
 import com.pennant.backend.model.others.JVPosting;
+import com.pennant.backend.model.systemmasters.BRERequestDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.model.dms.DMSLeadDetails;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.model.eligibility.EligibilityDetail;
@@ -50,5 +53,25 @@ public interface MiscellaneousRestService {
 	@POST
 	@Path(value = "/miscellaneous/getCheckListRule")
 	EligibilitySummaryResponse getCheckListRule(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
+
+	@POST
+	@Path("/miscellaneous/checkEligibility")
+	EligibilityDetailResponse checkEligibility(EligibilityDetail eligibilityDetail) throws ServiceException;
+
+	@POST
+	@Path("/miscellaneous/getScore")
+	BREResponse getScore(BRERequestDetail BRERequestDetail) throws ServiceException;
+
+	@POST
+	@Path("/miscellaneous/getProductOffers")
+	BREResponse getProductOffers(BRERequestDetail BRERequestDetail) throws ServiceException;
+
+	@POST
+	@Path("/miscellaneous/calculateEligibility")
+	BREResponse calculateEligibility(BRERequestDetail checkEligibilty) throws ServiceException;
+
+	@POST
+	@Path("/miscellaneous/pushLeadsForDMS")
+	WSReturnStatus pushLeadsForDMS(DMSLeadDetails dmsLeadDetails) throws ServiceException;
 
 }

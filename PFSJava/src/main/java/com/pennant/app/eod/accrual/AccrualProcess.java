@@ -45,14 +45,15 @@ package com.pennant.app.eod.accrual;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.eod.service.AmortizationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class AccrualProcess extends Thread {
-	private static final Logger logger = Logger.getLogger(AccrualProcess.class);
+	private static final Logger logger = LogManager.getLogger(AccrualProcess.class);
 
 	private static AccrualProcess me = null;
 	private DataEngineStatus calculation = new DataEngineStatus();

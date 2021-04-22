@@ -43,6 +43,7 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -77,6 +78,9 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 
 	private List<NPAProvisionDetail> provisionDetailsList = new LinkedList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Long npaTemplateId;
+	private String npaTemplateCode;
+	private String npaTemplateDesc;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -91,11 +95,53 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public NPAProvisionHeader copyEntity() {
+		NPAProvisionHeader entity = new NPAProvisionHeader();
+		entity.setId(this.id);
+		entity.setEntity(this.entity);
+		entity.setEntityName(this.entityName);
+		entity.setFinType(this.finType);
+		entity.setFinTypeName(this.finTypeName);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		this.provisionDetailsList.stream()
+				.forEach(e -> entity.getProvisionDetailsList().add(e == null ? null : e.copyEntity()));
+		this.auditDetailMap.entrySet().stream().forEach(e -> {
+			List<AuditDetail> newList = new ArrayList<AuditDetail>();
+			if (e.getValue() != null) {
+				e.getValue().forEach(
+						auditDetail -> newList.add(auditDetail == null ? null : auditDetail.getNewCopyInstance()));
+				entity.getAuditDetailMap().put(e.getKey(), newList);
+			} else
+				entity.getAuditDetailMap().put(e.getKey(), null);
+		});
+
+		entity.setNpaTemplateId(this.npaTemplateId);
+		entity.setNpaTemplateCode(this.npaTemplateCode);
+		entity.setNpaTemplateDesc(this.npaTemplateDesc);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("entityName");
 		excludeFields.add("finTypeName");
 		excludeFields.add("classificationHeaderList");
+		excludeFields.add("npaTemplateCode");
+		excludeFields.add("npaTemplateDesc");
 		return excludeFields;
 	}
 
@@ -189,6 +235,30 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 
 	public void setProvisionDetailsList(List<NPAProvisionDetail> provisionDetailsList) {
 		this.provisionDetailsList = provisionDetailsList;
+	}
+
+	public Long getNpaTemplateId() {
+		return npaTemplateId;
+	}
+
+	public void setNpaTemplateId(Long npaTemplateId) {
+		this.npaTemplateId = npaTemplateId;
+	}
+
+	public String getNpaTemplateCode() {
+		return npaTemplateCode;
+	}
+
+	public void setNpaTemplateCode(String npaTemplateCode) {
+		this.npaTemplateCode = npaTemplateCode;
+	}
+
+	public String getNpaTemplateDesc() {
+		return npaTemplateDesc;
+	}
+
+	public void setNpaTemplateDesc(String npaTemplateDesc) {
+		this.npaTemplateDesc = npaTemplateDesc;
 	}
 
 }

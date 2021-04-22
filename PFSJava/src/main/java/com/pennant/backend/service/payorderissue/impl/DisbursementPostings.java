@@ -9,17 +9,19 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
@@ -27,11 +29,12 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DisbursementPostings {
-	private Logger logger = Logger.getLogger(DisbursementPostings.class);
+	private Logger logger = LogManager.getLogger(DisbursementPostings.class);
 
 	private AccountEngineExecution engineExecution;
-	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	protected AEAmountCodes amountCodes;
 
 	public DisbursementPostings() {
 		super();
@@ -56,7 +59,7 @@ public class DisbursementPostings {
 
 		Map<Long, List<ReturnDataSet>> disbMap = new HashMap<>();
 
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finRef, "");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "");
 
 		if (CollectionUtils.isEmpty(approvedList)) {
 			return disbMap;
@@ -78,9 +81,18 @@ public class DisbursementPostings {
 			aeEvent.setCcy(finAdvancePayments.getDisbCCy());
 			aeEvent.setBranch(finMain.getFinBranch());
 			aeEvent.setFinReference(finRef);
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 			aeEvent.setFinType(finMain.getFinType());
-			amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
+			if (StringUtils.equals(finAdvancePayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+				amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+				//For GL Code
+				dataMap.put("ae_productCode", finAdvancePayments.getProductShortCode());
+				dataMap.put("ae_dealerCode", finAdvancePayments.getDealerShortCode());
+				dataMap.put("id_totPayAmount", finAdvancePayments.getAmtToBeReleased());
+			} else {
+				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
+				amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
+			}
 			amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
 			amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 			amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
@@ -101,6 +113,8 @@ public class DisbursementPostings {
 				dataMap = amountCodes.getDeclaredFieldValues();
 				aeEvent.setDataMap(dataMap);
 
+				dataMap.putAll(amountCodes.getDeclaredFieldValues());
+				aeEvent.setDataMap(dataMap);
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
 							aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
@@ -110,7 +124,7 @@ public class DisbursementPostings {
 				}
 				aeEvent.setLinkedTranId(0);
 				aeEvent.setEntityCode(finMain.getLovDescEntityCode());
-				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
+				engineExecution.getAccEngineExecResults(aeEvent);
 
 				datasetList = aeEvent.getReturnDataSet();
 				disbMap.put(finAdvancePayments.getPaymentId(), datasetList);
@@ -130,7 +144,7 @@ public class DisbursementPostings {
 
 		Map<Integer, Long> disbMap = new HashMap<>();
 
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finRef, "");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "_AView");
 
 		if (advPaymentsList != null && !advPaymentsList.isEmpty()) {
 
@@ -139,11 +153,31 @@ public class DisbursementPostings {
 
 				if (finApprovedPay != null
 						&& StringUtils.equals(finApprovedPay.getStatus(), finAdvancePayments.getStatus())
-						&& !StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
+						&& !StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())
+						&& !finAdvancePayments.isPostingQdp()) {
 					continue;
 				}
 
-				if (StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
+				if (finApprovedPay != null) {
+					if (StringUtils.isBlank(finAdvancePayments.getPartnerBankAc())) {
+						finAdvancePayments.setPartnerBankAc(finApprovedPay.getPartnerBankAc());
+					}
+
+					if (StringUtils.isBlank(finAdvancePayments.getPartnerBankAcType())) {
+						finAdvancePayments.setPartnerBankAcType(finApprovedPay.getPartnerBankAcType());
+					}
+
+					if (StringUtils.isBlank(finAdvancePayments.getDisbCCy())) {
+						finAdvancePayments.setDisbCCy(finApprovedPay.getDisbCCy());
+					}
+
+					if (finAdvancePayments.getLlDate() == null) {
+						finAdvancePayments.setLLDate(finApprovedPay.getLlDate());
+					}
+				}
+
+				if (StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())
+						|| StringUtils.equals(DisbursementConstants.STATUS_REVERSED, finAdvancePayments.getStatus())) {
 					// Reverse postings cancel case.
 					long linkedTranId = finApprovedPay.getLinkedTranId();
 					postingsPreparationUtil.postReversalsByLinkedTranID(linkedTranId);
@@ -157,21 +191,31 @@ public class DisbursementPostings {
 					aeEvent.setCcy(finAdvancePayments.getDisbCCy());
 					aeEvent.setBranch(finMain.getFinBranch());
 					aeEvent.setFinReference(finRef);
-					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 					aeEvent.setFinType(finMain.getFinType());
-					amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
+					if (StringUtils.equals(finAdvancePayments.getPaymentDetail(),
+							DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+						amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
+						aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
+						//For GL Code
+						dataMap.put("ae_productCode", finAdvancePayments.getProductShortCode());
+						dataMap.put("ae_dealerCode", finAdvancePayments.getDealerShortCode());
+						dataMap.put("id_totPayAmount", finAdvancePayments.getAmtToBeReleased());
+
+					} else {
+						amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
+						aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
+					}
 					amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
 					amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 					amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
 					amountCodes.setPaymentType(finAdvancePayments.getPaymentType());
 					amountCodes.setFinType(aeEvent.getFinType());
 					aeEvent.setCustID(finMain.getCustID());
-					aeEvent.setValueDate(finAdvancePayments.getLlDate());
 					aeEvent.setPostingUserBranch(usrBranch);
 					aeEvent.setEntityCode(finMain.getLovDescEntityCode());
 					// Prepare posting for new added
 					boolean posted = true;
-					dataMap = amountCodes.getDeclaredFieldValues();
+					dataMap.putAll(amountCodes.getDeclaredFieldValues());
 					aeEvent.setDataMap(dataMap);
 					if (StringUtils.isNotBlank(finMain.getPromotionCode()) && finMain.getPromotionSeqId() == 0) {
 						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
@@ -219,8 +263,8 @@ public class DisbursementPostings {
 		this.engineExecution = engineExecution;
 	}
 
-	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
-		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {

@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -18,7 +19,7 @@ public class ClosedFacilityProcess extends QuartzJobBean implements StatefulJob,
 
 	private static final long serialVersionUID = 5973408474522551573L;
 
-	private static final Logger logger = Logger.getLogger(ClosedFacilityProcess.class);
+	private static final Logger logger = LogManager.getLogger(ClosedFacilityProcess.class);
 
 	public ClosedFacilityProcess() {
 		super();

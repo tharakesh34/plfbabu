@@ -12,14 +12,14 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AutoKnockOffDAO;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.util.BatchUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class LoadAutoKnockOffProcessDataTasklet extends BasicDao<AutoKnockOff> implements Tasklet {
@@ -35,8 +35,8 @@ public class LoadAutoKnockOffProcessDataTasklet extends BasicDao<AutoKnockOff> i
 			logger.debug(Literal.LEAVING);
 			return RepeatStatus.FINISHED;
 		}
-
-		Date valueDate = SysParamUtil.getAppDate();
+		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
+		Date valueDate = eventProperties.getAppDate();
 
 		/**
 		 * Deleting records with the value date to handle failure case.
@@ -51,7 +51,7 @@ public class LoadAutoKnockOffProcessDataTasklet extends BasicDao<AutoKnockOff> i
 
 		BatchUtil.setExecutionStatus(context, StepUtil.AUTO_KNOCKOFF_PROCESS);
 
-		String thresholdValue = (String) SysParamUtil.getValue(SMTParameterConstants.AUTO_KNOCKOFF_THRESHOLD);
+		String thresholdValue = eventProperties.getThresholdValue();
 
 		/**
 		 * Storing all the Excess and Payble in AUTO_KNOCKOFF_EXCESS table.

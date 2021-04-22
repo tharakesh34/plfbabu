@@ -46,7 +46,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 	private static final long serialVersionUID = -6345351842301484405L;
-	private static final Logger logger = Logger.getLogger(RuleListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RuleListCtrl.class);
 
 	protected Window window_RuleList;
 	protected Borderlayout borderLayout_RuleList;
@@ -129,6 +130,9 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		if (this.limitLine != null && StringUtils.isNotBlank(this.limitLine.getValue())) {
 			super.searchObject.addFilterEqual("ruleEvent", this.limitLine.getValue());
 
+		}
+		if (RuleConstants.MODULE_FEEPERC.equals(this.ruleModule.getValue())) {
+			super.searchObject.addFilterEqual("Active", 1);
 		}
 	}
 
@@ -184,12 +188,20 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			this.ruleModuleName = "LimitDefRule";
 		} else if (RuleConstants.MODULE_LPPRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "LPPRule";
+		} else if (RuleConstants.MODULE_INSRULE.equals(ruleModuleValue)) {
+			this.ruleModuleName = "InsuranceRule";
 		} else if (RuleConstants.MODULE_BOUNCE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "BOUNCE";
 		} else if (RuleConstants.MODULE_STGACRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "StageAccountingRule";
 		} else if (RuleConstants.MODULE_VERRULE.equals(ruleModuleValue)) {
 			this.ruleModuleName = "VerificationRule";
+		} else if (RuleConstants.MODULE_FEEPERC.equals(ruleModule.getValue())) {
+			this.ruleModuleName = "FeePerc";
+		} else if (RuleConstants.MODULE_BRERULE.equals(ruleModuleValue)) {
+			this.ruleModuleName = "BreRule";
+		} else if (RuleConstants.MODULE_DUEDATERULE.equals(ruleModuleValue)) {
+			this.ruleModuleName = "DueDateLogicRule";
 		}
 
 		// Set the page level components.
@@ -213,6 +225,7 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 				Operators.STRING);
 		registerField("ruleCodeDesc", listheader_RuleCodeDesc, SortOrder.NONE, ruleCodeDesc, sortOperator_ruleCodeDesc,
 				Operators.STRING);
+		registerField("Active");
 
 		if (this.ruleEvent != null) {
 			registerField("ruleEvent", listheader_RuleEvent, SortOrder.NONE, ruleEvent, sortOperator_ruleEvent,
@@ -271,6 +284,8 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 			aRule.setRuleEvent(this.limitLine.getValue());
 		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_SCORES)) {
 			aRule.setRuleEvent("RSCORE");
+		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEEPERC)) {
+			aRule.setRuleEvent("");
 		} else if (!StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_FEES)) {
 			aRule.setRuleEvent(ruleModuleValue);
 		} else if (StringUtils.equalsIgnoreCase(ruleModuleValue, RuleConstants.MODULE_GSTRULE)) { //GST Rules
@@ -303,9 +318,14 @@ public class RuleListCtrl extends GFCBaseListCtrl<Rule> {
 		String ruleCode = (String) selectedItem.getAttribute("ruleCode");
 		String ruleModule = this.ruleModule.getValue();
 		String ruleEvent = (String) selectedItem.getAttribute("ruleEvent");
+		boolean active = (boolean) selectedItem.getAttribute("active");
+		Rule rule = null;
 
-		Rule rule = ruleService.getRuleById(ruleCode, ruleModule, ruleEvent);
-
+		if (RuleConstants.MODULE_FEEPERC.equals(this.ruleModule.getValue())) {
+			rule = ruleService.getActiveRuleByID(ruleCode, ruleModule, ruleEvent, active);
+		} else {
+			rule = ruleService.getRuleById(ruleCode, ruleModule, ruleEvent);
+		}
 		if (rule == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Country Limit Exposure Report" language="groovy" pageWidth="1145" pageHeight="45000" orientation="Landscape" columnWidth="1145" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="20" uuid="94d75d8e-97ff-4cd9-9adc-cc38e21748bb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.sheet1" value="Country Limits Exposure"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.sheet2" value="Country Limits Excess"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.sheet3" value="Customer Limits Excess"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="searchCriteria" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<parameter name="unitParam" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select 'Country Limits Exposure' as Band1,'Country Limits Excess' Band2,'Customer Limits Excess' Band3,'Customer Limits Excess' Band4 FROM KFIL$P!{unitParam}.T4PF]]>
+	</queryString>
+	<field name="BAND1" class="java.lang.String"/>
+	<field name="BAND2" class="java.lang.String"/>
+	<field name="BAND3" class="java.lang.String"/>
+	<field name="BAND4" class="java.lang.String"/>
+	<group name="Band1">
+		<groupExpression><![CDATA[$F{BAND1}]]></groupExpression>
+		<groupHeader>
+			<band height="51">
+				<break>
+					<reportElement uuid="9415ae65-5fb5-44da-ac1c-df3a1b3e2440" x="0" y="50" width="1145" height="1"/>
+				</break>
+				<frame>
+					<reportElement uuid="7ffefb2a-ef00-495a-8be2-aa8d9bbb1b95" x="0" y="0" width="1145" height="50"/>
+					<subreport runToBottom="false">
+						<reportElement uuid="2274e291-7121-4f15-8346-cf8174f9d72e" x="0" y="0" width="1145" height="50"/>
+						<subreportParameter name="unitParam">
+							<subreportParameterExpression><![CDATA[$P{unitParam}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="organizationLogo">
+							<subreportParameterExpression><![CDATA[$P{organizationLogo}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA["CountryLimitExposurereport_SubRpt.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Band2">
+		<groupExpression><![CDATA[$F{BAND2}]]></groupExpression>
+		<groupHeader>
+			<band height="51">
+				<break>
+					<reportElement uuid="9415ae65-5fb5-44da-ac1c-df3a1b3e2440" x="0" y="0" width="1145" height="1"/>
+				</break>
+				<frame>
+					<reportElement uuid="6d4335cf-6321-48d8-8df0-0ca0030da43c" x="0" y="1" width="1145" height="50"/>
+					<subreport runToBottom="false">
+						<reportElement uuid="2274e291-7121-4f15-8346-cf8174f9d72e" x="0" y="0" width="1145" height="50"/>
+						<subreportParameter name="unitParam">
+							<subreportParameterExpression><![CDATA[$P{unitParam}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="organizationLogo">
+							<subreportParameterExpression><![CDATA[$P{organizationLogo}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA["CountryLimitExcess_SubRpt.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Band3">
+		<groupExpression><![CDATA[$F{BAND3}]]></groupExpression>
+		<groupHeader>
+			<band height="51">
+				<break>
+					<reportElement uuid="9415ae65-5fb5-44da-ac1c-df3a1b3e2440" x="0" y="0" width="1145" height="1"/>
+				</break>
+				<frame>
+					<reportElement uuid="6d4335cf-6321-48d8-8df0-0ca0030da43c" x="0" y="1" width="1145" height="50"/>
+					<subreport runToBottom="false">
+						<reportElement uuid="2274e291-7121-4f15-8346-cf8174f9d72e" x="0" y="0" width="1145" height="50"/>
+						<subreportParameter name="unitParam">
+							<subreportParameterExpression><![CDATA[$P{unitParam}]]></subreportParameterExpression>
+						</subreportParameter>
+						<subreportParameter name="organizationLogo">
+							<subreportParameterExpression><![CDATA[$P{organizationLogo}]]></subreportParameterExpression>
+						</subreportParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<subreportExpression><![CDATA["CustomerLimitExcess_SubRpt.jasper"]]></subreportExpression>
+					</subreport>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+</jasperReport>

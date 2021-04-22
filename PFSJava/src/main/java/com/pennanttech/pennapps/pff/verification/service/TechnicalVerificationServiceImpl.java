@@ -21,9 +21,11 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -56,6 +58,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationCategory;
@@ -73,7 +76,7 @@ import com.rits.cloning.Cloner;
  */
 public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVerification>
 		implements TechnicalVerificationService {
-	private static final Logger logger = Logger.getLogger(TechnicalVerificationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(TechnicalVerificationServiceImpl.class);
 
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
@@ -89,7 +92,9 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentDetailValidation documentValidation;
 	private RuleService ruleService;
-	private RuleExecutionUtil ruleExecutionUtil;
+	@Autowired(required = false)
+	@Qualifier("verificationPostExteranalServiceHook")
+	private PostExteranalServiceHook postExteranalServiceHook;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -154,7 +159,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			auditDetails.addAll(details);
 		}
 
-		// One Pager Extended field Details
+		//One Pager Extended field Details
 		if (tv.getOnePagerExtRender() != null) {
 			List<AuditDetail> details = tv.getAuditDetailMap().get("OnePagerExtFieldDetails");
 			StringBuilder tableName = new StringBuilder();
@@ -169,6 +174,10 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
+		}
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -418,6 +427,10 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], tv.getBefImage(), tv));
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(aAuditHeader, "doApprove");
+		}
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -917,13 +930,8 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	}
 
 	@Override
-	public List<Verification> getTvValuation(List<Long> verificationIDs) {
-		return technicalVerificationDAO.getTvValuation(verificationIDs);
-	}
-
-	@Override
-	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName) {
-		return technicalVerificationDAO.getCostOfPropertyValue(collRef, subModuleName);
+	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column) {
+		return technicalVerificationDAO.getCostOfPropertyValue(collRef, subModuleName, column);
 	}
 
 	@Override
@@ -989,7 +997,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 					fieldsAndValues.put("externalTvCount", externalTvCount);
 					fieldsAndValues.put("currentAssetValue", PennantApplicationUtil
 							.formateAmount(financeMain.getFinAssetValue(), PennantConstants.defaultCCYDecPos));
-					isValidTvCount = (boolean) ruleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
+					isValidTvCount = (boolean) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 							financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), RuleReturnType.BOOLEAN);
 					if (!isValidTvCount) {
 						auditDetail.setErrorDetail(ErrorUtil
@@ -1007,9 +1015,13 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		this.ruleService = ruleService;
 	}
 
-	@Autowired
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
+	@Override
+	public List<Verification> getTvValuation(List<Long> verificationIDs, String type) {
+		return technicalVerificationDAO.getTvValuation(verificationIDs, type);
+	}
+
+	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
+		this.postExteranalServiceHook = postExteranalServiceHook;
 	}
 
 }

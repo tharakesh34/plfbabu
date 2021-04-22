@@ -51,10 +51,11 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
@@ -83,6 +84,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.Module;
@@ -90,6 +92,7 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.FieldInvestigationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
+import com.pennanttech.pennapps.pff.verification.dao.LegalVettingDAO;
 import com.pennanttech.pennapps.pff.verification.dao.PersonalDiscussionDAO;
 import com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAO;
 import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
@@ -102,6 +105,7 @@ import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.LegalVetting;
 import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
@@ -147,6 +151,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private CollateralSetupDAO collateralSetupDAO;
 	@Autowired
 	private PersonalDiscussionDAO personalDiscussionDAO;
+	@Autowired
+	private LegalVettingService legalVettingService;
+	@Autowired
+	private LegalVettingDAO legalVettingDAO;
+	@Autowired(required = false)
+	@Qualifier("verificationPostExteranalServiceHook")
+	private PostExteranalServiceHook postExteranalServiceHook;
 
 	@Override
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
@@ -162,6 +173,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Verification lv = financeDetail.getLvVerification();
 		Verification rcu = financeDetail.getRcuVerification();
 		Verification pd = financeDetail.getPdVerification();
+		Verification ve = financeDetail.getLegalVetting();
 
 		if (verificationType == VerificationType.FI && fi != null) {
 			verification = fi;
@@ -179,8 +191,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		} else if (verificationType == VerificationType.PD && pd != null) {
 			verification = pd;
 			idList = personalDiscussionService.getPersonalDiscussionIds(pd.getVerifications(), pd.getKeyReference());
+		} else if (verificationType == VerificationType.VETTING && ve != null) {
+			verification = ve;
+			idList = legalVettingService.getLegalVettingIds(ve.getVerifications(), ve.getKeyReference());
 		}
-
 		if (verification == null) {
 			return auditDetails;
 		}
@@ -208,7 +222,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (isInitTab) {
 				// delete non verification Records from FI and TV
 				if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, item.getRecordType())
-						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI
+						&& (verificationType == VerificationType.TV || verificationType == VerificationType.VETTING
+								|| verificationType == VerificationType.FI
 								|| verificationType == VerificationType.PD)) {
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
@@ -242,7 +257,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verificationDAO.update(item, TableType.MAIN_TAB);
 				}
 
-				if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+				if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 					if (verification.getWorkflowId() == 0 || (engine.compareTo(verification.getTaskId(),
 							verification.getNextTaskId().replace(";", "")) == Flow.SUCCESSOR
 							|| engine.compareTo(verification.getTaskId(),
@@ -258,6 +273,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 								saveRCU(financeDetail, item);
 							} else if (verificationType == VerificationType.PD) {
 								savePD(financeDetail, item);
+							} else if (verificationType == VerificationType.VETTING) {
+								saveLVetting(financeDetail, item);
 							}
 						}
 					} else if (verificationType == VerificationType.RCU) {
@@ -277,6 +294,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 								saveRCU(financeDetail, item);
 							} else if (verificationType == VerificationType.PD) {
 								savePD(financeDetail, item);
+							} else if (verificationType == VerificationType.VETTING) {
+								saveLVetting(financeDetail, item);
 							}
 						}
 					} else if (verificationType == VerificationType.RCU) {
@@ -287,6 +306,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				if (item.getDecision() == Decision.RE_INITIATE.getKey()) {
 					if (verificationType == VerificationType.LV) {
 						savereInitLegalVerification(financeDetail, item);
+					} else if (verificationType == VerificationType.VETTING) {
+						savereInitLegalVetting(financeDetail, item);
 					} else {
 						reInitVerification(financeDetail, verificationType, item);
 					}
@@ -308,6 +329,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (item.getId() != 0) {
 				auditDetails.add(new AuditDetail(auditTranType, ++i, fields[0], fields[1], item.getBefImage(), item));
 			}
+		}
+
+		//calling post hook for data sync to external system
+		if (postExteranalServiceHook != null) {
+			AuditHeader aAuditHeader = getAuditHeader(financeDetail, auditTranType);
+			postExteranalServiceHook.doProcess(aAuditHeader, "saveOrUpdate");
 		}
 		return auditDetails;
 	}
@@ -424,7 +451,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		reInit.setLastMntBy(item.getLastMntBy());
 		reInit.setDecision(Decision.RE_INITIATE.getKey());
 
-		if (verificationType != VerificationType.LV) {
+		if (verificationType != VerificationType.LV && verificationType != VerificationType.VETTING) {
 			item.setAgency(item.getReInitAgency());
 			item.setRemarks(item.getDecisionRemarks());
 		}
@@ -479,6 +506,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 		} else if (verificationType == VerificationType.PD) {
 			savePD(financeDetail, item);
+		} else if (verificationType == VerificationType.VETTING) {
+			saveLVetting(financeDetail, item);
 		}
 	}
 
@@ -783,8 +812,98 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 	}
 
+	private void setVettingDocumentDetails(FinanceDetail financeDetail, Verification item) {
+		List<CustomerDocument> customerDocuemnts = financeDetail.getCustomerDetails().getCustomerDocumentsList();
+		List<DocumentDetails> loanDocuments = financeDetail.getDocumentDetailsList();
+		List<DocumentDetails> collateralDocumentList = new ArrayList<>();
+
+		List<DocumentDetails> list = null;
+		// Collateral Documents
+		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			list = documentDetailsDAO.getDocumentDetailsByRef(item.getReferenceFor(), CollateralConstants.MODULE_NAME,
+					"", "_View");
+		}
+
+		if (list != null) {
+			collateralDocumentList.addAll(list);
+		}
+
+		// Set customer documents id's
+		Map<String, CustomerDocument> customerDoumentMap = new HashMap<>();
+		if (customerDocuemnts != null) {
+			for (CustomerDocument document : customerDocuemnts) {
+				customerDoumentMap.put(document.getCustDocCategory(), document);
+			}
+		}
+
+		for (LVDocument lvDocument : item.getVettingDocuments()) {
+			if (lvDocument.getDocumentType() == DocumentType.CUSTOMER.getKey()) {
+				CustomerDocument document = customerDoumentMap.get(lvDocument.getDocumentSubId());
+				lvDocument.setDocumentId(document.getId());
+				lvDocument.setDocumentSubId(document.getCustDocCategory());
+				lvDocument.setDocumentRefId(document.getDocRefId());
+				lvDocument.setDocumentUri(document.getDocUri());
+			}
+		}
+
+		// Set loan documents id's
+		Map<String, DocumentDetails> loanDocumentMap = new HashMap<>();
+		if (loanDocuments != null) {
+			for (DocumentDetails document : loanDocuments) {
+				loanDocumentMap.put(document.getDocCategory(), document);
+			}
+		}
+
+		for (LVDocument lvDocument : item.getVettingDocuments()) {
+			if (lvDocument.getDocumentType() == DocumentType.LOAN.getKey()) {
+				DocumentDetails document = loanDocumentMap.get(lvDocument.getDocumentSubId());
+				lvDocument.setDocumentId(document.getId());
+				lvDocument.setDocumentSubId(document.getDocCategory());
+				lvDocument.setDocumentRefId(document.getDocRefId());
+				lvDocument.setDocumentUri(document.getDocUri());
+			}
+		}
+
+		// Set collateral documents id's
+		Map<String, DocumentDetails> collateralDocumentMap = new HashMap<>();
+		for (DocumentDetails document : collateralDocumentList) {
+			collateralDocumentMap.put(document.getDocCategory(), document);
+		}
+
+		for (LVDocument lvDocument : item.getVettingDocuments()) {
+			if (lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
+				DocumentDetails document = collateralDocumentMap.get(lvDocument.getDocumentSubId());
+				if (document == null) {
+					continue;
+				}
+				lvDocument.setDocumentId(document.getId());
+				lvDocument.setDocumentSubId(document.getDocCategory());
+				lvDocument.setDocumentRefId(document.getDocRefId());
+				lvDocument.setDocumentUri(document.getDocUri());
+
+			}
+		}
+	}
+
 	private void setRCUDocumentDetails(FinanceDetail financeDetail, Verification item) {
 		List<CustomerDocument> customerDocuemnts = financeDetail.getCustomerDetails().getCustomerDocumentsList();
+		List<JointAccountDetail> coApplicants = financeDetail.getJountAccountDetailList();
+		Map<Long, Map<String, CustomerDocument>> map = new HashMap<>();
+		if (CollectionUtils.isNotEmpty(coApplicants)) {
+			for (JointAccountDetail jointAccountDetail : coApplicants) {
+				List<CustomerDocument> customerDocumentsList = jointAccountDetail.getCustomerDetails()
+						.getCustomerDocumentsList();
+				Map<String, CustomerDocument> customerDoumentMap = new HashMap<>();
+				if (customerDocumentsList != null) {
+					for (CustomerDocument customerDocument : customerDocumentsList) {
+						customerDocument.setLovDescCustShrtName(
+								jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
+						customerDoumentMap.put(customerDocument.getCustDocCategory(), customerDocument);
+					}
+					map.put(jointAccountDetail.getCustomerDetails().getCustomer().getCustID(), customerDoumentMap);
+				}
+			}
+		}
 		List<DocumentDetails> loanDocuments = financeDetail.getDocumentDetailsList();
 		List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 
@@ -809,13 +928,23 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		}
 
 		for (RCUDocument rcuDocument : item.getRcuDocuments()) {
+			Integer docType = DocumentType.CUSTOMER.getKey();
+			CustomerDocument document = null;
 			if (rcuDocument.getDocumentType() == DocumentType.CUSTOMER.getKey()) {
-				CustomerDocument document = customerDoumentMap.get(rcuDocument.getDocCategory());
+				docType = DocumentType.CUSTOMER.getKey();
+				document = customerDoumentMap.get(rcuDocument.getDocCategory());
+			} else if (rcuDocument.getDocumentType() == DocumentType.COAPPLICANT.getKey()) {
+				docType = DocumentType.COAPPLICANT.getKey();
+				if (map.containsKey(rcuDocument.getDocumentId())) {
+					document = map.get(rcuDocument.getDocumentId()).get(rcuDocument.getDocCategory());
+				}
+			}
+			if (document != null) {
 				rcuDocument.setDocumentId(document.getCustID());
 				rcuDocument.setDocumentSubId(document.getCustDocCategory());
 				rcuDocument.setDocumentRefId(document.getDocRefId());
 				rcuDocument.setDocumentUri(document.getDocUri());
-				rcuDocument.setDocumentType(DocumentType.CUSTOMER.getKey());
+				rcuDocument.setDocumentType(docType);
 			}
 		}
 
@@ -1051,7 +1180,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		List<Verification> result = new ArrayList<>();
 		List<Verification> verifications = verificationDAO.getVeriFications(keyReference, verificationType);
 
-		if (VerificationType.LV.getKey() != verificationType) {
+		if (VerificationType.LV.getKey() != verificationType && VerificationType.VETTING.getKey() != verificationType) {
 			setDecision(verifications);
 		}
 
@@ -1109,6 +1238,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.setLastAgency("");
 				}
 
+			} else if (verificationType == VerificationType.VETTING.getKey()) {
+				if (legalVettingService.isCollateralDocumentsChanged(verification.getReferenceFor())) {
+					verification.setLastStatus(0);
+					verification.setLastVerificationDate(null);
+					verification.setLastAgency("");
+				}
+
 			}
 		}
 	}
@@ -1125,6 +1261,21 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 
 			verification.setLegalVerification(lv);
+		}
+	}
+
+	@Override
+	public void setVettingDetails(List<Verification> verifications) {
+		LegalVetting legalVetting;
+		for (Verification verification : verifications) {
+			legalVetting = legalVettingDAO.getLVFromStage(verification.getId());
+
+			if (legalVetting != null) {
+				legalVetting.setVettingDocuments(legalVettingDAO.getLVDocumentsFromStage(verification.getId()));
+				verification.setVettingDocuments(legalVetting.getVettingDocuments());
+			}
+
+			verification.setLegalVetting(legalVetting);
 		}
 	}
 
@@ -1152,6 +1303,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void setVerificationData(FinanceDetail financeDetail, Verification verification,
 			VerificationType verificationType) {
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
+		List<JointAccountDetail> jointaccountdetails = financeDetail.getJountAccountDetailList();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		verification.setModule(Module.LOAN.getKey());
 		verification.setCreatedOn(SysParamUtil.getAppDate());
@@ -1163,22 +1315,51 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification.setCustomerName(customer.getCustShrtName());
 		}
 		if (verificationType != VerificationType.FI) {
-			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-			verification.setCustId(customer.getCustID());
-			verification.setCustomerName(customer.getCustShrtName());
+			if (!StringUtils.equals(verification.getReferenceType(), DocumentType.COAPPLICANT.getValue())) {
+				verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+				verification.setCustId(customer.getCustID());
+				verification.setCustomerName(customer.getCustShrtName());
+			}
 		}
 		if (verificationType == VerificationType.LV) {
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());
 			}
-		} else if (verificationType == VerificationType.RCU) {
-			if (verification.getReference() == null) {
+		} else if (verificationType == VerificationType.RCU && verification.getReference() == null) {
+			if (!StringUtils.equals(verification.getReferenceType(), DocumentType.COAPPLICANT.getValue())) {
 				verification.setReference(customer.getCustCIF());
+			} else {
+				if (CollectionUtils.isNotEmpty(jointaccountdetails)) {
+					for (JointAccountDetail jointAccountDetail : jointaccountdetails) {
+						if (verification.getCustId() != null
+								&& jointAccountDetail.getCustID() == verification.getCustId()) {
+							verification.setReference(jointAccountDetail.getCustCIF());
+							break;
+						}
+					}
+				}
 			}
 		} else if (verificationType != VerificationType.PD) {
-			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-			verification.setCustId(customer.getCustID());
-			verification.setCustomerName(customer.getCustShrtName());
+			if (!StringUtils.equalsIgnoreCase(verification.getReferenceType(), DocumentType.COAPPLICANT.getValue())) {
+				verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+				verification.setCustId(customer.getCustID());
+				verification.setCustomerName(customer.getCustShrtName());
+			} else {
+				if (CollectionUtils.isNotEmpty(jointaccountdetails)) {
+					for (JointAccountDetail jointAccountDetail : jointaccountdetails) {
+						if (verification.getCustId() != null
+								&& jointAccountDetail.getCustID() == verification.getCustId()) {
+							verification.setCif(jointAccountDetail.getCustCIF());
+							if (jointAccountDetail.getCustomerDetails() != null
+									&& jointAccountDetail.getCustomerDetails().getCustomer() != null) {
+								verification.setCustomerName(
+										jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
+							}
+							break;
+						}
+					}
+				}
+			}
 		}
 
 	}
@@ -1204,12 +1385,16 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				exists = true;
 			}
 		} else if (verificationType == VerificationType.RCU) {
-			if (riskContainmentUnitService.getRCUDocument(verification.getId(),
-					verification.getRcuDocument()) != null) {
+			if (!riskContainmentUnitService.getRCUDocument(verification.getId(), verification.getRcuDocument())
+					.isEmpty()) {
 				exists = true;
 			}
 		} else if (verificationType == VerificationType.PD) {
 			if (personalDiscussionService.getVerificationFromRecording(verification.getId()) != null) {
+				exists = true;
+			}
+		} else if (verificationType == VerificationType.VETTING) {
+			if (!legalVettingService.getLVDocuments(verification.getId()).isEmpty()) {
 				exists = true;
 			}
 		}
@@ -1428,4 +1613,122 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			String custCif) {
 		return verificationDAO.getVerificationStatus(reference, verificationType, addressType, custCif);
 	}
+
+	@Override
+	public List<String> getApprovedLVVerifications(int decision, int verificationType) {
+		return verificationDAO.getAprrovedLVVerifications(decision, verificationType);
+	}
+
+	private void saveLVetting(FinanceDetail financeDetail, Verification item) {
+		if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+			legalVettingService.save(item, TableType.TEMP_TAB);
+			setVettingDocumentDetails(financeDetail, item);
+
+			for (LVDocument lvDocument : item.getVettingDocuments()) {
+				lvDocument.setVerificationId(item.getId());
+			}
+			legalVettingService.saveDocuments(item.getVettingDocuments(), TableType.TEMP_TAB);
+		}
+	}
+
+	private void saveLVettingInit(Verification verification) {
+		Long verificationId;
+		if (!verification.isApproveTab()) {
+			verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
+					verification.getReferenceFor(), VerificationType.VETTING.getKey(),
+					verification.getVerificationCategory());
+			Verification vrf = new Verification();
+			if (verification.getId() != 0 || verificationId != null) {
+				if (verification.getId() != 0) {
+					vrf.setId(verification.getId());
+				} else {
+					vrf.setId(verificationId);
+				}
+				if (!isVerificationInRecording(vrf, VerificationType.VETTING) && verification.isNewRecord()) {
+					throw new AppException(
+							String.format("Collateral %s already initiated", verification.getReferenceFor()));
+				}
+			}
+
+			if (verification.getId() != 0) {
+				verification.setId(verification.getId());
+				verificationDAO.update(verification, TableType.MAIN_TAB);
+			} else {
+				verificationDAO.save(verification, TableType.MAIN_TAB);
+			}
+		}
+		// delete documents
+		legalVettingService.deleteDocuments(verification.getId(), TableType.MAIN_TAB);
+
+		// Legal Vetting
+		legalVettingService.save(verification, TableType.MAIN_TAB);
+
+		// LV Documents
+		for (LVDocument document : verification.getVettingDocuments()) {
+			document.setVerificationId(verification.getLegalVetting().getVerificationId());
+		}
+
+		legalVettingService.saveDocuments(verification.getVettingDocuments(), TableType.STAGE_TAB);
+	}
+
+	@Override
+	public void saveLegalVetting(Verification verification) {
+		if (verification.getRequestType() == RequestType.WAIVE.getKey()) {
+			saveLVettingWaive(verification);
+		} else {
+			saveLVettingInit(verification);
+		}
+	}
+
+	@Override
+	public void savereInitLegalVetting(FinanceDetail financeDetail, Verification verification) {
+		reInitVerification(financeDetail, VerificationType.VETTING, verification);
+		saveLVettingInit(verification);
+
+	}
+
+	private void saveLVettingWaive(Verification verification) {
+		Verification item = null;
+		List<LVDocument> newLVDocs;
+		for (LVDocument lvDocument : verification.getLvDocuments()) {
+			item = new Verification();
+			newLVDocs = new ArrayList<>();
+			BeanUtils.copyProperties(verification, item);
+			item.setReferenceType(lvDocument.getDocumentSubId());
+
+			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(item.getKeyReference(),
+					item.getReferenceType(), VerificationType.LV.getKey(), verification.getVerificationCategory());
+
+			if (verificationId != null) {
+				item.setId(verificationId);
+				verificationDAO.update(item, TableType.MAIN_TAB);
+			} else {
+				verificationDAO.save(item, TableType.MAIN_TAB);
+			}
+
+			lvDocument.setVerificationId(item.getId());
+			newLVDocs.add(lvDocument);
+			item.setVettingDocuments(newLVDocs);
+
+			// Legal verification
+			legalVerificationService.save(item, TableType.MAIN_TAB);
+
+			// LV Documents
+			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.STAGE_TAB);
+		}
+	}
+
+	/**
+	 * Get Audit Header Details
+	 */
+	protected AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
+		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
+				afinanceDetail.getUserDetails(), null);
+	}
+
+	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
+		this.postExteranalServiceHook = postExteranalServiceHook;
+	}
+
 }

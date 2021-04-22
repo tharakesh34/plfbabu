@@ -11,12 +11,15 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinSchFrqInsurance;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
@@ -38,6 +41,7 @@ public class FinEODEvent implements Serializable {
 	private FinODPenaltyRate penaltyrate;
 	private List<FinanceDisbursement> financeDisbursements = new ArrayList<>(1);
 	private List<FinFeeScheduleDetail> finFeeScheduleDetails = new ArrayList<>(1);
+	private List<FinSchFrqInsurance> finSchFrqInsurances = new ArrayList<>(1);
 	private List<PresentmentDetail> presentmentDetails = new ArrayList<>(1);
 	private List<ReturnDataSet> returnDataSet = new ArrayList<>(1);
 	private List<Provision> provisions = new ArrayList<>(1);
@@ -70,12 +74,85 @@ public class FinEODEvent implements Serializable {
 	private boolean updRepayInstruct = false;
 	private boolean updLBDPostings = false;
 	private boolean updMonthEndPostings = false;
-	private List<String> finMainUpdateFields = new ArrayList<String>(1);
+	private List<String> finMainUpdateFields = new ArrayList<>(1);
 
 	// IND AS : Income / Expense Amortization 
 	private List<ProjectedAccrual> projectedAccrualList = new ArrayList<>(1);
 	private List<ProjectedAmortization> incomeAMZList = new ArrayList<>(1);
 	private Date appDate;
+
+	// Auto Increment Grace End
+	private boolean updFinSchdForChangeGrcEnd = false;
+	private List<RepayInstruction> orgRepayInsts = new ArrayList<>(1);
+	private List<FinanceScheduleDetail> orgFinSchdDetails = new ArrayList<>(1);
+	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
+	private SubventionDetail subventionDetail = new SubventionDetail();
+
+	public FinEODEvent copyEntity() {
+		FinEODEvent entity = new FinEODEvent();
+		entity.setFinanceMain(this.financeMain == null ? null : this.financeMain.copyEntity());
+		entity.setFinType(this.finType == null ? null : this.finType.copyEntity());
+		this.financeScheduleDetails.stream()
+				.forEach(e -> entity.getFinanceScheduleDetails().add(e == null ? null : e.copyEntity()));
+		this.RepayInstructions.stream()
+				.forEach(e -> entity.getRepayInstructions().add(e == null ? null : e.copyEntity()));
+		entity.setFinProfitDetail(this.finProfitDetail == null ? null : this.finProfitDetail.copyEntity());
+		this.finODDetails.stream().forEach(e -> entity.getFinODDetails().add(e == null ? null : e.copyEntity()));
+		this.finODDetailsLBD.stream().forEach(e -> entity.getFinODDetailsLBD().add(e == null ? null : e.copyEntity()));
+		this.odcRecoveries.stream().forEach(e -> entity.getOdcRecoveries().add(e == null ? null : e.copyEntity()));
+		entity.setPenaltyrate(this.penaltyrate == null ? null : this.penaltyrate.copyEntity());
+		this.financeDisbursements.stream()
+				.forEach(e -> entity.getFinanceDisbursements().add(e == null ? null : e.copyEntity()));
+		this.finFeeScheduleDetails.stream()
+				.forEach(e -> entity.getFinFeeScheduleDetails().add(e == null ? null : e.copyEntity()));
+		this.finSchFrqInsurances.stream()
+				.forEach(e -> entity.getFinSchFrqInsurances().add(e == null ? null : e.copyEntity()));
+		this.presentmentDetails.stream()
+				.forEach(e -> entity.getPresentmentDetails().add(e == null ? null : e.copyEntity()));
+		this.returnDataSet.stream().forEach(e -> entity.getReturnDataSet().add(e == null ? null : e.copyEntity()));
+		this.provisions.stream().forEach(e -> entity.getProvisions().add(e == null ? null : e.copyEntity()));
+		this.finExcessAmounts.stream()
+				.forEach(e -> entity.getFinExcessAmounts().add(e == null ? null : e.copyEntity()));
+		entity.setEventFromDate(this.eventFromDate);
+		entity.setEventToDate(this.eventToDate);
+		entity.setRecalFromDate(this.recalFromDate);
+		entity.setRecalToDate(this.recalToDate);
+		entity.setRecalType(this.recalType);
+		entity.setRecalSchdMethod(this.recalSchdMethod);
+		entity.setRateOnChgDate(this.rateOnChgDate);
+		entity.setAccruedAmount(this.accruedAmount);
+		entity.setRateReviewExist(this.rateReviewExist);
+		entity.setIdxPD(this.idxPD);
+		entity.setIdxGrcCpz(this.idxGrcCpz);
+		entity.setIdxGrcPft(this.idxGrcPft);
+		entity.setIdxGrcPftRvw(this.idxGrcPftRvw);
+		entity.setIdxRpyCpz(this.idxRpyCpz);
+		entity.setIdxRpyPft(this.idxRpyPft);
+		entity.setIdxRpyPftRvw(this.idxRpyPftRvw);
+		entity.setIdxRpy(this.idxRpy);
+		entity.setIdxDisb(this.idxDisb);
+		entity.setIdxDue(this.idxDue);
+		entity.setIdxPresentment(this.idxPresentment);
+		entity.setUpdFinMain(this.updFinMain);
+		entity.setUpdFinSchdForRateRvw(this.updFinSchdForRateRvw);
+		entity.setUpdRepayInstruct(this.updRepayInstruct);
+		entity.setUpdLBDPostings(this.updLBDPostings);
+		entity.setUpdMonthEndPostings(this.updMonthEndPostings);
+		this.finMainUpdateFields.stream().forEach(e -> entity.getFinMainUpdateFields().add(e));
+		this.projectedAccrualList.stream()
+				.forEach(e -> entity.getProjectedAccrualList().add(e == null ? null : e.copyEntity()));
+		this.incomeAMZList.stream().forEach(e -> entity.getIncomeAMZList().add(e == null ? null : e.copyEntity()));
+		entity.setAppDate(this.appDate);
+		entity.setUpdFinSchdForChangeGrcEnd(this.updFinSchdForChangeGrcEnd);
+		this.orgRepayInsts.stream().forEach(e -> entity.getOrgRepayInsts().add(e == null ? null : e.copyEntity()));
+		this.orgFinSchdDetails.stream()
+				.forEach(e -> entity.getOrgFinSchdDetails().add(e == null ? null : e.copyEntity()));
+		this.finServiceInstructions.stream()
+				.forEach(e -> entity.getFinServiceInstructions().add(e == null ? null : e.copyEntity()));
+		entity.setSubventionDetail(this.subventionDetail == null ? null : this.subventionDetail.copyEntity());
+		return entity;
+	}
+
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -243,6 +320,14 @@ public class FinEODEvent implements Serializable {
 
 	public void setFinFeeScheduleDetails(List<FinFeeScheduleDetail> finFeeScheduleDetails) {
 		this.finFeeScheduleDetails = finFeeScheduleDetails;
+	}
+
+	public List<FinSchFrqInsurance> getFinSchFrqInsurances() {
+		return finSchFrqInsurances;
+	}
+
+	public void setFinSchFrqInsurances(List<FinSchFrqInsurance> finSchFrqInsurances) {
+		this.finSchFrqInsurances = finSchFrqInsurances;
 	}
 
 	public List<PresentmentDetail> getPresentmentDetails() {
@@ -436,6 +521,7 @@ public class FinEODEvent implements Serializable {
 		this.penaltyrate = null;
 		this.financeDisbursements.clear();
 		this.finFeeScheduleDetails.clear();
+		this.finSchFrqInsurances.clear();
 		this.presentmentDetails.clear();
 		this.returnDataSet.clear();
 		this.provisions.clear();
@@ -457,5 +543,45 @@ public class FinEODEvent implements Serializable {
 
 	public void setAccruedAmount(BigDecimal accruedAmount) {
 		this.accruedAmount = accruedAmount;
+	}
+
+	public boolean isUpdFinSchdForChangeGrcEnd() {
+		return updFinSchdForChangeGrcEnd;
+	}
+
+	public void setUpdFinSchdForChangeGrcEnd(boolean updFinSchdForChangeGrcEnd) {
+		this.updFinSchdForChangeGrcEnd = updFinSchdForChangeGrcEnd;
+	}
+
+	public List<RepayInstruction> getOrgRepayInsts() {
+		return orgRepayInsts;
+	}
+
+	public void setOrgRepayInsts(List<RepayInstruction> orgRepayInsts) {
+		this.orgRepayInsts = orgRepayInsts;
+	}
+
+	public List<FinanceScheduleDetail> getOrgFinSchdDetails() {
+		return orgFinSchdDetails;
+	}
+
+	public void setOrgFinSchdDetails(List<FinanceScheduleDetail> orgFinSchdDetails) {
+		this.orgFinSchdDetails = orgFinSchdDetails;
+	}
+
+	public List<FinServiceInstruction> getFinServiceInstructions() {
+		return finServiceInstructions;
+	}
+
+	public void setFinServiceInstructions(List<FinServiceInstruction> finServiceInstructions) {
+		this.finServiceInstructions = finServiceInstructions;
+	}
+
+	public SubventionDetail getSubventionDetail() {
+		return subventionDetail;
+	}
+
+	public void setSubventionDetail(SubventionDetail subventionDetail) {
+		this.subventionDetail = subventionDetail;
 	}
 }

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>6.0.0-SNAPSHOT</version>
+		<version>6.0.0</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -19,6 +19,11 @@
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
 			<artifactId>PFSJava</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pff.groupId}</groupId>
+			<artifactId>PLFInterface</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

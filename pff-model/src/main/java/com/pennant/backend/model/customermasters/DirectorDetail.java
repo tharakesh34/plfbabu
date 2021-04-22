@@ -47,11 +47,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -67,7 +69,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"custAddrStreet", "custAddrStreet", "custAddrLine1", "custAddrLine2", "custPOBox", "custAddrFrom" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
-public class DirectorDetail extends AbstractWorkflowEntity implements Entity {
+public class DirectorDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -7532246118876551387L;
 

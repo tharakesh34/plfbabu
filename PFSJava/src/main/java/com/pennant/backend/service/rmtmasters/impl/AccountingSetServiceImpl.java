@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class AccountingSetServiceImpl extends GenericService<AccountingSet> implements AccountingSetService {
-	private static final Logger logger = Logger.getLogger(AccountingSetServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(AccountingSetServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountingSetDAO accountingSetDAO;

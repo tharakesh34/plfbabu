@@ -27,13 +27,14 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinCollateralsDAO;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -44,7 +45,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * DAO methods implementation for the <b>FinCollaterals model</b> class.<br>
  */
 public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implements FinCollateralsDAO {
-	private static Logger logger = Logger.getLogger(FinCollateralsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinCollateralsDAOImpl.class);
 
 	public FinCollateralsDAOImpl() {
 		super();
@@ -80,7 +81,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		RowMapper<FinCollaterals> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCollaterals.class);
+		RowMapper<FinCollaterals> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCollaterals.class);
 
 		try {
 			finCollaterals = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -234,7 +235,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCollaterals);
-		RowMapper<FinCollaterals> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinCollaterals.class);
+		RowMapper<FinCollaterals> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCollaterals.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

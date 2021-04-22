@@ -10,8 +10,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.pennanttech.pennapps.pff.external.controldump.ControlDumpExtract;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.external.controldump.ControlDumpExtract;
 
 public class TestControlDumpRequestService {
 
@@ -32,7 +32,7 @@ public class TestControlDumpRequestService {
 	public void process() {
 		try {
 			Date date = DateUtil.getDate(2017, 9, 3);
-			new ControlDumpExtract(dataSource, Long.valueOf(1000), date, date).process("CONTROL_DUMP_REQUEST");
+			new ControlDumpExtract(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

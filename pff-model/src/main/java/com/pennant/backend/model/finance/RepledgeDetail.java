@@ -94,6 +94,48 @@ public class RepledgeDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public RepledgeDetail copyEntity() {
+		RepledgeDetail entity = new RepledgeDetail();
+		entity.setFinReference(this.finReference);
+		entity.setValueDate(this.valueDate);
+		entity.setPromotionCode(this.promotionCode);
+		entity.setPromotionSeqId(this.promotionSeqId);
+		entity.setFinAmount(this.finAmount);
+		entity.setDeductFeeDisb(this.deductFeeDisb);
+		entity.setGdrAvailable(this.gdrAvailable);
+		entity.setPacketNumber(this.packetNumber);
+		entity.setRackNumber(this.rackNumber);
+		entity.setHowAquired(this.howAquired);
+		entity.setWhenAquired(this.whenAquired);
+		entity.setDmaCode(this.dmaCode);
+		entity.setFinPurpose(this.finPurpose);
+		entity.setFinPurposeDesc(this.finPurposeDesc);
+		entity.setDmaCodeDesc(this.dmaCodeDesc);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setTransactionType(this.transactionType);
+		entity.setRepledgeRef(this.repledgeRef);
+		entity.setReceivableAmount(this.receivableAmount);
+		entity.setWaiverRejected(this.waiverRejected);
+		entity.setRealizeAdjusted(this.realizeAdjusted);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setDocImage(this.docImage);
+		entity.setEligibleAmt(this.eligibleAmt);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public String getId() {
 		return finReference;
 	}

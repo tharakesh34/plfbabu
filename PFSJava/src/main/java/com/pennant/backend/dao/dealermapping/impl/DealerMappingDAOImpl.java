@@ -1,13 +1,14 @@
 package com.pennant.backend.dao.dealermapping.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dealermapping.DealerMappingDAO;
 import com.pennant.backend.model.dealermapping.DealerMapping;
@@ -20,7 +21,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements DealerMappingDAO {
 
-	private final static Logger logger = Logger.getLogger(DealerMappingDAOImpl.class);
+	private final static Logger logger = LogManager.getLogger(DealerMappingDAOImpl.class);
 
 	@Override
 	public String save(DealerMapping dealerMapping, TableType tableType) {
@@ -131,7 +132,7 @@ public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements 
 			logger.trace(Literal.SQL + sql.toString());
 			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dealerMapping);
 
-			RowMapper<DealerMapping> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DealerMapping.class);
+			RowMapper<DealerMapping> rowMapper = BeanPropertyRowMapper.newInstance(DealerMapping.class);
 
 			dealerMapping = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (DataAccessException e) {

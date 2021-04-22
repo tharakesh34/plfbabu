@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -79,6 +80,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerLimit;
+import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -89,7 +91,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = Logger.getLogger(CustomerSummaryListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerSummaryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -107,6 +109,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	protected Listbox listBoxCustomerLimit;
 	protected Listbox listBoxCustCollateral;
 	private CurrencyService currencyService;
+	private CustomerDataProcess customerDataProcess;
 	private CustomerLimitIntefaceService customerLimitIntefaceService;
 	protected JdbcSearchObject<Customer> searchObj;
 	// NEEDED for the ReUse in the SearchWindow
@@ -280,7 +283,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				fillCommitmentListBox(getPagedListWrapper().getPagedListService().getBySearchObject(cmtSearchObj),
 						this.listBoxCommitment);
 				fillLimitListBox(this.custCIF.getValue(), custBranch);
-
+				//doFillCustomerCollateral(getCustomerDataProcess().getCustomerCollateral(this.custCIF.getValue()));
 				JdbcSearchObject<CustomerCollateral> collateralSearchObj = new JdbcSearchObject<CustomerCollateral>(
 						CustomerCollateral.class);
 				collateralSearchObj.addTabelName("Collateral_summary_view");
@@ -526,4 +529,13 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	public CurrencyService getCurrencyService() {
 		return currencyService;
 	}
+
+	public CustomerDataProcess getCustomerDataProcess() {
+		return customerDataProcess;
+	}
+
+	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
+		this.customerDataProcess = customerDataProcess;
+	}
+
 }

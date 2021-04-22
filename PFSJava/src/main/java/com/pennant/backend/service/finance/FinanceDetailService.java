@@ -47,6 +47,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jaxen.JaxenException;
@@ -59,9 +60,11 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorHeader;
+import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -72,7 +75,10 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.TATDetail;
+import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -154,11 +160,24 @@ public interface FinanceDetailService {
 
 	FinanceSummary getFinanceProfitDetails(String finRef);
 
+	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
+
+	boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, String recalType,
+			BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
+	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
+
+	boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType,
+			boolean excludeDeferment, String addTermAfter, Date calFromDate, Date calToDate)
+			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+
 	FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts);
 
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
 
 	boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName);
+
+	List<ContractorAssetDetail> getContractorAssetDetailList(String finReference);
 
 	List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF);
 
@@ -200,6 +219,14 @@ public interface FinanceDetailService {
 	FinanceMain getFinanceMain(String finReference, String type);
 
 	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException;
+
+	List<String> getRollOverLimitRefList();
+
+	List<String> getRollOverFinTypeList(String limitRef);
+
+	List<Date> getRollOverNextDateList(String limitRef, String finType);
+
+	List<RolledoverFinanceDetail> getRolloverFinanceList(String value, String value2, Date dbDate);
 
 	FinanceDetail getPreApprovalFinanceDetailsById(String finReference);
 
@@ -251,8 +278,6 @@ public interface FinanceDetailService {
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);
 
-	List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
-
 	FinanceMain getFinanceMainForBatch(String finReference);
 
 	BigDecimal getOutStandingBalFromFees(String finReference);
@@ -301,6 +326,8 @@ public interface FinanceDetailService {
 
 	String getFinanceMainByRcdMaintenance(String reference, String type);
 
+	FinanceMain getRcdMaintenanceByRef(String reference, String type);
+
 	List<ReturnDataSet> getInsurancePostings(String finReference);
 
 	List<FinTypeFees> getSchemeFeesList(long referenceId, String eventCode, boolean origination, int moduleId);
@@ -309,4 +336,31 @@ public interface FinanceDetailService {
 
 	FinanceDetail getVerificationInitiationDetails(String finReference, VerificationType verificationType,
 			String tableType);
+
+	Map<String, Object> getUpLevelUsers(long usrId, String branch);
+
+	FinanceDetail getFinanceDetailsForPmay(String finReference);
+
+	FinCustomerDetails getDetailsByOfferID(String offerID);
+
+	void saveDisbDetails(List<FinanceDisbursement> disbursementDetails, String finReference);
+
+	void saveFinSchdDetail(List<FinanceScheduleDetail> financeScheduleDetails, String finReference);
+
+	FinanceDetail getFinSchdDetailByRef(String finReference, String string, boolean b);
+
+	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String string, boolean b);
+
+	List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(String finReference, String string, boolean b);
+
+	List<RepayInstruction> getRepayInstructions(String finReference, String string, boolean b);
+
+	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
+			FinanceDetail financeDetail);
+
+	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail financeDetail);
+
+	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
+
+	List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
 }

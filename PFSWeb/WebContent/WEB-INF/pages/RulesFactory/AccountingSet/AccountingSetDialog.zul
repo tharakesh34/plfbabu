@@ -120,6 +120,10 @@
 									hflex="min" />
 								<listheader id="listheader_TransDesc" label="${c:l('listheader_TransDesc.label')}" sort="false"
 									hflex="min" />
+								<listheader id="listheader_TransactionEntry_AccType"
+									label="${c:l('listheader_TransactionEntry_AccType.label')}" sort="false" hflex="min" />
+								<listheader id="listheader_AmountRule" label="${c:l('listheader_AmountRule.label')}"
+									sort="false" hflex="min" />
 								<listheader id="listheader_ByInvestor" label="${c:l('listheader_ByInvestor.label')}" sort="false"
 									hflex="min" />
 								<listheader id="listheader_Debitcredit" label="${c:l('listheader_Debitcredit.label')}" sort="false"

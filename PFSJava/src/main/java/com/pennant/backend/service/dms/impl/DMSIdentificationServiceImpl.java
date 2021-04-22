@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
@@ -36,7 +37,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 
 public class DMSIdentificationServiceImpl implements DMSIdentificationService {
-	private static Logger logger = Logger.getLogger(DMSIdentificationServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(DMSIdentificationServiceImpl.class);
 
 	private DMSIdentificationDAO dmsIdentificationDao;
 	private CollateralAssignmentDAO collateralAssignmentDAO;

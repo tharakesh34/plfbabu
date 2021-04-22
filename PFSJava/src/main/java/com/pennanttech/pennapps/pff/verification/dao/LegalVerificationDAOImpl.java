@@ -6,18 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -174,8 +174,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		RowMapper<LegalVerification> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalVerification.class);
+		RowMapper<LegalVerification> typeRowMapper = BeanPropertyRowMapper.newInstance(LegalVerification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -226,7 +225,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		logger.debug("insertSql: " + sql.toString());
 
-		jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				LVDocument document = lvDocuments.get(i);
@@ -311,8 +310,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
 
-		RowMapper<LegalVerification> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalVerification.class);
+		RowMapper<LegalVerification> typeRowMapper = BeanPropertyRowMapper.newInstance(LegalVerification.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -332,7 +330,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("verificationId", verificationId);
 
-		RowMapper<LVDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -356,7 +354,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		paramSource.addValue("keyReference", keyReference);
 		paramSource.addValue("documentType", DocumentType.COLLATRL.getKey());
 
-		RowMapper<LVDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -382,8 +380,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
-		RowMapper<LegalVerification> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalVerification.class);
+		RowMapper<LegalVerification> rowMapper = BeanPropertyRowMapper.newInstance(LegalVerification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -417,7 +414,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		RowMapper<LVDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -564,7 +561,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		paramSource.addValue("keyReference", keyReference);
 		paramSource.addValue("documentType", documentType.getKey());
 
-		RowMapper<LVDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LVDocument.class);
+		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -582,7 +579,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select v.id, v.verificationDate, coalesce(v.status, 0) status,");
@@ -660,4 +657,39 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		logger.debug(Literal.LEAVING);
 		return 0;
 	}
+
+	@Override
+	public List<LVDocument> getLVDocuments(String keyReference, TableType tableType) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT VERIFICATIONID, DOCUMENTID,DOCUMENTTYPE, DOCUMENTSUBID, SEQNO ");
+		sql.append(" FROM  VERIFICATION_LV_DETAILS");
+		if (tableType == TableType.BOTH_TAB) {
+			sql.append("_view");
+		} else {
+			sql.append(tableType.getSuffix());
+		}
+		sql.append(" WHERE VERIFICATIONID IN (SELECT ID FROM VERIFICATIONS WHERE KEYREFERENCE = ?)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(), new Object[] { keyReference }, (rs, rowNum) -> {
+				LVDocument lv = new LVDocument();
+
+				lv.setSeqNo((rs.getInt("seqNo")));
+				lv.setDocumentType(rs.getInt("documentType"));
+				lv.setDocumentSubId(rs.getString("documentSubId"));
+				lv.setVerificationId(rs.getLong("verificationId"));
+
+				return lv;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
 }

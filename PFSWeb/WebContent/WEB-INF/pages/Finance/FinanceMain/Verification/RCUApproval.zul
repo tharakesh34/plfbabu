@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<style>
 		.z-groupbox-collapsed{
@@ -11,8 +10,7 @@
 		}
 	</style>
 
-	<window id="window_RCUVerificationDialog" border="none" apply="${rcuVerificationDialogCtrl}" width="100%"
-		height="100%" sizable="false" contentStyle="padding:0px;border:none;">
+	<window id="window_RCUVerificationDialog" border="none" apply="${rcuVerificationDialogCtrl}" width="100%" height="100%" sizable="false" contentStyle="padding:0px;border:none;">
 		<radiogroup id="rcuRadioGroup" visible="false" />
 		<groupbox height="100%" contentStyle="overflow:auto;">
 			<groupbox id="finBasicdetails">
@@ -20,36 +18,21 @@
 			</groupbox>
 			<groupbox style="border:none;" contentStyle="border-top-width: 0px;" height="50%">
 				<caption label="Verifications" />
-				<listbox id="listBoxRCUVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}"
-					xmlns:w="client" w:onBind="zWatch.listen({onShow: [this, this.syncSize]});" w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});"
-					vflex="true">
+				<listbox id="listBoxRCUVerification" width="100%" span="true" style="overflow:auto;" emptyMessage="${c:l('listbox.emptyMessage')}" xmlns:w="client" w:onBind="zWatch.listen({onShow: [this, this.syncSize]});" w:onUnbind="zWatch.unlisten({onShow: [this, this.syncSize]});" vflex="true">
 					<listhead sizable="true">
-						<listheader id="listheader_RCUVerification_Select" label="${c:l('listheader_RCUVerification_Select.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_DocumentName" label="Document Type - Name" sort="false"
-							hflex="min" />
-						<listheader id="listheader_RCUVerification_RCU" label="${c:l('listheader_RCUVerification_RCU.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_Agency" label="${c:l('listheader_RCUVerification_Agency.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_Reason" label="${c:l('listheader_RCUVerification_Reason.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_Remarks" label="${c:l('listheader_RCUVerification_Remarks.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_BankAccNumber" label="${c:l('listheader_RCUVerification_BankAccNumber.label')}" 
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_BankName" label="${c:l('listheader_RCUVerification_BankName.label')}" 
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_LastStatus" label="${c:l('listheader_RCUVerification_Status.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_LastVrfDate" label="${c:l('listheader_RCUVerification_VrfDate.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_Decision" label="${c:l('listheader_RCUVerification_Decision.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_ReInitAgency" label="${c:l('listheader_RCUVerification_Agency.label')}"
-							sort="false" hflex="min" />
-						<listheader id="listheader_RCUVerification_ReInitRemarks" label="${c:l('listheader_RCUVerification_Remarks.label')}"
-							sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_Select" label="${c:l('listheader_RCUVerification_Select.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_DocumentName" label="${c:l('listheader_RCUVerification_DocumentType_Name.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_RCU" label="${c:l('listheader_RCUVerification_RCU.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_Agency" label="${c:l('listheader_RCUVerification_Agency.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_Reason" label="${c:l('listheader_RCUVerification_Reason.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_Remarks" label="${c:l('listheader_RCUVerification_Remarks.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_BankAccNumber" label="${c:l('listheader_RCUVerification_BankAccNumber.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_BankName" label="${c:l('listheader_RCUVerification_BankName.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_LastStatus" label="${c:l('listheader_RCUVerification_Status.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_LastVrfDate" label="${c:l('listheader_RCUVerification_VrfDate.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_Decision" label="${c:l('listheader_RCUVerification_Decision.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_ReInitAgency" label="${c:l('listheader_RCUVerification_Agency.label')}" sort="false" hflex="min" />
+						<listheader id="listheader_RCUVerification_ReInitRemarks" label="${c:l('listheader_RCUVerification_Remarks.label')}" sort="false" hflex="min" />
 					</listhead>
 				</listbox>
 			</groupbox>

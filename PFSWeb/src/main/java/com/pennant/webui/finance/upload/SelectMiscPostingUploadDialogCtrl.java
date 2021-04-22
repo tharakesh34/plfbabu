@@ -19,7 +19,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -57,7 +58,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 	private static final long serialVersionUID = 4783031677099154138L;
-	private static final Logger logger = Logger.getLogger(SelectMiscPostingUploadDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectMiscPostingUploadDialogCtrl.class);
 
 	protected Window window_MiscPostingUpload;
 

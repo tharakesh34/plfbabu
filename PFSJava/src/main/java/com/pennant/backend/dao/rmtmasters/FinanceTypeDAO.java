@@ -96,6 +96,9 @@ public interface FinanceTypeDAO {
 
 	String getFinTypeByReference(String finref);
 
+	FinanceType getFinanceType(String finType);
+
 	String getRepayHierarchy(String finType);
 
+	List<String> getAllowedOCRList();
 }

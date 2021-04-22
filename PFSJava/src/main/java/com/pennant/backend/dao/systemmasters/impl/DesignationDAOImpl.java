@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.DesignationDAO;
 import com.pennant.backend.model.systemmasters.Designation;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>Designation model</b> class.<br>
  */
 public class DesignationDAOImpl extends BasicDao<Designation> implements DesignationDAO {
-	private static Logger logger = Logger.getLogger(DesignationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DesignationDAOImpl.class);
 
 	public DesignationDAOImpl() {
 		super();
@@ -97,7 +98,7 @@ public class DesignationDAOImpl extends BasicDao<Designation> implements Designa
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(designation);
-		RowMapper<Designation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Designation.class);
+		RowMapper<Designation> typeRowMapper = BeanPropertyRowMapper.newInstance(Designation.class);
 
 		try {
 			designation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

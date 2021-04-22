@@ -45,7 +45,8 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
@@ -58,7 +59,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class UploadFinExpensesDAOImpl extends BasicDao<UploadFinExpenses> implements UploadFinExpensesDAO {
-	private static Logger logger = Logger.getLogger(UploadFinExpensesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadFinExpensesDAOImpl.class);
 
 	public UploadFinExpensesDAOImpl() {
 		super();

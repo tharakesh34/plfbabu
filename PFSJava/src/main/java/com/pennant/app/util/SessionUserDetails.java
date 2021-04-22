@@ -44,7 +44,8 @@ package com.pennant.app.util;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -54,7 +55,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class SessionUserDetails implements Serializable {
 	private static final long serialVersionUID = 1116443283350618246L;
-	private static final Logger logger = Logger.getLogger(SessionUserDetails.class);
+	private static final Logger logger = LogManager.getLogger(SessionUserDetails.class);
 
 	public static Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();

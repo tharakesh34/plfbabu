@@ -81,5 +81,6 @@ public class UploadConstants {
 
 	public static final String UPLOAD_MAKER_STAGE = "MAKER";
 	public static final String UPLOAD_APPROVER_STAGE = "TRANS_CHECKER";
+	public static final String RATE_CHANGE_UPLOAD = "RATE_CHANGE_UPLOAD";
 
 }

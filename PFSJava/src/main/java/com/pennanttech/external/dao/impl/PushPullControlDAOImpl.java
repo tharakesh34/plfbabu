@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements PushPullControlDAO {
-	private static Logger logger = Logger.getLogger(PushPullControlDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PushPullControlDAOImpl.class);
 
 	@Override
 	public long save(PushPullControl pushPullControl) {

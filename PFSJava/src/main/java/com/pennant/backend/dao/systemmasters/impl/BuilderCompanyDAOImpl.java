@@ -45,7 +45,8 @@ package com.pennant.backend.dao.systemmasters.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BuilderCompany</code> with set of CRUD operations.
  */
 public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implements BuilderCompanyDAO {
-	private static Logger logger = Logger.getLogger(BuilderCompanyDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BuilderCompanyDAOImpl.class);
 
 	public BuilderCompanyDAOImpl() {
 		super();
@@ -80,7 +81,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, Name, Segmentation, CustId, GroupId, ApfType, PeDevId, EntityType, EmailId");
-		sql.append(", CityType, Address1, Address2, Address3, City, Code, Devavailablity, Magnitude");
+		sql.append(", CityType, Address1, Address2, Address3, City, State, Code, Devavailablity, Magnitude");
 		sql.append(", Absavailablity, TotalProj, Approved, Remarks, PanDetails, BenfName, AccountNo");
 		sql.append(", BankBranchId, LimitOnAmt, LimitOnUnits, CurrentExpUni, CurrentExpAmt, DateOfInCop");
 		sql.append(", NoOfProj, AssHLPlayers, OnGoingProj, ExpInBusiness, Recommendation, MagintudeInLacs");
@@ -128,6 +129,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 					ca.setAddress2(rs.getString("Address2"));
 					ca.setAddress3(rs.getString("Address3"));
 					ca.setCity(rs.getString("City"));
+					ca.setState(rs.getString("State"));
 					ca.setCode(rs.getString("Code"));
 					ca.setDevavailablity(rs.getInt("Devavailablity"));
 					ca.setMagnitude(rs.getBigDecimal("Magnitude"));
@@ -237,7 +239,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 		StringBuilder sql = new StringBuilder(" insert into BuilderCompany");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, name, segmentation, CustId , groupId, apfType, peDevId, entityType");
-		sql.append(", emailId, cityType, address1, address2, address3, city, code, devavailablity");
+		sql.append(", emailId, cityType, address1, address2, address3, city, state, code, devavailablity");
 		sql.append(", magnitude, absavailablity, totalProj, approved, remarks, panDetails, benfName");
 		sql.append(", accountNo, bankBranchId, limitOnAmt, limitOnUnits, currentExpUni, currentExpAmt");
 		sql.append(", dateOfInCop, noOfProj, assHLPlayers, onGoingProj, expInBusiness, recommendation");
@@ -246,7 +248,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 		sql.append(", NextTaskId, RecordType, WorkflowId)");
 		sql.append("  values(");
 		sql.append(" :id, :name, :segmentation, :CustId ,:groupId, :apfType, :peDevId, :entityType");
-		sql.append(", :emailId, :cityType, :address1, :address2, :address3, :city, :code, :devavailablity");
+		sql.append(", :emailId, :cityType, :address1, :address2, :address3, :city, :state, :code, :devavailablity");
 		sql.append(", :magnitude, :absavailablity, :totalProj, :approved, :remarks, :panDetails");
 		sql.append(", :benfName, :accountNo, :bankBranchId, :limitOnAmt, :limitOnUnits, :currentExpUni");
 		sql.append(", :currentExpAmt, :dateOfInCop, :noOfProj, :assHLPlayers, :onGoingProj, :expInBusiness");
@@ -283,7 +285,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 		sql.append("  set name = :name, segmentation = :segmentation,CustId = :CustId , groupId = :groupId");
 		sql.append(", apfType= :apfType, peDevId= :peDevId, entityType= :entityType");
 		sql.append(", emailId= :emailId, cityType= :cityType, address1 = :address1, address2= :address2");
-		sql.append(", address3= address3, city= :city, code= :code, devavailablity= :devavailablity");
+		sql.append(", address3= address3, city= :city, state= :state, code= :code, devavailablity= :devavailablity");
 		sql.append(", magnitude= :magnitude, absavailablity= :absavailablity, totalProj= :totalProj");
 		sql.append(", approved= :approved, remarks= :remarks, panDetails= :panDetails, benfName= :benfName");
 		sql.append(", accountNo= :accountNo, bankBranchId= :bankBranchId, limitOnAmt= :limitOnAmt");

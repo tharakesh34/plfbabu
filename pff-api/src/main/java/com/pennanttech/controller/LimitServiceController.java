@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
@@ -43,8 +44,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class LimitServiceController {
-	private static Logger logger = Logger.getLogger(LimitServiceController.class);
+public class LimitServiceController extends ExtendedTestClass {
+	private static Logger logger = LogManager.getLogger(LimitServiceController.class);
 
 	private LimitStructureService limitStructureService;
 	private LimitDetailService limitDetailService;
@@ -179,11 +180,11 @@ public class LimitServiceController {
 
 		LimitHeader response = null;
 		try {
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			// call create limit setup method
@@ -229,10 +230,10 @@ public class LimitServiceController {
 
 		WSReturnStatus returnStatus = null;
 		try {
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			// call create limit setup method
 			AuditHeader header = limitDetailService.doApprove(auditHeader, false);
@@ -400,6 +401,7 @@ public class LimitServiceController {
 				detail.setUserDetails(userDetails);
 				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(),
 						CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
+				detail.setRevolving(true);
 			}
 		}
 
@@ -441,14 +443,14 @@ public class LimitServiceController {
 
 							/*
 							 * // expiry date if (curDetail.getExpiryDate() != null) {
-							 * prvDetail.setExpiryDate(curDetail.getExpiryDate()); } // limit check
-							 * prvDetail.setLimitCheck(curDetail.isLimitCheck());
+							 * prvDetail.setExpiryDate(curDetail.getExpiryDate() ); } // limit check
+							 * prvDetail.setLimitCheck(curDetail.isLimitCheck()) ;
 							 * 
-							 * // limit check method if (StringUtils.isNotBlank(curDetail.getLimitChkMethod())) {
-							 * prvDetail.setLimitChkMethod(curDetail.getLimitChkMethod()); }
+							 * // limit check method if (StringUtils.isNotBlank(curDetail. getLimitChkMethod())) {
+							 * prvDetail.setLimitChkMethod(curDetail. getLimitChkMethod()); }
 							 * 
-							 * if (!curDetail.getLimitSanctioned().equals(BigDecimal.ZERO)) {
-							 * prvDetail.setLimitSanctioned(curDetail.getLimitSanctioned()); }
+							 * if (!curDetail.getLimitSanctioned().equals( BigDecimal.ZERO)) {
+							 * prvDetail.setLimitSanctioned(curDetail. getLimitSanctioned()); }
 							 */
 							curDetail.setDetailId(prvDetail.getDetailId());
 							curDetail.setNewRecord(false);

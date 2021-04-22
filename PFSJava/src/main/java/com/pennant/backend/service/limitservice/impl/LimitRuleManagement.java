@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -33,7 +34,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class LimitRuleManagement {
 
-	private static Logger logger = Logger.getLogger(LimitRuleManagement.class);
+	private static Logger logger = LogManager.getLogger(LimitRuleManagement.class);
 	private LimitDetailDAO limitDetailDAO;
 	private CustomerDAO customerDAO;
 	private LimitRuleDAO limitRuleDAO;
@@ -107,8 +108,6 @@ public class LimitRuleManagement {
 			String ruleCode, String ruleValue, Customer customer, FinanceType financeType) {
 		logger.debug("Entering");
 
-		RuleExecutionUtil ruleExecution = new RuleExecutionUtil();
-
 		for (LimitDetails details : itemsListByrulecode.values()) {
 			HashMap<String, Object> fieldsandvalues = new HashMap<String, Object>();
 			Object ruleResult = null;
@@ -130,11 +129,11 @@ public class LimitRuleManagement {
 				finCCY = financeMain.getFinCcy();
 			}
 
-			ruleResult = ruleExecution.executeRule(details.getSqlRule(), fieldsandvalues, finCCY,
+			ruleResult = RuleExecutionUtil.executeRule(details.getSqlRule(), fieldsandvalues, finCCY,
 					RuleReturnType.BOOLEAN);
 
 			if (ruleResult != null && StringUtils.equals(ruleResult.toString(), "1")) {
-				ruleResult = ruleExecution.executeRule(details.getSqlRule(), financeMain.getDeclaredFieldValues(),
+				ruleResult = RuleExecutionUtil.executeRule(details.getSqlRule(), financeMain.getDeclaredFieldValues(),
 						financeMain.getFinCcy(), RuleReturnType.BOOLEAN);
 				if (ruleResult != null && StringUtils.equals(ruleResult.toString(), "1")) {
 					saveLimitRuleTransactiondetails(financeMain, details, ruleCode, ruleValue);

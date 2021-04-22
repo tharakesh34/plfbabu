@@ -129,6 +129,10 @@
 													style="font-weight:bold;" />
 												<label id="label_FinWriteoffDialog_InsAmount" value="${c:l('label_FinWriteoffDialog_InsAmount.value')}"
 													style="font-weight:bold;" />
+												<label id="label_FinWriteoffDialog_IncrCost" value="${c:l('label_FinWriteoffDialog_IncrCost.value')}"
+													style="font-weight:bold;" />
+												<label id="label_FinWriteoffDialog_SuplRent" value="${c:l('label_FinWriteoffDialog_SuplRent.value')}"
+													style="font-weight:bold;" />
 												<label id="label_FinWriteoffDialog_SchFee" value="${c:l('label_FinWriteoffDialog_SchFee.value')}"
 													style="font-weight:bold;" />
 											</row>
@@ -139,6 +143,10 @@
 												<decimalbox id="label_FinWriteoffDialog_WOPriAmt" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_WOPftAmt" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_WOInsAmt" readonly="true" style="border:none;background-color:white;" />
+												<decimalbox id="label_FinWriteoffDialog_WOIncrCostAmt" readonly="true"
+													style="border:none;background-color:white;" />
+												<decimalbox id="label_FinWriteoffDialog_WOSuplRentAmt" readonly="true"
+													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_WOSchdFeeAmt" readonly="true"
 													style="border:none;background-color:white;" />
 											</row>
@@ -157,6 +165,10 @@
 													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_UnPaidInsAmt" readonly="true"
 													style="border:none;background-color:white;" />
+												<decimalbox id="label_FinWriteoffDialog_UnPaidIncrCostAmt" readonly="true"
+													style="border:none;background-color:white;" />
+												<decimalbox id="label_FinWriteoffDialog_UnPaidSuplRentAmt" readonly="true"
+													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_UnPaidSchFeeAmt" readonly="true"
 													style="border:none;background-color:white;" />
 											</row>
@@ -168,6 +180,10 @@
 												<decimalbox id="label_FinWriteoffDialog_OutStandProfit" readonly="true"
 													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_OutStandIns" readonly="true"
+													style="border:none;background-color:white;" />
+												<decimalbox id="label_FinWriteoffDialog_OutStandIncrCost" readonly="true"
+													style="border:none;background-color:white;" />
+												<decimalbox id="label_FinWriteoffDialog_OutStandSuplRent" readonly="true"
 													style="border:none;background-color:white;" />
 												<decimalbox id="label_FinWriteoffDialog_OutStandSchFee" readonly="true"
 													style="border:none;background-color:white;" />
@@ -184,6 +200,8 @@
 												<decimalbox id="writeoffPriAmt" maxlength="21" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="writeoffPftAmt" maxlength="21" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="writeoffInsAmt" maxlength="21" readonly="true" style="border:none;background-color:white;" />
+												<decimalbox id="writeoffIncrCost" maxlength="21" readonly="true" style="border:none;background-color:white;" />
+												<decimalbox id="writeoffSuplRent" maxlength="21" readonly="true" style="border:none;background-color:white;" />
 												<decimalbox id="writeoffSchFee" maxlength="21" readonly="true" style="border:none;background-color:white;" />
 											</row>
 											<row spans="2,1">
@@ -234,11 +252,16 @@
 										<listheader id="listheader_ScheduleDetailDialog_Date" hflex="min" value="" />
 										<listheader id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min" />
 										<listheader id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" align="right" />
+										<listheader id="listheader_ScheduleDetailDialog_SupplementRent" hflex="min" visible="false" align="right" />
+										<listheader id="listheader_ScheduleDetailDialog_IncreasedCost" hflex="min" visible="false" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_SchFee" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_TDSAMount" hflex="min"
 											label="${c:l('listheader_TDSAmount.label')}" align="right" />
+										<listheader id="listheader_ScheduleDetailDialog_SchAdvProfit" hflex="min" visible="false" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_Principal" hflex="min" align="right" />
+										<listheader id="listheader_ScheduleDetailDialog_AdvTotal" hflex="min" visible="false" align="right" />
+										<listheader id="listheader_ScheduleDetailDialog_Rebate" hflex="min" visible="false" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_Total" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_ScheduleEndBal" hflex="min" align="right" />
 										<listheader id="listHeader_cashFlowEffect" hflex="min" align="right" visible="false" />

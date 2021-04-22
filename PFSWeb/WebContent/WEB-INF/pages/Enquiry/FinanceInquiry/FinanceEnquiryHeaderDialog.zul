@@ -94,8 +94,154 @@
 											<label id="label_FinanceEnquiryDialog_ReqRePayment" value="${c:l('label_FinanceEnquiryDialog_ReqRePayment.value')}" />
 											<checkbox id="reqRePayment" />
 										</row>
+										<row visible="false">
+											<label id="label_FinanceMainDialog_SourcingBranch"
+												value="${c:l('label_FinanceMainDialog_SourcingBranch.value')}" />
+											<extendedcombobox id="sourcingBranch" />
+											<label id="label_FinanceMainDialog_offerId"
+												value="${c:l('label_FinanceMainDialog_offerId.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="offerId" width="180px" />
+											</hbox>
+										</row>
+										<row visible="false">
+											<label id="label_FinanceMainDialog_Product"
+												value="${c:l('label_FinanceMainDialog_Product.value')}" />
+											<hbox>
+												<space spacing="2px" id="space_Product" />
+												<combobox id="product" width="180px" readonly="true" />
+											</hbox>
+											<label id="label_FinanceMainDialog_ASMName"
+												value="${c:l('label_FinanceMainDialog_ASMName.value')}" />
+											<extendedcombobox id="asmName" />
+										</row>
+										<row visible="false">
+											<label id="label_FinanceMainDialog_SourcingChannelCategory"
+												value="${c:l('label_FinanceMainDialog_SourcingChannelCategory.value')}" />
+											<hbox>
+												<space spacing="2px" id="space_sourChannelCategory" sclass="mandatory" />
+												<combobox id="sourChannelCategory" />
+											</hbox>
+											<label id="label_FinanceMainDialog_ReqloanTenor"
+												value="${c:l('label_FinanceMainDialog_ReqloanTenor.value')}" />
+											<hbox>
+												<space spacing="2px" id="space_ReqloanTenor" sclass="mandatory" />
+												<intbox id="reqLoanTenor" width="50px" maxlength="3"
+													style="text-align:right" />
+											</hbox>
+										</row>
+										<row visible="false">
+											<label id="label_FinanceMainDialog_Connector"
+												value="${c:l('label_FinanceMainDialog_Connector.value')}" />
+											<extendedcombobox id="connector" width="200px" />
+
+											<label id="labelFinanceMainDialogFinOCRRequired"
+												value="${c:l('label_FinanceMainDialog_FinOCRRequired.value')}" />
+											<hbox id="hboxFinOCRRequired">
+												<space spacing="2px" />
+												<checkbox id="finOCRRequired" checked="false" />
+											</hbox>
+										</row>
 									</rows>
 								</grid>
+
+								<groupbox id="gb_offerDetails" visible="false">
+									<caption label="${c:l('gb_offerDetails')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="220px" />
+											<column />
+											<column width="220px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label id="label_FinanceMainDialog_OfferProduct"
+													value="${c:l('label_FinanceMainDialog_OfferProduct.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="offerProduct" width="180px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_OfferAmount"
+													value="${c:l('label_FinanceMainDialog_OfferAmount.value')}" />
+												<hbox id="hbox_OfferAmount">
+													<currencyBox id="offerAmount" width="180px" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_FinanceMainDialog_CustSegmentation"
+													value="${c:l('label_FinanceMainDialog_CustSegmentation.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="custSegmentation" width="180px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_BaseProduct"
+													value="${c:l('label_FinanceMainDialog_BaseProduct.value')}" />
+												<hbox id="hbox_BaseProduct">
+													<space spacing="2px" />
+													<textbox id="baseProduct" width="180px" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_FinanceMainDialog_ProcessType"
+													value="${c:l('label_FinanceMainDialog_ProcessType.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="processType" width="180px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_BureauTimeSeries"
+													value="${c:l('label_FinanceMainDialog_BureauTimeSeries.value')}" />
+												<hbox id="hbox_BureauTimeSeries">
+													<space spacing="2px" />
+													<textbox id="bureauTimeSeries" width="180px" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_FinanceMainDialog_CampaignName"
+													value="${c:l('label_FinanceMainDialog_CampaignName.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="campaignName" width="180px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_ExistingLanRefNo"
+													value="${c:l('label_FinanceMainDialog_ExistingLanRefNo.value')}" />
+												<hbox id="hbox_ExistingLanRefNo">
+													<space spacing="2px" />
+													<textbox id="existingLanRefNo" width="180px" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_FinanceMainDialog_RSA"
+													value="${c:l('label_FinanceMainDialog_RSA.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="rsa" width="180px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_Verification"
+													value="${c:l('label_FinanceMainDialog_Verification.value')}" visible="false" />
+												<hbox id="hbox_Verification">
+													<space spacing="2px" id="space_Verification" visible="false" />
+													<combobox id="verification" visible="false" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_FinanceMainDialog_LeadSource"
+													value="${c:l('label_FinanceMainDialog_LeadSource.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="leadSource" width="180px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_POSource"
+													value="${c:l('label_FinanceMainDialog_POSource.value')}" />
+												<hbox id="hbox_poSource">
+													<space spacing="2px" />
+													<textbox id="poSource" width="180px" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
 							</tabpanel>
 						</tabpanels>
 					</tabbox>

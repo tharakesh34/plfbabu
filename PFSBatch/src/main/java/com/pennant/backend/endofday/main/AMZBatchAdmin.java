@@ -44,7 +44,8 @@ package com.pennant.backend.endofday.main;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class AMZBatchAdmin implements Serializable {
 
 	private static final long serialVersionUID = 4441350054219737955L;
-	private static final Logger logger = Logger.getLogger(AMZBatchAdmin.class);
+	private static final Logger logger = LogManager.getLogger(AMZBatchAdmin.class);
 
 	private static AMZBatchAdmin instance = null;
 	private static ClassPathXmlApplicationContext AMZ_JOB_CONTEXT;

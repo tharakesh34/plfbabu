@@ -42,11 +42,12 @@
  */
 package com.pennant.backend.endofday.main;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class EndOfDaySimulator {
-	private static final Logger logger = Logger.getLogger(EndOfDaySimulator.class);
+	private static final Logger logger = LogManager.getLogger(EndOfDaySimulator.class);
 
 	public static void main(String[] args) throws Exception {
 

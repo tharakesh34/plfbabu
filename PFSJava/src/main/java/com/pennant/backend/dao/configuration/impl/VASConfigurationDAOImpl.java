@@ -50,7 +50,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implements VASConfigurationDAO {
-	private static Logger logger = Logger.getLogger(VASConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VASConfigurationDAOImpl.class);
 
 	public VASConfigurationDAOImpl() {
 		super();
@@ -109,19 +110,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		return vASConfiguration;
 	}
 
-	/**
-	 * Fetch the Record VASConfiguration details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return VASConfiguration
-	 */
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting");
 		sql.append(", RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks");
@@ -201,10 +191,10 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in VasStructure{} table for the specified ProductCode >> {}", type,
+					productCode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

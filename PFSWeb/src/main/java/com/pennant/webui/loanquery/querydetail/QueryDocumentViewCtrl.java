@@ -1,6 +1,7 @@
 package com.pennant.webui.loanquery.querydetail;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Div;
@@ -13,7 +14,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 
 public class QueryDocumentViewCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final long serialVersionUID = 7219917076107821148L;
-	private static final Logger logger = Logger.getLogger(QueryDocumentViewCtrl.class);
+	private static final Logger logger = LogManager.getLogger(QueryDocumentViewCtrl.class);
 	private Window window_Query;
 
 	protected Tabbox tabbox;

@@ -43,21 +43,17 @@
 
 package com.pennant.backend.dao.lmtmasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -75,7 +71,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListReference>
 		implements FinanceCheckListReferenceDAO {
-	private static Logger logger = Logger.getLogger(FinanceCheckListReferenceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceCheckListReferenceDAOImpl.class);
 
 	public FinanceCheckListReferenceDAOImpl() {
 		super();
@@ -146,7 +142,7 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeCheckListReference);
-		RowMapper<FinanceCheckListReference> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinanceCheckListReference> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinanceCheckListReference.class);
 
 		try {
@@ -172,7 +168,6 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	@Override
 	public List<FinanceCheckListReference> getCheckListByFinRef(final String finReference, String showStageCheckListIds,
 			String type) {
-		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, QuestionId, Answer, Remarks, Version, LastMntBy");
@@ -204,56 +199,43 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
 
-					if (StringUtils.isNotBlank(showStageCheckListIds)) {
-						String[] showStageCheckList = showStageCheckListIds.split(",");
+			if (StringUtils.isNotBlank(showStageCheckListIds)) {
+				String[] showStageCheckList = showStageCheckListIds.split(",");
 
-						for (String showStage : showStageCheckList) {
-							ps.setLong(index++, Long.valueOf(showStage));
-						}
-					}
+				for (String showStage : showStageCheckList) {
+					ps.setLong(index++, Long.valueOf(showStage));
 				}
-			}, new RowMapper<FinanceCheckListReference>() {
-				@Override
-				public FinanceCheckListReference mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceCheckListReference fcr = new FinanceCheckListReference();
+			}
+		}, (rs, rowNum) -> {
+			FinanceCheckListReference fcr = new FinanceCheckListReference();
 
-					fcr.setFinReference(rs.getString("FinReference"));
-					fcr.setQuestionId(rs.getLong("QuestionId"));
-					fcr.setAnswer(rs.getLong("Answer"));
-					fcr.setRemarks(rs.getString("Remarks"));
-					fcr.setVersion(rs.getInt("Version"));
-					fcr.setLastMntBy(rs.getLong("LastMntBy"));
-					fcr.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					fcr.setRecordStatus(rs.getString("RecordStatus"));
-					fcr.setRoleCode(rs.getString("RoleCode"));
-					fcr.setNextRoleCode(rs.getString("NextRoleCode"));
-					fcr.setTaskId(rs.getString("TaskId"));
-					fcr.setNextTaskId(rs.getString("NextTaskId"));
-					fcr.setRecordType(rs.getString("RecordType"));
-					fcr.setWorkflowId(rs.getLong("WorkflowId"));
-					fcr.setInstructionUID(rs.getLong("InstructionUID"));
+			fcr.setFinReference(rs.getString("FinReference"));
+			fcr.setQuestionId(rs.getLong("QuestionId"));
+			fcr.setAnswer(rs.getLong("Answer"));
+			fcr.setRemarks(rs.getString("Remarks"));
+			fcr.setVersion(rs.getInt("Version"));
+			fcr.setLastMntBy(rs.getLong("LastMntBy"));
+			fcr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fcr.setRecordStatus(rs.getString("RecordStatus"));
+			fcr.setRoleCode(rs.getString("RoleCode"));
+			fcr.setNextRoleCode(rs.getString("NextRoleCode"));
+			fcr.setTaskId(rs.getString("TaskId"));
+			fcr.setNextTaskId(rs.getString("NextTaskId"));
+			fcr.setRecordType(rs.getString("RecordType"));
+			fcr.setWorkflowId(rs.getLong("WorkflowId"));
+			fcr.setInstructionUID(rs.getLong("InstructionUID"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						fcr.setLovDescQuesDesc(rs.getString("LovDescQuesDesc"));
-						fcr.setLovDescAnswerDesc(rs.getString("LovDescAnswerDesc"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				fcr.setLovDescQuesDesc(rs.getString("LovDescQuesDesc"));
+				fcr.setLovDescAnswerDesc(rs.getString("LovDescAnswerDesc"));
+			}
 
-					return fcr;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fcr;
+		});
 	}
 
 	/**

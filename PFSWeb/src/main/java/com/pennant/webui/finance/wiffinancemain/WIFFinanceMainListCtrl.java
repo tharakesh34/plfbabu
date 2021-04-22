@@ -45,7 +45,8 @@ package com.pennant.webui.finance.wiffinancemain;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -88,7 +89,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = 2808357374960437326L;
-	private static final Logger logger = Logger.getLogger(WIFFinanceMainListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(WIFFinanceMainListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -376,6 +377,11 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		aWIFFinanceMain.setNewRecord(aFinanceDetail.isNewRecord());
+
+		if (aFinanceDetail.getCustomer() != null) {
+			aFinanceDetail.getCustomer().setNewRecord(aFinanceDetail.isNewRecord());
+		}
+
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aWIFFinanceMain);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("financeDetail", aFinanceDetail);

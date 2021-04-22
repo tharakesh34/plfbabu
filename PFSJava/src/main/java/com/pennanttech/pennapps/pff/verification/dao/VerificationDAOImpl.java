@@ -16,7 +16,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,7 +26,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -47,7 +47,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>Verification</code> with set of CRUD operations.
  */
 public class VerificationDAOImpl extends BasicDao<Verification> implements VerificationDAO {
-	private static Logger logger = Logger.getLogger(VerificationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VerificationDAOImpl.class);
 
 	public VerificationDAOImpl() {
 		super();
@@ -91,12 +91,15 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		} else if (verificationType == VerificationType.PD.getKey()) {
 			parameterSource.addValue("dealerType", Agencies.PDAGENCY.getKey());
 			parameterSource.addValue("reasontypecode", WaiverReasons.PDWRES.getKey());
+		} else if (verificationType == VerificationType.VETTING.getKey()) {
+			parameterSource.addValue("dealerType", Agencies.LVAGENCY.getKey());
+			parameterSource.addValue("reasontypecode", WaiverReasons.LVWRES.getKey());
 		}
 
 		parameterSource.addValue("keyReference", keyReference);
 		parameterSource.addValue("verificationType", verificationType);
 
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
@@ -140,6 +143,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			entity.setId(keyHolder.getKey().longValue());
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -285,7 +290,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" v.id, verificationType, module, keyReference, referenceType, reference, ");
-		sql.append(" referenceFor,");
+		sql.append(" referenceFor, v.verificationCategory,");
 		sql.append(
 				" requesttype, reinitid, agency, a.dealerName agencyName,a.dealerCity agencyCity, reason, remarks, ");
 		sql.append(" createdBy, createdOn, status, agencyRemarks, agencyReason, decision, ");
@@ -293,7 +298,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		sql.append(" from verifications v left join AMTVehicleDealer_AView a on a.dealerid=v.agency");
 		sql.append(" where id=:id and a.dealerType=:dealerType");
 
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		paramMap.addValue("dealerType", Agencies.LVAGENCY.getKey());
@@ -314,10 +319,16 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		int type = verification.getVerificationType();
 
+		// FIXME : need to check for Legal Vetting
+
+		if (type == VerificationType.VETTING.getKey()) {
+			return null;
+		}
+
 		RCUDocument rcuDocument = null;
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("select v.id, v.verificationDate, coalesce(v.status, 0) status, a.dealerName as lastAgency");
@@ -411,7 +422,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		parameterSource.addValue("referenceFor", Arrays.asList(collaterals));
 
-		RowMapper<Verification> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Verification.class);
+		RowMapper<Verification> rowMapper = BeanPropertyRowMapper.newInstance(Verification.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
@@ -584,7 +595,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 			int verificationType, Integer tvStatus) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("select Verificationcategory,Agency,ReferenceFor from verifications");
+		StringBuilder sql = new StringBuilder(
+				"select Verificationcategory,Agency,ReferenceFor, Id, Reinitid from verifications");
 		sql.append(
 				" where verificationType = :verificationType and keyReference = :keyReference and referencefor = :collateralReference and verificationdate is not null");
 		sql.append(" and status = :status");
@@ -627,4 +639,154 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		return null;
 	}
 
+	@Override
+	public List<String> getAprrovedLVVerifications(int decision, int verificationType) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("select keyReference from verifications");
+		sql.append(" where decision = :decision and verificationType = :verificationType");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("decision", decision);
+		paramMap.addValue("verificationType", verificationType);
+		try {
+			return jdbcTemplate.queryForList(sql.toString(), paramMap, String.class);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	//Specific to API
+	@Override
+	public List<Verification> getVerifications(String finReference, int verificationType, int requestType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT ID, REFERENCEFOR, REQUESTTYPE, VERIFICATIONTYPE, c.CUSTSHRTNAME  FROM VERIFICATIONS v");
+		sql.append(" LEFT JOIN CUSTOMERS c on c.CUSTID = v.CUSTID");
+		sql.append(" WHERE KEYREFERENCE= ? and VERIFICATIONTYPE= ? and REQUESTTYPE= ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(),
+					new Object[] { finReference, verificationType, requestType }, (rs, rowNum) -> {
+						Verification vf = new Verification();
+
+						vf.setId(rs.getLong("ID"));
+						vf.setReferenceFor(rs.getString("REFERENCEFOR"));
+						vf.setCustomerName(rs.getString("CUSTSHRTNAME"));
+						vf.setRequestType(rs.getInt("REQUESTTYPE"));
+						vf.setVerificationType(rs.getInt("VERIFICATIONTYPE"));
+
+						return vf;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+	}
+
+	@Override
+	public boolean isVerificationIdExists(String finReference, String referenceFor, String reference,
+			int verificationtype, String referenceType) {
+		logger.debug(Literal.ENTERING);
+		int count = 0;
+
+		StringBuilder sql = new StringBuilder("SELECT COUNT(ID) FROM VERIFICATIONS");
+		sql.append(" WHERE REFERENCEFOR= :referenceFor AND verificationtype= :verificationtype");
+		sql.append(" AND KEYREFERENCE= :keyReference ");
+		if (verificationtype != 4) {
+			sql.append("and REFERENCE= :reference");
+		}
+		if (verificationtype == 4) {
+			if (referenceType.equals("CUSTOMER")) {
+				sql.append("and REFERENCE= :reference");
+			}
+			sql.append(" and ReferenceType=:referenceType");
+		}
+		logger.debug(Literal.SQL + sql);
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("referenceFor", referenceFor);
+		paramMap.addValue("verificationtype", verificationtype);
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("reference", reference);
+		if (verificationtype == 4) {
+			paramMap.addValue("referenceType", referenceType);
+		}
+
+		try {
+			count = jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		logger.debug("Leaving");
+		return count > 0 ? true : false;
+	}
+
+	@Override
+	public boolean isInitiatedVerfication(VerificationType verificationType, long verificationId, String type) {
+		//"verification_pd_temp"
+		logger.debug(Literal.ENTERING);
+		int count = 0;
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(verificationid) FROM ");
+		sql.append("VERIFICATION");
+		sql.append("_");
+		sql.append(verificationType);
+		sql.append(type);
+		sql.append(" WHERE verificationid= :verificationid");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("verificationid", verificationId);
+
+		try {
+			count = jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		logger.debug("Leaving");
+		return count > 0 ? true : false;
+	}
+
+	@Override
+	public Long isVerificationExist(String finReference, String referenceFor, String reference, int verificationtype,
+			String referenceType) {
+
+		StringBuilder sql = new StringBuilder("SELECT ID FROM VERIFICATIONS");
+		sql.append(" WHERE REFERENCEFOR= :referenceFor AND verificationtype= :verificationtype");
+		sql.append(" AND KEYREFERENCE= :keyReference ");
+		if (verificationtype != 4) {
+			sql.append("and REFERENCE= :reference");
+		}
+		if (verificationtype == 4) {
+			if (referenceType.equals("CUSTOMER")) {
+				sql.append("and REFERENCE= :reference");
+			}
+			sql.append(" and ReferenceType=:referenceType");
+		}
+		logger.debug(Literal.SQL + sql);
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("referenceFor", referenceFor);
+		paramMap.addValue("verificationtype", verificationtype);
+		paramMap.addValue("keyReference", finReference);
+		paramMap.addValue("reference", reference);
+		if (verificationtype == 4) {
+			paramMap.addValue("referenceType", referenceType);
+		}
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+
+		return null;
+	}
 }

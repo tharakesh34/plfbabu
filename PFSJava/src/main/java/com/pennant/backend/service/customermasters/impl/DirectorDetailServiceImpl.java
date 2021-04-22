@@ -46,7 +46,8 @@ package com.pennant.backend.service.customermasters.impl;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class DirectorDetailServiceImpl extends GenericService<DirectorDetail> implements DirectorDetailService {
-	private static final Logger logger = Logger.getLogger(DirectorDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DirectorDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DirectorDetailDAO directorDetailDAO;

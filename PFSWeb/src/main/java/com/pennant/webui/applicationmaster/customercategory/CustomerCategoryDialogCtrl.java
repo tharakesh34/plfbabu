@@ -48,7 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -83,7 +84,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	private static final long serialVersionUID = 8072326502727052098L;
-	private static final Logger logger = Logger.getLogger(CustomerCategoryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerCategoryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

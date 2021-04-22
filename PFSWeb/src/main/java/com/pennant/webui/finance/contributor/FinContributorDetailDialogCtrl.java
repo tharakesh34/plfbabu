@@ -52,7 +52,8 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -107,7 +108,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDetail> {
 	private static final long serialVersionUID = -6959194080451993569L;
-	private static final Logger logger = Logger.getLogger(FinContributorDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinContributorDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -259,6 +260,12 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			getUserWorkspace().allocateRoleAuthorities(getRole(), "FinContributorDetailDialog");
 		}
 
+		// set Field Properties
+		doSetFieldProperties();
+		if (this.contributorDetailsDialogCtrl != null && this.contributorDetailsDialogCtrl.getFinanceDetail()
+				.getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
+			dosetLabels();
+		}
 		doShowDialog(getFinContributorDetail());
 
 		//Calling SelectCtrl For proper selection of Customer
@@ -298,6 +305,11 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
+		}
+
+		if (this.contributorDetailsDialogCtrl != null && this.contributorDetailsDialogCtrl.getFinanceDetail()
+				.getFinScheduleData().getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
+			this.row_mudaribPerc.setVisible(false);
 		}
 
 		logger.debug("Leaving");

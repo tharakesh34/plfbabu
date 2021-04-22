@@ -39,7 +39,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getFinStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(enquiry.getNumberOfTerms()));//PSD# 145740
+		lc = new Listcell(String.valueOf(enquiry.getNOInst()));//PSD# 145740
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getMaturityDate()));
 		lc.setParent(item);

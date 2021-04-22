@@ -1,7 +1,8 @@
 package com.pennanttech.service.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CollateralController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.CollateralRestService;
 import com.pennanttech.pffws.CollateralSoapService;
@@ -26,8 +28,9 @@ import com.pennanttech.ws.model.collateral.CollateralDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CollateralWebServiceImpl implements CollateralRestService, CollateralSoapService {
-	Logger logger = Logger.getLogger(CollateralWebServiceImpl.class);
+public class CollateralWebServiceImpl extends ExtendedTestClass
+		implements CollateralRestService, CollateralSoapService {
+	Logger logger = LogManager.getLogger(CollateralWebServiceImpl.class);
 
 	private CollateralSetupService collateralSetupService;
 	private CustomerDetailsService customerDetailsService;
@@ -47,7 +50,7 @@ public class CollateralWebServiceImpl implements CollateralRestService, Collater
 		if (StringUtils.isBlank(collateralType)) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(collateralType);
 
 		// call get collateralType method
@@ -71,7 +74,7 @@ public class CollateralWebServiceImpl implements CollateralRestService, Collater
 		validationUtility.validate(collateralSetup, SaveValidationGroup.class);
 		CollateralSetup response = null;
 		try {
-			//bussiness validations
+			// bussiness validations
 			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "create");
 
 			if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -95,7 +98,7 @@ public class CollateralWebServiceImpl implements CollateralRestService, Collater
 			return response;
 		}
 
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[1];
 		if (response != null) {
 			logFields[0] = response.getCollateralRef();

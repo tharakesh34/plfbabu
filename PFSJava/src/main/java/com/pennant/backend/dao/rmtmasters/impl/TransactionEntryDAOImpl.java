@@ -47,21 +47,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -78,7 +81,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>TransactionEntry model</b> class.<br>
  */
 public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implements TransactionEntryDAO {
-	private static Logger logger = Logger.getLogger(TransactionEntryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(TransactionEntryDAOImpl.class);
 
 	public TransactionEntryDAOImpl() {
 		super();
@@ -152,8 +155,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 
 		try {
 			transactionEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -205,8 +207,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -231,6 +232,18 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		return accountSetIDs;
 	}
 
+	public static List<TransactionEntry> sortSchdDetails(List<TransactionEntry> transactionEntries) {
+
+		Collections.sort(transactionEntries, new Comparator<TransactionEntry>() {
+			@Override
+			public int compare(TransactionEntry detail1, TransactionEntry detail2) {
+				return (new Integer(detail1.getTransOrder()).compareTo(new Integer(detail2.getTransOrder())));
+			}
+		});
+
+		return transactionEntries;
+	}
+
 	/**
 	 * Fetch the Record Transaction Entry details by key field
 	 * 
@@ -242,22 +255,53 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	 */
 	@Override
 	public List<TransactionEntry> getListTranEntryForBatch(final long id, String type) {
-		TransactionEntry transactionEntry = new TransactionEntry();
-		transactionEntry.setId(id);
-
-		StringBuilder sql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc, Debitcredit, ");
-		sql.append(" ShadowPosting, Account, AccountType,AccountBranch, AccountSubHeadRule, ");
-		sql.append(" TranscationCode, RvsTransactionCode, AmountRule,ChargeType, FeeCode , OpenNewFinAc,");
-		sql.append(" PostToSys, DerivedTranOrder  ");
-		sql.append(" From RMTTransactionEntry");
-		sql.append(" Where AccountSetid =:AccountSetid Order by TransOrder");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting, Account, AccountType");
+		sql.append(", AccountBranch, AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule");
+		sql.append(", ChargeType, FeeCode, OpenNewFinAc, PostToSys, DerivedTranOrder");
+		sql.append(" from RMTTransactionEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where AccountSetid = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
 
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		List<TransactionEntry> list = null;
+
+		try {
+			list = this.jdbcOperations.query(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index, id);
+
+			}, (rs, rowNum) -> {
+				TransactionEntry te = new TransactionEntry();
+
+				te.setAccountSetid(rs.getLong("AccountSetid"));
+				te.setTransOrder(rs.getInt("TransOrder"));
+				te.setTransDesc(rs.getString("TransDesc"));
+				te.setDebitcredit(rs.getString("Debitcredit"));
+				te.setShadowPosting(rs.getBoolean("ShadowPosting"));
+				te.setAccount(rs.getString("Account"));
+				te.setAccountType(rs.getString("AccountType"));
+				te.setAccountBranch(rs.getString("AccountBranch"));
+				te.setAccountSubHeadRule(rs.getString("AccountSubHeadRule"));
+				te.setTranscationCode(rs.getString("TranscationCode"));
+				te.setRvsTransactionCode(rs.getString("RvsTransactionCode"));
+				te.setAmountRule(rs.getString("AmountRule"));
+				te.setChargeType(rs.getString("ChargeType"));
+				te.setFeeCode(rs.getString("FeeCode"));
+				te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
+				te.setPostToSys(rs.getString("PostToSys"));
+				te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
+
+				return te;
+
+			});
+		} catch (EmptyResultDataAccessException e) {
+			list = new ArrayList<>();
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return sortSchdDetails(list);
 	}
 
 	/**
@@ -436,7 +480,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 			selectSql.append(" Order BY SeqOrder ");
 
 			logger.debug("selectSql: " + selectSql.toString());
-			RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+			RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 			logger.debug("Leaving");
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
@@ -722,8 +766,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -741,8 +784,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new TransactionEntry());
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -764,8 +806,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new TransactionEntry());
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -803,8 +844,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 				"  where AccountSetID IN (select AccountSetID from FintypeAccounting where FinType = :FinType)");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(TransactionEntry.class);
+		RowMapper<TransactionEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(TransactionEntry.class);
 
 		logger.debug("Leaving");
 
@@ -827,7 +867,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		source.addValue("RuleCode", subHeadRules);
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		RowMapper<Rule> typeRowMapper = BeanPropertyRowMapper.newInstance(Rule.class);
 		ruleList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
 		logger.debug("Leaving");

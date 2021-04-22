@@ -44,7 +44,8 @@ package com.pennant.backend.service.applicationmaster.impl;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class BaseRateServiceImpl extends GenericService<BaseRate> implements BaseRateService {
-	private static Logger logger = Logger.getLogger(BaseRateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BaseRateDAOImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BaseRateDAO baseRateDAO;

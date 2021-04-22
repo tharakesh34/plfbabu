@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.mandate.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.model.mandate.MandateStatus;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements MandateStatusDAO {
-	private static Logger logger = Logger.getLogger(MandateStatusDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MandateStatusDAOImpl.class);
 
 	public MandateStatusDAOImpl() {
 		super();
@@ -96,7 +97,7 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 
 		logger.debug("sql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandateStatus);
-		RowMapper<MandateStatus> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MandateStatus.class);
+		RowMapper<MandateStatus> typeRowMapper = BeanPropertyRowMapper.newInstance(MandateStatus.class);
 
 		try {
 			mandateStatus = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -163,8 +164,8 @@ public class MandateStatusDAOImpl extends BasicDao<MandateStatus> implements Man
 		logger.debug("Entering");
 		if (mandateStatus.getId() == Long.MIN_VALUE) {
 			/*
-			 * mandateStatus.setId(getNextidviewDAO().getNextId("SeqMandatesStatus"));
-			 * logger.debug("get NextID:"+mandateStatus.getId());
+			 * mandateStatus.setId(getNextidviewDAO().getNextValue("SeqMandatesStatus"));
+			 * logger.debug("get NextValue:"+mandateStatus.getId());
 			 */
 		}
 

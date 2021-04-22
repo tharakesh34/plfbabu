@@ -42,22 +42,18 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -71,7 +67,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements CustomerEMailDAO {
-	private static Logger logger = Logger.getLogger(CustomerEMailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerEMailDAOImpl.class);
 
 	public CustomerEMailDAOImpl() {
 		super();
@@ -105,12 +101,14 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+		RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
 		try {
 			customerEMail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn(
+					"EMail details not found in CustomerEMails{} table/view for the specified CustID >> {} and CustEMailTypeCode",
+					type, id, typeCode);
 			customerEMail = null;
 		}
 		logger.debug(Literal.LEAVING);
@@ -121,8 +119,6 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	 * Method to return the customer email based on given customer id
 	 */
 	public List<CustomerEMail> getCustomerEmailByCustomer(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustEMail, CustEMailPriority, CustEMailTypeCode, DomainCheck, Version");
 		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -138,47 +134,35 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<CustomerEMail>() {
-				@Override
-				public CustomerEMail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerEMail ce = new CustomerEMail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
 
-					ce.setCustID(rs.getLong("CustID"));
-					ce.setCustEMail(rs.getString("CustEMail"));
-					ce.setCustEMailPriority(rs.getInt("CustEMailPriority"));
-					ce.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
-					ce.setDomainCheck(rs.getString("DomainCheck"));
-					ce.setVersion(rs.getInt("Version"));
-					ce.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					ce.setLastMntBy(rs.getLong("LastMntBy"));
-					ce.setRecordStatus(rs.getString("RecordStatus"));
-					ce.setRoleCode(rs.getString("RoleCode"));
-					ce.setNextRoleCode(rs.getString("NextRoleCode"));
-					ce.setTaskId(rs.getString("TaskId"));
-					ce.setNextTaskId(rs.getString("NextTaskId"));
-					ce.setRecordType(rs.getString("RecordType"));
-					ce.setWorkflowId(rs.getLong("WorkflowId"));
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			CustomerEMail ce = new CustomerEMail();
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						ce.setLovDescCustEMailTypeCode(rs.getString("LovDescCustEMailTypeCode"));
-					}
+			ce.setCustID(rs.getLong("CustID"));
+			ce.setCustEMail(rs.getString("CustEMail"));
+			ce.setCustEMailPriority(rs.getInt("CustEMailPriority"));
+			ce.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
+			ce.setDomainCheck(rs.getString("DomainCheck"));
+			ce.setVersion(rs.getInt("Version"));
+			ce.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ce.setLastMntBy(rs.getLong("LastMntBy"));
+			ce.setRecordStatus(rs.getString("RecordStatus"));
+			ce.setRoleCode(rs.getString("RoleCode"));
+			ce.setNextRoleCode(rs.getString("NextRoleCode"));
+			ce.setTaskId(rs.getString("TaskId"));
+			ce.setNextTaskId(rs.getString("NextTaskId"));
+			ce.setRecordType(rs.getString("RecordType"));
+			ce.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return ce;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				ce.setLovDescCustEMailTypeCode(rs.getString("LovDescCustEMailTypeCode"));
+			}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ce;
+		});
 	}
 
 	/**
@@ -197,7 +181,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-		RowMapper<String> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(String.class);
+		RowMapper<String> typeRowMapper = BeanPropertyRowMapper.newInstance(String.class);
 
 		List<String> custEmailsByIDs = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving");
@@ -425,7 +409,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("CustEMail", email);
 
-		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
+		RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
@@ -451,7 +435,6 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		logger.debug("selectSql: " + selectSql.toString());
 
 		List<String> custEmailsByIDs = this.jdbcTemplate.queryForList(selectSql.toString(), source, String.class);
-		;
 		logger.debug("Leaving");
 
 		return custEmailsByIDs;

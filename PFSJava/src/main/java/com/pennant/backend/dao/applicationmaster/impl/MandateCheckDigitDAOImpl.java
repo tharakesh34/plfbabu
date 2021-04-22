@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.MandateCheckDigitDAO;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>MandateCheckDigit</code> with set of CRUD operations.
  */
 public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implements MandateCheckDigitDAO {
-	private static Logger logger = Logger.getLogger(MandateCheckDigitDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MandateCheckDigitDAOImpl.class);
 
 	public MandateCheckDigitDAOImpl() {
 		super();
@@ -96,8 +97,7 @@ public class MandateCheckDigitDAOImpl extends BasicDao<MandateCheckDigit> implem
 		mandateCheckDigit.setCheckDigitValue(checkDigitValue);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(mandateCheckDigit);
-		RowMapper<MandateCheckDigit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(MandateCheckDigit.class);
+		RowMapper<MandateCheckDigit> rowMapper = BeanPropertyRowMapper.newInstance(MandateCheckDigit.class);
 
 		try {
 			mandateCheckDigit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

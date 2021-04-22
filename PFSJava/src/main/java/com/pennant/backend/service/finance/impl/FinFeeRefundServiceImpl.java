@@ -7,7 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -15,6 +16,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeRefundDAO;
@@ -47,6 +49,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -57,7 +60,7 @@ import com.pennanttech.pff.core.TableType;
  *
  */
 public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> implements FinFeeRefundService {
-	private static final Logger logger = Logger.getLogger(FinFeeRefundServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinFeeRefundServiceImpl.class);
 
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -129,6 +132,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 		//PROCESS ACCOUNTING
 		AEEvent aeEvent = processAccounting(refundHeader);
+		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		String userBranch = refundHeader.getUserDetails().getBranchCode();
@@ -144,6 +148,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			return auditHeader;
 		}
 		aeEvent.getAcSetIDList().add(accountingSetID);
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		refundHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 
@@ -739,6 +744,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		aeEvent.setBranch(feeRefundHeader.getFinBranch());
 		aeEvent.setCcy(feeRefundHeader.getFinCcy());
 		aeEvent.setCustID(feeRefundHeader.getCustId());
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
@@ -761,10 +767,12 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(feeRefundHeader.getCustId(),
 				feeRefundHeader.getFinCcy(), userBranch, feeRefundHeader.getFinBranch());
 
+		List<FinFeeDetail> list = feeRefundHeader.getFinFeeDetailList();
 		BigDecimal totPaidAmt = BigDecimal.ZERO;
 		dataMap.put("ae_refundVasFee", BigDecimal.ZERO);
 		for (FinFeeRefundDetails refundDetail : finFeeRefundDtlsList) {
-
+			FinFeeDetail finFeeDetail = getFeeDetailByFeeID(list, refundDetail.getFeeId());
+			PrvsFinFeeRefund prvsFinFeeRefund = getPrvsRefundsByFeeId(refundDetail.getFeeId());
 			//Incase of Vas FEE
 			if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(refundDetail.getFinEvent())) {
 				BigDecimal vasPaidFee = (BigDecimal) dataMap.get("ae_refundVasFee");
@@ -776,19 +784,38 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 			String feeTypeCode = refundDetail.getFeeTypeCode();
 			dataMap.put(feeTypeCode + "_R", refundDetail.getRefundAmtOriginal());
+			dataMap.put(feeTypeCode + "_TDS_R", refundDetail.getRefundAmtTDS());
 			if (refundDetail.isTaxApplicable()) {
 				TaxAmountSplit taxAmountSplit = null;
 
-				taxAmountSplit = GSTCalculator.getInclusiveGST(refundDetail.getRefundAmount(), taxPercentages);
+				taxAmountSplit = GSTCalculator.getInclusiveGST(
+						refundDetail.getRefundAmount().add(refundDetail.getRefundAmtTDS()), taxPercentages);
 				totPaidAmt = totPaidAmt.add(refundDetail.getRefundAmount());
 
-				dataMap.put(feeTypeCode + "_CGST_R", taxAmountSplit.getcGST());
-				dataMap.put(feeTypeCode + "_SGST_R", taxAmountSplit.getsGST());
-				dataMap.put(feeTypeCode + "_IGST_R", taxAmountSplit.getiGST());
-				dataMap.put(feeTypeCode + "_UGST_R", taxAmountSplit.getuGST());
-				dataMap.put(feeTypeCode + "_CESS_R", taxAmountSplit.getCess());
+				if (finFeeDetail.getPaidAmount().subtract(prvsFinFeeRefund.getTotRefundAmount())
+						.compareTo(refundDetail.getRefundAmount()) == 0) {
+
+					TaxAmountSplit prevTaxSplit = GSTCalculator.getInclusiveGST(
+							prvsFinFeeRefund.getTotRefundAmount().add(prvsFinFeeRefund.getTotRefundAmtTDS()),
+							taxPercentages);
+					TaxAmountSplit netTaxSplit = GSTCalculator.getInclusiveGST(
+							finFeeDetail.getPaidAmount().add(finFeeDetail.getPaidTDS()), taxPercentages);
+
+					dataMap.put(feeTypeCode + "_CGST_R", netTaxSplit.getcGST().subtract(prevTaxSplit.getcGST()));
+					dataMap.put(feeTypeCode + "_SGST_R", netTaxSplit.getsGST().subtract(prevTaxSplit.getsGST()));
+					dataMap.put(feeTypeCode + "_IGST_R", netTaxSplit.getiGST().subtract(prevTaxSplit.getiGST()));
+					dataMap.put(feeTypeCode + "_UGST_R", netTaxSplit.getuGST().subtract(prevTaxSplit.getuGST()));
+					dataMap.put(feeTypeCode + "_CESS_R", netTaxSplit.getCess().subtract(prevTaxSplit.getCess()));
+
+				} else {
+					dataMap.put(feeTypeCode + "_CGST_R", taxAmountSplit.getcGST());
+					dataMap.put(feeTypeCode + "_SGST_R", taxAmountSplit.getsGST());
+					dataMap.put(feeTypeCode + "_IGST_R", taxAmountSplit.getiGST());
+					dataMap.put(feeTypeCode + "_UGST_R", taxAmountSplit.getuGST());
+					dataMap.put(feeTypeCode + "_CESS_R", taxAmountSplit.getCess());
+				}
 			} else {
-				totPaidAmt = totPaidAmt.add(refundDetail.getRefundAmtOriginal());
+				totPaidAmt = totPaidAmt.add(refundDetail.getRefundAmount());
 			}
 		}
 
@@ -903,14 +930,16 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 		for (FinFeeRefundDetails finFeeRefundDetails : refundList) {
 			FinFeeDetail feeDetail = getFeeDetailByFeeID(finFeeDetails, finFeeRefundDetails.getFeeId());
-			BigDecimal waivedAmt = finFeeRefundDetails.getRefundAmount();
-			
+			FinFeeRefundDetails prvFinFeeRefundDetail = finFeeRefundDao
+					.getPrvRefundDetails(feeRefundHeader.getHeaderId(), feeDetail.getFeeID());
+			BigDecimal waivedAmt = finFeeRefundDetails.getRefundAmount().add(finFeeRefundDetails.getRefundAmtTDS());
+
 			feeDetail.setWaivedAmount(waivedAmt);
 			feeDetail.setWaivedGST(finFeeRefundDetails.getRefundAmtGST());
-			
+
 			String taxComponent = feeDetail.getTaxComponent();
 			feeDetail.setTaxComponent(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
-			
+
 			Long taxHeaderId = feeDetail.getTaxHeaderId();
 			if (taxHeaderId == null) {
 				continue;
@@ -921,19 +950,69 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 				type = "_TView";
 			}
 			feeDetail.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(taxHeaderId, type));
-			
+
 			if (feeDetail.getTaxHeader() != null) {
 				feeDetail.getTaxHeader().setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, type));
 			}
-			
+
 			finFeeDetailService.calculateFees(feeDetail, financeMain, taxPercentages);
-			
+
 			feeDetail.setTaxComponent(taxComponent);
-			
+
+			if (feeDetail.getPaidAmount().subtract(prvFinFeeRefundDetail.getRefundAmount())
+					.compareTo(feeDetail.getWaivedAmount().subtract(finFeeRefundDetails.getRefundAmtTDS())) == 0) {
+				TaxAmountSplit prevTaxSplit = GSTCalculator.getInclusiveGST(
+						prvFinFeeRefundDetail.getRefundAmount().add(prvFinFeeRefundDetail.getRefundAmtTDS()),
+						taxPercentages);
+				TaxAmountSplit netTaxSplit = GSTCalculator
+						.getInclusiveGST(feeDetail.getPaidAmount().add(feeDetail.getPaidTDS()), taxPercentages);
+				List<Taxes> taxDetails = feeDetail.getTaxHeader().getTaxDetails();
+
+				Taxes cgstTax = null;
+				Taxes sgstTax = null;
+				Taxes igstTax = null;
+				Taxes ugstTax = null;
+				Taxes cessTax = null;
+
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						String taxType = taxes.getTaxType();
+						switch (taxType) {
+						case RuleConstants.CODE_CGST:
+							cgstTax = taxes;
+							cgstTax.setWaivedTax(netTaxSplit.getcGST().subtract(prevTaxSplit.getcGST()));
+							break;
+						case RuleConstants.CODE_SGST:
+							sgstTax = taxes;
+							sgstTax.setWaivedTax(netTaxSplit.getsGST().subtract(prevTaxSplit.getsGST()));
+							break;
+						case RuleConstants.CODE_IGST:
+							igstTax = taxes;
+							igstTax.setWaivedTax(netTaxSplit.getiGST().subtract(prevTaxSplit.getiGST()));
+							break;
+						case RuleConstants.CODE_UGST:
+							ugstTax = taxes;
+							ugstTax.setWaivedTax(netTaxSplit.getuGST().subtract(prevTaxSplit.getuGST()));
+							break;
+						case RuleConstants.CODE_CESS:
+							cessTax = taxes;
+							cessTax.setWaivedTax(netTaxSplit.getCess().subtract(prevTaxSplit.getCess()));
+							break;
+						default:
+							break;
+						}
+
+					}
+				}
+				BigDecimal gstAmount = cgstTax.getWaivedTax().add(sgstTax.getWaivedTax()).add(igstTax.getWaivedTax())
+						.add(ugstTax.getWaivedTax()).add(cessTax.getWaivedTax());
+				feeDetail.setWaivedGST(gstAmount);
+			}
+
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equalsIgnoreCase(taxComponent)) {
 				feeDetail.setWaivedAmount(feeDetail.getWaivedAmount().subtract(feeDetail.getWaivedGST()));
 			}
-			
+
 			finFeeDetailsList.add(feeDetail);
 		}
 		return finFeeDetailsList;

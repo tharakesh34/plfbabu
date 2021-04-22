@@ -48,7 +48,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class AssetClassificationHeaderServiceImpl extends GenericService<AssetClassificationHeader>
 		implements AssetClassificationHeaderService {
-	private static final Logger logger = Logger.getLogger(AssetClassificationHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(AssetClassificationHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AssetClassificationHeaderDAO assetClassificationHeaderDAO;
@@ -459,12 +460,14 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 		AssetClassificationHeader header = (AssetClassificationHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (header.isNew() && assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(),
-				header.getStageOrder(), header.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		Long templateId = header.getNpaTemplateId();
+		int stageOrder = header.getStageOrder();
+		if (header.isNew() && assetClassificationHeaderDAO.isDuplicateKey(header.getId(), header.getCode(), stageOrder,
+				templateId, header.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_Code") + ": " + header.getCode();
-			parameters[1] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + header.getStageOrder();
+			parameters[1] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + stageOrder;
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
@@ -472,9 +475,9 @@ public class AssetClassificationHeaderServiceImpl extends GenericService<AssetCl
 		//Stage Order Unique Key Checking
 		if (header.isNew() && header.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			if (header.isNew()
-					&& assetClassificationHeaderDAO.isStageOrderExists(header.getStageOrder(), TableType.VIEW)) {
+					&& assetClassificationHeaderDAO.isStageOrderExists(stageOrder, templateId, TableType.VIEW)) {
 				String[] parameters = new String[1];
-				parameters[0] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + header.getStageOrder();
+				parameters[0] = PennantJavaUtil.getLabel("label_StageOrder") + ": " + stageOrder;
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
 		}

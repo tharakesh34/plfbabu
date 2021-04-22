@@ -46,20 +46,20 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.core.DateService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class CompleteEOD implements JobExecutionDecider {
 
-	private Logger logger = Logger.getLogger(CompleteEOD.class);
+	private Logger logger = LogManager.getLogger(CompleteEOD.class);
 
 	@SuppressWarnings("unused")
 	private DataSource dataSource;

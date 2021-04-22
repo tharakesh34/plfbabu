@@ -89,7 +89,7 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	void updatePayableReserve(long payAgainstID, BigDecimal reserveAmt);
 
-	void updateUtilise(long adviseID, BigDecimal amount);
+	void updateUtilise(long adviseID, BigDecimal amount, boolean noManualReserve);
 
 	void updateUtiliseOnly(long adviseID, BigDecimal amount);
 
@@ -147,10 +147,16 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	long getNewAdviseID();
 
-	long getDebitInvoiceID(long adviseID);
+	Long getDebitInvoiceID(long adviseID);
 
 	ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, String type);
 
 	ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, long adviseId, String type);
+
+	void updatePayableReserveAmount(long payAgainstID, BigDecimal reserveAmt);
+
+	BigDecimal getPayableBalanceAmt(String finReference, int adviseType);
+
+	BigDecimal getReceivableAmt(String finReference, boolean isBounce);
 
 }

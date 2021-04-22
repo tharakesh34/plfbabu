@@ -55,7 +55,8 @@ import java.util.Map.Entry;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -65,6 +66,7 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -75,6 +77,7 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -93,7 +96,7 @@ import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DisbursementInstCtrl {
-	private static final Logger logger = Logger.getLogger(DisbursementInstCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DisbursementInstCtrl.class);
 	private Listbox listbox;
 	private String ccy;
 	private int ccyFormat;
@@ -107,10 +110,14 @@ public class DisbursementInstCtrl {
 	private List<FinanceDisbursement> approvedDisbursments;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private DocumentDetails documentDetails;
-
-	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+
 	private DMSService dMSService;
+
+	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
+	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>(1);
+	private String moduleDefiner;
 
 	public void init(Listbox listbox, String ccy, boolean multiParty, String role) {
 		this.ccyFormat = CurrencyUtil.getFormat(ccy);
@@ -145,8 +152,20 @@ public class DisbursementInstCtrl {
 
 				for (FinAdvancePayments finAdvancePayments : list) {
 					if (finAdvancePayments.ispOIssued()) {
-						if (!StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_CANCEL)) {
-							return false;
+						if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+							if(!(StringUtils
+										.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_CANCEL)
+										|| StringUtils.equals(finAdvancePayments.getStatus(),
+												DisbursementConstants.STATUS_REJECTED)
+										|| StringUtils.equals(finAdvancePayments.getStatus(),
+											DisbursementConstants.STATUS_PRINT))) {
+								return false;
+							}
+						}else{
+							if (!StringUtils.equals(finAdvancePayments.getStatus(),
+									DisbursementConstants.STATUS_CANCEL)) {
+								return false;
+							}
 						}
 					}
 				}
@@ -264,7 +283,8 @@ public class DisbursementInstCtrl {
 
 				for (FinAdvancePayments detail : list) {
 
-					if (!DisbursementInstCtrl.isDeleteRecord(detail)) {
+					if (!DisbursementInstCtrl.isDeleteRecord(detail)
+							&& !DisbursementConstants.PAYMENT_DETAIL_VAS.equals(detail.getPaymentDetail())) {
 						grandTotal = grandTotal.add(detail.getAmtToBeReleased());
 						subTotal = subTotal.add(detail.getAmtToBeReleased());
 					}
@@ -283,8 +303,8 @@ public class DisbursementInstCtrl {
 
 					String paytype = detail.getPaymentType();
 
-					if (paytype.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-							|| paytype.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
+					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paytype)
+							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paytype)) {
 						bankName = detail.getBankName();
 						custName = detail.getLiabilityHoldName();
 						accoountNum = detail.getLlReferenceNo();
@@ -309,8 +329,9 @@ public class DisbursementInstCtrl {
 					lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));
 					lc.setParent(item);
 
-					if (detail.getStatus() != null && detail.getStatus().equals("REJECTED")) {
-						lc = new Listcell(detail.getStatus() + "-" + detail.getRejectReason());
+					if (StringUtils.equals(detail.getStatus(), DisbursementConstants.STATUS_REJECTED)) {
+						lc = new Listcell(detail.getStatus().concat(StringUtils.isNotEmpty(detail.getRejectReason())
+								? "-" + StringUtils.trimToEmpty(detail.getRejectReason()) : ""));
 					} else {
 						lc = new Listcell(detail.getStatus());
 					}
@@ -339,7 +360,8 @@ public class DisbursementInstCtrl {
 							}
 
 							VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
-									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), "_view");
+									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(),
+											vasDetail.getEntityCode(), "_view");
 							if (vasProviderAccDetail != null) {
 								Listitem item = new Listitem();
 								lc = new Listcell("");
@@ -356,8 +378,12 @@ public class DisbursementInstCtrl {
 
 								lc = new Listcell(vasProviderAccDetail.getAccountNumber());
 								lc.setParent(item);
-								grandTotal = grandTotal.add(vasDetail.getFee());
-								subTotal = subTotal.add(vasDetail.getFee());
+
+								if (!DisbursementConstants.STATUS_REJECTED.equals(vasDetail.getInsStatus())) {
+									grandTotal = grandTotal.add(vasDetail.getFee());
+									subTotal = subTotal.add(vasDetail.getFee());
+								}
+
 								lc = new Listcell(PennantApplicationUtil.amountFormate(vasDetail.getFee(), ccyFormat));
 								lc.setParent(item);
 
@@ -474,8 +500,8 @@ public class DisbursementInstCtrl {
 
 					String paytype = detail.getPaymentType();
 
-					if (paytype.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-							|| paytype.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
+					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paytype)
+							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paytype)) {
 						bankName = detail.getBankName();
 						custName = detail.getLiabilityHoldName();
 						accoountNum = detail.getLlReferenceNo();
@@ -530,7 +556,7 @@ public class DisbursementInstCtrl {
 	}
 
 	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list,
-			PayOrderIssueHeader payOrderIssueHeader) throws Exception {
+			PayOrderIssueHeader payOrderIssueHeader, String moduleDefiner) throws Exception {
 		logger.debug("Entering");
 
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
@@ -538,11 +564,13 @@ public class DisbursementInstCtrl {
 		aFinAdvancePayments.setPaymentSeq(getNextPaymentSequence(list));
 		aFinAdvancePayments.setNewRecord(true);
 		aFinAdvancePayments.setWorkflowId(0);
+		aFinAdvancePayments.setVasReference(PennantConstants.List_Select);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
 		map.put("documentDetails", getDocumentDetails());
+		map.put("moduleDefiner", moduleDefiner);
 		doshowDialog(map, listCtrl, dialogCtrl, module, false, payOrderIssueHeader);
 
 		logger.debug("Leaving");
@@ -627,6 +655,9 @@ public class DisbursementInstCtrl {
 			map.put("finAdvancePaymentsListCtrl", listCtrl);
 			map.put("financeMainDialogCtrl", dialogCtrl);
 		}
+		map.put("FinFeeDetailList", getFinFeeDetailList());
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("VasRecordingList", getVasRecordingList());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -709,21 +740,24 @@ public class DisbursementInstCtrl {
 	}
 
 	public static boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
-				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
+		String recordType = aFinAdvancePayments.getRecordType();
+		String status = aFinAdvancePayments.getStatus();
+		if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)
+				|| DisbursementConstants.STATUS_CANCEL.equals(status)
+				|| DisbursementConstants.STATUS_REJECTED.equals(status)
+				|| DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(status)) {
 			return true;
 		}
 		return false;
 	}
 
 	private boolean allowMaintainAfterRequestSent(FinAdvancePayments aFinAdvancePayments) {
-		if (StringUtils.equals(DisbursementConstants.STATUS_AWAITCON, aFinAdvancePayments.getStatus())) {
-			if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType())
-					|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
-							aFinAdvancePayments.getPaymentType())) {
-				return true;
+		String status = aFinAdvancePayments.getStatus();
+		String paymentType = aFinAdvancePayments.getPaymentType();
+		if (DisbursementConstants.STATUS_AWAITCON.equals(status)) {
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+				return false;
 			}
 			return false;
 		}
@@ -736,8 +770,15 @@ public class DisbursementInstCtrl {
 		 * !StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType()))) { return
 		 * false; }
 		 */
-
-		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
+		if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ) {
+			if (DisbursementConstants.STATUS_PAID.equals(status)) {
+				return true;
+			}
+			if (DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(status)) {
+				return false;
+			}
+		}
+		if (DisbursementConstants.STATUS_PAID.equals(status)) {
 			return false;
 		}
 
@@ -854,6 +895,11 @@ public class DisbursementInstCtrl {
 		return false;
 	}
 
+	//VAS FrondEnd Functionality
+	public List<ErrorDetail> validateVasInstructions(List<FinAdvancePayments> advPaymentsList, boolean validate) {
+		return finAdvancePaymentsService.validateVasInstructions(vasRecordingList, advPaymentsList, validate);
+	}
+
 	public void setFinanceDisbursement(List<FinanceDisbursement> financeDisbursement) {
 		this.financeDisbursements = financeDisbursement;
 	}
@@ -878,20 +924,39 @@ public class DisbursementInstCtrl {
 		this.documentDetails = documentDetails;
 	}
 
-	public VASProviderAccDetailDAO getvASProviderAccDetailDAO() {
-		return vASProviderAccDetailDAO;
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
-	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
-		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	public List<FinFeeDetail> getFinFeeDetailList() {
+		return finFeeDetailList;
+	}
+
+	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {
+		this.finFeeDetailList = finFeeDetailList;
+	}
+
+	public List<VASRecording> getVasRecordingList() {
+		return vasRecordingList;
+	}
+
+	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
+		this.vasRecordingList = vasRecordingList;
+	}
+
+	public String getModuleDefiner() {
+		return moduleDefiner;
+	}
+
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
 	}
 
 	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
 		this.vASConfigurationDAO = vASConfigurationDAO;
 	}
 
-	public void setdMSService(DMSService dMSService) {
-		this.dMSService = dMSService;
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
 	}
-
 }

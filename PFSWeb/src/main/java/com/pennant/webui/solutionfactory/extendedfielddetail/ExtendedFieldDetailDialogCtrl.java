@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -109,7 +110,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	private static final long serialVersionUID = -5800673813892917464L;
-	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -610,15 +611,15 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 
 		try {
+			List<ExtendedFieldDetail> detailList = null;
 
-			int seqNo = this.fieldSeqOrder.intValue();
-			if (seqNo == 0) {
-				seqNo = maxSeqNo + 10;
-				if (seqNo > 1000) {
-					seqNo = 1000;
-				}
+			if (extendedFieldDialogCtrl != null) {
+				detailList = extendedFieldDialogCtrl.getExtendedFieldDetailsList();
+			} else {
+				detailList = technicalValuationDialogCtrl.getTechValuationFieldDetailsList();
 			}
-			aExtendedFieldDetail.setFieldSeqOrder(seqNo);
+
+			setSequence(aExtendedFieldDetail, wve, detailList);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1150,6 +1151,25 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 		aExtendedFieldDetail.setRecordStatus(this.recordStatus.getValue());
 		logger.debug("Leaving");
+	}
+
+	private void setSequence(ExtendedFieldDetail aExtendedFieldDetail, ArrayList<WrongValueException> wve,
+			List<ExtendedFieldDetail> detailList) {
+		int seqNo = this.fieldSeqOrder.intValue();
+
+		for (ExtendedFieldDetail extendedFieldDetail : detailList) {
+			if (extendedFieldDetail.getFieldSeqOrder() == seqNo) {
+				MessageUtil.showError("Sequence number already exists");
+				wve.add(new WrongValueException(seqNo));
+				break;
+			} else if (seqNo == 0) {
+				seqNo = maxSeqNo + 10;
+				if (seqNo > 1000) {
+					seqNo = 1000;
+				}
+			}
+		}
+		aExtendedFieldDetail.setFieldSeqOrder(seqNo);
 	}
 
 	/**
@@ -2039,7 +2059,12 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowMandatory.setVisible(true);
 			this.rowUnique.setVisible(false);
 			this.rowValFromScript.setVisible(false);
-			this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
+			if (getExtendedFieldDetail().isNew() || (StringUtils.equals(getExtendedFieldDetail().getRecordType(),
+					PennantConstants.RECORD_TYPE_NEW))) {
+				this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
+			} else {
+				this.fieldLength.setReadonly(true);
+			}
 			this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
 			this.rowConstraint.setVisible(false);
 			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(false);

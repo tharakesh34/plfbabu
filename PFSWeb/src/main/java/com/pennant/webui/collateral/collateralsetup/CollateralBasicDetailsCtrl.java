@@ -3,7 +3,8 @@ package com.pennant.webui.collateral.collateralsetup;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Label;
@@ -15,11 +16,12 @@ import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.CommitmentConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private static final long serialVersionUID = -4843661930948561711L;
-	private static final Logger logger = Logger.getLogger(CollateralBasicDetailsCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralBasicDetailsCtrl.class);
 
 	protected Window window_CollateralBasicDetails; // autowired
 	protected Label colBasic_depositerCif; // autoWired
@@ -201,6 +203,61 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.colBasic_colCcy.setValue(String.valueOf(finHeaderList.get(3)));
 			this.colBasic_colType.setValue(String.valueOf(finHeaderList.get(4)));
 			this.colBasic_colLoc.setValue(String.valueOf(finHeaderList.get(5)));
+		}
+		//up front fee receipt cancellation doc
+		if (StringUtils.equals(getModuleName(), DocumentCategories.UPFNT_FEE_RECEIPTS.getKey())) {
+			//label setting 
+			this.label_CollateralBasicDetails_depositerCif
+					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_ReceiptId.value"));
+			this.label_CollateralBasicDetails_colRef
+					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_FinReference.value"));
+			this.label_CollateralBasicDetails_depositerName
+					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_PromotionCode.value"));
+			this.label_CollateralBasicDetails_colCcy
+					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_FinType.value"));
+			this.label_CollateralBasicDetails_colType
+					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_FinCcy.value"));
+			this.label_CollateralBasicDetails_colLoc
+					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_FinBranch.value"));
+			this.label_LoanNo.setValue(Labels.getLabel("label_ReceiptCancellationDialog_CustID.value"));
+			//data setting
+			this.colBasic_depositerCif.setValue(String.valueOf(finHeaderList.get(0)));
+			this.colBasic_colRef.setValue(String.valueOf(finHeaderList.get(1)));
+			this.colBasic_depositerName.setValue(String.valueOf(finHeaderList.get(2)));
+			this.colBasic_colCcy.setValue(String.valueOf(finHeaderList.get(3)));
+			this.colBasic_colType.setValue(String.valueOf(finHeaderList.get(4)));
+			this.colBasic_colLoc.setValue(String.valueOf(finHeaderList.get(5)));
+			this.loanNo.setValue(String.valueOf(finHeaderList.get(6)));
+			row_FinBranch.setVisible(false);
+			row_LoanTenure.setVisible(false);
+			row_ROI.setVisible(false);
+		}
+
+		//payable advice documents ribbon
+		if (StringUtils.equals(getModuleName(), DocumentCategories.MANUAL_ADVISE_PAYABLE.getKey())) {
+			//label setting 
+			this.label_CollateralBasicDetails_depositerCif
+					.setValue(Labels.getLabel("label_ManualAdviseDialog_LoanReference.value"));
+			this.label_CollateralBasicDetails_colRef
+					.setValue(Labels.getLabel("label_ManualAdviseDialog_LoanType.value"));
+			this.label_CollateralBasicDetails_depositerName.setValue(Labels.getLabel("label_CustomerCIF"));
+			this.label_CollateralBasicDetails_colCcy
+					.setValue(Labels.getLabel("label_ManualAdviseDialog_FinAmount.value"));
+			this.label_CollateralBasicDetails_colType
+					.setValue(Labels.getLabel("label_ManualAdviseDialog_LoanStartDate.value"));
+			this.label_CollateralBasicDetails_colLoc
+					.setValue(Labels.getLabel("label_ManualAdviseDialog_MaturityDate.value"));
+			//data setting
+			this.colBasic_depositerCif.setValue(String.valueOf(finHeaderList.get(0)));
+			this.colBasic_colRef.setValue(String.valueOf(finHeaderList.get(1)));
+			this.colBasic_depositerName.setValue(String.valueOf(finHeaderList.get(2)));
+			this.colBasic_colCcy.setValue(String.valueOf(finHeaderList.get(3)));
+			this.colBasic_colType.setValue(String.valueOf(finHeaderList.get(4)));
+			this.colBasic_colLoc.setValue(String.valueOf(finHeaderList.get(5)));
+			row_FinType.setVisible(false);
+			row_FinBranch.setVisible(false);
+			row_LoanTenure.setVisible(false);
+			row_ROI.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}

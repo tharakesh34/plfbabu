@@ -28,7 +28,9 @@ public class StepUtil {
 		retailcibil,
 		corporatecibil,
 		prepareIncomeAMZDetails,
-		autoKnockOffProcess
+		autoKnockOffProcess,
+		customerDataPreperation, 
+		masterDataPreparation,
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");

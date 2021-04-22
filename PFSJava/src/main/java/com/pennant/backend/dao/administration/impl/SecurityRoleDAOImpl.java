@@ -46,14 +46,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityRoleDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleDAO {
-	private static Logger logger = Logger.getLogger(SecurityRoleDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityRoleDAOImpl.class);
 
 	public SecurityRoleDAOImpl() {
 		super();
@@ -123,7 +124,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 		try {
 			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -164,7 +165,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
 			secRoles = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -221,8 +222,8 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 	public long save(SecurityRole secRoles, String type) {
 		logger.debug("Entering");
 		if (secRoles.getId() == Long.MIN_VALUE) {
-			secRoles.setId(getNextId("SeqSecRoles"));
-			logger.debug("get NextID:" + secRoles.getId());
+			secRoles.setId(getNextValue("SeqSecRoles"));
+			logger.debug("get NextValue:" + secRoles.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into SecRoles");
@@ -310,7 +311,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -328,7 +329,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -348,7 +349,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRole);
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -372,7 +373,7 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		StringBuilder selectSql = new StringBuilder("SELECT * FROM SecRoles where rolecd in (:Rolecds) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);

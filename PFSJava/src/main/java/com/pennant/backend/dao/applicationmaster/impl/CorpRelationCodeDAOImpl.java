@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CorpRelationCodeDAO;
 import com.pennant.backend.model.applicationmaster.CorpRelationCode;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode> implements CorpRelationCodeDAO {
-	private static Logger logger = Logger.getLogger(CorpRelationCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CorpRelationCodeDAOImpl.class);
 
 	public CorpRelationCodeDAOImpl() {
 		super();
@@ -93,8 +94,7 @@ public class CorpRelationCodeDAOImpl extends BasicDao<CorpRelationCode> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corpRelationCode);
-		RowMapper<CorpRelationCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CorpRelationCode.class);
+		RowMapper<CorpRelationCode> typeRowMapper = BeanPropertyRowMapper.newInstance(CorpRelationCode.class);
 
 		try {
 			corpRelationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

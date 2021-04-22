@@ -47,7 +47,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Executions;
 
@@ -58,7 +59,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PTReportUtils implements Serializable {
 
 	private static final long serialVersionUID = 8400638894656139790L;
-	private static final Logger logger = Logger.getLogger(PTReportUtils.class);
+	private static final Logger logger = LogManager.getLogger(PTReportUtils.class);
 
 	@SuppressWarnings("rawtypes")
 	public static void getPTReport(String model, List searchObj, int maxResults) throws InterruptedException {

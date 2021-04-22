@@ -48,8 +48,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -68,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>EODConfig</code> with set of CRUD operations.
  */
 public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfigDAO {
-	private static Logger logger = Logger.getLogger(EODConfigDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(EODConfigDAOImpl.class);
 
 	public EODConfigDAOImpl() {
 		super();
@@ -100,7 +102,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		logger.debug(Literal.ENTERING);
 
 		if (eODConfig.getEodConfigId() <= 0) {
-			eODConfig.setEodConfigId(getNextId("SeqEodConfig"));
+			eODConfig.setEodConfigId(getNextValue("SeqEodConfig"));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert into");
@@ -340,7 +342,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					return rs.getString("EODStartJobFrequency");
 				}
 			});
-
+			if (CollectionUtils.isEmpty(eodFrequency)) {
+				return null;
+			}
 			return eodFrequency.get(0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
@@ -448,7 +452,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					return rs.getString("ReminderFrequency");
 				}
 			});
-
+			if (CollectionUtils.isEmpty(eodFrequency)) {
+				return null;
+			}
 			return eodFrequency.get(0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
@@ -476,7 +482,9 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					return rs.getString("DelayFrequency");
 				}
 			});
-
+			if (CollectionUtils.isEmpty(eodFrequency)) {
+				return null;
+			}
 			return eodFrequency.get(0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);

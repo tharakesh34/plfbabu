@@ -47,7 +47,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>LegalDetail</code> with set of CRUD operations.
  */
 public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements LegalDetailDAO {
-	private static Logger logger = Logger.getLogger(LegalDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LegalDetailDAOImpl.class);
 
 	public LegalDetailDAOImpl() {
 		super();
@@ -200,9 +201,9 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalDetail.getId() == Long.MIN_VALUE) {
-			legalDetail.setId(getNextId("SeqLegalDetails"));
+			legalDetail.setId(getNextValue("SeqLegalDetails"));
 			legalDetail.setLegalReference(getLegalReference(legalDetail.getId()));
-			logger.debug("get NextID:" + legalDetail.getId());
+			logger.debug("get NextValue:" + legalDetail.getId());
 		}
 
 		// Execute the SQL, binding the arguments.

@@ -50,7 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -108,7 +109,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	private static final long serialVersionUID = -3436424948986683205L;
-	private static final Logger logger = Logger.getLogger(DirectorDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DirectorDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -192,6 +193,8 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	private BigDecimal totSharePerc;
 	private String userRole = "";
 	private boolean isEnquiry = false;
+	private boolean isFinanceProcess = false;
+	private boolean workflow = false;
 
 	/**
 	 * default constructor.<br>
@@ -267,6 +270,19 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			}
 			this.directorDetail.setWorkflowId(0);
 		}
+
+		if (arguments.containsKey("isFinanceProcess")) {
+			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
+		}
+
+		if (arguments.containsKey("fromLoan")) {
+			isFinanceProcess = (Boolean) arguments.get("fromLoan");
+		}
+
+		if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
+			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
+		}
+
 		doLoadWorkFlow(this.directorDetail.isWorkflow(), this.directorDetail.getWorkflowId(),
 				this.directorDetail.getNextTaskId());
 
@@ -1124,7 +1140,7 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			if (StringUtils.isBlank(aDirectorDetail.getRecordType())) {
 				aDirectorDetail.setVersion(aDirectorDetail.getVersion() + 1);
 				aDirectorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				if (getCustomerDialogCtrl() != null
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
 						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
 					aDirectorDetail.setNewRecord(true);
 				}
@@ -1388,6 +1404,9 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 					aDirectorDetail.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
+					if (workflow && !isFinanceProcess && StringUtils.isBlank(aDirectorDetail.getRecordType())) {
+						aDirectorDetail.setNewRecord(true);
+					}
 				}
 
 				if (StringUtils.isBlank(aDirectorDetail.getRecordType())) {
@@ -1843,9 +1862,10 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			throws InterruptedException {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
-		this.custID.setValue(aCustomer.getCustID());
-		this.custCIF.setValue(aCustomer.getCustCIF().trim());
-		this.custShrtName.setValue(aCustomer.getCustShrtName());
+		//PSD # 156134 commented the below code because main applicant details are overriding with share holder details.
+		//this.custID.setValue(aCustomer.getCustID());
+		//this.custCIF.setValue(aCustomer.getCustCIF().trim());
+		//this.custShrtName.setValue(aCustomer.getCustShrtName());
 		if (this.shareholderCustomer.isChecked()) {
 			this.shareHolderCustID.setValue(aCustomer.getCustID());
 			this.shareHolderCustCIF.setValue(aCustomer.getCustCIF().trim());
@@ -1853,14 +1873,14 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 			if (PennantConstants.PFF_CUSTCTG_CORP.equals(aCustomer.getCustCtgCode())
 					|| PennantConstants.PFF_CUSTCTG_SME.equals(aCustomer.getCustCtgCode())) {
 				this.shortName.setValue(aCustomer.getCustShrtName());
-				this.nationality.setValueColumn(aCustomer.getCustNationality());
-				this.nationality.setDescColumn(aCustomer.getLovDescCustNationalityName());
+				this.nationality.setValue(aCustomer.getCustNationality());
+				this.nationality.setDescription(aCustomer.getLovDescCustNationalityName());
 				this.dob.setValue(aCustomer.getCustDOB());
 			} else if (PennantConstants.PFF_CUSTCTG_INDIV.equals(aCustomer.getCustCtgCode())) {
 				this.firstName.setValue(aCustomer.getCustFName());
 				this.lastName.setValue(aCustomer.getCustLName());
-				this.nationality.setValueColumn(aCustomer.getCustNationality());
-				this.nationality.setDescColumn(aCustomer.getLovDescCustNationalityName());
+				this.nationality.setValue(aCustomer.getCustNationality());
+				this.nationality.setDescription(aCustomer.getLovDescCustNationalityName());
 				this.dob.setValue(aCustomer.getCustDOB());
 			}
 		}

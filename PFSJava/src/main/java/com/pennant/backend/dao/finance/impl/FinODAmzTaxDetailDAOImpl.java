@@ -46,21 +46,22 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.OverdueTaxMovement;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> implements FinODAmzTaxDetailDAO {
-	private static Logger logger = Logger.getLogger(FinODAmzTaxDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinODAmzTaxDetailDAOImpl.class);
 
 	public FinODAmzTaxDetailDAOImpl() {
 		super();
@@ -89,88 +90,120 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 	 * 
 	 */
 	@Override
-	public long save(FinODAmzTaxDetail finODAmzTaxDetail) {
-		logger.debug("Entering");
-
-		if (finODAmzTaxDetail.getTaxSeqId() == Long.MIN_VALUE || finODAmzTaxDetail.getTaxSeqId() == 0) {
-			finODAmzTaxDetail.setTaxSeqId(getNextValue("SeqFinODAmzTaxDetail"));
-			logger.debug("get NextID:" + finODAmzTaxDetail.getTaxSeqId());
+	public long save(FinODAmzTaxDetail oatd) {
+		if (oatd.getTaxSeqId() == Long.MIN_VALUE || oatd.getTaxSeqId() == 0) {
+			oatd.setTaxSeqId(getNextValue("SeqFinODAmzTaxDetail"));
 		}
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into FinODAmzTaxDetail");
-		insertSql.append(
-				" (TaxSeqId , FinReference, ValueDate , PostDate, TaxFor, Amount, TaxType , CGST , SGST , UGST , IGST , TotalGST, PaidAmount, WaivedAmount, InvoiceID)");
-		insertSql.append(
-				" Values( :TaxSeqId , :FinReference, :ValueDate , :PostDate, :TaxFor, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :TotalGST, :PaidAmount, :WaivedAmount, :InvoiceID)");
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Insert Into FinODAmzTaxDetail(");
+		sql.append("TaxSeqId, FinReference, ValueDate, PostDate, TaxFor, Amount, TaxType");
+		sql.append(", CGST, SGST, UGST, IGST, TotalGST, PaidAmount, WaivedAmount, InvoiceID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return finODAmzTaxDetail.getTaxSeqId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, oatd.getTaxSeqId());
+			ps.setString(index++, oatd.getFinReference());
+			ps.setDate(index++, JdbcUtil.getDate(oatd.getValueDate()));
+			ps.setDate(index++, JdbcUtil.getDate(oatd.getPostDate()));
+			ps.setString(index++, oatd.getTaxFor());
+			ps.setBigDecimal(index++, oatd.getAmount());
+			ps.setString(index++, oatd.getTaxType());
+			ps.setBigDecimal(index++, oatd.getCGST());
+			ps.setBigDecimal(index++, oatd.getSGST());
+			ps.setBigDecimal(index++, oatd.getUGST());
+			ps.setBigDecimal(index++, oatd.getIGST());
+			ps.setBigDecimal(index++, oatd.getTotalGST());
+			ps.setBigDecimal(index++, oatd.getPaidAmount());
+			ps.setBigDecimal(index++, oatd.getWaivedAmount());
+			ps.setLong(index, JdbcUtil.getLong(oatd.getInvoiceID()));
+		});
+
+		return oatd.getTaxSeqId();
 	}
 
 	@Override
-	public void saveTaxReceivable(FinTaxReceivable finTaxReceivable) {
-		logger.debug(Literal.ENTERING);
+	public void saveTaxReceivable(FinTaxReceivable tr) {
+		StringBuilder sql = new StringBuilder();
 
-		StringBuilder insertSql = new StringBuilder();
+		sql.append("INSERT INTO FinTaxReceivable");
+		sql.append(" (FinReference, TaxFor, ReceivableAmount, CGST, IGST, UGST, SGST, CESS)");
+		sql.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?) ");
 
-		insertSql.append(" INSERT INTO FinTaxReceivable");
-		insertSql.append(" (FinReference, TaxFor, ReceivableAmount, CGST, IGST, UGST, SGST, CESS ) ");
-		insertSql.append(" VALUES (:FinReference, :TaxFor, :ReceivableAmount, :CGST, :IGST, :UGST, :SGST, :CESS) ");
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTaxReceivable);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, tr.getFinReference());
+			ps.setString(index++, tr.getTaxFor());
+			ps.setBigDecimal(index++, tr.getReceivableAmount());
+			ps.setBigDecimal(index++, tr.getCGST());
+			ps.setBigDecimal(index++, tr.getIGST());
+			ps.setBigDecimal(index++, tr.getUGST());
+			ps.setBigDecimal(index++, tr.getSGST());
+			ps.setBigDecimal(index, tr.getCESS());
+
+		});
 	}
 
 	@Override
 	public FinTaxReceivable getFinTaxReceivable(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, TaxFor, ReceivableAmount, CGST, IGST, UGST, SGST, CESS");
+		sql.append(" from FinTaxReceivable");
+		sql.append(" WHERE  FinReference = ? and TaxFor= ?");
 
-		FinTaxReceivable taxReceivable = new FinTaxReceivable();
-		taxReceivable.setFinReference(finReference);
-		taxReceivable.setTaxFor(type);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference, TaxFor, ReceivableAmount, CGST, IGST, UGST, SGST, CESS ");
-		selectSql.append(" FROM FinTaxReceivable");
-		selectSql.append(" WHERE  FinReference = :FinReference AND TaxFor=:TaxFor ");
-
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxReceivable);
-		RowMapper<FinTaxReceivable> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTaxReceivable.class);
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			taxReceivable = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, type },
+					(rs, rowNum) -> {
+						FinTaxReceivable tr = new FinTaxReceivable();
+
+						tr.setFinReference(rs.getString("FinReference"));
+						tr.setTaxFor(rs.getString("TaxFor"));
+						tr.setReceivableAmount(rs.getBigDecimal("ReceivableAmount"));
+						tr.setCGST(rs.getBigDecimal("CGST"));
+						tr.setIGST(rs.getBigDecimal("IGST"));
+						tr.setUGST(rs.getBigDecimal("UGST"));
+						tr.setSGST(rs.getBigDecimal("SGST"));
+						tr.setCESS(rs.getBigDecimal("CESS"));
+
+						return tr;
+					});
 		} catch (EmptyResultDataAccessException e) {
-			taxReceivable = null;
+			logger.warn("Record not found in FinTaxReceivable table for the specified FinReference >> {} and tyoe{}",
+					finReference, type, finReference);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return taxReceivable;
+		return null;
 	}
 
 	@Override
-	public void updateTaxReceivable(FinTaxReceivable taxReceivable) {
-		logger.debug(Literal.ENTERING);
+	public void updateTaxReceivable(FinTaxReceivable tr) {
+		StringBuilder sql = new StringBuilder("Update FinTaxReceivable");
+		sql.append(" Set ReceivableAmount = ?, CGST = ?, IGST = ?, UGST = ?, SGST = ?, CESS = ? ");
+		sql.append(" Where FinReference = ? and TaxFor= ?");
 
-		StringBuilder updateSql = new StringBuilder("Update FinTaxReceivable");
-		updateSql.append(
-				" Set ReceivableAmount = :ReceivableAmount, CGST = :CGST, IGST = :IGST, UGST = :UGST, SGST = :SGST, CESS = :CESS ");
-		updateSql.append(" Where FinReference =:FinReference AND TaxFor=:TaxFor ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxReceivable);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+			ps.setBigDecimal(index++, tr.getReceivableAmount());
+			ps.setBigDecimal(index++, tr.getCGST());
+			ps.setBigDecimal(index++, tr.getIGST());
+			ps.setBigDecimal(index++, tr.getUGST());
+			ps.setBigDecimal(index++, tr.getSGST());
+			ps.setBigDecimal(index++, tr.getCESS());
+			ps.setString(index++, tr.getFinReference());
+			ps.setString(index, tr.getTaxFor());
 
-		logger.debug(Literal.LEAVING);
+		});
 	}
 
 	@Override
@@ -204,8 +237,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxIncomeDetail);
-		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTaxIncomeDetail.class);
+		RowMapper<FinTaxIncomeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTaxIncomeDetail.class);
 
 		try {
 			taxIncomeDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -219,26 +251,17 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 	@Override
 	public boolean isDueCreatedForDate(String finReference, Date valueDate, String taxFor) {
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("ValueDate", valueDate);
-		source.addValue("TaxFor", taxFor);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Count(*)");
+		sql.append(" From FinODAmzTaxDetail");
+		sql.append(" Where FinReference = ? and ValueDate= ? and TaxFor = ?");
 
-		StringBuilder selectSql = new StringBuilder(" Select COUNT(*)  From FinODAmzTaxDetail");
-		selectSql.append(" Where FinReference = :FinReference AND ValueDate= :ValueDate AND TaxFor = :TaxFor ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + selectSql.toString());
-
-		int recordCount = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			Object[] object = new Object[] { finReference, JdbcUtil.getDate(valueDate), taxFor };
+			return this.jdbcOperations.queryForObject(sql.toString(), object, Integer.class) > 0 ? true : false;
 		} catch (EmptyResultDataAccessException e) {
-			recordCount = 0;
-		}
-
-		if (recordCount > 0) {
-			return true;
-		} else {
 			return false;
 		}
 	}
@@ -259,8 +282,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
-		RowMapper<FinODAmzTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinODAmzTaxDetail.class);
+		RowMapper<FinODAmzTaxDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODAmzTaxDetail.class);
 
 		try {
 			finODAmzTaxDetailList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -290,8 +312,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
-		RowMapper<FinODAmzTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinODAmzTaxDetail.class);
+		RowMapper<FinODAmzTaxDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODAmzTaxDetail.class);
 
 		try {
 			finODAmzTaxDetailList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -323,8 +344,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxIncomeDetail);
-		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTaxIncomeDetail.class);
+		RowMapper<FinTaxIncomeDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTaxIncomeDetail.class);
 
 		List<FinTaxIncomeDetail> incomeList = null;
 		try {

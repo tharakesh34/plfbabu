@@ -9,14 +9,15 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.model.finance.AuditTransaction;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail> implements ApprovalStatusEnquiryDAO {
-	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(ApprovalStatusEnquiryDAOImpl.class);
 
 	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
@@ -60,8 +61,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerFinanceDetail);
-		RowMapper<CustomerFinanceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerFinanceDetail.class);
+		RowMapper<CustomerFinanceDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerFinanceDetail.class);
 
 		try {
 			customerFinanceDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -111,8 +111,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		customerFinanceDetail.setRecordStatus("Saved");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerFinanceDetail);
-		RowMapper<AuditTransaction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AuditTransaction.class);
+		RowMapper<AuditTransaction> typeRowMapper = BeanPropertyRowMapper.newInstance(AuditTransaction.class);
 		logger.debug(Literal.LEAVING);
 
 		return this.auditJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
@@ -187,6 +186,28 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public List<AuditTransaction> getFinTransactions(String id) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy, RecordStatus, ");
+		sql.append(" RecordType, UsrName from FinStsAprvlInquiry_View ");
+		sql.append(" Where AuditReference =:FinReference  ");
+		sql.append(" Order by AuditDate ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		CustomerFinanceDetail customerFinanceDetail = new CustomerFinanceDetail();
+		customerFinanceDetail.setFinReference(id);
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerFinanceDetail);
+		RowMapper<AuditTransaction> typeRowMapper = BeanPropertyRowMapper.newInstance(AuditTransaction.class);
+		logger.debug(Literal.LEAVING);
+
+		return this.auditJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	public void setAuditDataSource(DataSource auditDataSource) {

@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -78,7 +79,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinanceApplicationCodeDialogCtrl extends GFCBaseCtrl<FinanceApplicationCode> {
 	private static final long serialVersionUID = -2489293301745014852L;
-	private static final Logger logger = Logger.getLogger(FinanceApplicationCodeDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceApplicationCodeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

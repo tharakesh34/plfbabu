@@ -3,20 +3,22 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements FinStatusDetailDAO {
-	private static Logger logger = Logger.getLogger(FinStatusDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinStatusDetailDAOImpl.class);
 
 	public FinStatusDetailDAOImpl() {
 		super();
@@ -24,36 +26,44 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 
 	@Override
 	public void save(FinStatusDetail finStatusDetail) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" FinStatusDetail");
+		sql.append("(FinReference, ValueDate, CustId, FinStatus, ODDays");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?");
+		sql.append(")");
 
-		StringBuilder insertSql = new StringBuilder(" Insert Into FinStatusDetail ");
-		insertSql.append(" (FinReference, ValueDate, CustId, FinStatus, ODDays ) values");
-		insertSql.append(" (:FinReference, :ValueDate, :CustId, :FinStatus, :ODDays)");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
 		try {
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
+				ps.setString(index++, finStatusDetail.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(finStatusDetail.getValueDate()));
+				ps.setLong(index++, finStatusDetail.getCustId());
+				ps.setString(index++, finStatusDetail.getFinStatus());
+				ps.setInt(index++, finStatusDetail.getODDays());
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
 	}
 
 	@Override
 	public void saveOrUpdateFinStatus(FinStatusDetail finStatusDetail) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("DELETE FROM  FinStatusDetail");
+		sql.append(" Where FinReference = ? AND ValueDate = ?");
 
-		StringBuilder selectSql = new StringBuilder("DELETE FROM  FinStatusDetail");
-		selectSql.append(" Where FinReference =:FinReference AND ValueDate=:ValueDate");
+		logger.trace(Literal.SQL + sql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, finStatusDetail.getFinReference());
+			ps.setDate(2, JdbcUtil.getDate(finStatusDetail.getValueDate()));
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
+		});
 
 		save(finStatusDetail);
-
-		logger.debug("Leaving");
 	}
 
 	public int update(FinStatusDetail finStatusDetail) {
@@ -81,8 +91,7 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinStatusDetail.class);
+		RowMapper<FinStatusDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinStatusDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -114,8 +123,7 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
 
-		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinStatusDetail.class);
+		RowMapper<FinStatusDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinStatusDetail.class);
 		logger.debug(Literal.LEAVING);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);

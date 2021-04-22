@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -43,8 +43,9 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 				" principaloutstanding, overdueamount, finstatus, foir, source, checkedby, securitydetails, loanpurpose, repaybank, otherFinInstitute,");
 		sql.append(" imputedEmi, ownerShip, lastTwentyFourMonths, lastSixMonths, lastThreeMonths, currentOverDue,");
 		sql.append(" version, lastmntby, lastmnton, recordstatus,");
-		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)");
-
+		sql.append(" rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid,");
+		sql.append(
+				" repayFromAccNo, remarks, noOfBouncesInSixMonths, noOfBouncesInTwelveMonths, consideredBasedOnRTR, mob)");
 		sql.append(" values(:Id, :LinkId, :SeqNo, :FinType, :finDate, :loanBank, :rateOfInterest,");
 		sql.append(
 				" :tenure, :originalAmount, :instalmentAmount, :outstandingBalance, :balanceTenure, :bounceInstalments,");
@@ -54,7 +55,9 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 				" :imputedEmi, :ownerShip, :lastTwentyFourMonths, :lastSixMonths, :lastThreeMonths, :currentOverDue,");
 		sql.append(" :version, :lastMntBy, :lastMntOn, :recordStatus,");
 		sql.append(" :roleCode, :nextRoleCode,");
-		sql.append(" :taskId, :nextTaskId, :recordType, :workflowId");
+		sql.append(" :taskId, :nextTaskId, :recordType, :workflowId,");
+		sql.append(
+				" :repayFromAccNo, :remarks, :noOfBouncesInSixMonths, :noOfBouncesInTwelveMonths, :consideredBasedOnRTR, :mob");
 		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -79,10 +82,14 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 		sql.append(" balancetenure=:balanceTenure, bounceinstalments=:bounceInstalments,");
 		sql.append(" principaloutstanding=:principalOutstanding, overdueamount=:overdueAmount, finstatus=:finStatus,");
 		sql.append(" foir=:foir, source=:source, checkedby=:checkedBy, securitydetails=:securityDetails,");
-		sql.append(" loanpurpose=:loanPurpose, repaybank=:repayBank, otherFinInstitute=:otherFinInstitute,");
+		sql.append(" loanpurpose=:loanPurpose, repaybank=:repayBank, repayFromAccNo=:repayFromAccNo,");
 		sql.append(" imputedEmi=:imputedEmi, ownerShip=:ownerShip, lastTwentyFourMonths=:lastTwentyFourMonths,");
-		sql.append(" lastSixMonths=:lastSixMonths, lastThreeMonths=:lastThreeMonths, currentOverDue=:currentOverDue,");
-		sql.append(" version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
+		sql.append(" otherFinInstitute=:otherFinInstitute,lastSixMonths=:lastSixMonths,");
+		sql.append(" lastThreeMonths=:lastThreeMonths,currentOverDue=:currentOverDue,remarks=:remarks,");
+		sql.append(" noOfBouncesInSixMonths=:noOfBouncesInSixMonths");
+		sql.append(",noOfBouncesInTwelveMonths=:noOfBouncesInTwelveMonths,");
+		sql.append(" consideredBasedOnRTR=:consideredBasedOnRTR, mob=:mob,");
+		sql.append("version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
 		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
 		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");
 		sql.append(" where id = :Id ");
@@ -159,8 +166,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("custid", custId);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -256,8 +262,7 @@ public class ExternalLiabilityDAOImpl extends SequenceDao<CustomerExtLiability> 
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("linkid", linkId);
-		RowMapper<CustomerExtLiability> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerExtLiability.class);
+		RowMapper<CustomerExtLiability> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerExtLiability.class);
 
 		logger.debug(Literal.LEAVING);
 

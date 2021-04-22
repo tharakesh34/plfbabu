@@ -49,16 +49,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceCheckList;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> implements RisksAndMitigantsDAO {
-	private static Logger logger = Logger.getLogger(RisksAndMitigantsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RisksAndMitigantsDAOImpl.class);
 
 	public RisksAndMitigantsDAOImpl() {
 		super();
@@ -154,8 +155,7 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dueDiligenceDetail);
-		RowMapper<DueDiligenceCheckList> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DueDiligenceCheckList.class);
+		RowMapper<DueDiligenceCheckList> typeRowMapper = BeanPropertyRowMapper.newInstance(DueDiligenceCheckList.class);
 
 		List<DueDiligenceCheckList> dueDiligenceDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -282,8 +282,7 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 		InterfaceLogDetail interfaceLogDetail = new InterfaceLogDetail();
 		interfaceLogDetail.setReference(reference);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
-		RowMapper<InterfaceLogDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InterfaceLogDetail.class);
+		RowMapper<InterfaceLogDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(InterfaceLogDetail.class);
 
 		List<InterfaceLogDetail> interfaceLogDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);

@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +91,7 @@ public class AgreementDetail {
 	private String custName = ""; // Full Name or Short Name
 
 	/** Provides current Customer Mothers Name. */
-	private String custLocalLngName = ""; // Customer Arabic Name
+	private String custArabicName = ""; // Customer Arabic Name
 
 	/** Provides current Customer Passport Number. */
 	private String custPassport = ""; // Customer Passport Number
@@ -115,6 +116,14 @@ public class AgreementDetail {
 
 	/** Provides current Customer Age. */
 	private String custAge = ""; // Customer Age based On Date Of Birth
+
+	/** Provides current Customer Age. */
+	private String custAgeAtMaturity = ""; // Customer Age at loan maturity date
+
+	/** Provides Customer NRI or not (Y/N). */
+	private String custIsNRI = "";
+
+	private String entityTypeVal = "";
 
 	/** Provides current CustomerProfession. */
 	private String custEmpProf = ""; // Profession
@@ -192,6 +201,7 @@ public class AgreementDetail {
 	 * Provides Customer Pan Number.
 	 */
 	private String panNumber = "";
+	private String custDocPanNumber = "";
 
 	private String custEmpStsCode = ""; // Customer Employee Status Code
 
@@ -251,17 +261,27 @@ public class AgreementDetail {
 	 * Provides Customer Gender.
 	 */
 	private String otherBankName;
+	/**
+	 * Provides Customer Qualification.
+	 */
+	private String custQuallification = ""; //  customer Gender
+	private String accountsOfficer = ""; //  customer Gender
 
 	private String otherBankAmt;
 
 	private String custContribution;
 	private String custConInWords;
 
+	//Customer subcategory
+	private String custSubCategory = "";
+
+	private String ltvPerc = "";
+
 	/**
 	 * Provides current/ co-applicant Customer Name.
 	 */
 	private String liabilityHoldName;
-
+	private String initialCreditCompletedDate = "";
 	private String sellerContribution;
 	private String sellerContInWords;
 	private String otherBankAmtInWords;
@@ -351,9 +371,35 @@ public class AgreementDetail {
 	private String primaryCoApplicant = "";
 
 	/**
+	 * Provides name of the borrowers along with salutation
+	 */
+	private String nameofBorrowers = "";
+
+	/**
 	 * Provides Primary Guarantor
 	 */
 	private String primaryGuarantor = "";
+	private String dsaName = "";
+	private String salesManager = "";
+	private String asmName = "";
+	private BigDecimal baseRate = BigDecimal.ZERO;
+	private String deviationCount = "0.00";
+
+	public BigDecimal getBaseRate() {
+		return baseRate;
+	}
+
+	public void setBaseRate(BigDecimal baseRate) {
+		this.baseRate = baseRate;
+	}
+
+	public String getDeviationCount() {
+		return deviationCount;
+	}
+
+	public void setDeviationCount(String deviationCount) {
+		this.deviationCount = deviationCount;
+	}
 
 	List<DueDiligenceDetails> dueDiligenceDetails;
 	List<RecommendationNotes> recommendationNotes;
@@ -601,12 +647,12 @@ public class AgreementDetail {
 		this.custAddrPhone = custAddrPhone;
 	}
 
-	public String getLovDescCustAddrZIP() {
-		return lovDescCustAddrZIP;
+	public String getAccountsOfficer() {
+		return accountsOfficer;
 	}
 
-	public void setLovDescCustAddrZIP(String lovDescCustAddrZIP) {
-		this.lovDescCustAddrZIP = lovDescCustAddrZIP;
+	public void setAccountsOfficer(String accountsOfficer) {
+		this.accountsOfficer = accountsOfficer;
 	}
 
 	/**
@@ -634,6 +680,35 @@ public class AgreementDetail {
 	public void setCustAddrSubDistrict(String custAddrSubDistrict) {
 		this.custAddrSubDistrict = custAddrSubDistrict;
 	}
+
+	public String getDsaName() {
+		return dsaName;
+	}
+
+	public void setDsaName(String dsaName) {
+		this.dsaName = dsaName;
+	}
+
+	public String getSalesManager() {
+		return salesManager;
+	}
+
+	public void setSalesManager(String salesManager) {
+		this.salesManager = salesManager;
+	}
+
+	public String getAsmName() {
+		return asmName;
+	}
+
+	public void setAsmName(String asmName) {
+		this.asmName = asmName;
+	}
+
+	/**
+	 * Provides current customers address type.
+	 */
+	private String custAddrType = "";
 
 	/**
 	 * Provides current customers House Number.
@@ -705,286 +780,37 @@ public class AgreementDetail {
 	 */
 	private String custAddrPhone = "";
 
-	/**
-	 * Provides current customers AreaNmae.
-	 */
-	private String lovDescCustAddrZIP = "";
-
-	public String getCustRegAddrHNbr() {
-		return custRegAddrHNbr;
-	}
-
-	public void setCustRegAddrHNbr(String custRegAddrHNbr) {
-		this.custRegAddrHNbr = custRegAddrHNbr;
-	}
-
-	public String getCustRegFlatNbr() {
-		return custRegFlatNbr;
-	}
-
-	public void setCustRegFlatNbr(String custRegFlatNbr) {
-		this.custRegFlatNbr = custRegFlatNbr;
-	}
-
-	public String getCustRegAddrStreet() {
-		return custRegAddrStreet;
-	}
-
-	public void setCustRegAddrStreet(String custRegAddrStreet) {
-		this.custRegAddrStreet = custRegAddrStreet;
-	}
-
-	public String getCustRegAddrLine1() {
-		return custRegAddrLine1;
-	}
-
-	public void setCustRegAddrLine1(String custRegAddrLine1) {
-		this.custRegAddrLine1 = custRegAddrLine1;
-	}
-
-	public String getCustRegAddrLine2() {
-		return custRegAddrLine2;
-	}
-
-	public void setCustRegAddrLine2(String custRegAddrLine2) {
-		this.custRegAddrLine2 = custRegAddrLine2;
-	}
-
-	public String getCustRegPOBox() {
-		return custRegPOBox;
-	}
-
-	public void setCustRegPOBox(String custRegPOBox) {
-		this.custRegPOBox = custRegPOBox;
-	}
-
-	public String getCustRegAddrCountry() {
-		return custRegAddrCountry;
-	}
-
-	public void setCustRegAddrCountry(String custRegAddrCountry) {
-		this.custRegAddrCountry = custRegAddrCountry;
-	}
-
-	public String getLovDescCustRegAddrCountryName() {
-		return lovDescCustRegAddrCountryName;
-	}
-
-	public void setLovDescCustRegAddrCountryName(String lovDescCustRegAddrCountryName) {
-		this.lovDescCustRegAddrCountryName = lovDescCustRegAddrCountryName;
-	}
-
-	public String getCustRegAddrProvince() {
-		return custRegAddrProvince;
-	}
-
-	public void setCustRegAddrProvince(String custRegAddrProvince) {
-		this.custRegAddrProvince = custRegAddrProvince;
-	}
-
-	public String getLovDescCustRegAddrProvinceName() {
-		return lovDescCustRegAddrProvinceName;
-	}
-
-	public void setLovDescCustRegAddrProvinceName(String lovDescCustRegAddrProvinceName) {
-		this.lovDescCustRegAddrProvinceName = lovDescCustRegAddrProvinceName;
-	}
-
-	public String getCustRegAddrCity() {
-		return custRegAddrCity;
-	}
-
-	public void setCustRegAddrCity(String custRegAddrCity) {
-		this.custRegAddrCity = custRegAddrCity;
-	}
-
-	public String getLovDescCustRegAddrCityName() {
-		return lovDescCustRegAddrCityName;
-	}
-
-	public void setLovDescCustRegAddrCityName(String lovDescCustRegAddrCityName) {
-		this.lovDescCustRegAddrCityName = lovDescCustRegAddrCityName;
-	}
-
-	public String getCustRegAddrZIP() {
-		return custRegAddrZIP;
-	}
-
-	public void setCustRegAddrZIP(String custRegAddrZIP) {
-		this.custRegAddrZIP = custRegAddrZIP;
-	}
-
-	public String getCustRegAddrPhone() {
-		return custRegAddrPhone;
-	}
-
-	public void setCustRegAddrPhone(String custRegAddrPhone) {
-		this.custRegAddrPhone = custRegAddrPhone;
-	}
+	private String custPerAddrHNbr = "";
+	private String custPerFlatNbr = "";
+	private String custPerPOBox = "";
+	private String custPerAddrStreet = "";
+	private String custPerAddrLine1 = "";
+	private String custPerAddrLine2 = "";
+	private String custPerAddrCountry = "";
+	private String custPerAddrProvince = "";
+	private String custPerAddrCity = "";
+	private String custPerAddrZIP = "";
 
 	// PERMANENT ADDRESS Details && REGISTERED ADDRESS Details Setting Purpose Added
 	private String custRegAddrHNbr = "";
 	private String custRegFlatNbr = "";
-	private String custRegAddrStreet = "";
-	private String custRegAddrLine1 = "";
-	private String custRegAddrLine2 = "";
 	private String custRegPOBox = "";
+	private String custRegAddrStreet = "";
 	private String custRegAddrCountry = "";
-	private String lovDescCustRegAddrCountryName = "";
 	private String custRegAddrProvince = "";
-	private String lovDescCustRegAddrProvinceName = "";
 	private String custRegAddrCity = "";
-	private String lovDescCustRegAddrCityName = "";
 	private String custRegAddrZIP = "";
-	private String custRegAddrPhone = "";
-	private String lovDescCustRegAddrZIP = "";
-
-	private String custPerAddrHNbr = "";
-	private String custPerFlatNbr = "";
-	private String custPerAddrStreet = "";
-	private String custPerAddrLine1 = "";
-	private String custPerAddrLine2 = "";
-	private String custPerPOBox = "";
-	private String custPerAddrCountry = "";
-	private String lovDescCustPerAddrCountryName = "";
-	private String custPerAddrProvince = "";
-	private String lovDescCustPerAddrProvinceName = "";
-	private String custPerAddrCity = "";
-	private String lovDescCustPerAddrCityName = "";
-	private String custPerAddrZIP = "";
-	private String custPerAddrPhone = "";
-	private String lovDescCustPerAddrZIP = "";
 
 	// OFFICE ADDRESS Details Setting Added for the Requirement of PL_CAM
 	private String custOfcAddrHNbr = "";
 	private String custOfcFlatNbr = "";
 	private String custOfcAddrStreet = "";
-	private String custOfcAddrLine1 = "";
-	private String custOfcAddrLine2 = "";
 	private String custOfcPOBox = "";
 	private String custOfcAddrCountry = "";
-	private String lovDescCustOfcAddrCountryName = "";
 	private String custOfcAddrProvince = "";
-	private String lovDescCustOfcAddrProvinceName = "";
 	private String custOfcAddrCity = "";
-	private String lovDescCustOfcAddrCityName = "";
 	private String custOfcAddrZIP = "";
 	private String custOfcAddrPhone = "";
-	private String lovDescCustOfcAddrZIP = "";
-
-	// ========== Arabic Fields Details ==========//
-
-	public String getCustOfcAddrHNbr() {
-		return custOfcAddrHNbr;
-	}
-
-	public void setCustOfcAddrHNbr(String custOfcAddrHNbr) {
-		this.custOfcAddrHNbr = custOfcAddrHNbr;
-	}
-
-	public String getCustOfcFlatNbr() {
-		return custOfcFlatNbr;
-	}
-
-	public void setCustOfcFlatNbr(String custOfcFlatNbr) {
-		this.custOfcFlatNbr = custOfcFlatNbr;
-	}
-
-	public String getCustOfcAddrStreet() {
-		return custOfcAddrStreet;
-	}
-
-	public void setCustOfcAddrStreet(String custOfcAddrStreet) {
-		this.custOfcAddrStreet = custOfcAddrStreet;
-	}
-
-	public String getCustOfcAddrLine1() {
-		return custOfcAddrLine1;
-	}
-
-	public void setCustOfcAddrLine1(String custOfcAddrLine1) {
-		this.custOfcAddrLine1 = custOfcAddrLine1;
-	}
-
-	public String getCustOfcAddrLine2() {
-		return custOfcAddrLine2;
-	}
-
-	public void setCustOfcAddrLine2(String custOfcAddrLine2) {
-		this.custOfcAddrLine2 = custOfcAddrLine2;
-	}
-
-	public String getCustOfcPOBox() {
-		return custOfcPOBox;
-	}
-
-	public void setCustOfcPOBox(String custOfcPOBox) {
-		this.custOfcPOBox = custOfcPOBox;
-	}
-
-	public String getCustOfcAddrCountry() {
-		return custOfcAddrCountry;
-	}
-
-	public void setCustOfcAddrCountry(String custOfcAddrCountry) {
-		this.custOfcAddrCountry = custOfcAddrCountry;
-	}
-
-	public String getLovDescCustOfcAddrCountryName() {
-		return lovDescCustOfcAddrCountryName;
-	}
-
-	public void setLovDescCustOfcAddrCountryName(String lovDescCustOfcAddrCountryName) {
-		this.lovDescCustOfcAddrCountryName = lovDescCustOfcAddrCountryName;
-	}
-
-	public String getCustOfcAddrProvince() {
-		return custOfcAddrProvince;
-	}
-
-	public void setCustOfcAddrProvince(String custOfcAddrProvince) {
-		this.custOfcAddrProvince = custOfcAddrProvince;
-	}
-
-	public String getLovDescCustOfcAddrProvinceName() {
-		return lovDescCustOfcAddrProvinceName;
-	}
-
-	public void setLovDescCustOfcAddrProvinceName(String lovDescCustOfcAddrProvinceName) {
-		this.lovDescCustOfcAddrProvinceName = lovDescCustOfcAddrProvinceName;
-	}
-
-	public String getCustOfcAddrCity() {
-		return custOfcAddrCity;
-	}
-
-	public void setCustOfcAddrCity(String custOfcAddrCity) {
-		this.custOfcAddrCity = custOfcAddrCity;
-	}
-
-	public String getLovDescCustOfcAddrCityName() {
-		return lovDescCustOfcAddrCityName;
-	}
-
-	public void setLovDescCustOfcAddrCityName(String lovDescCustOfcAddrCityName) {
-		this.lovDescCustOfcAddrCityName = lovDescCustOfcAddrCityName;
-	}
-
-	public String getCustOfcAddrZIP() {
-		return custOfcAddrZIP;
-	}
-
-	public void setCustOfcAddrZIP(String custOfcAddrZIP) {
-		this.custOfcAddrZIP = custOfcAddrZIP;
-	}
-
-	public String getCustOfcAddrPhone() {
-		return custOfcAddrPhone;
-	}
-
-	public void setCustOfcAddrPhone(String custOfcAddrPhone) {
-		this.custOfcAddrPhone = custOfcAddrPhone;
-	}
 
 	public String getCustPerAddrHNbr() {
 		return custPerAddrHNbr;
@@ -1000,6 +826,14 @@ public class AgreementDetail {
 
 	public void setCustPerFlatNbr(String custPerFlatNbr) {
 		this.custPerFlatNbr = custPerFlatNbr;
+	}
+
+	public String getCustPerPOBox() {
+		return custPerPOBox;
+	}
+
+	public void setCustPerPOBox(String custPerPOBox) {
+		this.custPerPOBox = custPerPOBox;
 	}
 
 	public String getCustPerAddrStreet() {
@@ -1026,28 +860,12 @@ public class AgreementDetail {
 		this.custPerAddrLine2 = custPerAddrLine2;
 	}
 
-	public String getCustPerPOBox() {
-		return custPerPOBox;
-	}
-
-	public void setCustPerPOBox(String custPerPOBox) {
-		this.custPerPOBox = custPerPOBox;
-	}
-
 	public String getCustPerAddrCountry() {
 		return custPerAddrCountry;
 	}
 
 	public void setCustPerAddrCountry(String custPerAddrCountry) {
 		this.custPerAddrCountry = custPerAddrCountry;
-	}
-
-	public String getLovDescCustPerAddrCountryName() {
-		return lovDescCustPerAddrCountryName;
-	}
-
-	public void setLovDescCustPerAddrCountryName(String lovDescCustPerAddrCountryName) {
-		this.lovDescCustPerAddrCountryName = lovDescCustPerAddrCountryName;
 	}
 
 	public String getCustPerAddrProvince() {
@@ -1058,28 +876,12 @@ public class AgreementDetail {
 		this.custPerAddrProvince = custPerAddrProvince;
 	}
 
-	public String getLovDescCustPerAddrProvinceName() {
-		return lovDescCustPerAddrProvinceName;
-	}
-
-	public void setLovDescCustPerAddrProvinceName(String lovDescCustPerAddrProvinceName) {
-		this.lovDescCustPerAddrProvinceName = lovDescCustPerAddrProvinceName;
-	}
-
 	public String getCustPerAddrCity() {
 		return custPerAddrCity;
 	}
 
 	public void setCustPerAddrCity(String custPerAddrCity) {
 		this.custPerAddrCity = custPerAddrCity;
-	}
-
-	public String getLovDescCustPerAddrCityName() {
-		return lovDescCustPerAddrCityName;
-	}
-
-	public void setLovDescCustPerAddrCityName(String lovDescCustPerAddrCityName) {
-		this.lovDescCustPerAddrCityName = lovDescCustPerAddrCityName;
 	}
 
 	public String getCustPerAddrZIP() {
@@ -1090,36 +892,142 @@ public class AgreementDetail {
 		this.custPerAddrZIP = custPerAddrZIP;
 	}
 
-	public String getCustPerAddrPhone() {
-		return custPerAddrPhone;
+	// ========== Arabic Fields Details ==========//
+
+	public String getCustRegAddrHNbr() {
+		return custRegAddrHNbr;
 	}
 
-	public void setCustPerAddrPhone(String custPerAddrPhone) {
-		this.custPerAddrPhone = custPerAddrPhone;
+	public void setCustRegAddrHNbr(String custRegAddrHNbr) {
+		this.custRegAddrHNbr = custRegAddrHNbr;
 	}
 
-	public String getLovDescCustRegAddrZIP() {
-		return lovDescCustRegAddrZIP;
+	public String getCustRegFlatNbr() {
+		return custRegFlatNbr;
 	}
 
-	public void setLovDescCustRegAddrZIP(String lovDescCustRegAddrZIP) {
-		this.lovDescCustRegAddrZIP = lovDescCustRegAddrZIP;
+	public void setCustRegFlatNbr(String custRegFlatNbr) {
+		this.custRegFlatNbr = custRegFlatNbr;
 	}
 
-	public String getLovDescCustPerAddrZIP() {
-		return lovDescCustPerAddrZIP;
+	public String getCustRegPOBox() {
+		return custRegPOBox;
 	}
 
-	public void setLovDescCustPerAddrZIP(String lovDescCustPerAddrZIP) {
-		this.lovDescCustPerAddrZIP = lovDescCustPerAddrZIP;
+	public void setCustRegPOBox(String custRegPOBox) {
+		this.custRegPOBox = custRegPOBox;
 	}
 
-	public String getLovDescCustOfcAddrZIP() {
-		return lovDescCustOfcAddrZIP;
+	public String getCustRegAddrStreet() {
+		return custRegAddrStreet;
 	}
 
-	public void setLovDescCustOfcAddrZIP(String lovDescCustOfcAddrZIP) {
-		this.lovDescCustOfcAddrZIP = lovDescCustOfcAddrZIP;
+	public void setCustRegAddrStreet(String custRegAddrStreet) {
+		this.custRegAddrStreet = custRegAddrStreet;
+	}
+
+	public String getCustRegAddrCountry() {
+		return custRegAddrCountry;
+	}
+
+	public void setCustRegAddrCountry(String custRegAddrCountry) {
+		this.custRegAddrCountry = custRegAddrCountry;
+	}
+
+	public String getCustRegAddrProvince() {
+		return custRegAddrProvince;
+	}
+
+	public void setCustRegAddrProvince(String custRegAddrProvince) {
+		this.custRegAddrProvince = custRegAddrProvince;
+	}
+
+	public String getCustRegAddrCity() {
+		return custRegAddrCity;
+	}
+
+	public void setCustRegAddrCity(String custRegAddrCity) {
+		this.custRegAddrCity = custRegAddrCity;
+	}
+
+	public String getCustRegAddrZIP() {
+		return custRegAddrZIP;
+	}
+
+	public void setCustRegAddrZIP(String custRegAddrZIP) {
+		this.custRegAddrZIP = custRegAddrZIP;
+	}
+
+	public String getCustOfcAddrHNbr() {
+		return custOfcAddrHNbr;
+	}
+
+	public void setCustOfcAddrHNbr(String custOfcAddrHNbr) {
+		this.custOfcAddrHNbr = custOfcAddrHNbr;
+	}
+
+	public String getCustOfcFlatNbr() {
+		return custOfcFlatNbr;
+	}
+
+	public void setCustOfcFlatNbr(String custOfcFlatNbr) {
+		this.custOfcFlatNbr = custOfcFlatNbr;
+	}
+
+	public String getCustOfcAddrStreet() {
+		return custOfcAddrStreet;
+	}
+
+	public void setCustOfcAddrStreet(String custOfcAddrStreet) {
+		this.custOfcAddrStreet = custOfcAddrStreet;
+	}
+
+	public String getCustOfcPOBox() {
+		return custOfcPOBox;
+	}
+
+	public void setCustOfcPOBox(String custOfcPOBox) {
+		this.custOfcPOBox = custOfcPOBox;
+	}
+
+	public String getCustOfcAddrCountry() {
+		return custOfcAddrCountry;
+	}
+
+	public void setCustOfcAddrCountry(String custOfcAddrCountry) {
+		this.custOfcAddrCountry = custOfcAddrCountry;
+	}
+
+	public String getCustOfcAddrProvince() {
+		return custOfcAddrProvince;
+	}
+
+	public void setCustOfcAddrProvince(String custOfcAddrProvince) {
+		this.custOfcAddrProvince = custOfcAddrProvince;
+	}
+
+	public String getCustOfcAddrCity() {
+		return custOfcAddrCity;
+	}
+
+	public void setCustOfcAddrCity(String custOfcAddrCity) {
+		this.custOfcAddrCity = custOfcAddrCity;
+	}
+
+	public String getCustOfcAddrZIP() {
+		return custOfcAddrZIP;
+	}
+
+	public void setCustOfcAddrZIP(String custOfcAddrZIP) {
+		this.custOfcAddrZIP = custOfcAddrZIP;
+	}
+
+	public String getCustOfcAddrPhone() {
+		return custOfcAddrPhone;
+	}
+
+	public void setCustOfcAddrPhone(String custOfcAddrPhone) {
+		this.custOfcAddrPhone = custOfcAddrPhone;
 	}
 
 	private String finReferenceArabic;
@@ -1159,6 +1067,10 @@ public class AgreementDetail {
 	 * Provides current Loan Type.
 	 */
 	private String finType = ""; // Finance Type
+	/**
+	 *  Provides current Loan Type Product.
+	 */
+	private String finProduct = ""; // Product
 
 	/**
 	 * Provides current Loan Type Description.
@@ -1242,12 +1154,12 @@ public class AgreementDetail {
 	/**
 	 * Provides Down Payment amount.
 	 */
-	private String downPayment = "";
+	private String downPayment = ""; // Down Payment to Bank / Down Pay by Bank in case of AHB DPSP
 
 	/**
 	 * Provides Down Payment Bank.
 	 */
-	private String downPayBank = "";
+	private String downPayBank = ""; // Down Payment to Bank / Down Pay by Bank in case of AHB DPSP
 
 	/**
 	 * Provides Down Payment to Supplier/Vendor.
@@ -1279,11 +1191,18 @@ public class AgreementDetail {
 	 */
 	private String finRpyMethod = ""; // Repayment Method
 	private String facilityRef = ""; // Commitment Or Limit Reference
-
+	private String sourChannelCategory = "";
 	/**
 	 * Provides Loan Grace Period End Date.
 	 */
+	private String morPeriod = "0"; // Number of Moratorium terms
+	private String morStartDate = ""; // Moratorium Start Date
+	private String morEndDate = ""; // Moratorium End Date
+
+	private String grcPeriod = "0"; // Number of Grace terms
+	private String grcStartDate = ""; // Grace Period Start Date 
 	private String grcEndDate = ""; // Grace Period End Date
+
 	private String lpoPrice = ""; // LPO Price
 	private String lpoPriceInWords = ""; // LPO Price in Words
 
@@ -1332,6 +1251,8 @@ public class AgreementDetail {
 	private String finEmpCode = ""; // Employee Code
 	private String finEmpName = ""; // Employee Name
 	private String finBranchRegion = ""; // Loan Branch assigned region
+	private String offerId = "";//Lead Id
+	private List<com.pennant.backend.model.finance.financialsummary.SanctionConditions> sanctionConditions = new ArrayList<>();
 
 	public String getFinBranchAddrHNbr() {
 		return StringUtils.trimToEmpty(finBranchAddrHNbr);
@@ -1379,6 +1300,14 @@ public class AgreementDetail {
 
 	public void setFinBranchPOBox(String finBranchPOBox) {
 		this.finBranchPOBox = finBranchPOBox;
+	}
+
+	public String getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(String offerId) {
+		this.offerId = offerId;
 	}
 
 	public String getFinBranchAddrCountry() {
@@ -1558,6 +1487,11 @@ public class AgreementDetail {
 	private String firstInstAmount = ""; // First Term Installment Amount
 
 	/**
+	 * Provides First Term Installment Amount On Sanctioned Amount
+	 */
+	private String firstInstAmtOnSanAmt = ""; // First Term Installment Amount On Sanctioned Amount
+
+	/**
 	 * Provides Last Term Installment Amount.
 	 */
 	private String lastInstAmount = ""; // Last Term Installment Amount
@@ -1578,6 +1512,26 @@ public class AgreementDetail {
 	private String repayBaseRate = ""; // Actual repay Rate Base  of Repayment
 
 	/**
+	 * Provides Advised Actual Profit Rate of Repayment.
+	 */
+	private String advPftRate = ""; // Advised Actual Profit Rate of Repayment
+
+	/**
+	 * Provides Advised Base Rate of Repayment.
+	 */
+	private String advBaseRate = ""; // Advised Base Rate of Repayment
+
+	/**
+	 * Provides Advised Margin Rate of Repayment.
+	 */
+	private String advMargin = ""; // Advised Margin Rate of Repayment
+
+	/**
+	 * Provides Advance Payment.
+	 */
+	private String advPayment = ""; // Advance Payment
+
+	/**
 	 * Provides Effective Rate of Return.
 	 */
 	private String effPftRate = ""; // Effective Rate of Return
@@ -1591,6 +1545,11 @@ public class AgreementDetail {
 	 * Provides Total Profit.
 	 */
 	private String profit = ""; // Total Profit
+
+	/**
+	 * Provides Total Advised Profit.
+	 */
+	private String advProfit = ""; // Total Advised Profit
 
 	/**
 	 * Provides Loan Late Payment Penalty Rate.
@@ -1611,6 +1570,13 @@ public class AgreementDetail {
 	 * Provides repay Amount.
 	 */
 	private String repayAmount = ""; // repay Amount
+	private String repayAmtInWords = ""; // repay Amount
+
+	/**
+	 * Provides EMI on total loan amount
+	 */
+	private String repayOnLoanAmt = "";
+	private String repayOnLoanAmtInWords = "";
 
 	/**
 	 * Provides Insurance Amount.
@@ -1668,6 +1634,14 @@ public class AgreementDetail {
 	private String firstDisbursementAmt = "";
 
 	private String repaySplRate = "";
+
+	//DDA Fields
+	//===============================
+	private String bankName = ""; // DDA Sponsoring Bank
+	private String accountType = ""; // DDA Bank Account Type for selected Account
+	private String iban = ""; // Customer IBAN Number
+	private String ddaPurposeCode = ""; // DDA Purpose Code
+	private String ifscCode = ""; // DDA Purpose Code
 
 	//Mandate
 	/**
@@ -1877,6 +1851,19 @@ public class AgreementDetail {
 	private String assetPricePF = "";
 	private String assetFinRatio = "";
 
+	//====== Goods Finance =====================//
+
+	private List<GoodLoanDetails> goodsLoanDetails;
+
+	//====== Commodity Finance =================//
+
+	private String holdCertificateNo = "";
+	private String quantity = "";
+	private String commodityType = "";
+	private String commodityDesc = ""; //  Quantity and General Description of Commodities
+
+	private String commodityUnit = "";
+	private String brokerName = "";
 	/*
 	 * private int tenureDays; private String splInstruction; private List<CommidityLoanDetails> commidityLoanDetail;
 	 */
@@ -1905,6 +1892,7 @@ public class AgreementDetail {
 	private String sharePerc = ""; //AHB Share (finAmount-downpayment)/finAmount
 	private String perofPri = ""; //Perc of Pri in Schd on Total Pri
 	private String fIDate = ""; // First Installment Date
+	private String SchAdvRate = "";
 	private String schdInst = ""; //Schd Installment
 	private String osPriAmount = "";
 	private String SchPriAmtPerBank = ""; //Schd Pri Amount % for bank
@@ -1916,6 +1904,7 @@ public class AgreementDetail {
 	private String priAmtCurtInst = ""; //Pri amount of cur Instl
 	private String schPriFirstInstl = ""; //Schd Pri Amount on First Instl
 	private String schdPftFirstInstl = ""; //Schd Pft Amount on First Instl
+	private String schdAdvPftFirstInstl = ""; //Schd Adv Pft Amount on First Instl
 
 	private String oDInsDate = ""; //OD Instl Date
 	private String emiRate = ""; //EMI DATE 
@@ -1964,6 +1953,9 @@ public class AgreementDetail {
 	private String mMAMLatePayRate = "";
 	private String mMALatePayRate = "";
 	private String mMAMaturityDate = "";
+	private String planEMIHAlw = "";
+	private String finOcrRequired = "";
+	private String addProdFeatures = ""; // Additional product features
 
 	//==========Equipment Loan Detail==========//
 
@@ -1972,7 +1964,15 @@ public class AgreementDetail {
 	private String machineAge = "";
 	private String manufacturer = "";
 	private String eqpmentLocation = "";
-	private String actualProcessFeeValueInWords = "";
+	private String actualProcessFeeValueInWords = ""; // Actual  ProcessingFees
+
+	public String getActualProcessFeeValueInWords() {
+		return actualProcessFeeValueInWords;
+	}
+
+	public void setActualProcessFeeValueInWords(String actualProcessFeeValueInWords) {
+		this.actualProcessFeeValueInWords = actualProcessFeeValueInWords;
+	}
 
 	public String getMachineName() {
 		return machineName;
@@ -2166,6 +2166,38 @@ public class AgreementDetail {
 		this.nextInstDate = nextInstDate;
 	}
 
+	public String getAdvPftRate() {
+		return advPftRate;
+	}
+
+	public void setAdvPftRate(String advPftRate) {
+		this.advPftRate = advPftRate;
+	}
+
+	public String getAdvBaseRate() {
+		return advBaseRate;
+	}
+
+	public void setAdvBaseRate(String advBaseRate) {
+		this.advBaseRate = advBaseRate;
+	}
+
+	public String getAdvMargin() {
+		return advMargin;
+	}
+
+	public void setAdvMargin(String advMargin) {
+		this.advMargin = advMargin;
+	}
+
+	public String getAdvProfit() {
+		return advProfit;
+	}
+
+	public void setAdvProfit(String advProfit) {
+		this.advProfit = advProfit;
+	}
+
 	public String getLatePayRate() {
 		return latePayRate;
 	}
@@ -2230,6 +2262,38 @@ public class AgreementDetail {
 	 * public void setTotalPrice(String totalPrice) { this.totalPrice = totalPrice; }
 	 */
 
+	public String getPlanEMIHAlw() {
+		return planEMIHAlw;
+	}
+
+	public void setPlanEMIHAlw(String planEMIHAlw) {
+		this.planEMIHAlw = planEMIHAlw;
+	}
+
+	public String getFinOcrRequired() {
+		return finOcrRequired;
+	}
+
+	public void setFinOcrRequired(String finOcrRequired) {
+		this.finOcrRequired = finOcrRequired;
+	}
+
+	public String getCommodityDesc() {
+		return commodityDesc;
+	}
+
+	public void setCommodityDesc(String commodityDesc) {
+		this.commodityDesc = commodityDesc;
+	}
+
+	public String getBrokerName() {
+		return brokerName;
+	}
+
+	public void setBrokerName(String brokerName) {
+		this.brokerName = brokerName;
+	}
+
 	public String getOsPri() {
 		return osPri;
 	}
@@ -2268,6 +2332,14 @@ public class AgreementDetail {
 
 	public void setfIDate(String fIDate) {
 		this.fIDate = fIDate;
+	}
+
+	public String getSchAdvRate() {
+		return SchAdvRate;
+	}
+
+	public void setSchAdvRate(String schAdvRate) {
+		SchAdvRate = schAdvRate;
 	}
 
 	public String getSchdInst() {
@@ -2869,6 +2941,7 @@ public class AgreementDetail {
 	 */
 	//============== Finance Collaterals Details =============//
 	private List<FinCollaterals> collateralData;
+	private String collateralAvail = "No";
 
 	public class FinCollaterals {
 		private String collateralType = "";
@@ -2880,6 +2953,8 @@ public class AgreementDetail {
 		private String colAddrCity = "";
 		private String colLtv = "";
 		private List<ExtendedDetailCollateral> extendedDetailsList = null;
+		private List<CoOwners> coOwnersList = new ArrayList<>();
+		private Map<String, Object> collMap = new HashMap<>();
 
 		public String getReference() {
 			return reference;
@@ -2952,6 +3027,46 @@ public class AgreementDetail {
 		public void setExtendedDetailsList(List<ExtendedDetailCollateral> extendedDetailsList) {
 			this.extendedDetailsList = extendedDetailsList;
 		}
+
+		public List<CoOwners> getCoOwnersList() {
+			return coOwnersList;
+		}
+
+		public void setCoOwnersList(List<CoOwners> coOwnersList) {
+			this.coOwnersList = coOwnersList;
+		}
+
+		public Map<String, Object> getCollMap() {
+			return collMap;
+		}
+
+		public void setCollMap(Map<String, Object> collMap) {
+			this.collMap = collMap;
+		}
+
+		public class CoOwners {
+
+			private String cif = "";
+			private String name = "";
+
+			public String getCif() {
+				return cif;
+			}
+
+			public void setCif(String cif) {
+				this.cif = cif;
+			}
+
+			public String getName() {
+				return name;
+			}
+
+			public void setName(String name) {
+				this.name = name;
+			}
+
+		}
+
 	}
 
 	private ExtendedDetailCollateral edc;
@@ -3014,9 +3129,12 @@ public class AgreementDetail {
 		private String schdSeqNo = "";
 		private String closingBalance = ""; //closing Balance(AED)
 		private String insSchd = ""; //Insurance Fee
+		private String suplRent = "";
+		private String schAdvPft = "";
 		private String advPayment = ""; // Advance Payment
 		private String openingPrincipal = ""; // Advance Payment
 		private String rateOfInterst = ""; // Advance Payment
+		private String profitCalc = "";
 
 		public String getCurSchPriAmount() {
 			return curSchPriAmount;
@@ -3074,12 +3192,28 @@ public class AgreementDetail {
 			this.insSchd = insSchd;
 		}
 
+		public String getSuplRent() {
+			return suplRent;
+		}
+
+		public void setSuplRent(String suplRent) {
+			this.suplRent = suplRent;
+		}
+
 		public String getSchTotalPriAmt() {
 			return schTotalPriAmt;
 		}
 
 		public void setSchTotalPriAmt(String schTotalPriAmt) {
 			this.schTotalPriAmt = schTotalPriAmt;
+		}
+
+		public String getSchAdvPft() {
+			return schAdvPft;
+		}
+
+		public void setSchAdvPft(String schAdvPft) {
+			this.schAdvPft = schAdvPft;
 		}
 
 		public String getAdvPayment() {
@@ -3105,6 +3239,15 @@ public class AgreementDetail {
 		public void setRateOfInterst(String rateOfInterst) {
 			this.rateOfInterst = rateOfInterst;
 		}
+
+		public String getProfitCalc() {
+			return profitCalc;
+		}
+
+		public void setProfitCalc(String profitCalc) {
+			this.profitCalc = profitCalc;
+		}
+
 	}
 
 	public class GoodLoanDetails {
@@ -3722,6 +3865,14 @@ public class AgreementDetail {
 		this.lastInstDate = lastInstDate;
 	}
 
+	public String getFirstInstAmtOnSanAmt() {
+		return firstInstAmtOnSanAmt;
+	}
+
+	public void setFirstInstAmtOnSanAmt(String firstInstAmtOnSanAmt) {
+		this.firstInstAmtOnSanAmt = firstInstAmtOnSanAmt;
+	}
+
 	public String getLastInstAmount() {
 		return lastInstAmount;
 	}
@@ -3849,6 +4000,30 @@ public class AgreementDetail {
 	 * trafficProfileNo) { this.trafficProfileNo = trafficProfileNo; }
 	 */
 
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
+
 	public String getCustIdType() {
 		return custIdType;
 	}
@@ -3865,12 +4040,36 @@ public class AgreementDetail {
 		this.custIdName = custIdName;
 	}
 
-	public String getCustLocalLngName() {
-		return custLocalLngName;
+	public String getDdaPurposeCode() {
+		return ddaPurposeCode;
 	}
 
-	public void setCustLocalLngName(String custLocalLngName) {
-		this.custLocalLngName = custLocalLngName;
+	public void setDdaPurposeCode(String ddaPurposeCode) {
+		this.ddaPurposeCode = ddaPurposeCode;
+	}
+
+	public String getCustArabicName() {
+		return custArabicName;
+	}
+
+	public void setCustArabicName(String custArabicName) {
+		this.custArabicName = custArabicName;
+	}
+
+	public String getHoldCertificateNo() {
+		return holdCertificateNo;
+	}
+
+	public void setHoldCertificateNo(String holdCertificateNo) {
+		this.holdCertificateNo = holdCertificateNo;
+	}
+
+	public String getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(String quantity) {
+		this.quantity = quantity;
 	}
 
 	public String getCustRO1() {
@@ -3887,6 +4086,14 @@ public class AgreementDetail {
 
 	public void setMMADate(String mMADate) {
 		this.mMADate = mMADate;
+	}
+
+	public String getCommodityType() {
+		return commodityType;
+	}
+
+	public void setCommodityType(String commodityType) {
+		this.commodityType = commodityType;
 	}
 
 	public String getDisbAccount() {
@@ -4023,6 +4230,14 @@ public class AgreementDetail {
 
 	public void setFinRpyMethod(String finRpyMethod) {
 		this.finRpyMethod = finRpyMethod;
+	}
+
+	public String getSourChannelCategory() {
+		return sourChannelCategory;
+	}
+
+	public void setSourChannelCategory(String sourChannelCategory) {
+		this.sourChannelCategory = sourChannelCategory;
 	}
 
 	public String getFacilityRef() {
@@ -4388,6 +4603,14 @@ public class AgreementDetail {
 		this.mMADate = mMADate;
 	}
 
+	public String getCommodityUnit() {
+		return commodityUnit;
+	}
+
+	public void setCommodityUnit(String commodityUnit) {
+		this.commodityUnit = commodityUnit;
+	}
+
 	public String getAppTime() {
 		return appTime;
 	}
@@ -4450,14 +4673,6 @@ public class AgreementDetail {
 
 	public void setEqpmentLocation(String eqpmentLocation) {
 		this.eqpmentLocation = eqpmentLocation;
-	}
-
-	public String getActualProcessFeeValueInWords() {
-		return actualProcessFeeValueInWords;
-	}
-
-	public void setActualProcessFeeValueInWords(String actualProcessFeeValueInWords) {
-		this.actualProcessFeeValueInWords = actualProcessFeeValueInWords;
 	}
 
 	public String getmMAMLatePayRate() {
@@ -4527,12 +4742,28 @@ public class AgreementDetail {
 	 * public void setDealerCity(String dealerCity) { this.dealerCity = dealerCity; }
 	 */
 
+	public List<GoodLoanDetails> getGoodsLoanDetails() {
+		return goodsLoanDetails;
+	}
+
+	public void setGoodsLoanDetails(List<GoodLoanDetails> goodsLoanDetails) {
+		this.goodsLoanDetails = goodsLoanDetails;
+	}
+
 	public String getCustOccupation() {
 		return custOccupation;
 	}
 
 	public void setCustOccupation(String custOccupation) {
 		this.custOccupation = custOccupation;
+	}
+
+	public String getAdvPayment() {
+		return advPayment;
+	}
+
+	public void setAdvPayment(String advPayment) {
+		this.advPayment = advPayment;
 	}
 
 	/*
@@ -4556,12 +4787,28 @@ public class AgreementDetail {
 		this.repayAmount = repayAmount;
 	}
 
+	public String getRepayAmtInWords() {
+		return repayAmtInWords;
+	}
+
+	public void setRepayAmtInWords(String repayAmtInWords) {
+		this.repayAmtInWords = repayAmtInWords;
+	}
+
 	public String getInsAmt() {
 		return insAmt;
 	}
 
 	public void setInsAmt(String insAmt) {
 		this.insAmt = insAmt;
+	}
+
+	public String getIfscCode() {
+		return ifscCode;
+	}
+
+	public void setIfscCode(String ifscCode) {
+		this.ifscCode = ifscCode;
 	}
 
 	public String getDownPayment() {
@@ -5040,6 +5287,14 @@ public class AgreementDetail {
 	 * marketValueInWords) { this.marketValueInWords = marketValueInWords; }
 	 */
 
+	public String getSchdAdvPftFirstInstl() {
+		return schdAdvPftFirstInstl;
+	}
+
+	public void setSchdAdvPftFirstInstl(String schdAdvPftFirstInstl) {
+		this.schdAdvPftFirstInstl = schdAdvPftFirstInstl;
+	}
+
 	public String getEarlySettleAmt() {
 		return earlySettleAmt;
 	}
@@ -5332,6 +5587,14 @@ public class AgreementDetail {
 		this.panNumber = panNumber;
 	}
 
+	public String getCustDocPanNumber() {
+		return custDocPanNumber;
+	}
+
+	public void setCustDocPanNumber(String custDocPanNumber) {
+		this.custDocPanNumber = custDocPanNumber;
+	}
+
 	public String getAccNumberMandate() {
 		return StringUtils.trimToEmpty(accNumberMandate);
 	}
@@ -5364,6 +5627,30 @@ public class AgreementDetail {
 		this.customerBankInfos = customerBankInfos;
 	}
 
+	public String getCustQuallification() {
+		return custQuallification;
+	}
+
+	public void setCustQuallification(String custQuallification) {
+		this.custQuallification = custQuallification;
+	}
+
+	public String getCustSubCategory() {
+		return custSubCategory;
+	}
+
+	public void setCustSubCategory(String custSubCategory) {
+		this.custSubCategory = custSubCategory;
+	}
+
+	public String getLtvPerc() {
+		return ltvPerc;
+	}
+
+	public void setLtvPerc(String ltvPerc) {
+		this.ltvPerc = ltvPerc;
+	}
+
 	public class CoApplicant {
 		private String custCIF = "";
 		private String custName = "";
@@ -5390,7 +5677,22 @@ public class AgreementDetail {
 		private String custAge = "";
 		private String custFatherName = "";
 		private String custSalutation = "";
-		private String lovDescCustAddrZIP = "";
+		private String custAgeAtMaturity = "";
+		private String custIsNRI = "";
+		private String borrowerType = "";
+		private String riskCategory = "";
+		private long custId = 0;
+		private String entityTypeVal = "";
+		private String custYearsExp = "";
+		private String custDOB = "";
+		private String custSegment = "";
+		private String custIndustry = "";
+		private String custEmpType = "";
+		private String custEmpName = "";
+		private String custType = "";
+		private String custSubCategory = "";
+
+		private Map<String, String> extMap = new HashMap<>();
 
 		public CoApplicant() {
 
@@ -5596,12 +5898,124 @@ public class AgreementDetail {
 			this.custSalutation = custSalutation;
 		}
 
-		public String getLovDescCustAddrZIP() {
-			return lovDescCustAddrZIP;
+		public String getCustAgeAtMaturity() {
+			return custAgeAtMaturity;
 		}
 
-		public void setLovDescCustAddrZIP(String lovDescCustAddrZIP) {
-			this.lovDescCustAddrZIP = lovDescCustAddrZIP;
+		public void setCustAgeAtMaturity(String custAgeAtMaturity) {
+			this.custAgeAtMaturity = custAgeAtMaturity;
+		}
+
+		public String getCustIsNRI() {
+			return custIsNRI;
+		}
+
+		public void setCustIsNRI(String custIsNRI) {
+			this.custIsNRI = custIsNRI;
+		}
+
+		public String getBorrowerType() {
+			return borrowerType;
+		}
+
+		public void setBorrowerType(String borrowerType) {
+			this.borrowerType = borrowerType;
+		}
+
+		public String getRiskCategory() {
+			return riskCategory;
+		}
+
+		public void setRiskCategory(String riskCategory) {
+			this.riskCategory = riskCategory;
+		}
+
+		public long getCustId() {
+			return custId;
+		}
+
+		public void setCustId(long custId) {
+			this.custId = custId;
+		}
+
+		public String getEntityTypeVal() {
+			return entityTypeVal;
+		}
+
+		public void setEntityTypeVal(String entityTypeVal) {
+			this.entityTypeVal = entityTypeVal;
+		}
+
+		public String getCustYearsExp() {
+			return custYearsExp;
+		}
+
+		public void setCustYearsExp(String custYearsExp) {
+			this.custYearsExp = custYearsExp;
+		}
+
+		public String getCustDOB() {
+			return custDOB;
+		}
+
+		public void setCustDOB(String custDOB) {
+			this.custDOB = custDOB;
+		}
+
+		public String getCustSegment() {
+			return custSegment;
+		}
+
+		public void setCustSegment(String custSegment) {
+			this.custSegment = custSegment;
+		}
+
+		public String getCustIndustry() {
+			return custIndustry;
+		}
+
+		public void setCustIndustry(String custIndustry) {
+			this.custIndustry = custIndustry;
+		}
+
+		public String getCustEmpType() {
+			return custEmpType;
+		}
+
+		public void setCustEmpType(String custEmpType) {
+			this.custEmpType = custEmpType;
+		}
+
+		public String getCustEmpName() {
+			return custEmpName;
+		}
+
+		public void setCustEmpName(String custEmpName) {
+			this.custEmpName = custEmpName;
+		}
+
+		public String getCustType() {
+			return custType;
+		}
+
+		public void setCustType(String custType) {
+			this.custType = custType;
+		}
+
+		public String getCustSubCategory() {
+			return custSubCategory;
+		}
+
+		public void setCustSubCategory(String custSubCategory) {
+			this.custSubCategory = custSubCategory;
+		}
+
+		public Map<String, String> getExtMap() {
+			return extMap;
+		}
+
+		public void setExtMap(Map<String, String> extMap) {
+			this.extMap = extMap;
 		}
 
 	}
@@ -7137,6 +7551,7 @@ public class AgreementDetail {
 		private boolean los;
 		private boolean otc;
 		private boolean pdd;
+		private String covenantTypeDesc = "";
 
 		public Covenant() {
 			super();
@@ -7228,6 +7643,14 @@ public class AgreementDetail {
 
 		public void setPdd(boolean pdd) {
 			this.pdd = pdd;
+		}
+
+		public String getCovenantTypeDesc() {
+			return covenantTypeDesc;
+		}
+
+		public void setCovenantTypeDesc(String covenantTypeDesc) {
+			this.covenantTypeDesc = covenantTypeDesc;
 		}
 
 	}
@@ -7534,6 +7957,8 @@ public class AgreementDetail {
 		private String repayBank = "";
 		private String repayBankName = "";
 		private String otherFinInstitute = "";
+		private String bounceInstalmentsInSixMonths = "";
+		private String bounceInstalmentsInTwelveMonths = "";
 
 		public String getFinBranchName() {
 			return finBranchName;
@@ -7810,6 +8235,22 @@ public class AgreementDetail {
 			this.otherFinInstitute = otherFinInstitute;
 		}
 
+		public String getBounceInstalmentsInSixMonths() {
+			return bounceInstalmentsInSixMonths;
+		}
+
+		public void setBounceInstalmentsInSixMonths(String bounceInstalmentsInSixMonths) {
+			this.bounceInstalmentsInSixMonths = bounceInstalmentsInSixMonths;
+		}
+
+		public String getBounceInstalmentsInTwelveMonths() {
+			return bounceInstalmentsInTwelveMonths;
+		}
+
+		public void setBounceInstalmentsInTwelveMonths(String bounceInstalmentsInTwelveMonths) {
+			this.bounceInstalmentsInTwelveMonths = bounceInstalmentsInTwelveMonths;
+		}
+
 	}
 
 	private List<InternalLiabilityDetail> internalLiabilityDetails;
@@ -7937,6 +8378,7 @@ public class AgreementDetail {
 		private String minEodBalance = "";
 		private String maxEodBalance = "";
 		private String avgEodBalance = "";
+		private String noEMIBounce = "";
 
 		public BankingDetail() {
 		}
@@ -8148,6 +8590,14 @@ public class AgreementDetail {
 		public void setAvgEodBalance(String avgEodBalance) {
 			this.avgEodBalance = avgEodBalance;
 		}
+
+		public String getNoEMIBounce() {
+			return noEMIBounce;
+		}
+
+		public void setNoEMIBounce(String noEMIBounce) {
+			this.noEMIBounce = noEMIBounce;
+		}
 	}
 
 	private List<IrrDetail> irrDetails;
@@ -8282,6 +8732,7 @@ public class AgreementDetail {
 		private String remarks = "";
 		private String deviationType = "";
 		private String severity = "";
+		private String status = "";
 		private String approvalStatus = "";
 
 		public LoanDeviation() {
@@ -8341,6 +8792,14 @@ public class AgreementDetail {
 
 		public void setSeverity(String severity) {
 			this.severity = severity;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
 		}
 
 		public String getApprovalStatus() {
@@ -8474,6 +8933,12 @@ public class AgreementDetail {
 		private String value = "";
 		private String fieldType = "";
 		private String fieldLabel = "";
+		private String agrField = "";
+		private String insuranceType = "";
+		private String vasProvider = "";
+		private String custCif = "";
+		private String fieldDataType = "";
+		private String applicantType = "";
 
 		public ExtendedDetail() {
 		}
@@ -8518,6 +8983,54 @@ public class AgreementDetail {
 
 		public void setFieldLabel(String fieldLabel) {
 			this.fieldLabel = fieldLabel;
+		}
+
+		public String getAgrField() {
+			return agrField;
+		}
+
+		public void setAgrField(String agrField) {
+			this.agrField = agrField;
+		}
+
+		public String getInsuranceType() {
+			return insuranceType;
+		}
+
+		public void setInsuranceType(String insuranceType) {
+			this.insuranceType = insuranceType;
+		}
+
+		public String getVasProvider() {
+			return vasProvider;
+		}
+
+		public void setVasProvider(String vasProvider) {
+			this.vasProvider = vasProvider;
+		}
+
+		public String getFieldDataType() {
+			return fieldDataType;
+		}
+
+		public void setFieldDataType(String fieldDataType) {
+			this.fieldDataType = fieldDataType;
+		}
+
+		public String getCustCif() {
+			return custCif;
+		}
+
+		public void setCustCif(String custCif) {
+			this.custCif = custCif;
+		}
+
+		public String getApplicantType() {
+			return applicantType;
+		}
+
+		public void setApplicantType(String applicantType) {
+			this.applicantType = applicantType;
 		}
 
 	}
@@ -8785,8 +9298,11 @@ public class AgreementDetail {
 		private String documentStatus = "";
 		private String recommanditionStatus = "";
 		private String finalDecision = "";
+		private String valuationAmount = "0.00";
+		private String marketValue = "0.00";
 		//PSD # 148958[new merge field added for the CAM_MEMO Purpose.]
 		private String verifiedDate = "";
+		private String finalValAmt = "0.00";
 
 		public VerificationDetail() {
 		}
@@ -8911,12 +9427,36 @@ public class AgreementDetail {
 			this.finalDecision = finalDecision;
 		}
 
+		public String getValuationAmount() {
+			return valuationAmount;
+		}
+
+		public void setValuationAmount(String valuationAmount) {
+			this.valuationAmount = valuationAmount;
+		}
+
+		public String getMarketValue() {
+			return marketValue;
+		}
+
+		public void setMarketValue(String marketValue) {
+			this.marketValue = marketValue;
+		}
+
 		public String getVerifiedDate() {
 			return verifiedDate;
 		}
 
 		public void setVerifiedDate(String verifiedDate) {
 			this.verifiedDate = verifiedDate;
+		}
+
+		public String getFinalValAmt() {
+			return finalValAmt;
+		}
+
+		public void setFinalValAmt(String finalValAmt) {
+			this.finalValAmt = finalValAmt;
 		}
 
 	}
@@ -9002,6 +9542,7 @@ public class AgreementDetail {
 	}
 
 	private List<DirectorDetail> directorDetails;
+	private List<CoAppDirectorDetail> coAppDirectorDetails = new ArrayList<>();
 
 	public List<DirectorDetail> getDirectorDetails() {
 		return directorDetails;
@@ -9011,7 +9552,154 @@ public class AgreementDetail {
 		this.directorDetails = directorDetails;
 	}
 
+	public List<CoAppDirectorDetail> getCoAppDirectorDetails() {
+		return coAppDirectorDetails;
+	}
+
+	public void setCoAppDirectorDetails(List<CoAppDirectorDetail> coAppDirectorDetails) {
+		this.coAppDirectorDetails = coAppDirectorDetails;
+	}
+
 	public class DirectorDetail {
+		private String firstName = "";
+		private String middleName = "";
+		private String lastName = "";
+		private String gender = "";
+		private String salutationCodeName = "";
+		private String cityName = "";
+		private String provinceName = "";
+		private String countryName = "";
+		private String shortName = "";
+		private String shareholder = "No";
+		private String director = "No";
+		private String sharePerc = "";
+		private String docCategoryName = "";
+		private String designationName = "";
+		private String nationalityName = "";
+
+		public String getNationalityName() {
+			return nationalityName;
+		}
+
+		public void setNationalityName(String nationalityName) {
+			this.nationalityName = nationalityName;
+		}
+
+		public String getDesignationName() {
+			return designationName;
+		}
+
+		public void setDesignationName(String designationName) {
+			this.designationName = designationName;
+		}
+
+		public String getDocCategoryName() {
+			return docCategoryName;
+		}
+
+		public void setDocCategoryName(String docCategoryName) {
+			this.docCategoryName = docCategoryName;
+		}
+
+		public String getFirstName() {
+			return firstName;
+		}
+
+		public void setFirstName(String firstName) {
+			this.firstName = firstName;
+		}
+
+		public String getMiddleName() {
+			return middleName;
+		}
+
+		public void setMiddleName(String middleName) {
+			this.middleName = middleName;
+		}
+
+		public String getLastName() {
+			return lastName;
+		}
+
+		public void setLastName(String lastName) {
+			this.lastName = lastName;
+		}
+
+		public String getGender() {
+			return gender;
+		}
+
+		public void setGender(String gender) {
+			this.gender = gender;
+		}
+
+		public String getSalutationCodeName() {
+			return salutationCodeName;
+		}
+
+		public void setSalutationCodeName(String salutationCodeName) {
+			this.salutationCodeName = salutationCodeName;
+		}
+
+		public String getCityName() {
+			return cityName;
+		}
+
+		public void setCityName(String cityName) {
+			this.cityName = cityName;
+		}
+
+		public String getProvinceName() {
+			return provinceName;
+		}
+
+		public void setProvinceName(String provinceName) {
+			this.provinceName = provinceName;
+		}
+
+		public String getCountryName() {
+			return countryName;
+		}
+
+		public void setCountryName(String countryName) {
+			this.countryName = countryName;
+		}
+
+		public String getShortName() {
+			return shortName;
+		}
+
+		public void setShortName(String shortName) {
+			this.shortName = shortName;
+		}
+
+		public String getShareholder() {
+			return shareholder;
+		}
+
+		public void setShareholder(String shareholder) {
+			this.shareholder = shareholder;
+		}
+
+		public String getDirector() {
+			return director;
+		}
+
+		public void setDirector(String director) {
+			this.director = director;
+		}
+
+		public String getSharePerc() {
+			return sharePerc;
+		}
+
+		public void setSharePerc(String sharePerc) {
+			this.sharePerc = sharePerc;
+		}
+
+	}
+
+	public class CoAppDirectorDetail {
 		private String firstName = "";
 		private String middleName = "";
 		private String lastName = "";
@@ -9315,6 +10003,26 @@ public class AgreementDetail {
 
 	public void setOtherMap(Map<String, String> otherMap) {
 		this.otherMap = otherMap;
+	}
+
+	private List<Map<String, String>> collExtMap = new ArrayList<>();
+
+	public List<Map<String, String>> getCollExtMap() {
+		return collExtMap;
+	}
+
+	public void setCollExtMap(List<Map<String, String>> collExtMap) {
+		this.collExtMap = collExtMap;
+	}
+
+	private List<Map<String, String>> customerExtMap = new ArrayList<>();
+
+	public List<Map<String, String>> getCustomerExtMap() {
+		return customerExtMap;
+	}
+
+	public void setCustomerExtMap(List<Map<String, String>> customerExtMap) {
+		this.customerExtMap = customerExtMap;
 	}
 
 	//----------------------------- PSL Details
@@ -9830,6 +10538,15 @@ public class AgreementDetail {
 		this.finBranchRegion = finBranchRegion;
 	}
 
+	public List<com.pennant.backend.model.finance.financialsummary.SanctionConditions> getSanctionConditions() {
+		return sanctionConditions;
+	}
+
+	public void setSanctionConditions(
+			List<com.pennant.backend.model.finance.financialsummary.SanctionConditions> sanctionConditions) {
+		this.sanctionConditions = sanctionConditions;
+	}
+
 	public List<VerificationDetail> getPdVerification() {
 		return pdVerification;
 	}
@@ -10299,5 +11016,575 @@ public class AgreementDetail {
 			this.format = format;
 		}
 
+	}
+
+	private List<List<ExtendedDetail>> vasExtendedDetails = new ArrayList<>();
+
+	private List<List<ExtendedDetail>> custExtendedDetails = new ArrayList<>();
+
+	//Builder Demand Amount
+	private String builderDemandAmount = "0.00";
+	//Own Contribution Amount
+	private String ocrAmount = "0.00";
+
+	public List<List<ExtendedDetail>> getVasExtendedDetails() {
+		return vasExtendedDetails;
+	}
+
+	public void setVasExtendedDetails(List<List<ExtendedDetail>> vasExtendedDetails) {
+		this.vasExtendedDetails = vasExtendedDetails;
+	}
+
+	//Vas Extended map
+	private List<Map<String, String>> vasExtMap = new ArrayList<>();
+
+	public List<Map<String, String>> getVasExtMap() {
+		return vasExtMap;
+	}
+
+	public void setVasExtMap(List<Map<String, String>> vasExtMap) {
+		this.vasExtMap = vasExtMap;
+	}
+
+	public String getBuilderDemandAmount() {
+		return builderDemandAmount;
+	}
+
+	public void setBuilderDemandAmount(String builderDemandAmount) {
+		this.builderDemandAmount = builderDemandAmount;
+	}
+
+	public String getOcrAmount() {
+		return ocrAmount;
+	}
+
+	public void setOcrAmount(String ocrAmount) {
+		this.ocrAmount = ocrAmount;
+	}
+
+	public String getCollateralAvail() {
+		return collateralAvail;
+	}
+
+	public void setCollateralAvail(String collateralAvail) {
+		this.collateralAvail = collateralAvail;
+	}
+
+	public String getCustAddrType() {
+		return custAddrType;
+	}
+
+	public void setCustAddrType(String custAddrType) {
+		this.custAddrType = custAddrType;
+	}
+
+	public String getCustAgeAtMaturity() {
+		return custAgeAtMaturity;
+	}
+
+	public void setCustAgeAtMaturity(String custAgeAtMaturity) {
+		this.custAgeAtMaturity = custAgeAtMaturity;
+	}
+
+	public String getCustIsNRI() {
+		return custIsNRI;
+	}
+
+	public void setCustIsNRI(String custIsNRI) {
+		this.custIsNRI = custIsNRI;
+	}
+
+	public String getEntityTypeVal() {
+		return entityTypeVal;
+	}
+
+	public void setEntityTypeVal(String entityTypeVal) {
+		this.entityTypeVal = entityTypeVal;
+	}
+
+	public List<List<ExtendedDetail>> getCustExtendedDetails() {
+		return custExtendedDetails;
+	}
+
+	public void setCustExtendedDetails(List<List<ExtendedDetail>> custExtendedDetails) {
+		this.custExtendedDetails = custExtendedDetails;
+	}
+
+	public class ScoreHeader {
+		private String customerType = "";
+		private String custName = "";
+		private String totalScore = "";
+		private String creditWorth = "";
+
+		public ScoreHeader() {
+		}
+
+		public String getCustomerType() {
+			return customerType;
+		}
+
+		public void setCustomerType(String customerType) {
+			this.customerType = customerType;
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getTotalScore() {
+			return totalScore;
+		}
+
+		public void setTotalScore(String totalScore) {
+			this.totalScore = totalScore;
+		}
+
+		public String getCreditWorth() {
+			return creditWorth;
+		}
+
+		public void setCreditWorth(String creditWorth) {
+			this.creditWorth = creditWorth;
+		}
+	}
+
+	private List<ScoreHeader> scoreHeaders = new ArrayList<>();
+
+	public List<ScoreHeader> getScoreHeaders() {
+		return scoreHeaders;
+	}
+
+	public void setScoreHeaders(List<ScoreHeader> scoreHeaders) {
+		this.scoreHeaders = scoreHeaders;
+	}
+
+	public class CustomerAddress {
+		private String custName = "";
+		private String custCIF = "";
+		private String custAddrType = "";
+		private String custAddrHNbr = "";
+		private String custFlatNbr = "";
+		private String custAddrStreet = "";
+		private String custAddrLine1 = "";
+		private String custAddrLine2 = "";
+		private String custPOBox = "";
+		private String custAddrCountry = "";
+		private String lovDescCustAddrCountryName = "";
+		private String custAddrProvince = "";
+		private String lovDescCustAddrProvinceName = "";
+		private String custAddrCity = "";
+		private String lovDescCustAddrCityName = "";
+		private String custAddrZIP = "";
+		private String custAddrPhone = "";
+
+		public CustomerAddress() {
+		}
+
+		public String getCustAddrType() {
+			return custAddrType;
+		}
+
+		public void setCustAddrType(String custAddrType) {
+			this.custAddrType = custAddrType;
+		}
+
+		public String getCustAddrHNbr() {
+			return custAddrHNbr;
+		}
+
+		public void setCustAddrHNbr(String custAddrHNbr) {
+			this.custAddrHNbr = custAddrHNbr;
+		}
+
+		public String getCustFlatNbr() {
+			return custFlatNbr;
+		}
+
+		public void setCustFlatNbr(String custFlatNbr) {
+			this.custFlatNbr = custFlatNbr;
+		}
+
+		public String getCustAddrStreet() {
+			return custAddrStreet;
+		}
+
+		public void setCustAddrStreet(String custAddrStreet) {
+			this.custAddrStreet = custAddrStreet;
+		}
+
+		public String getCustAddrLine1() {
+			return custAddrLine1;
+		}
+
+		public void setCustAddrLine1(String custAddrLine1) {
+			this.custAddrLine1 = custAddrLine1;
+		}
+
+		public String getCustAddrLine2() {
+			return custAddrLine2;
+		}
+
+		public void setCustAddrLine2(String custAddrLine2) {
+			this.custAddrLine2 = custAddrLine2;
+		}
+
+		public String getCustPOBox() {
+			return custPOBox;
+		}
+
+		public void setCustPOBox(String custPOBox) {
+			this.custPOBox = custPOBox;
+		}
+
+		public String getCustAddrCountry() {
+			return custAddrCountry;
+		}
+
+		public void setCustAddrCountry(String custAddrCountry) {
+			this.custAddrCountry = custAddrCountry;
+		}
+
+		public String getLovDescCustAddrCountryName() {
+			return lovDescCustAddrCountryName;
+		}
+
+		public void setLovDescCustAddrCountryName(String lovDescCustAddrCountryName) {
+			this.lovDescCustAddrCountryName = lovDescCustAddrCountryName;
+		}
+
+		public String getCustAddrProvince() {
+			return custAddrProvince;
+		}
+
+		public void setCustAddrProvince(String custAddrProvince) {
+			this.custAddrProvince = custAddrProvince;
+		}
+
+		public String getLovDescCustAddrProvinceName() {
+			return lovDescCustAddrProvinceName;
+		}
+
+		public void setLovDescCustAddrProvinceName(String lovDescCustAddrProvinceName) {
+			this.lovDescCustAddrProvinceName = lovDescCustAddrProvinceName;
+		}
+
+		public String getCustAddrCity() {
+			return custAddrCity;
+		}
+
+		public void setCustAddrCity(String custAddrCity) {
+			this.custAddrCity = custAddrCity;
+		}
+
+		public String getLovDescCustAddrCityName() {
+			return lovDescCustAddrCityName;
+		}
+
+		public void setLovDescCustAddrCityName(String lovDescCustAddrCityName) {
+			this.lovDescCustAddrCityName = lovDescCustAddrCityName;
+		}
+
+		public String getCustAddrZIP() {
+			return custAddrZIP;
+		}
+
+		public void setCustAddrZIP(String custAddrZIP) {
+			this.custAddrZIP = custAddrZIP;
+		}
+
+		public String getCustAddrPhone() {
+			return custAddrPhone;
+		}
+
+		public void setCustAddrPhone(String custAddrPhone) {
+			this.custAddrPhone = custAddrPhone;
+		}
+
+		public String getCustName() {
+			return custName;
+		}
+
+		public void setCustName(String custName) {
+			this.custName = custName;
+		}
+
+		public String getCustCIF() {
+			return custCIF;
+		}
+
+		public void setCustCIF(String custCIF) {
+			this.custCIF = custCIF;
+		}
+	}
+
+	public class ChequeDetail {
+
+		private String seqNo = "";
+		private String accountNo = "";
+		private String chequeSerialNo = "";
+		private String chequeType = "";
+		private String chequeTypeDesc = "";
+		private String chequeDate = "";
+		private String eMIRefNo = "";
+		private String amount = "0.00";
+		private String chequeStatus = "";
+		private String accHolderName = "";
+		private String status = "";
+		private String branchDesc = "";
+		private String micr = "";
+		private String ifsc = "";
+		private String city = "";
+		private String chqBankName = "";
+
+		public String getSeqNo() {
+			return seqNo;
+		}
+
+		public void setSeqNo(String seqNo) {
+			this.seqNo = seqNo;
+		}
+
+		public String getAccountNo() {
+			return accountNo;
+		}
+
+		public void setAccountNo(String accountNo) {
+			this.accountNo = accountNo;
+		}
+
+		public String getChequeSerialNo() {
+			return chequeSerialNo;
+		}
+
+		public void setChequeSerialNo(String chequeSerialNo) {
+			this.chequeSerialNo = chequeSerialNo;
+		}
+
+		public String getChequeType() {
+			return chequeType;
+		}
+
+		public void setChequeType(String chequeType) {
+			this.chequeType = chequeType;
+		}
+
+		public String getChequeTypeDesc() {
+			return chequeTypeDesc;
+		}
+
+		public void setChequeTypeDesc(String chequeTypeDesc) {
+			this.chequeTypeDesc = chequeTypeDesc;
+		}
+
+		public String getChequeDate() {
+			return chequeDate;
+		}
+
+		public void setChequeDate(String chequeDate) {
+			this.chequeDate = chequeDate;
+		}
+
+		public String geteMIRefNo() {
+			return eMIRefNo;
+		}
+
+		public void seteMIRefNo(String eMIRefNo) {
+			this.eMIRefNo = eMIRefNo;
+		}
+
+		public String getAmount() {
+			return amount;
+		}
+
+		public void setAmount(String amount) {
+			this.amount = amount;
+		}
+
+		public String getChequeStatus() {
+			return chequeStatus;
+		}
+
+		public void setChequeStatus(String chequeStatus) {
+			this.chequeStatus = chequeStatus;
+		}
+
+		public String getAccHolderName() {
+			return accHolderName;
+		}
+
+		public void setAccHolderName(String accHolderName) {
+			this.accHolderName = accHolderName;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getBranchDesc() {
+			return branchDesc;
+		}
+
+		public void setBranchDesc(String branchDesc) {
+			this.branchDesc = branchDesc;
+		}
+
+		public String getMicr() {
+			return micr;
+		}
+
+		public void setMicr(String micr) {
+			this.micr = micr;
+		}
+
+		public String getIfsc() {
+			return ifsc;
+		}
+
+		public void setIfsc(String ifsc) {
+			this.ifsc = ifsc;
+		}
+
+		public String getCity() {
+			return city;
+		}
+
+		public void setCity(String city) {
+			this.city = city;
+		}
+
+		public String getChqBankName() {
+			return chqBankName;
+		}
+
+		public void setChqBankName(String chqBankName) {
+			this.chqBankName = chqBankName;
+		}
+
+	}
+
+	private List<CustomerAddress> custAddresses = new ArrayList<>();
+
+	public List<CustomerAddress> getCustAddresses() {
+		return custAddresses;
+	}
+
+	public void setCustAddresses(List<CustomerAddress> custAddresses) {
+		this.custAddresses = custAddresses;
+	}
+
+	private List<CustomerAddress> coAppAddresses = new ArrayList<>();
+
+	private List<ChequeDetail> chequeDetails = new ArrayList<>();
+
+	public List<CustomerAddress> getCoAppAddresses() {
+		return coAppAddresses;
+	}
+
+	public void setCoAppAddresses(List<CustomerAddress> coAppAddresses) {
+		this.coAppAddresses = coAppAddresses;
+	}
+
+	public List<ChequeDetail> getChequeDetails() {
+		return chequeDetails;
+	}
+
+	public void setChequeDetails(List<ChequeDetail> chequeDetails) {
+		this.chequeDetails = chequeDetails;
+	}
+
+	public String getRepayOnLoanAmt() {
+		return repayOnLoanAmt;
+	}
+
+	public void setRepayOnLoanAmt(String repayOnLoanAmt) {
+		this.repayOnLoanAmt = repayOnLoanAmt;
+	}
+
+	public String getRepayOnLoanAmtInWords() {
+		return repayOnLoanAmtInWords;
+	}
+
+	public void setRepayOnLoanAmtInWords(String repayOnLoanAmtInWords) {
+		this.repayOnLoanAmtInWords = repayOnLoanAmtInWords;
+	}
+
+	public String getMorPeriod() {
+		return morPeriod;
+	}
+
+	public void setMorPeriod(String morPeriod) {
+		this.morPeriod = morPeriod;
+	}
+
+	public String getMorStartDate() {
+		return morStartDate;
+	}
+
+	public void setMorStartDate(String morStartDate) {
+		this.morStartDate = morStartDate;
+	}
+
+	public String getMorEndDate() {
+		return morEndDate;
+	}
+
+	public void setMorEndDate(String morEndDate) {
+		this.morEndDate = morEndDate;
+	}
+
+	public String getGrcPeriod() {
+		return grcPeriod;
+	}
+
+	public void setGrcPeriod(String grcPeriod) {
+		this.grcPeriod = grcPeriod;
+	}
+
+	public String getGrcStartDate() {
+		return grcStartDate;
+	}
+
+	public void setGrcStartDate(String grcStartDate) {
+		this.grcStartDate = grcStartDate;
+	}
+
+	public String getAddProdFeatures() {
+		return addProdFeatures;
+	}
+
+	public void setAddProdFeatures(String addProdFeatures) {
+		this.addProdFeatures = addProdFeatures;
+	}
+
+	public String getNameofBorrowers() {
+		return nameofBorrowers;
+	}
+
+	public void setNameofBorrowers(String nameofBorrowers) {
+		this.nameofBorrowers = nameofBorrowers;
+	}
+
+	public String getInitialCreditCompletedDate() {
+		return initialCreditCompletedDate;
+	}
+
+	public void setInitialCreditCompletedDate(String initialCreditCompletedDate) {
+		this.initialCreditCompletedDate = initialCreditCompletedDate;
+	}
+	
+	public String getFinProduct() {
+		return finProduct;
+	}
+
+	public void setFinProduct(String finProduct) {
+		this.finProduct = finProduct;
 	}
 }

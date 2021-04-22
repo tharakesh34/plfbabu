@@ -31,6 +31,7 @@ public final class AppStaticList {
 	private static List<Property> covenantTypes = initializeCovenantTypes();
 	private static List<Property> months = initializeMonths();
 	private static List<Property> finOptions = initializeFinOptions();
+	private static List<Property> commodityUnitTypes = initializeCommodityUnitTypes();
 
 	/**
 	 * Private constructor to hide the implicit public one.
@@ -108,6 +109,7 @@ public final class AppStaticList {
 		list.add(new Property("SC", App.getLabel("label_StandardCovenants")));
 		list.add(new Property("FC", App.getLabel("label_FinancialCovenants")));
 		list.add(new Property("NFC", App.getLabel("label_NonFinancialCovenants")));
+		list.add(new Property("SKR", App.getLabel("label_SafeKeepingRecord")));
 		return list;
 	}
 
@@ -241,4 +243,18 @@ public final class AppStaticList {
 		return finOptions;
 	}
 
+	private static List<Property> initializeCommodityUnitTypes() {
+		List<Property> list = new ArrayList<>(5);
+		list.add(new Property(1, "Killos"));
+		list.add(new Property(2, "Tonnes"));
+		list.add(new Property(3, "Grams"));
+		list.add(new Property(4, "Ounce"));
+		list.add(new Property(5, "Quantity"));
+
+		return list;
+	}
+
+	public static List<Property> getCommodityUnitTypes() {
+		return commodityUnitTypes;
+	}
 }

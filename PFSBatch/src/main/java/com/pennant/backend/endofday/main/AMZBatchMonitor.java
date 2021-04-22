@@ -54,7 +54,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.StepExecution;
@@ -67,7 +68,7 @@ import com.pennant.backend.util.AmortizationConstants;
 
 public class AMZBatchMonitor {
 
-	private static final Logger logger = Logger.getLogger(AMZBatchMonitor.class);
+	private static final Logger logger = LogManager.getLogger(AMZBatchMonitor.class);
 	private static AMZBatchMonitor instance = null;
 
 	private static ClassPathXmlApplicationContext jobMonitorContext;

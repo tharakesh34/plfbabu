@@ -18,6 +18,13 @@ public class WSReturnStatus implements Serializable {
 	String returnCode;
 	String returnText;
 
+	public WSReturnStatus copyEntity() {
+		WSReturnStatus entity = new WSReturnStatus();
+		entity.setReturnCode(this.returnCode);
+		entity.setReturnText(this.returnText);
+		return entity;
+	}
+
 	public String getReturnCode() {
 		return returnCode;
 	}

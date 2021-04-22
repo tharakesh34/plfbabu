@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.authorization.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.authorization.AuthorizationLimitDAO;
 import com.pennant.backend.model.authorization.AuthorizationLimit;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>AuthorizationLimit</code> with set of CRUD operations.
  */
 public class AuthorizationLimitDAOImpl extends SequenceDao<AuthorizationLimit> implements AuthorizationLimitDAO {
-	private static Logger logger = Logger.getLogger(AuthorizationLimitDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AuthorizationLimitDAOImpl.class);
 
 	public AuthorizationLimitDAOImpl() {
 		super();
@@ -98,8 +99,7 @@ public class AuthorizationLimitDAOImpl extends SequenceDao<AuthorizationLimit> i
 		authorizationLimit.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimit);
-		RowMapper<AuthorizationLimit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AuthorizationLimit.class);
+		RowMapper<AuthorizationLimit> rowMapper = BeanPropertyRowMapper.newInstance(AuthorizationLimit.class);
 
 		try {
 			authorizationLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -140,8 +140,7 @@ public class AuthorizationLimitDAOImpl extends SequenceDao<AuthorizationLimit> i
 		;
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimit);
-		RowMapper<AuthorizationLimit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AuthorizationLimit.class);
+		RowMapper<AuthorizationLimit> rowMapper = BeanPropertyRowMapper.newInstance(AuthorizationLimit.class);
 
 		try {
 			authorizationLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

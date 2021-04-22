@@ -45,15 +45,16 @@ package com.pennant.backend.dao.administration.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityUserHierarchyDAO;
 import com.pennant.backend.model.administration.ReportingManager;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierarchy>
 		implements SecurityUserHierarchyDAO {
 
-	private static Logger logger = Logger.getLogger(SecurityUserHierarchyDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserHierarchyDAOImpl.class);
 
 	public SecurityUserHierarchyDAOImpl() {
 		super();
@@ -177,8 +178,7 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<SecurityUserHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityUserHierarchy.class);
+		RowMapper<SecurityUserHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUserHierarchy.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
@@ -207,8 +207,7 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<SecurityUserHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityUserHierarchy.class);
+		RowMapper<SecurityUserHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUserHierarchy.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
@@ -230,8 +229,7 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<SecurityUserHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityUserHierarchy.class);
+		RowMapper<SecurityUserHierarchy> rowMapper = BeanPropertyRowMapper.newInstance(SecurityUserHierarchy.class);
 
 		try {
 			jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);

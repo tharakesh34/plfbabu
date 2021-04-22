@@ -49,7 +49,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
@@ -74,7 +75,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -98,7 +98,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
-	private static final Logger logger = Logger.getLogger(FinCovenantTypeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinCovenantTypeListCtrl.class);
 
 	protected Window window_FinCovenantTypeList;
 
@@ -364,6 +364,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
+	 * @param commodityHeader
 	 * 
 	 */
 	public void doWriteBeanToComponents() {

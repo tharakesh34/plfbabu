@@ -27,7 +27,9 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_IND_AS", true);
 
-		customConstants.put("ALLOW_ADV_INT_EMI", true);
+		customConstants.put("ALLOW_ADV_INT", true);
+
+		customConstants.put("ALLOW_ADV_EMI", true);
 
 		customConstants.put("ALLOW_DSF_CASHCLT", true);
 
@@ -43,11 +45,29 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
 
-		customConstants.put("ALLOW_OLDEST_DUE", true);
-
 		customConstants.put("ALLOW_NPA_PROVISION", true);
 
-		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
+		customConstants.put("ALLOW_PMAY", true);
+
+		customConstants.put("ALLOW_OCR", true);
+
+		customConstants.put("IND_AS_ACCOUNTING_REQ", true);
+
+		customConstants.put("DISB_PAID_CANCELLATION_ALLOW", true);
+
+		customConstants.put("MANDATE_PTNRBNK_IN_DWNLD", true);
+
+		customConstants.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", true);
+
+		customConstants.put("GROUP_BATCH_BY_PARTNERBANK", true);
+
+		customConstants.put("PRESENTMENT_STAGE_ACCOUNTING_REQ", true);
+
+		customConstants.put("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", true);
+
+		customConstants.put("ALLOW_AUTO_GRACE_EXT", true);
+
+		customConstants.put("ALLOW_LOAN_DOWNSIZING", true);
 
 	}
 

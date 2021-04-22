@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1442.1" author="saranya.s">
+		<addColumn tableName="ADTBMTBANKDETAIL">
+			<column name="MinAccNoLength" type="int" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<!-- ST#1544 Under Construction Changes change sets start -->
+
+	<changeSet id="ST#1544.1" author="sampath.d">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="GrcAdjReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.2" author="sampath.d">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="GrcPeriodAftrFullDisb" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.3" author="sampath.d">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="AutoIncrGrcEndDate" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.4" author="sampath.d">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="GrcAutoIncrMonths" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.5" author="sampath.d">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MaxAutoIncrAllowed" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.6" author="sampath.d">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="ThrldToMaintainGrcPrd" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.7" author="sampath.d">
+		<sql>
+			<![CDATA[
+				UPDATE ADTRMTFINANCETYPES Set GrcAdjReq = 0;
+				UPDATE ADTRMTFINANCETYPES Set GrcPeriodAftrFullDisb = 0;
+				UPDATE ADTRMTFINANCETYPES Set AutoIncrGrcEndDate = 0;
+				UPDATE ADTRMTFINANCETYPES Set GrcAutoIncrMonths = 0;
+				UPDATE ADTRMTFINANCETYPES Set MaxAutoIncrAllowed = 0;
+				UPDATE ADTRMTFINANCETYPES Set ThrldToMaintainGrcPrd = 0;
+				
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1544.8" author="sampath.d" dbms="postgresql, oracle">
+		<addDefaultValue columnName="GrcAdjReq" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="GrcPeriodAftrFullDisb" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="AutoIncrGrcEndDate" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="GrcAutoIncrMonths" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="MaxAutoIncrAllowed" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="ThrldToMaintainGrcPrd" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1544.9" author="sampath.d" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFT_GrcAdjReq DEFAULT 0 FOR GrcAdjReq;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFT_GrcPdArFlDisb DEFAULT 0 FOR GrcPeriodAftrFullDisb;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFT_AutIrGrEdDate DEFAULT 0 FOR AutoIncrGrcEndDate;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFT_GcAutInrMnths DEFAULT 0 FOR GrcAutoIncrMonths;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFT_MaxAutInrAlod DEFAULT 0 FOR MaxAutoIncrAllowed;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFT_ThrldToMtnGrcPrd DEFAULT 0 FOR ThrldToMaintainGrcPrd;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1544.10" author="sampath.d">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="AlwGrcAdj" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.11" author="sampath.d">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="ENDGRCPERIODAFTRFULLDISB" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.12" author="sampath.d">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="AUTOINCGRCENDDATE" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1544.13" author="sampath.d">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinanceMain Set AlwGrcAdj = 0;
+				UPDATE AdtFinanceMain Set EndGrcPeriodAftrFullDisb = 0;
+				UPDATE AdtFinanceMain Set AutoIncGrcEndDate = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1544.14" author="sampath.d" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AdtFinanceMain ADD CONSTRAINT DF_AdtFM_AlwGrcAdj DEFAULT 0 FOR AlwGrcAdj;
+				ALTER TABLE AdtFinanceMain ADD CONSTRAINT DF_AdtFM_EdGrPdArFlDisb DEFAULT 0 FOR EndGrcPeriodAftrFullDisb;
+				ALTER TABLE AdtFinanceMain ADD CONSTRAINT DF_AdtFM_AutIncGrEdDate DEFAULT 0 FOR AutoIncGrcEndDate;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1544.15" author="sampath.d" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AlwGrcAdj" tableName="AdtFinanceMain" defaultValue="0" />
+		<addDefaultValue columnName="EndGrcPeriodAftrFullDisb" tableName="AdtFinanceMain" defaultValue="0" />
+		<addDefaultValue columnName="AutoIncGrcEndDate" tableName="AdtFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<!-- ST#1544 Under Construction Changes change sets end -->
+
+	 <changeSet id="DE#185.2" author="narendra.m">
+		 <modifyDataType tableName="ADTBOUNCEREASONS" columnName="REASON" newDataType="VARCHAR(150)" />
+	</changeSet>
+	
+</databaseChangeLog>

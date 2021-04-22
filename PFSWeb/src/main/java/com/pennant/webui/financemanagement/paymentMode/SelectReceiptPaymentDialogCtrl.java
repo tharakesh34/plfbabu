@@ -7,7 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
@@ -60,6 +61,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -75,7 +77,7 @@ import com.pennanttech.pff.external.SubReceiptPaymentModes;
 public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(SelectReceiptPaymentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectReceiptPaymentDialogCtrl.class);
 
 	protected Window window_SelectReceiptPaymentDialog;
 	protected Textbox custCIF;
@@ -87,10 +89,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	protected Combobox subReceiptMode;
 	protected Combobox receiptPurpose;
 	protected CurrencyBox receiptAmount;
+	protected CurrencyBox tDSAmount;
 	protected CurrencyBox receiptDues;
 	protected Datebox receiptDate;
 	protected Datebox valueDate;
 	protected ExtendedCombobox referenceId;
+	protected Combobox sourceofFund;
 
 	protected Button btnProceed;
 	protected Button btnValidate;
@@ -104,6 +108,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	protected Row row_ReceiptPurpose;
 	protected Row row_ReceiptChannel;
 	protected Row row_receiptAmount;
+	protected Row row_tDSAmount;
 	protected Row row_receiptDues;
 	protected Label ReceiptPayment;
 	protected Label label_ReceiptPayment_CustomerName;
@@ -311,9 +316,15 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 
+		this.tDSAmount.setTextBoxWidth(190);
+		this.tDSAmount.setProperties(false, formatter);
+		this.tDSAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
+				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
+
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
 		fillComboBox(this.receiptChannel, "", PennantStaticListUtil.getReceiptChannels(), "");
 		fillComboBox(this.subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), "");
+		fillComboBox(this.sourceofFund, "", PennantAppUtil.getFieldCodeList("SOURCE"), "");
 
 		this.module = getArgument("module");
 		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
@@ -349,6 +360,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.row_subReceiptMode.setVisible(false);
 			this.row_ReceiptChannel.setVisible(false);
 			this.row_receiptAmount.setVisible(false);
+			this.row_tDSAmount.setVisible(false);
 			this.btnValidate.setVisible(false);
 			this.row_receiptDues.setVisible(false);
 			this.row_ReceiptMode.setVisible(false);
@@ -545,6 +557,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		}
 
+		errorDetail = receiptService.getWaiverValidation(this.finReference.getValue(),
+				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
+
 		/*
 		 * if (isKnockOff) { BigDecimal receiptDues = this.receiptDues.getActualValue(); BigDecimal knockOffAmount =
 		 * this.receiptAmount.getActualValue(); String rcptPurpose = this.receiptPurpose.getSelectedItem().getValue();
@@ -619,8 +634,18 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			return;
 		}
 
+		errorDetail = receiptService.getWaiverValidation(finMain.getFinReference(),
+				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
+
+		if (errorDetail != null) {
+			MessageUtil.showError(ErrorUtil.getErrorDetail(errorDetail));
+			return;
+		}
+
 		if (receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails() != null
-				&& receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails().size() > 0) {
+				&& receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails().size() > 0)
+
+		{
 			MessageUtil.showError(ErrorUtil
 					.getErrorDetail(receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails().get(0)));
 			return;
@@ -761,6 +786,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		String recPurpose = getComboboxValue(this.receiptPurpose);
 		if (isForeClosure) {
 			recPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+			method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		}
 
 		switch (recPurpose) {
@@ -826,6 +852,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			rch.setReceiptChannel(PennantConstants.List_Select);
 		}
 
+		if (this.row_tDSAmount.isVisible()) {
+			rch.setTdsAmount(PennantApplicationUtil.unFormateAmount(this.tDSAmount.getActualValue(), formatter));
+		}
+
 		int methodCtg = receiptCalculator.setReceiptCategory(method);
 		fsd.setErrorDetails(new ArrayList<ErrorDetail>(1));
 
@@ -839,10 +869,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		fsi.setReceiptPurpose(method);
 		fsi.setFromDate(fsi.getValueDate());
 
-		rch.setReceiptDate(fsi.getReceivedDate());
+		rch.setReceiptAmount(rch.getReceiptAmount().add(rch.getTdsAmount()));
+		rch.setReceiptDate(SysParamUtil.getAppDate());
 		rch.setValueDate(fsi.getValueDate());
+		rch.setReceivedDate(fsi.getReceivedDate());
 		rcd.setValueDate(fsi.getValueDate());
 		rcd.setReceivedDate(fsi.getReceivedDate());
+		rch.setSourceofFund(getComboboxValue(this.sourceofFund));
 
 		receiptData = receiptService.validateDual(receiptData, methodCtg);
 	}
@@ -949,6 +982,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				}
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
 				resetDefaults(financeMain);
+				if (FinanceConstants.RECEIPT_MAKER.equals(this.module)
+						&& PennantConstants.TDS_MANUAL.equalsIgnoreCase(financeMain.getTdsType())) {
+					this.row_tDSAmount.setVisible(true);
+					this.tDSAmount.setValue(BigDecimal.ZERO);
+				}
+			} else {
+				this.receiptPurpose.setDisabled(false);
+				fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
+				this.row_tDSAmount.setVisible(false);
+				this.tDSAmount.setValue(BigDecimal.ZERO);
 			}
 		}
 

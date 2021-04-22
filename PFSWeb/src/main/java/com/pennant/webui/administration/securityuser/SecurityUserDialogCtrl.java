@@ -53,7 +53,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -154,7 +155,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements Constraint {
 	private static final long serialVersionUID = 952561911227552664L;
-	private static final Logger logger = Logger.getLogger(SecurityUserDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityUserDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -335,6 +336,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		setListusrDftAppId();
 		fillComboBox(authType, "", authTypesList, "");
+		fillComboBox(ldapDomainName, "", ldapDomainList, "");
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			fillComboBox(ldapDomainName, "", ldapDomainList, "");
@@ -1149,7 +1151,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			if (StringUtils.isNotEmpty(this.usrMobile.getValue())) {
 				this.usrMobile.setConstraint(
 						new PTMobileNumberValidator(Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), true,
-								PennantRegularExpressions.MOBILE_REGEX));
+								PennantRegularExpressions.REGEX_MOBILE));
 			} else {
 				this.usrMobile.setConstraint(new PTMobileNumberValidator(
 						Labels.getLabel("label_SecurityUserSearch_UsrMobile.value"), false));
@@ -1344,6 +1346,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
+		this.ldapDomainName.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.txtbox_Password.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
 		this.usrFName.setReadonly(isReadOnly("SecurityUserDialog_usrFName"));

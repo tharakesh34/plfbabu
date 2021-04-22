@@ -45,7 +45,8 @@ package com.pennant.backend.service.dedup.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class DedupFieldsServiceImpl implements DedupFieldsService {
-	private static final Logger logger = Logger.getLogger(DedupFieldsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DedupFieldsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

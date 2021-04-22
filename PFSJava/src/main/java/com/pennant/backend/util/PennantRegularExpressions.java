@@ -111,9 +111,11 @@ public class PennantRegularExpressions {
 	public static final String ID_CODES = "([A-Za-z\\/]*|[0-9\\/]*|[a-zA-Z0-9\\/]*)+\\s*";
 	//public static final String	ID_CODES							= "([A-Za-z\\s]*|[0-9\\s]*|[a-zA-Z0-9\\s]*)";
 
-	public static final String TELEPHONE_FAX_REGEX = "[0-9]{10}";
-	public static final String MOBILE_REGEX = "^(\\+\\d{1,3}[- ]?)?\\d{10}$";
-	public static final String EMAIL_REGEX = "^[a-zA-Z]+[0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-z]+[0-9]*(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
+	public static final String REGEX_TELEPHONE = "REGEX_TELEPHONE";
+	public static final String REGEX_FAX = "REGEX_FAX";
+	public static final String REGEX_MOBILE = "REGEX_MOBILE";
+
+	public static final String EMAIL_REGEX = "^[a-zA-Z0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-Z0-9]*(\\.?[a-zA-Z]*)?\\.{1}[a-zA-Z]{2,3}";
 	public static final String ADDRESS_REGEX = "[a-zA-Z0-9.\\>\\<\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]+";
 	public static final String WEB_REGEX = "^[wW]{3}[\\.]{1}([a-zA-z]+[0-9]*)(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
 
@@ -139,8 +141,11 @@ public class PennantRegularExpressions {
 	public static final String REGEX_NM_AMOUNT = "REGEX_NM_AMOUNT";
 	public static final String REGEX_COMPANY_NAME = "REGEX_COMPANY_NAME";
 	public static final String REGEX_NAME = "REGEX_NAME";
+	public static final String REGEX_CHEQUE_NAME = "REGEX_CHEQUE_NAME";
 	public static final String REGEX_UPPERCASENAME = "REGEX_UPPERCASENAME";
 	public static final String REGEX_CUST_NAME = "REGEX_CUST_NAME";
+	public static final String REGEX_RETAIL_CUST_NAME = "REGEX_RETAIL_CUST_NAME";
+	public static final String REGEX_CORP_CUST_NAME = "REGEX_CORP_CUST_NAME";
 	public static final String REGEX_ADDRESS = "REGEX_ADDRESS";
 	public static final String REGEX_STATICLIST = "REGEX_STATICLIST";
 	public static final String REGEX_NUMERIC = "REGEX_NUMERIC";
@@ -172,13 +177,14 @@ public class PennantRegularExpressions {
 	public static final String REGEX_AREA_MAXLENGTH = "REGEX_AREA_MAXLENGTH";
 	public static final String REGEX_PASSPORT = "REGEX_PASSPORT";
 	public static final String REGEX_CORP_CUST = "REGEX_CORP_CUST";
-	public static final String REGEX_AADHAR_NUMBER = "REGEX_AADHAAR_NUMBER";
+	public static final String REGEX_AADHAR_NUMBER = "REGEX_AADHAR_NUMBER";
 	public static final String REGEX_UPPBOX_ALPHA_FL3 = "REGEX_UPPBOX_ALPHA_FL3";
 	public static final String REGEX_UPPBOX_ALPHANUM_FL3 = "REGEX_UPPBOX_ALPHANUM_FL3";
 	public static final String REGEX_ACCOUNTNUMBER = "REGEX_ACCOUNTNUMBER";
 	public static final String REGEX_PANNUMBER = "REGEX_PAN_NUMBER";
 	public static final String REGEX_GSTIN = "REGEX_GSTIN";
 	public static final String REGEX_ACC_HOLDER_NAME = "REGEX_ACC_HOLDER_NAME";
+	public static final String REGEX_ACCOUNT_HOLDER_NAME = "REGEX_ACCOUNT_HOLDER_NAME";
 	public static final String REGEX_FAVOURING_NAME = "REGEX_FAVOURING_NAME";
 
 	public static final String REGEX_BARCODE_NUMBER = "REGEX_BARCODE_NUMBER";
@@ -191,6 +197,11 @@ public class PennantRegularExpressions {
 	public static final String REGEX_CLUST_NAME = "REGEX_CLUST_NAME";
 	public static final String REGEX_ALPHANUM_ALPHAFIRST = "REGEX_ALPHANUM_ALPHAFIRST";
 	public static final String REGEX_DOC_CODE = "REGEX_DOC_CODE";
+	public static final String NUMERIC_FL6_REGEX = "NUMERIC_FL6_REGEX";
+	public static final String REGEX_PHONE = "REGEX_PHONE";
+	public static final String REGEX_PHONE_COUNTRY = "REGEX_PHONE_COUNTRY";
+	public static final String REGEX_PHONE_AREA = "REGEX_PHONE_AREA";
+	public static final String REGEX_PHONE_NUMBER = "REGEX_PHONE_NUMBER";
 
 	private static Map<String, String> regexMapper = new HashMap<String, String>() {
 		private static final long serialVersionUID = -3549857310897774789L;
@@ -218,7 +229,6 @@ public class PennantRegularExpressions {
 			put(REGEX_UPPERCASENAME, "^[A-Za-z]+[A-Za-z.\\s]*");
 			put(REGEX_UPPER_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s\\/\\-]*");
 			put(REGEX_ALPHANUM_FSLASH_SPACE, "^[A-Za-z0-9\\/]+[A-Za-z0-9.\\s\\/\\-]*");
-			put(REGEX_CUST_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\_\\s]*");
 			put(REGEX_DESCRIPTION, "^[A-Za-z0-9]+[A-Za-z0-9\\.\\-\\s\\(\\)]*");
 			put(REGEX_ADDRESS, "[a-zA-Z0-9.\\>\\<\\,\\-\\/\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]*");
 			put(REGEX_NM_AMOUNT, "[0-9.\\-]*");
@@ -262,7 +272,7 @@ public class PennantRegularExpressions {
 			put(REGEX_LOOK_UP_VALUE, "^[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_BARCODE_NUMBER, "[0-9]{9}[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_SPECIAL_REGX,
-					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_\\=]*");
+					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_\\=\\']*");
 			put(REGEX_ALPHA_NUMERIC_DOT_SPACE, "[A-Za-z0-9 .]+");
 			put(REGEX_CLUST_NAME, "^[A-Za-z]+[A-Za-z0-9&\\-\\_\\,\\s,:]*");
 			put(REGEX_ALPHANUM_ALPHAFIRST, "^[A-Za-z]+[A-Za-z0-9]*");
@@ -270,6 +280,17 @@ public class PennantRegularExpressions {
 			put(REGEX_DOC_CODE, "^[A-Z0-9\\_]*");
 			put(REGEX_ALPHANUM_SPACE_SPL_CHAR,
 					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\,\\-\\@\\$\\%\\&\\#\\=\\+\\*(\\)\\[\\]\\{\\}\\s\\_]*");
+			put(NUMERIC_FL6_REGEX, "[0-9]{6}");
+
+			put(REGEX_PHONE, "^[0-9]{11}");
+			put(REGEX_MOBILE, "[0-9]{10}");
+			put(REGEX_TELEPHONE, "^\\+?[0-9\\s]{8,}$");
+			put(REGEX_FAX, "[0-9]{10}");
+
+			put(REGEX_PHONE_COUNTRY, "^[1-9]{1}[0-9]{0,3}");
+			put(REGEX_PHONE_AREA, "^[1-9]{1}[0-9]{0,3}");
+			put(REGEX_PHONE_NUMBER, "[0-9]{6,8}");
+
 		}
 	};
 

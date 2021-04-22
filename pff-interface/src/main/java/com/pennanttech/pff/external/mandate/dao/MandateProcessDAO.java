@@ -8,4 +8,12 @@ public interface MandateProcessDAO {
 	public List<Long> getMandateList(String entityCode);
 
 	public List<String> getEntityCodes();
+
+	public void deleteMandateRequests(List<Long> selectedMandateIds);
+
+	public void deleteMandateStatus(List<Long> selectedMandateIds);
+
+	public List<Long> getMandateList(String entityCode, String partnerBankCode);
+
+	public List<String> getPartnerBankCodeByEntity(String entityCode);
 }

@@ -71,10 +71,10 @@
 								</hbox>
 							</row>
 							<row visible="true">
-								<label id="label_BankDetailDialog_accNoLength" value="${c:l('label_BankDetailDialog_AccNoLength.value')}" />
+								<label id="label_BankDetailDialog_MinimumAccNoLength" value="${c:l('label_BankDetailDialog_MinimumAccNoLength.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<intbox id="accNoLength" />
+									<intbox id="minAccNoLength" />
 								</hbox>
 
 								<label id="label_BankDetailDialog_BankShortCode" value="${c:l('label_BankDetailDialog_BankShortCode.value')}" />
@@ -84,6 +84,12 @@
 								</hbox>
 							</row>
 							<row visible="true">
+								<label id="label_BankDetailDialog_accNoLength" value="${c:l('label_BankDetailDialog_AccNoLength.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<intbox id="accNoLength" />
+								</hbox>
+								
 								<label id="label_BankDetailDialog_Active" value="${c:l('label_BankDetailDialog_Active.value')}" />
 								<hbox>
 									<space spacing="2px" />

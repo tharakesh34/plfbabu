@@ -7,15 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.model.customermasters.CustCardSales;
@@ -26,7 +27,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> implements CustomerCardSalesInfoDAO {
-	private static Logger logger = Logger.getLogger(CustomerCardSalesInfoDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerCardSalesInfoDAOImpl.class);
 
 	public CustomerCardSalesInfoDAOImpl() {
 		super();
@@ -50,7 +51,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCardSalesInfo);
-		RowMapper<CustCardSales> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustCardSales.class);
+		RowMapper<CustCardSales> typeRowMapper = BeanPropertyRowMapper.newInstance(CustCardSales.class);
 
 		try {
 			customerCardSalesInfo = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -62,8 +63,6 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 	}
 
 	public List<CustCardSales> getCardSalesInfoByCustomer(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, MerchantId, CustID, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -78,41 +77,28 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<CustCardSales>() {
-				@Override
-				public CustCardSales mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustCardSales ccs = new CustCardSales();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			CustCardSales ccs = new CustCardSales();
 
-					ccs.setId(rs.getLong("Id"));
-					ccs.setMerchantId(rs.getString("MerchantId"));
-					ccs.setCustID(rs.getLong("CustID"));
-					ccs.setVersion(rs.getInt("Version"));
-					ccs.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					ccs.setLastMntBy(rs.getLong("LastMntBy"));
-					ccs.setRecordStatus(rs.getString("RecordStatus"));
-					ccs.setRoleCode(rs.getString("RoleCode"));
-					ccs.setNextRoleCode(rs.getString("NextRoleCode"));
-					ccs.setTaskId(rs.getString("TaskId"));
-					ccs.setNextTaskId(rs.getString("NextTaskId"));
-					ccs.setRecordType(rs.getString("RecordType"));
-					ccs.setWorkflowId(rs.getLong("WorkflowId"));
+			ccs.setId(rs.getLong("Id"));
+			ccs.setMerchantId(rs.getString("MerchantId"));
+			ccs.setCustID(rs.getLong("CustID"));
+			ccs.setVersion(rs.getInt("Version"));
+			ccs.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ccs.setLastMntBy(rs.getLong("LastMntBy"));
+			ccs.setRecordStatus(rs.getString("RecordStatus"));
+			ccs.setRoleCode(rs.getString("RoleCode"));
+			ccs.setNextRoleCode(rs.getString("NextRoleCode"));
+			ccs.setTaskId(rs.getString("TaskId"));
+			ccs.setNextTaskId(rs.getString("NextTaskId"));
+			ccs.setRecordType(rs.getString("RecordType"));
+			ccs.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return ccs;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return ccs;
+		});
 	}
 
 	@Override
@@ -237,7 +223,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCardSalesInfo);
-		RowMapper<CustCardSales> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustCardSales.class);
+		RowMapper<CustCardSales> typeRowMapper = BeanPropertyRowMapper.newInstance(CustCardSales.class);
 		try {
 			customerCardSalesInfo = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

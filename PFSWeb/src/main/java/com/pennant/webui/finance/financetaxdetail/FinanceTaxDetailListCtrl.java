@@ -45,7 +45,8 @@ package com.pennant.webui.finance.financetaxdetail;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -60,9 +61,9 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.financetaxdetail.model.FinanceTaxDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -78,7 +79,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FinanceTaxDetailListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceTaxDetailListCtrl.class);
 
 	protected Window window_FinanceTaxDetailList;
 	protected Borderlayout borderLayout_FinanceTaxDetailList;
@@ -113,6 +114,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	protected Listbox sortOperator_PinCode;
 
 	private transient FinanceTaxDetailService financeTaxDetailService;
+	private transient CustomerAddresDAO customerAddresDAO;
 
 	/**
 	 * default constructor.<br>
@@ -278,6 +280,11 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
+		if (enqiryModule) {
+			arg.put("enquirymode", true);
+		} else {
+			arg.put("enquirymode", false);
+		}
 		arg.put("financeTaxDetail", financetaxdetail);
 		arg.put("financeTaxDetailListCtrl", this);
 
@@ -332,5 +339,13 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 
 	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
 		this.financeTaxDetailService = financeTaxDetailService;
+	}
+
+	public CustomerAddresDAO getCustomerAddresDAO() {
+		return customerAddresDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 }

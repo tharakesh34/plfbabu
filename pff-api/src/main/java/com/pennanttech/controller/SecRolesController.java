@@ -2,7 +2,8 @@ package com.pennanttech.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.administration.SecurityRole;
@@ -10,8 +11,8 @@ import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennanttech.ws.model.secRoles.SecurityRoleDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class SecRolesController {
-	private final Logger logger = Logger.getLogger(SecRolesController.class);
+public class SecRolesController extends ExtendedTestClass {
+	private final Logger logger = LogManager.getLogger(SecRolesController.class);
 
 	private SecurityRoleService securityRoleService;
 

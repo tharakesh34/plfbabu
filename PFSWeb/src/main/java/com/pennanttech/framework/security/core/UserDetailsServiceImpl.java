@@ -47,7 +47,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class UserDetailsServiceImpl implements UserDetailsService {
-	private static final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(UserDetailsServiceImpl.class);
 
 	private UserService userService;
 
@@ -113,16 +114,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		// get the list of rights for a specified user.
 		final Collection<SecurityRight> rights = userService.getMenuRightsByUser(user);
 
-		final ArrayList<GrantedAuthority> rechteGrantedAuthorities = new ArrayList<>(rights.size());
+		final ArrayList<GrantedAuthority> grantedAuthorities = new ArrayList<>(rights.size());
 
-		// now create for all rights a GrantedAuthority
-		// and fill the GrantedAuthority List with these authorities.
-		for (final SecurityRight right : rights) {
-			rechteGrantedAuthorities.add(new SimpleGrantedAuthority(right.getRightName()));
-		}
+		rights.stream().forEach(right -> grantedAuthorities.add(new SimpleGrantedAuthority(right.getRightName())));
 
 		logger.trace(Literal.LEAVING);
-		return rechteGrantedAuthorities;
+		return grantedAuthorities;
 	}
 
 	@Autowired

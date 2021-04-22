@@ -6,7 +6,8 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -15,9 +16,10 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class ODDetailDownload implements Tasklet {
-	private Logger logger = Logger.getLogger(ODDetailDownload.class);
+	private Logger logger = LogManager.getLogger(ODDetailDownload.class);
 
 	private DataSource dataSource;
 
@@ -31,8 +33,8 @@ public class ODDetailDownload implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getAppValueDate();
-		dateAppDate = DateUtility.getAppDate();
+		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
+		dateAppDate = EODUtil.getDate("APP_DATE", context);
 
 		logger.debug("START: Overdue Details for Report as Value Date: " + DateUtility.addDays(dateValueDate, -1));
 

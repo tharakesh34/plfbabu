@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -28,6 +31,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
@@ -40,6 +44,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -54,12 +59,11 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
 
 	private static final long serialVersionUID = -8108473227202001840L;
-	private static final Logger logger = Logger.getLogger(ExtendedFieldCaptureDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldCaptureDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component
-	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ExtendedFieldCaptureDialog;
 	protected Tabpanel extendedFieldTabPanel;
@@ -81,6 +85,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	private String moduleType = "";
 	private ScriptValidationService scriptValidationService;
 	private DedupParmService dedupParmService;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	/**
 	 * default constructor.<br>
@@ -152,6 +157,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(260);
+		generator.setExtendedFieldDetailsService(getExtendedFieldDetailsService());
 		this.extendedFieldTabPanel.setHeight("100%");
 		generator.setCcyFormat(ccyFormat);
 		if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
@@ -165,7 +171,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			generator.setReadOnly(!isReadOnly);
 		}
 
-		// Pre-Validation Checking & Setting Defaults
+		//Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
 		if (getExtendedFieldRender().getMapValues() != null) {
 			fieldValuesMap = getExtendedFieldRender().getMapValues();
@@ -173,7 +179,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 
 		if (newRecord) {
 
-			// get pre-validation script if record is new
+			//get pre-validation script if record is new
 			String preValidationScript = getExtendedFieldRenderDialogCtrl().getPreValidationScript();
 			if (StringUtils.isNotEmpty(preValidationScript)) {
 				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
@@ -211,7 +217,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			generator.renderWindow(getExtendedFieldHeader(), newRecord);
 			// Height Calculation
 			int height = borderLayoutHeight - 100;
-			// this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
+			//this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -234,8 +240,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	 * @throws NoSuchFieldException
 	 */
 	public void onClick$btnSave(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException, IOException,
-			NoSuchMethodException, NoSuchFieldException, SecurityException {
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException,
+			ScriptException, IOException, NoSuchMethodException, NoSuchFieldException, SecurityException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -244,7 +250,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event An event sent to the event handler of the component.
+	 * @param event
+	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug("Entering");
@@ -304,9 +311,11 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType                       (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -384,7 +393,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public void doSave() throws InterruptedException, ParseException, IOException, NoSuchMethodException,
+	public void doSave()
+			throws InterruptedException, ParseException, ScriptException, IOException, NoSuchMethodException,
 			NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		logger.debug("Entering");
 
@@ -397,24 +407,25 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		Map<String, Object> fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 		aExetendedFieldRender.setMapValues(fielValueMap);
 
-		if (this.queryId > 0) {
+		if (!ImplementationConstants.COLLATERAL_DEDUP_WARNING && this.queryId > 0) {
 			DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(this.queryCode,
 					FinanceConstants.DEDUP_COLLATERAL, this.querySubCode);
 
-			String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup_Temp T1"
+			String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME, T2.CUSTCIF DepositorCif From CollateralSetup_Temp T1"
 					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
 					+ this.querySubCode + "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
-					+ " union all " + " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
+					+ " union all "
+					+ " Select T1.CollateralRef, T2.CUSTSHRTNAME, T2.CUSTCIF DepositorCif From CollateralSetup T1"
 					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
 					+ this.querySubCode + "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
 					+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + this.querySubCode
 					+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
 
 			List<CollateralSetup> collateralSetupList = this.dedupParmService.queryExecution(sqlQuery, fielValueMap);
-
+			String customerCIF = "";
 			if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
 				boolean recordFound = true;
-
+				customerCIF = collateralSetupList.get(0).getDepositorCif();
 				if (collateralSetupList.size() == 1) {
 					if (StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils.equals(
 							collateralSetupList.get(0).getCollateralRef(), aExetendedFieldRender.getReference())) {
@@ -426,11 +437,12 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 						if (!(StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
 								.equals(collateralSetup.getCollateralRef(), aExetendedFieldRender.getReference()))) {
 							recordFound = true;
+							customerCIF = collateralSetup.getDepositorCif();
 						}
 					}
 				}
 				if (recordFound) {
-					MessageUtil.showError("This collateral already used by some other customer.");
+					MessageUtil.showError(Labels.getLabel("Collateral_Dedup_Error_Message") + customerCIF);
 					return;
 				}
 			}
@@ -525,8 +537,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 				ExtendedFieldRender fieldRender = getExtendedFieldRenderDialogCtrl().getExtendedFieldRenderList()
 						.get(i);
 
-				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list
-																					// Seqno same
+				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -634,7 +645,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -716,7 +728,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -785,4 +798,13 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		this.dedupParmService = dedupParmService;
 	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
 }

@@ -45,14 +45,15 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SysNotificationDAO;
 import com.pennant.backend.model.applicationmaster.SysNotification;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class SysNotificationDAOImpl extends SequenceDao<SysNotification> implements SysNotificationDAO {
-	private static Logger logger = Logger.getLogger(SysNotificationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SysNotificationDAOImpl.class);
 
 	public SysNotificationDAOImpl() {
 		super();
@@ -101,8 +102,7 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sysNotification);
-		RowMapper<SysNotification> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SysNotification.class);
+		RowMapper<SysNotification> typeRowMapper = BeanPropertyRowMapper.newInstance(SysNotification.class);
 
 		try {
 			sysNotification = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -170,8 +170,8 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		logger.debug("Entering");
 
 		if (sysNotification.getId() == Long.MIN_VALUE) {
-			sysNotification.setSysNotificationId(getNextId("SeqSysNotification"));
-			logger.debug("Next ID ; " + sysNotification.getSysNotificationId());
+			sysNotification.setSysNotificationId(getNextValue("SeqSysNotification"));
+			logger.debug("Next Value; " + sysNotification.getSysNotificationId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into SysNotification");
@@ -248,7 +248,7 @@ public class SysNotificationDAOImpl extends SequenceDao<SysNotification> impleme
 		selectSql.append(" ORDER BY CustCIF");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(details);
-		RowMapper<SysNotificationDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SysNotificationDetails> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SysNotificationDetails.class);
 
 		logger.debug("selectSql: " + selectSql.toString());

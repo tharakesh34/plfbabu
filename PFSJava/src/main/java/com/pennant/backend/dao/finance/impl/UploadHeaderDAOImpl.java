@@ -46,14 +46,15 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.UploadHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements UploadHeaderDAO {
-	private static Logger logger = Logger.getLogger(UploadHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadHeaderDAOImpl.class);
 
 	public UploadHeaderDAOImpl() {
 		super();
@@ -93,7 +94,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadHeader);
-		RowMapper<UploadHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UploadHeader.class);
+		RowMapper<UploadHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadHeader.class);
 
 		try {
 			uploadHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -235,7 +236,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadHeader);
-		RowMapper<UploadHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UploadHeader.class);
+		RowMapper<UploadHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadHeader.class);
 
 		try {
 			uploadHeader = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -478,7 +479,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		selectSql.append(" Where UploadId = :UploadId Group By STATUS");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<UploadReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UploadReceipt.class);
+		RowMapper<UploadReceipt> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadReceipt.class);
 		logger.debug("Leaving");
 
 		return jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);

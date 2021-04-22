@@ -42,7 +42,8 @@
  */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -64,7 +65,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class AgreementDefinitionServiceImpl extends GenericService<AgreementDefinition>
 		implements AgreementDefinitionService {
-	private static final Logger logger = Logger.getLogger(AgreementDefinitionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(AgreementDefinitionServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

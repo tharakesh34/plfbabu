@@ -73,7 +73,7 @@
 										<label id="label_ChangeTDS_CustCIF" value="${c:l('label_ChangeTDS_CustCIF.label')}" />
 										<textbox id="custCIF" width="200px" maxlength="19" readonly="true" />
 										<label id="label_ChangeTDS_CustShrtName" value="${c:l('label_ChangeTDS_CustShrtName.label')}" />
-										<textbox id="custShrtName" width="200px" maxlength="50" readonly="true" />
+										<textbox id="custShrtName" width="200px" maxlength="100" readonly="true" />
 									</row>
 									<row>
 										<label id="label_ChangeTDS_CustDocType" value="${c:l('label_ChangeTDS_FinType.label')}" />
@@ -111,7 +111,7 @@
 											</hbox>
 
 										</row>
-										<row id="row_TDS2">
+										<row id="row_TDS2"  visible="false">
 											<label id="label_TdsStartDate" value="${c:l('label_ChangeTDS_TdsStartDate.value')}" />
 											<hbox>
 												<space spacing="2px" />
@@ -125,7 +125,7 @@
 											</hbox>
 
 										</row>
-										<row id="row_TDS3">
+										<row id="row_TDS3" visible="false">
 											<label id="label_TdsLimit" value="${c:l('label_ChangeTDS_TdsLimit.value')}" />
 											<currencyBox id="tdsLimit" width="180px" />
 

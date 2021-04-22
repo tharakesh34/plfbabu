@@ -101,6 +101,7 @@ public class AccountEventConstants {
 	public static final String THIRDPARTY_TRANSFER = "THIRDPT";
 	public static final String STUDY_DOCUMENTATION = "SDFAMZ";
 	public static final String FX_REVALUATION = "FXREVAL";
+	public static final String ACCEVENT_ROLLOVER = "ROLLOVER";
 	public static final String ACCEVENT_EMIHOLIDAY = "EMIDAY";
 	public static final String ACCEVENT_REAGING = "REAGING";
 	public static final String ACCEVENT_VAS_ACCRUAL = "VASACRUL";
@@ -131,6 +132,10 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_OEMSBV = "OEMSBV";
 	public static final String ACCEVENT_EXPENSE = "EXPENSE";
 	public static final String ACCEVENT_INDAS = "INDAS";
+	public static final String ACCEVENT_PRSNT = "PRSNT";
+	public static final String ACCEVENT_PRSNTRSP = "PRSNTRSP";
+	public static final String PART_CANCELATION = "PARTCAN";
+	public static final String ACCEVENT_NLRCPT = "NLRCPT";
 
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";

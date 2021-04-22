@@ -8,6 +8,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
+import com.pennant.backend.model.finance.ExtBreDetails;
+import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevType;
@@ -86,5 +88,9 @@ public interface CreditApplicationReviewService {
 	List<FinCreditReviewDetails> getFinCreditRevDetailIds(long custid);
 
 	Map<String, Object> getFinCreditRevSummaryDetails(long id, String auditYear);
+
+	ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewConfig);
+
+	ExtBreDetails getExtBreDetailsByRef(String finReference);
 
 }

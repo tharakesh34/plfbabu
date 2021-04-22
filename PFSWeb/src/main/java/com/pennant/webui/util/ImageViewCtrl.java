@@ -4,7 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Iframe;
@@ -12,6 +13,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinOCRCapture;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantConstants;
@@ -24,7 +26,7 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 	protected Iframe document;
 	protected Label label_RefId;
 
-	private static final Logger logger = Logger.getLogger(ImageViewCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ImageViewCtrl.class);
 
 	public ImageViewCtrl() {
 		super();
@@ -89,7 +91,8 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 						amedia = new AMedia(docDetail.getDocName(), "msword", "application/msword", data);
 					} else if (PennantConstants.DOC_TYPE_MSG.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "msg", "application/octet-stream", data);
-					} else if (PennantConstants.DOC_TYPE_IMAGE.equals(docDetail.getDoctype())) {
+					} else if (PennantConstants.DOC_TYPE_IMAGE.equals(docDetail.getDoctype())
+							|| StringUtils.equals(PennantConstants.DOC_TYPE_PNG, docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "jpeg", "image/jpeg", data);
 					} else if (PennantConstants.DOC_TYPE_ZIP.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "x-zip-compressed", "application/x-zip-compressed",
@@ -99,6 +102,8 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 					} else if (PennantConstants.DOC_TYPE_RAR.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "x-rar-compressed", "application/x-rar-compressed",
 								data);
+					} else {
+						amedia = new AMedia(docDetail.getDocName(), null, null, data);
 					}
 					document.setContent(amedia);
 				}
@@ -130,6 +135,25 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 				}
 
 				if (mandate != null) {
+					label_RefId.setVisible(true);
+					document.setContent(amedia);
+				}
+			}
+			if (arguments.containsKey("finOCRCapture")) {
+				this.window_ImageView.setWidth("75%");
+				this.window_ImageView.setHeight("80%");
+				this.label_RefId.setVisible(true);
+
+				FinOCRCapture finOCRCapture = (FinOCRCapture) arguments.get("finOCRCapture");
+				String docType = StringUtils.trimToEmpty(finOCRCapture.getFileName()).toLowerCase();
+				if (docType.endsWith(".pdf")) {
+					amedia = new AMedia(finOCRCapture.getFileName(), "pdf", "application/pdf",
+							finOCRCapture.getDocImage());
+				} else if (docType.endsWith(".jpg") || docType.endsWith(".jpeg") || docType.endsWith(".png")) {
+					amedia = new AMedia(finOCRCapture.getFileName(), "jpeg", "image/jpeg", finOCRCapture.getDocImage());
+				}
+
+				if (finOCRCapture != null) {
 					label_RefId.setVisible(true);
 					document.setContent(amedia);
 				}

@@ -3,11 +3,11 @@ package com.pennant.backend.dao.finance.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -23,7 +23,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> implements FinanceDeviationsDAO {
-	private static Logger logger = Logger.getLogger(FinanceDeviationsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceDeviationsDAOImpl.class);
 
 	public FinanceDeviationsDAOImpl() {
 		super();
@@ -35,53 +35,37 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 	 */
 	@Override
 	public List<FinanceDeviations> getFinanceDeviations(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finReference);
+			}
+		}, rowMapper);
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	@Override
 	public List<FinanceDeviations> getFinanceDeviations(String finReference, boolean deviProcessed, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinReference = ? and DeviProcessed = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setBoolean(index++, deviProcessed);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finReference);
+				ps.setBoolean(index++, deviProcessed);
+			}
+		}, rowMapper);
 	}
 
 	/**
@@ -109,7 +93,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 				" DelegationRole = :DelegationRole, ApprovalStatus = :ApprovalStatus ,DeviationDate = :DeviationDate,");
 		sql.append(" DeviationCategory = :DeviationCategory, Remarks =:Remarks, ");
 		sql.append(" DeviationUserId=:DeviationUserId, DelegatedUserId = :DelegatedUserId, ");
-		sql.append(" MarkDeleted = :MarkDeleted, RaisedUser = :RaisedUser");
+		sql.append(" MarkDeleted = :MarkDeleted, RaisedUser = :RaisedUser, Mitigants = :Mitigants");
 		sql.append(" where DeviationId = :DeviationId");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -127,19 +111,19 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		logger.debug("Entering");
 
 		if (financeDeviations.getDeviationId() == Long.MIN_VALUE) {
-			financeDeviations.setDeviationId(getNextId("SeqDeviations"));
+			financeDeviations.setDeviationId(getNextValue("SeqDeviations"));
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into FinanceDeviations");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" ( DeviationId, FinReference, Module, DeviationCode, DeviationType, ");
 		insertSql.append(" DeviationValue, UserRole, DelegationRole,ApprovalStatus,");
 		insertSql.append(
-				" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed, DeviationDesc, MarkDeleted, RaisedUser)");
+				" DeviationDate, DeviationUserId,DelegatedUserId,DeviationCategory,Remarks,DeviProcessed, DeviationDesc, MarkDeleted, RaisedUser, Mitigants)");
 
 		insertSql.append(" Values( :DeviationId, :FinReference, :Module, :DeviationCode, :DeviationType,");
 		insertSql.append(" :DeviationValue, :UserRole, :DelegationRole, :ApprovalStatus,");
 		insertSql.append(
-				" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed, :DeviationDesc, :MarkDeleted, :RaisedUser)");
+				" :DeviationDate, :DeviationUserId, :DelegatedUserId, :DeviationCategory, :Remarks, :DeviProcessed, :DeviationDesc, :MarkDeleted, :RaisedUser, :Mitigants)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeDeviations);
@@ -282,7 +266,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" DeviationId, FinReference, Module, Remarks, DeviationCode, DeviationType, DeviationValue");
 		sql.append(", UserRole, DeviationCategory, DelegationRole, ApprovalStatus, DeviationDate, DeviationUserId");
-		sql.append(", MarkDeleted, DelegatedUserId, DeviationDesc, RaisedUser");
+		sql.append(", MarkDeleted, DelegatedUserId, DeviationDesc, RaisedUser, Mitigants");
 
 		if (!StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append(", DeviProcessed");
@@ -321,6 +305,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			fd.setDelegatedUserId(rs.getString("DelegatedUserId"));
 			fd.setDeviationDesc(rs.getString("DeviationDesc"));
 			fd.setRaisedUser(rs.getString("RaisedUser"));
+			fd.setMitigants(rs.getString("Mitigants"));
 
 			if (!StringUtils.containsIgnoreCase(type, "View")) {
 				fd.setDeviProcessed(rs.getBoolean("DeviProcessed"));
@@ -332,34 +317,24 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 
 	@Override
 	public List<FinanceDeviations> getFinanceDeviationsByStatus(String finReference, String status, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinReference = ? and ApprovalStatus = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, status);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		FinDeviationRowMapper rowMapper = new FinDeviationRowMapper(type);
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setString(index++, finReference);
+				ps.setString(index++, status);
+			}
+		}, rowMapper);
 	}
 
 	@Override
 	public FinanceDeviations getFinanceDeviationsByIdAndFinRef(String finReference, long deviationId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinReference = ? and deviationId = ?");
 
@@ -369,10 +344,11 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, deviationId },
 					rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"Deviation not exist in FinanceDeviations{} table/view for the specified FinReference >> {} and deviationId >> {}",
+					type, finReference, deviationId);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 }

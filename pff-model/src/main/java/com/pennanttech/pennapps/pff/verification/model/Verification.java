@@ -19,6 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -28,21 +34,32 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>Verification table</b>
  *
  */
+
+@XmlAccessorType(XmlAccessType.NONE)
 public class Verification extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long id;
+	@XmlElement
 	private int verificationType;
 	private int module;
+	@XmlElement
 	private String keyReference;
+	@XmlElement
 	private String referenceType;
+	@XmlElement
 	private String reference;
+	@XmlElement
 	private String referenceFor;
 	private Long custId;
+	@XmlElement
 	private int requestType;
 	private Long reinitid;
+	@XmlElement
 	private Long agency;
+	@XmlElement
 	private Long reason;
+	@XmlElement
 	private String remarks;
 	private long createdBy;
 	private Date createdOn;
@@ -56,6 +73,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private boolean approveTab;
 	private boolean waiveTab;
+	@XmlElement(name = "documentType")
 	private int docType;
 	private int oldRequestType;
 	private String docName;
@@ -63,17 +81,25 @@ public class Verification extends AbstractWorkflowEntity {
 	private boolean ignoreFlag;
 	private boolean initiated;
 	private boolean save;
+	@XmlElement
 	private String collateralType;
 
+	@XmlElement
 	private String cif;
+	@XmlElement(name = "name")
 	private String customerName;
 	private String agencyName;
 	private String agencyCity;
 	private String reasonName;
+	@XmlElementWrapper
+	@XmlElement
 	private List<LVDocument> lvDocuments = new ArrayList<>();
 	private RCUDocument rcuDocument;
+	@XmlElementWrapper
+	@XmlElement
 	private List<RCUDocument> rcuDocuments = new ArrayList<>();
-
+	@XmlElementWrapper
+	@XmlElement
 	private List<Verification> verifications = new ArrayList<>();
 	private FieldInvestigation fieldInvestigation;
 	private List<CustomerDetails> customerDetailsList = new ArrayList<>();
@@ -83,6 +109,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private TechnicalVerification technicalVerification;
 	private LegalVerification legalVerification;
 	private RiskContainmentUnit rcuVerification;
+	private LegalVetting legalVetting;
 
 	private int lastStatus;
 	private Date lastVerificationDate;
@@ -94,9 +121,12 @@ public class Verification extends AbstractWorkflowEntity {
 	private String verificationStatus;
 	private PersonalDiscussion personalDiscussion;
 
+	@XmlElement(name = "accountNumber")
 	private String accNumber;
+	@XmlElement
 	private String bankName;
 	//New Field for BHFL.
+	@XmlElement
 	private int verificationCategory;
 	private BigDecimal finalValAsPerPE = BigDecimal.ZERO;
 	private BigDecimal finalValAmt = BigDecimal.ZERO;
@@ -107,6 +137,12 @@ public class Verification extends AbstractWorkflowEntity {
 	//Value As Per Cost Of Property
 	private BigDecimal valueForCOP = BigDecimal.ZERO;
 	private String tvRecordStatus;
+	private List<LVDocument> vettingDocuments = new ArrayList<>();
+	private String city;
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	@XmlElement
+	private String collRef;
 
 	public Verification() {
 		super();
@@ -120,6 +156,7 @@ public class Verification extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("cif");
+		excludeFields.add("city");
 		excludeFields.add("customerName");
 		excludeFields.add("agencyName");
 		excludeFields.add("reasonName");
@@ -131,6 +168,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("technicalVerification");
 		excludeFields.add("lvDocuments");
 		excludeFields.add("legalVerification");
+		excludeFields.add("legalVetting");
 		excludeFields.add("agencyCity");
 		excludeFields.add("approveTab");
 		excludeFields.add("docType");
@@ -163,6 +201,9 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("accNumber");
 		excludeFields.add("bankName");
 		excludeFields.add("collateralType");
+		excludeFields.add("vettingDocuments");
+		excludeFields.add("returnStatus");
+		excludeFields.add("collRef");
 		return excludeFields;
 	}
 
@@ -725,4 +766,45 @@ public class Verification extends AbstractWorkflowEntity {
 	public void setCollateralType(String collateralType) {
 		this.collateralType = collateralType;
 	}
+
+	public LegalVetting getLegalVetting() {
+		return legalVetting;
+	}
+
+	public void setLegalVetting(LegalVetting legalVetting) {
+		this.legalVetting = legalVetting;
+	}
+
+	public List<LVDocument> getVettingDocuments() {
+		return vettingDocuments;
+	}
+
+	public void setVettingDocuments(List<LVDocument> vettingDocuments) {
+		this.vettingDocuments = vettingDocuments;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getCollRef() {
+		return collRef;
+	}
+
+	public void setCollRef(String collRef) {
+		this.collRef = collRef;
+	}
+
 }

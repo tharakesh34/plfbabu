@@ -46,7 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -73,6 +74,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -83,7 +85,6 @@ import com.pennant.util.AgreementGeneration;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -93,7 +94,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(AgreementDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AgreementDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -113,12 +114,12 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	// protected List box listBox_FinAgreementDetail; // autoWired
 	// Main Tab Details
 	private RuleService ruleService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private AgreementGeneration agreementGeneration;
 	private FinanceDetail financeDetail = null;
 	private Object financeMainDialogCtrl = null;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
+	private DDAControllerService ddaControllerService;
 	protected Groupbox finBasicdetails;
 
 	private List<FinanceReferenceDetail> agreementList = null;
@@ -225,8 +226,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						if (isFinanceProcess) {
 							HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
 									.getDeclaredFieldValues();
-							isAgrRender = (boolean) getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-									fieldsAndValues,
+							isAgrRender = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 									getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
 									RuleReturnType.BOOLEAN);
 						}
@@ -405,73 +405,80 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		if (isFinanceProcess) {
 			// Calling Credit Review Details
 
+			if (detail == null) {
+				return;
+			}
+
 			FinScheduleData finScheduleData = detail.getFinScheduleData();
+			if (finScheduleData == null) {
+				return;
+			}
+
 			FinanceMain fm = finScheduleData.getFinanceMain();
-			if (detail == null || finScheduleData == null || fm == null) {
+			if (fm == null) {
 				return;
 			}
 
 			try {
 
-				String finReference = fm.getFinReference();
-				String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
-				String reportName = "";
-
-				/**
-				 * Disabling the aggPath functionality as aggPath is no longer considered in loan process. As discussed
-				 * with Raju. This functionality is moved to collateral and associated at customer side.
-				 * 
-				 */
-				String aggPath = "", templateName = "";
-				if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
-					String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
-					// aggPath =
-					// main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
-					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
-				} else {
-					// aggPath = main.getFinPurpose();
-					templateName = data.getLovDescAggReportName();
+				if (StringUtils.trimToEmpty(data.getLovDescCodelov()).equals(PennantConstants.DOCCTG_DDA_FORM)) {
+					doValidateDDARequest(detail);
 				}
 
-				AgreementEngine engine = new AgreementEngine(aggPath);
-				engine.setTemplate(templateName);
-				engine.loadTemplate();
-
-				engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(),
-						getUserWorkspace().getUserDetails()));
-
-				getAgreementGeneration().setExtendedMasterDescription(detail, engine);
-				getAgreementGeneration().setCustExtFieldDesc(detail.getCustomerDetails(), engine);
-				getAgreementGeneration().setFeeDetails(detail, engine);
-
-				byte[] docData = null;
-				int format = 0;
-
-				if (PennantConstants.DOC_TYPE_PDF.equals(data.getAggType())) {
-					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
-					format = SaveFormat.PDF;
-					docData = engine.getDocumentInByteArray(format);
+				if (data.isAllowMultiple()) {
+					generateMultipleAgreements(detail, data, fm.getFinPurpose(), data.getModuleType());
 				} else {
-					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
-					format = SaveFormat.DOCX;
-					docData = engine.getDocumentInByteArray(format);
+					String finReference = fm.getFinReference();
+					String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
+					String reportName = "";
+
+					/**
+					 * Disabling the aggPath functionality as aggPath is no longer considered in loan process. As
+					 * discussed with Raju. This functionality is moved to collateral and associated at customer side.
+					 * 
+					 */
+					String aggPath = "", templateName = "";
+					if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
+						String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
+						// aggPath =
+						// main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
+						templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
+					} else {
+						// aggPath = main.getFinPurpose();
+						templateName = data.getLovDescAggReportName();
+					}
+
+					AgreementEngine engine = new AgreementEngine();
+					engine.setTemplate(templateName);
+					engine.loadTemplate();
+
+					engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(),
+							getUserWorkspace().getUserDetails()));
+
+					getAgreementGeneration().setExtendedMasterDescription(detail, engine);
+					getAgreementGeneration().setCustExtFieldDesc(detail.getCustomerDetails(), engine);
+					getAgreementGeneration().setFeeDetails(detail, engine);
+
+					byte[] docData = null;
+					int format = 0;
+
+					if (PennantConstants.DOC_TYPE_PDF.equals(data.getAggType())) {
+						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
+						format = SaveFormat.PDF;
+						docData = engine.getDocumentInByteArray(format);
+					} else {
+						reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
+						format = SaveFormat.DOCX;
+						docData = engine.getDocumentInByteArray(format);
+					}
+
+					showDocument(docData, window_AgreementDetailDialog, reportName, format);
+
+					engine.close();
+					engine = null;
 				}
-
-				showDocument(docData, window_AgreementDetailDialog, reportName, format);
-
-				engine.close();
-				engine = null;
 			} catch (Exception e) {
-				if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
-						|| e.getMessage().equals("Template site does not exist.")
-						|| e.getMessage().equals("Template does not exist."))) {
-					// throw new Exception("Template does not exists.Please
-					// configure Template.");
-					AppException exception = new AppException("Template does not exists.Please configure Template.");
-					MessageUtil.showError(exception);
-				} else {
-					MessageUtil.showError(e);
-				}
+				MessageUtil.showError(e);
 			}
 		} else {
 
@@ -491,7 +498,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					aggPath = "";
 					templateName = data.getLovDescAggReportName();
 				}
-				AgreementEngine engine = new AgreementEngine(aggPath);
+				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 
@@ -520,7 +527,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private FinanceDetail getFinanceDetails() {
+	private FinanceDetail getFinanceDetails() throws Exception {
 
 		if (!isFinanceProcess) {
 			return null;
@@ -534,10 +541,50 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			}
 		} catch (Exception e) {
 			if (e.getCause().getClass().equals(WrongValuesException.class)) {
-				throw new AppException(e.getMessage());
+				throw e;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Method for validate DDA Registration request details
+	 * 
+	 * @param detail
+	 * @param data
+	 * @throws InterruptedException
+	 */
+	private void doValidateDDARequest(FinanceDetail detail) throws InterruptedException {
+
+		try {
+			getDdaControllerService().validateDDARequest(detail);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+	}
+
+	private void generateMultipleAgreements(FinanceDetail detail, FinanceReferenceDetail data, String assetType,
+			String moduleType) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		moduleType = StringUtils.trimToEmpty(moduleType);
+
+		switch (moduleType) {
+		case PennantConstants.JOINSCUSTAGRDATA:
+			getAgreementGeneration().prepareAgreementDataJoinsCust(detail, data, getUserWorkspace().getUserDetails());
+			break;
+
+		case PennantConstants.ADVANCEPAYMENTAGRDATA:
+			getAgreementGeneration().prepareAdvancePaymentAgreementData(detail, data,
+					getUserWorkspace().getUserDetails());
+			break;
+		default:
+			break;
+		}
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	public void doEdit() {
@@ -605,14 +652,6 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		this.ruleService = ruleService;
 	}
 
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
 	}
@@ -627,6 +666,14 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
 		this.agreementGeneration = agreementGeneration;
+	}
+
+	public DDAControllerService getDdaControllerService() {
+		return ddaControllerService;
+	}
+
+	public void setDdaControllerService(DDAControllerService ddaControllerService) {
+		this.ddaControllerService = ddaControllerService;
 	}
 
 	public CollateralBasicDetailsCtrl getCollateralBasicDetailsCtrl() {

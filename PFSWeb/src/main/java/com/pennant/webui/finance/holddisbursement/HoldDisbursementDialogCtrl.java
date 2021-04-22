@@ -43,12 +43,12 @@
 package com.pennant.webui.finance.holddisbursement;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -82,7 +82,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(HoldDisbursementDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(HoldDisbursementDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -187,15 +187,15 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 		//this.totalLoanAmt.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.totalLoanAmt.setFormat(PennantConstants.rateFormate9);
 
-		this.totalLoanAmt.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.totalLoanAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.totalLoanAmt.setScale(PennantConstants.defaultCCYDecPos);
 		this.disbursedAmount.setMaxlength(18);
 		this.disbursedAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.disbursedAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.disbursedAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.disbursedAmount.setScale(PennantConstants.defaultCCYDecPos);
 		this.holdLimitAmount.setMaxlength(18);
 		this.holdLimitAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.holdLimitAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.holdLimitAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.holdLimitAmount.setScale(PennantConstants.defaultCCYDecPos);
 		this.remarks.setMaxlength(100);
 

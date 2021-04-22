@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  DataImportDAOImpl.java                                               * 	  
+ * FileName    		:  OfflineUserMessagesBackupDAOImpl.java                                               * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -47,21 +47,20 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.messages.OfflineUserMessagesBackupDAO;
 import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * @author s057
@@ -83,43 +82,64 @@ public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessa
 	 */
 	@Override
 	public List<OfflineUsersMessagesBackup> getMessagesBackupByUserId(String toUsrId) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ToUsrID, FromUsrID, SendTime, Message");
+		sql.append(" FROM OFFLINEUSRMESSAGESBACKUP");
+		sql.append(" Where ToUsrID = ?");
 
-		OfflineUsersMessagesBackup offlineUsersMessagesBackup = new OfflineUsersMessagesBackup();
-		offlineUsersMessagesBackup.setToUsrID(toUsrId);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT  TOUSRID,FROMUSRID,SENDTIME,MESSAGE");
-		selectSql.append("  FROM OFFLINEUSRMESSAGESBACKUP where ToUsrID=:ToUsrID order by SENDTIME Asc ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(offlineUsersMessagesBackup);
-		RowMapper<OfflineUsersMessagesBackup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OfflineUsersMessagesBackup.class);
+		List<OfflineUsersMessagesBackup> msgList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, toUsrId);
+		}, (rs, rowNum) -> {
+			OfflineUsersMessagesBackup msgBkp = new OfflineUsersMessagesBackup();
 
-		try {
-			logger.debug(Literal.LEAVING);
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			return null;
-		}
+			msgBkp.setFromUsrID(rs.getString("FromUsrID"));
+			msgBkp.setSendTime(rs.getDate("SendTime"));
+			msgBkp.setMessage(rs.getString("Message"));
+			msgBkp.setToUsrID(rs.getString("ToUsrID"));
+
+			return msgBkp;
+		});
+
+		return sortBySendTime(msgList);
+	}
+
+	private List<OfflineUsersMessagesBackup> sortBySendTime(List<OfflineUsersMessagesBackup> msgList) {
+		return msgList.stream().sorted((msg1, msg2) -> DateUtil.compare(msg1.getSendTime(), msg2.getSendTime()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public void save(List<OfflineUsersMessagesBackup> offlineusrmsgBkpList) {
-		logger.debug("Entering");
+	public void save(List<OfflineUsersMessagesBackup> msgBkp) {
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" OFFLINEUSRMESSAGESBACKUP");
+		sql.append(" (TOUSRID, FROMUSRID, SENDTIME, MESSAGE");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?");
+		sql.append(")");
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into OFFLINEUSRMESSAGESBACKUP");
-		insertSql.append(" (TOUSRID, FROMUSRID, SENDTIME, MESSAGE)");
-		insertSql.append(" Values(:ToUsrID, :FromUsrID, :SendTime, :Message)");
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(offlineusrmsgBkpList.toArray());
+		logger.trace(Literal.SQL, sql.toString());
 
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		logger.debug("Leaving");
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				OfflineUsersMessagesBackup offUsrMsgBkp = msgBkp.get(i);
 
+				int index = 1;
+				ps.setString(index++, offUsrMsgBkp.getToUsrID());
+				ps.setString(index++, offUsrMsgBkp.getFromUsrID());
+				ps.setDate(index++, JdbcUtil.getDate(offUsrMsgBkp.getSendTime()));
+				ps.setString(index++, offUsrMsgBkp.getMessage());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return msgBkp.size();
+			}
+		});
 	}
 
 	@Override

@@ -42,14 +42,11 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -65,7 +62,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> implements CustEmployeeDetailDAO {
-	private static Logger logger = Logger.getLogger(CustEmployeeDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustEmployeeDetailDAOImpl.class);
 
 	public CustEmployeeDetailDAOImpl() {
 		super();
@@ -82,8 +79,6 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 	 */
 	@Override
 	public CustEmployeeDetail getCustEmployeeDetailById(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, EmpStatus, EmpSector, Profession, EmpName, EmpNameForOthers, EmpDesg");
 		sql.append(", EmpDept, EmpFrom, MonthlyIncome, OtherIncome, AdditionalIncome, Version, LastMntOn");
@@ -102,56 +97,51 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<CustEmployeeDetail>() {
-						@Override
-						public CustEmployeeDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							CustEmployeeDetail cmd = new CustEmployeeDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				CustEmployeeDetail cmd = new CustEmployeeDetail();
 
-							cmd.setCustID(rs.getLong("CustID"));
-							cmd.setEmpStatus(rs.getString("EmpStatus"));
-							cmd.setEmpSector(rs.getString("EmpSector"));
-							cmd.setProfession(rs.getString("Profession"));
-							cmd.setEmpName(rs.getLong("EmpName"));
-							cmd.setEmpNameForOthers(rs.getString("EmpNameForOthers"));
-							cmd.setEmpDesg(rs.getString("EmpDesg"));
-							cmd.setEmpDept(rs.getString("EmpDept"));
-							cmd.setEmpFrom(rs.getTimestamp("EmpFrom"));
-							cmd.setMonthlyIncome(rs.getBigDecimal("MonthlyIncome"));
-							cmd.setOtherIncome(rs.getString("OtherIncome"));
-							cmd.setAdditionalIncome(rs.getBigDecimal("AdditionalIncome"));
-							cmd.setVersion(rs.getInt("Version"));
-							cmd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							cmd.setLastMntBy(rs.getLong("LastMntBy"));
-							cmd.setRecordStatus(rs.getString("RecordStatus"));
-							cmd.setRoleCode(rs.getString("RoleCode"));
-							cmd.setNextRoleCode(rs.getString("NextRoleCode"));
-							cmd.setTaskId(rs.getString("TaskId"));
-							cmd.setNextTaskId(rs.getString("NextTaskId"));
-							cmd.setRecordType(rs.getString("RecordType"));
-							cmd.setWorkflowId(rs.getLong("WorkflowId"));
+				cmd.setCustID(rs.getLong("CustID"));
+				cmd.setEmpStatus(rs.getString("EmpStatus"));
+				cmd.setEmpSector(rs.getString("EmpSector"));
+				cmd.setProfession(rs.getString("Profession"));
+				cmd.setEmpName(rs.getLong("EmpName"));
+				cmd.setEmpNameForOthers(rs.getString("EmpNameForOthers"));
+				cmd.setEmpDesg(rs.getString("EmpDesg"));
+				cmd.setEmpDept(rs.getString("EmpDept"));
+				cmd.setEmpFrom(rs.getTimestamp("EmpFrom"));
+				cmd.setMonthlyIncome(rs.getBigDecimal("MonthlyIncome"));
+				cmd.setOtherIncome(rs.getString("OtherIncome"));
+				cmd.setAdditionalIncome(rs.getBigDecimal("AdditionalIncome"));
+				cmd.setVersion(rs.getInt("Version"));
+				cmd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				cmd.setLastMntBy(rs.getLong("LastMntBy"));
+				cmd.setRecordStatus(rs.getString("RecordStatus"));
+				cmd.setRoleCode(rs.getString("RoleCode"));
+				cmd.setNextRoleCode(rs.getString("NextRoleCode"));
+				cmd.setTaskId(rs.getString("TaskId"));
+				cmd.setNextTaskId(rs.getString("NextTaskId"));
+				cmd.setRecordType(rs.getString("RecordType"));
+				cmd.setWorkflowId(rs.getLong("WorkflowId"));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								cmd.setLovDescEmpStatus(rs.getString("LovDescEmpStatus"));
-								cmd.setLovDescEmpSector(rs.getString("LovDescEmpSector"));
-								cmd.setLovDescProfession(rs.getString("LovDescProfession"));
-								cmd.setLovDescEmpName(rs.getString("LovDescEmpName"));
-								cmd.setLovDescEmpDesg(rs.getString("LovDescEmpDesg"));
-								cmd.setLovDescEmpDept(rs.getString("LovDescEmpDept"));
-								cmd.setLovDescOtherIncome(rs.getString("LovDescOtherIncome"));
-								cmd.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
-								cmd.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
-								cmd.setEmpAlocType(rs.getString("EmpAlocType"));
-							}
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					cmd.setLovDescEmpStatus(rs.getString("LovDescEmpStatus"));
+					cmd.setLovDescEmpSector(rs.getString("LovDescEmpSector"));
+					cmd.setLovDescProfession(rs.getString("LovDescProfession"));
+					cmd.setLovDescEmpName(rs.getString("LovDescEmpName"));
+					cmd.setLovDescEmpDesg(rs.getString("LovDescEmpDesg"));
+					cmd.setLovDescEmpDept(rs.getString("LovDescEmpDept"));
+					cmd.setLovDescOtherIncome(rs.getString("LovDescOtherIncome"));
+					cmd.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
+					cmd.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
+					cmd.setEmpAlocType(rs.getString("EmpAlocType"));
+				}
 
-							return cmd;
-						}
-					});
+				return cmd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Records are not found in CustEmployeeDetail{} for CustID : {}", type, id);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

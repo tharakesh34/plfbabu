@@ -62,6 +62,7 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	private String fileName = null;
 	private Date transactionDate = null;
 	private int totalRecords = 0;
+	private int procRecords = 0;
 	private int successCount = 0;
 	private int failedCount = 0;
 	private boolean newRecord;
@@ -74,6 +75,8 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	private ReceiptUploadHeader befImage;
 
 	private LoggedInUser userDetails;
+	private long attemptNo;
+	private int attemptStatus;
 
 	private List<ReceiptUploadDetail> receiptUploadList = new ArrayList<>();
 
@@ -90,7 +93,9 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 		excludeFields.add("entityCodeDesc");
 		excludeFields.add("uploadProgress");
 		excludeFields.add("receiptId");
-
+		excludeFields.add("attemptStatus");
+		excludeFields.add("attemptNo");
+		excludeFields.add("procRecords");
 		return excludeFields;
 	}
 
@@ -108,6 +113,14 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 
 	public void setTotalRecords(int totalRecords) {
 		this.totalRecords = totalRecords;
+	}
+
+	public int getProcRecords() {
+		return procRecords;
+	}
+
+	public void setProcRecords(int procRecords) {
+		this.procRecords = procRecords;
 	}
 
 	public int getSuccessCount() {
@@ -240,4 +253,21 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	public void setLovValue(String lovValue) {
 		this.lovValue = lovValue;
 	}
+
+	public int getAttemptStatus() {
+		return attemptStatus;
+	}
+
+	public void setAttemptStatus(int attemptStatus) {
+		this.attemptStatus = attemptStatus;
+	}
+
+	public long getAttemptNo() {
+		return attemptNo;
+	}
+
+	public void setAttemptNo(long attemptNo) {
+		this.attemptNo = attemptNo;
+	}
+
 }

@@ -42,15 +42,16 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.BuilderProjcetDAO;
 import com.pennant.backend.model.systemmasters.BuilderProjcet;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BuilderProjcet</code> with set of CRUD operations.
  */
 public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implements BuilderProjcetDAO {
-	private static Logger logger = Logger.getLogger(BuilderProjcetDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BuilderProjcetDAOImpl.class);
 
 	public BuilderProjcetDAOImpl() {
 		super();
@@ -78,8 +79,15 @@ public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, name, builderId, apfNo, ");
+		sql.append("RegistrationNumber, AddressLine1, AddressLine2, AddressLine3, Landmark,");
+		sql.append("AreaOrLocality, City, State, PinCode, ProjectType, TypesOfApf, TotalUnits,");
+		sql.append("NumberOfTowers, NoOfIndependentHouses, ProjectStartDate, ProjectEndDate, Remarks,");
+		sql.append("CommencementCertificateNo, Commencecrtfctissuingauthority, TotalPlotArea, ");
+		sql.append("ConstructedArea, TechnicalDone, LegalDone, ");
+		sql.append("RcuDone, Constrctincompletionpercentage, DisbursalRecommendedPercentage, ");
+		sql.append("BeneficiaryName, BankBranchID, AccountNo, ");
 		if (type.contains("View")) {
-			sql.append("builderIdName,");
+			sql.append("builderIdName, segmentation, branchbankname, branchdesc, ifsc,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -94,7 +102,7 @@ public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implement
 		builderProjcet.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderProjcet);
-		RowMapper<BuilderProjcet> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderProjcet.class);
+		RowMapper<BuilderProjcet> rowMapper = BeanPropertyRowMapper.newInstance(BuilderProjcet.class);
 
 		try {
 			builderProjcet = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -118,16 +126,30 @@ public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implement
 		StringBuilder sql = new StringBuilder(" insert into BuilderProjcet");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, name, builderId, apfNo, ");
+		sql.append("RegistrationNumber, AddressLine1, AddressLine2, AddressLine3, Landmark,");
+		sql.append("AreaOrLocality, City, State, PinCode, ProjectType, TypesOfApf, TotalUnits,");
+		sql.append("NumberOfTowers, NoOfIndependentHouses, ProjectStartDate, ProjectEndDate, Remarks,");
+		sql.append("CommencementCertificateNo, Commencecrtfctissuingauthority, TotalPlotArea, ");
+		sql.append("ConstructedArea, TechnicalDone, LegalDone, ");
+		sql.append("RcuDone, Constrctincompletionpercentage, DisbursalRecommendedPercentage,");
+		sql.append("BeneficiaryName, BankBranchID, AccountNo, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :name, :builderId, :apfNo, ");
+		sql.append(":RegistrationNumber, :AddressLine1, :AddressLine2, :AddressLine3, :Landmark,");
+		sql.append(":AreaOrLocality, :City, :State, :PinCode, :ProjectType, :TypesOfApf, :TotalUnits,");
+		sql.append(":NumberOfTowers, :NoOfIndependentHouses, :ProjectStartDate, :ProjectEndDate, :Remarks,");
+		sql.append(":CommencementCertificateNo, :Commencecrtfctissuingauthority, :TotalPlotArea, ");
+		sql.append(":ConstructedArea, :TechnicalDone, :LegalDone, ");
+		sql.append(":RcuDone, :Constrctincompletionpercentage, :DisbursalRecommendedPercentage,");
+		sql.append(":BeneficiaryName, :BankBranchID, :AccountNo, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		/*
 		 * // Get the identity sequence number. if (builderProjcet.getId() <= 0) {
-		 * builderProjcet.setId(getNextidviewDAO().getNextId("SeqBuilderProjcet" )); }
+		 * builderProjcet.setId(getNextidviewDAO().getNextValue("SeqBuilderProjcet" )); }
 		 */
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -151,6 +173,19 @@ public class BuilderProjcetDAOImpl extends SequenceDao<BuilderProjcet> implement
 		StringBuilder sql = new StringBuilder("update BuilderProjcet");
 		sql.append(tableType.getSuffix());
 		sql.append("  set name = :name, builderId = :builderId, apfNo = :apfNo, ");
+		sql.append("RegistrationNumber= :RegistrationNumber, AddressLine1= :AddressLine1, ");
+		sql.append("AddressLine2= :AddressLine2, AddressLine3= :AddressLine3, Landmark= :Landmark, ");
+		sql.append("AreaOrLocality= :AreaOrLocality, City= :City, State= :State, PinCode= :PinCode, ");
+		sql.append("ProjectType= :ProjectType, TypesOfApf= :TypesOfApf, TotalUnits= :TotalUnits, ");
+		sql.append("NumberOfTowers= :NumberOfTowers, NoOfIndependentHouses= :NoOfIndependentHouses, ");
+		sql.append("ProjectStartDate= :ProjectStartDate, ProjectEndDate= :ProjectEndDate, Remarks= :Remarks, ");
+		sql.append(
+				"CommencementCertificateNo=:CommencementCertificateNo, Commencecrtfctissuingauthority=:Commencecrtfctissuingauthority, TotalPlotArea=:TotalPlotArea, ");
+		sql.append("ConstructedArea=:ConstructedArea, TechnicalDone=:TechnicalDone, ");
+		sql.append("LegalDone=:LegalDone, RcuDone=:RcuDone, ");
+		sql.append(
+				"Constrctincompletionpercentage=:Constrctincompletionpercentage, DisbursalRecommendedPercentage=:DisbursalRecommendedPercentage,");
+		sql.append("BeneficiaryName= :BeneficiaryName, BankBranchID= :BankBranchID, AccountNo= :AccountNo,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

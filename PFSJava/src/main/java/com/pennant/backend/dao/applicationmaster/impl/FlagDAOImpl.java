@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.model.applicationmasters.Flag;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
-	private static Logger logger = Logger.getLogger(FlagDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FlagDAOImpl.class);
 
 	public FlagDAOImpl() {
 		super();
@@ -102,7 +103,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
-		RowMapper<Flag> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Flag.class);
+		RowMapper<Flag> typeRowMapper = BeanPropertyRowMapper.newInstance(Flag.class);
 
 		try {
 			flag = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

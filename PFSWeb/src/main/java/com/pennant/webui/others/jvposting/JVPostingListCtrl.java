@@ -45,7 +45,8 @@ package com.pennant.webui.others.jvposting;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -79,7 +80,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(JVPostingListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(JVPostingListCtrl.class);
 
 	protected Window window_JVPostingList;
 	protected Borderlayout borderLayout_JVPostingList;
@@ -246,7 +247,9 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 				refreshList();
 			} else {
 				JVPosting jVPosting = null;
-				if (approvedList) {
+
+				if (this.moduleType != null
+						&& StringUtils.equals(PennantConstants.MODULETYPE_ENQ, moduleType.getValue())) {
 					jVPosting = getJVPostingService().getApprovedJVPostingById(aJVPosting.getId());
 				} else {
 					jVPosting = getJVPostingService().getJVPostingById(aJVPosting.getId());
@@ -322,6 +325,7 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		 * a delete, edit or insert a JVPosting.
 		 */
 		arg.put("jVPostingListCtrl", this);
+		arg.put("isExpRequired", ImplementationConstants.ALLOW_EXPENSE_TRACKING);
 
 		// call the zul-file with the parameters packed in a map
 		try {

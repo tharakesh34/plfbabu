@@ -74,6 +74,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			sql.append(", custlname");
 			sql.append(", custdob");
 			sql.append(", custgendercode");
+			sql.append(", custcrcpr");
 			sql.append(" from customers where custid = :custid");
 		} else {
 			sql.append(" select distinct c.custid");
@@ -121,6 +122,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					customer.setCustLName(rs.getString("custlname"));
 					customer.setCustDOB(rs.getDate("custdob"));
 					customer.setCustGenderCode(rs.getString("custgendercode"));
+					customer.setCustCRCPR(rs.getString("custcrcpr"));
 				} else {
 					customer.setCustShrtName(rs.getString("custshrtname"));
 					customer.setCustDftBranch(rs.getString("custdftbranch"));
@@ -351,6 +353,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 					finEnqy.setExcessAmtPaid(rs.getBigDecimal("EXCESS_AMT_PAID"));
 					finEnqy.setCurODDays(rs.getInt("CURODDAYS"));
 					finEnqy.setClosingStatus(rs.getString("CLOSINGSTATUS"));
+					finEnqy.setClosedDate(rs.getDate("CLOSEDDATE"));
 					finEnqy.setOwnership(rs.getString("OWNERSHIP"));
 					finEnqy.setNumberOfTerms(rs.getInt("NUMBEROFTERMS"));
 					finEnqy.setSvAmount(rs.getBigDecimal("CUSTINCOME"));
@@ -617,6 +620,48 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.trace(Literal.LEAVING);
+		return null;
+	}
+
+	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+	@Override
+	public CibilMemberDetail getMemberDetailsByType(String bureauType, String type) {
+		logger.trace(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, TYPE, SEGMENT_TYPE, MEMBER_CODE, MEMBER_ID");
+		sql.append(", PREVIOUS_MEMBER_ID, MEMBER_SHORT_NAME, MEMBER_PASSWORD");
+		sql.append(", FILE_PATH, FILE_FORMATE");
+		sql.append(" From CIBIL_MEMBER_DETAILS");
+		sql.append(" Where SEGMENT_TYPE = ? and TYPE = ?");
+
+		logger.trace(Literal.SQL, sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { bureauType, type },
+					new RowMapper<CibilMemberDetail>() {
+						@Override
+						public CibilMemberDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+							CibilMemberDetail cibilMemberDetail = new CibilMemberDetail();
+
+							cibilMemberDetail.setId(rs.getString("ID"));
+							cibilMemberDetail.setType(rs.getString("TYPE"));
+							cibilMemberDetail.setSegmentType(rs.getString("SEGMENT_TYPE"));
+							cibilMemberDetail.setMemberCode(rs.getString("MEMBER_CODE"));
+							cibilMemberDetail.setMemberId(rs.getString("MEMBER_ID"));
+							cibilMemberDetail.setPreviousMemberId(rs.getString("PREVIOUS_MEMBER_ID"));
+							cibilMemberDetail.setMemberShortName(rs.getString("MEMBER_SHORT_NAME"));
+							cibilMemberDetail.setMemberPassword(rs.getString("MEMBER_PASSWORD"));
+							cibilMemberDetail.setFilePath(rs.getString("FILE_PATH"));
+							cibilMemberDetail.setFileFormate(rs.getString("FILE_FORMATE"));
+
+							return cibilMemberDetail;
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
 		logger.trace(Literal.LEAVING);
 		return null;
 	}

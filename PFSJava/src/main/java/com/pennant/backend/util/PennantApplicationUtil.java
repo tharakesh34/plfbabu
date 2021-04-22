@@ -16,7 +16,8 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.zkoss.zkplus.spring.SpringUtil;
@@ -24,7 +25,7 @@ import org.zkoss.zkplus.spring.SpringUtil;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -38,6 +39,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
@@ -49,7 +51,7 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 
 public class PennantApplicationUtil {
-	private static final Logger logger = Logger.getLogger(PennantApplicationUtil.class);
+	private static final Logger logger = LogManager.getLogger(PennantApplicationUtil.class);
 	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
 	private static Country defaultCountry = null;
 
@@ -95,25 +97,19 @@ public class PennantApplicationUtil {
 		return new BigDecimal(bigInteger);
 	}
 
-	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
-		BigDecimal bigDecimal = BigDecimal.ZERO;
-
-		if (amount != null) {
-			bigDecimal = amount.divide(new BigDecimal(Math.pow(10, dec)));
-		}
-		return bigDecimal;
+	public static BigDecimal formateAmount(BigDecimal amount, int decimals) {
+		return CurrencyUtil.parse(amount, decimals);
 	}
 
 	public static String amountFormate(BigDecimal amount, int dec) {
-		BigDecimal bigDecimal = BigDecimal.ZERO;
-		if (amount != null) {
-			bigDecimal = amount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
-		}
-
-		return formatAmount(bigDecimal, dec, false);
+		return CurrencyUtil.format(amount, dec);
 	}
 
-	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
+	public static String formatAmount(BigDecimal value, int decPos) {
+		return formatAmount(value, decPos, false);
+	}
+
+	private static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
 		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
 			DecimalFormat df = new DecimalFormat();
 
@@ -723,17 +719,14 @@ public class PennantApplicationUtil {
 	}
 
 	public static String getEventCode(Date date) {
-		logger.debug("Entering");
-
 		String feeEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
 
-		if (date.after(DateUtility.getAppDate())) {
+		if (date.after(SysParamUtil.getAppDate())) {
 			if (ImplementationConstants.ALLOW_ADDDBSF) {
 				feeEvent = AccountEventConstants.ACCEVENT_ADDDBSF;
 			}
 		}
 
-		logger.debug("Leaving");
 		return feeEvent;
 	}
 
@@ -819,6 +812,7 @@ public class PennantApplicationUtil {
 			// "label_CoreCustomerDialog_PrimaryID_Retl.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
+			result.put("MOBILEMANDATORY", ImplementationConstants.CUST_MOB_MANDATORY ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL") + "_NUMBER");
 			break;
 		case "CORP":
@@ -827,12 +821,14 @@ public class PennantApplicationUtil {
 			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
+			result.put("MOBILEMANDATORY", ImplementationConstants.CUST_MOB_MANDATORY ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP") + "_NUMBER");
 			break;
 		default:
 			result.put("TYPE", "");
 			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
 			result.put("MANDATORY", "false");
+			result.put("MOBILEMANDATORY", "false");
 			result.put("REGEX", "");
 		}
 
@@ -1009,5 +1005,24 @@ public class PennantApplicationUtil {
 		}
 
 		return dataMap;
+	}
+
+	public static List<String> getActiveFieldCodeList(String fieldCode) {
+		List<String> fieldCodeList = new ArrayList<String>();
+
+		Search search = new Search(LovFieldDetail.class);
+		search.addSort("FieldCodeValue", false);
+		search.addFilter(new Filter("FieldCode", fieldCode, Filter.OP_EQUAL));
+		search.addFilter(new Filter("IsActive", true, Filter.OP_EQUAL));
+		search.addField("FieldCodeValue");
+		search.addField("ValueDesc");
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		List<LovFieldDetail> appList = searchProcessor.getResults(search);
+		for (int i = 0; i < appList.size(); i++) {
+			String codeValue = String.valueOf(appList.get(i).getFieldCodeValue());
+			fieldCodeList.add(codeValue);
+		}
+		return fieldCodeList;
 	}
 }

@@ -46,13 +46,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
 import com.pennant.backend.model.bmtmasters.Product;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
-	private static Logger logger = Logger.getLogger(ProductDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProductDAOImpl.class);
 
 	public ProductDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(product);
-		RowMapper<Product> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Product.class);
+		RowMapper<Product> typeRowMapper = BeanPropertyRowMapper.newInstance(Product.class);
 
 		try {
 			product = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -124,7 +125,7 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ProductCategory, AllowDeviation");
+		sql.append(" ProductCategory, AllowDeviation, ProductCode, ProductDesc");
 		sql.append(" from BMTProduct");
 		sql.append(" Where ProductCode = ?");
 
@@ -138,6 +139,8 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 
 					pc.setProductCategory(rs.getString("ProductCategory"));
 					pc.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+					pc.setProductCode(rs.getString("ProductCode"));
+					pc.setProductDesc(rs.getString("ProductDesc"));
 
 					return pc;
 				}

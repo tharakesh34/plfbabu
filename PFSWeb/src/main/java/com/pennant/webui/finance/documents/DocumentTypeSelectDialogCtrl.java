@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -86,7 +87,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final long serialVersionUID = -6959194080451993569L;
-	private static final Logger logger = Logger.getLogger(DocumentTypeSelectDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DocumentTypeSelectDialogCtrl.class);
 
 	protected Window window_DocumentTypeSelectDialog;
 	//protected Combobox	                  docCategory;	                                                                 // autowired
@@ -263,7 +264,11 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				|| DocumentCategories.FINANCE.getKey().equals(module)
 				|| DocumentCategories.COLLATERAL.getKey().equals(module)
 				|| DocumentCategories.SAMPLING.getKey().equals(module)
-				|| DocumentCategories.VERIFICATION_PD.getKey().equals(module)) {
+				|| DocumentCategories.VERIFICATION_PD.getKey().equals(module)
+				|| DocumentCategories.BUILDER_PROJ_DOC.getKey().equals(module)
+				|| DocumentCategories.UPFNT_FEE_RECEIPTS.getKey().equals(module)
+				|| DocumentCategories.MANUAL_ADVISE_PAYABLE.getKey().equals(module)
+				|| DocumentCategories.VERIFICATION_VT.getKey().equals(module)) {
 			this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode", module, Filter.OP_EQUAL) });
 		} else {
 			if (module == null) {
@@ -368,6 +373,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				map.put("finDocumentDetail", documentDetails);
 				map.put("isCheckList", false);
 				map.put("docIsMandatory", false);
+				map.put("moduleName", module);
 				if (getFinanceDetail() != null) {
 					map.put("isDocAllowedForInput", isDocAllowedForInput(doctype.getDocTypeCode()));
 				} else {

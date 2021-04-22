@@ -52,8 +52,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
@@ -133,7 +135,7 @@ import com.pennanttech.pff.commodity.model.Commodity;
  */
 public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructure> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CollateralStructureDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralStructureDialogCtrl.class);
 
 	protected Window window_CollateralStructureDialog;
 	protected Textbox collateralType;
@@ -443,10 +445,18 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 		if (getExtendedFieldDialogCtrl() != null) {
 			List<ExtendedFieldDetail> extFieldList = getExtendedFieldDialogCtrl().getExtendedFieldDetailsList();
+			//to display tv fields for post script validation
+			ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();
 			if (extFieldList != null && !extFieldList.isEmpty()) {
+				List<ExtendedFieldDetail> tvExtFieldList = extendedFieldHeader.getTechnicalValuationDetailList();
+				if (!CollectionUtils.isEmpty(tvExtFieldList)) {
+					extFieldList.addAll(tvExtFieldList);
+				}
+				fieldNames.clear();
 				for (ExtendedFieldDetail details : extFieldList) {
 					if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
 							&& !StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+						fieldNames.add(details.getFieldName());
 						Listitem item = new Listitem();
 						Listcell lc = new Listcell(details.getFieldName());
 						lc.setParent(item);
@@ -1734,6 +1744,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			extFldHeader.setNextTaskId(aCollateralStructure.getNextTaskId());
 			extFldHeader.setRoleCode(aCollateralStructure.getRoleCode());
 			extFldHeader.setNextRoleCode(aCollateralStructure.getNextRoleCode());
+			extFldHeader.setPostValidation(aCollateralStructure.getPostValidation());
+			extFldHeader.setPostValidationReq(aCollateralStructure.isPostValidationReq());
+			extFldHeader.setPreValidation(aCollateralStructure.getPreValidation());
+			extFldHeader.setPreValidationReq(aCollateralStructure.isPreValidationReq());
 			if (PennantConstants.RECORD_TYPE_DEL.equals(aCollateralStructure.getRecordType())) {
 				if (StringUtils.trimToNull(extFldHeader.getRecordType()) == null) {
 					extFldHeader.setRecordType(aCollateralStructure.getRecordType());

@@ -62,7 +62,7 @@ public interface FeeTypeService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	long getFinFeeTypeIdByFeeType(String feeTypeCode);
+	Long getFinFeeTypeIdByFeeType(String feeTypeCode);
 
 	String getTaxCompByCode(String feeTypeCode);
 

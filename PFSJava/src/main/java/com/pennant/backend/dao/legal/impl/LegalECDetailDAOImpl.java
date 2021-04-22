@@ -49,15 +49,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.legal.LegalECDetailDAO;
 import com.pennant.backend.model.legal.LegalECDetail;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalECDetail</code> with set of CRUD operations.
  */
 public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements LegalECDetailDAO {
-	private static Logger logger = Logger.getLogger(LegalECDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LegalECDetailDAOImpl.class);
 
 	public LegalECDetailDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 		legalECDetail.setLegalECId(legalECId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalECDetail);
-		RowMapper<LegalECDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalECDetail.class);
+		RowMapper<LegalECDetail> rowMapper = BeanPropertyRowMapper.newInstance(LegalECDetail.class);
 
 		try {
 			legalECDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -183,8 +184,8 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalECDetail.getId() == Long.MIN_VALUE) {
-			legalECDetail.setId(getNextId("SeqLegalECDetails"));
-			logger.debug("get NextID:" + legalECDetail.getId());
+			legalECDetail.setId(getNextValue("SeqLegalECDetails"));
+			logger.debug("get NextValue:" + legalECDetail.getId());
 		}
 
 		// Execute the SQL, binding the arguments.

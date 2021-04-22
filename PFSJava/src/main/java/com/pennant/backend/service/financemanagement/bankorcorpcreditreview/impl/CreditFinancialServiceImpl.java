@@ -3,7 +3,8 @@ package com.pennant.backend.service.financemanagement.bankorcorpcreditreview.imp
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -19,6 +20,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 public class CreditFinancialServiceImpl extends GenericService<CreditReviewData> implements CreditFinancialService {
 	@Autowired
@@ -26,7 +28,7 @@ public class CreditFinancialServiceImpl extends GenericService<CreditReviewData>
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
 
-	private static Logger logger = Logger.getLogger(CreditFinancialServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CreditFinancialServiceImpl.class);
 
 	@Override
 	public void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType) {
@@ -40,13 +42,10 @@ public class CreditFinancialServiceImpl extends GenericService<CreditReviewData>
 		creditReviewData.setNextRoleCode(financeMain.getNextRoleCode());
 		creditReviewData.setRecordStatus(financeMain.getRecordStatus());
 		creditReviewData.setWorkflowId(financeMain.getWorkflowId());
-		if (creditReviewData.isNew()) {
-			creditReviewDetailDAO.save(creditReviewData);
-			auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_ADD));
-		} else {
-			creditReviewDetailDAO.update(creditReviewData);
-			auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_UPD));
-		}
+		creditReviewDetailDAO.delete(financeMain.getFinReference(), TableType.MAIN_TAB);
+		creditReviewDetailDAO.save(creditReviewData);
+		auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_ADD));
+
 		addAudit(auditHeader, auditDetails);
 		logger.debug(Literal.LEAVING);
 	}
@@ -61,13 +60,10 @@ public class CreditFinancialServiceImpl extends GenericService<CreditReviewData>
 		creditReviewData.setNextRoleCode(financeMain.getNextRoleCode());
 		creditReviewData.setRecordStatus(financeMain.getRecordStatus());
 		creditReviewData.setWorkflowId(financeMain.getWorkflowId());
-		if (creditReviewData.isNew()) {
-			creditReviewDetailDAO.save(creditReviewData);
-			auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_ADD));
-		} else {
-			creditReviewDetailDAO.update(creditReviewData);
-			auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_UPD));
-		}
+		creditReviewDetailDAO.delete(financeMain.getFinReference(), TableType.MAIN_TAB);
+		creditReviewDetailDAO.save(creditReviewData);
+		auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_ADD));
+
 		addAudit(auditHeader, auditDetails);
 
 	}

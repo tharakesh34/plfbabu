@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.OtherBankFinanceTypeDAO;
 import com.pennant.backend.model.applicationmaster.OtherBankFinanceType;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class OtherBankFinanceTypeDAOImpl extends BasicDao<OtherBankFinanceType> implements OtherBankFinanceTypeDAO {
-	private static Logger logger = Logger.getLogger(OtherBankFinanceTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(OtherBankFinanceTypeDAOImpl.class);
 
 	public OtherBankFinanceTypeDAOImpl() {
 		super();
@@ -101,8 +102,7 @@ public class OtherBankFinanceTypeDAOImpl extends BasicDao<OtherBankFinanceType> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(otherBankFinanceType);
-		RowMapper<OtherBankFinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(OtherBankFinanceType.class);
+		RowMapper<OtherBankFinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(OtherBankFinanceType.class);
 
 		try {
 			otherBankFinanceType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,

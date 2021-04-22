@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -40,7 +41,7 @@ import com.pennanttech.pff.mmfl.cd.service.ConsumerProductService;
 
 public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ConsumerProductDialogueCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ConsumerProductDialogueCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -134,6 +135,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		setStatusDetails();
 
 		this.txtchannel.setMaxlength(20);
+		this.modelId.setMaxlength(20);
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 		this.minAmount.setProperties(true, formatter);
@@ -425,7 +427,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 
 		if (!this.modelId.isReadonly()) {
 			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 8));
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 20));
 		}
 
 		if (!this.modelDescription.isReadonly()) {

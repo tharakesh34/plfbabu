@@ -44,14 +44,15 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ReinstateFinanceDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  *
  */
 public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implements ReinstateFinanceDAO {
-	private static Logger logger = Logger.getLogger(ReinstateFinanceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReinstateFinanceDAOImpl.class);
 
 	public ReinstateFinanceDAOImpl() {
 		super();
@@ -137,8 +138,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reinstateFinance);
-		RowMapper<ReinstateFinance> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ReinstateFinance.class);
+		RowMapper<ReinstateFinance> typeRowMapper = BeanPropertyRowMapper.newInstance(ReinstateFinance.class);
 
 		try {
 			reinstateFinance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -178,7 +178,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 				" LEFT JOIN REASONHEADER T9 ON T9.ID=T8.ID AND T9.REFERENCE = T1.FINREFERENCE Where FinReference = :FinReference");
 
 		SqlParameterSource sqlParameterSource = new BeanPropertySqlParameterSource(reinstateFinance);
-		RowMapper<ReinstateFinance> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReinstateFinance.class);
+		RowMapper<ReinstateFinance> rowMapper = BeanPropertyRowMapper.newInstance(ReinstateFinance.class);
 
 		logger.debug("Leaving");
 		try {
@@ -339,7 +339,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		selectSql.append(
 				" GrcMargin, RepayMargin, FinCommitmentRef, DepreciationFrq, FinCurrAssetValue,FinContractDate,");
 		selectSql.append(
-				" NextDepDate, LastDepDate, FinCustPftAccount, NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
+				" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
 		selectSql
 				.append(" ClosingStatus, FinApprovedDate, InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, ");
 		selectSql.append(
@@ -347,7 +347,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		selectSql.append(" LinkedFinRef,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId, ");
-		selectSql.append(" DownPayAccount,  SecurityDeposit, RcdMaintainSts, FinRepayMethod, ");
+		selectSql.append(" InvestmentRef , DownPayAccount,  SecurityDeposit, RcdMaintainSts, FinRepayMethod, ");
 		selectSql
 				.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, CustDSR,JointAccount,JointCustId,");
 		selectSql.append(
@@ -357,7 +357,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
 			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -390,6 +390,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		saveFinanceChildDetail("FinScheduledetails_Temp", "RejectFinScheduledetails", finRef);
 		saveFinanceChildDetail("FinDedupDetail", "RejectFinDedupDetail", finRef);
 		saveFinanceChildDetail("FinBlackListDetail", "RejectFinBlackListDetail", finRef);
+		saveFinanceChildDetail("FinPoliceCaseDetail", "RejectFinPoliceCaseDetail", finRef);
 		saveFinanceChildDetail("FinODPenaltyRates_Temp", "RejectFinODPenaltyRates", finRef);
 		saveFinanceChildDetail("FinFeeCharges_Temp", "RejectFinFeeCharges", finRef);
 
@@ -414,6 +415,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		deleteChildDetailsByTableName("RejectFinScheduledetails", finRef);
 		deleteChildDetailsByTableName("RejectFinDedupDetail", finRef);
 		deleteChildDetailsByTableName("RejectFinBlackListDetail", finRef);
+		deleteChildDetailsByTableName("RejectFinPoliceCaseDetail", finRef);
 		deleteChildDetailsByTableName("RejectFinODPenaltyRates", finRef);
 		deleteChildDetailsByTableName("RejectFinFeeCharges", finRef);
 

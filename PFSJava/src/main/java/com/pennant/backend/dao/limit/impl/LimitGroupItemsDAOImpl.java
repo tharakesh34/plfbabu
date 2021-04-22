@@ -3,14 +3,15 @@ package com.pennant.backend.dao.limit.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitGroupItemsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -21,7 +22,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements LimitGroupItemsDAO {
-	private static Logger logger = Logger.getLogger(LimitGroupItemsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitGroupItemsDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new LimitGroupItems
@@ -86,8 +87,7 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 		source = new MapSqlParameterSource();
 		source.addValue("LimitGroupCode", id);
 
-		RowMapper<LimitGroupItems> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitGroupItems.class);
+		RowMapper<LimitGroupItems> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupItems.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -292,8 +292,7 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroupItems);
-		RowMapper<LimitGroupItems> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitGroupItems.class);
+		RowMapper<LimitGroupItems> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroupItems.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -315,7 +314,7 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 
 		try {
 
-			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {
@@ -342,7 +341,7 @@ public class LimitGroupItemsDAOImpl extends BasicDao<LimitGroupItems> implements
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			recordCount = this.jdbcTemplate.queryForInt(selectSql.toString(), source);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		} finally {

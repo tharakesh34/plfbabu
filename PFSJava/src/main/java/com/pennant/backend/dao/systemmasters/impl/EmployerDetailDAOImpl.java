@@ -44,14 +44,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.EmployerDetailDAO;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
@@ -68,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implements EmployerDetailDAO {
-	private static Logger logger = Logger.getLogger(EmployerDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(EmployerDetailDAOImpl.class);
 
 	public EmployerDetailDAOImpl() {
 		super();
@@ -94,6 +96,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 				"Select EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(", EmpCategory ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",lovDescIndustryDesc,lovDescCountryDesc,lovDescProvinceName,lovDescCityName");
 		}
@@ -103,7 +106,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employerDetail);
-		RowMapper<EmployerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmployerDetail.class);
+		RowMapper<EmployerDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(EmployerDetail.class);
 
 		try {
 			employerDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -127,6 +130,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	 * @throws DataAccessException
 	 * 
 	 */
+	@Override
 	public void delete(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
@@ -171,8 +175,8 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	public String save(EmployerDetail employerDetail, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 		if (employerDetail.getId() == Long.MIN_VALUE) {
-			employerDetail.setId(getNextId("SeqEmployerDetail"));
-			logger.debug("get NextID:" + employerDetail.getId());
+			employerDetail.setId(getNextValue("SeqEmployerDetail"));
+			logger.debug("get NextValue:" + employerDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into EmployerDetail");
@@ -180,11 +184,13 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 		insertSql.append(
 				" (EmployerId, EmpIndustry, EmpName, EstablishDate, EmpAddrHNbr, EmpFlatNbr, EmpAddrStreet, EmpAddrLine1, EmpAddrLine2, EmpPOBox, EmpCountry, EmpProvince, EmpCity, EmpPhone, EmpFax, EmpTelexNo, EmpEmailId, EmpWebSite, ContactPersonName, ContactPersonNo, EmpAlocationType,BankRefNo,EmpIsActive");
 		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		insertSql.append(",EmpCategory)");
 		insertSql.append(
 				" Values(:EmployerId, :EmpIndustry, :EmpName, :EstablishDate, :EmpAddrHNbr, :EmpFlatNbr, :EmpAddrStreet, :EmpAddrLine1, :EmpAddrLine2, :EmpPOBox, :EmpCountry, :EmpProvince, :EmpCity, :EmpPhone, :EmpFax, :EmpTelexNo, :EmpEmailId, :EmpWebSite, :ContactPersonName, :ContactPersonNo, :EmpAlocationType, :BankRefNo, :EmpIsActive");
 		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+		insertSql.append(",:EmpCategory)");
 
 		logger.trace(Literal.SQL + insertSql.toString());
 
@@ -220,6 +226,7 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 				" Set EmpIndustry = :EmpIndustry, EmpName = :EmpName, EstablishDate = :EstablishDate, EmpAddrHNbr = :EmpAddrHNbr, EmpFlatNbr = :EmpFlatNbr, EmpAddrStreet = :EmpAddrStreet, EmpAddrLine1 = :EmpAddrLine1, EmpAddrLine2 = :EmpAddrLine2, EmpPOBox = :EmpPOBox, EmpCountry = :EmpCountry, EmpProvince = :EmpProvince, EmpCity = :EmpCity, EmpPhone = :EmpPhone, EmpFax = :EmpFax, EmpTelexNo = :EmpTelexNo, EmpEmailId = :EmpEmailId, EmpWebSite = :EmpWebSite, ContactPersonName = :ContactPersonName, ContactPersonNo = :ContactPersonNo, EmpAlocationType = :EmpAlocationType, BankRefNo = :BankRefNo, EmpIsActive = :EmpIsActive");
 		updateSql.append(
 				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(", EmpCategory = :EmpCategory");
 		updateSql.append(" Where EmployerId =:EmployerId");
 		//updateSql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -239,6 +246,33 @@ public class EmployerDetailDAOImpl extends SequenceDao<EmployerDetail> implement
 	public boolean isDuplicateKey(long employerId, TableType tableType) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean isNonTargetEmployee(String name, String category, String type) {
+
+		logger.debug(Literal.ENTERING);
+		boolean exists = false;
+
+		// Prepare the parameter source.
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("EmployerId", Integer.parseInt(name));
+		paramSource.addValue("EmpCategory", category);
+
+		// Check whether the document id exists for another customer.
+		String sql = QueryUtil.getCountQuery(new String[] { "EmployerDetail" },
+				"EmployerId =:EmployerId and EmpCategory =:EmpCategory");
+
+		logger.trace(Literal.SQL + sql);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+
 	}
 
 }

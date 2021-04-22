@@ -6,18 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -145,8 +145,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		RowMapper<RiskContainmentUnit> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RiskContainmentUnit.class);
+		RowMapper<RiskContainmentUnit> typeRowMapper = BeanPropertyRowMapper.newInstance(RiskContainmentUnit.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -168,13 +167,13 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 				"(verificationId, seqno, documentid, documenttype, documentsubid, documentrefid, documenturi, reinitid,");
 		sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks,initRemarks, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, accNumber, bankName)");
 
 		sql.append(
 				"values (:verificationId, :seqNo, :documentId, :documentType, :documentSubId, :documentRefId, :documentUri, :reinitid,");
 		sql.append(" :verificationType , :status, :pagesEyeballed, :pagesSampled, :agentRemarks,:initRemarks,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :accNumber, :bankName)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -307,8 +306,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
-		RowMapper<RiskContainmentUnit> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RiskContainmentUnit.class);
+		RowMapper<RiskContainmentUnit> rowMapper = BeanPropertyRowMapper.newInstance(RiskContainmentUnit.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -387,6 +385,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		sql = new StringBuilder();
 
 		sql.append(" Select verificationId, SeqNo, documentid, documentsubid, reinitid, documentType,initRemarks,");
+		sql.append(" accNumber, bankName,");
 		if (type.contains("View")) {
 			sql.append(" code, description, docmodule, documentrefid, seqno, docname, doctype, referenceid, ");
 			sql.append(" verificationtype, status, pageseyeballed, pagessampled, agentremarks, ");
@@ -401,7 +400,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source = new MapSqlParameterSource();
 		source.addValue("verificationId", verificationId);
 
-		RowMapper<RCUDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
+		RowMapper<RCUDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -454,7 +453,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				"select verificationid, seqno, documentid, documentType, documentsubid, documentrefid, documenturi, initRemarks, decision, decisionremarks, reinitId,");
-		sql.append(" documentsubid as docCategory");
+		sql.append(" documentsubid as docCategory, accNumber, bankName");
 		sql.append(" From verification_rcu_details");
 
 		if (tableType == TableType.BOTH_TAB) {
@@ -463,8 +462,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			sql.append(tableType.getSuffix());
 		}
 
-		sql.append(
-				" Where verificationId in (select verificationId from verifications where keyReference =:keyReference)");
+		sql.append(" Where verificationId in (select Id from verifications where keyReference =:keyReference)");
 
 		sql.append(" and documentType = :documentType");
 
@@ -475,7 +473,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		paramSource.addValue("keyReference", keyReference);
 		paramSource.addValue("documentType", documentType.getKey());
 
-		RowMapper<RCUDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
+		RowMapper<RCUDocument> rowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -551,7 +549,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	}
 
 	@Override
-	public RCUDocument getRCUDocument(long verificationId, RCUDocument rcuDocument) {
+	public List<RCUDocument> getRCUDocument(long verificationId, RCUDocument rcuDocument) {
 
 		StringBuilder sql = null;
 		MapSqlParameterSource source = null;
@@ -573,9 +571,9 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		source.addValue("documentType", rcuDocument.getDocumentType());
 		source.addValue("documentSubId", rcuDocument.getDocumentSubId());
 
-		RowMapper<RCUDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RCUDocument.class);
+		RowMapper<RCUDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(RCUDocument.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			// logger.error("Exception: ", e);
 		} finally {
@@ -583,7 +581,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			sql = null;
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -611,4 +609,44 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		return 0;
 	}
 
+	@Override
+	public List<RCUDocument> getDocuments(String keyReference, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT VERIFICATIONID, SEQNO, DOCUMENTID, DOCUMENTTYPE,  DECISION, DECISIONREMARKS, REINITID");
+		sql.append(" ,DOCUMENTSUBID, DOCUMENTREFID, DOCUMENTURI, INITREMARKS");
+		sql.append(" ,DOCUMENTSUBID AS DOCCATEGORY");
+		sql.append(" FROM VERIFICATION_RCU_DETAILS");
+
+		if (tableType == TableType.BOTH_TAB) {
+			sql.append("_view");
+		} else {
+			sql.append(tableType.getSuffix());
+		}
+		sql.append(" WHERE VERIFICATIONID IN (SELECT ID FROM VERIFICATIONS WHERE KEYREFERENCE = ?)");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.query(sql.toString(),
+					new Object[] { keyReference}, (rs, rowNum) -> {
+						RCUDocument rcu = new RCUDocument();
+
+						rcu.setSeqNo((rs.getInt("seqNo")));
+						rcu.setDocumentType(rs.getInt("documentType"));
+						rcu.setDocumentSubId(rs.getString("documentSubId"));
+						rcu.setVerificationId(rs.getLong("verificationId"));
+
+						return rcu;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
+
+	}
 }
+

@@ -45,10 +45,15 @@ package com.pennant.backend.model.financemanagement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -64,28 +69,32 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "id", "reference", "presentmentDate", "partnerBankId", "fromDate", "toDate", "status",
 		"mandateType", "loanType", "finBranch", "schdate" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class PresentmentHeader extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement(name = "presentmentHeaderId")
 	private long id = Long.MIN_VALUE;
+	@XmlElement(name = "batchReference")
 	private String reference;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date presentmentDate;
+	@XmlElement(name = "partnerBank")
 	private long partnerBankId;
 	private String partnerBankCode;
 	private String partnerBankName;
 	private String partnerAcctNumber;
 	private String partnerAcctType;
-	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
+	@XmlElement
 	private Date fromDate;
-	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
+	@XmlElement
 	private Date toDate;
 	private int status;
 	private String bankCode;
 	private String bankName;
+	@XmlElement(name = "paymentMode")
 	private String mandateType;
 	private String mandateTypeName;
+	@XmlElement(name = "finType")
 	private String loanType;
 	private String loanTypeName;
 	private String finBranch;
@@ -96,7 +105,9 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private int processedRecords;
 	private int successRecords;
 	private int failedRecords;
+	@XmlElement
 	private String entityCode;
+	@XmlElement
 	private String presentmentType;
 	private String emandateSource;
 
@@ -113,6 +124,12 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 	private List<Long> includeList = new ArrayList<>();
 	private List<Long> excludeList = new ArrayList<>();
 
+	private boolean bpiPaidOnInstDate;
+	private boolean groupByBank;
+	private boolean groupByPartnerBank;
+	private Map<String, Long> groups = new HashMap<>();
+	private List<PresentmentDetail> presentments = new ArrayList<>();
+
 	public PresentmentHeader(long id) {
 		super();
 		this.setId(id);
@@ -124,6 +141,17 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public PresentmentHeader() {
 		super();
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("bpiPaidOnInstDate");
+		excludeFields.add("groupByBank");
+		excludeFields.add("groupByPartnerBank");
+		excludeFields.add("groups");
+		excludeFields.add("presentments");
+
+		return excludeFields;
 	}
 
 	public String getReference() {
@@ -410,6 +438,46 @@ public class PresentmentHeader extends AbstractWorkflowEntity implements Entity 
 
 	public void setExcludeList(List<Long> excludeList) {
 		this.excludeList = excludeList;
+	}
+
+	public boolean isBpiPaidOnInstDate() {
+		return bpiPaidOnInstDate;
+	}
+
+	public void setBpiPaidOnInstDate(boolean bpiPaidOnInstDate) {
+		this.bpiPaidOnInstDate = bpiPaidOnInstDate;
+	}
+
+	public List<PresentmentDetail> getPresentments() {
+		return presentments;
+	}
+
+	public void setPresentments(List<PresentmentDetail> presentments) {
+		this.presentments = presentments;
+	}
+
+	public Map<String, Long> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Map<String, Long> groups) {
+		this.groups = groups;
+	}
+
+	public boolean isGroupByBank() {
+		return groupByBank;
+	}
+
+	public void setGroupByBank(boolean groupByBank) {
+		this.groupByBank = groupByBank;
+	}
+
+	public boolean isGroupByPartnerBank() {
+		return groupByPartnerBank;
+	}
+
+	public void setGroupByPartnerBank(boolean groupByPartnerBank) {
+		this.groupByPartnerBank = groupByPartnerBank;
 	}
 
 }

@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Label;
@@ -21,7 +22,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails> {
 	private static final long serialVersionUID = 1153958690214979057L;
-	private static final Logger logger = Logger.getLogger(DmsDocumentDetailsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DmsDocumentDetailsDialogCtrl.class);
 	private Window window_DmsDocumentDetailDialog;
 	private List<DMSDocumentDetails> dmsDocumentDetaillog = null;
 	private DMSDocumentDetails dmsDocumentDetails;

@@ -73,9 +73,9 @@ public interface FinanceScheduleDetailDAO {
 
 	int getFrqDfrCount(String finReference);
 
-	void updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail);
+	int updateForRateReview(List<FinanceScheduleDetail> financeScheduleDetail);
 
-	void saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF);
+	int saveList(List<FinanceScheduleDetail> financeScheduleDetail, String type, boolean isWIF);
 
 	BigDecimal getSuspenseAmount(String finReference, Date dateValueDate);
 
@@ -102,6 +102,8 @@ public interface FinanceScheduleDetailDAO {
 			Date schdTodate);
 
 	List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate);
+
+	FinanceScheduleDetail getFinanceScheduleForRebate(String finreference, Date schdDate);
 
 	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schdDate, boolean isWIF);
 
@@ -132,12 +134,8 @@ public interface FinanceScheduleDetailDAO {
 	// Mandate Registration Request
 	List<FinanceScheduleDetail> getFirstRepayAmt(String finReference);
 
-	FinanceScheduleDetail getFinScheduleDetailForCOf(String finReference, Date appDate);
-
 	// ## Ticket id:124998(receipt upload) 16/8/2018
 	BigDecimal getClosingBalance(String finReference, Date valueDate);
-
-	List<FinanceScheduleDetail> getDMFinScheduleDetails(String id, String type);
 
 	FinanceScheduleDetail getPrvSchd(String finReference, Date curBussDate);
 
@@ -157,6 +155,12 @@ public interface FinanceScheduleDetailDAO {
 	int getDueBucket(String finReference);
 
 	List<FinanceScheduleDetail> getDueSchedulesByFacilityRef(String finReference, Date valueDate);
+
+	List<FinanceScheduleDetail> getFinScheduleDetailsBySchPriPaid(String id, String type, boolean isWIF);
+
+	FinanceScheduleDetail getFinSchDetailOrderBySchDate(String selectQuery, String whereClause, String reference);
+
+	FinanceScheduleDetail getNextUnpaidSchPayment(String finReference, Date valueDate);
 
 	void saveSchDueTaxDetail(ScheduleDueTaxDetail dueTaxDetail);
 

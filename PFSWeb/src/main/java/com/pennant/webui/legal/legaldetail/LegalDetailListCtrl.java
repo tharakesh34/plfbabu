@@ -47,7 +47,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -86,7 +87,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LegalDetailListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LegalDetailListCtrl.class);
 
 	protected Window window_LegalDetailList;
 	protected Borderlayout borderLayout_LegalDetailList;

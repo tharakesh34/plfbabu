@@ -49,15 +49,16 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.model.systemmasters.DocumentType;
@@ -73,7 +74,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements DocumentTypeDAO {
-	private static Logger logger = Logger.getLogger(DocumentTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DocumentTypeDAOImpl.class);
 
 	private static String selectAllQuery;
 
@@ -113,7 +114,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
-		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		RowMapper<DocumentType> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentType.class);
 
 		try {
 			documentType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -274,7 +275,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		logger.debug("selectSql: " + selectSql.toString());
 		DocumentType documentType = new DocumentType();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentType);
-		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		RowMapper<DocumentType> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentType.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -347,5 +348,27 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 
 		return selectAllQuery;
 
+	}
+
+	public String getDocCategoryByDocType(String docTypeCode, String type) {
+
+		String categoryCode = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder sql = new StringBuilder("Select ");
+
+		if (type.contains("View")) {
+			sql.append(" CategoryCode ");
+		}
+		sql.append(" from BMTDocumentTypes");
+		sql.append(type);
+		sql.append(" where DocTypeCode = :DocTypeCode");
+		source.addValue("DocTypeCode", docTypeCode);
+		try {
+			categoryCode = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		return categoryCode;
 	}
 }

@@ -46,7 +46,8 @@ package com.pennant.backend.service.vasproducttype.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class VASProductTypeServiceImpl extends GenericService<VASProductType> implements VASProductTypeService {
-	private static final Logger logger = Logger.getLogger(VASProductTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VASProductTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private VASProductTypeDAO vASProductTypeDAO;

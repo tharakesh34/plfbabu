@@ -49,6 +49,10 @@
 						<columns>
 							<column width="150px" />
 							<column />
+							<column width="150px" />
+							<column />
+							<column width="150px" />
+							<column />
 						</columns>
 						<rows>
 							<row>
@@ -56,7 +60,7 @@
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<longbox id="custID" width="150px" maxlength="26" visible="false" />
-									<textbox id="custCIF" width="152px" maxlength="50" style="overflow: hidden;" />
+									<textbox id="custCIF" width="150px" maxlength="50" style="overflow: hidden;" />
 									<label id="custShrtName" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 									<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
 								</hbox>
@@ -64,6 +68,14 @@
 							<row>
 								<label id="label_CustomerAddresDialog_CustAddrType" value="${c:l('label_CustomerAddresDialog_CustAddrType.value')}" />
 								<extendedcombobox id="custAddrType" />
+								<label id="label_CustomerAddresDialog_CustAlternateCIF" value="${c:l('label_CustomerAddresDialog_CustAlternateCIF.value')}" />
+								<extendedcombobox id="custCifAlternate" />
+								<label id="label_CustomerAddresDialog_SameAsAddressType" value="${c:l('label_CustomerAddresDialog_SameAsAddressType.value')}"
+									visible="true" />
+								<hbox>
+									<space spacing="2px" id="space_sameAsAddType" />
+									<combobox id="sameasAddressType" width="121px" readonly="true" />
+								</hbox>
 							</row>
 							<row>
 								<label id="label_CustomerAddresDialog_CustCareOfAddr" value="${c:l('label_CustomerAddresDialog_CustCareOfAddr.value')}" />
@@ -71,8 +83,6 @@
 									<space spacing="2px" />
 									<textbox id="custCareOfAddr" width="250px" />
 								</hbox>
-							</row>
-							<row>
 								<label id="label_CustomerAddresDialog_CustAddrHNbr" value="${c:l('label_CustomerAddresDialog_CustAddrHNbr.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
@@ -85,11 +95,9 @@
 									<space spacing="2px" />
 									<textbox id="custFlatNbr" width="250px" />
 								</hbox>
-							</row>
-							<row>
 								<label id="label_CustomerAddresDialog_CustAddrStreet" value="${c:l('label_CustomerAddresDialog_CustAddrStreet.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory" />
+									<space spacing="2px" id="space_custAddrStreet" />
 									<textbox id="custAddrStreet" width="250px" />
 								</hbox>
 							</row>
@@ -99,8 +107,6 @@
 									<space spacing="2px" />
 									<textbox id="custAddrLine1" width="250px" />
 								</hbox>
-							</row>
-							<row>
 								<label id="label_CustomerAddresDialog_CustAddrLine2" value="${c:l('label_CustomerAddresDialog_CustAddrLine2.value')}" />
 								<hbox>
 									<space spacing="2px" />
@@ -113,8 +119,6 @@
 									<extendedcombobox id="custAddrCity" />
 									<textbox id="cityName" width="180px" />
 								</hbox>
-							</row>
-							<row>
 								<label id="label_CustomerAddresDialog_CustSubDist" value="${c:l('label_CustomerAddresDialog_CustSubDist.value')}" />
 								<hbox>
 									<space spacing="2px" />
@@ -127,17 +131,12 @@
 									<space spacing="2px" />
 									<textbox id="custDistrict" width="250px" />
 								</hbox>
-							</row>
-							<row>
 								<label id="label_CustomerAddresDialog_CustAddrProvince" value="${c:l('label_CustomerAddresDialog_CustAddrProvince.value')}" />
 								<extendedcombobox id="custAddrProvince" />
 							</row>
 							<row>
 								<label id="label_CustomerAddresDialog_CustAddrCountry" value="${c:l('label_CustomerAddresDialog_CustAddrCountry.value')}" />
 								<extendedcombobox id="custAddrCountry" />
-							</row>
-
-							<row>
 								<label id="label_CustomerAddresDialog_CustAddrZIP" value="${c:l('label_CustomerAddresDialog_CustAddrZIP.value')}" />
 								<extendedcombobox id="custAddrZIP" />
 							</row>
@@ -147,19 +146,17 @@
 									<space spacing="2px" />
 									<textbox id="custPOBox" width="155px" />
 								</hbox>
+								<label id="label_CustomerAddresDialog_CustAddrPriority" value="${c:l('label_CustomerAddresDialog_CustAddrPriority.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="custAddrPriority" width="151px" maxlength="14" />
+								</hbox>
 							</row>
 							<row visible="false">
 								<label id="label_CustomerAddresDialog_CustAddrPhone" value="${c:l('label_CustomerAddresDialog_CustAddrPhone.value')}" />
 								<hbox>
 									<space spacing="2px" />
 									<textbox id="custAddrPhone" maxlength="50" width="155px" />
-								</hbox>
-							</row>
-							<row>
-								<label id="label_CustomerAddresDialog_CustAddrPriority" value="${c:l('label_CustomerAddresDialog_CustAddrPriority.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<combobox id="custAddrPriority" width="151px" maxlength="14" />
 								</hbox>
 							</row>
 						</rows>

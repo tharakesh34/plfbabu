@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.SubSegmentDAO;
 import com.pennant.backend.model.systemmasters.SubSegment;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmentDAO {
-	private static Logger logger = Logger.getLogger(SubSegmentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SubSegmentDAOImpl.class);
 
 	public SubSegmentDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class SubSegmentDAOImpl extends BasicDao<SubSegment> implements SubSegmen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subSegment);
-		RowMapper<SubSegment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubSegment.class);
+		RowMapper<SubSegment> typeRowMapper = BeanPropertyRowMapper.newInstance(SubSegment.class);
 
 		try {
 			subSegment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

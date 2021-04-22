@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -40,7 +41,7 @@ import com.pennanttech.pff.external.CollectionProcess;
  */
 public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CollectionDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollectionDialogCtrl.class);
 
 	protected Window window_CollectionDialog;
 	protected Borderlayout borderLayout_CollectionDialog;

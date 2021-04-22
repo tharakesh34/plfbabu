@@ -43,7 +43,8 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class EmpStsCodeServiceImpl extends GenericService<EmpStsCode> implements EmpStsCodeService {
 
-	private static Logger logger = Logger.getLogger(EmpStsCodeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(EmpStsCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private EmpStsCodeDAO empStsCodeDAO;

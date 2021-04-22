@@ -5,7 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -29,7 +30,7 @@ import com.pennanttech.pff.service.sampling.SamplingService;
 public class SamplingExtFieldCaptureDialogCtrl extends GFCBaseCtrl<Sampling> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(SamplingExtFieldCaptureDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SamplingExtFieldCaptureDialogCtrl.class);
 
 	protected Window window_SamplingExtendedFieldDialog;
 

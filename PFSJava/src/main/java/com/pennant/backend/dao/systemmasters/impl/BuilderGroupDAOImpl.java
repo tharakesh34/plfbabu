@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BuilderGroup</code> with set of CRUD operations.
  */
 public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements BuilderGroupDAO {
-	private static Logger logger = Logger.getLogger(BuilderGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BuilderGroupDAOImpl.class);
 
 	public BuilderGroupDAOImpl() {
 		super();

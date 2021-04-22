@@ -12,7 +12,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -41,6 +42,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -50,6 +52,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -66,6 +69,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -100,7 +104,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LegalVerificationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LegalVerificationDialogCtrl.class);
 
 	protected Window window_LegalVerificationDialog;
 	protected Tab verificationDetails;
@@ -126,6 +130,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	protected Textbox remarks;
 	protected North north;
 	protected South south;
+	protected Space space_AgentCode;
+	protected Space space_AgentName;
 
 	private boolean fromLoanOrg;
 
@@ -238,8 +244,13 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.LVSRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
 
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -253,7 +264,8 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-
+		this.space_AgentCode.setVisible(!ImplementationConstants.VER_INIT_AGENT_MANDATORY);
+		this.space_AgentName.setVisible(!ImplementationConstants.VER_INIT_AGENT_MANDATORY);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -566,19 +578,21 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		if (docDetails != null && docDetails.getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(docDetails.getDocImage());
 			String docName = details.getDocName();
-			if (details.getDocType().equals(PennantConstants.DOC_TYPE_PDF)) {
+			if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_PDF)) {
 				amedia = new AMedia(docName, "pdf", "application/pdf", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_IMAGE)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_IMAGE)) {
 				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_WORD)
-					|| details.getDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_WORD)
+					|| details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_ZIP)) {
 				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_7Z)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_7Z)) {
 				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
-			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_RAR)) {
 				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
+			} else if (details.getDocType().equalsIgnoreCase(PennantConstants.DOC_TYPE_JPG)) {
+				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
 			}
 			Filedownload.save(amedia);
 
@@ -817,11 +831,21 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	}
 
 	private void visibleComponent(Integer type) {
+		String reasonType = null;
 		if (type == LVStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
+			reasonType = StatuReasons.LVNTVRTY.getKey();
 		} else {
 			this.reason.setMandatoryStyle(false);
+			reasonType = StatuReasons.LVPOSTVRTY.getKey();
 		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			this.reason.setFilters(reasonFilter);
+		}
+
 	}
 
 	private void setValue(Listitem listitem, String componentId) {
@@ -998,12 +1022,13 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,
+							ImplementationConstants.VER_INIT_AGENT_MANDATORY));
 		}
 		if (!this.agentName.isReadonly()) {
-			this.agentName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalVerificationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, true));
+			this.agentName.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_LegalVerificationDialog_AgentName.value"),
+					PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_AGENT_MANDATORY));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(
@@ -1183,6 +1208,9 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		try {
 			if (doProcess(lv, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(lv.getRoleCode(), lv.getNextRoleCode(),
+						lv.getKeyReference(), " Loan ", lv.getRecordStatus(), getNextTaskId());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 

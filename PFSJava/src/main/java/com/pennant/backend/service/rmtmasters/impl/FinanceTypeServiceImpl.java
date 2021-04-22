@@ -50,7 +50,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,6 +71,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeAccountDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.ProductAssetDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
+import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -93,6 +95,7 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.service.rmtmasters.FinTypeExpenseService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
+import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
@@ -109,8 +112,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>FinanceType</b>.<br>
  */
 public class FinanceTypeServiceImpl extends GenericService<FinanceType> implements FinanceTypeService {
-
-	private static final Logger logger = Logger.getLogger(FinanceTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTypeDAO financeTypeDAO;
@@ -126,6 +128,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private FinTypeVasDetailValidation finTypeVasDetailValidation;
 
 	private FinTypeFeesService finTypeFeesService;
+	private FinTypeInsurancesService finTypeInsurancesService;
 	private FinTypeAccountingService finTypeAccountingService;
 	private FinTypePartnerBankService finTypePartnerBankService;
 	private FinTypeExpenseService finTypeExpenseService;
@@ -224,6 +227,14 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			List<AuditDetail> feeDetails = financeType.getAuditDetailMap().get("FinTypeFees");
 			feeDetails = this.finTypeFeesService.processFinTypeFeesDetails(feeDetails, tableType);
 			auditDetails.addAll(feeDetails);
+		}
+
+		// Finance Type Insurances
+		if (financeType.getFinTypeInsurances() != null && financeType.getFinTypeInsurances().size() > 0) {
+			List<AuditDetail> insuranceDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
+			insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
+					tableType);
+			auditDetails.addAll(insuranceDetails);
 		}
 
 		// Finance Type Accounting
@@ -339,6 +350,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					.setFinTypeReceiptModesList(getFinTypeReceiptModesDAO().getReceiptModesByFinType(finType, "_View"));
 			financeType.setFinTypeFeesList(
 					getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getFinTypeInsuranceListByID(finType,
+					FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeAccountingList(getFinTypeAccountingService().getFinTypeAccountingListByID(finType,
 					FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypePartnerBankList(
@@ -369,6 +382,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 *            (String)
 	 * @return FinanceType
 	 */
+	@Override
 	public FinanceType getApprovedFinanceTypeById(String finType) {
 		logger.debug("Entering");
 
@@ -382,6 +396,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(finType, "_AView"));
 			financeType.setFinTypeFeesList(
 					getFinTypeFeesService().getApprovedFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(finType,
+					FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeAccountingList(getFinTypeAccountingService()
 					.getApprovedFinTypeAccountingListByID(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypePartnerBankList(
@@ -439,6 +455,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -454,7 +471,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		FinanceType financeType = new FinanceType();
-		BeanUtils.copyProperties((FinanceType) auditHeader.getAuditDetail().getModelData(), financeType);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), financeType);
 
 		if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -546,6 +563,16 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					auditDetails.addAll(feeDetails);
 				}
 			}
+			// Insurances
+			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+				List<AuditDetail> insuranceDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
+
+				if (insuranceDetails != null && !insuranceDetails.isEmpty()) {
+					insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
+							"");
+					auditDetails.addAll(insuranceDetails);
+				}
+			}
 			// FinTypePartnerBank
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 				List<AuditDetail> finTypePartnerBankDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
@@ -613,7 +640,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		int servFeeOrder = 0;
 		int moduleId = FinanceConstants.MODULEID_FINTYPE;
 
-		long feeTypeId;
+		Long feeTypeId;
 
 		String finType = financeType.getFinType();
 
@@ -630,35 +657,37 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		AdvanceType advanceType = AdvanceType.getType(financeType.getAdvType());
 
-		if (financeType.isGrcAdvIntersetReq() || financeType.isAdvIntersetReq() && advanceType != AdvanceType.AE) {
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), orgFinEvent, true);
-				finTypeFee.setFeeOrder(++orgFeeOrder);
-				fees.add(finTypeFee);
-			}
-
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), serFinEvent, false);
-				finTypeFee.setFeeOrder(++servFeeOrder);
-				fees.add(finTypeFee);
-			}
-		} else {
-			for (FinTypeFees fee : fees) {
+		if (feeTypeId != null) {
+			if (financeType.isGrcAdvIntersetReq() || financeType.isAdvIntersetReq() && advanceType != AdvanceType.AE) {
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-
-				if (exist && AdvanceRuleCode.ADVINT.name().equals(fee.getFeeTypeCode())) {
-					if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), orgFinEvent, true);
+					finTypeFee.setFeeOrder(++orgFeeOrder);
+					fees.add(finTypeFee);
 				}
 
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), serFinEvent, false);
+					finTypeFee.setFeeOrder(++servFeeOrder);
+					fees.add(finTypeFee);
+				}
+			} else {
+				for (FinTypeFees fee : fees) {
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 
-				if (exist && AdvanceRuleCode.ADVINT.name().equals(fee.getFeeTypeCode())) {
-					if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					if (exist && AdvanceRuleCode.ADVINT.name().equals(fee.getFeeTypeCode())) {
+						if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
+					}
+
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+
+					if (exist && AdvanceRuleCode.ADVINT.name().equals(fee.getFeeTypeCode())) {
+						if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
 					}
 				}
 			}
@@ -666,42 +695,43 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		// ***************************advance EMI
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVEMI.name());
-
-		if (financeType.isAdvIntersetReq() && advanceType == AdvanceType.AE) {
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), orgFinEvent, true);
-				finTypeFee.setFeeOrder(++orgFeeOrder);
-				fees.add(finTypeFee);
-			}
-
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
-
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), serFinEvent, false);
-				finTypeFee.setFeeOrder(++servFeeOrder);
-				fees.add(finTypeFee);
-			}
-		} else {
-			for (FinTypeFees fee : fees) {
-
-				if (fee.getFeeTypeID() != feeTypeId) {
-					continue;
-				}
-
+		if (feeTypeId != null) {
+			if (financeType.isAdvIntersetReq() && advanceType == AdvanceType.AE) {
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-
-				if (exist && AdvanceRuleCode.ADVEMI.name().equals(fee.getFeeTypeCode())) {
-					if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), orgFinEvent, true);
+					finTypeFee.setFeeOrder(++orgFeeOrder);
+					fees.add(finTypeFee);
 				}
 
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
 
-				if (exist && AdvanceRuleCode.ADVEMI.name().equals(fee.getFeeTypeCode())) {
-					if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), serFinEvent, false);
+					finTypeFee.setFeeOrder(++servFeeOrder);
+					fees.add(finTypeFee);
+				}
+			} else {
+				for (FinTypeFees fee : fees) {
+
+					if (fee.getFeeTypeID() != feeTypeId) {
+						continue;
+					}
+
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
+
+					if (exist && AdvanceRuleCode.ADVEMI.name().equals(fee.getFeeTypeCode())) {
+						if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
+					}
+
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+
+					if (exist && AdvanceRuleCode.ADVEMI.name().equals(fee.getFeeTypeCode())) {
+						if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
 					}
 				}
 			}
@@ -709,53 +739,55 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		// ************************** DSF
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.DSF.name());
-		if (financeType.isDsfReq()) {
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.DSF.name(), orgFinEvent, true);
-				finTypeFee.setFeeOrder(++orgFeeOrder);
-				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
-				finTypeFee.setAlwModifyFee(true);
-				finTypeFee.setAlwDeviation(true);
-				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
-				finTypeFee.setActive(true);
-				finTypeFee.setAlwModifyFeeSchdMthd(false);
-				finTypeFee.setNextRoleCode("");
-				fees.add(finTypeFee);
-			}
-
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.DSF.name(), serFinEvent, false);
-				finTypeFee.setFeeOrder(++servFeeOrder);
-				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
-				finTypeFee.setAlwModifyFee(true);
-				finTypeFee.setAlwDeviation(true);
-				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
-				finTypeFee.setActive(true);
-				finTypeFee.setAlwModifyFeeSchdMthd(false);
-				finTypeFee.setNextRoleCode("");
-				fees.add(finTypeFee);
-			}
-		} else {
-			for (FinTypeFees fee : fees) {
-				if (fee.getFeeTypeID() != feeTypeId) {
-					continue;
-				}
-
+		if (feeTypeId != null) {
+			if (financeType.isDsfReq()) {
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-
-				if (exist && AdvanceRuleCode.DSF.name().equals(fee.getFeeTypeCode())) {
-					if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.DSF.name(), orgFinEvent, true);
+					finTypeFee.setFeeOrder(++orgFeeOrder);
+					finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
+					finTypeFee.setAlwModifyFee(true);
+					finTypeFee.setAlwDeviation(true);
+					finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+					finTypeFee.setActive(true);
+					finTypeFee.setAlwModifyFeeSchdMthd(false);
+					finTypeFee.setNextRoleCode("");
+					fees.add(finTypeFee);
 				}
 
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.DSF.name(), serFinEvent, false);
+					finTypeFee.setFeeOrder(++servFeeOrder);
+					finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
+					finTypeFee.setAlwModifyFee(true);
+					finTypeFee.setAlwDeviation(true);
+					finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+					finTypeFee.setActive(true);
+					finTypeFee.setAlwModifyFeeSchdMthd(false);
+					finTypeFee.setNextRoleCode("");
+					fees.add(finTypeFee);
+				}
+			} else {
+				for (FinTypeFees fee : fees) {
+					if (fee.getFeeTypeID() != feeTypeId) {
+						continue;
+					}
 
-				if (exist && AdvanceRuleCode.DSF.name().equals(fee.getFeeTypeCode())) {
-					if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
+
+					if (exist && AdvanceRuleCode.DSF.name().equals(fee.getFeeTypeCode())) {
+						if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
+					}
+
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+
+					if (exist && AdvanceRuleCode.DSF.name().equals(fee.getFeeTypeCode())) {
+						if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
 					}
 				}
 			}
@@ -763,53 +795,55 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		// **************************** Cash Collateral
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.CASHCLT.name());
-		if (financeType.isCashCollateralReq()) {
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.CASHCLT.name(), orgFinEvent, true);
-				finTypeFee.setFeeOrder(++orgFeeOrder);
-				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
-				finTypeFee.setAlwModifyFee(true);
-				finTypeFee.setAlwDeviation(true);
-				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
-				finTypeFee.setActive(true);
-				finTypeFee.setAlwModifyFeeSchdMthd(false);
-				finTypeFee.setNextRoleCode("");
-				fees.add(finTypeFee);
-			}
-
-			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
-			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.CASHCLT.name(), serFinEvent, false);
-				finTypeFee.setFeeOrder(++servFeeOrder);
-				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
-				finTypeFee.setAlwModifyFee(true);
-				finTypeFee.setAlwDeviation(true);
-				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
-				finTypeFee.setActive(true);
-				finTypeFee.setAlwModifyFeeSchdMthd(false);
-				finTypeFee.setNextRoleCode("");
-				fees.add(finTypeFee);
-			}
-		} else {
-			for (FinTypeFees fee : fees) {
-
-				if (fee.getFeeTypeID() != feeTypeId) {
-					continue;
-				}
+		if (feeTypeId != null) {
+			if (financeType.isCashCollateralReq()) {
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-
-				if (exist && AdvanceRuleCode.CASHCLT.name().equals(fee.getFeeTypeCode())) {
-					if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					}
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.CASHCLT.name(), orgFinEvent, true);
+					finTypeFee.setFeeOrder(++orgFeeOrder);
+					finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
+					finTypeFee.setAlwModifyFee(true);
+					finTypeFee.setAlwDeviation(true);
+					finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+					finTypeFee.setActive(true);
+					finTypeFee.setAlwModifyFeeSchdMthd(false);
+					finTypeFee.setNextRoleCode("");
+					fees.add(finTypeFee);
 				}
 
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.CASHCLT.name(), serFinEvent, false);
+					finTypeFee.setFeeOrder(++servFeeOrder);
+					finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
+					finTypeFee.setAlwModifyFee(true);
+					finTypeFee.setAlwDeviation(true);
+					finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+					finTypeFee.setActive(true);
+					finTypeFee.setAlwModifyFeeSchdMthd(false);
+					finTypeFee.setNextRoleCode("");
+					fees.add(finTypeFee);
+				}
+			} else {
+				for (FinTypeFees fee : fees) {
 
-				if (exist && AdvanceRuleCode.CASHCLT.name().equals(fee.getFeeTypeCode())) {
-					if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
-						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					if (fee.getFeeTypeID() != feeTypeId) {
+						continue;
+					}
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
+
+					if (exist && AdvanceRuleCode.CASHCLT.name().equals(fee.getFeeTypeCode())) {
+						if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
+					}
+
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+
+					if (exist && AdvanceRuleCode.CASHCLT.name().equals(fee.getFeeTypeCode())) {
+						if (!fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
 					}
 				}
 			}
@@ -848,6 +882,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -1125,6 +1160,25 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(auditDetailMap.get("FinTypeFees"));
 		}
 
+		// Insurance Details
+		if (financeType.getFinTypeInsurances() != null && financeType.getFinTypeInsurances().size() > 0) {
+			for (FinTypeInsurances finTypeInsurances : financeType.getFinTypeInsurances()) {
+				finTypeInsurances.setFinType(financeType.getFinType());
+				finTypeInsurances.setWorkflowId(financeType.getWorkflowId());
+				finTypeInsurances.setRecordStatus(financeType.getRecordStatus());
+				finTypeInsurances.setUserDetails(financeType.getUserDetails());
+				finTypeInsurances.setLastMntOn(financeType.getLastMntOn());
+				finTypeInsurances.setRoleCode(financeType.getRoleCode());
+				finTypeInsurances.setNextRoleCode(financeType.getNextRoleCode());
+				finTypeInsurances.setTaskId(financeType.getTaskId());
+				finTypeInsurances.setNextTaskId(financeType.getNextTaskId());
+			}
+
+			auditDetailMap.put("FinTypeInsurance", finTypeInsurancesService
+					.setFinTypeInsuranceDetailsAuditData(financeType.getFinTypeInsurances(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinTypeInsurance"));
+		}
+
 		// Accounting
 		if (financeType.getFinTypeAccountingList() != null && financeType.getFinTypeAccountingList().size() > 0) {
 			for (FinTypeAccounting finTypeAccounting : financeType.getFinTypeAccountingList()) {
@@ -1230,6 +1284,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				rcdType = ((FinTypeFees) object).getRecordType();
 			} else if (object instanceof FinTypeAccounting) {
 				rcdType = ((FinTypeAccounting) object).getRecordType();
+			} else if (object instanceof FinTypeInsurances) {
+				rcdType = ((FinTypeInsurances) object).getRecordType();
 			} else if (object instanceof FinTypeExpense) {
 				rcdType = ((FinTypeExpense) object).getRecordType();
 			}
@@ -1315,6 +1371,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(this.finTypeFeesService.delete(financeType.getFinTypeFeesList(), tableType,
 					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
+		// Insurance Deatails
+		if (financeType.getFinTypeInsurances() != null && !financeType.getFinTypeInsurances().isEmpty()) {
+			auditDetails.addAll(this.finTypeInsurancesService.delete(financeType.getFinTypeInsurances(), tableType,
+					auditTranType, financeType.getFinType(), FinanceConstants.MODULEID_FINTYPE));
+		}
 		// Accounting Deatails
 		if (financeType.getFinTypeAccountingList() != null && !financeType.getFinTypeAccountingList().isEmpty()) {
 			auditDetails.addAll(this.finTypeAccountingService.delete(financeType.getFinTypeAccountingList(), tableType,
@@ -1359,6 +1420,17 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails = financeType.getAuditDetailMap().get("FinTypeFees");
 			for (AuditDetail auditDetail : auditDetails) {
 				List<ErrorDetail> details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method)
+						.getErrorDetails();
+				if (details != null) {
+					errorDetails.addAll(details);
+				}
+			}
+		}
+
+		if (financeType.getAuditDetailMap().get("FinTypeInsurance") != null) {
+			auditDetails = financeType.getAuditDetailMap().get("FinTypeInsurance");
+			for (AuditDetail auditDetail : auditDetails) {
+				List<ErrorDetail> details = this.finTypeInsurancesService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
@@ -2322,6 +2394,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return this.irrFinanceValidation;
 	}
 
+	@Override
+	public FinanceType getFinanceType(String finType) {
+		return getFinanceTypeDAO().getFinanceType(finType);
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -2404,6 +2481,14 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 	public void setFinTypeFeesService(FinTypeFeesService finTypeFeesService) {
 		this.finTypeFeesService = finTypeFeesService;
+	}
+
+	public FinTypeInsurancesService getFinTypeInsurancesService() {
+		return finTypeInsurancesService;
+	}
+
+	public void setFinTypeInsurancesService(FinTypeInsurancesService finTypeInsurancesService) {
+		this.finTypeInsurancesService = finTypeInsurancesService;
 	}
 
 	public FinTypeAccountingService getFinTypeAccountingService() {

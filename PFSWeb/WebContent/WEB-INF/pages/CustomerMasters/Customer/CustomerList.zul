@@ -74,6 +74,14 @@
 									<textbox id="custDftBranch" width="108px" maxlength="19" />
 								</row>
 								<row>
+									<label id="label_CustomerSearch_CustEID" value="${c:l('label_CustomerSearch_CustEID.value')}" />
+									<listbox id="sortOperator_custEID" width="43px" mold="select" rows="1" />
+									<textbox id="custEid" width="150px" />
+									<label id="label_CustomerSearch_CustMobile" value="${c:l('label_CustomerSearch_CustMobile.value')}" />
+									<listbox id="sortOperator_custMobile" width="43px" mold="select" rows="1" />
+									<textbox id="custMobile" width="150px" />
+								</row>
+								<row>
 									<label id="label_CustomerSearch_CustCtgCode" value="${c:l('label_CustomerSearch_CustCtgCode.value')}" />
 									<listbox id="sortOperator_custCtgCode" width="43px" mold="select" rows="1" />
 									<combobox id="custCtgCode" width="171px" />

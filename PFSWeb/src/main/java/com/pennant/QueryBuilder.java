@@ -50,7 +50,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -101,7 +102,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 @SuppressWarnings("rawtypes")
 public class QueryBuilder extends Groupbox {
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(QueryBuilder.class);
+	private static Logger logger = LogManager.getLogger(QueryBuilder.class);
 
 	protected Tree tree; // autowired
 	protected Space space; // autowired
@@ -1739,7 +1740,7 @@ public class QueryBuilder extends Groupbox {
 					// AC == Account Number
 					// CD == Date with Century
 					if ("A".equalsIgnoreCase(type)) {
-						listCell = new Listcell(PennantAppUtil.formatAmount(new BigDecimal(data), 2, false));
+						listCell = new Listcell(PennantAppUtil.formatAmount(new BigDecimal(data), 2));
 						listCell.setParent(item);
 						listCell.setStyle("text-align:right;");
 					} else if ("D".equalsIgnoreCase(type)) {

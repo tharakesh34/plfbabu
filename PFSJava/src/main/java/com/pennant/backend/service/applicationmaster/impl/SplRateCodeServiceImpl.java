@@ -44,7 +44,8 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class SplRateCodeServiceImpl extends GenericService<SplRateCode> implements SplRateCodeService {
 
-	private static final Logger logger = Logger.getLogger(SplRateCodeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SplRateCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SplRateCodeDAO splRateCodeDAO;

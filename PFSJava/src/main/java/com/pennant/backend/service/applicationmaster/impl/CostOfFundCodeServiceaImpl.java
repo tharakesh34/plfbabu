@@ -43,7 +43,8 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> implements CostOfFundCodeService {
-	private static Logger logger = Logger.getLogger(CostOfFundCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CostOfFundCodeDAOImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CostOfFundCodeDAO costOfFundCodeDAO;

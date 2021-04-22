@@ -1,14 +1,15 @@
 package com.pennattech.pff.mmfl.cd.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 
 public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> implements MerchantDetailsDAO {
-	private static Logger logger = Logger.getLogger(MerchantDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MerchantDetailsDAOImpl.class);
 
 	public MerchantDetailsDAOImpl() {
 		super();
@@ -46,7 +47,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		merchantDetails.setMerchantId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(merchantDetails);
-		RowMapper<MerchantDetails> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(MerchantDetails.class);
+		RowMapper<MerchantDetails> rowMapper = BeanPropertyRowMapper.newInstance(MerchantDetails.class);
 
 		try {
 			merchantDetails = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

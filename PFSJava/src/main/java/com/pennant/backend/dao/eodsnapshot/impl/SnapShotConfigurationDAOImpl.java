@@ -46,15 +46,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.eodsnapshot.SnapShotConfigurationDAO;
 import com.pennant.backend.model.eodsnapshot.SnapShotConfiguration;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>SnapShotConfiguration</code> with set of CRUD operations.
  */
 public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration> implements SnapShotConfigurationDAO {
-	private static Logger logger = Logger.getLogger(SnapShotConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SnapShotConfigurationDAOImpl.class);
 
 	public SnapShotConfigurationDAOImpl() {
 		super();
@@ -97,8 +98,7 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		snapShotConfiguration.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConfiguration);
-		RowMapper<SnapShotConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SnapShotConfiguration.class);
+		RowMapper<SnapShotConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotConfiguration.class);
 
 		try {
 			snapShotConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -262,8 +262,7 @@ public class SnapShotConfigurationDAOImpl extends BasicDao<SnapShotConfiguration
 		snapShotConfiguration.setActive(true);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotConfiguration);
-		RowMapper<SnapShotConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SnapShotConfiguration.class);
+		RowMapper<SnapShotConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotConfiguration.class);
 		try {
 			configurations = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

@@ -50,15 +50,16 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>ExtendedFieldHeader model</b> class.<br>
  */
 public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader> implements ExtendedFieldHeaderDAO {
-	private static Logger logger = Logger.getLogger(ExtendedFieldHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtendedFieldHeaderDAOImpl.class);
 
 	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
@@ -110,8 +111,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldHeader.class);
+		RowMapper<ExtendedFieldHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try {
 			extendedFieldHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -173,8 +173,6 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 */
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(final String moduleName, String subModuleName,
 			String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ModuleName = ? and SubModuleName = ?");
 
@@ -189,7 +187,6 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -256,8 +253,8 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		logger.debug("Entering");
 
 		if (extendedFieldHeader.getId() == Long.MIN_VALUE) {
-			extendedFieldHeader.setId(getNextId("SeqExtendedFieldHeader"));
-			logger.debug("get NextID:" + extendedFieldHeader.getId());
+			extendedFieldHeader.setId(getNextValue("SeqExtendedFieldHeader"));
+			logger.debug("get NextValue:" + extendedFieldHeader.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ExtendedFieldHeader");
@@ -597,8 +594,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		selectSql.append(" Where ModuleName = :ModuleName AND Event = :Event");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldHeader.class);
+		RowMapper<ExtendedFieldHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldHeader.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), parameterSource, typeRowMapper);

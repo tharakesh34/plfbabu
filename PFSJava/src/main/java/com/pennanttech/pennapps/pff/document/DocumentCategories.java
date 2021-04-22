@@ -16,10 +16,14 @@ public enum DocumentCategories {
 	VERIFICATION_RCU("VERIFICATION_RCU", Labels.getLabel("label_documents_category_rcu")),
 	VERIFICATION_FI("VERIFICATION_FI", Labels.getLabel("label_documents_category_fi")),
 	VERIFICATION_LV("VERIFICATION_LV", Labels.getLabel("label_documents_category_lv")),
+	VERIFICATION_VT("VERIFICATION_VT", Labels.getLabel("label_documents_category_vetting")),
 	SAMPLING("SAMPLING", Labels.getLabel("label_documents_category_sampling")),
 	VERIFICATION_PD("VERIFICATION_PD", Labels.getLabel("label_documents_category_pd")),
 	BUILDER_PROJ_DOC("BUILDER_PROJ_DOC", Labels.getLabel("label_documents_category_builderproject")),
-	COVENANT("COVENANT", Labels.getLabel("label_documents_category_covenants"));
+	COVENANT("COVENANT", Labels.getLabel("label_documents_category_covenants")),
+	UPFNT_FEE_RECEIPTS("UPFRTFEERECEIPT", Labels.getLabel("label_documents_category_receipts")),
+	MANUAL_ADVISE_PAYABLE("MANLADSPAYABLE", Labels.getLabel("label_documents_category_payableadvise")),
+	PERFIOS("PERFIOS", Labels.getLabel("label_documents_category_Perfios"));
 
 	private final String key;
 	private final String value;

@@ -44,7 +44,9 @@ package com.pennant.backend.service.bmtmasters.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,7 +74,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class BankBranchServiceImpl extends GenericService<BankBranch> implements BankBranchService {
-	private static final Logger logger = Logger.getLogger(BankBranchServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(BankBranchServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BankBranchDAO bankBranchDAO;
@@ -381,10 +383,31 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		if (bankBranch.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(bankBranch.getRecordType())
 				&& bankBranchDAO.isDuplicateKey(bankBranch.getBankCode(), bankBranch.getBranchCode(),
 						bankBranch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + bankBranch.getBranchCode();
+			String[] parameters = new String[2];
+			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + bankBranch.getBranchCode() + " And ";
+			parameters[1] = PennantJavaUtil.getLabel("label_BankCode") + ": " + bankBranch.getBankCode();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
+
+		if (PennantConstants.RECORD_TYPE_DEL.equals(StringUtils.trimToEmpty(bankBranch.getRecordType()))) {
+			long bankBranchID = bankBranch.getBankBranchID();
+
+			int mandateCount = mandateDAO.getBranch(bankBranchID, "");
+			int disbCount = finAdvancePaymentsDAO.getBranch(bankBranchID, "");
+			int beneficiaryCount = beneficiaryDAO.getBranch(bankBranchID, "");
+
+			if (mandateCount != 0 || beneficiaryCount != 0 || disbCount != 0) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(bankBranch.getBranchCode());
+
+				errParm[0] = PennantJavaUtil.getLabel("label_BankBranchCode") + ":" + valueParm[0];
+
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
@@ -399,7 +422,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 */
 	@Override
 	public BankBranch getBankBrachByIFSC(String ifsc) {
-		return getBankBranchDAO().getBankBrachByIFSC(ifsc, "");
+		return bankBranchDAO.getBankBrachByIFSC(ifsc, "");
 	}
 
 	/**
@@ -411,7 +434,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 */
 	@Override
 	public BankBranch getBankBrachByCode(String bankCode, String branchCode) {
-		return getBankBranchDAO().getBankBrachByCode(bankCode, branchCode, "");
+		return bankBranchDAO.getBankBrachByCode(bankCode, branchCode, "");
 	}
 
 	@Override
@@ -441,6 +464,11 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 
 	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
 		this.beneficiaryDAO = beneficiaryDAO;
+	}
+
+	@Override
+	public int getAccNoLengthByIFSC(String ifscCode) {
+		return getBankBranchDAO().getAccNoLengthByIFSC(ifscCode, "_View");
 	}
 
 }

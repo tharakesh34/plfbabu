@@ -49,7 +49,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
@@ -87,7 +88,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReportHeader> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private final static Logger logger = Logger.getLogger(ScheduleRateReportHeaderCtrl.class);
+	private final static Logger logger = LogManager.getLogger(ScheduleRateReportHeaderCtrl.class);
 
 	protected Window window_ScheduleRateReportHeaderDialogCtrl;
 	protected ExtendedCombobox finReference;

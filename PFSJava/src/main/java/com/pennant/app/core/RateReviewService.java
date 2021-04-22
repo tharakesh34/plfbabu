@@ -47,15 +47,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -67,11 +68,12 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class RateReviewService extends ServiceHelper {
 
 	private static final long serialVersionUID = -4939080414435712845L;
-	private Logger logger = Logger.getLogger(RateReviewService.class);
+	private Logger logger = LogManager.getLogger(RateReviewService.class);
 
 	private FinanceRateReviewDAO financeRateReviewDAO;
 	private AccrualService accrualService;
@@ -82,8 +84,7 @@ public class RateReviewService extends ServiceHelper {
 		super();
 	}
 
-	public CustEODEvent processRateReview(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
+	public void processRateReview(CustEODEvent custEODEvent) throws Exception {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -97,41 +98,39 @@ public class RateReviewService extends ServiceHelper {
 				reviewRateUpdate(finEODEvent, custEODEvent);
 			}
 		}
-		logger.debug(" Leaving ");
-		return custEODEvent;
 	}
 
 	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		//Reverify really Rate Review Required
 		finEODEvent.setRateReviewExist(false);
 
 		//No Rate Review on start date
-		if (valueDate.compareTo(finMain.getFinStartDate()) == 0) {
+		if (valueDate.compareTo(fm.getFinStartDate()) == 0) {
 			return;
 		}
 
 		//No Rate Review on Maturity date
-		if (valueDate.compareTo(finMain.getMaturityDate()) == 0) {
+		if (valueDate.compareTo(fm.getMaturityDate()) == 0) {
 			return;
 		}
 
 		int iEvtFrom = 0;
-		int iEvtTo = finSchdDetails.size() - 1;
+		int iEvtTo = schedules.size() - 1;
 
 		finEODEvent.setEventFromDate(valueDate);
-		finEODEvent.setEventToDate(finSchdDetails.get(iEvtTo).getSchDate());
-		finEODEvent.setRecalFromDate(finSchdDetails.get(iEvtTo).getSchDate());
-		finEODEvent.setRecalToDate(finSchdDetails.get(iEvtTo).getSchDate());
+		finEODEvent.setEventToDate(schedules.get(iEvtTo).getSchDate());
+		finEODEvent.setRecalFromDate(schedules.get(iEvtTo).getSchDate());
+		finEODEvent.setRecalToDate(schedules.get(iEvtTo).getSchDate());
 
-		for (int i = 0; i < finSchdDetails.size(); i++) {
-			if (finSchdDetails.get(i).getSchDate().compareTo(valueDate) == 0
-					&& !StringUtils.isEmpty(finSchdDetails.get(i).getBaseRate())) {
+		for (int i = 0; i < schedules.size(); i++) {
+			if (schedules.get(i).getSchDate().compareTo(valueDate) == 0
+					&& !StringUtils.isEmpty(schedules.get(i).getBaseRate())) {
 				// FIXME Field name should be renamed
-				finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
+				finEODEvent.setRateOnChgDate(schedules.get(i).getBaseRate());
 				iEvtFrom = i;
 				break;
 			}
@@ -145,9 +144,9 @@ public class RateReviewService extends ServiceHelper {
 		FinanceScheduleDetail curSchd = null;
 
 		//SET Event From Date in case Unpaid Schedules only
-		if (StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_RVWUPR)) {
-			for (int i = iEvtFrom; i < finSchdDetails.size(); i++) {
-				curSchd = finSchdDetails.get(i);
+		if (CalculationConstants.RATEREVIEW_RVWUPR.equals(fm.getRvwRateApplFor())) {
+			for (int i = iEvtFrom; i < schedules.size(); i++) {
+				curSchd = schedules.get(i);
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0
 						&& curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) == 0
 						&& curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
@@ -158,7 +157,7 @@ public class RateReviewService extends ServiceHelper {
 
 				finEODEvent.setRateReviewExist(true);
 				iEvtFrom = i;
-				finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
+				finEODEvent.setRateOnChgDate(schedules.get(i).getBaseRate());
 				finEODEvent.setEventFromDate(curSchd.getSchDate());
 				break;
 			}
@@ -171,13 +170,13 @@ public class RateReviewService extends ServiceHelper {
 		}
 
 		//SET RECAL From Date
-		finEODEvent.setRecalType(finMain.getSchCalOnRvw());
+		finEODEvent.setRecalType(fm.getSchCalOnRvw());
 
 		if (StringUtils.isEmpty(finEODEvent.getRecalType())) {
 			finEODEvent.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		}
 
-		if (!StringUtils.equals(finEODEvent.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+		if (!CalculationConstants.RPYCHG_ADJMDT.equals(finEODEvent.getRecalType())) {
 			finEODEvent.setRecalFromDate(findRecalFromDate(finEODEvent, iEvtFrom));
 		}
 
@@ -190,33 +189,42 @@ public class RateReviewService extends ServiceHelper {
 	}
 
 	private void reviewRateUpdate(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+		String finReference = finEODEvent.getFinanceMain().getFinReference();
+		logger.info("Processing rate review for the FinReference >> {}", finReference);
 
-		String finRef = finEODEvent.getFinanceMain().getFinReference();
-		FinScheduleData finScheduleData = getFinSchDataByFinRef(finEODEvent);
+		FinScheduleData schdData = getFinSchDataByFinRef(finEODEvent);
 		Date valueDate = custEODEvent.getEodValueDate();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 
-		finMain.setEventFromDate(finEODEvent.getEventFromDate());
-		finMain.setEventToDate(finEODEvent.getEventToDate());
-		finMain.setRecalFromDate(finEODEvent.getRecalFromDate());
-		finMain.setRecalToDate(finEODEvent.getRecalToDate());
-		finMain.setRecalSchdMethod(finEODEvent.getRecalSchdMethod());
-		finMain.setRecalType(finEODEvent.getRecalType());
+		fm.setEventFromDate(finEODEvent.getEventFromDate());
+		fm.setEventToDate(finEODEvent.getEventToDate());
+		fm.setRecalFromDate(finEODEvent.getRecalFromDate());
+		fm.setRecalToDate(finEODEvent.getRecalToDate());
+		fm.setRecalSchdMethod(finEODEvent.getRecalSchdMethod());
+		fm.setRecalType(finEODEvent.getRecalType());
 
 		// Schedule Recalculation Locking Period Applicability
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
-			Date recalLockTill = finMain.getRecalFromDate();
+		EventProperties eventProperties = custEODEvent.getEventProperties();
+		boolean schRecalLock = false;
+		if (eventProperties.isParameterLoaded()) {
+			schRecalLock = eventProperties.isSchRecalLock();
+		} else {
+			schRecalLock = SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK);
+		}
+
+		if (schRecalLock) {
+			Date recalLockTill = fm.getRecalFromDate();
 			if (recalLockTill == null) {
-				recalLockTill = finMain.getMaturityDate();
+				recalLockTill = fm.getMaturityDate();
 			}
 
-			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			int sdSize = schdData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
 
-				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+				curSchd = schdData.getFinanceScheduleDetails().get(i);
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);
@@ -227,7 +235,7 @@ public class RateReviewService extends ServiceHelper {
 		// Finance Profit Details
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 		if (profitDetail.getFinReference() == null) {
-			profitDetail = getFinanceProfitDetailDAO().getFinProfitDetailsById(finMain.getFinReference());
+			profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinReference());
 		}
 
 		BigDecimal totalPftSchdOld = profitDetail.getTotalPftSchd();
@@ -237,13 +245,13 @@ public class RateReviewService extends ServiceHelper {
 		//finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 		// Rate Changes applied for Finance Schedule Data
-		finScheduleData = ScheduleCalculator.refreshRates(finScheduleData);
+		schdData = ScheduleCalculator.refreshRates(schdData);
 
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		newProfitDetail = accrualService.calProfitDetails(finMain, finSchdDetails, profitDetail, valueDate);
+		newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);
 		// Amount Codes Details Preparation
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(finMain, profitDetail, finSchdDetails,
-				AccountEventConstants.ACCEVENT_RATCHG, valueDate, valueDate);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profitDetail, schedules, AccountEventConstants.ACCEVENT_RATCHG,
+				valueDate, valueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
@@ -253,31 +261,32 @@ public class RateReviewService extends ServiceHelper {
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
 		if (amountCodes.getPftChg().compareTo(BigDecimal.ZERO) == 0) {
+			logger.info("Rate review Exhausted for the FinReference >> {} due profit shcedule", finReference);
 			return;
 		}
 
 		finEODEvent.setUpdFinMain(true);
 		finEODEvent.setupdFinSchdForRateRvw(true);
 		finEODEvent.setUpdRepayInstruct(true);
-		finEODEvent.setFinanceScheduleDetails(finScheduleData.getFinanceScheduleDetails());
-		finEODEvent.setRepayInstructions(finScheduleData.getRepayInstructions());
+		finEODEvent.setFinanceScheduleDetails(schdData.getFinanceScheduleDetails());
+		finEODEvent.setRepayInstructions(schdData.getRepayInstructions());
 
 		//Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
-		rateReview.setFinReference(finRef);
+		rateReview.setFinReference(finReference);
 		rateReview.setRateType(finEODEvent.getRateOnChgDate());
-		rateReview.setCurrency(finMain.getFinCcy());
+		rateReview.setCurrency(fm.getFinCcy());
 		rateReview.setValueDate(valueDate);
 		rateReview.setEffectiveDate(valueDate);
 		rateReview.setEventFromDate(finEODEvent.getEventFromDate());
 		rateReview.setEventToDate(finEODEvent.getEventToDate());
-		rateReview.setRecalFromdate(finMain.getRecalFromDate());
-		rateReview.setRecalToDate(finMain.getRecalToDate());
+		rateReview.setRecalFromdate(fm.getRecalFromDate());
+		rateReview.setRecalToDate(fm.getRecalToDate());
 		financeRateReviewDAO.save(rateReview);
-		aeEvent.setFinType(finMain.getFinType());
-		long accountingID = getAccountingID(finMain, AccountEventConstants.ACCEVENT_RATCHG);
+		aeEvent.setFinType(fm.getFinType());
+		Long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_RATCHG);
 
-		if (accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			return;
 		} else {
 			aeEvent.getAcSetIDList().add(accountingID);
@@ -289,6 +298,8 @@ public class RateReviewService extends ServiceHelper {
 		//Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+
+		logger.info("Rate review Completed for the FinReference >>{}", finReference);
 	}
 
 	/**
@@ -299,56 +310,52 @@ public class RateReviewService extends ServiceHelper {
 	 * @return
 	 */
 	public FinScheduleData getFinSchDataByFinRef(FinEODEvent finEodEvent) {
-		logger.debug("Entering");
 
-		FinScheduleData finSchData = new FinScheduleData();
-		finSchData.setFinReference(finEodEvent.getFinanceMain().getFinReference());
-		finSchData.setFinanceMain(finEodEvent.getFinanceMain());
-		finSchData.setFinanceScheduleDetails(finEodEvent.getFinanceScheduleDetails());
-		FinanceType fintype = getFinanceType(finEodEvent.getFinanceMain().getFinType());
-		finSchData.setFinanceType(fintype);
+		FinScheduleData schdData = new FinScheduleData();
+		FinanceMain fm = finEodEvent.getFinanceMain();
+		String finReference = fm.getFinReference();
+		schdData.setFinReference(finReference);
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceScheduleDetails(finEodEvent.getFinanceScheduleDetails());
+		FinanceType fintype = getFinanceType(fm.getFinType());
+		schdData.setFinanceType(fintype);
 		finEodEvent.setFinType(fintype);
 
-		List<RepayInstruction> repayInstructions = getRepayInstructionDAO()
-				.getRepayInstrEOD(finSchData.getFinReference());
+		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finReference);
+		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "", false);
 
-		finSchData.setRepayInstructions(repayInstructions);
+		schdData.setRepayInstructions(repayInstructions);
 		finEodEvent.setRepayInstructions(repayInstructions);
+		schdData.setDisbursementDetails(fd);
+		finEodEvent.setFinanceDisbursements(fd);
 
-		// Finance Disbursement Details
-		List<FinanceDisbursement> finDisbDetails = getFinanceDisbursementDAO()
-				.getFinanceDisbursementDetails(finSchData.getFinReference(), "", false);
-
-		finSchData.setDisbursementDetails(finDisbDetails);
-		finEodEvent.setFinanceDisbursements(finDisbDetails);
-
-		logger.debug("Leaving");
-		return finSchData;
+		return schdData;
 	}
 
 	private Date findRecalFromDate(FinEODEvent finEODEvent, int iEvtFrom) {
 
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
-		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
-		int sdSize = finSchdDetails.size();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+		FinanceScheduleDetail schd = new FinanceScheduleDetail();
+
+		int sdSize = schedules.size();
 		Date recalFromDate = null;
 
 		for (int i = iEvtFrom; i < sdSize; i++) {
-			curSchd = finSchdDetails.get(i);
+			schd = schedules.get(i);
 
 			if (i == iEvtFrom) {
 				continue;
 			}
 			//Since schedule is presented it should not considered for rate review.
-			if (curSchd.getPresentmentId() != 0) {
+			if (schd.getPresentmentId() != 0) {
 				continue;
 			}
 
 			//SET RECAL FROMDATE
-			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
-				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) == 0
-						&& curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) == 0) {
-					recalFromDate = curSchd.getSchDate();
+			if (schd.isPftOnSchDate() || schd.isRepayOnSchDate()) {
+				if (schd.getSchdPriPaid().compareTo(BigDecimal.ZERO) == 0
+						&& schd.getSchdPftPaid().compareTo(BigDecimal.ZERO) == 0) {
+					recalFromDate = schd.getSchDate();
 					break;
 				}
 			}
@@ -357,10 +364,6 @@ public class RateReviewService extends ServiceHelper {
 		return recalFromDate;
 
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public void setFinanceRateReviewDAO(FinanceRateReviewDAO financeRateReviewDAO) {
 		this.financeRateReviewDAO = financeRateReviewDAO;

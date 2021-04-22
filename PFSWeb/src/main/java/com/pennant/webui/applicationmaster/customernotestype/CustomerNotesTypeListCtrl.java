@@ -44,7 +44,8 @@ package com.pennant.webui.applicationmaster.customernotestype;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerNotesTypeListCtrl extends GFCBaseListCtrl<CustomerNotesType> {
 	private static final long serialVersionUID = -9149300436300750011L;
-	private static final Logger logger = Logger.getLogger(CustomerNotesTypeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerNotesTypeListCtrl.class);
 
 	protected Window window_CustomerNotesTypeList;
 	protected Borderlayout borderLayout_CustomerNotesTypeList;

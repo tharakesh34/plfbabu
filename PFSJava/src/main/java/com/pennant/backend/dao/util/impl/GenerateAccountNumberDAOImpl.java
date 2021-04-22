@@ -43,13 +43,14 @@
 
 package com.pennant.backend.dao.util.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.model.SeqAccountNumber;
 import com.pennant.backend.dao.util.GenerateAccountNumberDAO;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class GenerateAccountNumberDAOImpl extends BasicDao<SeqAccountNumber> implements GenerateAccountNumberDAO {
-	private static Logger logger = Logger.getLogger(GenerateAccountNumberDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GenerateAccountNumberDAOImpl.class);
 
 	public GenerateAccountNumberDAOImpl() {
 		super();
@@ -86,8 +87,7 @@ public class GenerateAccountNumberDAOImpl extends BasicDao<SeqAccountNumber> imp
 		logger.debug("selectSql: " + selectQry.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(seqAccountNumber);
-		RowMapper<SeqAccountNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SeqAccountNumber.class);
+		RowMapper<SeqAccountNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(SeqAccountNumber.class);
 
 		try {
 			seqAccountNumber = this.jdbcTemplate.queryForObject(selectQry.toString(), beanParameters, typeRowMapper);

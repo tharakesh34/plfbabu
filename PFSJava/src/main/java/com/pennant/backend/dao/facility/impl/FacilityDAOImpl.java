@@ -47,13 +47,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.facility.FacilityDAO;
 import com.pennant.backend.model.facility.Facility;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class FacilityDAOImpl extends BasicDao<Facility> implements FacilityDAO {
-	private static Logger logger = Logger.getLogger(FacilityDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FacilityDAOImpl.class);
 
 	public FacilityDAOImpl() {
 		super();
@@ -137,7 +138,7 @@ public class FacilityDAOImpl extends BasicDao<Facility> implements FacilityDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(facility);
-		RowMapper<Facility> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Facility.class);
+		RowMapper<Facility> typeRowMapper = BeanPropertyRowMapper.newInstance(Facility.class);
 
 		try {
 			facility = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -368,7 +369,7 @@ public class FacilityDAOImpl extends BasicDao<Facility> implements FacilityDAO {
 		selectSql.append(" Where CAFReference =:CAFReference ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<Facility> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Facility.class);
+		RowMapper<Facility> typeRowMapper = BeanPropertyRowMapper.newInstance(Facility.class);
 
 		try {
 			facility = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

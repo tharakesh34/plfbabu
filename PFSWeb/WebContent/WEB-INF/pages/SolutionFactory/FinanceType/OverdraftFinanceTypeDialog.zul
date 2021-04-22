@@ -619,6 +619,22 @@
 												<decimalbox id="finGrcMargin" width="125px" maxlength="15" style="text-align:right" />
 											</hbox>
 										</row>
+										<row id="row_GrcAdvBaseRate" visible="false">
+											<label id="label_FinanceTypeDialog_GrcAdvBaseRate" value="${c:l('label_OverDraftFinanceTypeDialog_GrcAdvBaseRate.value')}" />
+											<extendedcombobox id="grcAdvBaseRate" />
+											<label id="label_FinanceTypeDialog_GrcAdvPftRate" value="${c:l('label_OverDraftFinanceTypeDialog_GrcAdvPftRate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<decimalbox id="grcAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
+											</hbox>
+										</row>
+										<row id="row_GrcAdvMargin" visible="false">
+											<label id="label_FinanceTypeDialog_GrcAdvMargin" value="${c:l('label_OverDraftFinanceTypeDialog_GrcAdvMargin.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<decimalbox id="grcAdvMargin" width="125px" maxlength="15" style="text-align:right" />
+											</hbox>
+										</row>
 										<row id="row_FinGrcRates" visible="false">
 											<label id="label_FinanceTypeDialog_FInGrcMinRate" value="${c:l('label_OverDraftFinanceTypeDialog_FInGrcMinRate.value')}" />
 											<hbox>
@@ -681,7 +697,68 @@
 												<checkbox id="finIsIntCpzAtGrcEnd" checked="false" />
 											</hbox>
 										</row>
-
+										</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="gb_autoGraceInc_Details" visible="false">
+								<caption label="${c:l('label_FinanceTypeDialog_AutoGraceIncrement')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label id="label_GrcAdjReq"
+												value="${c:l('label_FinanceTypeDialog_GrcAdjReq.value')}" />
+											<hbox id="hlayout_GrcAdjReq" spacing="2px">
+												<space id="space_GrcAdjReq" spacing="2px" />
+												<checkbox id="grcAdjReq" />
+											</hbox>
+										</row>
+										<row>
+											<label id="label_grcPeriodAftrFullDisb"
+												value="${c:l('label_FinanceTypeDialog_GrcPeriodAftrFullDisb.value')}" />
+											<hlayout id="hlayout_grcPeriodAftrFullDisb" spacing="2px">
+												<space id="space_grcPeriodAftrFullDisb" spacing="2px" />
+												<checkbox id="grcPeriodAftrFullDisb" />
+											</hlayout>
+											<label id="label_AutoIncrGrcEndDate"
+												value="${c:l('label_FinanceTypeDialog_AutoIncrGrcEndDate.value')}" />
+											<hlayout id="hlayout_AutoIncrGrcEndDate" spacing="2px">
+												<space id="space_AutoIncrGrcEndDate" spacing="2px" />
+												<checkbox id="autoIncrGrcEndDate" />
+											</hlayout>
+										</row>
+										<row>
+											<label id="label_GrcAutoIncrMonths"
+												value="${c:l('label_FinanceTypeDialog_GrcAutoIncrMonths.value')}" />
+											<hlayout id="hlayout_GrcAutoIncrMonths" spacing="2px">
+												<space id="space_GrcAutoIncrMonths" spacing="2px" />
+												<intbox id="grcAutoIncrMonths" />
+											</hlayout>
+											<label id="label_MaxAutoIncrAllowed"
+												value="${c:l('label_FinanceTypeDialog_MaxAutoIncrAllowed.value')}" />
+											<hlayout id="hlayout_MaxAutoIncrAllowed" spacing="2px">
+												<space id="space_MaxAutoIncrAllowed" spacing="2px" />
+												<intbox id="maxAutoIncrAllowed" />
+											</hlayout>
+										</row>
+										<row>
+											<label id="label_ThrldtoMaintainGrcPrd"
+												value="${c:l('label_FinanceTypeDialog_ThrldtoMaintainGrcPrd.value')}" />
+											<hlayout id="hlayoutThrldtoMaintainGrcPrd" spacing="2px">
+												<space id="spaceThrldtoMaintainGrcPrd" spacing="2px" />
+												<intbox id="thrldtoMaintainGrcPrd" />
+											</hlayout>
+											<label id="label_UnderConstruction" value="${c:l('label_FinanceTypeDialog_UnderConstruction.value')}" />
+											<hbox id="hlayout_UnderConstruction" spacing="2px">
+												<space id="space_UnderConstruction" spacing="2px" />
+												<checkbox id="underConstruction" />
+											</hbox>
+										</row>
 									</rows>
 								</grid>
 							</groupbox>
@@ -710,6 +787,23 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="equalRepayment" checked="true" />
+												</hbox>
+											</row>
+
+											<row id="row_RpyAdvBaseRate" visible="false">
+												<label id="label_FinanceTypeDialog_RpyAdvBaseRate" value="${c:l('label_OverDraftFinanceTypeDialog_RpyAdvBaseRate.value')}" />
+												<extendedcombobox id="rpyAdvBaseRate" />
+												<label id="label_FinanceTypeDialog_RpyAdvPftRate" value="${c:l('label_OverDraftFinanceTypeDialog_RpyAdvPftRate.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="rpyAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
+												</hbox>
+											</row>
+											<row id="row_RpyAdvMargin" visible="false">
+												<label id="label_FinanceTypeDialog_RpyAdvMargin" value="${c:l('label_OverDraftFinanceTypeDialog_RpyAdvMargin.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="rpyAdvMargin" width="125px" maxlength="15" style="text-align:right" />
 												</hbox>
 											</row>
 
@@ -1050,6 +1144,18 @@
 												<checkbox id="allowRIAInvestment" checked="false" />
 											</hbox>
 
+											<label id="label_FinanceTypeDialog_AllowAdvanceRent" value="${c:l('label_OverDraftFinanceTypeDialog_AllowAdvanceRentAllow.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox id="alwAdvanceRent" checked="false" />
+											</hbox>
+										</row>
+										<row id="row_allowDownpayPgm" visible="false">
+											<label id="label_FinanceTypeDialog_AllowDownpayPgm" value="${c:l('label_OverDraftFinanceTypeDialog_AllowDownpayPgm.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox id="allowDownpayPgm" checked="false" />
+											</hbox>
 										</row>
 										<row visible="false">
 											<label id="label_FinanceTypeDialog_AlwMaxDisbCheckReq" value="${c:l('label_FinanceTypeDialog_AlwMaxDisbCheckReq.value')}" />
@@ -1064,6 +1170,15 @@
 												<space spacing="2px" />
 												<checkbox id="alwMultiPartyDisb" checked="false" />
 											</hbox>
+										</row>
+										<row>
+											<label id="label_FinanceTypeDialog_RolloverFinance" value="${c:l('label_OverDraftFinanceTypeDialog_RolloverFinance.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox id="rolloverFinance" checked="false" />
+											</hbox>
+											<label id="label_FinanceTypeDialog_RollOverFrq" value="${c:l('label_OverDraftFinanceTypeDialog_RollOverFrq.value')}" />
+											<frequencybox id="rollOverFrq" />
 										</row>
 										<row visible="false">
 											<label id="label_FinanceTypeDialog_FinAlwRateChangeAnyDate" value="${c:l('label_OverDraftFinanceTypeDialog_FinAlwRateChangeAnyDate.value')}" />

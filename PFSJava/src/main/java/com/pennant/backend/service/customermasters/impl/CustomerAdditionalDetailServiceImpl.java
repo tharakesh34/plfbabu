@@ -43,7 +43,8 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CustomerAdditionalDetailServiceImpl extends GenericService<CustomerAdditionalDetail>
 		implements CustomerAdditionalDetailService {
-	private static Logger logger = Logger.getLogger(CustomerAdditionalDetailServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerAdditionalDetailServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerAdditionalDetailDAO customerAdditionalDetailDAO;
 

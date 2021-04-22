@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +19,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -62,123 +63,126 @@ public class PresentmentJobService extends AbstractInterface {
 	private PresentmentDetailService presentmentDetailService;
 	private PresentmentImportProcess presentmentImportProcess;
 	private NotificationService notificationService;
-	private DataEngineStatus status = new DataEngineStatus();
 	private DataEngineConfig dataEngineConfig;
 	private static List<Configuration> PRESENTMENT_CONFIG = new ArrayList<>();
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
 
-	String localLocation = "";
-	String instrumentType = "";
-	Channel channel = null;
-	ChannelSftp channelSftp = null;
-	Session session = null;
-
-	// method for presentment extraction,creation and approval
 	public void extractPresentment(PresentmentHeader header) {
-		logger.debug(Literal.ENTERING);
+		Date fromDate = header.getFromDate();
+		Date toDate = header.getToDate();
 		LoggedInUser loggedInUser = new LoggedInUser();
 
+		logger.info("Presentment Extraction Process Started...");
+
+		List<PresentmentHeader> headerList = null;
 		try {
-			logger.info("Presentment Extraction Process Started...... ");
 
-			presentmentDetailService.savePresentmentDetails(header); // extraction
-			List<PresentmentHeader> headerList = presentmentDetailService.getPresenmentHeaderList(header.getFromDate(),
-					header.getToDate(), RepayConstants.PEXC_EXTRACT);
-			logger.info("No of Records Extracted : {}", headerList.size());
+			presentmentDetailService.savePresentmentDetails(header);
 
-			for (PresentmentHeader presentmentHeader : headerList) {
-				long id = presentmentHeader.getId();
+			headerList = presentmentDetailService.getPresenmentHeaderList(fromDate, toDate,
+					RepayConstants.PEXC_EXTRACT);
+			logger.debug("No of Records Extracted : {}", headerList.size());
+
+			for (PresentmentHeader ph : headerList) {
+				long id = ph.getId();
 
 				List<Long> includeList = presentmentDetailService.getIncludeList(id);
-				presentmentHeader.setIncludeList(includeList);
+				ph.setIncludeList(includeList);
 
 				logger.info("No of Records in Include List  : {}", includeList.size());
 
 				boolean searchIncludeList = presentmentDetailService.searchIncludeList(id, 0);
 
 				if (!searchIncludeList) {
-					logger.info("No Records are there to Create Presentment Batch : {}", includeList.size());
-					return;
+					logger.debug("No Records are there to Create Presentment Batch : {}", includeList.size());
+					continue;
 				}
 
 				List<Long> excludeList = presentmentDetailService.getExcludeList(id);
-				presentmentHeader.setExcludeList(excludeList);
+				ph.setExcludeList(excludeList);
 
-				logger.info("No of Records in Exclude List  : {}", excludeList.size());
+				logger.debug("No of Records in Exclude List  : {}", excludeList.size());
 
-				Presentment partnerBank = getPartnerBankId(presentmentHeader.getLoanType());
+				if (StringUtils.isEmpty(ph.getPartnerAcctNumber()) && ph.getPartnerBankId() == 0) {
+					Presentment pb = getPartnerBankId(ph.getLoanType());
+					ph.setPartnerAcctNumber(pb.getAccountNo());
+					ph.setPartnerBankId(pb.getPartnerBankId());
+				} else {
+					ph.setPartnerAcctNumber(ph.getPartnerAcctNumber());
+					ph.setPartnerBankId(ph.getPartnerBankId());
+				}
 
-				logger.info("Presentment Batch Creation Process Started...... ");
+				logger.debug("Presentment Batch Creation Process Started...");
 
-				presentmentHeader.setPartnerAcctNumber(partnerBank.getAccountNo());
-				presentmentHeader.setPartnerBankId(partnerBank.getPartnerBankId());
-				presentmentHeader.setUserDetails(loggedInUser);
+				ph.setUserDetails(loggedInUser);
 
-				presentmentHeader.setUserAction(STATUS_SUBMIT);
-				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
+				ph.setUserAction(STATUS_SUBMIT);
+				presentmentDetailService.updatePresentmentDetails(ph);
 
-				logger.info("No of Presentment Records Created  : {}", includeList.size());
+				logger.debug("No of Presentment Records Created  : {}", includeList.size());
 
-				logger.info("Presentment Batch Approval Process...... ");
+				logger.debug("Presentment Batch Approval Process...... ");
 
-				presentmentHeader.setUserAction(STATUS_APPROVE);
-				presentmentDetailService.updatePresentmentDetails(presentmentHeader);
-				logger.info("No of Presentment Records Approved  : {}", includeList.size());
-
+				ph.setUserAction(STATUS_APPROVE);
+				presentmentDetailService.updatePresentmentDetails(ph);
+				logger.debug("No of Presentment Records Approved  : {}", includeList.size());
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
+
+		logger.info("Presentment Extraction Process compled.");
 	}
 
-	// method for uploading presentment
 	public void uploadPresentment(String jobName) {
 		logger.debug(Literal.ENTERING);
 		try {
 			loadConfig();
 			for (Configuration configuration : PRESENTMENT_CONFIG) {
-				if (jobName.equals(configuration.getName())) {
-					status.setName(configuration.getName());
-					localLocation = setLocalRepoLocation(configuration.getUploadPath());
 
-					Map<String, EventProperties> properties = eventProperties.computeIfAbsent(configuration.getId(),
-							abc -> dataEngineConfig.getEventPropertyMap(configuration.getId()));
+				if (!jobName.equals(configuration.getName())) {
+					continue;
+				}
+				DataEngineStatus status = new DataEngineStatus();
+				status.setName(configuration.getName());
+				String localLocation = setLocalRepoLocation(configuration.getUploadPath());
 
-					String[] postEvents = StringUtils.trimToEmpty(configuration.getPostEvent()).split(",");
-					EventProperties property = null;
+				Map<String, EventProperties> properties = eventProperties.computeIfAbsent(configuration.getId(),
+						abc -> dataEngineConfig.getEventPropertyMap(configuration.getId()));
 
-					EventProperties s3Property = null;
-					EventProperties sharedFTPProperty = null;
-					EventProperties sharedSFTPProperty = null;
-					EventProperties sharedNetworkFolderProperty = null;
+				String[] postEvents = StringUtils.trimToEmpty(configuration.getPostEvent()).split(",");
+				EventProperties property = null;
 
-					for (String postEvent : postEvents) {
-						postEvent = StringUtils.trimToEmpty(postEvent);
-						property = properties.get(postEvent);
-						if (property != null) {
-							if (property.getStorageType().equals("S3")) {
-								s3Property = property;
-							} else if (property.getStorageType().equals("SHARE_TO_FTP")) {
-								sharedFTPProperty = property;
-							} else if (property.getStorageType().equals("SHARE_TO_SFTP")) {
-								sharedSFTPProperty = property;
-							} else if (property.getStorageType().equals("SHARED_NETWORK_FOLDER")) {
-								sharedNetworkFolderProperty = property;
-							}
+				EventProperties s3Property = null;
+				EventProperties sharedFTPProperty = null;
+				EventProperties sharedSFTPProperty = null;
+				EventProperties sharedNetworkFolderProperty = null;
+
+				for (String postEvent : postEvents) {
+					postEvent = StringUtils.trimToEmpty(postEvent);
+					property = properties.get(postEvent);
+					if (property != null) {
+						if (property.getStorageType().equals("S3")) {
+							s3Property = property;
+						} else if (property.getStorageType().equals("SHARE_TO_FTP")) {
+							sharedFTPProperty = property;
+						} else if (property.getStorageType().equals("SHARE_TO_SFTP")) {
+							sharedSFTPProperty = property;
+						} else if (property.getStorageType().equals("SHARED_NETWORK_FOLDER")) {
+							sharedNetworkFolderProperty = property;
 						}
-
 					}
 
-					if (s3Property != null) {
-						// FIXME
-					} else if (sharedSFTPProperty != null) {
-						getListOfFilesFromFTP(sharedSFTPProperty, "SFTP", configuration);
-					} else if (sharedFTPProperty != null) {
-						getListOfFilesFromFTP(sharedFTPProperty, "FTP", configuration);
-					} else if (sharedNetworkFolderProperty != null) {
-						// FIXME
-					}
+				}
+
+				if (s3Property != null) {
+					// FIXME
+				} else if (sharedSFTPProperty != null) {
+					getListOfFilesFromFTP(sharedSFTPProperty, "SFTP", configuration, localLocation, status);
+				} else if (sharedFTPProperty != null) {
+					getListOfFilesFromFTP(sharedFTPProperty, "FTP", configuration, localLocation, status);
+				} else if (sharedNetworkFolderProperty != null) {
+					// FIXME
 				}
 			}
 		} catch (Exception e) {
@@ -197,7 +201,8 @@ public class PresentmentJobService extends AbstractInterface {
 		return fileLocation.toString();
 	}
 
-	private List<File> getListOfFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config) {
+	private List<File> getListOfFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config,
+			String localLocation, DataEngineStatus status) {
 		logger.debug(Literal.ENTERING);
 		List<String> fileNames = null;
 		try {
@@ -224,10 +229,10 @@ public class PresentmentJobService extends AbstractInterface {
 				File file = new File(localLocation.concat(File.separator).concat(fileName));
 				if (file.exists()) {
 					byte[] data = FileUtils.readFileToByteArray(file);
-					instrumentType = getInstrumentType(file.getName());
+					String instrumentType = getInstrumentType(file.getName());
 					Media aMedia = new AMedia(file.getName(), "xlsx", null, data);
 					if (config.getName().endsWith(instrumentType)) {
-						upload(aMedia, instrumentType);
+						upload(aMedia, instrumentType, status);
 
 						Map<String, EventProperties> properties = eventProperties.computeIfAbsent(config.getId(),
 								abc -> dataEngineConfig.getEventPropertyMap(config.getId()));
@@ -248,9 +253,9 @@ public class PresentmentJobService extends AbstractInterface {
 					}
 					new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey)
 							.deleteFile(bucketName.concat("/").concat(fileName));
-					logger.info("{} file processed successfully.." + fileName);
+					logger.info("{} file processed successfully..", fileName);
 				} else {
-					logger.info(fileName + " does not exists");
+					logger.info("{} file name does not exists", fileName);
 				}
 			}
 		} catch (Exception e) {
@@ -260,6 +265,7 @@ public class PresentmentJobService extends AbstractInterface {
 	}
 
 	private String getInstrumentType(String name) {
+		String instrumentType = null;
 		if (StringUtils.contains(name, MandateConstants.TYPE_NACH)) {
 			instrumentType = MandateConstants.TYPE_NACH;
 		} else if (StringUtils.contains(name, MandateConstants.TYPE_PDC)) {
@@ -276,6 +282,9 @@ public class PresentmentJobService extends AbstractInterface {
 	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
 			String secretKey) {
 		JSch jsch = new JSch();
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
 		try {
 			session = jsch.getSession(accessKey, hostName, port);
 			session.setPassword(secretKey);
@@ -343,7 +352,7 @@ public class PresentmentJobService extends AbstractInterface {
 		}
 	}
 
-	private void upload(Media aMedia, String instrumentType) {
+	private void upload(Media aMedia, String instrumentType, DataEngineStatus status) {
 		logger.debug(Literal.ENTERING);
 
 		PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(dataSource, presentmentDetailService,
@@ -365,18 +374,21 @@ public class PresentmentJobService extends AbstractInterface {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
 	}
 
-	public List<FinanceType> getFinanceTypeList() {
+	public List<FinanceType> getFinanceTypeList(String entityCode) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
 		try {
-			sql = new StringBuilder("Select fintype, findivision");
-			sql.append(" from  RMTFinanceTypes ");
+			sql = new StringBuilder("Select rmt.fintype from rmtfinancetypes rmt ");
+			sql.append("inner join smtdivisiondetail smt on smt.divisionCode = rmt.findivision ");
+			sql.append("where smt.entitycode = :entityCode and rmt.finisactive = :active");
 
 			MapSqlParameterSource source = new MapSqlParameterSource();
-			RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+			source.addValue("entityCode", entityCode);
+			source.addValue("active", 1);
+			RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 			return namedJdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -385,7 +397,7 @@ public class PresentmentJobService extends AbstractInterface {
 		return null;
 	}
 
-	public String getEntityCodes(String division) {
+	public List<String> getEntityCodes() {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
 		try {
@@ -393,9 +405,8 @@ public class PresentmentJobService extends AbstractInterface {
 			sql.append("from  SMTDivisionDetail where divisioncode = :division ");
 
 			MapSqlParameterSource source = new MapSqlParameterSource();
-			source.addValue("division", division);
 
-			return namedJdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return namedJdbcTemplate.queryForList(sql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

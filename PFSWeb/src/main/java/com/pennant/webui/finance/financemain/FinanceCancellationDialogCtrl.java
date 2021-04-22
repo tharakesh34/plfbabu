@@ -13,7 +13,8 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
@@ -74,7 +75,7 @@ import com.rits.cloning.Cloner;
 
 public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(FinanceCancellationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceCancellationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -193,6 +194,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			}
 
 			setMainWindow(window_FinanceCancellationDialog);
+			setProductCode("Murabaha");
 
 			/* set components visible dependent of the users rights */
 			isEnquiry = true;
@@ -580,16 +582,17 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 				if (downPayment.compareTo(this.finAmount.getValidateValue()) > 0) {
 					throw new WrongValueException(this.downPayBank,
-							Labels.getLabel("MAND_FIELD_MIN", new String[] {
-									Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
-									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter, false) }));
+							Labels.getLabel("MAND_FIELD_MIN",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayment.value"),
+											reqDwnPay.toString(),
+											PennantAppUtil.formatAmount(this.finAmount.getActualValue(), formatter) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
 					throw new WrongValueException(this.downPayBank, Labels.getLabel("PERC_MIN",
 							new String[] {
 									Labels.getLabel("label_" + getProductCode() + "FinanceMainDialog_DownPayBS.value"),
-									PennantAppUtil.formatAmount(reqDwnPay, formatter, false) }));
+									PennantAppUtil.formatAmount(reqDwnPay, formatter) }));
 				}
 			}
 			aFinanceMain
@@ -675,7 +678,14 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		try {
 			ArrayList<ReasonDetails> reasonList = new ArrayList<>();
-			for (String reasonId : this.reasons.getValue().split(",")) {
+			String reasonCode = this.reasons.getValue();
+
+			if (reasonCode == null || "".equals(reasonCode) || reasonCode.isEmpty()) {
+				throw new WrongValueException(this.reasons, Labels.getLabel("FIELD_NO_INVALID",
+						new String[] { Labels.getLabel("label_FinanceMainDialog_CancelReason.value") }));
+			}
+
+			for (String reasonId : reasonCode.split(",")) {
 				ReasonDetails reasonDetails = new ReasonDetails();
 				reasonDetails.setReasonId(Long.valueOf(reasonId));
 				reasonList.add(reasonDetails);
@@ -771,12 +781,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				this.noOfTermsRow.setVisible(false);
 			}
 
+			readOnlyComponent(true, this.reasons);
 			if (this.recordStatus.getValue().equals("Submitted")) {
-				readOnlyComponent(true, this.reasons);
 				readOnlyComponent(true, this.btnReasons);
 				readOnlyComponent(true, this.cancelRemarks);
 			} else {
-				readOnlyComponent(false, this.reasons);
 				readOnlyComponent(false, this.btnReasons);
 				readOnlyComponent(false, this.cancelRemarks);
 			}
@@ -1146,7 +1155,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
+					processCompleted = true;
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else {
 					FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();

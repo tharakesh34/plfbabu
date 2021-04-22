@@ -4,20 +4,21 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail> implements PaymentRecoveryDetailDAO {
-	private static Logger logger = Logger.getLogger(PaymentRecoveryDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentRecoveryDetailDAOImpl.class);
 
 	@Override
 	public void save(List<PaymentRecoveryDetail> detail) {
@@ -75,8 +76,7 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		selectSql.append(" where BatchRefNumber=:BatchRefNumber order by PrimaryDebitAccount,priority ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PaymentRecoveryDetail.class);
+		RowMapper<PaymentRecoveryDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -103,8 +103,7 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PaymentRecoveryDetail.class);
+		RowMapper<PaymentRecoveryDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -125,8 +124,7 @@ public class PaymentRecoveryDetailDAOImpl extends BasicDao<PaymentRecoveryDetail
 		selectSql.append(" where BatchRefNumber=:BatchRefNumber and CustomerReference = :CustomerReference");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PaymentRecoveryDetail.class);
+		RowMapper<PaymentRecoveryDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentRecoveryDetail.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

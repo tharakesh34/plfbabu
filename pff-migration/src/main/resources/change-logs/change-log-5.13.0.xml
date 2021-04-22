@@ -1,0 +1,4809 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<!-- ST#1923 write off loan changes start -->
+
+	<changeSet id="ST#1923.1" author="sudheer.t">
+		<addColumn tableName="FinanceMain_Temp">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.2" author="sudheer.t">
+		<addColumn tableName="FinanceMain">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.3" author="sudheer.t">
+		<addColumn tableName="FINANCEMAIN_PA">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.4" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN_TEMP SET WriteOffLoan = 0;
+				UPDATE FINANCEMAIN SET WriteOffLoan = 0;
+				UPDATE FINANCEMAIN_PA SET WriteOffLoan = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.5" author="sudheer.t" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_FM_T_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FM_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FMP_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.6" author="sudheer.t" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WriteOffLoan" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="WriteOffLoan" tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="WriteOffLoan" tableName="FINANCEMAIN_PA" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1923.7" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN SET WriteOffLoan = 1 Where ClosingStatus = 'W';
+				UPDATE FINANCEMAIN_PA SET WriteOffLoan = 1 Where ClosingStatus = 'W';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.8" author="sudheer.t">
+		<addColumn tableName="WIFFinanceMain_Temp">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.9" author="sudheer.t">
+		<addColumn tableName="WIFFinanceMain">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.10" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE WIFFinanceMain_Temp SET WriteOffLoan = 0;
+				UPDATE WIFFinanceMain SET WriteOffLoan = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.11" author="sudheer.t" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE WIFFinanceMain_Temp ADD CONSTRAINT DF_WFM_T_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+				ALTER TABLE WIFFinanceMain ADD CONSTRAINT DF_WFM_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.12" author="sudheer.t" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WriteOffLoan" tableName="WIFFinanceMain_Temp" defaultValue="0" />
+		<addDefaultValue columnName="WriteOffLoan" tableName="WIFFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1923.13" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE WIFFinanceMain SET WriteOffLoan = 1 Where ClosingStatus = 'W';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.14" author="sudheer.t">
+		<addColumn tableName="RejectFinanceMain">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.15" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE RejectFinanceMain Set WriteOffLoan = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.16" author="sudheer.t" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE RejectFinanceMain ADD CONSTRAINT DF_RFM_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.17" author="sudheer.t" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WriteOffLoan" tableName="RejectFinanceMain" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="ST#1923.18" author="sudheer.t">
+		<sql>
+			<![CDATA[
+			
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_pftS';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_pftSB';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_priSB';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_odPri';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_odPft';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'WRITEOFF' and AMOUNTCODE = 'ae_prvMntAmz';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REPAY'    and AMOUNTCODE = 'ae_isWriteOff';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARLYPAY' and AMOUNTCODE = 'ae_isWriteOff';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'EARSTMNT' and AMOUNTCODE = 'ae_isWriteOff';
+				
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_pftS','Total Interest as per schedule till today','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_pftSB','Total Interest due as per schedule till today','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_priSB','Total Principal due as per schedule till today','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_odPri','OverDue Principal','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_odPft','OverDue Profit','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('WRITEOFF',0,'ae_prvMntAmz','Previous Month Amortized interest','1',1,1005,current_timestamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REPAY',0,'ae_isWriteOff','Write Off',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EARLYPAY',0,'ae_isWriteOff','Write Off',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('EARSTMNT',0,'ae_isWriteOff','Write Off',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.19" author="sudheer.t">
+		<addColumn tableName="FinPftDetails">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.20" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE FinPftDetails Set WriteOffLoan = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.21" author="sudheer.t" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FinPftDetails ADD CONSTRAINT DF_FPT_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.21" author="sudheer.t" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WriteOffLoan" tableName="FinPftDetails" defaultValue="0" />
+	</changeSet>
+	
+	<!-- ST#1923 write off loan changes end -->
+
+	<!-- ST#1922 Restructure functionality in LMS "START" -->
+
+	<changeSet id="ST#1922.1" author="sivasai.p">
+		<createTable tableName="Restructure_Details">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RestructureType" type="varchar(10)" />
+			<column name="EmiHldPeriod" type="int" />
+			<column name="PriHldPeriod" type="int" />
+			<column name="EmiPeriods" type="int" />
+			<column name="TotNoOfRestructure" type="int" />
+			<column name="RecalculationType" type="varchar(10)" />
+			<column name="ServiceRequestNo" type="varchar(20)" />
+			<column name="Remark" type="varchar(200)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+			<column name="OldBucket" type="int" />
+			<column name="NewBucket" type="int" />
+			<column name="OldEmios" type="decimal(18,0)" />
+			<column name="NewEmios" type="decimal(18,0)" />
+			<column name="OldBalTenure" type="int" />
+			<column name="NewBalTenure" type="int" />
+			<column name="OldMaturity" type="datetime" />
+			<column name="NewMaturity" type="datetime" />
+			<column name="LastBilledDate" type="datetime" />
+			<column name="LastBilledInstNo" type="int" />
+			<column name="ActLoanAmount" type="decimal(18,0)" />
+			<column name="OldTenure" type="int" />
+			<column name="NewTenure" type="int" />
+			<column name="OldInterest" type="decimal(18,0)" />
+			<column name="NewInterest" type="decimal(18,0)" />
+			<column name="OldMaxUnplannedEmi" type="int" />
+			<column name="NewMaxUnplannedEmi" type="int" />
+			<column name="OldAvailedUnplanEmi" type="int" />
+			<column name="NewAvailedUnplanEmi" type="int" />
+			<column name="OldFinalEmi" type="decimal(18,0)" />
+			<column name="NewFinalEmi" type="decimal(18,0)" />
+			<column name="RestructureDate" type="datetime" />
+			<column name="TenorChange" type="boolean" />
+			<column name="EmiRecal" type="boolean" />
+			<column name="RestructureReason" type="varchar(15)" />
+			<column name="OldDpd" type="smallint" />
+			<column name="NewDpd" type="smallint" />
+			<column name="OldCpzInterest" type="decimal(18,0)" />
+			<column name="NewCpzInterest" type="decimal(18,0)" />
+			<column name="EmiHldStartDate" type="datetime" />
+			<column name="EmiHldEndDate" type="datetime" />
+			<column name="PriHldStartDate" type="datetime" />
+			<column name="PriHldEndDate" type="datetime" />
+			<column name="OldPOsAmount" type="decimal(18,0)" />
+			<column name="NewPOsAmount" type="decimal(18,0)" />
+			<column name="OldEmiOverdue" type="decimal(18,0)" />
+			<column name="NewEmiOverdue" type="decimal(18,0)" />
+			<column name="BounceCharge" type="decimal(18,0)" />
+			<column name="OldPenaltyAmount" type="decimal(18,0)" />
+			<column name="NewPenaltyAmount" type="decimal(18,0)" />
+			<column name="OtherCharge" type="decimal(18,0)" />
+			<column name="RestructureCharge" type="decimal(18,0)" />
+			<column name="AppDate" type="datetime" />
+			<column name="FinCurrAssetValue" type="decimal(18,0)" />
+			<column name="OldExtOdDays" type="smallint" />
+			<column name="NewExtOdDays" type="smallint" />
+			<column name="RepayProfitRate" type="number(13,9)" />
+			<column name="GrcMaxAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1922.1_1" author="sivasai.p">
+		<addPrimaryKey tableName="Restructure_Details" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#1922.2" author="sivasai.p">
+		<createTable tableName="Restructure_Details_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RestructureType" type="varchar(10)" />
+			<column name="EmiHldPeriod" type="int" />
+			<column name="PriHldPeriod" type="int" />
+			<column name="EmiPeriods" type="int" />
+			<column name="TotNoOfRestructure" type="int" />
+			<column name="RecalculationType" type="varchar(10)" />
+			<column name="ServiceRequestNo" type="varchar(20)" />
+			<column name="Remark" type="varchar(200)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+			<column name="OldBucket" type="int" />
+			<column name="NewBucket" type="int" />
+			<column name="OldEmios" type="decimal(18,0)" />
+			<column name="NewEmios" type="decimal(18,0)" />
+			<column name="OldBalTenure" type="int" />
+			<column name="NewBalTenure" type="int" />
+			<column name="OldMaturity" type="datetime" />
+			<column name="NewMaturity" type="datetime" />
+			<column name="LastBilledDate" type="datetime" />
+			<column name="LastBilledInstNo" type="int" />
+			<column name="ActLoanAmount" type="decimal(18,0)" />
+			<column name="OldTenure" type="int" />
+			<column name="NewTenure" type="int" />
+			<column name="OldInterest" type="decimal(18,0)" />
+			<column name="NewInterest" type="decimal(18,0)" />
+			<column name="OldMaxUnplannedEmi" type="int" />
+			<column name="NewMaxUnplannedEmi" type="int" />
+			<column name="OldAvailedUnplanEmi" type="int" />
+			<column name="NewAvailedUnplanEmi" type="int" />
+			<column name="OldFinalEmi" type="decimal(18,0)" />
+			<column name="NewFinalEmi" type="decimal(18,0)" />
+			<column name="RestructureDate" type="datetime" />
+			<column name="TenorChange" type="boolean" />
+			<column name="EmiRecal" type="boolean" />
+			<column name="RestructureReason" type="varchar(15)" />
+			<column name="OldDpd" type="smallint" />
+			<column name="NewDpd" type="smallint" />
+			<column name="OldCpzInterest" type="decimal(18,0)" />
+			<column name="NewCpzInterest" type="decimal(18,0)" />
+			<column name="EmiHldStartDate" type="datetime" />
+			<column name="EmiHldEndDate" type="datetime" />
+			<column name="PriHldStartDate" type="datetime" />
+			<column name="PriHldEndDate" type="datetime" />
+			<column name="OldPOsAmount" type="decimal(18,0)" />
+			<column name="NewPOsAmount" type="decimal(18,0)" />
+			<column name="OldEmiOverdue" type="decimal(18,0)" />
+			<column name="NewEmiOverdue" type="decimal(18,0)" />
+			<column name="BounceCharge" type="decimal(18,0)" />
+			<column name="OldPenaltyAmount" type="decimal(18,0)" />
+			<column name="NewPenaltyAmount" type="decimal(18,0)" />
+			<column name="OtherCharge" type="decimal(18,0)" />
+			<column name="RestructureCharge" type="decimal(18,0)" />
+			<column name="AppDate" type="datetime" />
+			<column name="FinCurrAssetValue" type="decimal(18,0)" />
+			<column name="OldExtOdDays" type="smallint" />
+			<column name="NewExtOdDays" type="smallint" />
+			<column name="RepayProfitRate" type="number(13,9)" />
+			<column name="GrcMaxAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1922.2_1" author="sivasai.p">
+		<addPrimaryKey tableName="Restructure_Details_Temp" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#1922.3" author="sivasai.p">
+		<createTable tableName="Restructure_Types">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="RstTypeCode" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="RstTypeDesc" type="Varchar(100)" />
+			<column name="MaxEmiHoliday" type="int" />
+			<column name="MaxPriHoliday" type="int" />
+			<column name="MaxEmiTerm" type="int" />
+			<column name="MaxTotTerm" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1922.3_1" author="sivasai.p">
+		<addPrimaryKey tableName="Restructure_Types" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#1922.3_2" author="sivasai.p">
+		<addUniqueConstraint tableName="Restructure_Types" columnNames="RstTypeCode" />
+	</changeSet>
+
+	<changeSet id="ST#1922.1.1" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OldDpd" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewDpd" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldCpzInterest" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewCpzInterest" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldPOsAmount" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewPOsAmount" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldEmiOverdue" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewEmiOverdue" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="BounceCharge" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldPenaltyAmount" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewPenaltyAmount" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OtherCharge" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="RestructureCharge" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="FinCurrAssetValue" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldExtOdDays" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewExtOdDays" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="RepayProfitRate" tableName="Restructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="GrcMaxAmount" tableName="Restructure_Details" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1922.1.2" author="sivasai.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_olddpd DEFAULT 0 FOR OldDpd;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_newdpd DEFAULT 0 FOR NewDpd;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_oldcpzinterest DEFAULT 0 FOR OldCpzInterest;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_newcpzinterest DEFAULT 0 FOR NewCpzInterest;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_oldposamount DEFAULT 0 FOR OldPOsAmount;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_newposamount DEFAULT 0 FOR NewPOsAmount; 
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_oldemioverdue DEFAULT 0 FOR OldEmiOverdue;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_newemioverdue DEFAULT 0 FOR NewEmiOverdue;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_bouncecharge DEFAULT 0 FOR BounceCharge;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_oldpenaltyamount DEFAULT 0 FOR OldPenaltyAmount;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_newpenaltyamount DEFAULT 0 FOR NewPenaltyAmount;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_othercharge DEFAULT 0 FOR OtherCharge;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_restructurecharge DEFAULT 0 FOR RestructureCharge;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_fincurrassetvalue DEFAULT 0 FOR FinCurrAssetValue;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_oldextoddays DEFAULT 0 FOR OldExtOdDays;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_newextoddays DEFAULT 0 FOR NewExtOdDays;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_repayprofitrate DEFAULT 0 FOR RepayProfitRate;
+				ALTER TABLE Restructure_Details ADD CONSTRAINT df_rd_grcmaxamount DEFAULT 0 FOR GrcMaxAmount;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.2.1" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OldDpd" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="NewDpd" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="OldCpzInterest" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="NewCpzInterest" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="OldPOsAmount" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="NewPOsAmount" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="OldEmiOverdue" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="NewEmiOverdue" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="BounceCharge" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="OldPenaltyAmount" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="NewPenaltyAmount" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="OtherCharge" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="RestructureCharge" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="FinCurrAssetValue" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="OldExtOdDays" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="NewExtOdDays" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="RepayProfitRate" tableName="Restructure_Details_Temp" defaultValue="0" />
+		<addDefaultValue columnName="GrcMaxAmount" tableName="Restructure_Details_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1922.2.2" author="sivasai.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_olddpd DEFAULT 0 FOR OldDpd;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_newdpd DEFAULT 0 FOR NewDpd;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_oldcpzinterest DEFAULT 0 FOR OldCpzInterest;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_newcpzinterest DEFAULT 0 FOR NewCpzInterest;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_oldposamount DEFAULT 0 FOR OldPOsAmount;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_newposamount DEFAULT 0 FOR NewPOsAmount; 
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_oldemioverdue DEFAULT 0 FOR OldEmiOverdue;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_newemioverdue DEFAULT 0 FOR NewEmiOverdue;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_bouncecharge DEFAULT 0 FOR BounceCharge;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_oldpenaltyamount DEFAULT 0 FOR OldPenaltyAmount;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_newpenaltyamount DEFAULT 0 FOR NewPenaltyAmount;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_othercharge DEFAULT 0 FOR OtherCharge;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_restructurecharge DEFAULT 0 FOR RestructureCharge;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_fincurrassetvalue DEFAULT 0 FOR FinCurrAssetValue;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_oldextoddays DEFAULT 0 FOR OldExtOdDays;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_newextoddays DEFAULT 0 FOR NewExtOdDays;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_repayprofitrate DEFAULT 0 FOR RepayProfitRate;
+				ALTER TABLE Restructure_Details_Temp ADD CONSTRAINT df_rd_t_grcmaxamount DEFAULT 0 FOR GrcMaxAmount;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.3.1.1" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="MaxEmiHoliday" tableName="Restructure_Types" defaultValue="0" />
+		<addDefaultValue columnName="MaxPriHoliday" tableName="Restructure_Types" defaultValue="0" />
+		<addDefaultValue columnName="MaxEmiTerm" tableName="Restructure_Types" defaultValue="0" />
+		<addDefaultValue columnName="MaxTotTerm" tableName="Restructure_Types" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1922.3.1.2" author="Ganesh.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE Restructure_Types ADD CONSTRAINT df_rt_maxemiholiday DEFAULT 0 FOR MaxEmiHoliday;
+				ALTER TABLE Restructure_Types ADD CONSTRAINT df_rt_maxpriholiday DEFAULT 0 FOR MaxPriHoliday;
+				ALTER TABLE Restructure_Types ADD CONSTRAINT df_rt_maxemiterm DEFAULT 0 FOR MaxEmiTerm;
+				ALTER TABLE Restructure_Types ADD CONSTRAINT df_rt_maxtotterm DEFAULT 0 FOR MaxTotTerm;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.3.2" author="sivasai.p">
+		<sql>
+		<![CDATA[
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario1', 'EMI Holiday + Interest only', 24, 24, 0, 24);
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario2', 'Tenor Extension', 0, 0, 24, 24);
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario3', 'EMI Holiday + Tenor extension', 24, 0, 24, 24);
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario4', 'EMI Holiday', 24, 0, 0, 24);
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario5', 'Principal Holiday', 0, 24, 0, 24);
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario6', 'Principal Holiday + Tenor extension', 0, 24, 24, 24);
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario7', 'EMI Holiday + Tenor extension (Without EMI change)', 24, 0, 0, 24);
+			INSERT INTO Restructure_Types (RSTTYPECODE, RSTTYPEDESC, MAXEMIHOLIDAY, MAXPRIHOLIDAY, MAXEMITERM, MAXTOTTERM) values ('Scenario8', 'Principal Holiday + Tenor extension (Without EMI change)', 0, 24, 0, 24);
+		 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.4_pre" author="sivasai.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'restructure_details_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.4" author="sivasai.p" dbms="postgresql,mssql">
+		<createView viewName="Restructure_Details_View" replaceIfExists="true"> 
+			<![CDATA[
+				SELECT T1.ID,
+					FINREFERENCE,
+				    RESTRUCTURETYPE,
+				    EMIHLDPERIOD,
+				    PRIHLDPERIOD,
+				    EMIPERIODS,
+				    TOTNOOFRESTRUCTURE,
+				    RECALCULATIONTYPE,
+				    SERVICEREQUESTNO,
+				    REMARK,
+				    VERSION,
+				    LASTMNTBY,
+				    LASTMNTON,
+				    RECORDSTATUS,
+				    ROLECODE,
+				    NEXTROLECODE,
+				    TASKID,
+				    NEXTTASKID,
+				    RECORDTYPE,
+				    WORKFLOWID,
+				    OLDBUCKET,
+				    NEWBUCKET,
+				    OLDEMIOS,
+				    NEWEMIOS,
+				    OLDBALTENURE,
+				    NEWBALTENURE,
+				    OLDMATURITY,
+				    NEWMATURITY,
+				    LASTBILLEDDATE,
+				    LASTBILLEDINSTNO,
+				    ACTLOANAMOUNT,
+				    OLDTENURE,
+				    NEWTENURE,
+				    OLDINTEREST,
+				    NEWINTEREST,
+				    OLDMAXUNPLANNEDEMI,
+				    NEWMAXUNPLANNEDEMI,
+				    OLDAVAILEDUNPLANEMI,
+				    NEWAVAILEDUNPLANEMI,
+				    OLDFINALEMI,
+				    NEWFINALEMI,
+				    TENORCHANGE,
+				    EMIRECAL,
+				    RESTRUCTUREDATE,
+				    RESTRUCTUREREASON,
+				    OLDDPD,
+				    NEWDPD,
+				    OLDCPZINTEREST,
+				    NEWCPZINTEREST,
+				    EMIHLDSTARTDATE,
+				    EMIHLDENDDATE,
+				    PRIHLDSTARTDATE,
+				    PRIHLDENDDATE,
+				    OLDPOSAMOUNT, 
+				    NEWPOSAMOUNT, 
+				    OLDEMIOVERDUE, 
+				    NEWEMIOVERDUE, 
+				    BOUNCECHARGE, 
+				    OLDPENALTYAMOUNT,
+				    NEWPENALTYAMOUNT, 
+				    OTHERCHARGE, 
+				    RESTRUCTURECHARGE,
+				    APPDATE,
+					T2.RSTTYPECODE, 
+					T2.RSTTYPEDESC, 
+				    FINCURRASSETVALUE,
+				    OLDEXTODDAYS, 
+				    NEWEXTODDAYS,
+				    REPAYPROFITRATE,
+					T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS_TEMP T1 
+			  	INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS BIGINT) = T2.ID
+				UNION ALL	 
+		 		SELECT T1.ID, 
+				    FINREFERENCE,
+				    RESTRUCTURETYPE,
+				    EMIHLDPERIOD,
+				    PRIHLDPERIOD,
+				    EMIPERIODS,
+				    TOTNOOFRESTRUCTURE,
+				    RECALCULATIONTYPE,
+				    SERVICEREQUESTNO,
+				    REMARK,
+				    VERSION,
+				    LASTMNTBY,
+				    LASTMNTON,
+				    RECORDSTATUS,
+				    ROLECODE,
+				    NEXTROLECODE,
+				    TASKID,
+				    NEXTTASKID,
+				    RECORDTYPE,
+				    WORKFLOWID,
+				    OLDBUCKET,
+				    NEWBUCKET,
+				    OLDEMIOS,
+				    NEWEMIOS,
+				    OLDBALTENURE,
+				    NEWBALTENURE,
+				    OLDMATURITY,
+				    NEWMATURITY,
+				    LASTBILLEDDATE,
+				    LASTBILLEDINSTNO,
+				    ACTLOANAMOUNT,
+				    OLDTENURE,
+				    NEWTENURE,
+				    OLDINTEREST,
+				    NEWINTEREST,
+				    OLDMAXUNPLANNEDEMI,
+				    NEWMAXUNPLANNEDEMI,
+				    OLDAVAILEDUNPLANEMI,
+				    NEWAVAILEDUNPLANEMI,
+				    OLDFINALEMI,
+				    NEWFINALEMI,
+				    TENORCHANGE,
+				    EMIRECAL,
+				    RESTRUCTUREDATE,
+				    RESTRUCTUREREASON,
+				    OLDDPD,
+				    NEWDPD,
+				    OLDCPZINTEREST,
+				    NEWCPZINTEREST,
+				    EMIHLDSTARTDATE,
+				    EMIHLDENDDATE,
+				    PRIHLDSTARTDATE,
+				    PRIHLDENDDATE,
+				    OLDPOSAMOUNT, 
+				    NEWPOSAMOUNT, 
+				    OLDEMIOVERDUE, 
+				    NEWEMIOVERDUE, 
+				    BOUNCECHARGE, 
+				    OLDPENALTYAMOUNT,
+				    NEWPENALTYAMOUNT, 
+				    OTHERCHARGE, 
+				    RESTRUCTURECHARGE,
+				    APPDATE,
+					T2.RSTTYPECODE, 
+					T2.RSTTYPEDESC, 
+				    FINCURRASSETVALUE,
+				    OLDEXTODDAYS, 
+				    NEWEXTODDAYS,
+				    REPAYPROFITRATE,
+					T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS T1 
+				INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS BIGINT) = T2.ID
+				WHERE NOT EXISTS (SELECT 1 FROM RESTRUCTURE_DETAILS_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1922.4" author="sivasai.p" dbms="oracle">
+		<createView viewName="Restructure_Details_View" replaceIfExists="true"> 
+			<![CDATA[
+				SELECT T1.ID,
+					FINREFERENCE,
+				    RESTRUCTURETYPE,
+				    EMIHLDPERIOD,
+				    PRIHLDPERIOD,
+				    EMIPERIODS,
+				    TOTNOOFRESTRUCTURE,
+				    RECALCULATIONTYPE,
+				    SERVICEREQUESTNO,
+				    REMARK,
+				    VERSION,
+				    LASTMNTBY,
+				    LASTMNTON,
+				    RECORDSTATUS,
+				    ROLECODE,
+				    NEXTROLECODE,
+				    TASKID,
+				    NEXTTASKID,
+				    RECORDTYPE,
+				    WORKFLOWID,
+				    OLDBUCKET,
+				    NEWBUCKET,
+				    OLDEMIOS,
+				    NEWEMIOS,
+				    OLDBALTENURE,
+				    NEWBALTENURE,
+				    OLDMATURITY,
+				    NEWMATURITY,
+				    LASTBILLEDDATE,
+				    LASTBILLEDINSTNO,
+				    ACTLOANAMOUNT,
+				    OLDTENURE,
+				    NEWTENURE,
+				    OLDINTEREST,
+				    NEWINTEREST,
+				    OLDMAXUNPLANNEDEMI,
+				    NEWMAXUNPLANNEDEMI,
+				    OLDAVAILEDUNPLANEMI,
+				    NEWAVAILEDUNPLANEMI,
+				    OLDFINALEMI,
+				    NEWFINALEMI,
+				    TENORCHANGE,
+				    EMIRECAL,
+				    RESTRUCTUREDATE,
+				    RESTRUCTUREREASON,
+				    OLDDPD,
+				    NEWDPD,
+				    OLDCPZINTEREST,
+				    NEWCPZINTEREST,
+				    EMIHLDSTARTDATE,
+				    EMIHLDENDDATE,
+				    PRIHLDSTARTDATE,
+				    PRIHLDENDDATE,
+				    OLDPOSAMOUNT, 
+				    NEWPOSAMOUNT, 
+				    OLDEMIOVERDUE, 
+				    NEWEMIOVERDUE, 
+				    BOUNCECHARGE, 
+				    OLDPENALTYAMOUNT,
+				    NEWPENALTYAMOUNT, 
+				    OTHERCHARGE, 
+				    RESTRUCTURECHARGE,
+				    APPDATE,
+					T2.RSTTYPECODE, 
+					T2.RSTTYPEDESC, 
+				    FINCURRASSETVALUE,
+				    OLDEXTODDAYS, 
+				    NEWEXTODDAYS,
+				    REPAYPROFITRATE,
+					T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS_TEMP T1 
+			  	INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS number) = T2.ID
+				UNION ALL	 
+		 		SELECT T1.ID, 
+				    FINREFERENCE,
+				    RESTRUCTURETYPE,
+				    EMIHLDPERIOD,
+				    PRIHLDPERIOD,
+				    EMIPERIODS,
+				    TOTNOOFRESTRUCTURE,
+				    RECALCULATIONTYPE,
+				    SERVICEREQUESTNO,
+				    REMARK,
+				    VERSION,
+				    LASTMNTBY,
+				    LASTMNTON,
+				    RECORDSTATUS,
+				    ROLECODE,
+				    NEXTROLECODE,
+				    TASKID,
+				    NEXTTASKID,
+				    RECORDTYPE,
+				    WORKFLOWID,
+				    OLDBUCKET,
+				    NEWBUCKET,
+				    OLDEMIOS,
+				    NEWEMIOS,
+				    OLDBALTENURE,
+				    NEWBALTENURE,
+				    OLDMATURITY,
+				    NEWMATURITY,
+				    LASTBILLEDDATE,
+				    LASTBILLEDINSTNO,
+				    ACTLOANAMOUNT,
+				    OLDTENURE,
+				    NEWTENURE,
+				    OLDINTEREST,
+				    NEWINTEREST,
+				    OLDMAXUNPLANNEDEMI,
+				    NEWMAXUNPLANNEDEMI,
+				    OLDAVAILEDUNPLANEMI,
+				    NEWAVAILEDUNPLANEMI,
+				    OLDFINALEMI,
+				    NEWFINALEMI,
+				    TENORCHANGE,
+				    EMIRECAL,
+				    RESTRUCTUREDATE,
+				    RESTRUCTUREREASON,
+				    OLDDPD,
+				    NEWDPD,
+				    OLDCPZINTEREST,
+				    NEWCPZINTEREST,
+				    EMIHLDSTARTDATE,
+				    EMIHLDENDDATE,
+				    PRIHLDSTARTDATE,
+				    PRIHLDENDDATE,
+				    OLDPOSAMOUNT, 
+				    NEWPOSAMOUNT, 
+				    OLDEMIOVERDUE, 
+				    NEWEMIOVERDUE, 
+				    BOUNCECHARGE, 
+				    OLDPENALTYAMOUNT,
+				    NEWPENALTYAMOUNT, 
+				    OTHERCHARGE, 
+				    RESTRUCTURECHARGE,
+				    APPDATE,
+					T2.RSTTYPECODE, 
+					T2.RSTTYPEDESC, 
+				    FINCURRASSETVALUE,
+				    OLDEXTODDAYS, 
+				    NEWEXTODDAYS,
+				    REPAYPROFITRATE,
+					T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS T1 
+				INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS number) = T2.ID
+				WHERE NOT EXISTS (SELECT 1 FROM RESTRUCTURE_DETAILS_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+
+	<changeSet id="ST#1922.4_post" author="sivasai.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'restructure_details_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.5_pre" author="sivasai.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'restructure_details_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.5" author="sivasai.p" dbms="postgresql,mssql">
+		<createView viewName="Restructure_Details_AView" replaceIfExists="true"> 
+			<![CDATA[
+		 		 SELECT T1.ID,
+					FINREFERENCE,
+					RESTRUCTURETYPE,
+					EMIHLDPERIOD,
+					PRIHLDPERIOD,
+					EMIPERIODS,
+					TOTNOOFRESTRUCTURE,
+					RECALCULATIONTYPE,
+					SERVICEREQUESTNO,
+					REMARK,
+					VERSION, 
+					LASTMNTBY,
+					LASTMNTON,
+					RECORDSTATUS,
+					ROLECODE,
+					NEXTROLECODE,
+					TASKID,
+					NEXTTASKID,
+					RECORDTYPE,
+					WORKFLOWID,
+					OLDBUCKET,
+					NEWBUCKET,
+					OLDEMIOS,
+					NEWEMIOS,
+					OLDBALTENURE,
+					NEWBALTENURE,
+					OLDMATURITY,
+					NEWMATURITY,
+					LASTBILLEDDATE,
+					LASTBILLEDINSTNO,
+					ACTLOANAMOUNT,
+					OLDTENURE,
+					NEWTENURE,
+					OLDINTEREST,
+					NEWINTEREST,
+					OLDMAXUNPLANNEDEMI,
+					NEWMAXUNPLANNEDEMI,
+					OLDAVAILEDUNPLANEMI,
+					NEWAVAILEDUNPLANEMI,
+					OLDFINALEMI,
+					NEWFINALEMI,
+					TENORCHANGE,
+					EMIRECAL, 
+					RESTRUCTUREDATE,
+					RESTRUCTUREREASON,
+					OLDDPD,
+					NEWDPD,
+					OLDCPZINTEREST,
+					NEWCPZINTEREST,
+					EMIHLDSTARTDATE,
+					EMIHLDENDDATE,
+					PRIHLDSTARTDATE,
+					PRIHLDENDDATE,
+					OLDPOSAMOUNT, 
+					NEWPOSAMOUNT, 
+					OLDEMIOVERDUE,
+					NEWEMIOVERDUE, 
+					BOUNCECHARGE,
+					OLDPENALTYAMOUNT, 
+					NEWPENALTYAMOUNT, 
+					OTHERCHARGE,
+					RESTRUCTURECHARGE,
+					APPDATE,
+				 	T2.RSTTYPECODE,
+				 	T2.RSTTYPEDESC,
+		    		FINCURRASSETVALUE, 
+					OLDEXTODDAYS,
+					NEWEXTODDAYS,
+					REPAYPROFITRATE,
+				 	T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS T1 
+				INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS BIGINT) = T2.ID 
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1922.5" author="sivasai.p" dbms="oracle">
+		<createView viewName="Restructure_Details_AView" replaceIfExists="true"> 
+			<![CDATA[
+		 		 SELECT T1.ID,
+					FINREFERENCE,
+					RESTRUCTURETYPE,
+					EMIHLDPERIOD,
+					PRIHLDPERIOD,
+					EMIPERIODS,
+					TOTNOOFRESTRUCTURE,
+					RECALCULATIONTYPE,
+					SERVICEREQUESTNO,
+					REMARK,
+					VERSION, 
+					LASTMNTBY,
+					LASTMNTON,
+					RECORDSTATUS,
+					ROLECODE,
+					NEXTROLECODE,
+					TASKID,
+					NEXTTASKID,
+					RECORDTYPE,
+					WORKFLOWID,
+					OLDBUCKET,
+					NEWBUCKET,
+					OLDEMIOS,
+					NEWEMIOS,
+					OLDBALTENURE,
+					NEWBALTENURE,
+					OLDMATURITY,
+					NEWMATURITY,
+					LASTBILLEDDATE,
+					LASTBILLEDINSTNO,
+					ACTLOANAMOUNT,
+					OLDTENURE,
+					NEWTENURE,
+					OLDINTEREST,
+					NEWINTEREST,
+					OLDMAXUNPLANNEDEMI,
+					NEWMAXUNPLANNEDEMI,
+					OLDAVAILEDUNPLANEMI,
+					NEWAVAILEDUNPLANEMI,
+					OLDFINALEMI,
+					NEWFINALEMI,
+					TENORCHANGE,
+					EMIRECAL, 
+					RESTRUCTUREDATE,
+					RESTRUCTUREREASON,
+					OLDDPD,
+					NEWDPD,
+					OLDCPZINTEREST,
+					NEWCPZINTEREST,
+					EMIHLDSTARTDATE,
+					EMIHLDENDDATE,
+					PRIHLDSTARTDATE,
+					PRIHLDENDDATE,
+					OLDPOSAMOUNT, 
+					NEWPOSAMOUNT, 
+					OLDEMIOVERDUE,
+					NEWEMIOVERDUE, 
+					BOUNCECHARGE,
+					OLDPENALTYAMOUNT, 
+					NEWPENALTYAMOUNT, 
+					OTHERCHARGE,
+					RESTRUCTURECHARGE,
+					APPDATE,
+				 	T2.RSTTYPECODE,
+				 	T2.RSTTYPEDESC,
+		    		FINCURRASSETVALUE, 
+					OLDEXTODDAYS,
+					NEWEXTODDAYS,
+					REPAYPROFITRATE,
+				 	T1.GRCMAXAMOUNT
+				FROM RESTRUCTURE_DETAILS T1 
+				INNER JOIN RESTRUCTURE_TYPES T2 ON CAST(T1.RESTRUCTURETYPE AS number) = T2.ID 
+			]]>
+		</createView>
+	</changeSet>
+
+
+	<changeSet id="ST#1922.5_post" author="sivasai.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'restructure_details_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- Seq_Restructure_Details -->
+	<changeSet id="ST#1922.6" author="sivasai.p" >
+		<createSequence sequenceName="Seq_Restructure_Details" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#1922.7" author="Rahul">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('RSTRS', 'Restructure Reason', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RSTRS', 'RESTRUCTURE', 'RESTRUCTURE', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				INSERT INTO RMTLOVFIELDDETAIL (FIELDCODEID, FIELDCODE, FIELDCODEVALUE, VALUEDESC, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, SYSTEMDEFAULT) values ((Select max(FieldCodeId)+1 from RMTLOVFIELDDETAIL_VIEW), 'RSTRS', 'COVID-19', 'COVID-19', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+		 	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.8" author="sivasai.p">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinanceManagement_RestructureDetail', 'MENU',0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'button_FinanceSelectList_NewRestructureDetail', 'FinanceSelectList',0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'button_FinanceMainDialog_btnRestructureDetail', 'FinanceMainDialog',0,1000,CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);	
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_RestructureEnquiry', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS), 'RESTRUCTUREDETAIL_VIEW', 'Restructure WF View Group', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS), 'RESTRUCTUREDETAIL_MAKER', 'Restructure WF Maker Group', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS), 'RESTRUCTUREDETAIL_APPROVER', 'Restructure WF Approver Group', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_FinanceManagement_RestructureDetail'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_FinanceSelectList_NewRestructureDetail'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_FinanceMainDialog_btnRestructureDetail'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuCat_FinanceManagement'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_FinanceMainDialog_btnSave'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_FinanceMainDialog_btnSave'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_FinanceManagement_RestructureDetail'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RESTRUCTUREDETAIL_VIEW'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_RestructureEnquiry'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.9" author="sivasai.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'SCDCHG' and  AMOUNTCODE = 'ae_PrvInst';
+				DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'SCDCHG' and  AMOUNTCODE = 'ae_prvPrip';
+				DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'SCDCHG' and  AMOUNTCODE = 'ae_TotPrvCpz';
+				DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'SCDCHG' and  AMOUNTCODE = 'ae_CurInst';
+				DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'SCDCHG' and  AMOUNTCODE = 'ae_CurPrip';
+				DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'SCDCHG' and  AMOUNTCODE = 'ae_NetCpz';
+				DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'SCDCHG' and  AMOUNTCODE = 'ae_mthIncome'; 
+				 
+	  		    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('SCDCHG', 0, 'ae_PrvInst', 'Previous Interest', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	  		    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('SCDCHG', 0, 'ae_PrvPrip', 'Previous Principal', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	  		    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('SCDCHG', 0, 'ae_TotPrvCpz', 'Previous Total Captalitize', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	  		    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('SCDCHG', 0, 'ae_CurInst', 'Current Interest', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	  		    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('SCDCHG', 0, 'ae_CurPrip', 'Current Principal', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	  		    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('SCDCHG', 0, 'ae_NetCpz', 'Net Captalitize', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	  		    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('SCDCHG', 0, 'ae_mthIncome', 'Month Income', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.10" author="sivasai.p">
+		<addColumn tableName="FinanceMain_Temp">
+			<column name="Restructure" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1922.11" author="sivasai.p">
+		<addColumn tableName="FinanceMain">
+			<column name="Restructure" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1922.12" author="sivasai.p">
+		<addColumn tableName="FINANCEMAIN_PA">
+			<column name="Restructure" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1922.13" author="sivasai.p">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN_TEMP SET Restructure = 0;
+				UPDATE FINANCEMAIN SET Restructure = 0;
+				UPDATE FINANCEMAIN_PA SET Restructure = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.14" author="sivasai.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_FM_T_Restructure DEFAULT 0 FOR Restructure;
+				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FM_Restructure DEFAULT 0 FOR Restructure;
+				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FMP_Restructure DEFAULT 0 FOR Restructure;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.14" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Restructure" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="Restructure" tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="Restructure" tableName="FINANCEMAIN_PA" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1922.15" author="sivasai.p">
+		<addColumn tableName="WIFFinanceMain_Temp">
+			<column name="Restructure" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1922.16" author="sivasai.p">
+		<addColumn tableName="WIFFinanceMain">
+			<column name="Restructure" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1922.17" author="sivasai.p">
+		<sql>
+			<![CDATA[
+				UPDATE WIFFinanceMain_Temp SET Restructure = 0;
+				UPDATE WIFFinanceMain SET Restructure = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.18" author="sivasai.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE WIFFinanceMain_Temp ADD CONSTRAINT DF_WFM_T_Restructure DEFAULT 0 FOR Restructure;
+				ALTER TABLE WIFFinanceMain ADD CONSTRAINT DF_WFM_Restructure DEFAULT 0 FOR Restructure;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.18" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Restructure" tableName="WIFFinanceMain_Temp" defaultValue="0" />
+		<addDefaultValue columnName="Restructure" tableName="WIFFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1922.19" author="sivasai.p">
+		<addColumn tableName="RejectFinanceMain">
+			<column name="Restructure" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1922.20" author="sivasai.p">
+		<sql>
+			<![CDATA[
+				UPDATE RejectFinanceMain Set Restructure = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.21" author="sivasai.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE RejectFinanceMain ADD CONSTRAINT DF_RFM_Restructure DEFAULT 0 FOR Restructure;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.21" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Restructure" tableName="RejectFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<!-- ST#1922 Restructure functionality in LMS "END" -->
+
+	<!-- ST#1923 write off loan and ST#1922 Restructure functionality in LMS views are handling in single place changes start -->
+
+	<changeSet id="ST#1923.18" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_tview');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.19" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
+		   <![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.INVESTMENTREF,
+					T1.NUMBEROFTERMS,
+					T1.GRCPERIODENDDATE,
+					T1.ALLOWGRCPERIOD,
+					T1.GRACEBASERATE,
+					T1.GRACESPECIALRATE,
+					T1.GRCPFTRATE,
+					T1.GRCPFTFRQ,
+					T1.NEXTGRCPFTDATE,
+					T1.ALLOWGRCPFTRVW,
+					T1.GRCPFTRVWFRQ,
+					T1.NEXTGRCPFTRVWDATE,
+					T1.ALLOWGRCCPZ,
+					T1.GRCCPZFRQ,
+					T1.NEXTGRCCPZDATE,
+					T1.REPAYBASERATE,
+					T1.REPAYSPECIALRATE,
+					T1.REPAYPROFITRATE,
+					T1.REPAYFRQ,
+					T1.NEXTREPAYDATE,
+					T1.REPAYPFTFRQ,
+					T1.NEXTREPAYPFTDATE,
+					T1.ALLOWREPAYRVW,
+					T1.REPAYRVWFRQ,
+					T1.NEXTREPAYRVWDATE,
+					T1.ALLOWREPAYCPZ,
+					T1.REPAYCPZFRQ,
+					T1.NEXTREPAYCPZDATE,
+					T1.MATURITYDATE,
+					T1.CPZATGRACEEND,
+					T1.DOWNPAYMENT,
+					T1.GRACEFLATAMOUNT,
+					T1.REQREPAYAMOUNT,
+					T1.TOTALPROFIT,
+					T1.TOTALCPZ,
+					T1.TOTALGROSSPFT,
+					T1.TOTALGROSSGRCPFT,
+					T1.TOTALGRACEPFT,
+					T1.TOTALGRACECPZ,
+					T1.GRCRATEBASIS,
+					T1.REPAYRATEBASIS,
+					T1.FINTYPE,
+					T1.FINREMARKS,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.REQMATURITY,
+					T1.CALTERMS,
+					T1.CALMATURITY,
+					T1.FIRSTREPAY,
+					T1.LASTREPAY,
+					T1.FINSTARTDATE,
+					T1.FINAMOUNT,
+					T1.FINAMOUNT + T1.FEECHARGEAMT - T1.DOWNPAYMENT LOVDESCFINANCINGAMOUNT,
+					T1.FINREPAYMENTAMOUNT,
+					T1.CUSTID,
+					T1.DEFFERMENTS,
+					T1.PLANDEFERCOUNT,
+					T1.FINBRANCH,
+					T1.FINSOURCEID,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.ALLOWEDDEFFRQCHANGE,
+					T1.AVAILEDDEFFRQCHANGE,
+					T1.RECALTYPE,
+					T1.FINASSETVALUE,
+					T1.DISBACCOUNTID,
+					T1.REPAYACCOUNTID,
+					T1.FINISACTIVE,
+					T1.LIMITVALID,
+					T1.OVERRIDELIMIT,
+					T1.SECURITYDEPOSIT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T7.FINTYPEDESC LOVDESCFINTYPENAME,
+					T7.FINMAXAMOUNT LOVDESCFINMAXAMT,
+					T7.FINMINAMOUNT LOVDESCFINMINAMOUNT,
+					T1.MINDOWNPAYPERC,
+					T7.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T7.FINISDWPAYREQUIRED LOVDESCDWNPAYREQ,
+					T7.FINMAXDIFFERMENT LOVDESCFINMAXDIFFERMENT,
+					T12.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T12.BRANCHPROVINCE FINBRANCHPROVINCECODE,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.LASTREPAYRVWDATE,
+					T1.LASTREPAYCPZDATE,
+					T1.ALLOWGRCREPAY,
+					T1.GRCSCHDMTHD,
+					T1.GRCMARGIN,
+					T1.REPAYMARGIN,
+					T1.FINCURRASSETVALUE,
+					T1.FINCOMMITMENTREF,
+					T1.FINLIMITREF,
+					T1.DEPRECIATIONFRQ,
+					T1.FINCONTRACTDATE,
+					T1.NEXTDEPDATE,
+					T1.LASTDEPDATE,
+					T1.FINACCOUNT,
+					T1.FINCUSTPFTACCOUNT,
+					T17.ACRTILLLBD LOVDESCACCRUEDTILLLBD,
+					T7.FINRVWRATEAPPLFOR,
+					T1.TOTALREPAYAMT,
+					T1.CLOSINGSTATUS,
+					T1.FINAPPROVEDDATE,
+					T1.FEECHARGEAMT,
+					T1.BLACKLISTED,
+					T1.FINREPAYPFTONFRQ,
+					T1.ANUALIZEDPERCRATE,
+					T1.EFFECTIVERATEOFRETURN,
+					T1.MIGRATEDFINANCE,
+					T1.SCHEDULEMAINTAINED,
+					T1.SCHEDULEREGENERATED,
+					T1.FINPURPOSE,
+					T39.LOANPURPOSEDESC LOVDESCFINPURPOSENAME,
+					T1.FINSTATUS,
+					T1.FINSTSREASON,
+					T1.INITIATEUSER,
+					T1.BANKNAME,
+					T1.IBAN,
+					T1.ACCOUNTTYPE,
+					T1.DDAREFERENCENO,
+					T7.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+					T1.CUSTDSR,
+					T1.JOINTACCOUNT,
+					T1.JOINTCUSTID,
+					T1.DOWNPAYBANK,
+					T1.DOWNPAYSUPL,
+					T1.DOWNPAYACCOUNT,
+					T1.SECURITYCOLLATERAL,
+					T1.APPROVED,
+					T1.DISCREPANCY,
+					T1.LIMITAPPROVED,
+					T1.GRACETERMS,
+					T7.FINDIVISION LOVDESCFINDIVISION,
+					T1.RCDMAINTAINSTS,
+					T1.FINREPAYMETHOD,
+					T1.GRCPROFITDAYSBASIS,
+					T1.STEPFINANCE,
+					T1.STEPTYPE,
+					T1.STEPPOLICY,
+					T1.ALWMANUALSTEPS,
+					T1.NOOFSTEPS,
+					T1.LINKEDFINREF,
+					T1.NEXTUSERID,
+					T1.PRIORITY,
+					T24.POLICYDESC LOVDESCSTEPPOLICYNAME,
+					T1.GRCMINRATE,
+					T1.GRCMAXRATE,
+					T1.RPYMINRATE,
+					T1.RPYMAXRATE,
+					T1.DEVIATIONAPPROVAL,
+					T1.MANUALSCHEDULE,
+					T1.TAKEOVERFINANCE,
+					T1.GRCADVBASERATE,
+					T1.GRCADVMARGIN,
+					T1.GRCADVPFTRATE,
+					T1.RPYADVBASERATE,
+					T1.RPYADVMARGIN,
+					T1.RPYADVPFTRATE,
+					T1.SUPPLEMENTRENT,
+					T1.INCREASEDCOST,
+					T1.CREDITINSAMT,
+					T1.ROLLOVERFRQ,
+					T1.NEXTROLLOVERDATE,
+					T27.CUSTSTSDESCRIPTION,
+					T1.SHARIASTATUS,
+					T1.INITIATEDATE,
+					T1.FINPREAPPROVEDREF,
+					T1.MMAID,
+					T1.ACCOUNTSOFFICER,
+					T1.FEEACCOUNTID,
+					T1.FINCANCELAC,
+					T28.DEALERNAME LOVDESCACCOUNTSOFFICER,
+					T28.DEALERCITY LOVDESCSOURCECITY,
+					T1.DSACODE,
+					T30.ROFFICERDESC DSACODEDESC,
+					T1.TDSAPPLICABLE,
+					T1.MANDATEID,
+					T1.DROPLINEFRQ,
+					T1.FIRSTDROPLINEDATE,
+					T1.PFTSERVICINGODLIMIT,
+					T1.INSURANCEAMT,
+					T1.DEDUCTINSDISB,
+					T1.ALWBPI,
+					T1.BPITREATMENT,
+					T1.PLANEMIHALW,
+					T1.PLANEMIHMETHOD,
+					T1.PLANEMIHMAXPERYEAR,
+					T1.PLANEMIHMAX,
+					T1.PLANEMIHLOCKPERIOD,
+					T1.PLANEMICPZ,
+					T1.CALROUNDINGMODE,
+					T1.ALWMULTIDISB,
+					T1.APPLICATIONNO,
+					T1.REFERRALID,
+					T33.ROFFICERDESC REFERRALIDDESC,
+					T1.DMACODE,
+					T34.ROFFICERDESC DMACODEDESC,
+					T1.SALESDEPARTMENT,
+					T35.DEPTDESC SALESDEPARTMENTDESC,
+					T1.QUICKDISB,
+					T1.WIFREFERENCE,
+					T1.UNPLANEMIHLOCKPERIOD,
+					T1.UNPLANEMICPZ,
+					T1.REAGECPZ,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.BPIAMOUNT,
+					T1.DEDUCTFEEDISB,
+					T1.RVWRATEAPPLFOR,
+					T1.SCHCALONRVW,
+					T1.PASTDUEPFTCALMTHD,
+					T1.PASTDUEPFTMARGIN,
+					T1.DROPPINGMETHOD,
+					T1.RATECHGANYDAY,
+					T1.PROMOTIONCODE,
+					T1.RESTRUCTURELOAN,
+					T1.OLDFINREFERENCE,
+					T1.REAGEBUCKET,
+					T1.FINCATEGORY,
+					T1.PRODUCTCATEGORY,
+					T1.ROUNDINGTARGET,
+					T36.ENTITYCODE LOVDESCENTITYCODE,
+					T1.ELIGIBILITYMETHOD,
+					T38.FIELDCODEVALUE LOVELIGIBILITYMETHOD,
+					T38.VALUEDESC LOVDESCELIGIBILITYMETHOD,
+					T1.EMPLOYEENAME,
+					T37.ROFFICERDESC EMPLOYEENAMEDESC,
+					T1.SAMPLINGREQUIRED,
+					T1.LEGALREQUIRED,
+					T1.GRCMAXAMOUNT,
+					T1.CONNECTOR,
+					T40.DEALERNAME CONNECTORCODE,
+					T40.DEALERCITY CONNECTORDESC,
+					T1.ADVANCEEMI,
+					T1.ADVEMITERMS,
+					T1.BPIPFTDAYSBASIS,
+					T1.FIXEDRATETENOR,
+					T1.FIXEDTENORRATE,
+					T12.BRANCHTEL FINBRANCHCONTACT,
+					T1.PROCESSATTRIBUTES,
+					T1.BUSINESSVERTICAL,
+					BV.CODE BUSINESSVERTICALCODE,
+					BV.DESCRIPTION BUSINESSVERTICALDESC,
+					T1.GRCADVTYPE,
+					T1.GRCADVTERMS,
+					T1.ADVTYPE,
+					T1.ADVTERMS,
+					T1.ADVSTAGE,
+					T1.TDSPERCENTAGE,
+					T1.TDSSTARTDATE,
+					T1.TDSENDDATE,
+					T1.TDSLIMITAMT,
+					T1.VANREQ,
+					T1.VANCODE,
+					T1.ALLOWDRAWINGPOWER,
+					T1.ALLOWREVOLVING,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					T1.APPLIEDLOANAMT,
+					T1.FINISRATERVWATGRCEND,
+					T1.PLANEMIHALWINGRACE,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN_TEMP T1
+				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
+				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
+				LEFT JOIN FINPFTDETAILS T17 ON T17.FINREFERENCE  = T1.FINREFERENCE 
+				LEFT JOIN STEPPOLICYHEADER T24 ON T1.STEPPOLICY  = T24.POLICYCODE 
+				LEFT JOIN BMTCUSTSTATUSCODES T27 ON T1.FINSTATUS  = T27.CUSTSTSCODE 
+				LEFT JOIN AMTVEHICLEDEALER T28 ON T1.ACCOUNTSOFFICER = T28.DEALERID
+				LEFT JOIN RELATIONSHIPOFFICERS T30 ON T1.DSACODE  = T30.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T33 ON T1.REFERRALID  = T33.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T34 ON T1.DMACODE  = T34.ROFFICERCODE 
+				LEFT JOIN BMTDEPARTMENTS T35 ON T1.SALESDEPARTMENT  = T35.DEPTCODE 
+				LEFT JOIN SMTDIVISIONDETAIL T36 ON T7.FINDIVISION  = T36.DIVISIONCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T37 ON T1.EMPLOYEENAME  = T37.ROFFICERCODE 
+				LEFT JOIN RMTLOVFIELDDETAIL T38 ON T1.ELIGIBILITYMETHOD = T38.FIELDCODEID AND T38.FIELDCODE  = 'ELGMETHOD' 
+				LEFT JOIN LOANPURPOSES T39 ON T1.FINPURPOSE  = T39.LOANPURPOSECODE 
+				LEFT JOIN AMTVEHICLEDEALER T40 ON T1.CONNECTOR = T40.DEALERID
+				LEFT JOIN BUSINESS_VERTICAL BV ON BV.ID = T1.BUSINESSVERTICAL
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.20" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.21" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_aview');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.22" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
+			<![CDATA[ 
+				SELECT T1.FINREFERENCE,
+					T1.INVESTMENTREF,
+					T1.NUMBEROFTERMS,
+					T1.GRCPERIODENDDATE,
+					T1.ALLOWGRCPERIOD,
+					T1.GRACEBASERATE,
+					T1.GRACESPECIALRATE,
+					T1.GRCPFTRATE,
+					T1.GRCPFTFRQ,
+					T1.NEXTGRCPFTDATE,
+					T1.ALLOWGRCPFTRVW,
+					T1.GRCPFTRVWFRQ,
+					T1.NEXTGRCPFTRVWDATE,
+					T1.ALLOWGRCCPZ,
+					T1.GRCCPZFRQ,
+					T1.NEXTGRCCPZDATE,
+					T1.REPAYBASERATE,
+					T1.REPAYSPECIALRATE,
+					T1.REPAYPROFITRATE,
+					T1.REPAYFRQ,
+					T1.NEXTREPAYDATE,
+					T1.REPAYPFTFRQ,
+					T1.NEXTREPAYPFTDATE,
+					T1.ALLOWREPAYRVW,
+					T1.REPAYRVWFRQ,
+					T1.NEXTREPAYRVWDATE,
+					T1.ALLOWREPAYCPZ,
+					T1.REPAYCPZFRQ,
+					T1.NEXTREPAYCPZDATE,
+					T1.MATURITYDATE,
+					T1.CPZATGRACEEND,
+					T1.DOWNPAYMENT,
+					T1.GRACEFLATAMOUNT,
+					T1.REQREPAYAMOUNT,
+					T1.TOTALPROFIT,
+					T1.TOTALCPZ,
+					T1.TOTALGROSSPFT,
+					T1.TOTALGROSSGRCPFT,
+					T1.TOTALGRACEPFT,
+					T1.TOTALGRACECPZ,
+					T1.GRCRATEBASIS,
+					T1.REPAYRATEBASIS,
+					T1.FINTYPE,
+					T1.FINREMARKS,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.REQMATURITY,
+					T1.CALTERMS,
+					T1.CALMATURITY,
+					T1.FIRSTREPAY,
+					T1.LASTREPAY,
+					T1.FINSTARTDATE,
+					T1.FINAMOUNT,
+					T1.FINAMOUNT + T1.FEECHARGEAMT - T1.DOWNPAYMENT LOVDESCFINANCINGAMOUNT,
+					T1.FINREPAYMENTAMOUNT,
+					T1.CUSTID,
+					T1.DEFFERMENTS,
+					T1.PLANDEFERCOUNT,
+					T1.FINBRANCH,
+					T1.FINSOURCEID,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.ALLOWEDDEFFRQCHANGE,
+					T1.AVAILEDDEFFRQCHANGE,
+					T1.RECALTYPE,
+					T1.FINASSETVALUE,
+					T1.DISBACCOUNTID,
+					T1.REPAYACCOUNTID,
+					T1.FINISACTIVE,
+					T1.LIMITVALID,
+					T1.OVERRIDELIMIT,
+					T1.SECURITYDEPOSIT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T7.FINTYPEDESC LOVDESCFINTYPENAME,
+					T7.FINMAXAMOUNT LOVDESCFINMAXAMT,
+					T7.FINMINAMOUNT LOVDESCFINMINAMOUNT,
+					T1.MINDOWNPAYPERC,
+					T7.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T7.FINISDWPAYREQUIRED LOVDESCDWNPAYREQ,
+					T7.FINMAXDIFFERMENT LOVDESCFINMAXDIFFERMENT,
+					T12.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T12.BRANCHPROVINCE FINBRANCHPROVINCECODE,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.LASTREPAYRVWDATE,
+					T1.LASTREPAYCPZDATE,
+					T1.ALLOWGRCREPAY,
+					T1.GRCSCHDMTHD,
+					T1.GRCMARGIN,
+					T1.REPAYMARGIN,
+					T1.FINCURRASSETVALUE,
+					T1.FINCOMMITMENTREF,
+					T1.FINLIMITREF,
+					T1.DEPRECIATIONFRQ,
+					T1.FINCONTRACTDATE,
+					T1.NEXTDEPDATE,
+					T1.LASTDEPDATE,
+					T1.FINACCOUNT,
+					T1.FINCUSTPFTACCOUNT,
+					T17.ACRTILLLBD LOVDESCACCRUEDTILLLBD,
+					T7.FINRVWRATEAPPLFOR,
+					T1.TOTALREPAYAMT,
+					T1.CLOSINGSTATUS,
+					T1.FINAPPROVEDDATE,
+					T1.FEECHARGEAMT,
+					T1.BLACKLISTED,
+					T1.FINREPAYPFTONFRQ,
+					T1.ANUALIZEDPERCRATE,
+					T1.EFFECTIVERATEOFRETURN,
+					T1.MIGRATEDFINANCE,
+					T1.SCHEDULEMAINTAINED,
+					T1.SCHEDULEREGENERATED,
+					T1.FINPURPOSE,
+					T39.LOANPURPOSEDESC LOVDESCFINPURPOSENAME,
+					T1.FINSTATUS,
+					T1.FINSTSREASON,
+					T1.INITIATEUSER,
+					T1.BANKNAME,
+					T1.IBAN,
+					T1.ACCOUNTTYPE,
+					T1.DDAREFERENCENO,
+					T7.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+					T1.CUSTDSR,
+					T1.JOINTACCOUNT,
+					T1.JOINTCUSTID,
+					T1.DOWNPAYBANK,
+					T1.DOWNPAYSUPL,
+					T1.DOWNPAYACCOUNT,
+					T1.SECURITYCOLLATERAL,
+					T1.APPROVED,
+					T1.DISCREPANCY,
+					T1.LIMITAPPROVED,
+					T1.GRACETERMS,
+					T7.FINDIVISION LOVDESCFINDIVISION,
+					T1.RCDMAINTAINSTS,
+					T1.FINREPAYMETHOD,
+					T1.GRCPROFITDAYSBASIS,
+					T1.STEPFINANCE,
+					T1.STEPTYPE,
+					T1.STEPPOLICY,
+					T1.ALWMANUALSTEPS,
+					T1.NOOFSTEPS,
+					T1.LINKEDFINREF,
+					T1.NEXTUSERID,
+					T1.PRIORITY,
+					T24.POLICYDESC LOVDESCSTEPPOLICYNAME,
+					T1.GRCMINRATE,
+					T1.GRCMAXRATE,
+					T1.RPYMINRATE,
+					T1.RPYMAXRATE,
+					T1.DEVIATIONAPPROVAL,
+					T1.MANUALSCHEDULE,
+					T1.TAKEOVERFINANCE,
+					T1.GRCADVBASERATE,
+					T1.GRCADVMARGIN,
+					T1.GRCADVPFTRATE,
+					T1.RPYADVBASERATE,
+					T1.RPYADVMARGIN,
+					T1.RPYADVPFTRATE,
+					T1.SUPPLEMENTRENT,
+					T1.INCREASEDCOST,
+					T1.CREDITINSAMT,
+					T1.ROLLOVERFRQ,
+					T1.NEXTROLLOVERDATE,
+					T27.CUSTSTSDESCRIPTION,
+					T1.SHARIASTATUS,
+					T1.INITIATEDATE,
+					T1.FINPREAPPROVEDREF,
+					T1.MMAID,
+					T1.ACCOUNTSOFFICER,
+					T1.FEEACCOUNTID,
+					T1.FINCANCELAC,
+					T28.DEALERNAME LOVDESCACCOUNTSOFFICER,
+					T28.DEALERCITY LOVDESCSOURCECITY,
+					T1.DSACODE,
+					T30.ROFFICERDESC DSACODEDESC,
+					T1.TDSAPPLICABLE,
+					T1.MANDATEID,
+					T1.DROPLINEFRQ,
+					T1.FIRSTDROPLINEDATE,
+					T1.PFTSERVICINGODLIMIT,
+					T1.INSURANCEAMT,
+					T1.DEDUCTINSDISB,
+					T1.ALWBPI,
+					T1.BPITREATMENT,
+					T1.PLANEMIHALW,
+					T1.PLANEMIHMETHOD,
+					T1.PLANEMIHMAXPERYEAR,
+					T1.PLANEMIHMAX,
+					T1.PLANEMIHLOCKPERIOD,
+					T1.PLANEMICPZ,
+					T1.CALROUNDINGMODE,
+					T1.ALWMULTIDISB,
+					T1.APPLICATIONNO,
+					T1.REFERRALID,
+					T33.ROFFICERDESC REFERRALIDDESC,
+					T1.DMACODE,
+					T34.ROFFICERDESC DMACODEDESC,
+					T1.SALESDEPARTMENT,
+					T35.DEPTDESC SALESDEPARTMENTDESC,
+					T1.QUICKDISB,
+					T1.WIFREFERENCE,
+					T1.UNPLANEMIHLOCKPERIOD,
+					T1.UNPLANEMICPZ,
+					T1.REAGECPZ,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.BPIAMOUNT,
+					T1.DEDUCTFEEDISB,
+					T1.RVWRATEAPPLFOR,
+					T1.SCHCALONRVW,
+					T1.PASTDUEPFTCALMTHD,
+					T1.PASTDUEPFTMARGIN,
+					T1.DROPPINGMETHOD,
+					T1.RATECHGANYDAY,
+					T1.PROMOTIONCODE,
+					T1.RESTRUCTURELOAN,
+					T1.OLDFINREFERENCE,
+					T1.REAGEBUCKET,
+					T1.FINCATEGORY,
+					T1.PRODUCTCATEGORY,
+					T1.ROUNDINGTARGET,
+					T36.ENTITYCODE LOVDESCENTITYCODE,
+					T1.ELIGIBILITYMETHOD,
+					T38.FIELDCODEVALUE LOVELIGIBILITYMETHOD,
+					T38.VALUEDESC LOVDESCELIGIBILITYMETHOD,
+					T1.EMPLOYEENAME,
+					T37.ROFFICERDESC EMPLOYEENAMEDESC,
+					T1.SAMPLINGREQUIRED,
+					T1.LEGALREQUIRED,
+					T1.GRCMAXAMOUNT,
+					T1.CONNECTOR,
+					T40.DEALERNAME CONNECTORCODE,
+					T40.DEALERCITY CONNECTORDESC,
+					T1.ADVANCEEMI,
+					T1.ADVEMITERMS,
+					T1.BPIPFTDAYSBASIS,
+					T1.FIXEDRATETENOR,
+					T1.FIXEDTENORRATE,
+					T12.BRANCHTEL FINBRANCHCONTACT,
+					T1.PROCESSATTRIBUTES,
+					T1.BUSINESSVERTICAL,
+					BV.CODE BUSINESSVERTICALCODE,
+					BV.DESCRIPTION BUSINESSVERTICALDESC,
+					T1.GRCADVTYPE,
+					T1.GRCADVTERMS,
+					T1.ADVTYPE,
+					T1.ADVTERMS,
+					T1.ADVSTAGE,
+					T1.TDSPERCENTAGE,
+					T1.TDSSTARTDATE,
+					T1.TDSENDDATE,
+					T1.TDSLIMITAMT,
+					T1.VANREQ,
+					T1.VANCODE,
+					T1.ALLOWDRAWINGPOWER,
+					T1.ALLOWREVOLVING,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					T1.APPLIEDLOANAMT,
+					T1.FINISRATERVWATGRCEND,
+					T1.PLANEMIHALWINGRACE,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					C.CUSTCIF LOVDESCCUSTCIF,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE						
+				FROM FINANCEMAIN T1
+				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE 
+				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
+				LEFT JOIN FINPFTDETAILS T17 ON T17.FINREFERENCE  = T1.FINREFERENCE 
+				LEFT JOIN STEPPOLICYHEADER T24 ON T1.STEPPOLICY  = T24.POLICYCODE 
+				LEFT JOIN BMTCUSTSTATUSCODES T27 ON T1.FINSTATUS  = T27.CUSTSTSCODE 
+				LEFT JOIN AMTVEHICLEDEALER T28 ON T1.ACCOUNTSOFFICER = T28.DEALERID
+				LEFT JOIN RELATIONSHIPOFFICERS T30 ON T1.DSACODE  = T30.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T33 ON T1.REFERRALID  = T33.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T34 ON T1.DMACODE  = T34.ROFFICERCODE 
+				LEFT JOIN BMTDEPARTMENTS T35 ON T1.SALESDEPARTMENT  = T35.DEPTCODE 
+				LEFT JOIN SMTDIVISIONDETAIL T36 ON T7.FINDIVISION  = T36.DIVISIONCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T37 ON T1.EMPLOYEENAME  = T37.ROFFICERCODE 
+				LEFT JOIN RMTLOVFIELDDETAIL T38 ON T1.ELIGIBILITYMETHOD = T38.FIELDCODEID AND T38.FIELDCODE  = 'ELGMETHOD' 
+				LEFT JOIN LOANPURPOSES T39 ON T1.FINPURPOSE  = T39.LOANPURPOSECODE 
+				LEFT JOIN AMTVEHICLEDEALER T40 ON T1.CONNECTOR = T40.DEALERID
+				LEFT JOIN BUSINESS_VERTICAL BV ON BV.ID = T1.BUSINESSVERTICAL
+				INNER JOIN CUSTOMERS C ON C.CUSTID = t1.CUSTID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.23" author="gopal.p" dbms="postgresql">
+		<sql>	
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.24" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.25" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="FINANCEMAIN_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+				    T1.INVESTMENTREF,
+				    T1.NUMBEROFTERMS,
+				    T1.GRCPERIODENDDATE,
+				    T1.ALLOWGRCPERIOD,
+				    T1.GRACEBASERATE,
+				    T1.GRACESPECIALRATE,
+				    T1.GRCPFTRATE,
+				    T1.GRCPFTFRQ,
+				    T1.NEXTGRCPFTDATE,
+				    T1.ALLOWGRCPFTRVW,
+				    T1.GRCPFTRVWFRQ,
+				    T1.NEXTGRCPFTRVWDATE,
+				    T1.ALLOWGRCCPZ,
+				    T1.GRCCPZFRQ,
+				    T1.NEXTGRCCPZDATE,
+				    T1.REPAYBASERATE,
+				    T1.REPAYSPECIALRATE,
+				    T1.REPAYPROFITRATE,
+				    T1.REPAYFRQ,
+				    T1.NEXTREPAYDATE,
+				    T1.REPAYPFTFRQ,
+				    T1.NEXTREPAYPFTDATE,
+				    T1.ALLOWREPAYRVW,
+				    T1.REPAYRVWFRQ,
+				    T1.NEXTREPAYRVWDATE,
+				    T1.ALLOWREPAYCPZ,
+				    T1.REPAYCPZFRQ,
+				    T1.NEXTREPAYCPZDATE,
+				    T1.MATURITYDATE,
+				    T1.CPZATGRACEEND,
+				    T1.DOWNPAYMENT,
+				    T1.GRACEFLATAMOUNT,
+				    T1.REQREPAYAMOUNT,
+				    T1.TOTALPROFIT,
+				    T1.TOTALCPZ,
+				    T1.TOTALGROSSPFT,
+				    T1.TOTALGROSSGRCPFT,
+				    T1.TOTALGRACEPFT,
+				    T1.TOTALGRACECPZ,
+				    T1.GRCRATEBASIS,
+				    T1.REPAYRATEBASIS,
+				    T1.FINTYPE,
+				    T1.FINREMARKS,
+				    T1.FINCCY,
+				    T1.SCHEDULEMETHOD,
+				    T1.PROFITDAYSBASIS,
+				    T1.REQMATURITY,
+				    T1.CALTERMS,
+				    T1.CALMATURITY,
+				    T1.FIRSTREPAY,
+				    T1.LASTREPAY,
+				    T1.FINSTARTDATE,
+				    T1.FINAMOUNT,
+				    T1.FINAMOUNT + T1.FEECHARGEAMT - T1.DOWNPAYMENT LOVDESCFINANCINGAMOUNT,
+				    T1.FINREPAYMENTAMOUNT,
+				    T1.CUSTID,
+				    T1.DEFFERMENTS,
+				    T1.PLANDEFERCOUNT,
+				    T1.FINBRANCH,
+				    T1.FINSOURCEID,
+				    T1.ALLOWEDDEFRPYCHANGE,
+				    T1.AVAILEDDEFRPYCHANGE,
+				    T1.ALLOWEDDEFFRQCHANGE,
+				    T1.AVAILEDDEFFRQCHANGE,
+				    T1.RECALTYPE,
+				    T1.FINASSETVALUE,
+				    T1.DISBACCOUNTID,
+				    T1.REPAYACCOUNTID,
+				    T1.FINISACTIVE,
+				    T1.LIMITVALID,
+				    T1.OVERRIDELIMIT,
+				    T1.SECURITYDEPOSIT,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T7.FINTYPEDESC LOVDESCFINTYPENAME,
+				    T7.FINMAXAMOUNT LOVDESCFINMAXAMT,
+				    T7.FINMINAMOUNT LOVDESCFINMINAMOUNT,
+				    T1.MINDOWNPAYPERC,
+				    T7.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+				    T7.FINISDWPAYREQUIRED LOVDESCDWNPAYREQ,
+				    T7.FINMAXDIFFERMENT LOVDESCFINMAXDIFFERMENT,
+				    T12.BRANCHDESC LOVDESCFINBRANCHNAME,
+				    T12.BRANCHPROVINCE FINBRANCHPROVINCECODE,
+				    T1.LASTREPAYDATE,
+				    T1.LASTREPAYPFTDATE,
+				    T1.LASTREPAYRVWDATE,
+				    T1.LASTREPAYCPZDATE,
+				    T1.ALLOWGRCREPAY,
+				    T1.GRCSCHDMTHD,
+				    T1.GRCMARGIN,
+				    T1.REPAYMARGIN,
+				    T1.FINCURRASSETVALUE,
+				    T1.FINCOMMITMENTREF,
+				    T1.FINLIMITREF,
+				    T1.DEPRECIATIONFRQ,
+				    T1.FINCONTRACTDATE,
+				    T1.NEXTDEPDATE,
+				    T1.LASTDEPDATE,
+				    T1.FINACCOUNT,
+				    T1.FINCUSTPFTACCOUNT,
+				    T17.ACRTILLLBD LOVDESCACCRUEDTILLLBD,
+				    T7.FINRVWRATEAPPLFOR,
+				    T1.TOTALREPAYAMT,
+				    T1.CLOSINGSTATUS,
+				    T1.FINAPPROVEDDATE,
+				    T1.FEECHARGEAMT,
+				    T1.BLACKLISTED,
+				    T1.FINREPAYPFTONFRQ,
+				    T1.ANUALIZEDPERCRATE,
+				    T1.EFFECTIVERATEOFRETURN,
+				    T1.MIGRATEDFINANCE,
+				    T1.SCHEDULEMAINTAINED,
+				    T1.SCHEDULEREGENERATED,
+				    T1.FINPURPOSE,
+				    T39.LOANPURPOSEDESC LOVDESCFINPURPOSENAME,
+				    T1.FINSTATUS,
+				    T1.FINSTSREASON,
+				    T1.INITIATEUSER,
+				    T1.BANKNAME,
+				    T1.IBAN,
+				    T1.ACCOUNTTYPE,
+				    T1.DDAREFERENCENO,
+				    T7.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+				    T1.CUSTDSR,
+				    T1.JOINTACCOUNT,
+				    T1.JOINTCUSTID,
+				    T1.DOWNPAYBANK,
+				    T1.DOWNPAYSUPL,
+				    T1.DOWNPAYACCOUNT,
+				    T1.SECURITYCOLLATERAL,
+				    T1.APPROVED,
+				    T1.DISCREPANCY,
+				    T1.LIMITAPPROVED,
+				    T1.GRACETERMS,
+				    T7.FINDIVISION LOVDESCFINDIVISION,
+				    T1.RCDMAINTAINSTS,
+				    T1.FINREPAYMETHOD,
+				    T1.GRCPROFITDAYSBASIS,
+				    T1.STEPFINANCE,
+				    T1.STEPTYPE,
+				    T1.STEPPOLICY,
+				    T1.ALWMANUALSTEPS,
+				    T1.NOOFSTEPS,
+				    T1.LINKEDFINREF,
+				    T1.NEXTUSERID,
+				    T1.PRIORITY,
+				    T24.POLICYDESC LOVDESCSTEPPOLICYNAME,
+				    T1.GRCMINRATE,
+				    T1.GRCMAXRATE,
+				    T1.RPYMINRATE,
+				    T1.RPYMAXRATE,
+				    T1.DEVIATIONAPPROVAL,
+				    T1.MANUALSCHEDULE,
+				    T1.TAKEOVERFINANCE,
+				    T1.GRCADVBASERATE,
+				    T1.GRCADVMARGIN,
+				    T1.GRCADVPFTRATE,
+				    T1.RPYADVBASERATE,
+				    T1.RPYADVMARGIN,
+				    T1.RPYADVPFTRATE,
+				    T1.SUPPLEMENTRENT,
+				    T1.INCREASEDCOST,
+				    T1.CREDITINSAMT,
+				    T1.ROLLOVERFRQ,
+				    T1.NEXTROLLOVERDATE,
+				    T27.CUSTSTSDESCRIPTION,
+				    T1.SHARIASTATUS,
+				    T1.INITIATEDATE,
+				    T1.FINPREAPPROVEDREF,
+				    T1.MMAID,
+				    T1.ACCOUNTSOFFICER,
+				    T1.FEEACCOUNTID,
+				    T1.FINCANCELAC,
+				    T28.DEALERNAME LOVDESCACCOUNTSOFFICER,
+				    T28.DEALERCITY LOVDESCSOURCECITY,
+				    T1.DSACODE,
+				    T30.ROFFICERDESC DSACODEDESC,
+				    T1.TDSAPPLICABLE,
+				    T1.MANDATEID,
+				    T1.DROPLINEFRQ,
+				    T1.FIRSTDROPLINEDATE,
+				    T1.PFTSERVICINGODLIMIT,
+				    T1.INSURANCEAMT,
+				    T1.DEDUCTINSDISB,
+				    T1.ALWBPI,
+				    T1.BPITREATMENT,
+				    T1.PLANEMIHALW,
+				    T1.PLANEMIHMETHOD,
+				    T1.PLANEMIHMAXPERYEAR,
+				    T1.PLANEMIHMAX,
+				    T1.PLANEMIHLOCKPERIOD,
+				    T1.PLANEMICPZ,
+				    T1.CALROUNDINGMODE,
+				    T1.ALWMULTIDISB,
+				    T1.APPLICATIONNO,
+				    T1.REFERRALID,
+				    T33.ROFFICERDESC REFERRALIDDESC,
+				    T1.DMACODE,
+				    T34.ROFFICERDESC DMACODEDESC,
+				    T1.SALESDEPARTMENT,
+				    T35.DEPTDESC SALESDEPARTMENTDESC,
+				    T1.QUICKDISB,
+				    T1.WIFREFERENCE,
+				    T1.UNPLANEMIHLOCKPERIOD,
+				    T1.UNPLANEMICPZ,
+				    T1.REAGECPZ,
+				    T1.MAXUNPLANNEDEMI,
+				    T1.MAXREAGEHOLIDAYS,
+				    T1.AVAILEDUNPLANEMI,
+				    T1.AVAILEDREAGEH,
+				    T1.BPIAMOUNT,
+				    T1.DEDUCTFEEDISB,
+				    T1.RVWRATEAPPLFOR,
+				    T1.SCHCALONRVW,
+				    T1.PASTDUEPFTCALMTHD,
+				    T1.PASTDUEPFTMARGIN,
+				    T1.DROPPINGMETHOD,
+				    T1.RATECHGANYDAY,
+				    T1.PROMOTIONCODE,
+				    T1.RESTRUCTURELOAN,
+				    T1.OLDFINREFERENCE,
+				    T1.REAGEBUCKET,
+				    T1.FINCATEGORY,
+				    T1.PRODUCTCATEGORY,
+				    T1.ROUNDINGTARGET,
+				    T36.ENTITYCODE LOVDESCENTITYCODE,
+				    T1.ELIGIBILITYMETHOD,
+				    T38.FIELDCODEVALUE LOVELIGIBILITYMETHOD,
+				    T38.VALUEDESC LOVDESCELIGIBILITYMETHOD,
+				    T1.EMPLOYEENAME,
+				    T37.ROFFICERDESC EMPLOYEENAMEDESC,
+				    T1.SAMPLINGREQUIRED,
+				    T1.LEGALREQUIRED,
+				    T1.GRCMAXAMOUNT,
+				    T1.CONNECTOR,
+				    T40.DEALERNAME CONNECTORCODE,
+				    T40.DEALERCITY CONNECTORDESC,
+				    T1.ADVANCEEMI,
+				    T1.ADVEMITERMS,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.FIXEDRATETENOR,
+				    T1.FIXEDTENORRATE,
+				    T12.BRANCHTEL FINBRANCHCONTACT,
+				    T1.PROCESSATTRIBUTES,
+				    T1.BUSINESSVERTICAL,
+				    BV.CODE BUSINESSVERTICALCODE,
+				    BV.DESCRIPTION BUSINESSVERTICALDESC,
+				    T1.GRCADVTYPE,
+				    T1.GRCADVTERMS,
+				    T1.ADVTYPE,
+				    T1.ADVTERMS,
+				    T1.ADVSTAGE,
+				    T1.TDSPERCENTAGE,
+				    T1.TDSSTARTDATE,
+				    T1.TDSENDDATE,
+				    T1.TDSLIMITAMT,
+				    T1.VANREQ,
+				    T1.VANCODE,
+				    T1.ALLOWDRAWINGPOWER,
+				    T1.ALLOWREVOLVING,
+				    T1.SANBSDSCHDLE,
+				    T1.PROMOTIONSEQID,
+				    T1.SVAMOUNT,
+				    T1.CBAMOUNT,
+				    T1.APPLIEDLOANAMT,
+				    T1.FINISRATERVWATGRCEND,
+					T1.PLANEMIHALWINGRACE,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN_TEMP T1
+				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
+				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
+				LEFT JOIN FINPFTDETAILS T17 ON T17.FINREFERENCE  = T1.FINREFERENCE 
+				LEFT JOIN STEPPOLICYHEADER T24 ON T1.STEPPOLICY  = T24.POLICYCODE 
+				LEFT JOIN BMTCUSTSTATUSCODES T27 ON T1.FINSTATUS  = T27.CUSTSTSCODE 
+				LEFT JOIN AMTVEHICLEDEALER T28 ON T1.ACCOUNTSOFFICER = T28.DEALERID
+				LEFT JOIN RELATIONSHIPOFFICERS T30 ON T1.DSACODE  = T30.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T33 ON T1.REFERRALID  = T33.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T34 ON T1.DMACODE  = T34.ROFFICERCODE 
+				LEFT JOIN BMTDEPARTMENTS T35 ON T1.SALESDEPARTMENT  = T35.DEPTCODE 
+				LEFT JOIN SMTDIVISIONDETAIL T36 ON T7.FINDIVISION  = T36.DIVISIONCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T37 ON T1.EMPLOYEENAME  = T37.ROFFICERCODE 
+				LEFT JOIN RMTLOVFIELDDETAIL T38 ON T1.ELIGIBILITYMETHOD = T38.FIELDCODEID AND T38.FIELDCODE  = 'ELGMETHOD' 
+				LEFT JOIN LOANPURPOSES T39 ON T1.FINPURPOSE  = T39.LOANPURPOSECODE 
+				LEFT JOIN AMTVEHICLEDEALER T40 ON T1.CONNECTOR = T40.DEALERID
+				LEFT JOIN BUSINESS_VERTICAL BV ON BV.ID = T1.BUSINESSVERTICAL
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+				    T1.INVESTMENTREF,
+				    T1.NUMBEROFTERMS,
+				    T1.GRCPERIODENDDATE,
+				    T1.ALLOWGRCPERIOD,
+				    T1.GRACEBASERATE,
+				    T1.GRACESPECIALRATE,
+				    T1.GRCPFTRATE,
+				    T1.GRCPFTFRQ,
+				    T1.NEXTGRCPFTDATE,
+				    T1.ALLOWGRCPFTRVW,
+				    T1.GRCPFTRVWFRQ,
+				    T1.NEXTGRCPFTRVWDATE,
+				    T1.ALLOWGRCCPZ,
+				    T1.GRCCPZFRQ,
+				    T1.NEXTGRCCPZDATE,
+				    T1.REPAYBASERATE,
+				    T1.REPAYSPECIALRATE,
+				    T1.REPAYPROFITRATE,
+				    T1.REPAYFRQ,
+				    T1.NEXTREPAYDATE,
+				    T1.REPAYPFTFRQ,
+				    T1.NEXTREPAYPFTDATE,
+				    T1.ALLOWREPAYRVW,
+				    T1.REPAYRVWFRQ,
+				    T1.NEXTREPAYRVWDATE,
+				    T1.ALLOWREPAYCPZ,
+				    T1.REPAYCPZFRQ,
+				    T1.NEXTREPAYCPZDATE,
+				    T1.MATURITYDATE,
+				    T1.CPZATGRACEEND,
+				    T1.DOWNPAYMENT,
+				    T1.GRACEFLATAMOUNT,
+				    T1.REQREPAYAMOUNT,
+				    T1.TOTALPROFIT,
+				    T1.TOTALCPZ,
+				    T1.TOTALGROSSPFT,
+				    T1.TOTALGROSSGRCPFT,
+				    T1.TOTALGRACEPFT,
+				    T1.TOTALGRACECPZ,
+				    T1.GRCRATEBASIS,
+				    T1.REPAYRATEBASIS,
+				    T1.FINTYPE,
+				    T1.FINREMARKS,
+				    T1.FINCCY,
+				    T1.SCHEDULEMETHOD,
+				    T1.PROFITDAYSBASIS,
+				    T1.REQMATURITY,
+				    T1.CALTERMS,
+				    T1.CALMATURITY,
+				    T1.FIRSTREPAY,
+				    T1.LASTREPAY,
+				    T1.FINSTARTDATE,
+				    T1.FINAMOUNT,
+				    T1.FINAMOUNT + T1.FEECHARGEAMT - T1.DOWNPAYMENT LOVDESCFINANCINGAMOUNT,
+				    T1.FINREPAYMENTAMOUNT,
+				    T1.CUSTID,
+				    T1.DEFFERMENTS,
+				    T1.PLANDEFERCOUNT,
+				    T1.FINBRANCH,
+				    T1.FINSOURCEID,
+				    T1.ALLOWEDDEFRPYCHANGE,
+				    T1.AVAILEDDEFRPYCHANGE,
+				    T1.ALLOWEDDEFFRQCHANGE,
+				    T1.AVAILEDDEFFRQCHANGE,
+				    T1.RECALTYPE,
+				    T1.FINASSETVALUE,
+				    T1.DISBACCOUNTID,
+				    T1.REPAYACCOUNTID,
+				    T1.FINISACTIVE,
+				    T1.LIMITVALID,
+				    T1.OVERRIDELIMIT,
+				    T1.SECURITYDEPOSIT,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T7.FINTYPEDESC LOVDESCFINTYPENAME,
+				    T7.FINMAXAMOUNT LOVDESCFINMAXAMT,
+				    T7.FINMINAMOUNT LOVDESCFINMINAMOUNT,
+				    T1.MINDOWNPAYPERC,
+				    T7.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+				    T7.FINISDWPAYREQUIRED LOVDESCDWNPAYREQ,
+				    T7.FINMAXDIFFERMENT LOVDESCFINMAXDIFFERMENT,
+				    T12.BRANCHDESC LOVDESCFINBRANCHNAME,
+				    T12.BRANCHPROVINCE FINBRANCHPROVINCECODE,
+				    T1.LASTREPAYDATE,
+				    T1.LASTREPAYPFTDATE,
+				    T1.LASTREPAYRVWDATE,
+				    T1.LASTREPAYCPZDATE,
+				    T1.ALLOWGRCREPAY,
+				    T1.GRCSCHDMTHD,
+				    T1.GRCMARGIN,
+				    T1.REPAYMARGIN,
+				    T1.FINCURRASSETVALUE,
+				    T1.FINCOMMITMENTREF,
+				    T1.FINLIMITREF,
+				    T1.DEPRECIATIONFRQ,
+				    T1.FINCONTRACTDATE,
+				    T1.NEXTDEPDATE,
+				    T1.LASTDEPDATE,
+				    T1.FINACCOUNT,
+				    T1.FINCUSTPFTACCOUNT,
+				    T17.ACRTILLLBD LOVDESCACCRUEDTILLLBD,
+				    T7.FINRVWRATEAPPLFOR,
+				    T1.TOTALREPAYAMT,
+				    T1.CLOSINGSTATUS,
+				    T1.FINAPPROVEDDATE,
+				    T1.FEECHARGEAMT,
+				    T1.BLACKLISTED,
+				    T1.FINREPAYPFTONFRQ,
+				    T1.ANUALIZEDPERCRATE,
+				    T1.EFFECTIVERATEOFRETURN,
+				    T1.MIGRATEDFINANCE,
+				    T1.SCHEDULEMAINTAINED,
+				    T1.SCHEDULEREGENERATED,
+				    T1.FINPURPOSE,
+				    T39.LOANPURPOSEDESC LOVDESCFINPURPOSENAME,
+				    T1.FINSTATUS,
+				    T1.FINSTSREASON,
+				    T1.INITIATEUSER,
+				    T1.BANKNAME,
+				    T1.IBAN,
+				    T1.ACCOUNTTYPE,
+				    T1.DDAREFERENCENO,
+				    T7.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+				    T1.CUSTDSR,
+				    T1.JOINTACCOUNT,
+				    T1.JOINTCUSTID,
+				    T1.DOWNPAYBANK,
+				    T1.DOWNPAYSUPL,
+				    T1.DOWNPAYACCOUNT,
+				    T1.SECURITYCOLLATERAL,
+				    T1.APPROVED,
+				    T1.DISCREPANCY,
+				    T1.LIMITAPPROVED,
+				    T1.GRACETERMS,
+				    T7.FINDIVISION LOVDESCFINDIVISION,
+				    T1.RCDMAINTAINSTS,
+				    T1.FINREPAYMETHOD,
+				    T1.GRCPROFITDAYSBASIS,
+				    T1.STEPFINANCE,
+				    T1.STEPTYPE,
+				    T1.STEPPOLICY,
+				    T1.ALWMANUALSTEPS,
+				    T1.NOOFSTEPS,
+				    T1.LINKEDFINREF,
+				    T1.NEXTUSERID,
+				    T1.PRIORITY,
+				    T24.POLICYDESC LOVDESCSTEPPOLICYNAME,
+				    T1.GRCMINRATE,
+				    T1.GRCMAXRATE,
+				    T1.RPYMINRATE,
+				    T1.RPYMAXRATE,
+				    T1.DEVIATIONAPPROVAL,
+				    T1.MANUALSCHEDULE,
+				    T1.TAKEOVERFINANCE,
+				    T1.GRCADVBASERATE,
+				    T1.GRCADVMARGIN,
+				    T1.GRCADVPFTRATE,
+				    T1.RPYADVBASERATE,
+				    T1.RPYADVMARGIN,
+				    T1.RPYADVPFTRATE,
+				    T1.SUPPLEMENTRENT,
+				    T1.INCREASEDCOST,
+				    T1.CREDITINSAMT,
+				    T1.ROLLOVERFRQ,
+				    T1.NEXTROLLOVERDATE,
+				    T27.CUSTSTSDESCRIPTION,
+				    T1.SHARIASTATUS,
+				    T1.INITIATEDATE,
+				    T1.FINPREAPPROVEDREF,
+				    T1.MMAID,
+				    T1.ACCOUNTSOFFICER,
+				    T1.FEEACCOUNTID,
+				    T1.FINCANCELAC,
+				    T28.DEALERNAME LOVDESCACCOUNTSOFFICER,
+				    T28.DEALERCITY LOVDESCSOURCECITY,
+				    T1.DSACODE,
+				    T30.ROFFICERDESC DSACODEDESC,
+				    T1.TDSAPPLICABLE,
+				    T1.MANDATEID,
+				    T1.DROPLINEFRQ,
+				    T1.FIRSTDROPLINEDATE,
+				    T1.PFTSERVICINGODLIMIT,
+				    T1.INSURANCEAMT,
+				    T1.DEDUCTINSDISB,
+				    T1.ALWBPI,
+				    T1.BPITREATMENT,
+				    T1.PLANEMIHALW,
+				    T1.PLANEMIHMETHOD,
+				    T1.PLANEMIHMAXPERYEAR,
+				    T1.PLANEMIHMAX,
+				    T1.PLANEMIHLOCKPERIOD,
+				    T1.PLANEMICPZ,
+				    T1.CALROUNDINGMODE,
+				    T1.ALWMULTIDISB,
+				    T1.APPLICATIONNO,
+				    T1.REFERRALID,
+				    T33.ROFFICERDESC REFERRALIDDESC,
+				    T1.DMACODE,
+				    T34.ROFFICERDESC DMACODEDESC,
+				    T1.SALESDEPARTMENT,
+				    T35.DEPTDESC SALESDEPARTMENTDESC,
+				    T1.QUICKDISB,
+				    T1.WIFREFERENCE,
+				    T1.UNPLANEMIHLOCKPERIOD,
+				    T1.UNPLANEMICPZ,
+				    T1.REAGECPZ,
+				    T1.MAXUNPLANNEDEMI,
+				    T1.MAXREAGEHOLIDAYS,
+				    T1.AVAILEDUNPLANEMI,
+				    T1.AVAILEDREAGEH,
+				    T1.BPIAMOUNT,
+				    T1.DEDUCTFEEDISB,
+				    T1.RVWRATEAPPLFOR,
+				    T1.SCHCALONRVW,
+				    T1.PASTDUEPFTCALMTHD,
+				    T1.PASTDUEPFTMARGIN,
+				    T1.DROPPINGMETHOD,
+				    T1.RATECHGANYDAY,
+				    T1.PROMOTIONCODE,
+				    T1.RESTRUCTURELOAN,
+				    T1.OLDFINREFERENCE,
+				    T1.REAGEBUCKET,
+				    T1.FINCATEGORY,
+				    T1.PRODUCTCATEGORY,
+				    T1.ROUNDINGTARGET,
+				    T36.ENTITYCODE LOVDESCENTITYCODE,
+				    T1.ELIGIBILITYMETHOD,
+				    T38.FIELDCODEVALUE LOVELIGIBILITYMETHOD,
+				    T38.VALUEDESC LOVDESCELIGIBILITYMETHOD,
+				    T1.EMPLOYEENAME,
+				    T37.ROFFICERDESC EMPLOYEENAMEDESC,
+				    T1.SAMPLINGREQUIRED,
+				    T1.LEGALREQUIRED,
+				    T1.GRCMAXAMOUNT,
+				    T1.CONNECTOR,
+				    T40.DEALERNAME CONNECTORCODE,
+				    T40.DEALERCITY CONNECTORDESC,
+				    T1.ADVANCEEMI,
+				    T1.ADVEMITERMS,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.FIXEDRATETENOR,
+				    T1.FIXEDTENORRATE,
+				    T12.BRANCHTEL FINBRANCHCONTACT,
+				    T1.PROCESSATTRIBUTES,
+				    T1.BUSINESSVERTICAL,
+				    BV.CODE BUSINESSVERTICALCODE,
+				    BV.DESCRIPTION BUSINESSVERTICALDESC,
+				    T1.GRCADVTYPE,
+				    T1.GRCADVTERMS,
+				    T1.ADVTYPE,
+				    T1.ADVTERMS,
+				    T1.ADVSTAGE,
+				    T1.TDSPERCENTAGE,
+				    T1.TDSSTARTDATE,
+				    T1.TDSENDDATE,
+				    T1.TDSLIMITAMT,
+				    T1.VANREQ,
+				    T1.VANCODE,
+				    T1.ALLOWDRAWINGPOWER,
+				    T1.ALLOWREVOLVING,
+				    T1.SANBSDSCHDLE,
+				    T1.PROMOTIONSEQID,
+				    T1.SVAMOUNT,
+				    T1.CBAMOUNT,
+				    T1.APPLIEDLOANAMT,
+				    T1.FINISRATERVWATGRCEND,
+					T1.PLANEMIHALWINGRACE,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN T1
+				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE  = T7.FINTYPE 
+				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
+				LEFT JOIN FINPFTDETAILS T17 ON T17.FINREFERENCE  = T1.FINREFERENCE 
+				LEFT JOIN STEPPOLICYHEADER T24 ON T1.STEPPOLICY  = T24.POLICYCODE 
+				LEFT JOIN BMTCUSTSTATUSCODES T27 ON T1.FINSTATUS  = T27.CUSTSTSCODE 
+				LEFT JOIN AMTVEHICLEDEALER T28 ON T1.ACCOUNTSOFFICER = T28.DEALERID
+				LEFT JOIN RELATIONSHIPOFFICERS T30 ON T1.DSACODE  = T30.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T33 ON T1.REFERRALID  = T33.ROFFICERCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T34 ON T1.DMACODE  = T34.ROFFICERCODE 
+				LEFT JOIN BMTDEPARTMENTS T35 ON T1.SALESDEPARTMENT  = T35.DEPTCODE 
+				LEFT JOIN SMTDIVISIONDETAIL T36 ON T7.FINDIVISION  = T36.DIVISIONCODE 
+				LEFT JOIN RELATIONSHIPOFFICERS T37 ON T1.EMPLOYEENAME  = T37.ROFFICERCODE 
+				LEFT JOIN RMTLOVFIELDDETAIL T38 ON T1.ELIGIBILITYMETHOD = T38.FIELDCODEID AND T38.FIELDCODE  = 'ELGMETHOD' 
+				LEFT JOIN LOANPURPOSES T39 ON T1.FINPURPOSE  = T39.LOANPURPOSECODE 
+				LEFT JOIN AMTVEHICLEDEALER T40 ON T1.CONNECTOR = T40.DEALERID
+				LEFT JOIN BUSINESS_VERTICAL BV ON BV.ID = T1.BUSINESSVERTICAL
+				WHERE NOT (EXISTS ( SELECT 1 FROM FINANCEMAIN_TEMP 
+					WHERE FINANCEMAIN_TEMP.FINREFERENCE  = T1.FINREFERENCE ))
+				   ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.26" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.27" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_lview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.28" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT T1.FINREFERENCE,
+				    T1.INVESTMENTREF,
+				    T1.FINTYPE,
+				    T1.FINCCY,
+				    T1.FINAMOUNT,
+				    T1.DOWNPAYMENT,
+				    T1.FEECHARGEAMT,
+				    T1.SCHEDULEMETHOD,
+				    T1.NUMBEROFTERMS,
+				    T1.RECORDSTATUS,
+				    T1.RECORDTYPE,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.FINBRANCH,
+				    T1.FINCONTRACTDATE,
+				    T1.LINKEDFINREF,
+				    T1.NEXTUSERID,
+				    T1.PRIORITY,
+				    T1.WORKFLOWID,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.FINPREAPPROVEDREF,
+				    T1.RCDMAINTAINSTS,
+				    T1.INSURANCEAMT,
+				    T1.FINCURRASSETVALUE,
+				    T1.CALTERMS,
+				    T1.DEVIATIONAPPROVAL,
+				    T1.FINPURPOSE,
+				    T1.INITIATEDATE,
+				    T1.FINASSETVALUE,
+				    T2.CUSTID,
+				    T2.CUSTCIF LOVDESCCUSTCIF,
+				    T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+				    T2.CUSTPASSPORTNO LOVDESCCUSTPASSPORTNO,
+				    T2.CUSTDOB LOVDESCCUSTDOB,
+				    T2.CUSTCRCPR LOVDESCCUSTCRCPR,
+				    T2.PHONENUMBER,
+				    T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    T3.FINDIVISION LOVDESCFINDIVISION,
+				    T3.PRODUCT LOVDESCFINPRODUCT,
+				    T3.FINTYPEDESC LOVDESCFINTYPENAME,
+				    COALESCE(T4.ROLEDESC, ${add.schema} FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+				    T1.SAMPLINGREQUIRED,
+				    T1.ADVANCEEMI,
+				    T1.ADVEMITERMS,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.GRACETERMS,
+				    T1.PRODUCTCATEGORY,
+				    T1.VERSION,
+				    T1.TDSAPPLICABLE,
+				    T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+			    FROM FINANCEMAIN_TEMP T1
+			    JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+			    JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
+			    LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE = T4.ROLECD
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.29" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_lview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.30" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.31" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="WIFFINANCEMAIN_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.NUMBEROFTERMS,
+					T1.GRCPERIODENDDATE,
+					T1.ALLOWGRCPERIOD,
+					T1.GRACEBASERATE,
+					T1.GRACESPECIALRATE,
+					T1.GRCPFTRATE,
+					T1.GRCPFTFRQ,
+					T1.NEXTGRCPFTDATE,
+					T1.ALLOWGRCPFTRVW,
+					T1.GRCPFTRVWFRQ,
+					T1.NEXTGRCPFTRVWDATE,
+					T1.ALLOWGRCCPZ,
+					T1.GRCCPZFRQ,
+					T1.NEXTGRCCPZDATE,
+					T1.REPAYBASERATE,
+					T1.REPAYSPECIALRATE,
+					T1.REPAYPROFITRATE,
+					T1.REPAYFRQ,
+					T1.NEXTREPAYDATE,
+					T1.REPAYPFTFRQ,
+					T1.NEXTREPAYPFTDATE,
+					T1.ALLOWREPAYRVW,
+					T1.REPAYRVWFRQ,
+					T1.NEXTREPAYRVWDATE,
+					T1.ALLOWREPAYCPZ,
+					T1.REPAYCPZFRQ,
+					T1.NEXTREPAYCPZDATE,
+					T1.MATURITYDATE,
+					T1.CPZATGRACEEND,
+					T1.DOWNPAYMENT,
+					T1.GRACEFLATAMOUNT,
+					T1.REQREPAYAMOUNT,
+					T1.TOTALPROFIT,
+					T1.TOTALCPZ,
+					T1.TOTALGROSSPFT,
+					T1.TOTALGRACEPFT,
+					T1.TOTALGRACECPZ,
+					T1.GRCRATEBASIS,
+					T1.REPAYRATEBASIS,
+					T1.FINTYPE,
+					T1.FINREMARKS,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.REQMATURITY,
+					T1.CALTERMS,
+					T1.CALMATURITY,
+					T1.FIRSTREPAY,
+					T1.LASTREPAY,
+					T1.FINSTARTDATE,
+					T1.FINAMOUNT,
+					T1.FINREPAYMENTAMOUNT,
+					T1.CUSTID,
+					T1.DEFFERMENTS,
+					T1.PLANDEFERCOUNT,
+					T1.FINISACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T15.CUSTCIF LOVDESCCUSTCIF,
+					T7.FINTYPEDESC LOVDESCFINTYPENAME,
+					T1.FINBRANCH,
+					T1.FINSOURCEID,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.ALLOWEDDEFFRQCHANGE,
+					T1.AVAILEDDEFFRQCHANGE,
+					T7.FINMAXAMOUNT LOVDESCFINMAXAMT,
+					T7.FINMINAMOUNT LOVDESCFINMINAMOUNT,
+					T7.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T1.MINDOWNPAYPERC,
+					T7.FINISDWPAYREQUIRED LOVDESCDWNPAYREQ,
+					T1.RECALTYPE,
+					T1.FINASSETVALUE,
+					T7.FINMAXDIFFERMENT LOVDESCFINMAXDIFFERMENT,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.LASTREPAYRVWDATE,
+					T1.LASTREPAYCPZDATE,
+					T1.DISBACCOUNTID,
+					T1.REPAYACCOUNTID,
+					T1.ALLOWGRCREPAY,
+					T1.GRCSCHDMTHD,
+					T1.REPAYMARGIN,
+					T1.GRCMARGIN,
+					T1.DEPRECIATIONFRQ,
+					T1.FINCOMMITMENTREF,
+					T1.FINCURRASSETVALUE,
+					T1.FINCONTRACTDATE,
+					T1.NEXTDEPDATE,
+					T1.LASTDEPDATE,
+					T1.FINACCOUNT,
+					T1.FINCUSTPFTACCOUNT,
+					T7.FINRVWRATEAPPLFOR,
+					T1.TOTALREPAYAMT,
+					T1.CLOSINGSTATUS,
+					T1.FINAPPROVEDDATE,
+					T1.FINREPAYPFTONFRQ,
+					T1.ANUALIZEDPERCRATE,
+					T1.EFFECTIVERATEOFRETURN,
+					T1.DOWNPAYBANK,
+					T1.DOWNPAYSUPL,
+					T7.FINDIVISION LOVDESCFINDIVISIONNAME,
+					T1.GRACETERMS,
+					T14.FACILITYTYPE,
+					T15.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T16.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T1.TOTALGROSSGRCPFT,
+					T1.GRCPROFITDAYSBASIS,
+					T1.STEPFINANCE,
+					T1.STEPTYPE,
+					T1.STEPPOLICY,
+					T1.ALWMANUALSTEPS,
+					T1.NOOFSTEPS,
+					T1.LINKEDFINREF,
+					T7.PRODUCT LOVDESCFINPRODUCT,
+					T1.GRCMINRATE,
+					T1.GRCMAXRATE,
+					T1.RPYMINRATE,
+					T1.RPYMAXRATE,
+					T1.MANUALSCHEDULE,
+					T1.TAKEOVERFINANCE,
+					T1.GRCADVBASERATE,
+					T1.GRCADVMARGIN,
+					T1.GRCADVPFTRATE,
+					T1.RPYADVBASERATE,
+					T1.RPYADVMARGIN,
+					T1.RPYADVPFTRATE,
+					T1.SUPPLEMENTRENT,
+					T1.INCREASEDCOST,
+					T1.FEEACCOUNTID,
+					T1.TDSAPPLICABLE,
+					T1.INSURANCEAMT,
+					T1.DEDUCTINSDISB,
+					T1.ALWBPI,
+					T1.BPITREATMENT,
+					T1.PLANEMIHALW,
+					T1.PLANEMIHMETHOD,
+					T1.PLANEMIHMAXPERYEAR,
+					T1.PLANEMIHMAX,
+					T1.PLANEMIHLOCKPERIOD,
+					T1.PLANEMICPZ,
+					T1.CALROUNDINGMODE,
+					T1.ALWMULTIDISB,
+					T1.BPIAMOUNT,
+					T1.DEDUCTFEEDISB,
+					T1.FEECHARGEAMT,
+					T1.RVWRATEAPPLFOR,
+					T1.SCHCALONRVW,
+					T1.PASTDUEPFTCALMTHD,
+					T1.PASTDUEPFTMARGIN,
+					T1.DROPPINGMETHOD,
+					T1.RATECHGANYDAY,
+					T1.FINCATEGORY,
+					T1.PRODUCTCATEGORY,
+					T1.ROUNDINGTARGET,
+					T1.GRCMAXAMOUNT,
+					T1.ADVANCEEMI,
+					T1.ADVEMITERMS,
+					T1.BPIPFTDAYSBASIS,
+					T1.FIXEDTENORRATE,
+					T1.FIXEDRATETENOR,
+					T1.GRCADVTYPE,
+					T1.GRCADVTERMS,
+					T1.ADVTYPE,
+					T1.ADVTERMS,
+					T1.ADVSTAGE,
+					T1.ALLOWDRAWINGPOWER,
+					T1.ALLOWREVOLVING,
+					T1.APPLIEDLOANAMT,
+					T1.FINISRATERVWATGRCEND,
+					T1.CBAMOUNT,
+					T1.SVAMOUNT,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM WIFFINANCEMAIN_TEMP T1
+				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
+				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
+				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE
+				LEFT JOIN RMTBRANCHES T16 ON T1.FINBRANCH = T16.BRANCHCODE
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+					T1.NUMBEROFTERMS,
+					T1.GRCPERIODENDDATE,
+					T1.ALLOWGRCPERIOD,
+					T1.GRACEBASERATE,
+					T1.GRACESPECIALRATE,
+					T1.GRCPFTRATE,
+					T1.GRCPFTFRQ,
+					T1.NEXTGRCPFTDATE,
+					T1.ALLOWGRCPFTRVW,
+					T1.GRCPFTRVWFRQ,
+					T1.NEXTGRCPFTRVWDATE,
+					T1.ALLOWGRCCPZ,
+					T1.GRCCPZFRQ,
+					T1.NEXTGRCCPZDATE,
+					T1.REPAYBASERATE,
+					T1.REPAYSPECIALRATE,
+					T1.REPAYPROFITRATE,
+					T1.REPAYFRQ,
+					T1.NEXTREPAYDATE,
+					T1.REPAYPFTFRQ,
+					T1.NEXTREPAYPFTDATE,
+					T1.ALLOWREPAYRVW,
+					T1.REPAYRVWFRQ,
+					T1.NEXTREPAYRVWDATE,
+					T1.ALLOWREPAYCPZ,
+					T1.REPAYCPZFRQ,
+					T1.NEXTREPAYCPZDATE,
+					T1.MATURITYDATE,
+					T1.CPZATGRACEEND,
+					T1.DOWNPAYMENT,
+					T1.GRACEFLATAMOUNT,
+					T1.REQREPAYAMOUNT,
+					T1.TOTALPROFIT,
+					T1.TOTALCPZ,
+					T1.TOTALGROSSPFT,
+					T1.TOTALGRACEPFT,
+					T1.TOTALGRACECPZ,
+					T1.GRCRATEBASIS,
+					T1.REPAYRATEBASIS,
+					T1.FINTYPE,
+					T1.FINREMARKS,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.REQMATURITY,
+					T1.CALTERMS,
+					T1.CALMATURITY,
+					T1.FIRSTREPAY,
+					T1.LASTREPAY,
+					T1.FINSTARTDATE,
+					T1.FINAMOUNT,
+					T1.FINREPAYMENTAMOUNT,
+					T1.CUSTID,
+					T1.DEFFERMENTS,
+					T1.PLANDEFERCOUNT,
+					T1.FINISACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T15.CUSTCIF LOVDESCCUSTCIF,
+					T7.FINTYPEDESC LOVDESCFINTYPENAME,
+					T1.FINBRANCH,
+					T1.FINSOURCEID,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.ALLOWEDDEFFRQCHANGE,
+					T1.AVAILEDDEFFRQCHANGE,
+					T7.FINMAXAMOUNT LOVDESCFINMAXAMT,
+					T7.FINMINAMOUNT LOVDESCFINMINAMOUNT,
+					T7.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T1.MINDOWNPAYPERC,
+					T7.FINISDWPAYREQUIRED LOVDESCDWNPAYREQ,
+					T1.RECALTYPE,
+					T1.FINASSETVALUE,
+					T7.FINMAXDIFFERMENT LOVDESCFINMAXDIFFERMENT,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.LASTREPAYRVWDATE,
+					T1.LASTREPAYCPZDATE,
+					T1.DISBACCOUNTID,
+					T1.REPAYACCOUNTID,
+					T1.ALLOWGRCREPAY,
+					T1.GRCSCHDMTHD,
+					T1.REPAYMARGIN,
+					T1.GRCMARGIN,
+					T1.DEPRECIATIONFRQ,
+					T1.FINCOMMITMENTREF,
+					T1.FINCURRASSETVALUE,
+					T1.FINCONTRACTDATE,
+					T1.NEXTDEPDATE,
+					T1.LASTDEPDATE,
+					T1.FINACCOUNT,
+					T1.FINCUSTPFTACCOUNT,
+					T7.FINRVWRATEAPPLFOR,
+					T1.TOTALREPAYAMT,
+					T1.CLOSINGSTATUS,
+					T1.FINAPPROVEDDATE,
+					T1.FINREPAYPFTONFRQ,
+					T1.ANUALIZEDPERCRATE,
+					T1.EFFECTIVERATEOFRETURN,
+					T1.DOWNPAYBANK,
+					T1.DOWNPAYSUPL,
+					T7.FINDIVISION LOVDESCFINDIVISIONNAME,
+					T1.GRACETERMS,
+					T14.FACILITYTYPE,
+					T15.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T16.BRANCHDESC  LOVDESCFINBRANCHNAME,
+					T1.TOTALGROSSGRCPFT,
+					T1.GRCPROFITDAYSBASIS,
+					T1.STEPFINANCE,
+					T1.STEPTYPE,
+					T1.STEPPOLICY,
+					T1.ALWMANUALSTEPS,
+					T1.NOOFSTEPS,
+					T1.LINKEDFINREF,
+					T7.PRODUCT LOVDESCFINPRODUCT,
+					T1.GRCMINRATE,
+					T1.GRCMAXRATE,
+					T1.RPYMINRATE,
+					T1.RPYMAXRATE,
+					T1.MANUALSCHEDULE,
+					T1.TAKEOVERFINANCE,
+					T1.GRCADVBASERATE,
+					T1.GRCADVMARGIN,
+					T1.GRCADVPFTRATE,
+					T1.RPYADVBASERATE,
+					T1.RPYADVMARGIN,
+					T1.RPYADVPFTRATE,
+					T1.SUPPLEMENTRENT,
+					T1.INCREASEDCOST,
+					T1.FEEACCOUNTID,
+					T1.TDSAPPLICABLE,
+					T1.INSURANCEAMT,
+					T1.DEDUCTINSDISB,
+					T1.ALWBPI,
+					T1.BPITREATMENT,
+					T1.PLANEMIHALW,
+					T1.PLANEMIHMETHOD,
+					T1.PLANEMIHMAXPERYEAR,
+					T1.PLANEMIHMAX,
+					T1.PLANEMIHLOCKPERIOD,
+					T1.PLANEMICPZ,
+					T1.CALROUNDINGMODE,
+					T1.ALWMULTIDISB,
+					T1.BPIAMOUNT,
+					T1.DEDUCTFEEDISB,
+					T1.FEECHARGEAMT,
+					T1.RVWRATEAPPLFOR,
+					T1.SCHCALONRVW,
+					T1.PASTDUEPFTCALMTHD,
+					T1.PASTDUEPFTMARGIN,
+					T1.DROPPINGMETHOD,
+					T1.RATECHGANYDAY,
+					T1.FINCATEGORY,
+					T1.PRODUCTCATEGORY,
+					T1.ROUNDINGTARGET,
+					T1.GRCMAXAMOUNT,
+					T1.ADVANCEEMI,
+					T1.ADVEMITERMS,
+					T1.BPIPFTDAYSBASIS,
+					T1.FIXEDTENORRATE,
+					T1.FIXEDRATETENOR,
+					T1.GRCADVTYPE,
+					T1.GRCADVTERMS,
+					T1.ADVTYPE,
+					T1.ADVTERMS,
+					T1.ADVSTAGE,
+					T1.ALLOWDRAWINGPOWER,
+					T1.ALLOWREVOLVING,
+					T1.APPLIEDLOANAMT,
+					T1.FINISRATERVWATGRCEND,
+					T1.CBAMOUNT,
+					T1.SVAMOUNT,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM WIFFINANCEMAIN T1
+				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
+				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
+				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE
+				LEFT JOIN RMTBRANCHES T16 ON T1.FINBRANCH = T16.BRANCHCODE
+				WHERE NOT (EXISTS ( SELECT 1
+				FROM WIFFINANCEMAIN_TEMP
+				WHERE WIFFINANCEMAIN_TEMP.FINREFERENCE = T1.FINREFERENCE))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.32" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.33" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.34" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.NUMBEROFTERMS,
+					T1.GRCPERIODENDDATE,
+					T1.ALLOWGRCPERIOD,
+					T1.GRACEBASERATE,
+					T1.GRACESPECIALRATE,
+					T1.GRCPFTRATE,
+					T1.GRCPFTFRQ,
+					T1.NEXTGRCPFTDATE,
+					T1.ALLOWGRCPFTRVW,
+					T1.GRCPFTRVWFRQ,
+					T1.NEXTGRCPFTRVWDATE,
+					T1.ALLOWGRCCPZ,
+					T1.GRCCPZFRQ,
+					T1.NEXTGRCCPZDATE,
+					T1.REPAYBASERATE,
+					T1.REPAYSPECIALRATE,
+					T1.REPAYPROFITRATE,
+					T1.REPAYFRQ,
+					T1.NEXTREPAYDATE,
+					T1.REPAYPFTFRQ,
+					T1.NEXTREPAYPFTDATE,
+					T1.ALLOWREPAYRVW,
+					T1.REPAYRVWFRQ,
+					T1.NEXTREPAYRVWDATE,
+					T1.ALLOWREPAYCPZ,
+					T1.REPAYCPZFRQ,
+					T1.NEXTREPAYCPZDATE,
+					T1.MATURITYDATE,
+					T1.CPZATGRACEEND,
+					T1.DOWNPAYMENT,
+					T1.GRACEFLATAMOUNT,
+					T1.REQREPAYAMOUNT,
+					T1.TOTALPROFIT,
+					T1.TOTALCPZ,
+					T1.TOTALGROSSPFT,
+					T1.TOTALGRACEPFT,
+					T1.TOTALGRACECPZ,
+					T1.GRCRATEBASIS,
+					T1.REPAYRATEBASIS,
+					T1.FINTYPE,
+					T1.FINREMARKS,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.REQMATURITY,
+					T1.CALTERMS,
+					T1.CALMATURITY,
+					T1.FIRSTREPAY,
+					T1.LASTREPAY,
+					T1.FINSTARTDATE,
+					T1.FINAMOUNT,
+					T1.FINREPAYMENTAMOUNT,
+					T1.CUSTID,
+					T1.DEFFERMENTS,
+					T1.PLANDEFERCOUNT,
+					T1.FINISACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T15.CUSTCIF LOVDESCCUSTCIF,
+					T7.FINTYPEDESC LOVDESCFINTYPENAME,
+					T1.FINBRANCH,
+					T1.FINSOURCEID,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.ALLOWEDDEFFRQCHANGE,
+					T1.AVAILEDDEFFRQCHANGE,
+					T7.FINMAXAMOUNT LOVDESCFINMAXAMT,
+					T7.FINMINAMOUNT LOVDESCFINMINAMOUNT,
+					T7.FINISALWDIFFERMENT  LOVDESCFINALWDEFERMENT,
+					T1.MINDOWNPAYPERC,
+					T7.FINISDWPAYREQUIRED LOVDESCDWNPAYREQ,
+					T1.RECALTYPE,
+					T1.FINASSETVALUE,
+					T7.FINMAXDIFFERMENT LOVDESCFINMAXDIFFERMENT,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.LASTREPAYRVWDATE,
+					T1.LASTREPAYCPZDATE,
+					T1.DISBACCOUNTID,
+					T1.REPAYACCOUNTID,
+					T1.ALLOWGRCREPAY,
+					T1.GRCSCHDMTHD,
+					T1.REPAYMARGIN,
+					T1.GRCMARGIN,
+					T1.DEPRECIATIONFRQ,
+					T1.FINCOMMITMENTREF,
+					T1.FINCURRASSETVALUE,
+					T1.FINCONTRACTDATE,
+					T1.NEXTDEPDATE,
+					T1.LASTDEPDATE,
+					T1.FINACCOUNT,
+					T1.FINCUSTPFTACCOUNT,
+					T7.FINRVWRATEAPPLFOR,
+					T1.TOTALREPAYAMT,
+					T1.CLOSINGSTATUS,
+					T1.FINAPPROVEDDATE,
+					T1.FINREPAYPFTONFRQ,
+					T1.ANUALIZEDPERCRATE,
+					T1.EFFECTIVERATEOFRETURN,
+					T1.DOWNPAYBANK,
+					T1.DOWNPAYSUPL,
+					T7.FINDIVISION LOVDESCFINDIVISIONNAME,
+					T1.GRACETERMS,
+					T14.FACILITYTYPE,
+					T15.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T16.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T1.TOTALGROSSGRCPFT,
+					T1.GRCPROFITDAYSBASIS,
+					T1.STEPFINANCE,
+					T1.STEPTYPE,
+					T1.STEPPOLICY,
+					T1.ALWMANUALSTEPS,
+					T1.NOOFSTEPS,
+					T1.LINKEDFINREF,
+					T7.PRODUCT LOVDESCFINPRODUCT,
+					T1.GRCMINRATE,
+					T1.GRCMAXRATE,
+					T1.RPYMINRATE,
+					T1.RPYMAXRATE,
+					T1.MANUALSCHEDULE,
+					T1.TAKEOVERFINANCE,
+					T1.GRCADVBASERATE,
+					T1.GRCADVMARGIN,
+					T1.GRCADVPFTRATE,
+					T1.RPYADVBASERATE,
+					T1.RPYADVMARGIN,
+					T1.RPYADVPFTRATE,
+					T1.SUPPLEMENTRENT,
+					T1.INCREASEDCOST,
+					T1.FEEACCOUNTID,
+					T1.TDSAPPLICABLE,
+					T1.INSURANCEAMT,
+					T1.DEDUCTINSDISB,
+					T1.ALWBPI,
+					T1.BPITREATMENT,
+					T1.PLANEMIHALW,
+					T1.PLANEMIHMETHOD,
+					T1.PLANEMIHMAXPERYEAR,
+					T1.PLANEMIHMAX,
+					T1.PLANEMIHLOCKPERIOD,
+					T1.PLANEMICPZ,
+					T1.CALROUNDINGMODE,
+					T1.ALWMULTIDISB,
+					T1.BPIAMOUNT,
+					T1.DEDUCTFEEDISB,
+					T1.FEECHARGEAMT,
+					T1.RVWRATEAPPLFOR,
+					T1.SCHCALONRVW,
+					T1.PASTDUEPFTCALMTHD,
+					T1.PASTDUEPFTMARGIN,
+					T1.DROPPINGMETHOD,
+					T1.RATECHGANYDAY,
+					T1.ROUNDINGTARGET,
+					T1.GRCMAXAMOUNT,
+					T1.ADVANCEEMI,
+					T1.ADVEMITERMS,
+					T1.BPIPFTDAYSBASIS BPIRATEBASIS,
+					T1.GRCADVTYPE,
+					T1.GRCADVTERMS,
+					T1.ADVTYPE,
+					T1.ADVTERMS,
+					T1.ADVSTAGE,
+					T1.ALLOWDRAWINGPOWER,
+					T1.ALLOWREVOLVING,
+					T1.APPLIEDLOANAMT,
+					T1.FINISRATERVWATGRCEND,
+					T1.CBAMOUNT,
+					T1.SVAMOUNT,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM WIFFINANCEMAIN T1
+				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
+				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
+				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE
+				LEFT JOIN RMTBRANCHES T16 ON T1.FINBRANCH = T16.BRANCHCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.35" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffinancemain_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.36" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.37" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT F.FINREFERENCE,
+				    T.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    F.FINTYPE,
+				    F.FINBRANCH,
+				    F.FINSTARTDATE,
+				    F.MATURITYDATE,
+				    F.NUMBEROFTERMS,
+				    F.FINCCY,
+				    F.FINAMOUNT,
+				    F.FINAMOUNT - F.DOWNPAYMENT + F.FEECHARGEAMT + F.INSURANCEAMT FINANCINGAMOUNT,
+				    F.FEECHARGEAMT,
+				    F.INSURANCEAMT,
+				    F.FINAMOUNT - F.DOWNPAYMENT + F.FEECHARGEAMT + F.INSURANCEAMT - F.FINREPAYMENTAMOUNT CURFINAMOUNT,
+				    F.DOWNPAYMENT,
+				    F.FINCURRASSETVALUE,
+				    F.FINASSETVALUE,
+				    F.ALLOWDRAWINGPOWER,
+				    F.PROMOTIONSEQID,
+				    F.SANBSDSCHDLE,
+				    C.CUSTCIF LOVDESCCUSTCIF,
+				    F.SVAMOUNT,
+				    F.CBAMOUNT,
+				    F.FINISRATERVWATGRCEND,
+				    F.ALWGRCADJ,
+				    F.ENDGRCPERIODAFTRFULLDISB,
+				    F.AUTOINCGRCENDDATE,
+				    F.WRITEOFFLOAN,
+					F.RESTRUCTURE
+				FROM REJECTFINANCEMAIN F
+				LEFT JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				LEFT JOIN RMTFINANCETYPES T ON F.FINTYPE = T.FINTYPE
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.38" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.39" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_view');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.40" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT t1.finreference,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.CALTERMS NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.GRCPERIODENDDATE,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.ALLOWGRCPERIOD,
+					T1.DOWNPAYMENT,
+					T1.MIGRATEDFINANCE,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.FINCURRASSETVALUE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.CLOSINGSTATUS,
+					T1.GRACETERMS,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.FINSTATUS ,
+					T1.MANDATEID,
+					T1.FINREPAYMETHOD,
+					T1.FINASSETVALUE,
+					T1.INSURANCEAMT,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					(T1.FINCURRASSETVALUE+ T1.FEECHARGEAMT+T1.INSURANCEAMT) FINANCINGAMOUNT,
+					(T1.FINCURRASSETVALUE- T1.FINREPAYMENTAMOUNT+ T1.FEECHARGEAMT+T1.INSURANCEAMT) CURFINAMOUNT,
+					T2.FINTYPEDESC LOVDESCFINTYPENAME,
+					T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+					T2.FINDIVISION LOVDESCFINDIVISION,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T5.CUSTTYPECTG,
+					COALESCE(T9.NOINST,0) NOINST,
+					T1.TOTALCPZ,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.RECORDSTATUS,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN T1
+				INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				INNER JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				INNER JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				INNER JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.41" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.42" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.43" author="gopal.p">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView viewName="FINANCEENQUIRY_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.CALTERMS NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.GRCPERIODENDDATE,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.ALLOWGRCPERIOD,
+					T1.DOWNPAYMENT,
+					T1.MIGRATEDFINANCE,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.FINCURRASSETVALUE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.CLOSINGSTATUS,
+					T1.GRACETERMS,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.FINSTATUS,
+					T1.MANDATEID,
+					T1.FINREPAYMETHOD,
+					T1.FINASSETVALUE,
+					T1.FINCURRASSETVALUE + T1.FEECHARGEAMT + T1.INSURANCEAMT FINANCINGAMOUNT,
+					T1.FINCURRASSETVALUE - T1.FINREPAYMENTAMOUNT + T1.FEECHARGEAMT + T1.INSURANCEAMT CURFINAMOUNT,
+					T2.FINTYPEDESC LOVDESCFINTYPENAME,
+					T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+					T2.FINDIVISION LOVDESCFINDIVISION,
+					T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.CUSTCIF LOVDESCCUSTCIF,
+					T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+					T5.CUSTTYPECTG,
+					COALESCE(T9.NOINST, 0)  NOINST,
+					T1.TOTALCPZ,
+					T1.ALWGRCADJ,
+					T1.ENDGRCPERIODAFTRFULLDISB,
+					T1.AUTOINCGRCENDDATE,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN_TEMP T1
+				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1923.44" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.46.1_pre" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemain_dataview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.46.1" author="sudheer.t">
+		<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true"> 
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINTYPE,
+					T2.CUSTCIF AS LOVDESCCUSTCIF,
+					T1.CUSTID,
+					T1.CLOSINGSTATUS,
+					T1.FINISACTIVE,
+					T1.MATURITYDATE,
+					T1.PRODUCTCATEGORY,
+					T1.WRITEOFFLOAN
+				FROM FINANCEMAIN T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
+				WHERE T1.CLOSINGSTATUS IS NULL OR T1.CLOSINGSTATUS <> 'C'
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1923.46.1_post" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemain_dataview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.47_pre" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financemaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.47" author="sudheer.t">
+		<comment>WriteOffLoan , Restructure columns are added</comment>
+		<createView replaceIfExists="true" viewName="FINANCEMAINTENANCE_VIEW">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT,
+					T1.GRACETERMS,
+					T1.ALLOWGRCPERIOD,
+					T1.GRCPERIODENDDATE,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.NEXTROLECODE,
+					T1.RECORDSTATUS,
+					T1.RECORDTYPE,
+					T1.ALLOWGRCPFTRVW,
+					T1.ALLOWREPAYRVW,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.RCDMAINTAINSTS,
+					T1.MIGRATEDFINANCE,
+					T1.CLOSINGSTATUS,
+					T1.REPAYRATEBASIS,
+					T1.MANUALSCHEDULE,
+					T1.FINCURRASSETVALUE,
+					T1.TAKEOVERFINANCE,
+					T1.NEXTROLLOVERDATE,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.DOWNPAYMENT,
+					T1.PLANEMIHALW,
+					T1.CALTERMS,
+					T1.RATECHGANYDAY,
+					T1.FINASSETVALUE,
+					T2.CUSTCIF LOVDESCCUSTCIF,
+					T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.FINDIVISION LOVDESCFINDIVISION,
+					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T4.PRODUCTCATEGORY,
+					COALESCE(T5.ROLEDESC,  ${ADD.SCHEMA}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+					COALESCE(T9.NOINST, 0) NOINST,
+					T1.SAMPLINGREQUIRED,
+					T1.ADVEMITERMS,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					T1.REPAYPFTFRQ,
+					T1.TOTALCPZ,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN_TEMP T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+				UNION ALL
+				SELECT T1.FINREFERENCE,
+					T1.FINBRANCH,
+					T1.FINTYPE,
+					T1.FINCCY,
+					T1.SCHEDULEMETHOD,
+					T1.PROFITDAYSBASIS,
+					T1.FINSTARTDATE,
+					T1.NUMBEROFTERMS,
+					T1.CUSTID,
+					T1.FINAMOUNT,
+					T1.MATURITYDATE,
+					T1.FINREPAYMENTAMOUNT,
+					T1.FINISACTIVE,
+					T1.BLACKLISTED,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT,
+					T1.GRACETERMS,
+					T1.ALLOWGRCPERIOD,
+					T1.GRCPERIODENDDATE,
+					T1.ALWMULTIDISB,
+					T1.DEFFERMENTS,
+					T1.NEXTROLECODE,
+					T1.RECORDSTATUS,
+					T1.RECORDTYPE,
+					T1.ALLOWGRCPFTRVW,
+					T1.ALLOWREPAYRVW,
+					T1.LASTREPAYDATE,
+					T1.LASTREPAYPFTDATE,
+					T1.ALLOWEDDEFRPYCHANGE,
+					T1.AVAILEDDEFRPYCHANGE,
+					T1.RCDMAINTAINSTS,
+					T1.MIGRATEDFINANCE,
+					T1.CLOSINGSTATUS,
+					T1.REPAYRATEBASIS,
+					T1.MANUALSCHEDULE,
+					T1.FINCURRASSETVALUE,
+					T1.TAKEOVERFINANCE,
+					T1.NEXTROLLOVERDATE,
+					T1.AVAILEDUNPLANEMI,
+					T1.AVAILEDREAGEH,
+					T1.MAXUNPLANNEDEMI,
+					T1.MAXREAGEHOLIDAYS,
+					T1.DOWNPAYMENT,
+					T1.PLANEMIHALW,
+					T1.CALTERMS,
+					T1.RATECHGANYDAY,
+					T1.FINASSETVALUE,
+					T2.CUSTCIF LOVDESCCUSTCIF,
+					T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+					T3.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+					T3.FINDIVISION LOVDESCFINDIVISION,
+					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+					T4.PRODUCTCATEGORY,
+					COALESCE(T5.ROLEDESC,  ${ADD.SCHEMA}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+					COALESCE(T9.NOINST, 0) NOINST,
+					T1.SAMPLINGREQUIRED,
+					T1.ADVEMITERMS,
+					T1.SANBSDSCHDLE,
+					T1.PROMOTIONSEQID,
+					T1.SVAMOUNT,
+					T1.CBAMOUNT,
+					T1.REPAYPFTFRQ,
+					T1.TOTALCPZ,
+					T1.WRITEOFFLOAN,
+					T1.RESTRUCTURE
+				FROM FINANCEMAIN T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				JOIN BMTPRODUCT T4 ON T3.FINCATEGORY = T4.PRODUCTCODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
+				WHERE NOT (EXISTS ( SELECT 1 AS EXPR1 FROM FINANCEMAIN_TEMP
+					WHERE FINANCEMAIN_TEMP.FINREFERENCE = T1.FINREFERENCE))
+		  	]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1923.47_post" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financemaintenance_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#1923 write off loan and ST#1922 Restructure functionality in LMS views are handling in single place changes end -->
+	
+	<!-- ST#1952 receipt upload performance improvement changes start -->
+
+	<changeSet id="ST#1952.1" author="gopalaswamy.m">
+		<addUniqueConstraint tableName="RECEIPTUPLOADHEADER" columnNames="FileName" constraintName="UK_RUH_FNAME" />
+	</changeSet>
+
+	<changeSet id="ST#1952.2" author="gopalaswamy.m">
+		<addUniqueConstraint tableName="RECEIPTUPLOADHEADER_TEMP" columnNames="FileName" constraintName="UK_RUH_FNAME_T" />
+	</changeSet>
+
+	<changeSet id="ST#1952.3" author="gopalaswamy.m">
+		<addColumn tableName="RECEIPTUPLOADDETAILS">
+			<column name="ProcessingStatus" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1952.4" author="gopalaswamy.m">
+		<addColumn tableName="RECEIPTUPLOADDETAILS">
+			<column name="BounceId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1952.5" author="gopalaswamy.m">
+		<addColumn tableName="RECEIPTUPLOADDETAILS">
+			<column name="BounceReason" type="varchar(1000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1952.6" author="gopalaswamy.m">
+		<addColumn tableName="RECEIPTUPLOADDETAILS">
+			<column name="ThreadId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1952.7" author="gopalaswamy.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RECEIPTUPLOADDETAILS ADD CONSTRAINT DF_UPLD_PRCSTS DEFAULT 0 FOR ProcessingStatus;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1952.7" author="gopalaswamy.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessingStatus" tableName="RECEIPTUPLOADDETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1952.8" author="gopalaswamy.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				UPDATE RECEIPTUPLOADDETAILS set ProcessingStatus = (CASE
+               				 WHEN RUD.UploadStatus = 'SUCCESS' THEN 2
+                			 WHEN RUD.UploadStatus = 'FAILURE' THEN 3
+               				 ELSE 0 END)
+					From RECEIPTUPLOADDETAILS RUD;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1952.8" author="gopalaswamy.M" dbms="oracle">
+		<sql>
+			<![CDATA[
+				UPDATE RECEIPTUPLOADDETAILS tt SET    tt.ProcessingStatus = (SELECT (CASE WHEN UploadStatus = 'SUCCESS' THEN 2
+																						  WHEN UploadStatus = 'FAILURE' THEN 3 
+                                                                                          ELSE 0 END) UploadStatus FROM RECEIPTUPLOADDETAILS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1952.8" author="gopalaswamy.M" dbms="mssql">
+		<sql>
+			<![CDATA[
+				UPDATE RECEIPTUPLOADDETAILS  set ProcessingStatus = (CASE
+	               				 WHEN UploadStatus = 'SUCCESS' THEN 2
+								WHEN UploadStatus = 'FAILURE' THEN 3 ELSE 0
+								END)
+					From RECEIPTUPLOADDETAILS RD;
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#1952.9" author="gopalaswamy.m">
+		<dropColumn tableName="RECEIPTUPLOADDETAILS" columnName="uploadStatus" />
+	</changeSet>
+	
+	<changeSet id="ST#1952.10" author="gopalaswamy.m">
+		<createSequence sequenceName="SeqReceipt_Upload_Log" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#1952.11" author="gopalaswamy.m">
+		<createTable tableName="RECEIPT_UPLOAD_LOG">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="AttemptNo" type="int" />
+			<column name="ProcessedRecords" type="int" />
+			<column name="SuccessCount" type="int" />
+			<column name="FailedCount" type="int" />
+			<column name="AttemptStatus" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1952.12" author="gopalaswamy.m">
+		<addPrimaryKey tableName="RECEIPT_UPLOAD_LOG" columnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="ST#1952.13" author="gopalaswamy.m">
+		<addUniqueConstraint tableName="RECEIPT_UPLOAD_LOG" columnNames="headerId,attemptno"
+			constraintName="UK_RUAPPRLL_HDRIDAT" />
+	</changeSet>
+
+	<changeSet id="ST#1952.14" author="gopalaswamy.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RECEIPT_UPLOAD_LOG ADD CONSTRAINT DF_UPLD_LOG_PRC DEFAULT 0 FOR ProcessedRecords;
+				ALTER TABLE RECEIPT_UPLOAD_LOG ADD CONSTRAINT DF_UPLD_LOG_SUC DEFAULT 0 FOR SuccessCount;
+				ALTER TABLE RECEIPT_UPLOAD_LOG ADD CONSTRAINT DF_UPLD_LOG_FAI DEFAULT 0 FOR FailedCount;
+				ALTER TABLE RECEIPT_UPLOAD_LOG ADD CONSTRAINT DF_UPLD_LOG_ATT DEFAULT 0 FOR AttemptStatus;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1952.14" author="gopalaswamy.m" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessedRecords" tableName="RECEIPT_UPLOAD_LOG" defaultValue="0" />
+		<addDefaultValue columnName="SuccessCount" tableName="RECEIPT_UPLOAD_LOG" defaultValue="0" />
+		<addDefaultValue columnName="FailedCount" tableName="RECEIPT_UPLOAD_LOG" defaultValue="0" />
+		<addDefaultValue columnName="attemptStatus" tableName="RECEIPT_UPLOAD_LOG" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1952.15" author="gopalaswamy.m">
+		<sql>
+			<![CDATA[
+				Delete FROM SMTPARAMETERS Where SYSPARMCODE = 'RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE';
+				Delete FROM SMTPARAMETERS Where SYSPARMCODE = 'RECEIPT_UPLOAD_THREAD_SIZE';
+				Delete FROM SMTPARAMETERS Where SYSPARMCODE = 'RECEIPT_UPLOAD_THREAD_BATCH_SIZE';
+				
+				Insert INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE', 'Number of records allowed in Receipt Upload File', 'int', 1, '10000', 6, 0, null, null, 'Number of records allowed in Receipt Upload File', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				Insert INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('RECEIPT_UPLOAD_THREAD_SIZE', 'Number of threads required in approval process', 'int', 1, '10', 5, 0, null, null, 'Number of threads required in approval process', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				Insert INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('RECEIPT_UPLOAD_THREAD_BATCH_SIZE', 'Number of records picked by each Thread', 'int', 1, '100', 5, 0, null, null, 'Number of records picked by each Thread in approval process', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1952.16_pre" author="gopalaswamy.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'receiptuploadheader_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1952.16" author="gopalaswamy.m" dbms="postgresql,mssql">
+		<createView viewName="RECEIPTUPLOADHEADER_TVIEW" replaceIfExists="true">
+		  <![CDATA[
+				SELECT T1.UPLOADHEADERID,
+					T1.FILENAME,
+					T1.TRANSACTIONDATE,
+					T1.TOTALRECORDS,
+					T1.SUCCESSCOUNT,
+					T1.FAILEDCOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.ENTITYCODE,
+					T1.UPLOADPROGRESS,
+					0 ATTEMPTSTATUS,
+					0 ATTEMPTNO,
+					0 PROCESSEDRECORDS
+			  	FROM RECEIPTUPLOADHEADER_TEMP T1
+				UNION ALL
+				SELECT T2.UPLOADHEADERID,
+					T2.FILENAME,
+					T2.TRANSACTIONDATE,
+					T2.TOTALRECORDS,
+					T1.SUCCESSCOUNT,
+					T1.FAILEDCOUNT,
+					T2.VERSION,
+					T2.LASTMNTBY,
+					T2.LASTMNTON,
+					'Attempt' RECORDSTATUS,
+					T2.ROLECODE,
+					T2.NEXTROLECODE,
+					T2.TASKID,
+					T2.NEXTTASKID,
+					T2.RECORDTYPE,
+					T2.WORKFLOWID,
+					T2.ENTITYCODE,
+					T2.UPLOADPROGRESS,
+					T1.ATTEMPTSTATUS,
+					T1.ATTEMPTNO,
+					T1.PROCESSEDRECORDS
+				FROM RECEIPT_UPLOAD_LOG T1
+			   INNER JOIN RECEIPTUPLOADHEADER_TEMP T2 ON T2.UPLOADHEADERID = T1.HEADERID
+   			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#1952.16" author="gopalaswamy.m" dbms="oracle">
+		<createView viewName="RECEIPTUPLOADHEADER_TVIEW" replaceIfExists="true">
+		  <![CDATA[
+				SELECT T1.UPLOADHEADERID,
+					T1.FILENAME,
+					T1.TRANSACTIONDATE,
+					T1.TOTALRECORDS,
+					T1.SUCCESSCOUNT,
+					T1.FAILEDCOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					cast(T1.RECORDSTATUS as varchar2(100)) RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.ENTITYCODE,
+					T1.UPLOADPROGRESS,
+					0 ATTEMPTSTATUS,
+					0 ATTEMPTNO,
+					0 PROCESSEDRECORDS
+			  	FROM RECEIPTUPLOADHEADER_TEMP T1
+				UNION ALL
+				SELECT T2.UPLOADHEADERID,
+					T2.FILENAME,
+					T2.TRANSACTIONDATE,
+					T2.TOTALRECORDS,
+					T1.SUCCESSCOUNT,
+					T1.FAILEDCOUNT,
+					T2.VERSION,
+					T2.LASTMNTBY,
+					T2.LASTMNTON,
+					'Attempt' RECORDSTATUS,
+					T2.ROLECODE,
+					T2.NEXTROLECODE,
+					T2.TASKID,
+					T2.NEXTTASKID,
+					T2.RECORDTYPE,
+					T2.WORKFLOWID,
+					T2.ENTITYCODE,
+					T2.UPLOADPROGRESS,
+					T1.ATTEMPTSTATUS,
+					T1.ATTEMPTNO,
+					T1.PROCESSEDRECORDS
+				FROM RECEIPT_UPLOAD_LOG T1
+			   INNER JOIN RECEIPTUPLOADHEADER_TEMP T2 ON T2.UPLOADHEADERID = T1.HEADERID
+   			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1952.16_post" author="gopalaswamy.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'receiptuploadheader_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#1952 receipt upload performance improvement changes end -->
+	
+	<!-- ST#1924 Difference in Special Rate Upload functionality changes start -->
+	
+	<changeSet id="ST#1924.1" author="Gireesh.G">
+		<createTable tableName="RATECHANGE_UPLOAD_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FileName" type="varchar(100)"/>
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="TotalRecords" type="int" />
+			<column name="SucessRecords" type="int" />
+			<column name="FailureRecords" type="int" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1924.1.1" author="Gireesh.G">
+		<addPrimaryKey tableName="RATECHANGE_UPLOAD_HEADER" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.1.2" author="Gireesh.G">
+		<addUniqueConstraint tableName="RATECHANGE_UPLOAD_HEADER" columnNames="FileName"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.2.1" author="Gireesh.G">
+		<createTable tableName="RATECHANGE_UPLOAD_DETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="BatchId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="FromDate" type="datetime" />
+			<column name="ToDate" type="datetime" />
+			<column name="BaseRateCode" type="varchar(8)" />
+			<column name="Margin" type="decimal(13,9)" />
+			<column name="ActualRate" type="decimal(13,9)" />
+			<column name="ReCalType" type="varchar(8)" />
+			<column name="RecalFromDate" type="datetime" />
+			<column name="ReCalToDate" type="datetime" />
+			<column name="ServiceReqNo" type="Varchar(50)" />
+			<column name="Remarks" type="varchar(1000)" />
+			<column name="SpecialRate" type="varchar(8)" />
+			<column name="Status" type="char(1)" />
+			<column name="UploadStatusRemarks" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1924.2.1.1" author="Gireesh.G">
+		<addPrimaryKey tableName="RATECHANGE_UPLOAD_DETAILS" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.2.2.1" author="Gireesh.G">
+		<addForeignKeyConstraint constraintName="FK_RATECHANGE_UPLOAD_BatchId"
+			baseTableName="RATECHANGE_UPLOAD_DETAILS" baseColumnNames="BatchId" referencedColumnNames="Id"
+			referencedTableName="RATECHANGE_UPLOAD_HEADER" />
+	</changeSet>
+	
+	<changeSet id="ST#1924.2.3.1" author="Gireesh.G">
+		<createIndex indexName="IDX_SR_FinRef" tableName="RATECHANGE_UPLOAD_DETAILS">
+			<column name="FinReference" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1924.2.4.1" author="Gireesh.G">
+		<createIndex indexName="IDX_SR_BatchId" tableName="RATECHANGE_UPLOAD_DETAILS">
+			<column name="BatchId" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#1924.3" author="Gireesh.G">
+		<createTable tableName="RATECHANGE_UPLOAD_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="DetailId" type="bigint" />
+			<column name="ErrorCode" type="varchar(10)" />
+			<column name="ErrorDescription" type="varchar(200)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1924.3.1" author="Gireesh.G">
+		<addPrimaryKey tableName="RATECHANGE_UPLOAD_LOG" columnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="ST#1924.4" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+                DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME = 'RATE_CHANGE_UPLOAD');
+				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME = 'RATE_CHANGE_UPLOAD');
+				DELETE FROM DATA_ENGINE_STATUS WHERE NAME = 'RATE_CHANGE_UPLOAD';
+             
+				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'RATE_CHANGE_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'RATE_CHANGE_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG where Name = 'RATE_CHANGE_UPLOAD';
+    
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'RATE_CHANGE_UPLOAD', 'RATE_CHANGE_UPLOAD', 12, 'RateChangeUpload', '', '', '', 0, 1, '', 'FINREFERENCE,FROMDATE,TODATE,BASERATECODE,MARGIN,ACTUALRATE,RECALTYPE,RECALFROMDATE,RECALTODATE', '', 'C', '/opt/Clix/PFF/RateChangeUpload', 'RateChangeUplaodReq', '.xlsx', 0,current_timestamp, '${SEQ_FILE},_${yyyyMMddHHmmss}', '', 0, '', 1, 1); 
+
+				INSERT INTO DATA_ENGINE_TABLE  (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select ID FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD'), 'RATECHANGE_UPLOAD_DETAILS', 1, ' ', null, null, null, null, null, null, null, 3, 0, 0);
+	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'BATCHID',           0, 'N', null, null, '${BATCHID}', null, 0, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'FINREFERENCE',      0, 'N', null, null, null,         null, 0, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'FROMDATE',          0, 'N', null, null, null,         null, 1, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'TODATE',     	     0, 'N', null, null, null,         null, 2, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'BASERATECODE',      0, 'N', null, null, null,         null, 3, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'MARGIN',            0, 'N', null, null, null,         null, 4, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'ACTUALRATE',        0, 'N', null, null, null,         null, 5, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'RECALTYPE',         0, 'N', null, null, null,         null, 6, null,null, null, null, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'RECALFROMDATE',     0, 'N', null, null, null,         null, 7, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'RECALTODATE',     	 0, 'N', null, null, null,         null, 8, null,null, null, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'SERVICEREQNO',      0, 'N', null, null, null,         null, 9, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'REMARKS',           0, 'N', null, null, null,         null, 10, null,null, null, null, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'RATECHANGE_UPLOAD_DETAILS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'RATE_CHANGE_UPLOAD')), 'SPECIALRATE',       0, 'N', null, null, null,         null, 11, null,null, null, null, 'O');
+ 			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1924.5" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeUpload') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeUpload';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD';
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((Select MAX(GrpID)+1 From SecGroups), 'RATECHANGE_UPLOAD', 'Group for Rate Change upload', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_RateChangeUpload', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RATECHANGE_UPLOAD'), (Select RightID from SecRights where RightName = 'menu_Item_RateChangeUpload'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- ST#1924 Difference in Special Rate Upload functionality changes end -->
+	
+	<changeSet id="1" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				CREATE TABLE BATCH_STEP_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_STEP_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_JOB_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_STEP_EXECUTION_SU AS SELECT * FROM BATCH_STEP_EXECUTION;
+				CREATE TABLE BATCH_JOB_EXECUTION_PARAMS_SU AS SELECT * FROM BATCH_JOB_EXECUTION_PARAMS;
+				CREATE TABLE BATCH_JOB_EXECUTION_SU AS SELECT * FROM BATCH_JOB_EXECUTION;
+				CREATE TABLE BATCH_JOB_INSTANCE_SU AS SELECT * FROM BATCH_JOB_INSTANCE;
+				
+				CREATE TABLE BATCH_JOB_EXECUTION_SEQ_SU AS SELECT * FROM BATCH_JOB_EXECUTION_SEQ;
+				CREATE TABLE BATCH_JOB_SEQ_SU AS SELECT * FROM BATCH_JOB_SEQ;
+				CREATE TABLE BATCH_STEP_EXECUTION_SEQ_SU AS SELECT * FROM BATCH_STEP_EXECUTION_SEQ;
+				
+				DELETE FROM BATCH_STEP_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_JOB_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_STEP_EXECUTION;
+				DELETE FROM BATCH_JOB_EXECUTION_PARAMS;
+				DELETE FROM BATCH_JOB_EXECUTION;
+				DELETE FROM BATCH_JOB_INSTANCE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="Gopal.p" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE TABLE BTCH_STEP_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_STEP_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT_SU AS SELECT * FROM BATCH_JOB_EXECUTION_CONTEXT;
+				CREATE TABLE BATCH_STEP_EXECUTION_SU AS SELECT * FROM BATCH_STEP_EXECUTION;
+				CREATE TABLE BATCH_JOB_EXECUTION_PARAMS_SU AS SELECT * FROM BATCH_JOB_EXECUTION_PARAMS;
+				CREATE TABLE BATCH_JOB_EXECUTION_SU AS SELECT * FROM BATCH_JOB_EXECUTION;
+				CREATE TABLE BATCH_JOB_INSTANCE_SU AS SELECT * FROM BATCH_JOB_INSTANCE;
+				
+				CREATE TABLE BATCH_JOB_EXECUTION_SEQ_SU AS SELECT BATCH_JOB_EXECUTION_SEQ.nextval from dual;
+				CREATE TABLE BATCH_JOB_SEQ_SU AS SELECT  BATCH_JOB_SEQ.nextval from dual;
+				CREATE TABLE BATCH_STEP_EXECUTION_SEQ_SU AS SELECT BATCH_STEP_EXECUTION_SEQ.nextval from dual;
+
+				DELETE FROM BATCH_STEP_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_JOB_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_STEP_EXECUTION;
+				DELETE FROM BATCH_JOB_EXECUTION_PARAMS;
+				DELETE FROM BATCH_JOB_EXECUTION;
+				DELETE FROM BATCH_JOB_INSTANCE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				SELECT * INTO BATCH_STEP_EXECUTION_CONTEXT_SU FROM BATCH_STEP_EXECUTION_CONTEXT;
+				SELECT * INTO BATCH_JOB_EXECUTION_CONTEXT_SU FROM BATCH_JOB_EXECUTION_CONTEXT;
+				SELECT * INTO BATCH_STEP_EXECUTION_SU FROM BATCH_STEP_EXECUTION;
+				SELECT * INTO BATCH_JOB_EXECUTION_PARAMS_SU FROM BATCH_JOB_EXECUTION_PARAMS;
+				SELECT * INTO BATCH_JOB_EXECUTION_SU FROM BATCH_JOB_EXECUTION;
+				SELECT * INTO BATCH_JOB_INSTANCE_SU FROM BATCH_JOB_INSTANCE;
+	
+				SELECT * INTO BATCH_JOB_EXECUTION_SEQ_SU FROM BATCH_JOB_EXECUTION_SEQ;
+				SELECT * INTO BATCH_JOB_SEQ_SU FROM BATCH_JOB_SEQ;
+				SELECT * INTO BATCH_STEP_EXECUTION_SEQ_SU FROM BATCH_STEP_EXECUTION_SEQ;
+				
+				DELETE FROM BATCH_STEP_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_JOB_EXECUTION_CONTEXT;
+				DELETE FROM BATCH_STEP_EXECUTION;
+				DELETE FROM BATCH_JOB_EXECUTION_PARAMS;
+				DELETE FROM BATCH_JOB_EXECUTION;
+				DELETE FROM BATCH_JOB_INSTANCE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.1" author="saranya.s">
+		<sql>
+			<![CDATA[
+				UPDATE FINFEERECEIPTS SET PaidTds = 0 WHERE PaidTds is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.2" author="saranya.s" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINFEERECEIPTS ADD CONSTRAINT DF_FR_PaidTds DEFAULT 0 FOR PaidTds;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.2" author="saranya.s" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PaidTds" tableName="FINFEERECEIPTS" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="PSD#161936.3" author="saranya.s">
+		<sql>
+			<![CDATA[
+				UPDATE FINFEERECEIPTS_TEMP SET PaidTds = 0 WHERE PaidTds is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.4" author="saranya.s" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINFEERECEIPTS_TEMP ADD CONSTRAINT DF_FR_T_PaidTds DEFAULT 0 FOR PaidTds;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#161936.4" author="saranya.s" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PaidTds" tableName="FINFEERECEIPTS_TEMP" defaultValue="0" />
+	</changeSet>
+	
+	<!-- eod performance testing indexes start -->
+	
+	<changeSet id="1" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+               	CREATE INDEX IX_FTAD_FINREF ON FINTAXDETAIL(lower(FINREFERENCE));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     CREATE INDEX IDX_FIDTL_FINF_FINS ON FINREPAYDETAILS(lower(FINREFERENCE),FINSCHDDATE);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     create index ix_frd_fref_shd on finrepaydetails(lower(finreference),finschddate,finvaluedate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IDX_CCD_AGGRN ON CF_CONTROL_DUMP(lower(AGREEMENTNO));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="5" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_PD_STATUS ON PRESENTMENTDETAILS(lower(STATUS));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+ 				create index IX_PMTD_SCHST on PRESENTMENTDETAILS(lower(FINREFERENCE),schdate,lower(STATUS));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     CREATE  INDEX ix_Pd_SchDt_Status on PresentmentDetails(lower(FINREFERENCE),SchDate,ExcludeReason,lower(STATUS),PresentmentID);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_FSD_FRSCD ON FINSCHEDULEDETAILS(lower(FINREFERENCE),SCHDATE,SCHSEQ);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="9" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     CREATE INDEX IX_FINTYPACCG_TYP_EVT_MDID ON FINTYPEACCOUNTING(lower(FINTYPE), lower(EVENT),ModuleId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="11" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_phd_id_stst_ref on presentmentheader(id,status,lower(reference));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="12" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fodd_finref on finoddetails(lower(finreference),FinODSchdDate);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="13" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_md_mdty on mandates(lower(mandatetype));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="14" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fm_mid_fis_fty on financemain(mandateid,finisactive,lower(fintype));
+    		]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="15_pre" author="murthy.y" >
+		<preConditions onFail="MARK_RAN">
+			<indexExists indexName="IX_FM_CUST_ID" />
+		</preConditions>
+		<dropIndex indexName="IX_FM_CUST_ID" tableName="FINANCEMAIN"/>
+	</changeSet>
+
+	<changeSet id="15" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fm_cuid_fisa on financemain(CustID,finisactive);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fm_FINREF ON financemain(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fiexamt_FINREF ON finexcessamount(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fgd_grcif on finguarantorsdetails(lower(guarantorcif));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			     create index ix_fgdt_grcif on finguarantorsdetails_temp(lower(guarantorcif));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="20" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fipftd_FINREF ON FinPftDetails(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="21" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_finodprat_FINREF ON FinODPenaltyRates(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="22" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_finrpyinst_FINREF ON FinRepayInstruction(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="23" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_fmt_FINREF ON financemain_temp(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="24" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			CREATE INDEX IX_manad_FINREF ON manualadvise(lower(FINREFERENCE));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="25" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index finr_ad on manualadvise(lower(finreference),advisetype,adviseamount,paidamount,waivedamount);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="26" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_ad_fin on manualadvise(advisetype,lower(finreference));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="27" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_cu_custcif on customers(lower(custcif));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="28" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_FTAD_FINREF ON FINTAXDETAIL(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="29" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IDX_FIDTL_FINF_FINS ON FINREPAYDETAILS(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),FINSCHDDATE);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="30" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_frd_fref_shd on finrepaydetails(NLSSORT(finreference,'nls_sort=''BINARY_CI'''),finschddate,finvaluedate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="31" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IDX_CCD_AGGRN ON CF_CONTROL_DUMP(NLSSORT(AGREEMENTNO,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="32" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_PD_STATUS ON PRESENTMENTDETAILS(NLSSORT(STATUS,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="33" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index IX_PMTD_SCHST on PRESENTMENTDETAILS(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),schdate,NLSSORT(STATUS,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="34" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE  INDEX ix_Pd_SchDt_Status on PresentmentDetails(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),SchDate,ExcludeReason,NLSSORT(STATUS,'nls_sort=''BINARY_CI'''),PresentmentID);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="35" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_FSD_FRSCD ON FINSCHEDULEDETAILS(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''),SCHDATE,SCHSEQ);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="36" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_FINTYPACCG_TYP_EVT_MDID ON FINTYPEACCOUNTING(NLSSORT(FINTYPE,'nls_sort=''BINARY_CI'''), NLSSORT(EVENT,'nls_sort=''BINARY_CI'''),ModuleId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="37" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="38" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_phd_id_stst_ref on presentmentheader(id,status,NLSSORT(reference,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="39" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fodd_finref on finoddetails(NLSSORT(finreference,'nls_sort=''BINARY_CI'''),FinODSchdDate);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="40" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_md_mdty on mandates(NLSSORT(mandatetype,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="41" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fm_mid_fis_fty on financemain(mandateid,finisactive,NLSSORT(fintype,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="42" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fm_cuid_fisa on financemain(CustID,finisactive);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="43" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fm_FINREF ON financemain(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="44" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fiexamt_FINREF ON finexcessamount(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="45" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fgd_grcif on finguarantorsdetails(NLSSORT(guarantorcif,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="46" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fgdt_grcif on finguarantorsdetails_temp(NLSSORT(guarantorcif,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="47" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fipftd_FINREF ON FinPftDetails(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="48" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_finodprat_FINREF ON FinODPenaltyRates(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="49" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_finrpyinst_FINREF ON FinRepayInstruction(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="50" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_fmt_FINREF ON financemain_temp(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="51" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_manad_FINREF ON manualadvise(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="52" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index finr_ad on manualadvise(NLSSORT(finreference,'nls_sort=''BINARY_CI'''),advisetype,adviseamount,paidamount,waivedamount);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="53" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_ad_fin on manualadvise(advisetype,NLSSORT(finreference,'nls_sort=''BINARY_CI'''));
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="54" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_cu_custcif on customers(NLSSORT(custcif,'nls_sort=''BINARY_CI'''));    
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="55" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_ftad_finref on fintaxdetail (finreference);
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="56" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index idx_fidtl_finf_fins on finrepaydetails (finreference,finschddate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="57" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_frd_fref_shd on finrepaydetails (finreference,finschddate,finvaluedate);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="58" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index idx_ccd_aggrn on cf_control_dump (agreementno);
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="59" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_pd_status on presentmentdetails (status);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="60" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_pmtd_schst on presentmentdetails (finreference,schdate,status);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="61" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_pd_schdt_status on presentmentdetails (finreference,schdate,excludereason,status,presentmentid);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="62" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fsd_frscd on finscheduledetails (finreference,schdate,schseq);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="63" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fintypaccg_typ_evt_mdid on fintypeaccounting (fintype,event,moduleid);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="64" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_prtheader_temp_id_pid on presentmentheader_temp (id,partnerbankid);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="65" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_phd_id_stst_ref on presentmentheader (id,status,reference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="66" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fodd_finref on finoddetails (finreference,finodschddate);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="67" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_md_mdty on mandates (mandatetype);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="68" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fm_mid_fis_fty on financemain (mandateid,finisactive,fintype);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="69" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fm_cuid_fisa on financemain (custid,finisactive);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="70" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fm_finref on financemain (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="71" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fiexamt_finref on finexcessamount (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="72" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fgd_grcif on finguarantorsdetails (guarantorcif);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="73" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fgdt_grcif on finguarantorsdetails_temp (guarantorcif);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="74" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fipftd_finref on finpftdetails (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="75" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_finodprat_finref on finodpenaltyrates (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="76" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_finrpyinst_finref on finrepayinstruction (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="77" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fmt_finref on financemain_temp (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="78" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_manad_finref on manualadvise (finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="79" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index finr_ad on manualadvise (finreference,advisetype,adviseamount,paidamount,waivedamount);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="80" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_ad_fin on manualadvise (advisetype,finreference);
+    		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="81" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_cu_custcif on customers (custcif);		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- eod performance testing indexes end -->
+
+	<changeSet id="PSD#170585.2" author="gopal.p" >
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_CLLIMITMIS') AND FIELDDBNAME = 'T7.Branchcode';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#141.3" author="gopal.p" >
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME IN ('menuItem_FinDeptReports_PastDue', 'menuItem_FinDeptReports_DisbursmentReport', 'menu_Item_ReceiptDetails'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1924.6" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM reportfilterfields where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_RateChangeuploadReport');
+				DELETE FROM REPORTCONFIGURATION where menuitemcode='menu_Item_RateChangeuploadReport';
+
+				INSERT INTO REPORTCONFIGURATION VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Rate Change Upload Report','Rate Change Upload Report',1,'RateChangeuploadReport','dataSource',1,'menu_Item_RateChangeuploadReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
+				INSERT INTO reportfilterfields VALUES ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_RateChangeuploadReport'),1,'File Name','LOVSEARCH','File Name','t.filename','','RateChangeUploadFileStatus','getFileName','getFileName','0',0,0,0,1,1,'','','','',250,'0','>=',1,1000,'Approved','','','','','',0,current_timestamp,'');
+			]]>
+		</sql>
+   </changeSet>
+   
+   <changeSet id="ST#1924.7" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeuploadReport') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD_REPORT');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RateChangeuploadReport';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'RATECHANGE_UPLOAD_REPORT';
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((Select MAX(GrpID)+1 From SecGroups), 'RATECHANGE_UPLOAD_REPORT', 'Group for Rate Change upload Report', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RightId)+1 from SecRights), 0, 'menu_Item_RateChangeuploadReport', 'MENU', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'RATECHANGE_UPLOAD_REPORT'), (Select RightID from SecRights where RightName = 'menu_Item_RateChangeuploadReport'), 1, 1, 1000, current_timestamp, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>

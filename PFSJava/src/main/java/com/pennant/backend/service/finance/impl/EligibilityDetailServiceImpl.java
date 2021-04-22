@@ -48,7 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
@@ -75,12 +76,11 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> implements EligibilityDetailService {
 
-	private static final Logger logger = Logger.getLogger(FinanceDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceDetailServiceImpl.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceEligibilityDetailDAO financeEligibilityDetailDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 
 	public EligibilityDetailServiceImpl() {
 		super();
@@ -214,8 +214,8 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 		BigDecimal downpaySupl = customerEligibilityCheck.getDownpaySupl();
 		customerEligibilityCheck.setDownpaySupl(CalculationUtil.getConvertedAmount(finCcy, null, downpaySupl));
 
-		Object object = getRuleExecutionUtil().executeRule(rule, customerEligibilityCheck.getDeclaredFieldValues(),
-				finCcy, RuleReturnType.DECIMAL);
+		Object object = RuleExecutionUtil.executeRule(rule, customerEligibilityCheck.getDeclaredFieldValues(), finCcy,
+				RuleReturnType.DECIMAL);
 
 		if (object != null) {
 			if (object instanceof BigDecimal) {
@@ -424,14 +424,6 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 
 	public void setFinanceEligibilityDetailDAO(FinanceEligibilityDetailDAO financeEligibilityDetailDAO) {
 		this.financeEligibilityDetailDAO = financeEligibilityDetailDAO;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

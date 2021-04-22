@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -72,7 +73,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>AccountMapping</b>.<br>
  */
 public class AccountMappingServiceImpl extends GenericService<AccountMapping> implements AccountMappingService {
-	private static final Logger logger = Logger.getLogger(AccountMappingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(AccountMappingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AccountMappingDAO accountMappingDAO;

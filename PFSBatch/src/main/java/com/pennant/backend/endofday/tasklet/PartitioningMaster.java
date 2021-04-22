@@ -53,10 +53,12 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class PartitioningMaster implements Partitioner {
 	private Logger logger = LogManager.getLogger(PartitioningMaster.class);
@@ -65,23 +67,33 @@ public class PartitioningMaster implements Partitioner {
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		Date valueDate = SysParamUtil.getAppValueDate();
-		logger.info("START: Thread Allocation On {}", valueDate);
+		EventProperties eventProperties = EODUtil.EVENT_PROPS;
+		Date valueDate = null;
+		int threadCount = 0;
+
+		if (eventProperties.isParameterLoaded()) {
+			valueDate = eventProperties.getAppValueDate();
+			threadCount = eventProperties.getEodThreadCount();
+		} else {
+			valueDate = SysParamUtil.getAppValueDate();
+			threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
+		}
+
+		logger.info("Thread allocation started...");
 
 		Map<String, ExecutionContext> partitionData = new HashMap<>();
 
 		boolean recordsLessThanThread = false;
 		/* Configured thread count */
-		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
 
 		/* Update Running Count of Loans */
 		customerQueuingDAO.updateFinRunningCount();
 
-		/* Count by progress */
 		long loanCount = customerQueuingDAO.getLoanCountByProgress();
+		long totalCustomers = 0;
 
 		if (loanCount != 0) {
-			long noOfRows = loanCount / threadCount;
+			long noOfRows = Math.round((new Double(loanCount) / new Double(threadCount)));
 
 			if (loanCount < threadCount) {
 				recordsLessThanThread = true;
@@ -102,6 +114,8 @@ public class PartitioningMaster implements Partitioner {
 				customerCount = customerQueuingDAO.updateThreadIDByLoanCount(valueDate, from, to, i);
 				from = to;
 
+				totalCustomers = totalCustomers + customerCount;
+
 				ExecutionContext execution = addExecution(i, loanCount, customerCount);
 				partitionData.put(Integer.toString(i), execution);
 
@@ -112,7 +126,10 @@ public class PartitioningMaster implements Partitioner {
 
 		}
 
-		logger.info("COMPLETE: Thread Allocation On {}", valueDate);
+		logger.info("Thread allocation completed.");
+		logger.info("Total threads >> {}", threadCount);
+		logger.info("Total customers >> {}", totalCustomers);
+		logger.info("Total loans >> {}", loanCount);
 		return partitionData;
 	}
 

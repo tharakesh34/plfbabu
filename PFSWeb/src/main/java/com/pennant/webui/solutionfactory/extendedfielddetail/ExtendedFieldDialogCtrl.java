@@ -50,7 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -96,7 +97,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	private static final long serialVersionUID = -3249715883200188080L;
-	private static final Logger logger = Logger.getLogger(ExtendedFieldDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldDialogCtrl.class);
 
 	protected Window window_ExtendedFieldDialog;
 	protected Label moduleDesc;
@@ -348,59 +349,63 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		// Adding Default Columns for Extended field Detail List (Number of units & Unit Price)
 		if (aExtendedFieldHeader.isNewRecord()) {
 
-			if (aExtendedFieldHeader.getExtendedFieldDetails() == null) {
+			aExtendedFieldHeader.setExtendedFieldDetails(this.extendedFieldDetailsList);
+
+			if (aExtendedFieldHeader.getExtendedFieldDetails() == null
+					|| aExtendedFieldHeader.getExtendedFieldDetails().isEmpty()) {
 				aExtendedFieldHeader.setExtendedFieldDetails(new ArrayList<ExtendedFieldDetail>());
-			}
-			if (StringUtils.equals(aExtendedFieldHeader.getModuleName(), CollateralConstants.MODULE_NAME)
-					|| StringUtils.equals(aExtendedFieldHeader.getModuleName(), AssetConstants.EXTENDEDFIELDS_MODULE)) {
-				//TODO: Modify dynamic from static
 
-				ExtendedFieldDetail unitCount = new ExtendedFieldDetail();
-				unitCount.setFieldName("NOOFUNITS");
-				unitCount.setFieldLabel("Number of Units");
-				unitCount.setFieldType(ExtendedFieldConstants.FIELDTYPE_INT);
-				unitCount.setFieldLength(3);
-				unitCount.setFieldSeqOrder(10);
-				unitCount.setFieldMandatory(true);
-				unitCount.setRecordType(PennantConstants.RCD_ADD);
-				unitCount.setVersion(1);
-				unitCount.setInputElement(true);
-				unitCount.setEditable(true);
+				if (StringUtils.equals(aExtendedFieldHeader.getModuleName(), CollateralConstants.MODULE_NAME)
+						|| StringUtils.equals(aExtendedFieldHeader.getModuleName(),
+								AssetConstants.EXTENDEDFIELDS_MODULE)) {
+					//TODO: Modify dynamic from static
 
-				ExtendedFieldDetail unitPrice = new ExtendedFieldDetail();
-				unitPrice.setFieldName("UNITPRICE");
-				unitPrice.setFieldLabel("Unit Price");
-				unitPrice.setFieldType(ExtendedFieldConstants.FIELDTYPE_AMOUNT);
-				unitPrice.setFieldLength(18);
-				unitPrice.setFieldSeqOrder(20);
-				unitPrice.setFieldMandatory(true);
-				unitPrice.setRecordType(PennantConstants.RCD_ADD);
-				unitPrice.setVersion(1);
-				unitPrice.setInputElement(true);
-				unitPrice.setEditable(true);
+					ExtendedFieldDetail unitCount = new ExtendedFieldDetail();
+					unitCount.setFieldName("NOOFUNITS");
+					unitCount.setFieldLabel("Number of Units");
+					unitCount.setFieldType(ExtendedFieldConstants.FIELDTYPE_INT);
+					unitCount.setFieldLength(3);
+					unitCount.setFieldSeqOrder(10);
+					unitCount.setFieldMandatory(true);
+					unitCount.setRecordType(PennantConstants.RCD_ADD);
+					unitCount.setVersion(1);
+					unitCount.setInputElement(true);
+					unitCount.setEditable(true);
 
-				if (this.isMarketableSecurities) {
-					ExtendedFieldDetail hsnCode = new ExtendedFieldDetail();
-					hsnCode.setFieldName("HSNCODE");
-					hsnCode.setFieldLabel("HSN / ISIN Code");
-					hsnCode.setFieldType(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO);
-					hsnCode.setFieldLength(20);
-					hsnCode.setFieldSeqOrder(50);
-					hsnCode.setFieldMandatory(true);
-					hsnCode.setRecordType(PennantConstants.RCD_ADD);
-					hsnCode.setVersion(1);
-					hsnCode.setInputElement(true);
-					hsnCode.setFieldList("HSNCodeData");
-					hsnCode.setFieldConstraint("HSNCode");
-					hsnCode.setEditable(true);
-					aExtendedFieldHeader.getExtendedFieldDetails().add(hsnCode);
+					ExtendedFieldDetail unitPrice = new ExtendedFieldDetail();
+					unitPrice.setFieldName("UNITPRICE");
+					unitPrice.setFieldLabel("Unit Price");
+					unitPrice.setFieldType(ExtendedFieldConstants.FIELDTYPE_AMOUNT);
+					unitPrice.setFieldLength(18);
+					unitPrice.setFieldSeqOrder(20);
+					unitPrice.setFieldMandatory(true);
+					unitPrice.setRecordType(PennantConstants.RCD_ADD);
+					unitPrice.setVersion(1);
+					unitPrice.setInputElement(true);
+					unitPrice.setEditable(true);
+
+					if (this.isMarketableSecurities) {
+						ExtendedFieldDetail hsnCode = new ExtendedFieldDetail();
+						hsnCode.setFieldName("HSNCODE");
+						hsnCode.setFieldLabel("HSN / ISIN Code");
+						hsnCode.setFieldType(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO);
+						hsnCode.setFieldLength(20);
+						hsnCode.setFieldSeqOrder(50);
+						hsnCode.setFieldMandatory(true);
+						hsnCode.setRecordType(PennantConstants.RCD_ADD);
+						hsnCode.setVersion(1);
+						hsnCode.setInputElement(true);
+						hsnCode.setFieldList("HSNCodeData");
+						hsnCode.setFieldConstraint("HSNCode");
+						hsnCode.setEditable(true);
+						aExtendedFieldHeader.getExtendedFieldDetails().add(hsnCode);
+					}
+
+					aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);
+					aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
+
 				}
-
-				aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);
-				aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
-
 			}
-
 		}
 
 		// Extended Fields Rendering
@@ -715,6 +720,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		this.pagingFieldDetList.setActivePage(0);
 		setTableName(this.extendedFieldDetailsList);
 		setExtendedFieldDetailsList(this.extendedFieldDetailsList);
+		this.extendedFieldHeader.setExtendedFieldDetails(this.extendedFieldDetailsList);
 		getExtendedFieldPagedListWrapper().initList(this.extendedFieldDetailsList, listBoxFieldDet, pagingFieldDetList);
 		this.listBoxFieldDet.setItemRenderer(new ExtendedFieldListItemRenderer());
 

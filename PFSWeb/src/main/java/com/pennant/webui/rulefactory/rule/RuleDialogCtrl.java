@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -80,6 +81,7 @@ import com.pennant.backend.model.rulefactory.JSRuleReturnType;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -100,7 +102,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(RuleDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RuleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -471,13 +473,22 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
 
+		case RuleConstants.MODULE_INSRULE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			break;
+
 		case RuleConstants.MODULE_RATERULE:
 			this.row_AllowDeviation.setVisible(true);
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
 
 		case RuleConstants.MODULE_PROVSN:
-			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			this.row_DeviationType.setVisible(true);
+			this.label_DeviationType.setValue(Labels.getLabel("label_RuleDialog_provisionType.value"));
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_OBJECT);
+			this.rule.setDeviationType(DeviationConstants.DT_PERCENTAGE);
+			this.deviationType.setReadonly(true);
+			this.returnType.setReadonly(true);
 			break;
 
 		case RuleConstants.MODULE_REFUND:
@@ -487,7 +498,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		case RuleConstants.MODULE_SCORES:
 			this.label_seqOrder.setValue(Labels.getLabel("label_RuleDialog_metricSeqOrder.value"));
 			//this.row_SeqOrder.setVisible(true);
-			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;
 
 		case RuleConstants.MODULE_SUBHEAD:
@@ -523,6 +534,19 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			break;
 
 		case RuleConstants.MODULE_STGACRULE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
+			break;
+		case RuleConstants.MODULE_FEEPERC:
+			this.row_FeeType.setVisible(true);
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			break;
+		case RuleConstants.MODULE_BRERULE:
+			this.row_DeviationType.setVisible(true);
+			this.label_DeviationType.setVisible(false);
+			this.hbox_DeviationType.setVisible(false);
+			//this.rule.setReturnType(RuleConstants.RETURNTYPE_STRING);
+			break;
+		case RuleConstants.MODULE_DUEDATERULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_INTEGER);
 			break;
 		}
@@ -660,7 +684,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		if (StringUtils.equals(module, RuleConstants.MODULE_ELGRULE)) {
 			excludeFields = "," + RuleConstants.RETURNTYPE_STRING + "," + RuleConstants.RETURNTYPE_CALCSTRING + ",";
-		} else if (StringUtils.equals(module, RuleConstants.MODULE_SUBHEAD)) {
+		} else if (StringUtils.equals(module, RuleConstants.MODULE_SUBHEAD)
+				|| StringUtils.equals(module, RuleConstants.MODULE_BRERULE)) {
 			excludeFields = "," + RuleConstants.RETURNTYPE_DECIMAL + "," + RuleConstants.RETURNTYPE_BOOLEAN + ","
 					+ RuleConstants.RETURNTYPE_INTEGER + "," + RuleConstants.RETURNTYPE_OBJECT + ",";
 		}
@@ -672,6 +697,14 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		this.ruleCodeDesc.setValue(aRule.getRuleCodeDesc());
 
 		if (StringUtils.equalsIgnoreCase(module, RuleConstants.MODULE_FEES)) {
+			this.ruleEvent.setValue(event);
+			this.feeType.setValue(aRule.getFeeTypeCode());
+			this.feeType.setDescription(aRule.getFeeTypeDesc());
+
+			if (aRule.getFeeTypeID() != null) {
+				this.feeType.setObject(new FeeType(aRule.getFeeTypeID()));
+			}
+		} else if (StringUtils.equalsIgnoreCase(module, RuleConstants.MODULE_FEEPERC)) {
 			this.ruleEvent.setValue(event);
 			this.feeType.setValue(aRule.getFeeTypeCode());
 			this.feeType.setDescription(aRule.getFeeTypeDesc());
@@ -825,6 +858,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 					aRule.setSQLRule(this.javaScriptSqlRule.getActualQuery());
 					aRule.setActualBlock(this.javaScriptSqlRule.getActualBlock());
 					aRule.setFields(this.javaScriptSqlRule.getFields());
+					aRule.setSPLRule(this.javaScriptSqlRule.getSplQuery());
 				}
 			}
 		} catch (WrongValueException we) {
@@ -836,7 +870,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -992,6 +1026,30 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 						jsRuleReturnTypeList.add(jsRuleReturnType);
 					}
+
+					if (RuleConstants.MODULE_PROVSN.equals(this.rule.getRuleModule())) {
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
+						jsRuleReturnType.setResultLabel(" result.provPercentage = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
+						jsRuleReturnType.setResultLabel(" result.provAmount = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_PERCENTAGE);
+						jsRuleReturnType.setResultLabel(" result.vasProvPercentage = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+						jsRuleReturnType = new JSRuleReturnType();
+						jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_DECIMAL);
+						jsRuleReturnType.setResultLabel(" result.vasProvAmount = ");
+						jsRuleReturnTypeList.add(jsRuleReturnType);
+
+					}
 				}
 			}
 		}
@@ -1009,6 +1067,8 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 				if (StringUtils.equalsIgnoreCase(this.rule.getRuleModule(), RuleConstants.MODULE_FEES)) {
 					this.javaScriptSqlRule.setEvent(this.ruleEvent.getValue());
+				} else if (StringUtils.equalsIgnoreCase(this.rule.getRuleModule(), RuleConstants.MODULE_FEEPERC)) {
+					this.javaScriptSqlRule.setEvent(this.ruleEvent.getValue());
 				} else {
 					this.javaScriptSqlRule.setEvent(this.rule.getRuleEvent());
 				}
@@ -1023,6 +1083,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 			this.javaScriptSqlRule.setEvent(this.rule.getRuleEvent());
 			this.javaScriptSqlRule.setFields(this.rule.getFields());
 			this.javaScriptSqlRule.setSqlQuery(this.rule.getSQLRule());
+			this.javaScriptSqlRule.setSplQuery(this.rule.getSPLRule());
 			this.javaScriptSqlRule.setActualBlock(this.rule.getActualBlock());
 			this.javaScriptSqlRule.buildQuery(this.rule.getActualBlock());
 
@@ -1120,6 +1181,11 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 
 		readOnlyComponent(enqiryModule || isReadOnly("RuleDialog_ruleCodeDesc"), this.ruleCodeDesc);
 		readOnlyComponent(enqiryModule || isReadOnly("RuleDialog_revolving"), this.revolving);
+
+		if (RuleConstants.MODULE_PROVSN.equals(this.rule.getRuleModule())) {
+			this.returnType.setDisabled(true);
+			this.deviationType.setDisabled(true);
+		}
 
 		this.seqOrder.setReadonly(isReadOnly("RuleDialog_seqOrder"));
 		this.allowDeviation.setDisabled(isReadOnly("RuleDialog_allowDeviation"));

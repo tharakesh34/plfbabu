@@ -115,7 +115,7 @@ public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(DateUtility.formatToLongDate(rcptDtl.getReceivedDate()));
 		lc.setParent(item);
 
-		lc = new Listcell(rcptDtl.getUploadStatus());
+		lc = new Listcell(rcptDtl.getProcessingStatus() == 2 ? "SUCCESS" : "FAILED");
 		lc.setParent(item);
 
 		lc = new Listcell(rcptDtl.getReason());

@@ -1,8 +1,8 @@
 package com.pennanttech.pff.jobs;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -51,8 +52,10 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String DMS_INVOKE_TIME = App.getProperty("dms.invoke.cronExpression");
 	private static final String REG_CASH_BACK_DBD_JOB = "REG_CASH_BACK_DBD_JOB";
 	private static final String REG_CASH_BACK_DBD_JOB_TRIGGER = "REG_CASH_BACK_DBD_JOB_TRIGGER";
+	private static final boolean DMS_JOB_ENABLED = Boolean.valueOf(App.getProperty("dms.job.enabled"));
 
 	private DMSService dMSService;
+	DMSStorage dmsStorageType = DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE));
 
 	private DisbursementRequestService disbursementRequestService;
 	private DisbursementResponse defaultDisbursementResponse;
@@ -63,6 +66,8 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private ExtractCustomerData extractCustomerData;
 	private PresentmentJobService presentmentJobService;
 	private EODService eodService;
+
+	private NonLanReceiptService nonLanReceiptService;
 
 	@Override
 	protected void registerJobs() throws Exception {
@@ -78,7 +83,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerDmsServiceInvokeJob();
 		registerCashBackDbdInvokeJob();
 
-		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+		if (DMS_JOB_ENABLED) {
 			registerDMSJob();
 		}
 
@@ -123,6 +128,11 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			registerEODReminderJob();
 			registerEODDelayJob();
 		}
+
+		if (ImplementationConstants.ALLOW_NON_LAN_RECEIPTS) {
+			mobAgencyReciptLimitUpdateJob();
+		}
+
 	}
 
 	/**
@@ -651,7 +661,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = EODDelayJob.JOB_KEY;
 		String jobDescription = EODDelayJob.JOB_KEY_DESCRIPTION;
 		String trigger = EODDelayJob.JOB_TRIGGER;
-		String cronExpression = eodService.getReminderCronExp();
+		String cronExpression = eodService.getDelayCronExp();
 
 		try {
 			CronExpression.validateExpression(cronExpression);
@@ -663,6 +673,28 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		dataMap.put("eodService", eodService);
 
 		registerJob(EODDelayJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void mobAgencyReciptLimitUpdateJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = MobAgencyReciptLimitUpdateJob.JOB_KEY;
+		String jobDescription = MobAgencyReciptLimitUpdateJob.JOB_KEY_DESCRIPTION;
+		String trigger = MobAgencyReciptLimitUpdateJob.JOB_TRIGGER;
+		String cronExpression = MobAgencyReciptLimitUpdateJob.getCronExpression();
+
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+
+		JobDataMap dataMap = new JobDataMap();
+		dataMap.put("nonLanReceiptService", nonLanReceiptService);
+
+		registerJob(MobAgencyReciptLimitUpdateJob.class, jobKey, jobDescription, trigger, cronExpression, dataMap);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -742,4 +774,8 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		this.eodService = eodService;
 	}
 
+	@Autowired
+	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
+		this.nonLanReceiptService = nonLanReceiptService;
+	}
 }

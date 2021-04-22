@@ -49,15 +49,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.legal.LegalApplicantDetailDAO;
 import com.pennant.backend.model.legal.LegalApplicantDetail;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalApplicantDetail</code> with set of CRUD operations.
  */
 public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetail> implements LegalApplicantDetailDAO {
-	private static Logger logger = Logger.getLogger(LegalApplicantDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LegalApplicantDetailDAOImpl.class);
 
 	public LegalApplicantDetailDAOImpl() {
 		super();
@@ -102,8 +103,7 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 		legalApplicantDetail.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalApplicantDetail);
-		RowMapper<LegalApplicantDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LegalApplicantDetail.class);
+		RowMapper<LegalApplicantDetail> rowMapper = BeanPropertyRowMapper.newInstance(LegalApplicantDetail.class);
 
 		try {
 			legalApplicantDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -200,8 +200,8 @@ public class LegalApplicantDetailDAOImpl extends SequenceDao<LegalApplicantDetai
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalApplicantDetail.getLegalApplicantId() == Long.MIN_VALUE) {
-			legalApplicantDetail.setLegalApplicantId(getNextId("SeqLEGALAPPLICANTDETAILS"));
-			logger.debug("get NextID:" + legalApplicantDetail.getLegalApplicantId());
+			legalApplicantDetail.setLegalApplicantId(getNextValue("SeqLEGALAPPLICANTDETAILS"));
+			logger.debug("get NextValue:" + legalApplicantDetail.getLegalApplicantId());
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

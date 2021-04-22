@@ -49,15 +49,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.legal.LegalDocumentDAO;
 import com.pennant.backend.model.legal.LegalDocument;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalDocument</code> with set of CRUD operations.
  */
 public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements LegalDocumentDAO {
-	private static Logger logger = Logger.getLogger(LegalDocumentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LegalDocumentDAOImpl.class);
 
 	public LegalDocumentDAOImpl() {
 		super();
@@ -103,7 +104,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		legalDocument.setLegalId(legalId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalDocument);
-		RowMapper<LegalDocument> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalDocument.class);
+		RowMapper<LegalDocument> rowMapper = BeanPropertyRowMapper.newInstance(LegalDocument.class);
 
 		try {
 			legalDocument = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -210,8 +211,8 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalDocument.getLegalDocumentId() == Long.MIN_VALUE) {
-			legalDocument.setLegalDocumentId(getNextId("SeqLegalDocuments"));
-			logger.debug("get NextID:" + legalDocument.getLegalDocumentId());
+			legalDocument.setLegalDocumentId(getNextValue("SeqLegalDocuments"));
+			logger.debug("get NextValue:" + legalDocument.getLegalDocumentId());
 		}
 
 		// Execute the SQL, binding the arguments.

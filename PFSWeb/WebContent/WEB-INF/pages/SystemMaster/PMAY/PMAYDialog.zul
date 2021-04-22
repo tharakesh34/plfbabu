@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_PmayDialog" border="normal" apply="${pmayDialogCtrl}" width="100%" height="100%" sizable="false">
+
+		<borderlayout id="borderlayoutPmay">
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" style="float:left; border-style: none;">
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center" style="toolbar-center">
+							<label value="${c:l('window_PmayDialog.title')}" sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" style="float:right; border-style: none;">
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="true">
+				<div width="100%">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+						<columns>
+							<column width="220px" />
+							<column />
+							<column width="200px" />
+							<column />
+						</columns>
+						<rows id="basicDts" visible="false">
+							<row height="24px">
+								<label id="label_FinBasicDetails_FinType" value="${c:l('label_FinanceMainDialog_FinType.value')}" />
+								<label id="finBasic_finType" style="font-weight:bold;" />
+								<label id="label_FinBasicDetails_FinReference" value="${c:l('label_FinanceMainDialog_FinReference.value')}" />
+								<label id="finBasic_finReference" style="font-weight:bold;" />
+							</row>
+							<row height="24px">
+								<label id="label_FinBasicDetails_CustomerCIF" value="${c:l('label_FinanceMainDialog_CustomerCIF.value')}" />
+								<label id="finBasic_custCif" style="font-weight:bold;" />
+								<label id="label_FinBasicDetails_CustShrtName" value="${c:l('label_FinanceMainDialog_CustShrtName.value')}" />
+								<label id="finBasic_custShrtName" style="font-weight:bold;" />
+							</row>
+						</rows>
+					</grid>
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<caption label="${c:l('pmayDetails')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="60%" />
+								<column width="40%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_balanceTransfer" value="${c:l('label_PmayDialog_BalanceTransfer.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="balanceTransferYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="balanceTransferNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<label id="label_primaryApplicant" value="${c:l('label_PmayDialog_PrimaryApplicant.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="primaryApplicantYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="primaryApplicantNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<label id="label_centralAssistance" value="${c:l('label_PmayDialog_CentralAssistance.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="centralAssistanceYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="centralAssistanceNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<label id="label_ownedHouse" value="${c:l('label_PmayDialog_OwnedHouse.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="ownedHouseYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="ownedHouseNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<label id="label_carpetArea" value="${c:l('label_PmayDialog_CarpetArea.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="carpetArea" width="200px" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_householdAnnIncome" value="${c:l('label_PmayDialog_HouseholdAnnIncome.value')}" />
+									<currencyBox id="householdAnnIncome" />
+								</row>
+								<row>
+									<label id="label_transactionFinType" value="${c:l('label_PmayDialog_TransactionFinType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="transactionFinType" />
+
+									</hbox>
+								</row>
+								<row>
+									<label id="label_notifiedTown" value="${c:l('label_PmayDialog_NotifiedTown.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="notifiedTownYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="notifiedTownNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row>
+									<label id="label_TownCode" value="${c:l('label_PmayDialog_TownCode.value')}" />
+									<hbox>
+										<extendedcombobox id="townCode" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_product" value="${c:l('label_PmayDialog_Product.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="product" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_prptyOwnedByWomen" value="${c:l('label_PmayDialog_PrptyOwnedByWomen.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="prptyOwnedByWomenYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="prptyOwnedByWomenNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row visible="false">
+									<label id="label_waterSupply" value="${c:l('label_PmayDialog_WaterSupply.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="waterSupplyYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="waterSupplyNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row visible="false">
+									<label id="label_drinage" value="${c:l('label_PmayDialog_Drinage.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="drinageYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="drinageNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+								<row visible="false">
+									<label id="label_electricity" value="${c:l('label_PmayDialog_Electricity.value')}" />
+									<cell colspan="5">
+										<radiogroup>
+											<radio id="electricityYes" label="${c:l('common.fetch.yes')}">
+											</radio>
+											<radio id="electricityNo" label="${c:l('common.fetch.no')}">
+											</radio>
+										</radiogroup>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+						<div sclass="z-toolbar" height="auto">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
+								<toolbar align="start" sclass="toolbar-start" width="300px">
+									<button id="btnPMAYElgbty" label="${c:l('label_btnPMAYElgbty')}" sclass="z-toolbarbutton" autodisable="btnPMAYElgbty" />
+								</toolbar>
+								<space width="2px" />
+							</hbox>
+						</div>
+					</groupbox>
+					<groupbox id="gb_subsidyEligibility">
+						<caption label="${c:l('subsidyEligibility')}" />
+						<grid>
+							<rows>
+								<row>
+									<label id="label_PMAYcategory" value="${c:l('label_PmayDialog_PMAYcategory.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="pmayCategory" width="200px" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_finalEligibility">
+						<caption label="${c:l('finalEligibility')}" />
+						<div sclass="z-toolbar" height="auto">
+							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
+								<toolbar align="start" sclass="toolbar-start" width="300px">
+									<button id="btnFinalElgbty" label="${c:l('label_btnFinalElgbty')}" sclass="z-toolbarbutton" autodisable="btnFinalElgbty" />
+								</toolbar>
+								<space width="2px" />
+							</hbox>
+						</div>
+						<listbox id="listBoxfinalEligibility" multiple="true" style="border:none" width="100%" sizedByContent="true"
+							span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
+							<listhead sizable="true">
+								<listheader id="listheader_RecordID" label="${c:l('listheader_PMAYDialog_RecordID.label')}" sort="false"
+									hflex="min" />
+								<listheader id="listheader_Status" label="${c:l('listheader_PMAYDialog_Status.label')}" sort="false"
+									hflex="min" />
+								<listheader id="listheader_ErrorCode" label="${c:l('listheader_PMAYDialog_ErrorCode.value')}" hflex="min" />
+								<listheader id="listheader_ErrorDesc" label="${c:l('listheader_PMAYDialog_ErrorDesc.label')}" hflex="min" />
+								<listheader id="listheader_ApplicantID" label="${c:l('listheader_PMAYDialog_ApplicantID.label')}"
+									hflex="min" />
+								<listheader id="listheader_Remarks" label="${c:l('listheader_PMAYDialog_Remarks.label')}" hflex="min" />
+							</listhead>
+						</listbox>
+
+					</groupbox>
+				</div>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%" closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus" value="${c:l('label_RecordStatus')}" sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

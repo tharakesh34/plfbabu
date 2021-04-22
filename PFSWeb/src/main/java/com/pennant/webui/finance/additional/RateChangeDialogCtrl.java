@@ -43,7 +43,6 @@
 package com.pennant.webui.finance.additional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -55,7 +54,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -92,6 +92,8 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BaseRateCodeService;
 import com.pennant.backend.util.FinanceConstants;
@@ -111,7 +113,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -4578996988245614938L;
-	private static final Logger logger = Logger.getLogger(RateChangeDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RateChangeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -269,7 +271,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.anyDateRateChangeToDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.rateChange.setMaxlength(13);
 		this.rateChange.setFormat(PennantConstants.rateFormate9);
-		this.rateChange.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.rateChange.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.rateChange.setScale(9);
 		this.rate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.rate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
@@ -318,7 +320,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.reviewDateFromDateRow.setVisible(false);
 			this.reviewDateToDateRow.setVisible(false);
 			this.anyDateRateChangeFromDate.setVisible(true);
-			this.anyDateRateChangeFromDate.setValue(DateUtility.getAppDate());
+			this.anyDateRateChangeFromDate.setValue(SysParamUtil.getAppDate());
 			this.anyDateRateChangeToDate.setVisible(true);
 			this.anyDateRateChangeToDate.setValue(aFinanceMain.getMaturityDate());
 			excludeFileds.append("CURPRD,");
@@ -448,13 +450,19 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 					PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		}
+
+		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
+		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES) && aFinType.isRateChgAnyDay()) {
+			processStepLoans(aFinanceMain, SysParamUtil.getAppDate());
+		}
+
 		logger.debug("Leaving");
 	}
 
 	public void onChange$anyDateRateChangeFromDate(Event event) {
 		logger.debug("Entering");
 
-		Date alwdBackDate = DateUtility.addDays(DateUtility.getAppDate(),
+		Date alwdBackDate = DateUtility.addDays(SysParamUtil.getAppDate(),
 				-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
 
 		if (this.anyDateRateChangeFromDate != null
@@ -484,6 +492,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					this.cbRecalFromDate.setSelectedIndex(0);
 				}
 			}
+		}
+
+		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
+		if (PennantConstants.YES.equalsIgnoreCase(valueAsString) && this.anyDateRateChangeFromDate.getValue() != null) {
+			processStepLoans(getFinScheduleData().getFinanceMain(), this.anyDateRateChangeFromDate.getValue());
 		}
 
 		logger.debug("Leaving");
@@ -531,7 +544,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		boolean allowBackDatedRateChange = SysParamUtil
 				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		Date allowBackDate = null;
 
 		if (allowBackDatedRateChange) {
@@ -691,7 +704,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		boolean allowBackDatedRateChange = SysParamUtil
 				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		Date allowBackDate = null;
 
 		Date lastSchdDate = null;
@@ -721,7 +734,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				//in Overdraft the Review from Date should be Greater than the appdate 
-				if (isOverdraft && DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) < 0
+				if (isOverdraft && DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0
 						&& !allowBackDatedRateChange) {
 					continue;
 				}
@@ -892,20 +905,23 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		//Last date
 		Date lastPaidDate = getFinScheduleData().getFinanceMain().getFinStartDate();
-		Date currBussDate = DateUtility.getAppDate();
-		for (int i = 1; i < getFinScheduleData().getFinanceScheduleDetails().size(); i++) {
+		Date currBussDate = SysParamUtil.getAppDate();
+		List<FinanceScheduleDetail> schdList = getFinScheduleData().getFinanceScheduleDetails();
+		for (int i = 1; i < schdList.size(); i++) {
 
-			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
+			FinanceScheduleDetail curSchd = schdList.get(i);
 			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
-					|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+					|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSuplRentPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getIncrCostPaid().compareTo(BigDecimal.ZERO) > 0) {
 				lastPaidDate = curSchd.getSchDate();
 			}
 
 			if (allowBackDatedRateChange) {
 				Date allowdBackDate = null;
-				for (FinanceScheduleDetail scheduleDetail : getFinScheduleData().getFinanceScheduleDetails()) {
+				for (FinanceScheduleDetail scheduleDetail : schdList) {
 					if (DateUtility.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
 						if (scheduleDetail.isRvwOnSchDate()) {
 							allowdBackDate = scheduleDetail.getSchDate();
@@ -948,7 +964,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			lastPaidDate = alwdBackDate;
 		}
 		Date backDate = null;
-		for (FinanceScheduleDetail scheduleDetail : getFinScheduleData().getFinanceScheduleDetails()) {
+		for (FinanceScheduleDetail scheduleDetail : schdList) {
 			if (DateUtility.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
 				if (scheduleDetail.isRvwOnSchDate()) {
 					backDate = scheduleDetail.getSchDate();
@@ -1021,7 +1037,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			if (this.reviewDateToDateRow.isVisible()) {
+			if (this.reviewDateToDateRow.isVisible() && this.profitDaysBasis.isDisabled()) {
 				if (isValidComboValue(this.cbRateChangeToDate, Labels.getLabel("label_RateChangeDialog_ToDate.value"))
 						&& this.cbRateChangeFromDate.getSelectedIndex() != 0) {
 					if (((Date) this.cbRateChangeToDate.getSelectedItem().getValue())
@@ -1154,7 +1170,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		BaseRateCode baseRateCode = null;
 		if (allowBackDatedRateChange && StringUtils.trimToNull(finServInst.getBaseRate()) != null) {
+
 			baseRateCode = this.baseRateCodeService.getBaseRateCodeById(finServInst.getBaseRate());
+
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FRQ_TERMS_VALIDATION)) {
 				String errMsg = validateFrq(getFinScheduleData(), finServInst, baseRateCode);
 
@@ -1163,12 +1181,15 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 
-			// Resetting Review Schedules based on ReView Frequency on Selected Base Rate
-			String rvwFrq = null;
-			if (baseRateCode != null) {
-				rvwFrq = baseRateCode.getbRRepayRvwFrq();
+			BigDecimal marginRate = finServInst.getMargin();
+			getFinScheduleData().getFinanceMain().setSkipRateReset(false);
+			if (marginRate != null && marginRate.compareTo(BigDecimal.ZERO) != 0) {
+				if (MessageUtil.confirm("Do you want to proceed with margin rate only.",
+						MessageUtil.YES | MessageUtil.NO) == MessageUtil.YES) {
+					// Calculating the old base rate if margin exists
+					calcRates(getFinScheduleData(), finServInst, baseRateCode);
+				}
 			}
-			setFinScheduleData(resetRvwFrqSchDates(getFinScheduleData(), rvwFrq, finServInst));
 		}
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
@@ -1186,6 +1207,78 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(bRRpyRvwFrq);
 		} else {
 			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(null);
+		}
+
+		if (this.recalTypeRow.isVisible() && this.cbReCalType.getSelectedItem().getValue().toString()
+				.equals(CalculationConstants.RPYCHG_STEPINST)) {
+
+			Date fromDate = (Date) this.cbRecalFromDate.getSelectedItem().getValue();
+			Date maturityDate = getFinScheduleData().getFinanceMain().getMaturityDate();
+			finServInst.setSchdMethod(CalculationConstants.RPYCHG_ADJTERMS);
+			finMain.setRecalType(CalculationConstants.RPYCHG_ADJTERMS);
+			finMain.setRecalFromDate(fromDate);
+			finMain.setRecalToDate(maturityDate);
+			finServInst.setRecalFromDate(fromDate);
+			finServInst.setRecalToDate(maturityDate);
+		}
+
+		FinanceStepPolicyDetail rpyStp = null;
+		if (CollectionUtils.isNotEmpty(getFinScheduleData().getStepPolicyDetails())) {
+			rpyStp = sortSPDList(finMain);
+		}
+
+		if (this.recalTypeRow.isVisible() && CalculationConstants.RPYCHG_STEPINST
+				.equals(this.cbReCalType.getSelectedItem().getValue().toString())) {
+			Date maturityDate = getFinScheduleData().getFinanceMain().getMaturityDate();
+
+			if (PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())) {
+				Date fromDate = (Date) this.cbRecalFromDate.getSelectedItem().getValue();
+				finServInst.setSchdMethod(CalculationConstants.RPYCHG_ADJTERMS);
+				finMain.setRecalType(CalculationConstants.RPYCHG_ADJTERMS);
+				finMain.setRecalFromDate(fromDate);
+				finMain.setRecalToDate(maturityDate);
+				finServInst.setRecalFromDate(fromDate);
+				finServInst.setRecalToDate(maturityDate);
+			} else if (PennantConstants.STEPPING_CALC_AMT.equals(finMain.getCalcOfSteps())) {
+
+				List<FinanceScheduleDetail> fsdList = schdList;
+				int fsdSize = fsdList.size();
+				FinanceScheduleDetail fsd = schdList.get(fsdSize - 1);
+				finMain.setAdjTerms(0);
+				if (rpyStp != null && fsd.getSchDate().compareTo(rpyStp.getStepEnd()) != 0) {
+					finMain.setRecalType(CalculationConstants.RPYCHG_ADDRECAL);
+					finMain.setRecalToDate(maturityDate);
+					int months = DateUtility.getMonthsBetween(fsd.getSchDate(), rpyStp.getStepEnd());
+					finMain.setAdjTerms(months);
+					for (FinanceScheduleDetail finSch : fsdList) {
+						if (finSch.getSchDate().compareTo(SysParamUtil.getAppDate()) > 0) {
+							finMain.setRecalFromDate(finSch.getSchDate());
+							break;
+						}
+					}
+					finServInst.setRecalFromDate(finMain.getRecalFromDate());
+					finServInst.setRecalToDate(maturityDate);
+					finServInst.setRecalType(finMain.getRecalType());
+					finServInst.setTerms(finMain.getAdjTerms());
+				} else {
+					BigDecimal recalculateRate = BigDecimal.ZERO;
+					if (StringUtils.isNotBlank(finServInst.getBaseRate())) {
+						recalculateRate = this.rate.getEffRateValue();
+					} else if (finServInst.getActualRate().compareTo(BigDecimal.ZERO) > 0) {
+						recalculateRate = finServInst.getActualRate();
+					}
+
+					if (recalculateRate.compareTo(fsd.getCalculatedRate()) > 0) {
+						finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+						finMain.setRecalFromDate(rpyStp.getStepStart());
+						finServInst.setRecalFromDate(finMain.getRecalFromDate());
+					} else {
+						finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+					}
+					finServInst.setRecalType(finMain.getRecalType());
+				}
+
+			}
 		}
 
 		// Service details calling for Schedule calculation
@@ -1209,6 +1302,39 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private FinanceStepPolicyDetail sortSPDList(FinanceMain finMain) {
+		List<FinanceStepPolicyDetail> spdList = new ArrayList<>();
+		List<FinanceStepPolicyDetail> rpyList = new ArrayList<>(1);
+		List<FinanceStepPolicyDetail> grcList = new ArrayList<>(1);
+		FinanceStepPolicyDetail rpyStp = null;
+
+		List<FinanceStepPolicyDetail> stepPolicyDetails = getFinScheduleData().getStepPolicyDetails();
+		for (FinanceStepPolicyDetail fspd : stepPolicyDetails) {
+			if (PennantConstants.STEP_SPECIFIER_REG_EMI.equals(fspd.getStepSpecifier())) {
+				rpyList.add(fspd);
+			} else {
+				grcList.add(fspd);
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(rpyList)) {
+			Collections.sort(rpyList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? 1
+					: step1.getStepNo() < step2.getStepNo() ? -1 : 0);
+			rpyStp = rpyList.get(rpyList.size() - 1);
+			finMain.setRpyStps(true);
+		}
+		if (CollectionUtils.isNotEmpty(grcList)) {
+			Collections.sort(grcList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? 1
+					: step1.getStepNo() < step2.getStepNo() ? -1 : 0);
+			finMain.setGrcStps(true);
+		}
+
+		spdList.addAll(grcList);
+		spdList.addAll(rpyList);
+		getFinScheduleData().setStepPolicyDetails(spdList);
+		return rpyStp;
 	}
 
 	/**
@@ -1456,23 +1582,34 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering" + event.toString());
 
 		this.cbRecalFromDate.getItems().clear();
+		Object cbRateChange = this.cbRateChangeFromDate.getSelectedItem().getValue();
 		if (this.cbReCalType.getSelectedIndex() > 0) {
 			if ((this.cbReCalType.getSelectedItem().getValue().toString()).equals(CalculationConstants.RPYCHG_TILLDATE)
 					|| (this.cbReCalType.getSelectedItem().getValue().toString())
 							.equals(CalculationConstants.RPYCHG_TILLMDT)) {
 				if (this.cbRateChangeFromDate.getSelectedIndex() > 0) {
 					fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
-							(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), false);
+							(Date) cbRateChange, false);
 				}
 			} else {
 				if (this.cbRateChangeFromDate.getSelectedIndex() > 0) {
 					fillSchToDates(this.cbRecalFromDate, getFinScheduleData().getFinanceScheduleDetails(),
-							(Date) this.cbRateChangeFromDate.getSelectedItem().getValue(), false);
+							(Date) cbRateChange, false);
 				} else {
 					if (this.cbRecalFromDate.getItemCount() > 0) {
 						this.cbRecalFromDate.setSelectedIndex(0);
 					}
 				}
+			}
+		}
+
+		if (PennantConstants.YES.equalsIgnoreCase(SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ"))) {
+			FinanceMain fm = getFinScheduleData().getFinanceMain();
+			if (cbRateChange != null && cbRateChange != "#") {
+				processStepLoans(fm, this.cbRateChangeFromDate.getSelectedItem().getValue());
+			}
+			if (this.anyDateRateChangeFromDate.getValue() != null) {
+				processStepLoans(fm, this.anyDateRateChangeFromDate.getValue());
 			}
 		}
 
@@ -1601,8 +1738,16 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 								CalculationConstants.SCHMTHD_PRI_PFT))) {
 			excludeFileds.append("STEPPOS,");
 		}
+
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		changeRecalType();
+
+		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
+		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES)
+				&& this.anyDateRateChangeFromDate.getValue() != null
+				&& this.cbRateChangeFromDate.getSelectedItem().getValue() != "#") {
+			processStepLoans(getFinScheduleData().getFinanceMain(), this.anyDateRateChangeFromDate.getValue());
+		}
 
 		logger.debug("Leaving " + event.toString());
 	}
@@ -1638,25 +1783,22 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.rate.setEffRateValue(BigDecimal.ZERO);
 		StringBuilder excludeFileds = new StringBuilder("");
 
-		if (!getFinScheduleData().getFinanceMain().isAllowGrcPftRvw()
-				&& !getFinScheduleData().getFinanceMain().isAllowRepayRvw()) {
+		FinanceMain fm = getFinScheduleData().getFinanceMain();
+		if (!fm.isAllowGrcPftRvw() && !fm.isAllowRepayRvw()) {
 			excludeFileds.append(",TILLDATE");
 		}
 
 		// Stepping POS Exclude for Recal Type
-		if (!getFinScheduleData().getFinanceMain().isStepFinance()
-				|| !StringUtils.equals(getFinScheduleData().getFinanceMain().getStepType(),
-						FinanceConstants.STEPTYPE_PRIBAL)
-				|| !(StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(),
-						CalculationConstants.SCHMTHD_PRI)
-						|| StringUtils.equals(getFinScheduleData().getFinanceMain().getScheduleMethod(),
-								CalculationConstants.SCHMTHD_PRI_PFT))) {
+		if (!fm.isStepFinance() || !StringUtils.equals(fm.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
+				|| !(StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
+						|| StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))) {
 			excludeFileds.append(",STEPPOS");
 		}
 
+		Object cbRateChange = this.cbRateChangeFromDate.getSelectedItem().getValue();
 		if (isValidComboValue(this.cbRateChangeFromDate, Labels.getLabel("label_RateChangeDialog_FromDate.value"))) {
 
-			if (getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1) {
+			if (fm.getNumberOfTerms() == 1) {
 				// FIXME PV @03/JUN/2018 ADJTERMS Testing
 				//excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 				excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADDRECAL,");
@@ -1675,27 +1817,23 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.cbRateChangeToDate.getItems().clear();
 			String frSpecifier = this.cbRateChangeFromDate.getSelectedItem().getAttribute("fromSpecifier").toString();
 			fillSchToDates(this.cbRateChangeToDate, getFinScheduleData().getFinanceScheduleDetails(),
-					(Date) this.cbRateChangeFromDate.getSelectedItem().getValue());
+					(Date) cbRateChange);
 
-			if (getFinScheduleData().getFinanceMain().isAllowGrcPeriod()
-					&& (frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE)
-							|| frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
+			if (fm.isAllowGrcPeriod() && (frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE)
+					|| frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
 
-				if (getFinScheduleData().getFinanceMain().getGraceBaseRate() != null) {
-					this.rate.setBaseValue(getFinScheduleData().getFinanceMain().getGraceBaseRate());
-					this.rate.setSpecialValue(getFinScheduleData().getFinanceMain().getGraceSpecialRate());
-					RateDetail rateDetail = RateUtil.rates(getFinScheduleData().getFinanceMain().getGraceBaseRate(),
-							getFinScheduleData().getFinanceMain().getFinCcy(),
-							getFinScheduleData().getFinanceMain().getGraceSpecialRate(), BigDecimal.ZERO,
-							getFinScheduleData().getFinanceMain().getGrcMinRate(),
-							getFinScheduleData().getFinanceMain().getGrcMaxRate());
+				if (fm.getGraceBaseRate() != null) {
+					this.rate.setBaseValue(fm.getGraceBaseRate());
+					this.rate.setSpecialValue(fm.getGraceSpecialRate());
+					RateDetail rateDetail = RateUtil.rates(fm.getGraceBaseRate(), fm.getFinCcy(),
+							fm.getGraceSpecialRate(), BigDecimal.ZERO, fm.getGrcMinRate(), fm.getGrcMaxRate());
 					this.rate.setEffRateValue(rateDetail.getNetRefRateLoan());
 				}
 
-				if (frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE) && getFinScheduleData()
-						.getFinanceMain().getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_NOPAY)) {
+				if (frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE)
+						&& fm.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_NOPAY)) {
 
-					if (getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1) {
+					if (fm.getNumberOfTerms() == 1) {
 						// FIXME PV @03/JUN/2018 ADJTERMS Testing
 						//excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 						excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADDRECAL,");
@@ -1712,26 +1850,31 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 
-				fillComboBox(profitDaysBasis, getFinScheduleData().getFinanceMain().getGrcProfitDaysBasis(),
-						PennantStaticListUtil.getProfitDaysBasis(), "");
+				fillComboBox(profitDaysBasis, fm.getGrcProfitDaysBasis(), PennantStaticListUtil.getProfitDaysBasis(),
+						"");
 			} else if ((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY))
 					|| (frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END))) {
 
-				if (getFinScheduleData().getFinanceMain().getRepayBaseRate() != null) {
-					this.rate.setBaseValue(getFinScheduleData().getFinanceMain().getRepayBaseRate());
-					this.rate.setSpecialValue(getFinScheduleData().getFinanceMain().getRepaySpecialRate());
-					RateDetail rateDetail = RateUtil.rates(getFinScheduleData().getFinanceMain().getRepayBaseRate(),
-							getFinScheduleData().getFinanceMain().getFinCcy(),
-							getFinScheduleData().getFinanceMain().getRepaySpecialRate(), BigDecimal.ZERO,
-							getFinScheduleData().getFinanceMain().getRpyMinRate(),
-							getFinScheduleData().getFinanceMain().getRpyMaxRate());
+				if (fm.getRepayBaseRate() != null) {
+					this.rate.setBaseValue(fm.getRepayBaseRate());
+					this.rate.setSpecialValue(fm.getRepaySpecialRate());
+					RateDetail rateDetail = RateUtil.rates(fm.getRepayBaseRate(), fm.getFinCcy(),
+							fm.getRepaySpecialRate(), BigDecimal.ZERO, fm.getRpyMinRate(), fm.getRpyMaxRate());
 					this.rate.setEffRateValue(rateDetail.getNetRefRateLoan());
 				}
-				fillComboBox(profitDaysBasis, getFinScheduleData().getFinanceMain().getProfitDaysBasis(),
-						PennantStaticListUtil.getProfitDaysBasis(), "");
+				fillComboBox(profitDaysBasis, fm.getProfitDaysBasis(), PennantStaticListUtil.getProfitDaysBasis(), "");
 			}
 
 			changeRecalType();
+		}
+
+		if (PennantConstants.YES.equalsIgnoreCase(SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ"))) {
+			if (cbRateChange != null && cbRateChange != "#") {
+				processStepLoans(fm, this.cbRateChangeFromDate.getSelectedItem().getValue());
+			}
+			if (this.anyDateRateChangeFromDate.getValue() != null) {
+				processStepLoans(fm, this.anyDateRateChangeFromDate.getValue());
+			}
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -2077,6 +2220,119 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		return financeScheduleDetail;
 	}
+
+	//Calculating the old base rate if margin exists
+	private void calcRates(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst,
+			BaseRateCode baseRateCode) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
+		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
+			financeMain.setSkipRateReset(false);
+			return;
+		}
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+
+		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
+
+		FinanceScheduleDetail prevScheduleDetail = null;
+
+		// Fetching the Schedule details from recal from date.
+		for (FinanceScheduleDetail detail : financeScheduleDetails) {
+			if (DateUtility.compare(detail.getSchDate(), evtFromDate) >= 0) {
+				break;
+			} else {
+				prevScheduleDetail = detail;
+			}
+		}
+
+		if (prevScheduleDetail == null) {
+			financeMain.setSkipRateReset(false);
+			return;
+		}
+
+		String baseRate = prevScheduleDetail.getBaseRate();
+		BigDecimal calculatedRate = prevScheduleDetail.getCalculatedRate();
+		BigDecimal marginRate = prevScheduleDetail.getMrgRate();
+		BigDecimal oldBaseRate = calculatedRate.subtract(marginRate);
+		finServiceInst.setActualRate(oldBaseRate.add(finServiceInst.getMargin()));
+		financeMain.setSkipRateReset(true);
+
+		int sdSize = financeScheduleDetails.size();
+		for (int i = 0; i < sdSize; i++) {
+			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+			Date schdDate = curSchd.getSchDate();
+
+			if ((DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) < 0)
+					|| (i == (sdSize - 1))) {
+				curSchd.setBaseRate(baseRate);
+				curSchd.setSplRate(finServiceInst.getSplRate());
+				curSchd.setMrgRate(finServiceInst.getMargin());
+				curSchd.setCalculatedRate(finServiceInst.getActualRate());
+				curSchd.setActRate(finServiceInst.getActualRate());
+			}
+
+		}
+		logger.debug(Literal.LEAVING);
+		return;
+	}
+
+	private void processStepLoans(FinanceMain finMain, Date fromDate) {
+
+		boolean isStepLoan = false;
+
+		if (finMain.isStepFinance()) {
+			if (StringUtils.isNotBlank(finMain.getStepPolicy())
+					|| (finMain.isAlwManualSteps() && finMain.getNoOfSteps() > 0)) {
+				isStepLoan = true;
+			}
+		}
+
+		if (isStepLoan) {
+			readOnlyComponent(true, this.cbReCalType);
+			Comboitem comboitem = new Comboitem();
+			comboitem.setValue(CalculationConstants.RPYCHG_STEPINST);
+			comboitem.setLabel(Labels.getLabel("label_" + CalculationConstants.RPYCHG_STEPINST));
+			this.cbReCalType.appendChild(comboitem);
+			this.cbReCalType.setSelectedItem(comboitem);
+
+			List<RepayInstruction> rpst = getFinScheduleData().getRepayInstructions();
+			Date recalFromDate = null;
+
+			if (PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())) {
+				if (fromDate.compareTo(finMain.getGrcPeriodEndDate()) > 0) {
+					RepayInstruction rins = rpst.get(rpst.size() - 1);
+					recalFromDate = rins.getRepayDate();
+					finMain.setRecalSteps(false);
+				} else {
+					finMain.setRecalSteps(true);
+					for (RepayInstruction repayInstruction : rpst) {
+						if (repayInstruction.getRepayDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
+							recalFromDate = repayInstruction.getRepayDate();
+							break;
+						}
+					}
+				}
+				fromDateRow.setVisible(true);
+			} else if (PennantConstants.STEPPING_CALC_AMT.equals(finMain.getCalcOfSteps())) {
+				fromDateRow.setVisible(false);
+			}
+
+			comboitem = new Comboitem();
+			Comboitem comboitem1 = new Comboitem();
+			comboitem.setLabel(DateUtility.formatToLongDate(recalFromDate));
+			comboitem.setValue(recalFromDate);
+			cbRecalFromDate.appendChild(comboitem1);
+			cbRecalFromDate.appendChild(comboitem);
+			cbRecalFromDate.setSelectedItem(comboitem);
+			readOnlyComponent(true, this.cbRecalFromDate);
+		}
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

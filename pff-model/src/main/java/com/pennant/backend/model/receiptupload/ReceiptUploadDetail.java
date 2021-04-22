@@ -35,9 +35,9 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private Date depositDate;
 	private Date realizationDate;
 	private Date instrumentDate;
-	private String uploadStatus = "";
+	private int processingStatus;
 	private String reason = "";
-	private long receiptId = 0;
+	private Long receiptId;
 	private long id = 0;
 	private String subReceiptMode = "";
 	private String receiptChannel = "";
@@ -45,7 +45,11 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private String extReference = "";
 	private Long collectionAgentId;
 	private String receivedFrom = "";
+	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private LoggedInUser loggedInUser;
+	private Integer threadId;
+	private Long bounceId;
+	private String bounceReason;
 
 	private List<UploadAlloctionDetail> listAllocationDetails = new ArrayList<>();
 	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
@@ -251,14 +255,6 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 		this.instrumentDate = instrumentDate;
 	}
 
-	public String getUploadStatus() {
-		return uploadStatus;
-	}
-
-	public void setUploadStatus(String uploadStatus) {
-		this.uploadStatus = uploadStatus;
-	}
-
 	public String getReason() {
 		return reason;
 	}
@@ -267,11 +263,11 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 		this.reason = reason;
 	}
 
-	public long getReceiptId() {
+	public Long getReceiptId() {
 		return receiptId;
 	}
 
-	public void setReceiptId(long receiptId) {
+	public void setReceiptId(Long receiptId) {
 		this.receiptId = receiptId;
 	}
 
@@ -346,4 +342,45 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
+
+	public BigDecimal getTdsAmount() {
+		return tdsAmount;
+	}
+
+	public void setTdsAmount(BigDecimal tdsAmount) {
+		this.tdsAmount = tdsAmount;
+	}
+
+	public Integer getThreadId() {
+		return threadId;
+	}
+
+	public void setThreadId(Integer threadId) {
+		this.threadId = threadId;
+	}
+
+	public int getProcessingStatus() {
+		return processingStatus;
+	}
+
+	public void setProcessingStatus(int processingStatus) {
+		this.processingStatus = processingStatus;
+	}
+
+	public Long getBounceId() {
+		return bounceId;
+	}
+
+	public void setBounceId(Long bounceId) {
+		this.bounceId = bounceId;
+	}
+
+	public String getBounceReason() {
+		return bounceReason;
+	}
+
+	public void setBounceReason(String bounceReason) {
+		this.bounceReason = bounceReason;
+	}
+
 }

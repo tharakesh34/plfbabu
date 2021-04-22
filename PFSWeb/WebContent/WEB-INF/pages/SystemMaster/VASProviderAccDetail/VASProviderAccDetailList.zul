@@ -53,7 +53,7 @@
 									<label id="label_VASProviderAccDetailList_ProviderId" value="${c:l('label_VASProviderAccDetailList_ProviderId.value')}" />
 									<listbox id="sortOperator_ProviderId" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="providerId" width="171px" maxlength="19" />
+									<textbox id="providerId" width="171px" maxlength="100" />
 									<label id="label_VASProviderAccDetailList_PaymentMode" value="${c:l('label_VASProviderAccDetailList_PaymentMode.value')}" />
 									<listbox id="sortOperator_PaymentMode" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />

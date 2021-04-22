@@ -80,6 +80,26 @@ public class FinFeeScheduleDetail implements Serializable {
 		super();
 	}
 
+	public FinFeeScheduleDetail copyEntity() {
+		FinFeeScheduleDetail entity = new FinFeeScheduleDetail();
+		entity.setFinReference(this.finReference);
+		entity.setFeeID(this.feeID);
+		entity.setSchDate(this.schDate);
+		entity.setSchAmount(this.schAmount);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setOsAmount(this.osAmount);
+		entity.setWaiverAmount(this.waiverAmount);
+		entity.setWriteoffAmount(this.writeoffAmount);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setIGST(this.iGST);
+		entity.setUGST(this.uGST);
+		entity.setCGST(this.cGST);
+		entity.setSGST(this.sGST);
+		entity.setTGST(this.tGST);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 

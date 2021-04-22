@@ -10,12 +10,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
+import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
@@ -25,6 +28,7 @@ import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -48,9 +52,12 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
+import com.pennant.backend.model.limit.LimitDetails;
+import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerCardSalesInfoService;
@@ -67,9 +74,11 @@ import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.DeleteValidationGroup;
@@ -81,6 +90,7 @@ import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CustomerController;
 import com.pennanttech.controller.CustomerDetailsController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -111,8 +121,8 @@ import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAPService {
-	private static final Logger logger = Logger.getLogger(CustomerWebServiceImpl.class);
+public class CustomerWebServiceImpl extends ExtendedTestClass implements CustomerRESTService, CustomerSOAPService {
+	private static final Logger logger = LogManager.getLogger(CustomerWebServiceImpl.class);
 
 	private CustomerController customerController;
 	private CustomerDetailsController customerDetailsController;
@@ -143,6 +153,9 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
 	private FinanceMainService financeMainService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
+	private JountAccountDetailDAO jountAccountDetailDAO;
+	private LimitDetailService limitDetailService;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -3313,6 +3326,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
 						dedup.setCustPassportNo(String.valueOf(feild.getValue()));
 					}
+					if (feild.getName().equalsIgnoreCase("VoterID")) {
+						dedup.setVoterID(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("DrivingLicence")) {
+						dedup.setDrivingLicenceNo(String.valueOf(feild.getValue()));
+					}
 				}
 			}
 			if (!fieldFound) {
@@ -3469,13 +3488,20 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 						blackListCustomers.setCustNationality(String.valueOf(feild.getValue()));
 					}
 					if (feild.getName().equalsIgnoreCase("CustCRCPR")) {
-						blackListCustomers.setCustAadhaar(String.valueOf(feild.getValue()));
+						blackListCustomers.setCustCRCPR(String.valueOf(feild.getValue()));
 					}
-					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
+					if (feild.getName().equalsIgnoreCase("CustAadhaar")) {
 						blackListCustomers.setCustAadhaar(String.valueOf(feild.getValue()));
 					}
 					if (feild.getName().equalsIgnoreCase("CustCtgCode")) {
 						blackListCustomers.setCustCtgCode(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
+						blackListCustomers.setCustPassportNo(String.valueOf(feild.getValue()));
+					}
+
+					if (feild.getName().equalsIgnoreCase("CustCompName")) {
+						blackListCustomers.setCustCompName(String.valueOf(feild.getValue()));
 					}
 				}
 
@@ -3585,9 +3611,20 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		if (!CollectionUtils.isEmpty(custIdList)) {
 			for (Long custId : custIdList) {
 				response = customerController.getCustomerDetails(custId);
+				List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryDAO
+						.getListOfCustomerFinanceDetailById(custId, "_AView", false);
+				if (response.getCustomerFinanceDetailList() != null) {
+					response.getCustomerFinanceDetailList().addAll(customerFinanceDetail);
+				}
 				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
+					response.getCustomerFinanceDetailList().forEach(customerFinDetail -> {
+						List<JointAccountDetail> jointAccountDetailList = jountAccountDetailDAO
+								.getJountAccountDetailByFinRef(customerFinDetail.getFinReference(), "_View");
+						customerFinDetail.setJointAccountDetails(jointAccountDetailList);
+					});
+
 					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
-						cfd.setStage(cfd.getRoleCode());
+						cfd.setStage(cfd.getNextRoleCode());
 						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinReference(), ""));
 					}
 				}
@@ -3620,9 +3657,23 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			if (cust != null) {
 				response.setCustomerPhoneNumber(
 						customerPhoneNumberService.getApprovedCustomerPhoneNumberById(cust.getCustID()));
+				response.setCustomerName(cust.getCustShrtName());
 			}
 			response.setCif(cust.getCustCIF());
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			LimitHeader headerDetail = limitDetailService.getLimitHeaderByCustomer(cust.getCustID());
+			if (headerDetail != null) {
+				for (LimitDetails detail : headerDetail.getCustomerLimitDetailsList()) {
+					if (LimitConstants.LIMIT_ITEM_TOTAL.equals(detail.getGroupCode())) {
+						response.setActualLimit(PennantApplicationUtil.formateAmount(
+								detail.getLimitSanctioned().subtract(detail.getUtilisedLimit()),
+								CurrencyUtil.getFormat(headerDetail.getLimitCcy())));
+						response.setExpiryDate(detail.getExpiryDate());
+					}
+					response.setBlocklimit(headerDetail.isBlocklimit());
+
+				}
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
 			logger.debug(Literal.LEAVING);
 			return response;
 		} else {
@@ -4136,4 +4187,18 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
+	@Autowired
+	public void setApprovalStatusEnquiryDAO(ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO) {
+		this.approvalStatusEnquiryDAO = approvalStatusEnquiryDAO;
+	}
+
+	@Autowired
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
+	}
+
+	@Autowired
+	public void setLimitDetailService(LimitDetailService limitDetailService) {
+		this.limitDetailService = limitDetailService;
+	}
 }

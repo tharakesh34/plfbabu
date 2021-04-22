@@ -63,6 +63,7 @@ public class PathUtil {
 
 	// Agreement Detail Paths
 	public static final String FINANCE_AGREEMENTS = "Agreements";
+	public static final String MMA_AGREEMENTS = "Agreements/MMAgreements";
 	public static final String FINANCE_INTERESTCERTIFICATE = "/Agreements/InterestCertificate";
 	public static final String FINANCE_LOANCLOSURE = "Agreements/LoanClosureLetter";
 
@@ -81,6 +82,8 @@ public class PathUtil {
 	public static final String REPORTS_IMAGE_CLIENT_IMAGE = "/OrgLogo";
 	public static final String REPORTS_IMAGE_PNG_FORMAT = ".png";
 	public static final String REPORTS_IMAGE_SIGN = "/Reports/images/signimage.png";
+	public static final String REPORTS_IMAGE_SOA = "/Reports/images/SOAOrgLogo.png";
+	public static final String PAYMENT_SCHEDULE_IMAGE_CLIENT = "/Reports/images/PaymentSchedule.jpg";
 
 	public static final String REPORTS_IMAGE_CLIENT_DIGITAL = "/Reports/images/OrgLogo1.png";
 
@@ -99,6 +102,8 @@ public class PathUtil {
 	public static final String FILE_UPLOADS_PATH = "FileUploads";
 
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; //For Credit Review Details
+	public static final String ExtLiability = "ExtLiability";
+	public static final String LoanReport = "LoanReport";
 
 	/**
 	 * Method for Set Environment Variable to Root Path Location

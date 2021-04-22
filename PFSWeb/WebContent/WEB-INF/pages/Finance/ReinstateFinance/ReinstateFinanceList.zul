@@ -132,21 +132,15 @@
 							multiple="false" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
 							<listhead sizable="true">
 								<listheader id="listheader_FinType" sort="auto" label="${c:l('listheader_FinType.label')}" hflex="min" />
-								<listheader id="listheader_FinProduct" sort="auto" label="${c:l('listheader_FinProduct.label')}"
-									hflex="min" />
 								<listheader id="listheader_CustCIF" sort="auto" label="${c:l('listheader_CustCIF.label')}" hflex="min" />
 								<listheader id="listheader_FinRef" sort="auto" label="${c:l('listheader_FinRef.label')}" hflex="min" />
 								<listheader id="listheader_FinBranch" sort="auto" label="${c:l('listheader_FinBranch.label')}" hflex="min" />
-								<listheader id="listheader_FinStartDate" sort="auto" label="${c:l('listheader_FinStartDate.label')}"
-									hflex="min" />
-								<listheader id="listheader_NumberOfTerms" sort="auto" label="${c:l('listheader_NumberOfTerms.label')}"
-									hflex="min" />
-								<listheader id="listheader_MaturityDate" sort="auto" label="${c:l('listheader_MaturityDate.label')}"
-									hflex="min" />
+								<listheader id="listheader_FinStartDate" label="${c:l('listheader_FinStartDate.label')}" hflex="min" />
+								<listheader id="listheader_NumberOfTerms" label="${c:l('listheader_NumberOfTerms.label')}" hflex="min" />
+								<listheader id="listheader_MaturityDate" label="${c:l('listheader_MaturityDate.label')}" hflex="min" />
 								<listheader id="listheader_FinCcy" sort="auto" label="${c:l('listheader_FinCcy.label')}" hflex="min" />
-								<listheader id="listheader_FinAmount" sort="auto" label="${c:l('listheader_FinAmount.label')}" hflex="min" />
-								<listheader id="listheader_CurFinAmount" label="${c:l('listheader_CurFinAmount.label')}" sort="auto"
-									hflex="min" />
+								<listheader id="listheader_FinAmount" label="${c:l('listheader_FinAmount.label')}" hflex="min" />
+								<listheader id="listheader_CurFinAmount" label="${c:l('listheader_CurFinAmount.label')}" hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"

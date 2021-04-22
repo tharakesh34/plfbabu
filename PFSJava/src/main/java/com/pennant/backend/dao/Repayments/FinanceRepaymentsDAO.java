@@ -13,6 +13,8 @@ public interface FinanceRepaymentsDAO {
 
 	long save(FinanceRepayments financeRepayments, String type);
 
+	void save(List<FinanceRepayments> list, String type);
+
 	List<FinanceRepayments> getFinRepayListByFinRef(String finRef, boolean isRpyCancelProc, String type);
 
 	void deleteRpyDetailbyLinkedTranId(long linkedTranId, String finReference);
@@ -66,5 +68,7 @@ public interface FinanceRepaymentsDAO {
 	List<FinanceRepayments> getInProcessRepaymnets(String finReference, List<Long> receiptList);
 
 	long getNewRepayID();
+
+	Long getLinkedTranIdByReceipt(long receiptId, String type);
 
 }

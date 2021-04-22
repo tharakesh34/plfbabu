@@ -62,7 +62,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.reason.details.ReasonDetails;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -78,17 +80,21 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate",
 		"graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq", "nextGrcPftDate",
 		"grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd",
-		"grcMinRate", "grcMaxRate", "grcMaxAmount", "numberOfTerms", "reqRepayAmount", "repayRateBasis",
-		"repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq",
-		"nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq",
-		"nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate", "nextRolloverDate", "finContractDate",
-		"finPurpose", "finLimitRef", "finCommitmentRef", "repayAccountId", "depreciationFrq", "dsaCode",
-		"accountsOfficer", "salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb",
-		"unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI",
-		"bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHAlwInGrace", "planEMIHMethod", "planEMIHMaxPerYear",
-		"planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate", "stage", "status",
-		"product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
-		"legalRequired" })
+		"grcMinRate", "grcMaxRate", "grcMaxAmount", "grcAdvPftRate", "grcAdvBaseRate", "grcAdvMargin", "numberOfTerms",
+		"reqRepayAmount", "repayRateBasis", "repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin",
+		"scheduleMethod", "repayFrq", "nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq",
+		"nextRepayRvwDate", "repayCpzFrq", "nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate",
+		"rpyMaxRate", "rpyAdvPftRate", "rpyAdvBaseRate", "rpyAdvMargin", "supplementRent", "increasedCost",
+		"rolloverFrq", "nextRolloverDate", "finContractDate", "finPurpose", "finLimitRef", "finCommitmentRef",
+		"repayAccountId", "depreciationFrq", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode", "referralId",
+		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
+		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHAlwInGrace",
+		"planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate",
+		"lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor", "fixedTenorRate",
+		"eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor", "offerProduct", "offerAmount",
+		"custSegmentation", "baseProduct", "processType", "bureauTimeSeries", "campaignName", "existingLanRefNo",
+		"leadSource", "poSource", "rsa", "verification", "sourChannelCategory", "offerId", "endGrcPeriodAftrFullDisb",
+		"autoIncGrcEndDate", "noOfSteps" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -101,6 +107,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String finReference;
 
 	private String linkedFinRef;
+	private String investmentRef = "";
 	@XmlElement
 	private String finType;
 	private String lovDescFinTypeName;
@@ -157,11 +164,15 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String finRemarks;
 	private long initiateUser;
 	private Date initiateDate;
+	private long mMAId;
+	private String agreeName;
 	private boolean finIsAlwMD;
-	@XmlElement
 	private long accountsOfficer;
-	@XmlElement
+	@XmlElement(name = "accountsOfficer")
+	private String accountsOfficerReference;
 	private String dsaCode;
+	@XmlElement(name = "dsaCode")
+	private String dsaCodeReference;
 	private String dsaName;
 	private String dsaCodeDesc;
 	private String lovDescAccountsOfficer;
@@ -173,6 +184,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date lovDescCustDOB;
 	private String lovDescRequestStage;
 	private String lovDescQueuePriority;
+	private String lovDescMMAReference;
 	@XmlElement(name = "tdsApplicable")
 	private boolean tDSApplicable;
 	@XmlElement
@@ -181,9 +193,50 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date firstDroplineDate;
 	private boolean pftServicingODLimit;
 
+	//Offer Details Start
+
+	@XmlElement
+	private String offerProduct;
+	@XmlElement
+	private BigDecimal offerAmount = BigDecimal.ZERO;
+	@XmlElement
+	private String custSegmentation;
+	@XmlElement
+	private String baseProduct;
+	@XmlElement
+	private String processType;
+	@XmlElement
+	private String bureauTimeSeries;
+	@XmlElement
+	private String campaignName;
+	@XmlElement
+	private String existingLanRefNo;
+	@XmlElement
+	private boolean rsa;
+	@XmlElement
+	private String verification;
+	@XmlElement
+	private String leadSource;
+	@XmlElement
+	private String poSource;
+	@XmlElement
+	private String offerId;
+
+	//Offer Details End
+
+	//Sourcing Details
+	@XmlElement
+	private String sourcingBranch;
+	private String lovDescSourcingBranch;
+	@XmlElement
+	private String sourChannelCategory;
+	private Long asmName;
+	@XmlElement(name = "asmName")
+	private String lovDescAsmName;
+
 	//Payment type check
 	private boolean chequeOrDDAvailable;
-	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
+	private boolean neftAvailable; // If NEFT/IMPS/RTGS Available
 
 	// Commercial Workflow Purpose
 	private String approved;
@@ -201,9 +254,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescStepPolicyName;
 	@XmlElement
 	private boolean alwManualSteps;
+	@XmlElement
 	private int noOfSteps = 0;
+	private boolean shariaApprovalReq;
+	private String shariaStatus;
 	private String rejectStatus;
 	private String rejectReason;
+	private boolean isPaymentToBank;
+	private boolean isPayToDevSelCust;
 	private boolean scheduleChange;
 
 	private BigDecimal adjOrgBal = BigDecimal.ZERO;
@@ -212,7 +270,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean resetNxtRpyInstReq = false;
 	private boolean resetOrgBal = true;
 	private String lovDescEntityCode;
-	//private String parentRef = "";
+	// private String parentRef = "";
+	private String parentRef = "";
 
 	// Deviation Process
 	private boolean deviationApproval;
@@ -223,6 +282,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String applicationNo;
 	private String swiftBranchCode;
+	private String finBranchContact;
 
 	private boolean allowDrawingPower;
 	private boolean allowRevolving;
@@ -275,6 +335,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal grcMaxAmount = BigDecimal.ZERO;
 	private boolean grcFrqEditable;
 
+	// Advised profit Rates
+	@XmlElement
+	private String grcAdvBaseRate;
+	@XmlElement
+	private BigDecimal grcAdvMargin = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal grcAdvPftRate = BigDecimal.ZERO;
+
 	// ===========================================
 	// ==========Repay Period Details=============
 	// ===========================================
@@ -324,9 +392,26 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement(name = "repayMaxRate")
 	private BigDecimal rpyMaxRate = BigDecimal.ZERO;
 
+	@XmlElement(name = "repayAdvBaseRate")
+	private String rpyAdvBaseRate;
+	@XmlElement(name = "repayAdvMargin")
+	private BigDecimal rpyAdvMargin = BigDecimal.ZERO;
+	@XmlElement(name = "repayAdvPftRate")
+	private BigDecimal rpyAdvPftRate = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal supplementRent = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal increasedCost = BigDecimal.ZERO;
+	private BigDecimal curSuplRent = BigDecimal.ZERO;
+	private BigDecimal curIncrCost = BigDecimal.ZERO;
 	private boolean frqEditable = false;
 
-	//PV: 10MAY17: remove from exlcuded fields
+	@XmlElement
+	private String rolloverFrq;
+	@XmlElement
+	private Date nextRolloverDate;
+
+	// PV: 10MAY17: remove from exlcuded fields
 	private String calRoundingMode;
 	private int roundingTarget;
 
@@ -373,6 +458,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int maxReAgeHolidays;
 	@XmlElement
 	private String product;
+	@XmlElement
+	private BigDecimal reqLoanAmt = BigDecimal.ZERO;
+	@XmlElement
+	private Integer reqLoanTenor = 0;
 
 	// ===========================================
 	// =========Schedule Build Usage ============
@@ -419,6 +508,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean rateChgAnyDay;
 	private BigDecimal pastduePftMargin = BigDecimal.ZERO;
 	private BigDecimal pftCpzFromReset = BigDecimal.ZERO;
+	private boolean recalSteps = false;
 
 	// Finance Maintenance Details
 	private int allowedDefRpyChange = 0;
@@ -439,6 +529,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	// ===========================================
 	@XmlElement
 	private BigDecimal finAssetValue = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal finCurrAssetValue = BigDecimal.ZERO;
 	private Date nextDepDate;
 	private Date lastDepDate;
@@ -471,6 +562,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private boolean lovDescIsSchdGenerated = false;
 	private String lovDescProductCodeName;
+	private BigDecimal availCommitAmount = BigDecimal.ZERO;
 	private long jointCustId;
 	private String lovDescJointCustCIF;
 	private String lovDescJointCustShrtName;
@@ -501,10 +593,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal amountBD = BigDecimal.ZERO;
 	private BigDecimal amountUSD = BigDecimal.ZERO;
 	private BigDecimal maturity = BigDecimal.ZERO;
+	private boolean fundsAvailConfirmed;
+	private boolean policeCaseFound = false;
+	private boolean policeCaseOverride = false;
 	private boolean chequeFound = false;
 	private boolean chequeOverride = false;
 	private BigDecimal score = BigDecimal.ZERO;
 	private boolean smecustomer = false;
+	private boolean cadrequired = false;
 	private boolean feeExists = false;
 	private String receiptMode;
 	private String receiptModeStatus;
@@ -532,6 +628,16 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescAssignMthd;
 	private Map<String, String> lovDescBaseRoleCodeMap = null;
 	private String lovDescFirstTaskOwner;
+
+	// ===========================================
+	// =========DDA Registration Fields==========
+	// ===========================================
+
+	private String bankName;
+	private String bankNameDesc;
+	private String iban;
+	private String accountType;
+	private String ddaReferenceNo;
 
 	// ===========================================
 	// =========Schedule Calculator Purpose ======
@@ -584,8 +690,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String salesDepartment;
 	private String salesDepartmentDesc;
-	@XmlElement
 	private String dmaCode;
+	@XmlElement(name = "dmaCode")
+	private String dmaCodeReference;
 	private String dmaCodeDesc;
 	private String dmaName;
 	@XmlElement
@@ -619,7 +726,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String status;
 
-	//For Fee Reca Calculation
+	// For Fee Reca Calculation
 	private BigDecimal recalFee = BigDecimal.ZERO;
 	private int recalTerms = 0;
 
@@ -628,13 +735,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean modifyBpi = false;
 
 	// Service task specific implemented fields
-	//FIXME: DDP: how to pass the below values from extended fields to workflow.
+	// FIXME: DDP: how to pass the below values from extended fields to
+	// workflow.
 	private boolean rcu;
 	private boolean dedupMatch;
 	private boolean hunterGo = true;
 	private boolean bureau;
 
-	//GST Columns Added
+	// GST Columns Added
 	private BigDecimal recalCGSTFee = BigDecimal.ZERO;
 	private BigDecimal recalIGSTFee = BigDecimal.ZERO;
 	private BigDecimal recalSGSTFee = BigDecimal.ZERO;
@@ -653,9 +761,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean legalRequired;
 
-	private boolean depositProcess = false; // added for Cash Management 
-	@XmlElement
+	private boolean depositProcess = false; // added for Cash Management
+
 	private long connector;
+	@XmlElement(name = "connector")
+	private String connectorReference;
 	private String connectorCode;
 	private String connectorDesc;
 
@@ -674,7 +784,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Map<String, String> attributes = new HashMap<>();
 	private BigDecimal repayAmount = BigDecimal.ZERO;
 	private String entityCode;
-	//### 10-09-2018,Ticket id:124998
+	// ### 10-09-2018,Ticket id:124998
 	private String entityDesc;
 
 	// tasks #1152 Business Vertical Tagged with Loan
@@ -730,9 +840,51 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String hunterStatus;
 	private int autoRejectionDays;
 
-	//QDP AutoApprove Changes.
+	// QDP AutoApprove Changes.
 	private boolean autoApprove = false;
 	private Date eodValueDate;
+	private boolean simulateAccounting;
+	private List<ReturnDataSet> returnDataSet;
+
+	private boolean pmay;
+	//OCR changes
+	@XmlElement
+	private boolean finOcrRequired = false;
+	//Check the Deviations are  Avilable or not in Workflow
+	private boolean deviationAvail;
+	//Split Loan or Pricing Detail
+	private boolean alwLoanSplit;
+	private boolean loanSplitted = false;
+	// Under Construction Details
+	@XmlElement
+	private boolean alwGrcAdj;
+	@XmlElement
+	private boolean endGrcPeriodAftrFullDisb;
+	@XmlElement
+	private boolean autoIncGrcEndDate;
+	private int pendingCovntCount = 0;
+	private String custEmpType = "";
+	//Disb based schedule
+	private boolean instBasedSchd;
+	private boolean ocrDeviation = false;
+	//Accounting related
+	private String partnerBankAcType;
+	private String partnerBankAc;
+	private boolean writeoffLoan = false;
+	// Restructure Loan
+	private boolean restructure = false;
+
+	private EventProperties eventProperties = new EventProperties();
+	@XmlElement
+	private String tdsType;
+
+	private String calcOfSteps;
+	private String stepsAppliedFor;
+	private boolean isRpyStps;
+	private boolean isGrcStps;
+	private int noOfGrcSteps = 0;
+
+	private boolean cpzPosIntact = false;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -758,22 +910,32 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("amountBD");
 		excludeFields.add("maturity");
 		excludeFields.add("amountUSD");
+		excludeFields.add("availCommitAmount");
 		excludeFields.add("name");
+		excludeFields.add("fundsAvailConfirmed");
 		excludeFields.add("pftIntact");
 		excludeFields.add("adjTerms");
 		excludeFields.add("blacklistOverride");
+		excludeFields.add("policeCaseFound");
+		excludeFields.add("policeCaseOverride");
 		excludeFields.add("score");
 		excludeFields.add("chequeFound");
 		excludeFields.add("chequeOverride");
 		excludeFields.add("curFinAmount");
 		excludeFields.add("financingAmount");
 		excludeFields.add("smecustomer");
+		excludeFields.add("cadrequired");
+		excludeFields.add("grcAdvBaseRateDesc");
+		excludeFields.add("rpyAdvBaseRateDesc");
 		excludeFields.add("bankNameDesc");
 		excludeFields.add("mMADate");
 		excludeFields.add("custStsDescription");
+		excludeFields.add("shariaApprovalReq");
 		excludeFields.add("rejectStatus");
 		excludeFields.add("rejectReason");
 		excludeFields.add("feeExists");
+		excludeFields.add("isPaymentToBank");
+		excludeFields.add("isPayToDevSelCust");
 		excludeFields.add("totalPriAmt");
 		excludeFields.add("desiredProfit");
 		excludeFields.add("pftForSelectedPeriod");
@@ -795,13 +957,18 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("recalEndDate");
 		excludeFields.add("procMethod");
 		excludeFields.add("secondaryAccount");
+		excludeFields.add("agreeName");
 		excludeFields.add("finIsAlwMD");
 		excludeFields.add("dsaCodeDesc");
+		excludeFields.add("dsaCodeReference");
 		excludeFields.add("dsaName");
 		excludeFields.add("finWriteoffAc");
+		excludeFields.add("lovDecMMAReference");
 		excludeFields.add("numOfMonths");
 		excludeFields.add("ifscCode");
 		excludeFields.add("refundAmount");
+		excludeFields.add("curSuplRent");
+		excludeFields.add("curIncrCost");
 		excludeFields.add("schPriDue");
 		excludeFields.add("schPftDue");
 		excludeFields.add("preApprovalFinance");
@@ -815,13 +982,16 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("disbInstList");
 		excludeFields.add("validateMain");
 		excludeFields.add("salesDepartmentDesc");
+		excludeFields.add("dmaCodeReference");
+		excludeFields.add("accountsOfficerReference");
+		excludeFields.add("connectorReference");
 		excludeFields.add("dmaCodeDesc");
 		excludeFields.add("dmaName");
 		excludeFields.add("referralIdDesc");
 		excludeFields.add("calGrcTerms");
 		excludeFields.add("calGrcEndDate");
 		excludeFields.add("tDSAmount");
-		excludeFields.add("availcommitamount");
+
 		excludeFields.add("nextRoleCodeDesc");
 		excludeFields.add("secUsrFullName");
 		excludeFields.add("workFlowType");
@@ -846,7 +1016,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("resetNxtRpyInstReq");
 		excludeFields.add("postingId");
 
-		//GST
+		// GST
 		excludeFields.add("recalCGSTFee");
 		excludeFields.add("recalIGSTFee");
 		excludeFields.add("recalSGSTFee");
@@ -868,7 +1038,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("lovEligibilityMethod");
 		excludeFields.add("lovDescEligibilityMethod");
 
-		//Cash Management
+		// Cash Management
 		excludeFields.add("depositProcess");
 
 		excludeFields.add("connectorCode");
@@ -884,9 +1054,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("repayAmount");
 		excludeFields.add("entityDesc");
 		excludeFields.add("entityCode");
+		excludeFields.add("finBranchContact");
 		excludeFields.add("nextUsrName");
 
-		//Payment type check
+		// Payment type check
 		excludeFields.add("chequeOrDDAvailable");
 		excludeFields.add("neftAvailable");
 
@@ -894,7 +1065,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("businessVerticalCode");
 		excludeFields.add("businessVerticalDesc");
 
-		// As part of receipt merging 
+		// As part of receipt merging
 		excludeFields.add("alwFlexi");
 		excludeFields.add("flexiAmount");
 		excludeFields.add("chgDropLineSchd");
@@ -924,21 +1095,572 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("cancelRemarks");
 		excludeFields.add("extendedFields");
 		excludeFields.add("autoApprove");
-		//hunterStatus
+		// hunterStatus
 		excludeFields.add("hunterStatus");
 		excludeFields.add("autoRejectionDays");
 		excludeFields.add("osPriBal");
 		excludeFields.add("rateChange");
 		excludeFields.add("appDate");
 		excludeFields.add("eodValueDate");
+		//Sourcing Details
+		excludeFields.add("lovDescSourcingBranch");
+		excludeFields.add("lovDescAsmName");
+		excludeFields.add("deviationAvail");
+		excludeFields.add("pendingCovntCount");
+		excludeFields.add("appDate");
+		excludeFields.add("parentRef");
+		excludeFields.add("recalSteps");
+
+		excludeFields.add("loanSplitted");
+		excludeFields.add("custEmpType");
+		excludeFields.add("planEMIHAlwInGrace");
+		excludeFields.add("simulateAccounting");
+		excludeFields.add("returnDataSet");
+		excludeFields.add("ocrDeviation");
+		excludeFields.add("eventProperties");
+		//Accounting related
+		excludeFields.add("partnerBankAcType");
+		excludeFields.add("partnerBankAc");
+		excludeFields.add("tdsType");
+		excludeFields.add("isRpyStps");
+		excludeFields.add("isGrcStps");
+		excludeFields.add("cpzPosIntact");
 		return excludeFields;
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
+	public FinanceMain copyEntity() {
+		FinanceMain entity = new FinanceMain();
+		entity.setFinReference(this.finReference);
+		entity.setLinkedFinRef(this.linkedFinRef);
+		entity.setInvestmentRef(this.investmentRef);
+		entity.setFinType(this.finType);
+		entity.setLovDescFinTypeName(this.lovDescFinTypeName);
+		entity.setPromotionCode(this.promotionCode);
+		entity.setFinCcy(this.finCcy);
+		entity.setProfitDaysBasis(this.profitDaysBasis);
+		entity.setCustID(this.custID);
+		entity.setLovDescCustCIF(this.lovDescCustCIF);
+		entity.setLovDescCustShrtName(this.lovDescCustShrtName);
+		entity.setFinBranch(this.finBranch);
+		entity.setLovDescFinBranchName(this.lovDescFinBranchName);
+		entity.setFinBranchProvinceCode(this.finBranchProvinceCode);
+		entity.setFinStartDate(this.finStartDate);
+		entity.setFinContractDate(this.finContractDate);
+		entity.setFinAmount(this.finAmount);
+		entity.setDisbAccountId(this.disbAccountId);
+		entity.setRepayAccountId(this.repayAccountId);
+		entity.setFinCancelAc(this.finCancelAc);
+		entity.setFinWriteoffAc(this.finWriteoffAc);
+		entity.setMinDownPayPerc(this.minDownPayPerc);
+		entity.setDownPayment(this.downPayment);
+		entity.setAdvanceEMI(this.advanceEMI);
+		entity.setDownPayBank(this.downPayBank);
+		entity.setDownPaySupl(this.downPaySupl);
+		entity.setDownPayAccount(this.downPayAccount);
+		entity.setDefferments(this.defferments);
+		entity.setPlanDeferCount(this.planDeferCount);
+		entity.setFinPurpose(this.finPurpose);
+		entity.setLovDescFinPurposeName(this.lovDescFinPurposeName);
+		entity.setAllowGrcPeriod(this.allowGrcPeriod);
+		entity.setFinRepayMethod(this.finRepayMethod);
+		entity.setFinCommitmentRef(this.finCommitmentRef);
+		entity.setLovDescCommitmentRefName(this.lovDescCommitmentRefName);
+		entity.setDepreciationFrq(this.depreciationFrq);
+		entity.setFinIsActive(this.finIsActive);
+		entity.setFinRemarks(this.finRemarks);
+		entity.setInitiateUser(this.initiateUser);
+		entity.setInitiateDate(this.initiateDate);
+		entity.setMMAId(this.mMAId);
+		entity.setAgreeName(this.agreeName);
+		entity.setFinIsAlwMD(this.finIsAlwMD);
+		entity.setAccountsOfficer(this.accountsOfficer);
+		entity.setAccountsOfficerReference(this.accountsOfficerReference);
+		entity.setDsaCode(this.dsaCode);
+		entity.setDsaCodeReference(this.dsaCodeReference);
+		entity.setDsaName(this.dsaName);
+		entity.setDsaCodeDesc(this.dsaCodeDesc);
+		entity.setLovDescAccountsOfficer(this.lovDescAccountsOfficer);
+		entity.setLovDescSourceCity(this.lovDescSourceCity);
+		entity.setLovDescMobileNumber(this.lovDescMobileNumber);
+		entity.setLovDescFinProduct(this.lovDescFinProduct);
+		entity.setLovDescCustCRCPR(this.lovDescCustCRCPR);
+		entity.setLovDescCustPassportNo(this.lovDescCustPassportNo);
+		entity.setLovDescCustDOB(this.lovDescCustDOB);
+		entity.setLovDescRequestStage(this.lovDescRequestStage);
+		entity.setLovDescQueuePriority(this.lovDescQueuePriority);
+		entity.setLovDescMMAReference(this.lovDescMMAReference);
+		entity.setTDSApplicable(this.tDSApplicable);
+		entity.setDroplineFrq(this.droplineFrq);
+		entity.setFirstDroplineDate(this.firstDroplineDate);
+		entity.setPftServicingODLimit(this.pftServicingODLimit);
+		entity.setOfferProduct(this.offerProduct);
+		entity.setOfferAmount(this.offerAmount);
+		entity.setCustSegmentation(this.custSegmentation);
+		entity.setBaseProduct(this.baseProduct);
+		entity.setProcessType(this.processType);
+		entity.setBureauTimeSeries(this.bureauTimeSeries);
+		entity.setCampaignName(this.campaignName);
+		entity.setExistingLanRefNo(this.existingLanRefNo);
+		entity.setRsa(this.rsa);
+		entity.setVerification(this.verification);
+		entity.setLeadSource(this.leadSource);
+		entity.setPoSource(this.poSource);
+		entity.setOfferId(this.offerId);
+		entity.setSourcingBranch(this.sourcingBranch);
+		entity.setLovDescSourcingBranch(this.lovDescSourcingBranch);
+		entity.setSourChannelCategory(this.sourChannelCategory);
+		entity.setAsmName(this.asmName);
+		entity.setLovDescAsmName(this.lovDescAsmName);
+		entity.setChequeOrDDAvailable(this.chequeOrDDAvailable);
+		entity.setNeftAvailable(this.neftAvailable);
+		entity.setApproved(this.approved);
+		entity.setSecurityDeposit(this.securityDeposit);
+		entity.setDeductFeeDisb(this.deductFeeDisb);
+		entity.setDeductInsDisb(this.deductInsDisb);
+		entity.setStepFinance(this.stepFinance);
+		entity.setStepType(this.stepType);
+		entity.setStepPolicy(this.stepPolicy);
+		entity.setLovDescStepPolicyName(this.lovDescStepPolicyName);
+		entity.setAlwManualSteps(this.alwManualSteps);
+		entity.setNoOfSteps(this.noOfSteps);
+		entity.setShariaApprovalReq(this.shariaApprovalReq);
+		entity.setShariaStatus(this.shariaStatus);
+		entity.setRejectStatus(this.rejectStatus);
+		entity.setRejectReason(this.rejectReason);
+		entity.setPaymentToBank(this.isPaymentToBank);
+		entity.setPayToDevSelCust(this.isPayToDevSelCust);
+		entity.setScheduleChange(this.scheduleChange);
+		entity.setAdjOrgBal(this.adjOrgBal);
+		entity.setRemBalForAdj(this.remBalForAdj);
+		entity.setDevFinCalReq(this.devFinCalReq);
+		entity.setResetNxtRpyInstReq(this.resetNxtRpyInstReq);
+		entity.setResetOrgBal(this.resetOrgBal);
+		entity.setLovDescEntityCode(this.lovDescEntityCode);
+		entity.setParentRef(this.parentRef);
+		entity.setDeviationApproval(this.deviationApproval);
+		entity.setFinPreApprovedRef(this.finPreApprovedRef);
+		entity.setPreApprovalFinance(this.preApprovalFinance);
+		entity.setPreApprovalExpired(this.preApprovalExpired);
+		entity.setApplicationNo(this.applicationNo);
+		entity.setSwiftBranchCode(this.swiftBranchCode);
+		entity.setFinBranchContact(this.finBranchContact);
+		entity.setAllowDrawingPower(this.allowDrawingPower);
+		entity.setAllowRevolving(this.allowRevolving);
+		entity.setFinIsRateRvwAtGrcEnd(this.finIsRateRvwAtGrcEnd);
+		entity.setRateChange(this.rateChange);
+		entity.setGraceTerms(this.graceTerms);
+		entity.setGrcPeriodEndDate(this.grcPeriodEndDate);
+		entity.setGrcRateBasis(this.grcRateBasis);
+		entity.setGrcPftRate(this.grcPftRate);
+		entity.setGraceBaseRate(this.graceBaseRate);
+		entity.setGraceSpecialRate(this.graceSpecialRate);
+		entity.setGrcMargin(this.grcMargin);
+		entity.setGrcProfitDaysBasis(this.grcProfitDaysBasis);
+		entity.setGrcPftFrq(this.grcPftFrq);
+		entity.setNextGrcPftDate(this.nextGrcPftDate);
+		entity.setAllowGrcPftRvw(this.allowGrcPftRvw);
+		entity.setGrcPftRvwFrq(this.grcPftRvwFrq);
+		entity.setNextGrcPftRvwDate(this.nextGrcPftRvwDate);
+		entity.setAllowGrcCpz(this.allowGrcCpz);
+		entity.setGrcCpzFrq(this.grcCpzFrq);
+		entity.setNextGrcCpzDate(this.nextGrcCpzDate);
+		entity.setAllowGrcRepay(this.allowGrcRepay);
+		entity.setGrcSchdMthd(this.grcSchdMthd);
+		entity.setGrcMinRate(this.grcMinRate);
+		entity.setGrcMaxRate(this.grcMaxRate);
+		entity.setGrcMaxAmount(this.grcMaxAmount);
+		entity.setGrcFrqEditable(this.grcFrqEditable);
+		entity.setGrcAdvBaseRate(this.grcAdvBaseRate);
+		entity.setGrcAdvMargin(this.grcAdvMargin);
+		entity.setGrcAdvPftRate(this.grcAdvPftRate);
+		entity.setNumberOfTerms(this.numberOfTerms);
+		entity.setNOInst(this.NOInst);
+		entity.setReqRepayAmount(this.reqRepayAmount);
+		entity.setRepayRateBasis(this.repayRateBasis);
+		entity.setRepayProfitRate(this.repayProfitRate);
+		entity.setRepayBaseRate(this.repayBaseRate);
+		entity.setRepayBaseRateVal(this.repayBaseRateVal);
+		entity.setRepaySpecialRate(this.repaySpecialRate);
+		entity.setRepayMargin(this.repayMargin);
+		entity.setScheduleMethod(this.scheduleMethod);
+		entity.setRepayPftFrq(this.repayPftFrq);
+		entity.setNextRepayPftDate(this.nextRepayPftDate);
+		entity.setAllowRepayRvw(this.allowRepayRvw);
+		entity.setRepayRvwFrq(this.repayRvwFrq);
+		entity.setNextRepayRvwDate(this.nextRepayRvwDate);
+		entity.setAllowRepayCpz(this.allowRepayCpz);
+		entity.setRepayCpzFrq(this.repayCpzFrq);
+		entity.setNextRepayCpzDate(this.nextRepayCpzDate);
+		entity.setRepayFrq(this.repayFrq);
+		entity.setNextRepayDate(this.nextRepayDate);
+		entity.setMaturityDate(this.maturityDate);
+		entity.setFinRepayPftOnFrq(this.finRepayPftOnFrq);
+		entity.setRpyMinRate(this.rpyMinRate);
+		entity.setRpyMaxRate(this.rpyMaxRate);
+		entity.setRpyAdvBaseRate(this.rpyAdvBaseRate);
+		entity.setRpyAdvMargin(this.rpyAdvMargin);
+		entity.setRpyAdvPftRate(this.rpyAdvPftRate);
+		entity.setSupplementRent(this.supplementRent);
+		entity.setIncreasedCost(this.increasedCost);
+		entity.setCurSuplRent(this.curSuplRent);
+		entity.setCurIncrCost(this.curIncrCost);
+		entity.setFrqEditable(this.frqEditable);
+		entity.setRolloverFrq(this.rolloverFrq);
+		entity.setNextRolloverDate(this.nextRolloverDate);
+		entity.setCalRoundingMode(this.calRoundingMode);
+		entity.setRoundingTarget(this.roundingTarget);
+		entity.setAlwMultiDisb(this.alwMultiDisb);
+		entity.setPostingId(this.postingId);
+		entity.setAlwBPI(this.alwBPI);
+		entity.setBpiTreatment(this.bpiTreatment);
+		entity.setBpiPftDaysBasis(this.bpiPftDaysBasis);
+		entity.setPlanEMIHAlw(this.planEMIHAlw);
+		entity.setPlanEMIHAlwInGrace(this.planEMIHAlwInGrace);
+		entity.setPlanEMIHMethod(this.planEMIHMethod);
+		entity.setPlanEMIHMaxPerYear(this.planEMIHMaxPerYear);
+		entity.setPlanEMIHMax(this.planEMIHMax);
+		entity.setPlanEMIHLockPeriod(this.planEMIHLockPeriod);
+		entity.setPlanEMICpz(this.planEMICpz);
+		entity.setUnPlanEMIHLockPeriod(this.unPlanEMIHLockPeriod);
+		entity.setUnPlanEMICpz(this.unPlanEMICpz);
+		entity.setReAgeCpz(this.reAgeCpz);
+		entity.setMaxUnplannedEmi(this.maxUnplannedEmi);
+		entity.setMaxReAgeHolidays(this.maxReAgeHolidays);
+		entity.setProduct(this.product);
+		entity.setReqLoanAmt(this.reqLoanAmt);
+		entity.setReqLoanTenor(this.reqLoanTenor);
+		entity.setFeeChargeAmt(this.feeChargeAmt);
+		entity.setInsuranceAmt(this.insuranceAmt);
+		entity.setCurDisbursementAmt(this.curDisbursementAmt);
+		entity.setAnualizedPercRate(this.anualizedPercRate);
+		entity.setEffectiveRateOfReturn(this.effectiveRateOfReturn);
+		entity.setCpzAtGraceEnd(this.cpzAtGraceEnd);
+		entity.setTotalGracePft(this.totalGracePft);
+		entity.setTotalGraceCpz(this.totalGraceCpz);
+		entity.setTotalGrossGrcPft(this.totalGrossGrcPft);
+		entity.setTotalProfit(this.totalProfit);
+		entity.setTotalCpz(this.totalCpz);
+		entity.setTotalGrossPft(this.totalGrossPft);
+		entity.setTotalRepayAmt(this.totalRepayAmt);
+		entity.setCalculateRepay(this.calculateRepay);
+		entity.setEqualRepay(this.equalRepay);
+		entity.setCalGrcTerms(this.calGrcTerms);
+		entity.setCalGrcEndDate(this.calGrcEndDate);
+		entity.setCalTerms(this.calTerms);
+		entity.setCalMaturity(this.calMaturity);
+		entity.setFirstRepay(this.firstRepay);
+		entity.setLastRepay(this.lastRepay);
+		entity.setFinRepaymentAmount(this.finRepaymentAmount);
+		entity.setEventFromDate(this.eventFromDate);
+		entity.setEventToDate(this.eventToDate);
+		entity.setRecalFromDate(this.recalFromDate);
+		entity.setRecalToDate(this.recalToDate);
+		entity.setRecalType(this.recalType);
+		entity.setRecalSchdMethod(this.recalSchdMethod);
+		entity.setDesiredProfit(this.desiredProfit);
+		entity.setRvwRateApplFor(this.rvwRateApplFor);
+		entity.setLovDescAdjClosingBal(this.lovDescAdjClosingBal);
+		entity.setTotalPriAmt(this.totalPriAmt);
+		entity.setSchPriDue(this.schPriDue);
+		entity.setSchPftDue(this.schPftDue);
+		entity.setSchCalOnRvw(this.schCalOnRvw);
+		entity.setPastduePftCalMthd(this.pastduePftCalMthd);
+		entity.setDroppingMethod(this.droppingMethod);
+		entity.setRateChgAnyDay(this.rateChgAnyDay);
+		entity.setPastduePftMargin(this.pastduePftMargin);
+		entity.setPftCpzFromReset(this.pftCpzFromReset);
+		entity.setRecalSteps(this.recalSteps);
+		entity.setAllowedDefRpyChange(this.allowedDefRpyChange);
+		entity.setAvailedDefRpyChange(this.availedDefRpyChange);
+		entity.setAllowedDefFrqChange(this.allowedDefFrqChange);
+		entity.setAvailedDefFrqChange(this.availedDefFrqChange);
+		entity.setLastRepayDate(this.lastRepayDate);
+		entity.setLastRepayPftDate(this.lastRepayPftDate);
+		entity.setLastRepayRvwDate(this.lastRepayRvwDate);
+		entity.setLastRepayCpzDate(this.lastRepayCpzDate);
+		entity.setPftIntact(this.pftIntact);
+		entity.setAdjTerms(this.adjTerms);
+		entity.setAdjustClosingBal(this.isAdjustClosingBal);
+		entity.setOsPriBal(this.osPriBal);
+		entity.setFinAssetValue(this.finAssetValue);
+		entity.setFinCurrAssetValue(this.finCurrAssetValue);
+		entity.setNextDepDate(this.nextDepDate);
+		entity.setLastDepDate(this.lastDepDate);
+		entity.setFinSourceID(this.finSourceID);
+		entity.setRcdMaintainSts(this.rcdMaintainSts);
+		entity.setLovDescFinScheduleOn(this.lovDescFinScheduleOn);
+		entity.setClosingStatus(this.closingStatus);
+		entity.setFinApprovedDate(this.finApprovedDate);
+		entity.setLovDescTenorName(this.lovDescTenorName);
+		entity.setMigratedFinance(this.migratedFinance);
+		entity.setScheduleMaintained(this.scheduleMaintained);
+		entity.setScheduleRegenerated(this.scheduleRegenerated);
+		entity.setManualSchedule(this.manualSchedule);
+		entity.setTakeOverFinance(this.takeOverFinance);
+		entity.setFinStatus(this.finStatus);
+		entity.setFinStsReason(this.finStsReason);
+		entity.setCustDSR(this.custDSR);
+		entity.setCurFinAmount(this.curFinAmount);
+		entity.setFinancingAmount(this.financingAmount);
+		entity.setBpiAmount(this.bpiAmount);
+		entity.setAppDate(this.appDate);
+		entity.setLovDescFinancingAmount(this.lovDescFinancingAmount);
+		entity.setLovDescIsSchdGenerated(this.lovDescIsSchdGenerated);
+		entity.setLovDescProductCodeName(this.lovDescProductCodeName);
+		entity.setAvailCommitAmount(this.availCommitAmount);
+		entity.setJointCustId(this.jointCustId);
+		entity.setLovDescJointCustCIF(this.lovDescJointCustCIF);
+		entity.setLovDescJointCustShrtName(this.lovDescJointCustShrtName);
+		entity.setJointAccount(this.jointAccount);
+		entity.setFinAccount(this.finAccount);
+		entity.setFinCustPftAccount(this.finCustPftAccount);
+		entity.setLovDescAccruedTillLBD(this.lovDescAccruedTillLBD);
+		entity.setCustStsDescription(this.custStsDescription);
+		entity.setDedupFound(this.dedupFound);
+		entity.setSkipDedup(this.skipDedup);
+		entity.setProceedDedup(this.proceedDedup);
+		entity.setBlacklisted(this.blacklisted);
+		entity.setBlacklistOverride(this.blacklistOverride);
+		entity.setLimitValid(this.limitValid);
+		entity.setOverrideLimit(this.overrideLimit);
+		entity.setAmount(this.amount);
+		entity.setException(this.exception);
+		entity.setAmountBD(this.amountBD);
+		entity.setAmountUSD(this.amountUSD);
+		entity.setMaturity(this.maturity);
+		entity.setFundsAvailConfirmed(this.fundsAvailConfirmed);
+		entity.setPoliceCaseFound(this.policeCaseFound);
+		entity.setPoliceCaseOverride(this.policeCaseOverride);
+		entity.setChequeFound(this.chequeFound);
+		entity.setChequeOverride(this.chequeOverride);
+		entity.setScore(this.score);
+		entity.setSmecustomer(this.smecustomer);
+		entity.setCadrequired(this.cadrequired);
+		entity.setFeeExists(this.feeExists);
+		entity.setReceiptMode(this.receiptMode);
+		entity.setReceiptModeStatus(this.receiptModeStatus);
+		entity.setReceiptPurpose(this.receiptPurpose);
+		entity.setWaivedAmt(this.waivedAmt);
+		entity.setLovDescCustCoreBank(this.lovDescCustCoreBank);
+		entity.setLovDescCustFName(this.lovDescCustFName);
+		entity.setLovDescCustLName(this.lovDescCustLName);
+		entity.setLovDescSalutationName(this.lovDescSalutationName);
+		entity.setLovDescCustCtgCode(this.lovDescCustCtgCode);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setNextUserId(this.nextUserId);
+		entity.setNextUsrName(this.nextUsrName);
+		entity.setPriority(this.priority);
+		entity.setLovDescAssignMthd(this.lovDescAssignMthd);
+		if (lovDescBaseRoleCodeMap != null) {
+			entity.setLovDescBaseRoleCodeMap(new HashMap<String, String>());
+			this.lovDescBaseRoleCodeMap.entrySet().stream()
+					.forEach(e -> entity.getLovDescBaseRoleCodeMap().put(e.getKey(), e.getValue()));
+		}
+		entity.setLovDescFirstTaskOwner(this.lovDescFirstTaskOwner);
+		entity.setBankName(this.bankName);
+		entity.setBankNameDesc(this.bankNameDesc);
+		entity.setIban(this.iban);
+		entity.setAccountType(this.accountType);
+		entity.setDdaReferenceNo(this.ddaReferenceNo);
+		entity.setPftForSelectedPeriod(this.pftForSelectedPeriod);
+		entity.setMiscAmount(this.miscAmount);
+		entity.setIndexMisc(this.indexMisc);
+		entity.setCompareToExpected(this.compareToExpected);
+		entity.setCompareExpectedResult(this.compareExpectedResult);
+		entity.setCompareExpectIndex(this.compareExpectIndex);
+		entity.setCompareWith(this.compareWith);
+		entity.setProtectSchdPft(this.protectSchdPft);
+		entity.setSchdIndex(this.schdIndex);
+		entity.setIndexStart(this.indexStart);
+		entity.setIndexEnd(this.indexEnd);
+		entity.setNewMaturityIndex(this.newMaturityIndex);
+		entity.setReqMaturity(this.reqMaturity);
+		entity.setProcMethod(this.procMethod);
+		entity.setIfscCode(this.ifscCode);
+		entity.setReqTerms(this.reqTerms);
+		entity.setIncreaseTerms(this.increaseTerms);
+		entity.setLovDescFinDivision(this.lovDescFinDivision);
+		entity.setLovValue(this.lovValue);
+		entity.setFeeAccountId(this.feeAccountId);
+		entity.setFinLimitRef(this.finLimitRef);
+		entity.setLovDescLimitRefName(this.lovDescLimitRefName);
+		entity.setProductCategory(this.productCategory);
+		entity.setMandateID(this.mandateID);
+		entity.setRefundAmount(this.refundAmount);
+		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
+		if (lovDescNextUsersRolesMap != null) {
+			entity.setLovDescNextUsersRolesMap(new HashMap<String, String>());
+			this.lovDescNextUsersRolesMap.entrySet().stream()
+					.forEach(e -> entity.getLovDescNextUsersRolesMap().put(e.getKey(), e.getValue()));
+		}
+		this.secondaryAccount.stream()
+				.forEach(e -> entity.getSecondaryAccount().add(e == null ? null : e.copyEntity()));
+		entity.setSalesDepartment(this.salesDepartment);
+		entity.setSalesDepartmentDesc(this.salesDepartmentDesc);
+		entity.setDmaCode(this.dmaCode);
+		entity.setDmaCodeReference(this.dmaCodeReference);
+		entity.setDmaCodeDesc(this.dmaCodeDesc);
+		entity.setDmaName(this.dmaName);
+		entity.setReferralId(this.referralId);
+		entity.setReferralIdDesc(this.referralIdDesc);
+		entity.setEmployeeName(this.employeeName);
+		entity.setEmployeeNameDesc(this.employeeNameDesc);
+		entity.setQuickDisb(this.quickDisb);
+		entity.setWifReference(this.wifReference);
+		entity.setAvailedUnPlanEmi(this.availedUnPlanEmi);
+		entity.setAvailedReAgeH(this.availedReAgeH);
+		entity.setWorkFlowType(this.workFlowType);
+		entity.setNextRoleCodeDesc(this.nextRoleCodeDesc);
+		entity.setSecUsrFullName(this.secUsrFullName);
+		entity.setValidateMain(this.validateMain);
+		entity.setFirstDisbDate(this.firstDisbDate);
+		entity.setLastDisbDate(this.lastDisbDate);
+		entity.setDueBucket(this.dueBucket);
+		entity.setReAgeBucket(this.reAgeBucket);
+		entity.setFinCategory(this.finCategory);
+		entity.setStage(this.stage);
+		entity.setStatus(this.status);
+		entity.setRecalFee(this.recalFee);
+		entity.setRecalTerms(this.recalTerms);
+		entity.setBpiResetReq(this.bpiResetReq);
+		entity.setModifyBpi(this.modifyBpi);
+		entity.setRcu(this.rcu);
+		entity.setDedupMatch(this.dedupMatch);
+		entity.setHunterGo(this.hunterGo);
+		entity.setBureau(this.bureau);
+		entity.setRecalCGSTFee(this.recalCGSTFee);
+		entity.setRecalIGSTFee(this.recalIGSTFee);
+		entity.setRecalSGSTFee(this.recalSGSTFee);
+		entity.setRecalUGSTFee(this.recalUGSTFee);
+		entity.setEligibilityMethod(this.eligibilityMethod);
+		entity.setLovEligibilityMethod(this.lovEligibilityMethod);
+		entity.setLovDescEligibilityMethod(this.lovDescEligibilityMethod);
+		entity.setCollateralType(this.collateralType);
+		entity.setMarketValue(this.marketValue);
+		entity.setGuidedValue(this.guidedValue);
+		entity.setTotalExposure(this.totalExposure);
+		entity.setSamplingRequired(this.samplingRequired);
+		entity.setLegalRequired(this.legalRequired);
+		entity.setDepositProcess(this.depositProcess);
+		entity.setConnector(this.connector);
+		entity.setConnectorReference(this.connectorReference);
+		entity.setConnectorCode(this.connectorCode);
+		entity.setConnectorDesc(this.connectorDesc);
+		entity.setVanReq(this.vanReq);
+		entity.setVanCode(this.vanCode);
+		entity.setFixedRateTenor(this.fixedRateTenor);
+		entity.setFixedTenorRate(this.fixedTenorRate);
+		entity.setFixedTenorEndDate(this.fixedTenorEndDate);
+		entity.setProcessAttributes(this.processAttributes);
+		entity.setHigherDeviationApprover(this.higherDeviationApprover);
+		this.attributes.entrySet().stream().forEach(e -> entity.getAttributes().put(e.getKey(), e.getValue()));
+		entity.setRepayAmount(this.repayAmount);
+		entity.setEntityCode(this.entityCode);
+		entity.setEntityDesc(this.entityDesc);
+		entity.setBusinessVertical(this.businessVertical);
+		entity.setBusinessVerticalCode(this.businessVerticalCode);
+		entity.setBusinessVerticalDesc(this.businessVerticalDesc);
+		entity.setGrcAdvType(this.grcAdvType);
+		entity.setGrcAdvTerms(this.grcAdvTerms);
+		entity.setAdvType(this.advType);
+		entity.setAdvTerms(this.advTerms);
+		entity.setAdvStage(this.advStage);
+		entity.setAlwFlexi(this.alwFlexi);
+		entity.setFlexiAmount(this.flexiAmount);
+		entity.setChgDropLineSchd(this.chgDropLineSchd);
+		entity.setAssignmentId(this.assignmentId);
+		entity.setPromotionSeqId(this.promotionSeqId);
+		entity.setLoanCategory(this.loanCategory);
+		entity.setAllowSubvention(this.allowSubvention);
+		this.glSubHeadCodes.entrySet().stream().forEach(e -> entity.getGlSubHeadCodes().put(e.getKey(), e.getValue()));
+		entity.setClosedDate(this.closedDate);
+		entity.setRecalIdx(this.recalIdx);
+		entity.setAlwStrtPrdHday(this.alwStrtPrdHday);
+		entity.setMaxStrtPrdHdays(this.maxStrtPrdHdays);
+		entity.setStrtPrdHdays(this.strtPrdHdays);
+		entity.setStrtprdCpzMethod(this.strtprdCpzMethod);
+		entity.setOldFinReference(this.oldFinReference);
+		entity.setCoreBankId(this.coreBankId);
+		entity.setTdsPercentage(this.tdsPercentage);
+		entity.setTdsStartDate(this.tdsStartDate);
+		entity.setTdsEndDate(this.tdsEndDate);
+		entity.setTdsLimitAmt(this.tdsLimitAmt);
+		entity.setIntTdsAdjusted(this.intTdsAdjusted);
+		entity.setExtReference(this.extReference);
+		entity.setServiceName(this.serviceName);
+		entity.setSanBsdSchdle(this.sanBsdSchdle);
+		entity.setApplySanctionCheck(this.applySanctionCheck);
+		entity.setSvAmount(this.svAmount);
+		entity.setCbAmount(this.cbAmount);
+		entity.setbRRpyRvwFrq(this.bRRpyRvwFrq);
+		entity.setTotalFinAmount(this.totalFinAmount);
+		entity.setAppliedLoanAmt(this.appliedLoanAmt);
+		entity.setSkipRateReset(this.skipRateReset);
+		this.detailsList.stream().forEach(e -> entity.getDetailsList().add(e == null ? null : e.copyEntity()));
+		entity.setCancelRemarks(this.cancelRemarks);
+		entity.setExtendedFields(this.extendedFields);
+		entity.setHunterStatus(this.hunterStatus);
+		entity.setAutoRejectionDays(this.autoRejectionDays);
+		entity.setAutoApprove(this.autoApprove);
+		entity.setEodValueDate(this.eodValueDate);
+		entity.setSimulateAccounting(this.simulateAccounting);
+		if (returnDataSet != null) {
+			entity.setReturnDataSet(new ArrayList<ReturnDataSet>());
+			this.returnDataSet.stream().forEach(e -> entity.getReturnDataSet().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setPmay(this.pmay);
+		entity.setFinOcrRequired(this.finOcrRequired);
+		entity.setDeviationAvail(this.deviationAvail);
+		entity.setAlwLoanSplit(this.alwLoanSplit);
+		entity.setLoanSplitted(this.loanSplitted);
+		entity.setAlwGrcAdj(this.alwGrcAdj);
+		entity.setEndGrcPeriodAftrFullDisb(this.endGrcPeriodAftrFullDisb);
+		entity.setAutoIncGrcEndDate(this.autoIncGrcEndDate);
+		entity.setPendingCovntCount(this.pendingCovntCount);
+		entity.setCustEmpType(this.custEmpType);
+		entity.setInstBasedSchd(this.instBasedSchd);
+		entity.setOcrDeviation(this.ocrDeviation);
+		entity.setPartnerBankAcType(this.partnerBankAcType);
+		entity.setPartnerBankAc(this.partnerBankAc);
+		entity.setWriteoffLoan(this.writeoffLoan);
+		entity.setRestructure(this.restructure);
+		entity.setEventProperties(this.eventProperties == null ? null : this.eventProperties.copyEntity());
+		entity.setTdsType(this.tdsType);
+		entity.setCalcOfSteps(this.calcOfSteps);
+		entity.setStepsAppliedFor(this.stepsAppliedFor);
+		entity.setRpyStps(this.isRpyStps);
+		entity.setGrcStps(this.isGrcStps);
+		entity.setNoOfGrcSteps(this.noOfGrcSteps);
+		entity.setCpzPosIntact(this.cpzPosIntact);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public FinanceMain() {
 		super();
+	}
+
+	public String getLovDescAsmName() {
+		return lovDescAsmName;
+	}
+
+	public void setLovDescAsmName(String lovDescAsmName) {
+		this.lovDescAsmName = lovDescAsmName;
 	}
 
 	public FinanceMain(String finReference) {
@@ -2166,6 +2888,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.approved = approved;
 	}
 
+	public void setAvailCommitAmount(BigDecimal availCommitAmount) {
+		this.availCommitAmount = availCommitAmount;
+	}
+
+	public BigDecimal getAvailCommitAmount() {
+		return availCommitAmount;
+	}
+
 	public BigDecimal getSecurityDeposit() {
 		return securityDeposit;
 	}
@@ -2182,12 +2912,28 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.deductFeeDisb = deductFeeDisb;
 	}
 
+	public boolean isFundsAvailConfirmed() {
+		return fundsAvailConfirmed;
+	}
+
+	public void setFundsAvailConfirmed(boolean fundsAvailConfirmed) {
+		this.fundsAvailConfirmed = fundsAvailConfirmed;
+	}
+
 	public void setLovDescCustCoreBank(String lovDescCustCoreBank) {
 		this.lovDescCustCoreBank = lovDescCustCoreBank;
 	}
 
 	public String getLovDescCustCoreBank() {
 		return lovDescCustCoreBank;
+	}
+
+	public String getInvestmentRef() {
+		return investmentRef;
+	}
+
+	public void setInvestmentRef(String investmentRef) {
+		this.investmentRef = investmentRef;
 	}
 
 	public int getGraceTerms() {
@@ -2270,12 +3016,44 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.noOfSteps = noOfSteps;
 	}
 
+	public boolean isShariaApprovalReq() {
+		return shariaApprovalReq;
+	}
+
+	public void setShariaApprovalReq(boolean shariaApprovalReq) {
+		this.shariaApprovalReq = shariaApprovalReq;
+	}
+
+	public String getShariaStatus() {
+		return shariaStatus;
+	}
+
+	public void setShariaStatus(String shariaStatus) {
+		this.shariaStatus = shariaStatus;
+	}
+
 	public boolean isPftIntact() {
 		return pftIntact;
 	}
 
 	public void setPftIntact(boolean pftIntact) {
 		this.pftIntact = pftIntact;
+	}
+
+	public boolean isPaymentToBank() {
+		return isPaymentToBank;
+	}
+
+	public void setPaymentToBank(boolean isPaymentToBank) {
+		this.isPaymentToBank = isPaymentToBank;
+	}
+
+	public boolean isPayToDevSelCust() {
+		return isPayToDevSelCust;
+	}
+
+	public void setPayToDevSelCust(boolean isPayToDevSelCust) {
+		this.isPayToDevSelCust = isPayToDevSelCust;
 	}
 
 	public int getAdjTerms() {
@@ -2298,7 +3076,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void getDeclaredFieldValues(HashMap<String, Object> fieldsAndValuesMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				//"fm_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				// "fm_" Should be in small case only, if we want to change the
+				// case we need to update the configuration fields as well.
 				fieldsAndValuesMap.put("fm_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 				if ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())) {
@@ -2430,6 +3209,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescNextUsersRolesMap = lovDescNextUsersRolesMap;
 	}
 
+	public boolean isPoliceCaseFound() {
+		return policeCaseFound;
+	}
+
+	public void setPoliceCaseFound(boolean policeCaseFound) {
+		this.policeCaseFound = policeCaseFound;
+	}
+
+	public boolean isPoliceCaseOverride() {
+		return policeCaseOverride;
+	}
+
+	public void setPoliceCaseOverride(boolean policeCaseOverride) {
+		this.policeCaseOverride = policeCaseOverride;
+	}
+
 	public BigDecimal getScore() {
 		return score;
 	}
@@ -2444,6 +3239,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setSmecustomer(boolean smecustomer) {
 		this.smecustomer = smecustomer;
+	}
+
+	public boolean isCadrequired() {
+		return cadrequired;
+	}
+
+	public void setCadrequired(boolean cadrequired) {
+		this.cadrequired = cadrequired;
 	}
 
 	public String getLovDescAssignMthd() {
@@ -2542,12 +3345,132 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.financingAmount = financingAmount;
 	}
 
+	public String getGrcAdvBaseRate() {
+		return grcAdvBaseRate;
+	}
+
+	public void setGrcAdvBaseRate(String grcAdvBaseRate) {
+		this.grcAdvBaseRate = grcAdvBaseRate;
+	}
+
+	public BigDecimal getGrcAdvMargin() {
+		return grcAdvMargin;
+	}
+
+	public void setGrcAdvMargin(BigDecimal grcAdvMargin) {
+		this.grcAdvMargin = grcAdvMargin;
+	}
+
+	public BigDecimal getGrcAdvPftRate() {
+		return grcAdvPftRate;
+	}
+
+	public void setGrcAdvPftRate(BigDecimal grcAdvPftRate) {
+		this.grcAdvPftRate = grcAdvPftRate;
+	}
+
+	public String getRpyAdvBaseRate() {
+		return rpyAdvBaseRate;
+	}
+
+	public void setRpyAdvBaseRate(String rpyAdvBaseRate) {
+		this.rpyAdvBaseRate = rpyAdvBaseRate;
+	}
+
+	public BigDecimal getRpyAdvMargin() {
+		return rpyAdvMargin;
+	}
+
+	public void setRpyAdvMargin(BigDecimal rpyAdvMargin) {
+		this.rpyAdvMargin = rpyAdvMargin;
+	}
+
+	public BigDecimal getRpyAdvPftRate() {
+		return rpyAdvPftRate;
+	}
+
+	public void setRpyAdvPftRate(BigDecimal rpyAdvPftRate) {
+		this.rpyAdvPftRate = rpyAdvPftRate;
+	}
+
+	public BigDecimal getSupplementRent() {
+		return supplementRent;
+	}
+
+	public void setSupplementRent(BigDecimal supplementRent) {
+		this.supplementRent = supplementRent;
+	}
+
+	public BigDecimal getIncreasedCost() {
+		return increasedCost;
+	}
+
+	public void setIncreasedCost(BigDecimal increasedCost) {
+		this.increasedCost = increasedCost;
+	}
+
+	public String getRolloverFrq() {
+		return rolloverFrq;
+	}
+
+	public void setRolloverFrq(String rolloverFrq) {
+		this.rolloverFrq = rolloverFrq;
+	}
+
+	public Date getNextRolloverDate() {
+		return nextRolloverDate;
+	}
+
+	public void setNextRolloverDate(Date nextRolloverDate) {
+		this.nextRolloverDate = nextRolloverDate;
+	}
+
 	public long getInitiateUser() {
 		return initiateUser;
 	}
 
 	public void setInitiateUser(long initiateUser) {
 		this.initiateUser = initiateUser;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(String iban) {
+		this.iban = iban;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getDdaReferenceNo() {
+		return ddaReferenceNo;
+	}
+
+	public void setDdaReferenceNo(String ddaReferenceNo) {
+		this.ddaReferenceNo = ddaReferenceNo;
+	}
+
+	public String getBankNameDesc() {
+		return bankNameDesc;
+	}
+
+	public void setBankNameDesc(String bankNameDesc) {
+		this.bankNameDesc = bankNameDesc;
 	}
 
 	public String getCustStsDescription() {
@@ -2734,6 +3657,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.secondaryAccount = secondaryAccount;
 	}
 
+	public String getAgreeName() {
+		return agreeName;
+	}
+
+	public void setAgreeName(String agreeName) {
+		this.agreeName = agreeName;
+	}
+
 	public String getFinCancelAc() {
 		return finCancelAc;
 	}
@@ -2750,12 +3681,28 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescAccountsOfficer = lovDescAccountsOfficer;
 	}
 
+	public long getMMAId() {
+		return mMAId;
+	}
+
+	public void setMMAId(long mMAId) {
+		this.mMAId = mMAId;
+	}
+
 	public String getFinWriteoffAc() {
 		return finWriteoffAc;
 	}
 
 	public void setFinWriteoffAc(String finWriteoffAc) {
 		this.finWriteoffAc = finWriteoffAc;
+	}
+
+	public String getLovDescMMAReference() {
+		return lovDescMMAReference;
+	}
+
+	public void setLovDescMMAReference(String lovDescMMAReference) {
+		this.lovDescMMAReference = lovDescMMAReference;
 	}
 
 	public String getIfscCode() {
@@ -2804,6 +3751,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setRefundAmount(BigDecimal refundAmount) {
 		this.refundAmount = refundAmount;
+	}
+
+	public BigDecimal getCurSuplRent() {
+		return curSuplRent;
+	}
+
+	public void setCurSuplRent(BigDecimal curSuplRent) {
+		this.curSuplRent = curSuplRent;
+	}
+
+	public BigDecimal getCurIncrCost() {
+		return curIncrCost;
+	}
+
+	public void setCurIncrCost(BigDecimal curIncrCost) {
+		this.curIncrCost = curIncrCost;
 	}
 
 	public BigDecimal getSchPriDue() {
@@ -3020,6 +3983,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setApplicationNo(String applicationNo) {
 		this.applicationNo = applicationNo;
+	}
+
+	public long getmMAId() {
+		return mMAId;
+	}
+
+	public void setmMAId(long mMAId) {
+		this.mMAId = mMAId;
 	}
 
 	public boolean isFinIsAlwMD() {
@@ -3467,7 +4438,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.lovDescSourceCity = lovDescSourceCity;
 	}
 
-	//GST
+	// GST
 
 	public BigDecimal getRecalIGSTFee() {
 		return recalIGSTFee;
@@ -3851,13 +4822,20 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	/*
 	 * public HashMap<String, Object> getExtendedFieldValues() { HashMap<String, Object> financeMainmap = new
 	 * HashMap<String, Object>(); for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) { try { if
-	 * ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName())) {
+	 * ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName() )) {
 	 * financeMainmap.putAll(extendedFields); } else if
-	 * (!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i].getName())) {
+	 * (!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i]. getName())) {
 	 * financeMainmap.put(this.getClass().getDeclaredFields()[i].getName(),
 	 * this.getClass().getDeclaredFields()[i].get(this)); } } catch (SecurityException | IllegalArgumentException |
 	 * IllegalAccessException e) { e.printStackTrace(); } } return financeMainmap; }
 	 */
+	public String getFinBranchContact() {
+		return finBranchContact;
+	}
+
+	public void setFinBranchContact(String finBranchContact) {
+		this.finBranchContact = finBranchContact;
+	}
 
 	public BigDecimal getRepayAmount() {
 		return repayAmount;
@@ -4363,6 +5341,426 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setEodValueDate(Date eodValueDate) {
 		this.eodValueDate = eodValueDate;
+	}
+
+	/*
+	 * public String getParentRef() { return parentRef; }
+	 * 
+	 * public void setParentRef(String parentRef) { this.parentRef = parentRef; }
+	 */
+
+	public BigDecimal getReqLoanAmt() {
+		return reqLoanAmt;
+	}
+
+	public void setReqLoanAmt(BigDecimal reqLoanAmt) {
+		this.reqLoanAmt = reqLoanAmt;
+	}
+
+	public Integer getReqLoanTenor() {
+		return reqLoanTenor;
+	}
+
+	public void setReqLoanTenor(Integer reqLoanTenor) {
+		this.reqLoanTenor = reqLoanTenor;
+	}
+
+	public boolean isFinOcrRequired() {
+		return finOcrRequired;
+	}
+
+	public void setFinOcrRequired(boolean finOcrRequired) {
+		this.finOcrRequired = finOcrRequired;
+	}
+
+	public String getOfferProduct() {
+		return offerProduct;
+	}
+
+	public void setOfferProduct(String offerProduct) {
+		this.offerProduct = offerProduct;
+	}
+
+	public BigDecimal getOfferAmount() {
+		return offerAmount;
+	}
+
+	public void setOfferAmount(BigDecimal offerAmount) {
+		this.offerAmount = offerAmount;
+	}
+
+	public String getCustSegmentation() {
+		return custSegmentation;
+	}
+
+	public void setCustSegmentation(String custSegmentation) {
+		this.custSegmentation = custSegmentation;
+	}
+
+	public String getBaseProduct() {
+		return baseProduct;
+	}
+
+	public void setBaseProduct(String baseProduct) {
+		this.baseProduct = baseProduct;
+	}
+
+	public String getProcessType() {
+		return processType;
+	}
+
+	public void setProcessType(String processType) {
+		this.processType = processType;
+	}
+
+	public String getBureauTimeSeries() {
+		return bureauTimeSeries;
+	}
+
+	public void setBureauTimeSeries(String bureauTimeSeries) {
+		this.bureauTimeSeries = bureauTimeSeries;
+	}
+
+	public String getCampaignName() {
+		return campaignName;
+	}
+
+	public void setCampaignName(String campaignName) {
+		this.campaignName = campaignName;
+	}
+
+	public String getExistingLanRefNo() {
+		return existingLanRefNo;
+	}
+
+	public void setExistingLanRefNo(String existingLanRefNo) {
+		this.existingLanRefNo = existingLanRefNo;
+	}
+
+	public boolean isRsa() {
+		return rsa;
+	}
+
+	public void setRsa(boolean rsa) {
+		this.rsa = rsa;
+	}
+
+	public String getVerification() {
+		return verification;
+	}
+
+	public void setVerification(String verification) {
+		this.verification = verification;
+	}
+
+	public String getLeadSource() {
+		return leadSource;
+	}
+
+	public void setLeadSource(String leadSource) {
+		this.leadSource = leadSource;
+	}
+
+	public String getPoSource() {
+		return poSource;
+	}
+
+	public void setPoSource(String poSource) {
+		this.poSource = poSource;
+	}
+
+	public String getSourcingBranch() {
+		return sourcingBranch;
+	}
+
+	public void setSourcingBranch(String sourcingBranch) {
+		this.sourcingBranch = sourcingBranch;
+	}
+
+	public String getLovDescSourcingBranch() {
+		return lovDescSourcingBranch;
+	}
+
+	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
+		this.lovDescSourcingBranch = lovDescSourcingBranch;
+	}
+
+	public String getSourChannelCategory() {
+		return sourChannelCategory;
+	}
+
+	public void setSourChannelCategory(String sourChannelCategory) {
+		this.sourChannelCategory = sourChannelCategory;
+	}
+
+	public Long getAsmName() {
+		return asmName;
+	}
+
+	public void setAsmName(Long asmName) {
+		this.asmName = asmName;
+	}
+
+	public String getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(String offerId) {
+		this.offerId = offerId;
+	}
+
+	public boolean isDeviationAvail() {
+		return deviationAvail;
+	}
+
+	public void setDeviationAvail(boolean deviationAvail) {
+		this.deviationAvail = deviationAvail;
+	}
+
+	public boolean isPmay() {
+		return pmay;
+	}
+
+	public void setPmay(boolean pmay) {
+		this.pmay = pmay;
+	}
+
+	/*
+	 * public String getParentRef() { return parentRef; }
+	 * 
+	 * public void setParentRef(String parentRef) { this.parentRef = parentRef; }
+	 */
+
+	public boolean isAlwGrcAdj() {
+		return alwGrcAdj;
+	}
+
+	public void setAlwGrcAdj(boolean alwGrcAdj) {
+		this.alwGrcAdj = alwGrcAdj;
+	}
+
+	public boolean isEndGrcPeriodAftrFullDisb() {
+		return endGrcPeriodAftrFullDisb;
+	}
+
+	public void setEndGrcPeriodAftrFullDisb(boolean endGrcPeriodAftrFullDisb) {
+		this.endGrcPeriodAftrFullDisb = endGrcPeriodAftrFullDisb;
+	}
+
+	public boolean isAutoIncGrcEndDate() {
+		return autoIncGrcEndDate;
+	}
+
+	public void setAutoIncGrcEndDate(boolean autoIncGrcEndDate) {
+		this.autoIncGrcEndDate = autoIncGrcEndDate;
+	}
+
+	public int getPendingCovntCount() {
+		return pendingCovntCount;
+	}
+
+	public boolean isRecalSteps() {
+		return recalSteps;
+	}
+
+	public void setRecalSteps(boolean recalSteps) {
+		this.recalSteps = recalSteps;
+	}
+
+	public void setPendingCovntCount(int pendingCovntCount) {
+		this.pendingCovntCount = pendingCovntCount;
+	}
+
+	public String getParentRef() {
+		return parentRef;
+	}
+
+	public void setParentRef(String parentRef) {
+		this.parentRef = parentRef;
+	}
+
+	public boolean isAlwLoanSplit() {
+		return alwLoanSplit;
+	}
+
+	public void setAlwLoanSplit(boolean alwLoanSplit) {
+		this.alwLoanSplit = alwLoanSplit;
+	}
+
+	public boolean isInstBasedSchd() {
+		return instBasedSchd;
+	}
+
+	public void setInstBasedSchd(boolean instBasedSchd) {
+		this.instBasedSchd = instBasedSchd;
+	}
+
+	public boolean isLoanSplitted() {
+		return loanSplitted;
+	}
+
+	public void setLoanSplitted(boolean loanSplitted) {
+		this.loanSplitted = loanSplitted;
+	}
+
+	public String getCustEmpType() {
+		return custEmpType;
+	}
+
+	public void setCustEmpType(String custEmpType) {
+		this.custEmpType = custEmpType;
+	}
+
+	public String getConnectorReference() {
+		return connectorReference;
+	}
+
+	public void setConnectorReference(String connectorReference) {
+		this.connectorReference = connectorReference;
+	}
+
+	public String getDsaCodeReference() {
+		return dsaCodeReference;
+	}
+
+	public void setDsaCodeReference(String dsaCodeReference) {
+		this.dsaCodeReference = dsaCodeReference;
+	}
+
+	public String getAccountsOfficerReference() {
+		return accountsOfficerReference;
+	}
+
+	public void setAccountsOfficerReference(String accountsOfficerReference) {
+		this.accountsOfficerReference = accountsOfficerReference;
+	}
+
+	public String getDmaCodeReference() {
+		return dmaCodeReference;
+	}
+
+	public void setDmaCodeReference(String dmaCodeReference) {
+		this.dmaCodeReference = dmaCodeReference;
+	}
+
+	public boolean isSimulateAccounting() {
+		return simulateAccounting;
+	}
+
+	public void setSimulateAccounting(boolean simulateAccounting) {
+		this.simulateAccounting = simulateAccounting;
+	}
+
+	public List<ReturnDataSet> getReturnDataSet() {
+		return returnDataSet;
+	}
+
+	public void setReturnDataSet(List<ReturnDataSet> returnDataSet) {
+		this.returnDataSet = returnDataSet;
+	}
+
+	public boolean isOcrDeviation() {
+		return ocrDeviation;
+	}
+
+	public void setOcrDeviation(boolean ocrDeviation) {
+		this.ocrDeviation = ocrDeviation;
+	}
+
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
+	}
+
+	public String getPartnerBankAcType() {
+		return partnerBankAcType;
+	}
+
+	public void setPartnerBankAcType(String partnerBankAcType) {
+		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public String getPartnerBankAc() {
+		return partnerBankAc;
+	}
+
+	public void setPartnerBankAc(String partnerBankAc) {
+		this.partnerBankAc = partnerBankAc;
+	}
+
+	public String getTdsType() {
+		return tdsType;
+	}
+
+	public void setTdsType(String tdsType) {
+		this.tdsType = tdsType;
+	}
+
+	public boolean isWriteoffLoan() {
+		return writeoffLoan;
+	}
+
+	public void setWriteoffLoan(boolean writeoffLoan) {
+		this.writeoffLoan = writeoffLoan;
+	}
+
+	public boolean isRestructure() {
+		return restructure;
+	}
+
+	public void setRestructure(boolean restructure) {
+		this.restructure = restructure;
+	}
+
+	public String getCalcOfSteps() {
+		return calcOfSteps;
+	}
+
+	public void setCalcOfSteps(String calcOfSteps) {
+		this.calcOfSteps = calcOfSteps;
+	}
+
+	public String getStepsAppliedFor() {
+		return stepsAppliedFor;
+	}
+
+	public void setStepsAppliedFor(String stepsAppliedFor) {
+		this.stepsAppliedFor = stepsAppliedFor;
+	}
+
+	public boolean isRpyStps() {
+		return isRpyStps;
+	}
+
+	public void setRpyStps(boolean isRpyStps) {
+		this.isRpyStps = isRpyStps;
+	}
+
+	public boolean isGrcStps() {
+		return isGrcStps;
+	}
+
+	public void setGrcStps(boolean isGrcStps) {
+		this.isGrcStps = isGrcStps;
+	}
+
+	public boolean isCpzPosIntact() {
+		return cpzPosIntact;
+	}
+
+	public void setCpzPosIntact(boolean cpzPosIntact) {
+		this.cpzPosIntact = cpzPosIntact;
+	}
+
+	public int getNoOfGrcSteps() {
+		return noOfGrcSteps;
+	}
+
+	public void setNoOfGrcSteps(int noOfGrcSteps) {
+		this.noOfGrcSteps = noOfGrcSteps;
 	}
 
 }

@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> implements FinContributorHeaderDAO {
-	private static Logger logger = Logger.getLogger(FinContributorHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinContributorHeaderDAOImpl.class);
 
 	public FinContributorHeaderDAOImpl() {
 		super();
@@ -134,8 +135,7 @@ public class FinContributorHeaderDAOImpl extends BasicDao<FinContributorHeader> 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(contributorHeader);
-		RowMapper<FinContributorHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinContributorHeader.class);
+		RowMapper<FinContributorHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinContributorHeader.class);
 
 		try {
 			contributorHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

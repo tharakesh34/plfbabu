@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -87,7 +88,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ActivityLogCtrl extends GFCBaseCtrl<Activity> implements Comparator<Notes> {
 	private static final long serialVersionUID = 8285763521940736965L;
-	private static final Logger logger = Logger.getLogger(ActivityLogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ActivityLogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

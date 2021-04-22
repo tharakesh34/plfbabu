@@ -77,4 +77,6 @@ public interface CollateralSetupDAO {
 
 	Long getCustomerIdByCollateral(String finReference);
 
+	boolean isCollateralInMaintenance(String collatrlRef, String type);
+
 }

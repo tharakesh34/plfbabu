@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.GeneralDesignationDAO;
 import com.pennant.backend.model.systemmasters.GeneralDesignation;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class GeneralDesignationDAOImpl extends BasicDao<GeneralDesignation> implements GeneralDesignationDAO {
-	private static Logger logger = Logger.getLogger(GeneralDesignationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GeneralDesignationDAOImpl.class);
 
 	public GeneralDesignationDAOImpl() {
 		super();
@@ -98,8 +99,7 @@ public class GeneralDesignationDAOImpl extends BasicDao<GeneralDesignation> impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(generalDesignation);
-		RowMapper<GeneralDesignation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(GeneralDesignation.class);
+		RowMapper<GeneralDesignation> typeRowMapper = BeanPropertyRowMapper.newInstance(GeneralDesignation.class);
 
 		try {
 			generalDesignation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

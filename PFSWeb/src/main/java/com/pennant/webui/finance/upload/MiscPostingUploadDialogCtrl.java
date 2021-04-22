@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -48,7 +49,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private static final long serialVersionUID = -6945930303723518608L;
-	private static final Logger logger = Logger.getLogger(MiscPostingUploadDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MiscPostingUploadDialogCtrl.class);
 
 	protected Window window_MiscPostingUploadDialog;
 
@@ -779,7 +780,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		for (MiscPostingUpload miscPostingUpload : rejectedMiscList) {
 			miscPostingUpload.setUploadStatus(PennantConstants.UPLOAD_STATUS_REJECT);
-			miscPostingUpload.setReason("");
+			miscPostingUpload.setReason("Manually rejected by the approver ");
 			rejectMiscpostingList.add(miscPostingUpload);
 		}
 
@@ -855,7 +856,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aUploadHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 

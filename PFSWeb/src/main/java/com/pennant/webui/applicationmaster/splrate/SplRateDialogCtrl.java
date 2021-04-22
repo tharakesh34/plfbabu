@@ -43,13 +43,13 @@
 package com.pennant.webui.applicationmaster.splrate;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -84,7 +84,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	private static final long serialVersionUID = -6395413534622055634L;
-	private static final Logger logger = Logger.getLogger(SplRateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SplRateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -185,7 +185,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 		this.sREffDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.sRRate.setMaxlength(13);
 		this.sRRate.setFormat(PennantConstants.rateFormate9);
-		this.sRRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.sRRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.sRRate.setScale(9);
 
 		this.sRType.setMandatoryStyle(true);

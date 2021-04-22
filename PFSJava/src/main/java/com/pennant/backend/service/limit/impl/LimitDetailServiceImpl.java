@@ -58,7 +58,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -119,7 +120,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  * 
  */
 public class LimitDetailServiceImpl extends GenericService<LimitDetails> implements LimitDetailService {
-	private static final Logger logger = Logger.getLogger(LimitDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(LimitDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private LimitHeaderDAO limitHeaderDAO;
@@ -582,7 +583,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			returnList.add(true);
 			return returnList;
 		}
-
+		Date appDate = SysParamUtil.getAppDate();
 		try {
 			CustomerQueuing custQueuing = prepareCustomerQueue(custId);
 			this.customerQueuingDAO.insertCustQueueForRebuild(custQueuing);
@@ -590,12 +591,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			// Customer Rebuild process
 			this.limitRebuild.processCustomerRebuild(custId, true);
 
-			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS);
+			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_SUCCESS, appDate);
 		} catch (Exception e) {
 
 			returnList.add(0);
 			returnList.add(false); // Customer Rebuild Failed
-			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_FAILED);
+			this.customerQueuingDAO.updateStatus(custId, EodConstants.PROGRESS_FAILED, appDate);
 			logger.debug(Literal.EXCEPTION, e);
 
 		} finally {

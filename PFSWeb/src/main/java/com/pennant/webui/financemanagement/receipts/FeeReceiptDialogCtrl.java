@@ -44,6 +44,7 @@ package com.pennant.webui.financemanagement.receipts;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +53,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -73,6 +75,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
@@ -87,7 +90,10 @@ import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -120,6 +126,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager;
@@ -146,7 +153,7 @@ import com.rits.cloning.Cloner;
  */
 public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(FeeReceiptDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FeeReceiptDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -220,6 +227,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Groupbox groupbox_Customer;
 	protected Groupbox groupbox_Other;
 	protected ExtendedCombobox custID;
+	protected Textbox extReference;
 	protected Textbox reference;
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
@@ -234,12 +242,25 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private final String FINFEEDETAIL = "FINFEEDETAIL";
 	private final String ALLOCATED_AMOUNT = "ALLOCATED_AMOUNT";
 	private final String ALLOCATED_AMT_GST = "ALLOCATED_AMT_GST";
+	private final String ALLOCATED_AMT_TDS = "ALLOCATED_AMT_TDS";
 	private final String ALLOCATES_AMT_TOTAL = "ALLOCATES_AMT_TOTAL";
 
 	private static final String FORMATTER = "FORMATTER";
 	private static final String LISTITEM_SUMMARY = "LISTITEM_SUMMARY";
 	private List<FinFeeReceipt> currentFinReceipts = new ArrayList<FinFeeReceipt>();
 	private List<FinFeeReceipt> oldFinReceipts = new ArrayList<FinFeeReceipt>();
+
+	private BigDecimal tdsPerc = null;
+	private String tdsRoundMode = null;
+	private int tdsRoundingTarget = 0;
+	private String taxRoundMode = null;
+	private int taxRoundingTarget = 0;
+	private boolean isFinTDSApplicable = false;
+
+	protected Listheader listheader_FeeDetailList_NetAmountOriginalTDS;
+	protected Listheader listheader_FeeDetailList_PaidTDS;
+	protected Listheader listheader_FeeDetailList_RemainingTDS;
+	protected Listheader listheader_FeeDetailList_AllocatedAmountTDS;
 
 	/**
 	 * default constructor.<br>
@@ -575,6 +596,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.custName.setValue(main.getLovDescCustShrtName());
 				this.finDivision.setValue(main.getLovDescFinDivision());
 				this.postBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
+				this.isFinTDSApplicable = main.isTDSApplicable();
 
 				//setting data
 				customerID = main.getCustID();
@@ -609,12 +631,18 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		Listcell lc;
 		Listitem item;
+		setParms();
 
 		this.listBoxFeeDetail.getItems().clear();
 
 		if (feeDetails == null) {
 			return;
 		}
+
+		this.listheader_FeeDetailList_NetAmountOriginalTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+		this.listheader_FeeDetailList_PaidTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+		this.listheader_FeeDetailList_RemainingTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
+		this.listheader_FeeDetailList_AllocatedAmountTDS.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 
 		int finFormatter = CurrencyUtil.getFormat(this.finCcy.getValue());
 		boolean readOnly = getUserWorkspace().isAllowed("FeeReceiptDialog_AllocatePaid");
@@ -626,13 +654,17 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			String taxComponent = null;
 
-			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
+			boolean isExclusive = FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent());
+			boolean isInclusive = FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent());
+
+			if (isExclusive) {
 				taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
-			} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
+			} else if (isInclusive) {
 				taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
 			} else {
 				taxComponent = Labels.getLabel("label_GST_NotApplicable");
 			}
+
 			String feeType = fee.getFeeTypeDesc() + " - (" + taxComponent + ")";
 			if (StringUtils.isNotEmpty(fee.getVasReference())) {
 				feeType = fee.getVasReference();
@@ -655,6 +687,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
+			//Net Amount TDS
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetTDS(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
 			//Total Net Amount
 			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmount(), finFormatter));
 			lc.setStyle("text-align:right;");
@@ -667,6 +704,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			//Paid Amount GST
 			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidAmountGST(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			//Paid Amount TDS
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getPaidTDS(), finFormatter));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
@@ -685,6 +727,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
+			//Remaining fee Amount  TDS
+			lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getRemTDS(), finFormatter));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
 			//Remaining fee Amount with GST
 			Decimalbox remainingFeeBox = getDecimalbox(finFormatter, true);
 			remainingFeeBox.setValue(PennantApplicationUtil.formateAmount(fee.getRemainingFee(), finFormatter));
@@ -696,12 +743,21 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			BigDecimal allocatedAmt = feeReceipt.getPaidAmount();
 			BigDecimal allocatedAmtGST = BigDecimal.ZERO;
 			BigDecimal totalAlcAmt = feeReceipt.getPaidAmount();
-			if (fee.isTaxApplicable()) {
-				TaxAmountSplit taxSplit = null;
-				taxSplit = GSTCalculator.getInclusiveGST(totalAlcAmt, taxPercentages);
-				allocatedAmtGST = taxSplit.gettGST();
-				allocatedAmt = totalAlcAmt.subtract(allocatedAmtGST);
+			BigDecimal allocatedTds = BigDecimal.ZERO;
+			if (fee.isTdsReq()) {
+				allocatedTds = feeReceipt.getPaidTds();
 			}
+			if (fee.isTaxApplicable() && allocatedAmt.compareTo(BigDecimal.ZERO) != 0) {
+				if (fee.getRemainingFee().compareTo(totalAlcAmt) == 0) {
+					allocatedAmtGST = fee.getNetAmountGST().subtract(fee.getPaidAmountGST());
+					allocatedTds = fee.getNetTDS().subtract(fee.getPaidTDS());
+				} else {
+					TaxAmountSplit taxSplit = null;
+					taxSplit = GSTCalculator.getInclusiveGST(totalAlcAmt.add(feeReceipt.getPaidTds()), taxPercentages);
+					allocatedAmtGST = taxSplit.gettGST();
+				}
+			}
+			allocatedAmt = totalAlcAmt.subtract(allocatedAmtGST).add(allocatedTds);
 
 			//Allocated Amount
 			Decimalbox allocAmtBox = getDecimalbox(finFormatter, true);
@@ -719,9 +775,18 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			lc.appendChild(allocAmtGstBox);
 			lc.setParent(item);
 
+			//Allocate Amount  TDS
+			Decimalbox allocAmtTdsBox = getDecimalbox(finFormatter, true);
+			allocAmtTdsBox.setValue(PennantApplicationUtil.formateAmount(allocatedTds, finFormatter));
+			lc = new Listcell();
+			lc.setStyle("text-align:right;");
+			lc.appendChild(allocAmtTdsBox);
+			lc.setParent(item);
+
 			//Allocated Amount total
 			Decimalbox totAllocAmtTotBox = getDecimalbox(finFormatter, !readOnly);
 			totAllocAmtTotBox.setValue(PennantApplicationUtil.formateAmount(totalAlcAmt, finFormatter));
+
 			lc = new Listcell();
 			lc.appendChild(totAllocAmtTotBox);
 			lc.setStyle("text-align:right;");
@@ -739,6 +804,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			map.put(FINFEEDETAIL, fee);
 			map.put(ALLOCATED_AMOUNT, allocAmtBox);
 			map.put(ALLOCATED_AMT_GST, allocAmtGstBox);
+			map.put(ALLOCATED_AMT_TDS, allocAmtTdsBox);
 			map.put(ALLOCATES_AMT_TOTAL, totAllocAmtTotBox);
 			map.put(FORMATTER, finFormatter);
 			totAllocAmtTotBox.addForward("onChange", window_FeeReceiptDialog, "onChangeFeeAmount", map);
@@ -772,20 +838,61 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		FinFeeReceipt feeReceipt = fee.getFinFeeReceipts().get(0);
 		Decimalbox allocAmtBox = (Decimalbox) map.get(ALLOCATED_AMOUNT);
 		Decimalbox allocAmtGstBox = (Decimalbox) map.get(ALLOCATED_AMT_GST);
+		Decimalbox allocAmtTdsBox = (Decimalbox) map.get(ALLOCATED_AMT_TDS);
 		Decimalbox totAllocAmtTotBox = (Decimalbox) map.get(ALLOCATES_AMT_TOTAL);
 		int formatter = (int) map.get(FORMATTER);
 
 		BigDecimal allocatedAmtGST = BigDecimal.ZERO;
+		BigDecimal allocatedAmtTDS = BigDecimal.ZERO;
+		BigDecimal allocatedAmt = BigDecimal.ZERO;
 		BigDecimal totAlocAmt = PennantApplicationUtil.unFormateAmount(totAllocAmtTotBox.getValue(), formatter);
-		if (fee.isTaxApplicable()) {
-			TaxAmountSplit taxSplit = null;
-			taxSplit = GSTCalculator.getInclusiveGST(totAlocAmt, taxPercentages);
-			allocatedAmtGST = taxSplit.gettGST();
+		BigDecimal fraction = BigDecimal.ONE;
+		BigDecimal totPerc = BigDecimal.ZERO;
+
+		BigDecimal netAmountOriginal = fee.getNetAmount();
+		BigDecimal netTDS = fee.getNetTDS();
+		totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
+
+		if (fee.isTdsReq() && this.isFinTDSApplicable) {
+			allocatedAmtTDS = (netTDS.multiply(totAlocAmt)).divide(netAmountOriginal, 2, RoundingMode.HALF_DOWN);
+			allocatedAmtTDS = CalculationUtil.roundAmount(allocatedAmtTDS, tdsRoundMode, tdsRoundingTarget);
+			totPerc = taxPercentages.get(RuleConstants.CODE_TOTAL_GST).subtract(tdsPerc);
 		}
+
+		if (fee.isTaxApplicable()) {
+			fraction = fraction.add(totPerc.divide(new BigDecimal(100), 2, RoundingMode.HALF_DOWN));
+
+			BigDecimal orgAmt = totAlocAmt.divide(fraction, 0, RoundingMode.HALF_DOWN);
+			orgAmt = CalculationUtil.roundAmount(orgAmt, taxRoundMode, taxRoundingTarget);
+			allocatedAmtGST = GSTCalculator.getExclusiveGST(orgAmt, taxPercentages).gettGST();
+
+		}
+
+		allocatedAmt = totAlocAmt.subtract(allocatedAmtGST).add(allocatedAmtTDS);
+
+		BigDecimal diffAmt = BigDecimal.ZERO;
+		BigDecimal diffGST = BigDecimal.ZERO;
+		BigDecimal diffTDS = BigDecimal.ZERO;
+
+		if (totAlocAmt.compareTo(fee.getRemainingFee()) == 0) {
+			diffAmt = fee.getRemainingFeeOriginal().subtract(allocatedAmt);
+			diffGST = fee.getRemainingFeeGST().subtract(allocatedAmtGST);
+			diffTDS = fee.getRemTDS().subtract(allocatedAmtTDS);
+		}
+
+		allocatedAmt = allocatedAmt.add(diffAmt);
+		allocatedAmtGST = allocatedAmtGST.add(diffGST);
+		allocatedAmtTDS = allocatedAmtTDS.add(diffTDS);
+
 		allocAmtGstBox.setValue(PennantApplicationUtil.formateAmount(allocatedAmtGST, formatter));
-		allocAmtBox.setValue(PennantApplicationUtil.formateAmount(totAlocAmt.subtract(allocatedAmtGST), formatter));
+		allocAmtTdsBox.setValue(PennantApplicationUtil.formateAmount(allocatedAmtTDS, formatter));
+		allocAmtBox.setValue(PennantApplicationUtil.formateAmount(allocatedAmt, formatter));
+		totAllocAmtTotBox.setValue(PennantApplicationUtil.formateAmount(totAlocAmt, formatter));
 		feeReceipt.setPaidAmount(totAlocAmt);
+		feeReceipt.setPaidTds(allocatedAmtTDS);
+
 		doFillSummaryDetails(listBoxFeeDetail);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -799,6 +906,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal totRemAmt = BigDecimal.ZERO;
 		BigDecimal totAllocFeeAmt = BigDecimal.ZERO;
 		BigDecimal totAllocGstAmt = BigDecimal.ZERO;
+		BigDecimal totAllocTdsAmt = BigDecimal.ZERO;
 		BigDecimal totpaid = BigDecimal.ZERO;
 
 		Listitem summaryItem = null;
@@ -810,19 +918,23 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				continue;
 			} else {
 				//Total remaining
-				Listcell totRemLC = list.get(9);
+				Listcell totRemLC = list.get(12);
 				Decimalbox totRemBox = (Decimalbox) totRemLC.getFirstChild();
 				totRemAmt = totRemAmt.add(totRemBox.getValue());
 				//Total Allocated Fee				
-				Listcell totAllocFeeLC = list.get(10);
+				Listcell totAllocFeeLC = list.get(13);
 				Decimalbox totFeeAmtBox = (Decimalbox) totAllocFeeLC.getFirstChild();
 				totAllocFeeAmt = totAllocFeeAmt.add(totFeeAmtBox.getValue());
 				//Total Allocated Fee GST				
-				Listcell totAllocGstLC = list.get(11);
+				Listcell totAllocGstLC = list.get(14);
 				Decimalbox totGstAmtBox = (Decimalbox) totAllocGstLC.getFirstChild();
 				totAllocGstAmt = totAllocGstAmt.add(totGstAmtBox.getValue());
+				//Total Allocated Fee GST				
+				Listcell totAllocTdsLC = list.get(15);
+				Decimalbox totTdsAmtBox = (Decimalbox) totAllocTdsLC.getFirstChild();
+				totAllocTdsAmt = totAllocTdsAmt.add(totTdsAmtBox.getValue());
 				//Total Allocated				
-				Listcell totAllocAmt = list.get(12);
+				Listcell totAllocAmt = list.get(16);
 				Decimalbox totBox = (Decimalbox) totAllocAmt.getFirstChild();
 				totpaid = totpaid.add(totBox.getValue() == null ? BigDecimal.ZERO : totBox.getValue());
 			}
@@ -842,8 +954,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Listcell totAllocGstLC = list.get(3);
 		Decimalbox totGstAmtBox = (Decimalbox) totAllocGstLC.getFirstChild();
 		totGstAmtBox.setValue(totAllocGstAmt);
+		//Total Allocated Fee GST				
+		Listcell totAllocTdsLC = list.get(4);
+		Decimalbox totTdsAmtBox = (Decimalbox) totAllocTdsLC.getFirstChild();
+		totTdsAmtBox.setValue(totAllocTdsAmt);
 		//Total Allocated				
-		Listcell totAllocAmt = list.get(4);
+		Listcell totAllocAmt = list.get(5);
 		Decimalbox totBox = (Decimalbox) totAllocAmt.getFirstChild();
 		totBox.setValue(totpaid);
 	}
@@ -863,7 +979,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		item.setId(LISTITEM_SUMMARY);
 		lc = new Listcell(Labels.getLabel("listcell_Total.label"));
 		item.setStyle("font-weight:bold;background-color: #C0EBDF;");
-		lc.setSpan(9);
+		lc.setSpan(12);
 		lc.setParent(item);
 
 		lc = new Listcell();
@@ -881,6 +997,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		lc = new Listcell();
 		Decimalbox totalAllocGstBox = getDecimalbox(formatter, true);
 		lc.appendChild(totalAllocGstBox);
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
+		lc = new Listcell();
+		Decimalbox totalAllocTdsBox = getDecimalbox(formatter, true);
+		lc.appendChild(totalAllocTdsBox);
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
 
@@ -1133,6 +1255,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					header.getReceiptDetails().add(receiptDetail);
 				}
 				header.setRemarks(this.remarks.getValue());
+				header.setTransactionRef(this.favourNo.getValue());
+				header.setBankCode(this.bankCode.getValue());
 				for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
 					receiptDetail.setAmount(header.getReceiptAmount());
 					receiptDetail.setPaymentType(header.getReceiptMode());
@@ -1311,7 +1435,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				PennantStaticListUtil.getReceiptPurpose(), "");
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
 				"");
-		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(),
+		fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModesByFeePayment(),
 				",EXCESS,MOBILE,");
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 		this.realizationDate.setValue(header.getRealizationDate());
@@ -1324,6 +1448,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (!header.isNewRecord()) {
 			this.finReference.setValue(header.getReference(), "");
+			this.isFinTDSApplicable = header.isFinTDSApplicable();
 			this.finType.setValue(header.getFinType(), header.getFinTypeDesc());
 			this.finCcy.setValue(header.getFinCcy(), CurrencyUtil.getCcyDesc(header.getFinCcy()));
 			this.finBranch.setValue(header.getFinBranch(), header.getFinBranchDesc());
@@ -1339,6 +1464,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				customerID = receiptHeader.getCustID();
 				setTaxPercentages(calcTaxPercentages());
 				setPaidFeeList(receiptHeader.getPaidFeeList());
+			} else if (RepayConstants.RECEIPTTO_CUSTOMER.equals(this.receiptHeader.getRecAgainst())) {
+				customerID = receiptHeader.getCustID();
+				this.finBranch.setValue(header.getPostBranch(), header.getPostBranchDesc());
+				setTaxPercentages(calcTaxPercentages());
 			}
 
 		} else {
@@ -1407,9 +1536,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			readOnlyComponent(true, this.finDivision);
 		} else if (this.groupbox_Customer.isVisible()) {
 			this.custID.setAttribute("custID", header.getReference());
+			this.extReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
 			if (!header.isNewRecord()) {
 				this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
 			}
+			doFillFeeDetails(header.getPaidFeeList());
 		} else if (this.groupbox_Other.isVisible()) {
 			this.reference.setValue(header.getReference());
 		}
@@ -1592,18 +1723,18 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		amountCodes.setPaidFee(receiptDetail.getAmount());
 		amountCodes.setFinType(getReceiptHeader().getFinType());
 		if (map != null) {
-			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
-			amountCodes.setFinbranch((String) map.get("FinBranch"));
-			amountCodes.setEntitycode((String) map.get("Entitycode"));
+			amountCodes.setBusinessvertical((String) map.get("BUSINESSVERTICAL"));
+			amountCodes.setFinbranch((String) map.get("FINBRANCH"));
+			amountCodes.setEntitycode((String) map.get("ENTITYCODE"));
 			BigDecimal alwFlexi = BigDecimal.ZERO;
-			if (map.get("AlwFlexi") instanceof Long) {
-				long value = (long) map.get("AlwFlexi");
+			if (map.get("ALWFLEXI") instanceof Long) {
+				long value = (long) map.get("ALWFLEXI");
 				amountCodes.setAlwflexi(value == 0 ? false : true);
-			} else if (map.get("AlwFlexi") instanceof BigDecimal) {
-				alwFlexi = (BigDecimal) map.get("AlwFlexi");
+			} else if (map.get("ALWFLEXI") instanceof BigDecimal) {
+				alwFlexi = (BigDecimal) map.get("ALWFLEXI");
 				amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
-			} else if (map.get("AlwFlexi") instanceof Integer) {
-				int value = (int) map.get("AlwFlexi");
+			} else if (map.get("ALWFLEXI") instanceof Integer) {
+				int value = (int) map.get("ALWFLEXI");
 				amountCodes.setAlwflexi(value == 0 ? false : true);
 			}
 		} else {
@@ -1618,10 +1749,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			aeEvent.getAcSetIDList().add(accountingSetID);
 
 			if (map != null) {
-				dataMap.put("emptype", map.get("emptype"));
-				dataMap.put("branchcity", map.get("branchcity"));
-				dataMap.put("fincollateralreq", map.get("fincollateralreq"));
-				dataMap.put("btloan", map.get("btloan"));
+				dataMap.put("emptype", map.get("EMPTYPE"));
+				dataMap.put("branchcity", map.get("BRANCHCITY"));
+				dataMap.put("fincollateralreq", map.get("FINCOLLATERALREQ"));
+				dataMap.put("btloan", map.get("BTLOAN"));
 			} else {
 				dataMap.put("emptype", "");
 				dataMap.put("branchcity", "");
@@ -1643,7 +1774,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			//execute accounting
 			aeEvent.setDataMap(dataMap);
-			accountingSetEntries.addAll(engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet());
+			engineExecution.getAccEngineExecResults(aeEvent);
+			accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 		} else {
 			Clients.showNotification(Labels.getLabel("label_FeeReceiptDialog_NoAccounting.value"), "warning", null,
 					null, -1);
@@ -1672,7 +1804,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String recptMode = getComboboxValue(receiptMode);
 		if (!this.receiptMode.isDisabled()) {
-			this.receiptMode.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptModes(),
+			this.receiptMode.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptModesByFeePayment(),
 					Labels.getLabel("label_FeeReceiptDialog_ReceiptMode.value")));
 		}
 		if (!this.excessAdjustTo.isDisabled()) {
@@ -1740,7 +1872,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 								PennantRegularExpressions.REGEX_NAME, true));
 			}
 
-			if (!this.depositDate.isDisabled()) {
+			if (!this.depositDate.isDisabled() && !this.depositDate.isReadonly()) {
 				this.depositDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_FeeReceiptDialog_DepositDate.value"),
 								true, SysParamUtil.getValueAsDate(""), appDate, true));
@@ -1755,7 +1887,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_NEFT)
 				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_RTGS)
-				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)) {
+				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_IMPS)
+				|| StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_DIGITAL)) {
 
 			if (!this.transactionRef.isReadonly()) {
 				this.transactionRef.setConstraint(
@@ -2257,7 +2390,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		for (Listitem listitem : listBoxFeeDetail.getItems()) {
 			List<Listcell> list = listitem.getChildren();
 			if (LISTITEM_SUMMARY.equalsIgnoreCase(listitem.getId())) {
-				Listcell totalPaidLC = list.get(4);
+				Listcell totalPaidLC = list.get(5);
 				Decimalbox totalPaidAmt = (Decimalbox) totalPaidLC.getFirstChild();
 				try {
 					totalPaid = totalPaidAmt.getValue();
@@ -2275,11 +2408,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 
 			//Total remaining
-			Listcell totRemainningLC = list.get(9);
+			Listcell totRemainningLC = list.get(12);
 			Decimalbox totRemainingAmtBox = (Decimalbox) totRemainningLC.getFirstChild();
 			double remainingFee = totRemainingAmtBox.getValue().doubleValue();
 
-			Listcell totAllocAmtLC = list.get(12);
+			Listcell totAllocAmtLC = list.get(16);
 			Decimalbox totAllocAmt = (Decimalbox) totAllocAmtLC.getFirstChild();
 			totAllocAmt.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("listheader_FeeDetailList_AllocatedAmount.label"),
@@ -2353,6 +2486,17 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (value != null) {
 			filters[0] = new Filter("BankCode", value, Filter.OP_EQUAL);
 			this.bankBranch.setFilters(filters);
+		}
+	}
+
+	private void setParms() {
+		if (tdsPerc == null || tdsRoundMode == null || tdsRoundingTarget == 0 || taxRoundMode == null
+				|| taxRoundingTarget == 0) {
+			tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+			taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 		}
 	}
 

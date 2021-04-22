@@ -21,9 +21,11 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -47,6 +49,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
 import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -61,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class FieldInvestigationServiceImpl extends GenericService<FieldInvestigation>
 		implements FieldInvestigationService {
-	private static final Logger logger = Logger.getLogger(FieldInvestigationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FieldInvestigationServiceImpl.class);
 
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
@@ -74,6 +77,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentDetailValidation documentValidation;
+	@Autowired(required = false)
+	@Qualifier("verificationPostExteranalServiceHook")
+	private PostExteranalServiceHook postExteranalServiceHook;
 
 	public FieldInvestigationServiceImpl() {
 		super();
@@ -97,6 +103,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -144,6 +151,12 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
+
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
+		}
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -328,6 +341,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	 *            id of the FieldInvestigation. (String)
 	 * @return verification_fi
 	 */
+	@Override
 	public FieldInvestigation getApprovedFieldInvestigation(long id) {
 		return fieldInvestigationDAO.getFieldInvestigation(id, "");
 	}
@@ -362,7 +376,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		}
 
 		FieldInvestigation fi = new FieldInvestigation();
-		BeanUtils.copyProperties((FieldInvestigation) auditHeader.getAuditDetail().getModelData(), fi);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), fi);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(fi.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(fieldInvestigationDAO.getFieldInvestigation(fi.getId(), ""));
@@ -438,7 +452,10 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		auditHeader.getAuditDetail().setModelData(fi);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
-
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(auditHeader, "doApprove");
+		}
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -933,5 +950,9 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 	@Override
 	public FieldInvestigation getVerificationFromRecording(long verificationId) {
 		return fieldInvestigationDAO.getFieldInvestigation(verificationId, "_view");
+	}
+
+	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
+		this.postExteranalServiceHook = postExteranalServiceHook;
 	}
 }

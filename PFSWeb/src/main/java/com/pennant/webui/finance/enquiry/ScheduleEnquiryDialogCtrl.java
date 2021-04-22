@@ -57,7 +57,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -81,6 +82,7 @@ import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -100,7 +102,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
  */
 public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ScheduleEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ScheduleEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -122,6 +124,11 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	protected Listheader listHeader_cashFlowEffect;
 	protected Listheader listHeader_vSProfit;
 	protected Listheader listHeader_orgPrincipalDue;
+	protected Listheader listheader_SupplementRent;
+	protected Listheader listheader_IncreasedCost;
+	protected Listheader listheader_SchAdvProfit;
+	protected Listheader listheader_AdvTotal;
+	protected Listheader listheader_Rebate;
 	protected Listheader listheader_Total;
 	protected Listheader listheader_TDSAmount;
 
@@ -210,6 +217,19 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
 				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
 			}
+		}
+
+		String product = getFinScheduleData().getFinanceType().getFinCategory();
+		if (StringUtils.equals(product, FinanceConstants.PRODUCT_STRUCTMUR)) {
+			this.listheader_SchAdvProfit.setVisible(true);
+			this.listheader_AdvTotal.setVisible(true);
+			this.listheader_Rebate.setVisible(true);
+			this.listheader_Total.setVisible(false);
+		} else if ((StringUtils.equals(product, FinanceConstants.PRODUCT_IJARAH)
+				|| StringUtils.equals(product, FinanceConstants.PRODUCT_FWIJARAH))
+				|| StringUtils.equals(product, FinanceConstants.PRODUCT_ISTISNA)) {
+			this.listheader_SupplementRent.setVisible(true);
+			this.listheader_IncreasedCost.setVisible(true);
 		}
 
 		if (!getFinScheduleData().getFinanceMain().isTDSApplicable()) {
@@ -372,23 +392,33 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		}
 
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(schedules));
+		BigDecimal totalAdvPft = BigDecimal.ZERO;
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		for (int i = 0; i < sdSize; i++) {
 			FinanceScheduleDetail curSchd = schedules.get(i);
 			boolean showRate = false;
+			boolean showAdvRate = false;
 			if (i == 0) {
 				prvSchDetail = curSchd;
 				showRate = true;
 
+				if (finScheduleData.getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_STRUCTMUR)) {
+					showAdvRate = true;
+				}
 			} else {
 				prvSchDetail = schedules.get(i - 1);
 				if (curSchd.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) != 0) {
 					showRate = true;
 				}
+				if (curSchd.getAdvCalRate().compareTo(prvSchDetail.getAdvCalRate()) != 0) {
+					showAdvRate = true;
+				}
 			}
 			// ####_0.2
 			doFillIrrDetails(finScheduleData.getiRRDetails());
+			// Preparing Total Advance Profit Amount
+			totalAdvPft = totalAdvPft.add(curSchd.getAdvProfit());
 
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("finSchdData", finScheduleData);
@@ -397,6 +427,8 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			map.put("penaltyDetailsMap", penaltyDetailsMap);
 			map.put("accrueValue", finScheduleData.getAccrueValue());
 			map.put("window", this.window_ScheduleEnquiryDialog);
+			map.put("totalAdvPft", totalAdvPft);
+			map.put("showAdvRate", showAdvRate);
 			map.put("formatter", formatter);
 
 			finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate,
@@ -405,6 +437,23 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				finRender.render(map, prvSchDetail, true, false, true, finScheduleData.getFinFeeDetailList(), showRate,
 						false);
 				break;
+			}
+
+			//SubventionDetails
+			if (finScheduleData.getFinanceMain().isAllowSubvention()) {
+				String listBoxHeight = this.borderLayoutHeight - 270 + "px";
+				if (CollectionUtils.isNotEmpty(finScheduleData.getDisbursementDetails())) {
+					boolean subventionSchedule = false;
+					for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
+						if (CollectionUtils.isNotEmpty(disbursement.getSubventionSchedules())) {
+							subventionSchedule = true;
+							break;
+						}
+					}
+					if (subventionSchedule) {
+						finRender.renderSubvention(finScheduleData, listBoxHeight);
+					}
+				}
 			}
 		}
 

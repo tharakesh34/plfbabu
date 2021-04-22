@@ -42,19 +42,13 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -71,15 +65,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> implements SanctionConditionsDAO {
-	private static Logger logger = Logger.getLogger(SanctionConditionsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SanctionConditionsDAOImpl.class);
 
 	public SanctionConditionsDAOImpl() {
 		super();
 	}
 
 	public List<SanctionConditions> getSanctionConditions(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" t1.Id, t1.SeqNo, t1.SanctionCondition, t1.Status, t1.FinReference, t1.Version");
 		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
@@ -99,44 +91,31 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<SanctionConditions>() {
-				@Override
-				public SanctionConditions mapRow(ResultSet rs, int rowNum) throws SQLException {
-					SanctionConditions sc = new SanctionConditions();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			ps.setString(index++, finReference);
+		}, (rs, rowNum) -> {
+			SanctionConditions sc = new SanctionConditions();
 
-					sc.setId(rs.getLong("Id"));
-					sc.setSeqNo(rs.getLong("SeqNo"));
-					sc.setSanctionCondition(rs.getString("SanctionCondition"));
-					sc.setStatus(rs.getString("Status"));
-					sc.setFinReference(rs.getString("FinReference"));
-					sc.setVersion(rs.getInt("Version"));
-					sc.setLastMntBy(rs.getLong("LastMntBy"));
-					sc.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					sc.setRecordStatus(rs.getString("RecordStatus"));
-					sc.setRoleCode(rs.getString("RoleCode"));
-					sc.setNextRoleCode(rs.getString("NextRoleCode"));
-					sc.setTaskId(rs.getString("TaskId"));
-					sc.setNextTaskId(rs.getString("NextTaskId"));
-					sc.setRecordType(rs.getString("RecordType"));
-					sc.setWorkflowId(rs.getLong("WorkflowId"));
+			sc.setId(rs.getLong("Id"));
+			sc.setSeqNo(rs.getLong("SeqNo"));
+			sc.setSanctionCondition(rs.getString("SanctionCondition"));
+			sc.setStatus(rs.getString("Status"));
+			sc.setFinReference(rs.getString("FinReference"));
+			sc.setVersion(rs.getInt("Version"));
+			sc.setLastMntBy(rs.getLong("LastMntBy"));
+			sc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			sc.setRecordStatus(rs.getString("RecordStatus"));
+			sc.setRoleCode(rs.getString("RoleCode"));
+			sc.setNextRoleCode(rs.getString("NextRoleCode"));
+			sc.setTaskId(rs.getString("TaskId"));
+			sc.setNextTaskId(rs.getString("NextTaskId"));
+			sc.setRecordType(rs.getString("RecordType"));
+			sc.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return sc;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return sc;
+		});
 	}
 
 	/**

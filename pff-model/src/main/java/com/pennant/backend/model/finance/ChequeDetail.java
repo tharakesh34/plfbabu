@@ -50,6 +50,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -62,21 +63,27 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "chequeDetailsID", "headerID", "bankBranchID", "accountNo", "chequeSerialNo", "chequeDate",
 		"eMIRefNo", "amount", "chequeCcy", "status", "active" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class ChequeDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	@XmlElement
 	private long chequeDetailsID;
 	private long headerID = 0;
 	private long bankBranchID = 0;
 	private String accountNo;
+	@XmlElement
 	private int chequeSerialNo;
+	@XmlElement
 	private String chequeType;
+	@XmlElement
 	private Date chequeDate;
 	private int eMIRefNo = -1;
+	@XmlElement
 	private BigDecimal amount;
 	private String chequeCcy;
 	private String chequeStatus;
+	@XmlElement
 	private String accountType;
 	private String accHolderName;
 	private String status;
@@ -90,7 +97,8 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private String documentName;
-	private long documentRef = Long.MIN_VALUE;
+	private Long documentRef = Long.MIN_VALUE;
+	@XmlElement(name = "docContent")
 	private byte[] docImage;
 	private boolean isUpload;
 
@@ -105,6 +113,9 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private Date chequeBounceDate;
 	private String chequeNumber;
 	private String chequeBounceReason;
+	private String sourceId;
+	@XmlElement
+	private boolean isDelete = false;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -134,6 +145,9 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("chequeBounceDate");
 		excludeFields.add("chequeNumber");
 		excludeFields.add("chequeBounceReason");
+		excludeFields.add("excbankBranchID");
+		excludeFields.add("sourceId");
+		excludeFields.add("isDelete");
 		return excludeFields;
 	}
 
@@ -277,11 +291,11 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.eMIRefNo = eMIRefNo;
 	}
 
-	public long getDocumentRef() {
+	public Long getDocumentRef() {
 		return documentRef;
 	}
 
-	public void setDocumentRef(long documentRef) {
+	public void setDocumentRef(Long documentRef) {
 		this.documentRef = documentRef;
 	}
 
@@ -411,6 +425,22 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 
 	public void setChequeBounceReason(String chequeBounceReason) {
 		this.chequeBounceReason = chequeBounceReason;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public boolean isDelete() {
+		return isDelete;
+	}
+
+	public void setDelete(boolean isDelete) {
+		this.isDelete = isDelete;
 	}
 
 }

@@ -57,7 +57,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -125,7 +126,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl<Customer> {
 	private static final long serialVersionUID = 3257569537441008225L;
-	private static final Logger logger = Logger.getLogger(CorporateApplicationFinanceFileUploadDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CorporateApplicationFinanceFileUploadDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

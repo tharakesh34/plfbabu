@@ -3,13 +3,14 @@ package com.pennant.backend.dao.limits.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -19,7 +20,7 @@ import com.pennant.backend.model.limits.LimitDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> implements LimitInterfaceDAO {
-	private static Logger logger = Logger.getLogger(LimitInterfaceDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitInterfaceDAOImpl.class);
 
 	public LimitInterfaceDAOImpl() {
 		super();
@@ -35,7 +36,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		logger.debug("Entering");
 
 		if (finLimitProcess.getId() == 0 || finLimitProcess.getId() == Long.MIN_VALUE) {
-			finLimitProcess.setFinLimitId(getNextId("SeqFinanceLimitProcess"));
+			finLimitProcess.setFinLimitId(getNextValue("SeqFinanceLimitProcess"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("INSERT INTO FinanceLimitProcess ");
@@ -104,8 +105,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeLimitProcess);
-		RowMapper<FinanceLimitProcess> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceLimitProcess.class);
+		RowMapper<FinanceLimitProcess> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceLimitProcess.class);
 
 		try {
 			limitProcess = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -141,7 +141,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		RowMapper<LimitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetail.class);
+		RowMapper<LimitDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetail.class);
 
 		try {
 			limitDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -244,7 +244,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
 			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -44,6 +44,8 @@
 package com.pennanttech.pff.external.mandate;
 
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -56,14 +58,18 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.TransactionStatus;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -80,6 +86,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineLog;
@@ -95,10 +102,11 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcesses;
+import com.pennanttech.pff.external.service.ExternalInterfaceService;
 import com.pennanttech.pff.model.mandate.MandateData;
 
 public class DefaultMandateProcess extends AbstractInterface implements MandateProcesses {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 	@Autowired
 	private DataEngineConfig dataEngineConfig;
 	private DataEngineImport dataEngine;
@@ -112,12 +120,20 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	ChannelSftp channelSftp = null;
 	Session session = null;
 
+	@Autowired(required = false)
+	@Qualifier("mandateUploadValidationImpl")
+	private ValidateRecord mandateUploadValidationImpl;
+	@Autowired(required = false)
+	@Qualifier("uploadToDownloadValidationImpl")
+	private ValidateRecord uploadToDownloadValidationImpl;
+	private ExternalInterfaceService externalInterfaceService;
+
 	public DefaultMandateProcess() {
 		super();
 	}
 
 	@Override
-	public void sendReqest(MandateData mandateData) {
+	public DataEngineStatus sendReqest(MandateData mandateData) {
 
 		long processId = mandateData.getProcess_Id();
 		Date fromDate = mandateData.getFromDate();
@@ -148,7 +164,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
-		genetare(dataEngine, userName, filterMap, parameterMap);
+		return genetare(dataEngine, userName, filterMap, parameterMap);
 	}
 
 	/**
@@ -308,6 +324,13 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 			return;
 		}
+
+		// Validate the file prefix.
+		if (prefix != null && !(StringUtils.startsWith(fileName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+			return;
+		}
 	}
 
 	public List<String> getEntityCodes() {
@@ -415,6 +438,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
+		dataEngine.setValidateRecord(mandateUploadValidationImpl);
 		dataEngine.importData(configName);
 
 		do {
@@ -449,7 +473,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("RESP_BATCH_ID", respBatchId);
 
-		rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
+		rowMapper = BeanPropertyRowMapper.newInstance(Mandate.class);
 		mandates = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
 
 		if (mandates == null || mandates.isEmpty()) {
@@ -471,7 +495,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 					updateMandateResponse(respMandate);
 					logMandate(respBatchId, respMandate);
 				} else {
-					respMandate.setMICR(mandate.getMICR());
 					validateMandate(respMandate, mandate, remarks);
 
 					if (remarks.length() > 0) {
@@ -546,7 +569,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		source = new MapSqlParameterSource();
 		source.addValue("MandateID", id);
 
-		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
+		RowMapper<Mandate> typeRowMapper = BeanPropertyRowMapper.newInstance(Mandate.class);
 		try {
 			return this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -617,7 +640,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				remarks.append("Customer Code");
 			}
 
-			if (!StringUtils.equals(mandate.getMICR(), respMandate.getMICR())) {
+			if (respMandate.getMICR() != null && !mandate.getMICR().equals(respMandate.getMICR())) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");
 				}
@@ -845,6 +868,165 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		}
 	}
 
+	@Override
+	public void processUploadToDownLoadFile(long userId, File file, Media media, DataEngineStatus status)
+			throws Exception {
+		logger.debug(Literal.ENTERING);
+		String configName = status.getName();
+		String name = "";
+		if (file != null) {
+			name = file.getName();
+		} else if (media != null) {
+			name = media.getName();
+		}
+		status.reset();
+		status.setFileName(name);
+		status.setRemarks("initiated Mandate Upload To Download file [ " + name + " ] processing..");
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
+				status);
+		dataEngine.setFile(file);
+		dataEngine.setMedia(media);
+		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
+		dataEngine.setValidateRecord(uploadToDownloadValidationImpl);
+		Map<String, Object> parameterMap = new HashMap<>();
+		parameterMap.put("APP_DATE", SysParamUtil.getAppDate());
+		dataEngine.setParameterMap(parameterMap);
+		dataEngine.importData(configName);
+
+		do {
+			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
+				processResponse(status.getId(), status);
+				break;
+			}
+		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void processResponse(long respBatchId, DataEngineStatus status) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		setExceptionLog(status);
+
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT MANDATEID");
+		sql.append(" FROM MANDATEUPLOADTODOWNLOAD");
+		sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("RESP_BATCH_ID", respBatchId);
+
+		List<Long> mandateIdList = namedJdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
+
+		if (mandateIdList == null || mandateIdList.isEmpty()) {
+			return;
+		}
+		//Updating the mandate status as 'NEW' for download
+		updateMandateStatus(mandateIdList);
+		try {
+			MandateData mandateData = new MandateData();
+			mandateData.setMandateIdList(mandateIdList);
+			MandateProcessThread process = new MandateProcessThread(mandateData, respBatchId);
+			Thread thread = new Thread(process);
+			thread.start();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public class MandateProcessThread extends Thread {
+		MandateData mandateData;
+		long respBatchId;
+
+		public MandateProcessThread(MandateData mandateData, long respBatchId) {
+			this.mandateData = mandateData;
+			this.respBatchId = respBatchId;
+		}
+
+		@Override
+		public void run() {
+			try {
+				externalInterfaceService.processMandateRequest(mandateData);
+				updateResponseStatus(mandateData.getMandateIdList(), respBatchId);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+	}
+
+	private void updateResponseStatus(List<Long> mandateIdList, long batchId) {
+		logger.debug(Literal.ENTERING);
+		try {
+			this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
+					"update MANDATEUPLOADTODOWNLOAD set status = ?, remarks = ? where mandateId=? and RESP_BATCH_ID=?",
+					new BatchPreparedStatementSetter() {
+						public void setValues(PreparedStatement ps, int i) throws SQLException {
+							ps.setString(1, "SUCCESS");
+							ps.setString(2, "Sent for Registration Process");
+							ps.setLong(3, mandateIdList.get(i));
+							ps.setLong(4, batchId);
+						}
+
+						public int getBatchSize() {
+							return mandateIdList.size();
+						}
+					});
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void updateMandateStatus(List<Long> mandateIdList) throws Exception {
+		logger.debug(Literal.ENTERING);
+		try {
+			this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
+					"update mandates set status = ? where mandateId=? and status!='NEW'",
+					new BatchPreparedStatementSetter() {
+						public void setValues(PreparedStatement ps, int i) throws SQLException {
+							ps.setString(1, "NEW");
+							ps.setLong(2, mandateIdList.get(i));
+						}
+
+						public int getBatchSize() {
+							return mandateIdList.size();
+						}
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	//Setting the exception log data engine status.
+	private void setExceptionLog(DataEngineStatus status) {
+		List<DataEngineLog> engineLogs = getExceptions(status.getId());
+		if (CollectionUtils.isNotEmpty(engineLogs)) {
+			status.setDataEngineLogList(engineLogs);
+		}
+	}
+
+	// Getting the exception log
+	public List<DataEngineLog> getExceptions(long batchId) {
+		RowMapper<DataEngineLog> rowMapper = null;
+		MapSqlParameterSource parameterMap = null;
+		StringBuilder sql = null;
+
+		try {
+			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
+			parameterMap = new MapSqlParameterSource();
+			parameterMap.addValue("ID", batchId);
+			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
+			return namedJdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
+		} catch (Exception e) {
+		} finally {
+			rowMapper = null;
+			sql = null;
+		}
+		return null;
+	}
+
 	protected void addCustomParameter(Map<String, Object> parameterMap) {
 
 	}
@@ -869,4 +1051,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		this.dataEngineConfig = dataEngineConfig;
 	}
 
+	@Autowired
+	public void setExternalInterfaceService(ExternalInterfaceService externalInterfaceService) {
+		this.externalInterfaceService = externalInterfaceService;
+	}
 }

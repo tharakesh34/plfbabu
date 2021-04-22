@@ -49,7 +49,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -74,7 +75,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 
 public class DashboardCreate extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = -4201689911130684236L;
-	private static final Logger logger = Logger.getLogger(DashboardCreate.class);
+	private static final Logger logger = LogManager.getLogger(DashboardCreate.class);
 	public ChartDetail chartDetail;
 	private int height = getContentAreaHeight() * 85 / 100 / 2;
 	ChartUtil chartUtil = new ChartUtil();

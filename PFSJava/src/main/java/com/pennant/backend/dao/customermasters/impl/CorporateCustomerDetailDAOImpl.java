@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.customermasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CorporateCustomerDetailDAO;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDetail>
 		implements CorporateCustomerDetailDAO {
 
-	private static Logger logger = Logger.getLogger(CorporateCustomerDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CorporateCustomerDetailDAOImpl.class);
 
 	public CorporateCustomerDetailDAOImpl() {
 		super();
@@ -105,7 +106,7 @@ public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDe
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(corporateCustomerDetail);
-		RowMapper<CorporateCustomerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<CorporateCustomerDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(CorporateCustomerDetail.class);
 
 		try {
@@ -176,7 +177,7 @@ public class CorporateCustomerDetailDAOImpl extends BasicDao<CorporateCustomerDe
 		insertSql.append(" (CustId, Name, PhoneNumber, EmailId, BussCommenceDate, ServCommenceDate,");
 		insertSql.append(" BankRelationshipDate, PaidUpCapital, AuthorizedCapital, ReservesAndSurPlus,");
 		insertSql.append(" IntangibleAssets, TangibleNetWorth, LongTermLiabilities, CapitalEmployed,");
-		insertSql.append(" NonCurrentAssets, NetWorkingCapital, NetSales, OtherIncome,");
+		insertSql.append(" Investments, NonCurrentAssets, NetWorkingCapital, NetSales, OtherIncome,");
 		insertSql.append(" NetProfitAfterTax, Depreciation, CashAccurals, AnnualTurnover, ReturnOnCapitalEmp,");
 		insertSql.append(" CurrentAssets, CurrentLiabilities, CurrentBookValue, CurrentMarketValue,");
 		insertSql.append(" PromotersShare, AssociatesShare, PublicShare, FinInstShare, Others, ");

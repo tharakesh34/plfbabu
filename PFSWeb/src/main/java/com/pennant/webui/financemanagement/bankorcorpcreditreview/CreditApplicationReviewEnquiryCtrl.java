@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -113,7 +114,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditReviewDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CreditApplicationReviewEnquiryCtrl.class);
 
 	protected Window window_CreditApplicationReviewDialog;
 	protected Borderlayout borderlayout_CreditApplicationReview;
@@ -190,7 +191,6 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	BigDecimal totLibNetWorthValue1 = BigDecimal.ZERO;
 	BigDecimal totAsstValue2 = BigDecimal.ZERO;
 	BigDecimal totLibNetWorthValue2 = BigDecimal.ZERO;
-
 
 	protected Div div_CmdBtntoolbar;
 	protected Div div_SearchBtntoolbar;
@@ -1084,8 +1084,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		map.put("finHeaderList", getFinBasicDetails());
 		map.put("financeDetail", getFinanceDetail());
 		map.put("isFinanceProcess", true);
-		map.put("ccyFormatter",
-				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+		if (onLoad) {
+			map.put("ccyFormatter",
+					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+		}
 		map.put("creditReviewDetails", creditReviewDetails);
 		map.put("creditReviewData", creditReviewData);
 		map.put("externalLiabilities", extLiabilities);
@@ -1126,7 +1128,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			amount = new BigDecimal(data);
 		}
 
-		return PennantApplicationUtil.formatAmount(amount, 2, false);
+		return PennantApplicationUtil.formatAmount(amount, 2);
 	}
 
 	/**
@@ -1292,10 +1294,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						value = PennantApplicationUtil.amountFormate(new BigDecimal(value), this.currFormatter);
 					} else if (finCreditRevSubCategory.isPercentCategory()) {
 						value = PennantApplicationUtil.formatAmount(new BigDecimal(value).multiply(new BigDecimal(100)),
-								2, false);
+								2);
 						value = value + " %";
 					} else {
-						value = PennantApplicationUtil.formatAmount(new BigDecimal(value), 2, false);
+						value = PennantApplicationUtil.formatAmount(new BigDecimal(value), 2);
 					}
 				} catch (Exception e) {
 					value = "--";
@@ -1421,13 +1423,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			if (subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_WRKCAP)
 					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_EBITDA4)
 					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_FCF)) {
-				return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE,
-						false);
+				return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
 			} else {
 				return "";
 			}
 		} else {
-			return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE, false);
+			return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE);
 		}
 	}
 

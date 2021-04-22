@@ -50,7 +50,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -82,7 +83,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -7778031557272602004L;
-	private static final Logger logger = Logger.getLogger(PostponementDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PostponementDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -558,6 +559,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.adjTerms, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_PostponementDialog_Terms.value") }));
 				}
+				getFinScheduleData().getFinanceMain().setAdjTerms(this.adjTerms.intValue());
 				finServiceInstruction.setTerms(this.adjTerms.intValue());
 
 			} catch (WrongValueException we) {

@@ -46,7 +46,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.HashedMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -78,7 +79,7 @@ import com.pennanttech.pennapps.lic.exception.LicenseException;
  */
 public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	private static final long serialVersionUID = -3407055074703929527L;
-	private static final Logger logger = Logger.getLogger(IndexCtrl.class);
+	private static final Logger logger = LogManager.getLogger(IndexCtrl.class);
 
 	private static final int CONTENT_AREA_HEIGHT_OFFSET = 92;
 

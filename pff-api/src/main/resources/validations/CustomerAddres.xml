@@ -61,7 +61,6 @@
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>Street is Mandatory</message>
 				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 			</constraint>

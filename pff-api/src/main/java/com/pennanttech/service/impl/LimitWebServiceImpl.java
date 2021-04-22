@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.LimitServiceController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.LimitRestService;
@@ -46,8 +48,8 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
-	private static final Logger logger = Logger.getLogger(LimitWebServiceImpl.class);
+public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestService, LimitSoapService {
+	private static final Logger logger = LogManager.getLogger(LimitWebServiceImpl.class);
 
 	private LimitServiceController limitServiceController;
 	private LimitStructureService limitStructureService;
@@ -108,7 +110,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		// bean validations
 		validationUtility.validate(limitHeader, LimitSetupGroup.class);
 		LimitHeader response = null;
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = limitHeader.getCustCIF();
 		logFields[1] = limitHeader.getCustGrpCode();
@@ -118,7 +120,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		// validate customer id and customer group id
 		WSReturnStatus returnStatus = doCustomerValidations(limitHeader);
 
-		// call get limit setup method 
+		// call get limit setup method
 		if (StringUtils.isBlank(returnStatus.getReturnCode())) {
 			response = limitServiceController.getLimitSetup(limitHeader);
 		} else {
@@ -126,7 +128,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 			doEmptyResponseObject(response);
 			response.setReturnStatus(returnStatus);
 		}
-		//for logging purpose
+		// for logging purpose
 		if (response.getHeaderId() != Long.MIN_VALUE) {
 			APIErrorHandlerService.logReference(String.valueOf(response.getHeaderId()));
 		}
@@ -140,7 +142,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		// bean validations
 		validationUtility.validate(limitHeader, SaveValidationGroup.class);
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = limitHeader.getCustCIF();
 		logFields[1] = limitHeader.getCustGrpCode();
@@ -164,9 +166,9 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 			}
 		}
 
-		// call create Limit setup 
+		// call create Limit setup
 		response = limitServiceController.createLimitSetup(auditHeader);
-		//for logging purpose
+		// for logging purpose
 		if (response.getHeaderId() != Long.MIN_VALUE) {
 			APIErrorHandlerService.logReference(String.valueOf(response.getHeaderId()));
 		}
@@ -187,7 +189,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		// bean validations
 		validationUtility.validate(limitHeader, UpdateValidationGroup.class);
 
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = limitHeader.getCustCIF();
 		logFields[1] = limitHeader.getCustGrpCode();
@@ -208,7 +210,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		// call create Limit setup
 		response = limitServiceController.updateLimitSetup(auditHeader);
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(String.valueOf(limitHeader.getHeaderId()));
 		logger.debug("Leaving");
 		return response;
@@ -230,7 +232,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		// bean validations
 		validationUtility.validate(limitTransDetail, SaveValidationGroup.class);
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = limitTransDetail.getCustCIF();
 		logFields[1] = limitTransDetail.getCustGrpCode();
@@ -250,7 +252,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 			// call do Reserve limit method
 			returnStatus = limitServiceController.doReserveLimit(limitTransDetail);
-			//for logging purpose
+			// for logging purpose
 			if (StringUtils.equals(returnStatus.getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
 				APIErrorHandlerService.logReference(String.valueOf(limitTransDetail.getHeaderId()));
 			}
@@ -275,7 +277,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		WSReturnStatus returnStatus = null;
 		validationUtility.validate(limitTransDetail, SaveValidationGroup.class);
 		limitTransDetail.setReferenceCode(LimitConstants.FINANCE);
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = limitTransDetail.getCustCIF();
 		logFields[1] = limitTransDetail.getCustGrpCode();
@@ -304,7 +306,7 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 
 		// call cancel Reserve limit method
 		returnStatus = limitServiceController.cancelReserveLimit(limitTransDetail);
-		//for logging purpose
+		// for logging purpose
 		if (StringUtils.equals(returnStatus.getReturnCode(), APIConstants.RES_SUCCESS_CODE)) {
 			APIErrorHandlerService.logReference(String.valueOf(limitTransDetail.getHeaderId()));
 		}

@@ -88,10 +88,10 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(
-				String.valueOf(financeMain.getGraceTerms() + financeMain.getCalTerms() + financeMain.getAdvTerms()));
+		lc = new Listcell(String.valueOf(financeMain.getNOInst()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate() == null
+				? financeMain.getNextRolloverDate() : financeMain.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
@@ -101,7 +101,7 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (financeMain.getFinRepaymentAmount() != null) {
-			//KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
+			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			BigDecimal curFinAmountValue = null;
 
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())) {

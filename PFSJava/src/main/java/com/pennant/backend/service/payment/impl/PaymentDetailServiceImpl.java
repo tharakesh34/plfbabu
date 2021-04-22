@@ -48,7 +48,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -89,7 +90,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PaymentDetail</b>.<br>
  */
 public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> implements PaymentDetailService {
-	private static final Logger logger = Logger.getLogger(PaymentDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PaymentDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentDetailDAO paymentDetailDAO;
@@ -667,7 +668,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 			if (payableReserve == null) {
 				// Update Payable Amount in Reserve
-				getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(), amount);
+				getManualAdviseDAO().updatePayableReserveAmount(paymentDetail.getReferenceId(), amount);
 
 				// Save Payable Reserve Log Amount
 				getManualAdviseDAO().savePayableReserveLog(paymentDetail.getPaymentDetailId(),
@@ -677,7 +678,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 					BigDecimal diffInReserve = amount.subtract(payableReserve.getReservedAmt());
 
 					// Update Reserve Amount in Manual Advise
-					getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(), diffInReserve);
+					getManualAdviseDAO().updatePayableReserveAmount(paymentDetail.getReferenceId(), diffInReserve);
 
 					// Update Payable Reserve Log
 					getManualAdviseDAO().updatePayableReserveLog(paymentDetail.getPaymentDetailId(),
@@ -777,11 +778,12 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 
 			advise.setPaidAmount(amount);
+			advise.setBalanceAmt(amount.negate());
 			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())) {
 				advise.setReservedAmt(amount.negate());
+				advise.setBalanceAmt(BigDecimal.ZERO);
 			}
 
-			advise.setBalanceAmt(amount.negate());
 			getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 
 			// Delete Reserved Log against Advise and Receipt Seq ID
@@ -859,6 +861,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
+	}
+
+	@Override
+	public long getPymntsCustId(long paymentId) {
+		return getPaymentInstructionDAO().getPymntsCustId(paymentId);
 	}
 
 	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {

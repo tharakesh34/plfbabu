@@ -44,30 +44,35 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 		logger.debug("Writing Document to FS...");
 
 		if (DMSStorage.FS == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			storeDocIntoFileSystem(dmsQueue);
-		} else if (DMSStorage.EXTERNAL == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
-			dmsQueue.setErrorCode("");
-			dmsQueue.setErrorDesc("");
+			if (externalDocumentManagementService == null) {
+				storeDocIntoFileSystems(dmsQueue);
+				return dmsQueue.getDocUri();
+			}
 			try {
 				dmsQueue.setDocUri(externalDocumentManagementService.store(dmsQueue));
+				return dmsQueue.getDocUri();
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 				dmsQueue.setErrorCode("DMS99");
 				dmsQueue.setErrorDesc(e.getMessage());
-				if (dmsQueue.getAttemptNum() >= 3) {
+			} finally {
+				int incre = dmsQueue.getAttemptNum() + 1;
+				dmsQueue.setAttemptNum(incre);
+				if (dmsQueue.getAttemptNum() >= 5) {
 					dmsQueue.setProcessingFlag(-1);
 				} else {
 					dmsQueue.setProcessingFlag(0);
 				}
-			} finally {
-				dmsQueue.setProcessingFlag(1);
 			}
+		} else if (DMSStorage.EXTERNAL == DMSStorage.getStorage(App.getProperty(DMSProperties.STORAGE))) {
+			dmsQueue.setErrorCode("");
+			dmsQueue.setErrorDesc("");
 
 		}
 		logger.debug(Literal.LEAVING);
 		return dmsQueue.getDocUri();
 	}
-
+	
 	@Override
 	public byte[] retrive(String docURI) {
 		logger.debug(Literal.ENTERING);
@@ -81,7 +86,24 @@ public class DocumentFileSystemImpl implements DocumentFileSystem {
 		}
 	}
 
-	private void storeDocIntoFileSystem(DMSQueue dmsQueue) {
+	@Override
+	public DMSQueue retriveDMS(String docURI) {
+		logger.debug(Literal.ENTERING);
+
+		DMSQueue dmsQueue = new DMSQueue();
+		if (externalDocumentManagementService == null) {
+			dmsQueue.setDocUri(docURI);
+			byte[] docImage = retriveDocFromFileSystem(docURI);
+			dmsQueue.setDocImage(docImage);
+			return dmsQueue;
+		} else {
+			dmsQueue.setDocUri(docURI);
+			dmsQueue = externalDocumentManagementService.retrieve(dmsQueue);
+			return dmsQueue;
+		}
+	}
+
+	private void storeDocIntoFileSystems(DMSQueue dmsQueue) {
 		logger.debug(Literal.ENTERING);
 		String filePrefix = createFolderStructure(dmsQueue);
 		String fileName = createFileName(dmsQueue);

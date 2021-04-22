@@ -53,7 +53,8 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -83,7 +84,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FinTypeFeesListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinTypeFeesListCtrl.class);
 
 	protected Window window_FinTypeFeesList;
 

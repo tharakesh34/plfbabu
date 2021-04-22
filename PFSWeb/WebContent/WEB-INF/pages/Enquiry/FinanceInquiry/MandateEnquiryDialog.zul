@@ -10,8 +10,7 @@
 				<div sclass="z-toolbar" style="padding:0">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
-						<toolbar align="start" sclass="toolbar-start">
-						</toolbar>
+						<toolbar align="start" sclass="toolbar-start"></toolbar>
 						<toolbar align="center" sclass="toolbar-center">
 							<label id="windowTitle" value="${c:l('window_FinMandateEnquiryDialog.title')}" sclass="label-heading" />
 						</toolbar>
@@ -101,7 +100,7 @@
 									<label id="label_AccHolderName" value="${c:l('label_MandateDialog_AccHolderName.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="accHolderName" maxlength="50" width="200px" />
+										<textbox id="accHolderName" maxlength="100" width="200px" />
 									</hbox>
 								</row>
 								<row visible="true">
@@ -251,8 +250,7 @@
 					</groupbox>
 				</div>
 			</center>
-			<south sclass="south-dialog">
-			</south>
+			<south sclass="south-dialog"></south>
 		</borderlayout>
 	</window>
 </zk>

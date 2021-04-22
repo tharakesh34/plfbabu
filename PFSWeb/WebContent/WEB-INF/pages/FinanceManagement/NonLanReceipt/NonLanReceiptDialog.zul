@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<script type="text/javascript" src="/deviceUtils/printerutil.js" />
+
+	<style>
+		div.z-column-cnt { padding: 3px; } div.z-column-cnt, div.z-row-cnt { color: #000000;
+		font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 11px; font-weight: bold; }
+	</style>
+	<window>
+		<window id="window_NonLanReceiptDialog" border="normal" width="100%" height="100%" sizable="false"
+			apply="${nonLanReceiptDialogCtrl}">
+
+			<div sclass="z-toolbar" style="padding:0">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+					<!-- COMMON BUTTONS -->
+					<toolbar align="start" sclass="toolbar-start">
+						<button id="btnReceipt" label="${c:l('btnReceipt.label')}"
+							tooltiptext="${c:l('btnReceipt.tooltiptext')}"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							sclass="z-toolbarbutton" />
+						<button id="btnNotes" label="${c:l('btnNotes.label')}"
+							tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<label id="windowTitle" value="${c:l('window_NonLanReceiptDialog.title')}"
+							sclass="label-heading" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							autodisable="btnReceipt,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							sclass="z-toolbarbutton" />
+						<button id="btnClose" label="${c:l('btnClose.label')}"
+							tooltiptext="${c:l('btnClose.tooltiptext')}"
+							autodisable="btnReceipt,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderlayout_Receipt">
+				<center border="none">
+					<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
+						<tabs id="tabsIndexCenter">
+							<tab id="receiptDetailsTab" label="${c:l('label_ReceiptDialog_ReceiptDetails')}" />
+							<tab id="postingDetailsTab" label="${c:l('label_ReceiptDialog_PostingDetails')}"
+								visible="false" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true">
+								<div>
+									<groupbox style="border:0px;">
+										<caption label="${c:l('label_ReceiptDialog_LoanSummary')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
+											width="100%">
+											<columns>
+												<column width="200px" />
+												<column />
+												<column width="200px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label id="label_ReceiptDialog_ReceivedFrom1"
+														value="${c:l('label_ReceiptDialog_ReceivedFrom1.value')}" />
+													<hbox>
+														<space spacing="2px" />
+
+														<combobox id="receivedFrom" width="180px" disabled="true" />
+													</hbox>
+													<label id="label_NonReceiptDialog_CustID"
+														value="${c:l('label_NonReceiptDialog_CustID.value')}" />
+													<hbox id="hbox_NonReceiptDialog">
+														<space spacing="2px" id="mandStyle" sclass="mandatory" />
+														<extendedcombobox id="custCIF" width="108px" maxlength="6"
+															readonly="true" />
+														<!-- <textbox id="custShrtName" width="108px" readonly="true" style="border:0px"/> -->
+													</hbox>
+
+												</row>
+												<row>
+													<label value="${c:l('label_ReceiptDialog_ExtReference.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<uppercasebox id="extReference" readonly="true" width="180px" />
+													</hbox>
+													<label value="${c:l('label_ReceiptDialog_ReceiptSource.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="receiptSource" disabled="true" width="180px" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+									<groupbox id="gb_ReceiptDetails">
+										<caption label="${c:l('label_ReceiptDialog_ReceiptDetail')}" />
+										<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+											<columns>
+												<column width="200px" />
+												<column />
+												<column width="200px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label value="${c:l('label_ReceiptPayment_ReceiptId.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="receiptId" readonly="true" />
+													</hbox>
+													<label id="label_ReceiptDialog_CashierBranch"
+														value="${c:l('label_ReceiptDialog_CashierBranch.value')}" />
+													<extendedcombobox id="cashierBranch" />
+												</row>
+												<row>
+													<label value="${c:l('label_ReceiptDialog_ReceiptMode.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="receiptMode" width="180px" readonly="true" />
+													</hbox>
+													<label id="receiptTypeLabel" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="subReceiptMode" width="180px" readonly="true"
+															visible="false" />
+														<combobox id="receiptChannel" width="180px" readonly="true"
+															visible="false" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_ReceiptPayment_ReceiptDate"
+														value="${c:l('label_ReceiptPayment_ReceiptDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="receiptDate" width="190px" />
+													</hbox>
+													<label value="${c:l('label_ReceiptDialog_ReceiptAmount.value')}" />
+													<currencyBox id="receiptAmount" />
+												</row>
+												<row id="row_ReceiptModeStatus" visible="false">
+													<label id="label_ReceiptDialog_ReceiptModeStatus"
+														value="${c:l('label_ReceiptDialog_ReceiptModeStatus.value')}" visible="false" />
+													<hbox id="hbox_ReceiptModeStatus" visible="false">
+														<space spacing="2px" sclass="mandatory" />
+														<combobox id="receiptModeStatus" width="180px" readonly="true" />
+													</hbox>
+												</row>
+												<row id="row_RealizationDate" visible="false">
+													<label id="label_ReceiptDialog_RealizationDate"
+														value="${c:l('label_ReceiptDialog_RealizationDate.value')}" />
+													<hbox id="hbox_ReceiptDialog_RealizationDate">
+														<space spacing="2px" sclass="mandatory" />
+														<datebox id="realizationDate" width="100px" />
+													</hbox>
+												</row>
+												<row id="row_BounceReason" visible="false">
+													<label id="label_ReceiptDialog_BounceReason"
+														value="${c:l('label_ReceiptDialog_BounceReason.value')}" />
+													<extendedcombobox id="bounceCode" />
+													<label id="label_ReceiptDialog_BounceCharge"
+														value="${c:l('label_ReceiptDialog_BounceCharge.value')}" />
+													<currencyBox id="bounceCharge" />
+												</row>
+												<row id="row_BounceRemarks" visible="false">
+													<label id="label_ReceiptDialog_BounceRemarks"
+														value="${c:l('label_ReceiptDialog_BounceRemarks.value')}" />
+													<hbox>
+														<textbox id="bounceRemarks" width="180px" />
+													</hbox>
+													<label id="label_ReceiptDialog_BounceDate"
+														value="${c:l('label_ReceiptDialog_BounceDate.value')}" />
+													<hbox id="hbox_ReceiptDialog_BounceDate">
+														<space spacing="2px" sclass="mandatory" />
+														<datebox id="bounceDate" width="100px" />
+													</hbox>
+												</row>
+												<row id="row_CancelReason" visible="false">
+													<label id="label_ReceiptDialog_CancelReason"
+														value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
+													<extendedcombobox id="cancelReason" />
+
+													<label id="label_ReceiptDialog_CancelRemark"
+														value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />
+													<textbox id="cancelRemarks" />
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+
+									<groupbox id="gb_TransactionDetails" visible="true">
+										<caption id="caption_receiptDetail"
+											label="${c:l('label_ReceiptDialog_TranscactionDetail.value')}" />
+										<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+											<columns>
+												<column width="200px" />
+												<column />
+												<column width="200px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label id="label_ReceiptDialog_PanNumber"
+														value="${c:l('label_ReceiptDialog_PanNumber.value')}" />
+													<hbox>
+														<space id="panSpace" spacing="2px" sclass="" />
+														<textbox id="panNumber" width="180px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_ReceiptDialog_CollectionAgentId"
+														value="${c:l('label_ReceiptDialog_CollectionAgency.value')}" />
+													<extendedcombobox id="collectionAgentId" width="180px" />
+												</row>
+												<row>
+													<label id="label_ReceiptDialog_Remarks"
+														value="${c:l('label_ReceiptDialog_Remarks.value')}" />
+													<hbox id="hbox_ReceiptDialog_Remarks">
+														<textbox id="remarks" width="180px" />
+													</hbox>
+												</row>
+												<row id="row_DepositBank">
+													<label id="label_ReceiptDialog_PartnerBankCode"
+														value="${c:l('label_ReceiptDialog_PartnerBankCode.value')}" />
+													<extendedcombobox id="fundingAccount" />
+
+												</row>
+												<row id="row_DepositDate" visible="false">
+													<label id="label_ReceiptDialog_DepositDate"
+														value="${c:l('label_ReceiptDialog_DepositDate.value')}" />
+													<hbox id="hbox_ReceiptDialog_DepositDate" visible="false">
+														<space spacing="2px" sclass="mandatory" />
+														<datebox id="depositDate" width="100px" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+
+									<groupbox id="gb_InstrumentDetails" sclass="gb-dialog">
+										<caption label="${c:l('label_ReceiptDialog_InstrmentDetails.value')}" />
+										<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+											<columns>
+												<column width="200px" />
+												<column />
+												<column width="200px" />
+												<column />
+											</columns>
+											<rows>
+												<row id="row_favourNo" visible="false">
+													<label id="label_ReceiptDialog_favourNo"
+														value="${c:l('label_ReceiptDialog_favourNo.value')}" />
+													<hbox id="hbox_ReceiptDialog_favourNo">
+														<space spacing="2px" sclass="mandatory" />
+														<uppercasebox id="favourNo" width="180px" />
+													</hbox>
+													<label id="label_ReceiptDialog_ValueDate"
+														value="${c:l('label_ReceiptDialog_ValueDate.value')}" />
+													<hbox id="hbox_ReceiptDialog_ValueDate">
+														<space spacing="2px" sclass="mandatory" />
+														<datebox id="valueDate" width="100px" />
+													</hbox>
+												</row>
+												<row id="row_BankCode" visible="false">
+													<label id="label_ReceiptDialog_BankCode"
+														value="${c:l('label_ReceiptDialog_IssuingBank.value')}" />
+													<extendedcombobox id="bankCode" />
+													<label id="label_ReceiptDialog_favourName"
+														value="${c:l('label_ReceiptDialog_favourName.value')}" />
+													<hbox id="hbox_ReceiptDialog_favourName">
+														<textbox id="favourName" width="180px" />
+														<label id="favourNameDesc" />
+													</hbox>
+												</row>
+												<row id="row_DepositNo" visible="false">
+
+													<label id="label_ReceiptDialog_depositNo" visible="false"
+														value="${c:l('label_ReceiptDialog_depositNo.value')}" />
+													<hbox id="hbox_ReceiptDialog_depositNo" visible="false">
+														<space spacing="2px" sclass="mandatory" />
+														<uppercasebox id="depositNo" width="180px" />
+													</hbox>
+												</row>
+												<row id="row_PaymentRef" visible="false">
+													<label id="label_ReceiptDialog_tranReference"
+														value="${c:l('label_ReceiptDialog_tranReference.value')}" />
+													<hbox id="hbox_ReceiptDialog_tranReference">
+														<space spacing="2px" sclass="mandatory" />
+														<uppercasebox id="transactionRef" width="180px" />
+													</hbox>
+												</row>
+												<row id="row_ChequeAcNo" visible="false">
+													<label id="label_ReceiptDialog_ChequeAccountNo"
+														value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
+													<accountSelectionBox id="chequeAcNo" width="180px" />
+												</row>
+												<row id="row_remarks" visible="false">
+													<label id="label_ReceiptDialog_paymentReference"
+														value="${c:l('label_ReceiptDialog_paymentReference.value')}" />
+													<hbox id="hbox_ReceiptDialog_paymentReference">
+														<space spacing="2px" />
+														<uppercasebox id="paymentRef" width="180px" />
+													</hbox>
+													<!-- <label
+														id="label_ReceiptDialog_ReceivedDate"
+														value="${c:l('label_ReceiptDialog_ReceivedDate.value')}" />
+														<hbox
+														id="hbox_ReceiptDialog_ReceivedDate">
+														<space
+														spacing="2px" sclass="mandatory" />
+														<datebox
+														id="receivedDate" width="100px" />
+														</hbox> -->
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+								</div>
+							</tabpanel>
+							<tabpanel id="tabpanel_Postings" visible="false">
+								<listbox id="listBoxPostings" emptyMessage="${c:l('listbox.emptyMessage')}"
+									fixedLayout="true" sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+									height="100%" multiple="false">
+									<listhead sizable="true">
+										<listheader id="listheader_Acc_TranOrderId"
+											label="${c:l('listheader_Acc_TranOrderId.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_FinEvent"
+											label="${c:l('listheader_Acc_FinEvent.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_PostDate"
+											label="${c:l('listheader_Acc_PostDate.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_ValueDate"
+											label="${c:l('listheader_Acc_ValueDate.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_TranDesc"
+											label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_DebitOrCredit"
+											label="${c:l('listheader_Acc_DebitOrCredit.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_TranCode"
+											label="${c:l('listheader_Acc_TranCode.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_RevTranCode"
+											label="${c:l('listheader_Acc_RevTranCode.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_AccountNo"
+											label="${c:l('listheader_Acc_AccountNo.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_AcCcy"
+											label="${c:l('listheader_Acc_AcCcy.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_Amount"
+											label="${c:l('listheader_Acc_Amount.label')}" sort="false" hflex="min" />
+										<listheader id="listheader_Acc_PostingStatus"
+											label="${c:l('listheader_Acc_PostingStatus.label')}" sort="false" hflex="min" />
+									</listhead>
+								</listbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</center>
+				<south id="south" sclass="south-dialog">
+					<groupbox id="groupboxWf" width="98%">
+						<caption label="${c:l('Action')}" />
+						<hbox width="95%">
+							<radiogroup id="userAction" name="action" />
+							<label id="label_ReceiptDialog_RecordStatus"
+								value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+							<label id="recordStatus" />
+						</hbox>
+					</groupbox>
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

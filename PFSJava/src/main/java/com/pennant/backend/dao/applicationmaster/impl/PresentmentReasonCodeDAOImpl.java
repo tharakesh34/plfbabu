@@ -1,13 +1,14 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.PresentmentReasonCodeDAO;
 import com.pennant.backend.model.applicationmaster.PresentmentReasonCode;
@@ -16,7 +17,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class PresentmentReasonCodeDAOImpl extends BasicDao<PresentmentReasonCode> implements PresentmentReasonCodeDAO {
-	private static Logger logger = Logger.getLogger(PresentmentReasonCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PresentmentReasonCodeDAOImpl.class);
 
 	public PresentmentReasonCodeDAOImpl() {
 		super();
@@ -38,8 +39,7 @@ public class PresentmentReasonCodeDAOImpl extends BasicDao<PresentmentReasonCode
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(presentmentReasonCode);
-		RowMapper<PresentmentReasonCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentReasonCode.class);
+		RowMapper<PresentmentReasonCode> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentReasonCode.class);
 
 		try {
 			presentmentReasonCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,

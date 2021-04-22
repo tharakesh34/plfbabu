@@ -45,6 +45,7 @@ package com.pennant.backend.dao.pdc;
 import java.util.List;
 
 import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface ChequeDetailDAO {
@@ -67,5 +68,7 @@ public interface ChequeDetailDAO {
 	void updateChequeStatus(long chequeDetailsId, String status);
 
 	void batchUpdateChequeStatus(List<Long> chequeDetailsId, String chequestatus);
+
+	int updateChequeStatus(List<PresentmentDetail> presentments);
 
 }

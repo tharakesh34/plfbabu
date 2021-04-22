@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<!-- ST#1923 Write off loan changes start -->
+
+	<!-- ST#1922 Restructure functionality in LMS "START" --> 
+	
+	<changeSet id="ST#1923.1" author="sudheer.t">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1923.2" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinanceMain Set WriteOffLoan = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.3" author="sudheer.t" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WriteOffLoan" tableName="AdtFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1923.4" author="sudheer.t" dbms="mysql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AdtFinanceMain ADD CONSTRAINT DF_ADTFM_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.5" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinanceMain Set WriteOffLoan = 1 Where ClosingStatus = 'W';
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#1923 Write off loan changes end -->
+	
+	
+	<changeSet id="ST#1922.1" author="sivasai.p">
+		<createTable tableName="AdtRestructure_Details">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="RestructureType" type="varchar(10)" />
+			<column name="EmiHldPeriod" type="int" />
+			<column name="PriHldPeriod" type="int" />
+			<column name="EmiPeriods" type="int" />
+			<column name="TotNoOfRestructure" type="int" />
+			<column name="RecalculationType" type="varchar(10)" />
+			<column name="ServiceRequestNo" type="varchar(20)" />
+			<column name="Remark" type="varchar(200)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+			<column name="OldBucket" type="int" />
+			<column name="NewBucket" type="int" />
+			<column name="OldEmios" type="decimal(18,0)" />
+			<column name="NewEmios" type="decimal(18,0)" />
+			<column name="OldBalTenure" type="int" />
+			<column name="NewBalTenure" type="int" />
+			<column name="OldMaturity" type="datetime" />
+			<column name="NewMaturity" type="datetime" />
+			<column name="LastBilledDate" type="datetime" />
+			<column name="LastBilledInstNo" type="int" />
+			<column name="ActLoanAmount" type="decimal(18,0)" />
+			<column name="OldTenure" type="int" />
+			<column name="NewTenure" type="int" />
+			<column name="OldInterest" type="decimal(18,0)" />
+			<column name="NewInterest" type="decimal(18,0)" />
+			<column name="OldMaxUnplannedEmi" type="int" />
+			<column name="NewMaxUnplannedEmi" type="int" />
+			<column name="OldAvailedUnplanEmi" type="int" />
+			<column name="NewAvailedUnplanEmi" type="int" />
+			<column name="OldFinalEmi" type="decimal(18,0)" />
+			<column name="NewFinalEmi" type="decimal(18,0)" />
+			<column name="RestructureDate" type="datetime" />
+			<column name="TenorChange" type="boolean" />
+			<column name="EmiRecal" type="boolean" />
+			<column name="RestructureReason" type="varchar(15)" />
+			<column name="OldDpd" type="smallint" />
+			<column name="NewDpd" type="smallint" />
+			<column name="OldCpzInterest" type="decimal(18,0)" />
+			<column name="NewCpzInterest" type="decimal(18,0)" />
+			<column name="EmiHldStartDate" type="datetime" />
+			<column name="EmiHldEndDate" type="datetime" />
+			<column name="PriHldStartDate" type="datetime" />
+			<column name="PriHldEndDate" type="datetime" />
+			<column name="OldPOsAmount" type="decimal(18,0)" />
+			<column name="NewPOsAmount" type="decimal(18,0)" />
+			<column name="OldEmiOverdue" type="decimal(18,0)" />
+			<column name="NewEmiOverdue" type="decimal(18,0)" />
+			<column name="BounceCharge" type="decimal(18,0)" />
+			<column name="OldPenaltyAmount" type="decimal(18,0)" />
+			<column name="NewPenaltyAmount" type="decimal(18,0)" />
+			<column name="OtherCharge" type="decimal(18,0)" />
+			<column name="RestructureCharge" type="decimal(18,0)" />
+			<column name="AppDate" type="datetime" />
+			<column name="FinCurrAssetValue" type="decimal(18,0)" />
+			<column name="OldExtOdDays" type="smallint" />
+			<column name="NewExtOdDays" type="smallint" />
+			<column name="RepayProfitRate" type="number(13,9)" />
+			<column name="GrcMaxAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1922.1.1" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OldDpd" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewDpd" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldCpzInterest" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewCpzInterest" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldPOsAmount" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewPOsAmount" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldEmiOverdue" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewEmiOverdue" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="BounceCharge" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldPenaltyAmount" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewPenaltyAmount" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OtherCharge" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="RestructureCharge" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="FinCurrAssetValue" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="OldExtOdDays" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="NewExtOdDays" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="RepayProfitRate" tableName="AdtRestructure_Details" defaultValue="0" />
+		<addDefaultValue columnName="GrcMaxAmount" tableName="AdtRestructure_Details" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1922.1.1" author="sivasai.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_olddpd DEFAULT 0 FOR OldDpd;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_newdpd DEFAULT 0 FOR NewDpd;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_oldcpzinterest DEFAULT 0 FOR OldCpzInterest;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_newcpzinterest DEFAULT 0 FOR NewCpzInterest;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_oldposamount DEFAULT 0 FOR OldPOsAmount;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_newposamount DEFAULT 0 FOR NewPOsAmount; 
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_oldemioverdue DEFAULT 0 FOR OldEmiOverdue;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_newemioverdue DEFAULT 0 FOR NewEmiOverdue;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_bouncecharge DEFAULT 0 FOR BounceCharge;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_oldpenaltyamount DEFAULT 0 FOR OldPenaltyAmount;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_newpenaltyamount DEFAULT 0 FOR NewPenaltyAmount;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_othercharge DEFAULT 0 FOR OtherCharge;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_restructurecharge DEFAULT 0 FOR RestructureCharge;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_fincurrassetvalue DEFAULT 0 FOR FinCurrAssetValue;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_oldextoddays DEFAULT 0 FOR OldExtOdDays;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_newextoddays DEFAULT 0 FOR NewExtOdDays;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_repayprofitrate DEFAULT 0 FOR RepayProfitRate;
+				ALTER TABLE AdtRestructure_Details ADD CONSTRAINT df_restruct_grcmaxamount DEFAULT 0 FOR GrcMaxAmount;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1922.2" author="sivasai.p">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="Restructure" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1922.3" author="sivasai.p">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinanceMain Set Restructure = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923.4" author="sivasai.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Restructure" tableName="AdtFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1923.4" author="sivasai.p" dbms="mysql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AdtFinanceMain ADD CONSTRAINT DF_ADTFM_Restructure DEFAULT 0 FOR Restructure;
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- ST#1922 Restructure functionality in LMS "END" -->  
+	
+</databaseChangeLog>

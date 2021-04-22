@@ -10,10 +10,11 @@ import javax.xml.bind.annotation.XmlType;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.ForeClosureReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = { "customer", "finance", "finReference", "docImage", "returnStatus" })
+@XmlType(propOrder = { "customer", "finance", "finReference", "docImage","foreclosureReport", "returnStatus" })
 public class FinStatementResponse {
 	@XmlElement
 	private CustomerDetails customer;
@@ -27,6 +28,8 @@ public class FinStatementResponse {
 	private byte[] docImage;
 	@XmlElement
 	private StatementOfAccount statementSOA;
+	@XmlElement
+	private ForeClosureReport foreclosureReport;
 
 	public CustomerDetails getCustomer() {
 		return customer;
@@ -75,4 +78,13 @@ public class FinStatementResponse {
 	public void setStatementSOA(StatementOfAccount statementSOA) {
 		this.statementSOA = statementSOA;
 	}
+
+	public ForeClosureReport getForeclosureReport() {
+		return foreclosureReport;
+	}
+
+	public void setForeclosureReport(ForeClosureReport foreclosureReport) {
+		this.foreclosureReport = foreclosureReport;
+	}
+
 }

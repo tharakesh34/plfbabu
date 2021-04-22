@@ -27,8 +27,11 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.DisbursementDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -152,12 +155,13 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 							req.setPartnerBankId(getValueAsLong(rs, "PARTNER_BANK_ID"));
 							req.setPartnerBankCode(getValueAsString(rs, "PARTNER_BANK_CODE"));
 							req.setAlwFileDownload(getValueAsBoolean(rs, "ALW_FILE_DOWNLOAD"));
-							req.setPartnerbankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
+							req.setPartnerBankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
 
+							req.setChequeNumber(getValueAsString(rs, "CHEQUE_NUMBER"));
 							// default data
 							req.setPaymentDetail1(DISB_FI_EMAIL);
 							req.setHeaderId(requestData.getHeaderId());
-							req.setRespBatchId(Long.valueOf(0));
+							req.setRespBatchId(new Long(0));
 
 							long id = insertDisbursement(req);
 							req.setId(id);
@@ -622,4 +626,328 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		});
 	}
 
+	@Override
+	public List<DisbursementRequest> getDisbursementInstructions(DisbursementRequest req) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT PAYMENTID , CUSTCIF, FINREFERENCE, FINTYPE");
+		sql.append(", AMTTOBERELEASED, DISBURSEMENT_TYPE, PAYABLELOC, PRINTINGLOC");
+		sql.append(", BANKNAME, MICR_CODE, IFSC_CODE, DISBDATE");
+		sql.append(", BENEFICIARYACCNO , BENEFICIARYNAME, BENFICIRY_EMAIL, PAYMENTTYPE, PARTNERBANK_CODE, CHANNEL");
+		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW WHERE");
+
+		if (!DisbursementConstants.CHANNEL_INSURANCE.equals(req.getChannel())) {
+			sql.append(" FINTYPE = ? AND");
+		}
+		sql.append(" ENTITYCODE = ? AND PARTNERBANK_CODE = ?");
+
+		if (StringUtils.isNotBlank(req.getPaymentType())) {
+			sql.append(" AND PAYMENTTYPE = ?");
+		}
+
+		if (StringUtils.isNotBlank(req.getChannel())) {
+			sql.append(" AND channel= ?");
+		}
+
+		if (req.getFromDate() != null) {
+			sql.append(" AND LLDATE >= ?");
+		}
+
+		if (req.getToDate() != null) {
+			sql.append(" AND LLDATE <= ?");
+		}
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		String ccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			if (!DisbursementConstants.CHANNEL_INSURANCE.equals(req.getChannel())) {
+				ps.setString(index++, req.getFinType());
+			}
+			ps.setString(index++, req.getEntityCode());
+			ps.setString(index++, req.getPartnerBankCode());
+
+			if (StringUtils.isNotBlank(req.getPaymentType())) {
+				ps.setString(index++, req.getPaymentType());
+			}
+
+			if (StringUtils.isNotBlank(req.getChannel())) {
+				ps.setString(index++, req.getChannel());
+			}
+
+			if (req.getFromDate() != null) {
+				ps.setDate(index++, JdbcUtil.getDate(req.getFromDate()));
+			}
+
+			if (req.getToDate() != null) {
+				ps.setDate(index++, JdbcUtil.getDate(req.getToDate()));
+			}
+		}, (rs, rowNum) -> {
+			DisbursementRequest dr = new DisbursementRequest();
+
+			dr.setDisbInstId(rs.getLong("PAYMENTID"));
+			dr.setFinReference(rs.getString("FINREFERENCE"));
+			dr.setCustCIF(rs.getString("CUSTCIF"));
+			dr.setDisbType(rs.getString("PAYMENTTYPE"));
+			dr.setPartnerBankCode(rs.getString("PARTNERBANK_CODE"));
+			dr.setDisbursementDate(rs.getDate("DISBDATE"));
+			dr.setBenficiaryName(rs.getString("BENEFICIARYNAME"));
+			dr.setBenficiaryAccount(rs.getString("BENEFICIARYACCNO"));
+			dr.setBenficiryEmail(rs.getString("BENFICIRY_EMAIL"));
+			dr.setIfscCode(rs.getString("IFSC_CODE"));
+			dr.setMicrCode(rs.getString("MICR_CODE"));
+
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(dr.getPaymentType())
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(dr.getPaymentType())) {
+				dr.setDraweeLocation(rs.getString("PAYABLELOC"));
+				dr.setPrintLocation(rs.getString("PRINTINGLOC"));
+			}
+
+			dr.setDisbursementAmount(rs.getBigDecimal("AMTTOBERELEASED"));
+			dr.setDisbursementType(rs.getString("DISBURSEMENT_TYPE"));
+			dr.setBenficiaryBank(rs.getString("BANKNAME"));
+			dr.setChannel(rs.getString("CHANNEL"));
+
+			dr.setDisbCCy(ccy);
+			return dr;
+		});
+	}
+
+	@Override
+	public FinAdvancePayments getDisbursementInstruction(long paymentId, String channel) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT PAYMENTID ,PARTNERBANK_ID, FINTYPE, BRANCHCODE");
+		sql.append(", BRANCHDESC, PARTNERBANK_CODE, ALWFILEDOWNLOAD, FINREFERENCE");
+		sql.append(", PAYMENTTYPE, ENTITYCODE, CUSTSHRTNAME, BENEFICIARYNAME");
+		sql.append(", BENEFICIARYACCNO, AMTTOBERELEASED, DISBURSEMENT_TYPE");
+		sql.append(", CHANNEL, PROVIDERID, STATUS");
+		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW");
+		sql.append(" WHERE PAYMENTID = ? AND  CHANNEL = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId, channel },
+					(rs, rowNum) -> {
+						FinAdvancePayments fp = new FinAdvancePayments();
+
+						fp.setPaymentId(rs.getLong("PAYMENTID"));
+						fp.setPartnerBankID(rs.getLong("PARTNERBANK_ID"));
+						fp.setFinType((rs.getString("FINTYPE")));
+						fp.setBranchCode(rs.getString("BRANCHCODE"));
+						fp.setBranchDesc(rs.getString("BRANCHDESC"));
+						fp.setPartnerbankCode(rs.getString("PARTNERBANK_CODE"));
+						fp.setAlwFileDownload(rs.getBoolean(("ALWFILEDOWNLOAD")));
+						fp.setFinReference(rs.getString("FINREFERENCE"));
+						fp.setPaymentType(rs.getString("PAYMENTTYPE"));
+						fp.setEntityCode((rs.getString("ENTITYCODE")));
+						fp.setCustShrtName(rs.getString("CUSTSHRTNAME"));
+						fp.setBeneficiaryName(rs.getString("BENEFICIARYNAME"));
+						fp.setBeneficiaryAccNo(rs.getString("BENEFICIARYACCNO"));
+						fp.setAmtToBeReleased(rs.getBigDecimal("AMTTOBERELEASED"));
+						fp.setPaymentType(rs.getString("DISBURSEMENT_TYPE"));
+						fp.setChannel(rs.getString("CHANNEL"));
+						fp.setProviderId(rs.getLong("PROVIDERID"));
+						fp.setStatus(rs.getString("STATUS"));
+
+						return fp;
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return null;
+		}
+	}
+
+	@Override
+	public List<DisbursementRequest> getDetailsByHeaderID(long headerID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT FINREFERENCE, ID, CHANNEL, DISBURSEMENT_ID");
+		sql.append(" FROM DISBURSEMENT_REQUESTS");
+		sql.append(" WHERE HEADER_ID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index, headerID);
+		}, (rs, rowNum) -> {
+			DisbursementRequest dr = new DisbursementRequest();
+
+			dr.setDisbReqId(rs.getLong("ID"));
+			dr.setDisbInstId(rs.getLong("DISBURSEMENT_ID"));
+			dr.setFinReference(rs.getString("FINREFERENCE"));
+			dr.setChannel(rs.getString("CHANNEL"));
+			return dr;
+		});
+	}
+
+	@Override
+	public FinAdvancePayments getDisbursementInstruction(long disbReqId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT FA.PAYMENTID, FA.PAYMENTSEQ, FA.PAYMENTTYPE, FA.FINREFERENCE, FA.LINKEDTRANID");
+		sql.append(", FA.STATUS, FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID");
+		sql.append(", FA.BANKCODE, FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE");
+		sql.append(", FA.AMTTOBERELEASED, FA.RECORDTYPE, FA.PARTNERBANKID");
+		sql.append(", PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY, FA.LLDATE");
+		sql.append(" FROM DISBURSEMENT_REQUESTS DR");
+		sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
+		sql.append(" LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID");
+		sql.append(" WHERE ID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { disbReqId }, (rs, rowNum) -> {
+				FinAdvancePayments fa = new FinAdvancePayments();
+				fa.setPaymentId(rs.getLong("PAYMENTID"));
+				fa.setPaymentSeq(rs.getInt("PAYMENTSEQ"));
+				fa.setPaymentType(rs.getString("PAYMENTTYPE"));
+				fa.setFinReference(rs.getString("FINREFERENCE"));
+				fa.setLinkedTranId(rs.getLong("LINKEDTRANID"));
+				fa.setStatus(rs.getString("STATUS"));
+				fa.setBeneficiaryAccNo(rs.getString("BENEFICIARYACCNO"));
+				fa.setBeneficiaryName(rs.getString("BENEFICIARYNAME"));
+				fa.setBankBranchID(rs.getLong("BANKBRANCHID"));
+				fa.setBankCode(rs.getString("BANKCODE"));
+				fa.setPhoneCountryCode(rs.getString("PHONECOUNTRYCODE"));
+				fa.setPhoneAreaCode(rs.getString("PHONEAREACODE"));
+				fa.setPhoneNumber(rs.getString("PHONENUMBER"));
+				fa.setAmtToBeReleased(rs.getBigDecimal("AMTTOBERELEASED"));
+				fa.setRecordType(rs.getString("RECORDTYPE"));
+				fa.setPartnerBankAcType(rs.getString("PARTNERBANKACTYPE"));
+				fa.setPartnerBankAc(rs.getString("PARTNERBANKAC"));
+				fa.setDisbCCy(rs.getString("DISBCCY"));
+				fa.setLLDate(rs.getDate("LLDATE"));
+				fa.setPartnerBankID(rs.getLong("PARTNERBANKID"));
+
+				return fa;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return null;
+		}
+	}
+
+	@Override
+	public PaymentInstruction getPaymentInstruction(long disbReqId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO");
+		sql.append(", PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID");
+		sql.append(", PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.DISBURSEMENT_ID, PI.STATUS");
+		sql.append(" FROM DISBURSEMENT_REQUESTS DR");
+		sql.append(" INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID");
+		sql.append(" INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID");
+		sql.append(" WHERE ID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { disbReqId }, (rs, rowNum) -> {
+				PaymentInstruction pi = new PaymentInstruction();
+				pi.setFinReference(rs.getString("FINREFERENCE"));
+				pi.setLinkedTranId(rs.getLong("LINKEDTRANID"));
+				pi.setBankBranchId(rs.getLong("BANKBRANCHID"));
+				pi.setAccountNo(rs.getString("ACCOUNTNO"));
+				pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
+				pi.setPhoneCountryCode(rs.getString("PHONECOUNTRYCODE"));
+				pi.setPhoneNumber(rs.getString("PHONENUMBER"));
+				pi.setPaymentInstructionId(rs.getLong("PAYMENTINSTRUCTIONID"));
+				pi.setPaymentAmount(rs.getBigDecimal("PAYMENTAMOUNT"));
+				pi.setPaymentType(rs.getString("PAYMENTTYPE"));
+				pi.setPaymentId(rs.getLong("DISBURSEMENT_ID"));
+				pi.setStatus(rs.getString("STATUS"));
+
+				return pi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return null;
+		}
+	}
+
+	@Override
+	public InsurancePaymentInstructions getInsuranceInstruction(long disbReqId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT PI.LINKEDTRANID, PI.ID, VPA.BANKBRANCHID, VPA.ACCOUNTNUMBER");
+		sql.append(", AVD.DEALERNAME, PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS");
+		sql.append(", DR.REJECT_REASON REJECTREASON, PI.PROVIDERID, DR.DISBURSEMENT_TYPE");
+		sql.append(", DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF, DR.FINREFERENCE");
+		sql.append(" FROM DISBURSEMENT_REQUESTS DR");
+		sql.append(" INNER JOIN INSURANCEPAYMENTINSTRUCTIONS PI ON PI.ID = DR.DISBURSEMENT_ID");
+		sql.append(" INNER JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID");
+		sql.append(" INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID");
+		sql.append(" INNER JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID");
+		sql.append(" WHERE DR.ID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { disbReqId }, (rs, rowNum) -> {
+				InsurancePaymentInstructions ipi = new InsurancePaymentInstructions();
+
+				ipi.setLinkedTranId(rs.getLong("LINKEDTRANID"));
+				ipi.setId(rs.getLong("ID"));
+				ipi.setPaymentAmount(rs.getBigDecimal("PAYMENTAMOUNT"));
+				ipi.setPaymentType(rs.getString("PAYMENTTYPE"));
+				ipi.setStatus(rs.getString("STATUS"));
+				ipi.setProviderId(rs.getLong("PROVIDERID"));
+				ipi.setFinReference(rs.getString("FINREFERENCE"));
+				ipi.setPaymentType(rs.getString("DISBURSEMENT_TYPE"));
+
+				return ipi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			return null;
+		}
+	}
+
+	@Override
+	public DisbursementRequest getDisbRequest(long id) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT ID, FINREFERENCE, DISBURSEMENT_ID, CHANNEL, STATUS, DISBURSEMENT_TYPE");
+		sql.append(" FROM DISBURSEMENT_REQUESTS");
+		sql.append(" WHERE ID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				DisbursementRequest dr = new DisbursementRequest();
+
+				dr.setId(rs.getLong("ID"));
+				dr.setFinReference(rs.getString("FINREFERENCE"));
+				dr.setPaymentId(rs.getLong("DISBURSEMENT_ID"));
+				dr.setChannel(rs.getString("CHANNEL"));
+				dr.setStatus(rs.getString("STATUS"));
+				dr.setDisbType(rs.getString("DISBURSEMENT_TYPE"));
+
+				return dr;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not available in DISBURSEMENT_REQUESTS table for the specified Id >> {}", id);
+			return null;
+		}
+	}
+
+	@Override
+	public int updateDisbRequest(DisbursementRequest request) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update DISBURSEMENT_REQUESTS SET");
+		sql.append(" STATUS = ?, REALIZATION_DATE = ?, REJECT_REASON = ?, TRANSACTIONREF = ?");
+		sql.append(" WHERE ID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, request.getStatus());
+			ps.setDate(2, JdbcUtil.getDate(request.getClearingDate()));
+			ps.setString(3, request.getRejectReason());
+			ps.setString(4, request.getTransactionref());
+			ps.setLong(5, request.getId());
+
+		});
+	}
 }

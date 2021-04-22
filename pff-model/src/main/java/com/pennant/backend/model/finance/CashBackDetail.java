@@ -15,6 +15,7 @@ public class CashBackDetail {
 	private Date finStartDate;
 	private long promotionSeqId = 0;
 	private String feeTypeCode;
+	private String hostReference;
 
 	public String getFinReference() {
 		return finReference;
@@ -94,5 +95,13 @@ public class CashBackDetail {
 
 	public void setFeeTypeCode(String feeTypeCode) {
 		this.feeTypeCode = feeTypeCode;
+	}
+
+	public String getHostReference() {
+		return hostReference;
+	}
+
+	public void setHostReference(String hostReference) {
+		this.hostReference = hostReference;
 	}
 }

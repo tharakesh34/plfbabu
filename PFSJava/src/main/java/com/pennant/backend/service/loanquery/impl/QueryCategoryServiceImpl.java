@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.service.loanquery.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -63,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>QueryCategory</b>.<br>
  */
 public class QueryCategoryServiceImpl extends GenericService<QueryCategory> implements QueryCategoryService {
-	private static final Logger logger = Logger.getLogger(QueryCategoryServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(QueryCategoryServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private QueryCategoryDAO queryCategoryDAO;

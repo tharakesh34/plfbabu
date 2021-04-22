@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> implements FinanceStepDetailDAO {
-	private static Logger logger = Logger.getLogger(FinanceStepDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceStepDetailDAOImpl.class);
 
 	public FinanceStepDetailDAOImpl() {
 		super();
@@ -73,8 +74,9 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc");
-		sql.append(", SteppedEMI, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				", SteppedEMI, StepSpecifier, StepStart, StepEnd, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, AutoCal");
 
 		if (isWIF) {
 			sql.append(" from WIFFinStepPolicyDetail");
@@ -106,6 +108,9 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 					spd.setRateMargin(rs.getBigDecimal("RateMargin"));
 					spd.setEmiSplitPerc(rs.getBigDecimal("EmiSplitPerc"));
 					spd.setSteppedEMI(rs.getBigDecimal("SteppedEMI"));
+					spd.setStepSpecifier(rs.getString("StepSpecifier"));
+					spd.setStepStart(rs.getDate("StepStart"));
+					spd.setStepEnd(rs.getDate("StepEnd"));
 					spd.setVersion(rs.getInt("Version"));
 					spd.setLastMntBy(rs.getLong("LastMntBy"));
 					spd.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -116,6 +121,7 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 					spd.setNextTaskId(rs.getString("NextTaskId"));
 					spd.setRecordType(rs.getString("RecordType"));
 					spd.setWorkflowId(rs.getLong("WorkflowId"));
+					spd.setAutoCal(rs.getBoolean("AutoCal"));
 
 					return spd;
 				}
@@ -153,13 +159,13 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 		}
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+				" (FinReference, StepNo, TenorSplitPerc, Installments,  RateMargin, EmiSplitPerc, SteppedEMI, StepSpecifier,");
+		insertSql.append(" StepStart, StepEnd, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, AutoCal)");
 		insertSql.append(
-				" Values(:FinReference, :StepNo, :TenorSplitPerc, :Installments, :RateMargin, :EmiSplitPerc, :SteppedEMI, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				" Values(:FinReference, :StepNo, :TenorSplitPerc, :Installments, :RateMargin, :EmiSplitPerc, :SteppedEMI, :StepSpecifier,");
+		insertSql.append(" :StepStart, :StepEnd, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
+		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :AutoCal)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finStepDetailList.toArray());

@@ -44,20 +44,21 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.Interface.service.CalendarInterfaceService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class CalendarUpdation implements Tasklet {
 
-	private Logger logger = Logger.getLogger(CalendarUpdation.class);
+	private Logger logger = LogManager.getLogger(CalendarUpdation.class);
 
 	private AccountsDAO accountsDAO;
 	private CalendarInterfaceService calendarInterfaceService;
@@ -71,15 +72,15 @@ public class CalendarUpdation implements Tasklet {
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
 		// Date Parameter List
-		Date valueDate = DateUtility.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
 		logger.debug("START: CalendarUpdation for Value Date: " + valueDate);
 		try {
 			// Accounts Accrual Balance reset to Zero
-			getAccountsDAO().updateAccrualBalance();
+			accountsDAO.updateAccrualBalance();
 
 			//Calendar Updation from Core Bank only When Flag becomes TRUE
 			if (COREBANK_CALENDAR_REQ) {
-				getCalendarInterfaceService().calendarUpdate();
+				calendarInterfaceService.calendarUpdate();
 			} else {
 				//BETTER TO MAKE SURE NEXT BUSINESS DATE AND COONFIRM WITH EOD USER
 			}

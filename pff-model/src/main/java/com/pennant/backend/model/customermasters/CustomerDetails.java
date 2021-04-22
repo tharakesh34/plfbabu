@@ -68,7 +68,6 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennant.backend.model.customermasters.CustomerGST;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -203,6 +202,9 @@ public class CustomerDetails implements java.io.Serializable {
 	private String matches;
 	@XmlElement
 	private List<CustomerFinanceDetail> customerFinanceDetailList;
+
+	private boolean reInitiateCibil = true;
+	private String actualError;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -678,6 +680,22 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setCustomerFinanceDetailList(List<CustomerFinanceDetail> customerFinanceDetailList) {
 		this.customerFinanceDetailList = customerFinanceDetailList;
+	}
+
+	public boolean isReInitiateCibil() {
+		return reInitiateCibil;
+	}
+
+	public void setReInitiateCibil(boolean reInitiateCibil) {
+		this.reInitiateCibil = reInitiateCibil;
+	}
+
+	public String getActualError() {
+		return actualError;
+	}
+
+	public void setActualError(String actualError) {
+		this.actualError = actualError;
 	}
 
 }

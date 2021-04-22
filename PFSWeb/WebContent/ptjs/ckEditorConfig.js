@@ -1,6 +1,5 @@
 CKEDITOR.editorConfig = function(config) {
     config.resize_enabled = false;
-    config.scayt_autoStartup = true;
     config.readOnly = false;
     config.toolbar = 'Simple';
     config.toolbar_Simple = [ 
@@ -10,7 +9,7 @@ CKEDITOR.editorConfig = function(config) {
                                 '/',
                                 [ 'Table', 'HorizontalRule', 'UIColor' ],
                                 { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','-','Undo','Redo'] },
-                                { name: 'paragraph', items : [ 'TextColor','BGColor','-','SpecialChar','PageBreak','-','SpellChecker','Scayt', 'Maximize'] }
+                                { name: 'paragraph', items : [ 'TextColor','BGColor','-','SpecialChar','PageBreak','-','SpellChecker', 'Maximize'] }
                             ];
  
  };

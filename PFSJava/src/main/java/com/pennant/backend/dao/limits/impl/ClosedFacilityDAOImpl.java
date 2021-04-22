@@ -3,7 +3,8 @@ package com.pennant.backend.dao.limits.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -14,7 +15,7 @@ import com.pennant.backend.model.limits.ClosedFacilityDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class ClosedFacilityDAOImpl extends BasicDao<ClosedFacilityDetail> implements ClosedFacilityDAO {
-	private static Logger logger = Logger.getLogger(ClosedFacilityDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ClosedFacilityDAOImpl.class);
 
 	public ClosedFacilityDAOImpl() {
 		super();

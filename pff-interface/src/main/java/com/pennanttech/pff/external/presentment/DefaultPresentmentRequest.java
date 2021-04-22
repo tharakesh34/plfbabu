@@ -9,18 +9,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -36,7 +38,7 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.PresentmentRequest;
 
 public class DefaultPresentmentRequest extends AbstractInterface implements PresentmentRequest {
-	protected static final Logger logger = Logger.getLogger(DefaultPresentmentRequest.class);
+	protected static final Logger logger = LogManager.getLogger(DefaultPresentmentRequest.class);
 
 	private static final String STATUS = "STATUS";
 
@@ -65,7 +67,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 					new PresentmentRowMapper());
 
 			// Begin Transaction
-			namedJdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
+			namedJdbcTemplate.update("DELETE FROM PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
 			int successCount = 0;
 			int processedCount = 0;
 			try {
@@ -119,7 +121,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.debug(Literal.ENTERING);
 
 		try {
-			Map<String, String> map = getPaymenyMode(presentmentId);
+			Map<String, String> map = getRequiredPresentmentHeaderDetails(presentmentId);
+			String paymentMode = map.get("MANDATETYPE");
+			String partnerBankCode = map.get("PARTNERBANKCODE");
 			String paymentModeConfigName = "PRESENTMENT_REQUEST_";
 
 			if (map.containsKey("MANDATETYPE")) {
@@ -139,7 +143,12 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			Map<String, Object> filterMap = new HashMap<>();
 			filterMap.put("JOB_ID", presentmentId);
 			dataEngine.setFilterMap(filterMap);
+
 			Map<String, Object> parameterMap = new HashMap<>();
+			if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK) {
+				parameterMap.put("SEQ_FILE", partnerBankCode);
+			}
+
 			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 			parameterMap.put("DepositeDate", DateUtil.format(getScheduleDate(presentmentId), "dd-MMM-yy"));
 			parameterMap.put("despositslipid", presentmentRef);
@@ -154,11 +163,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			parameterMap.put("AccountNo", bankAccNo);
 
 			String entityCode = presentment.getEntCode();
-			if (entityCode.equals("CC")) {
-				parameterMap.put("FILE_NAME_PREFIX", "CC_Pennant_Lot_");
-			} else if (entityCode.equals("CF")) {
-				parameterMap.put("FILE_NAME_PREFIX", "CF_Pennant_Lot_");
-			}
+			parameterMap.put("FILE_NAME_PREFIX", entityCode + "_Pennant_Lot_");
 
 			// for new Presentment only total count needs
 			if (smtPaymentModeConfig != null && smtPaymentModeConfig.equals("PRESENTMENT_REQUEST_PDC")) {
@@ -194,7 +199,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("ID", presentmentId);
 
-		RowMapper<Presentment> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Presentment.class);
+		RowMapper<Presentment> rowMapper = BeanPropertyRowMapper.newInstance(Presentment.class);
 		Presentment presentment = new Presentment();
 		try {
 			presentment = this.namedJdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -242,7 +247,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" 'PDC' MANDATETYPE,T0.EMANDATESOURCE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T4.IFSC,");
-		sql.append(" T7.PARTNERBANKCODE, NULL PARTNERBANKNAME, T7.UTILITYCODE, ");
+		sql.append(" T7.PARTNERBANKCODE, T7.PARTNERBANKNAME, T7.UTILITYCODE, ");
 		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
 		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
 		sql.append(" T3.ChequeSerialNo, T3.ChequeDate, T5.CUSTCIF ");
@@ -342,6 +347,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				presement.setChequeDate(rs.getTimestamp("CHEQUEDATE"));
 			}
 			presement.setUtilityCode(rs.getString("UTILITYCODE"));
+			presement.setSetilmentDate(SysParamUtil.getAppValueDate());
 
 			return presement;
 		}
@@ -356,7 +362,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
 		sql.append(
 				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
-		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode) ");
+		sql.append(" ChequeSerialNo, ChequeDate, UtilityCode");
+		sql.append(", SETILMENT_DATE, CUST_CIF, PDC_BY_NAME )");
 		sql.append(" values( :TxnReference,");
 
 		if (presentment.getEntityCode() == 0) {
@@ -370,7 +377,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
 		sql.append(
 				" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate, :partnerBankName, :IFSC,");
-		sql.append(" :ChequeSerialNo, :ChequeDate, :UtilityCode)");
+		sql.append(" :ChequeSerialNo, :ChequeDate, :UtilityCode");
+		sql.append(", :setilmentDate, :customerId, :destAccHolder ) ");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentment);
 		try {
@@ -384,7 +392,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	private void clearTables() {
 		logger.debug(Literal.ENTERING);
 
-		namedJdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
+		namedJdbcTemplate.update("DELETE FROM PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -530,7 +538,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			batchValues.addValue("ID", id);
 			sources.add(batchValues);
 			SqlParameterSource[] batchArgs = sources.toArray(new SqlParameterSource[sources.size()]);
-			if (sources.size() == PennantConstants.BULKPROCESSING_SIZE) {
+			if (sources.size() == PennantConstants.CHUNK_SIZE) {
 				this.namedJdbcTemplate.batchUpdate(sql.toString(), batchArgs);
 				sources.clear();
 			}
@@ -571,42 +579,40 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected Map<String, String> getPaymenyMode(long presentmentId) {
+	private Map<String, String> getRequiredPresentmentHeaderDetails(long presentmentId) {
 		logger.debug(Literal.ENTERING);
 
+		Map<String, String> map = new HashMap<>();
 		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource parmMap;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ID", presentmentId);
 
-		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("ID", presentmentId);
-
-		sql.append(" SELECT MANDATETYPE , EMANDATESOURCE");
+		sql.append(" SELECT MANDATETYPE, PARTNERBANKCODE, EMANDATESOURCE");
 		sql.append(" FROM PRESENTMENTHEADER ");
+		sql.append(" PH LEFT JOIN PARTNERBANKS PB ON PH.PARTNERBANKID = PB.PARTNERBANKID");
 		sql.append(" WHERE ID = :ID");
 
 		logger.trace("selectSql: " + sql.toString());
 
 		try {
-			Map<String, String> rowMap = new HashMap<>();
+			this.namedJdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, String>>() {
 
-			return this.namedJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Map<String, String>>() {
 				@Override
-				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					if (rs.next()) {
-						rowMap.put("MANDATETYPE", rs.getString("MANDATETYPE"));
-						rowMap.put("EMANDATESOURCE", rs.getString("EMANDATESOURCE"));
-					}
-					return rowMap;
-				}
+				public Map<String, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
+					map.put("MANDATETYPE", rs.getString("MANDATETYPE"));
+					map.put("PARTNERBANKCODE", rs.getString("PARTNERBANKCODE"));
+					map.put("EMANDATESOURCE", rs.getString("EMANDATESOURCE"));
 
+					return map;
+				}
 			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return null;
+		return map;
 	}
 
 	// For Presentment PDC total amount

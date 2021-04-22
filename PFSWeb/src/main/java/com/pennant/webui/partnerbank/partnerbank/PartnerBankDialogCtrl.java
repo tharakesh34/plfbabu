@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -104,7 +105,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PartnerBankDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PartnerBankDialogCtrl.class);
 
 	protected Window window_PartnerBankDialog;
 
@@ -151,6 +152,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Textbox vanCode;
 	protected Combobox downloadType;
 	protected Combobox dataEngineConfigName;
+	protected Label label_PartnerBankDialog_PartnerBankId;
+	protected Intbox partnerBankId;
 
 	protected Row row_DownloadType;
 	protected Row row_ReqFileDownload;
@@ -500,6 +503,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
 			this.vanCode.setValue(aPartnerBank.getVanCode());
 		}
+		this.partnerBankId.setValue((int) aPartnerBank.getPartnerBankId());
 		this.recordStatus.setValue(aPartnerBank.getRecordStatus());
 		this.sponsorBankCode.setValue(aPartnerBank.getSponsorBankCode());
 		this.clientCode.setValue(aPartnerBank.getClientCode());
@@ -942,7 +946,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					Labels.getLabel("label_PartnerBankDialog_FavourLength.value"), false, false, 99));
 		}
 
-		if (!this.btnSearchBranchCode.isDisabled() && this.alwBankBranchCode.isVisible()) {
+		if (!this.btnSearchBranchCode.isDisabled() && this.alwBankBranchCode.isVisible() && AlwBranchCode.isVisible()) {
 			this.alwBankBranchCode.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_PartnerBankDialog_AlwBankBranchCode.value"), null, true));
 		}
@@ -963,6 +967,10 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		if (!this.downloadType.isDisabled() && this.alwDisburment.isChecked()) {
 			this.downloadType.setConstraint(new StaticListValidator(downloadTypesList,
 					Labels.getLabel("label_PartnerBankDialog_DownloadType.value")));
+		}
+		if (!this.dataEngineConfigName.isDisabled() && this.alwDisburment.isChecked()) {
+			this.dataEngineConfigName.setConstraint(new StaticListValidator(dataEngineConfigNameList,
+					Labels.getLabel("label_PartnerBankDialog_DataEngineConfigName.value")));
 		}
 		logger.debug("Leaving");
 	}
@@ -1167,10 +1175,14 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.partnerBankCode.setReadonly(false);
 			this.partnerBankName.setReadonly(false);
 			this.btnCancel.setVisible(false);
+			this.partnerBankId.setVisible(false);
+			this.label_PartnerBankDialog_PartnerBankId.setVisible(false);
 		} else {
 			this.partnerBankCode.setReadonly(true);
 			this.partnerBankName.setReadonly(true);
 			this.btnCancel.setVisible(true);
+			this.partnerBankId.setVisible(true);
+			this.label_PartnerBankDialog_PartnerBankId.setVisible(true);
 		}
 
 		this.bankCode.setReadonly(isReadOnly("PartnerBankDialog_BankCode"));
@@ -1204,6 +1216,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.vanCode.setDisabled(isReadOnly("PartnerBankDialog_VanCode"));
 		this.sponsorBankCode.setReadonly(isReadOnly("PartnerBankDialog_SponsorBankCode"));
 		this.clientCode.setReadonly(isReadOnly("PartnerBankDialog_ClientCode"));
+		this.partnerBankId.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1850,7 +1863,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.reqFileDownload.setChecked(false);
 			this.dataEngineConfigName.setSelectedIndex(0);
 		} else {
-			this.dataEngineConfigName.setDisabled(false);
+			this.dataEngineConfigName.setDisabled(isReadOnly("PartnerBankDialog_DataEngineConfigName"));
 			this.dataEngineConfigName.setConstraint("");
 			this.dataEngineConfigName.setErrorMessage("");
 			this.reqFileDownload.setChecked(true);

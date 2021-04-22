@@ -63,12 +63,13 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinTypeFees extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
+	private long finTypeFeeId = Long.MIN_VALUE;
 	private String finType = null;
 	private boolean originationFee;
 	@XmlElement(name = "feeEvent")
 	private String finEvent;
 	private String finEventDesc;
-	private long feeTypeID = Long.MIN_VALUE;
+	private Long feeTypeID;
 	@XmlElement(name = "feeCode")
 	private String feeTypeCode;
 	@XmlElement(name = "feeDesc")
@@ -78,6 +79,8 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private String calculationType;
 	private String ruleCode;
 	private String ruleDesc;
+	private String percType;
+	private String percRule;
 	private BigDecimal amount = BigDecimal.ZERO;
 	private BigDecimal percentage = BigDecimal.ZERO;
 	private String calculateOn;
@@ -118,6 +121,55 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FinTypeFees copyEntity() {
+		FinTypeFees entity = new FinTypeFees();
+		entity.setFinTypeFeeId(this.finTypeFeeId);
+		entity.setFinType(this.finType);
+		entity.setOriginationFee(this.originationFee);
+		entity.setFinEvent(this.finEvent);
+		entity.setFinEventDesc(this.finEventDesc);
+		entity.setFeeTypeID(this.feeTypeID);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setFeeOrder(this.feeOrder);
+		entity.setFeeScheduleMethod(this.feeScheduleMethod);
+		entity.setCalculationType(this.calculationType);
+		entity.setRuleCode(this.ruleCode);
+		entity.setRuleDesc(this.ruleDesc);
+		entity.setPercType(this.percType);
+		entity.setPercRule(this.percRule);
+		entity.setAmount(this.amount);
+		entity.setPercentage(this.percentage);
+		entity.setCalculateOn(this.calculateOn);
+		entity.setAlwDeviation(this.alwDeviation);
+		entity.setMaxWaiverPerc(this.maxWaiverPerc);
+		entity.setAlwModifyFee(this.alwModifyFee);
+		entity.setAlwModifyFeeSchdMthd(this.alwModifyFeeSchdMthd);
+		entity.setActive(this.active);
+		entity.setModuleId(this.moduleId);
+		entity.setReferenceId(this.referenceId);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setTaxComponent(this.taxComponent);
+		entity.setAlwPreIncomization(this.alwPreIncomization);
+		entity.setTdsReq(this.tdsReq);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("feeTypeCode");
@@ -134,6 +186,14 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public String getId() {
 		return finType;
+	}
+
+	public long getFinTypeFeeId() {
+		return finTypeFeeId;
+	}
+
+	public void setFinTypeFeeId(long finTypeFeeId) {
+		this.finTypeFeeId = finTypeFeeId;
 	}
 
 	public void setId(String id) {
@@ -164,11 +224,11 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		this.finEventDesc = finEventDesc;
 	}
 
-	public long getFeeTypeID() {
+	public Long getFeeTypeID() {
 		return feeTypeID;
 	}
 
-	public void setFeeTypeID(long feeTypeID) {
+	public void setFeeTypeID(Long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
 
@@ -379,4 +439,21 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	public void setTdsReq(boolean tdsReq) {
 		this.tdsReq = tdsReq;
 	}
+
+	public String getPercType() {
+		return percType;
+	}
+
+	public void setPercType(String percType) {
+		this.percType = percType;
+	}
+
+	public String getPercRule() {
+		return percRule;
+	}
+
+	public void setPercRule(String percRule) {
+		this.percRule = percRule;
+	}
+
 }

@@ -49,7 +49,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -63,29 +64,44 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecLoginlogDAO {
-	private static final Logger logger = Logger.getLogger(SecLoginlogDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(SecLoginlogDAOImpl.class);
 
 	public SecLoginlogDAOImpl() {
 		super();
 	}
 
 	@Override
-	public long saveLog(SecLoginlog logingLog) {
-		logger.debug(Literal.ENTERING);
+	public long saveLog(SecLoginlog ssl) {
+		ssl.setId(getNextValue("SeqSecLoginLog"));
 
-		logingLog.setId(getNextValue("SeqSecLoginLog"));
-		StringBuilder insertSql = new StringBuilder(
-				"INSERT INTO SecLoginLog(LoginLogID,loginUsrLogin,LoginTime,LoginIP,LoginBrowserType,LoginStsID,");
-		insertSql.append("LoginSessionID,LoginError)");
-		insertSql.append(
-				"VALUES (:LoginLogID,:loginUsrLogin,:LoginTime,:LoginIP,:LoginBrowserType,:LoginStsID,:LoginSessionID,:LoginError)");
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" SecLoginLog ");
+		sql.append("(LoginLogID, loginUsrLogin, LoginTime, LoginIP, LoginBrowserType, LoginStsID, LoginSessionID");
+		sql.append(", LoginError");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		logger.trace(Literal.SQL + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(logingLog);
-		jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.trace(Literal.SQL, sql);
 
-		logger.debug(Literal.LEAVING);
-		return logingLog.getId();
+		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+
+				ps.setLong(index++, JdbcUtil.setLong(ssl.getLoginLogID()));
+				ps.setString(index++, ssl.getLoginUsrLogin());
+				ps.setTimestamp(index++, ssl.getLoginTime());
+				ps.setString(index++, ssl.getLoginIP());
+				ps.setString(index++, ssl.getLoginBrowserType());
+				ps.setInt(index++, ssl.getLoginStsID());
+				ps.setString(index++, ssl.getLoginSessionID());
+				ps.setString(index++, ssl.getLoginError());
+			}
+		});
+
+		return ssl.getId();
 	}
 
 	@Override

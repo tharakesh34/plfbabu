@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.staticparms.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.staticparms.LovFieldCodeDAO;
 import com.pennant.backend.model.staticparms.LovFieldCode;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFieldCodeDAO {
-	private static Logger logger = Logger.getLogger(LovFieldCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LovFieldCodeDAOImpl.class);
 
 	public LovFieldCodeDAOImpl() {
 		super();
@@ -97,7 +98,7 @@ public class LovFieldCodeDAOImpl extends BasicDao<LovFieldCode> implements LovFi
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(lovFieldCode);
-		RowMapper<LovFieldCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LovFieldCode.class);
+		RowMapper<LovFieldCode> typeRowMapper = BeanPropertyRowMapper.newInstance(LovFieldCode.class);
 
 		try {
 			lovFieldCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

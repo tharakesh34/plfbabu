@@ -1,58 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentHeaderDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * * Modified
+ * Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.payment.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -61,6 +47,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -70,7 +57,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PaymentHeader</code> with set of CRUD operations.
  */
 public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements PaymentHeaderDAO {
-	private static Logger logger = Logger.getLogger(PaymentHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentHeaderDAOImpl.class);
 
 	public PaymentHeaderDAOImpl() {
 		super();
@@ -99,7 +86,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		paymentHeader.setPaymentId(paymentId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentHeader);
-		RowMapper<PaymentHeader> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentHeader.class);
+		RowMapper<PaymentHeader> rowMapper = BeanPropertyRowMapper.newInstance(PaymentHeader.class);
 
 		try {
 			paymentHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -130,7 +117,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		// Get the sequence number.
 		if (paymentHeader.getPaymentId() <= 0) {
-			paymentHeader.setPaymentId(getNextId("SeqPaymentHeader"));
+			paymentHeader.setPaymentId(getNextValue("SeqPaymentHeader"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -237,15 +224,12 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 	@Override
 	public FinanceMain getFinanceDetails(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append("  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName,");
 		sql.append("  FT.FinDivision FinPurpose, FM.CalRoundingMode, FM.RoundingTarget,");
 		sql.append("  FM.FinBranch,FM.CustId, CU.CUSTCIF LovDescCustCif, CU.CUSTSHRTNAME LovDescCustShrtName,");
 		sql.append("  CURR.CCYCODE finCcy, FM.FINSTARTDATE, FM.MATURITYDATE,DIV.EntityCode LOVDESCENTITYCODE ");
+		sql.append(", FM.ClosingStatus");
 		sql.append(" FROM FinanceMainMaintenance_View FM ");
 		sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = FM.CUSTID");
 		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
@@ -254,19 +238,15 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		sql.append(" Where FinReference = :FinReference");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<FinanceMain> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> rowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
+			//
 		}
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -285,7 +265,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<FinExcessAmount> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
+		RowMapper<FinExcessAmount> rowMapper = BeanPropertyRowMapper.newInstance(FinExcessAmount.class);
 		try {
 			return jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -300,68 +280,83 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 
 	@Override
 	public List<ManualAdvise> getManualAdvise(String finReference) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where FinReference = ? and ma.AdviseType = ? and HoldDue = ?");
 
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
-		sql.append(
-				" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
-		sql.append(
-				"ft.feetypecode,ft.FEETYPEDESC, FT.TaxApplicable, FT.TaxComponent from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
-		sql.append(
-				"Where FinReference = :FinReference AND MA.AdviseType = :AdviseType AND MA.HOLDDUE =0 order by MA.VALUEDATE  ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("AdviseType", 2);
+		List<ManualAdvise> list = jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setInt(2, 2);
+			ps.setInt(3, 0);
+		}, (rs, i) -> {
+			ManualAdvise ma = getRowMapper(rs);
+			return ma;
+		});
 
-		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+		return list.stream().sorted((l1, l2) -> l1.getValueDate().compareTo(l2.getValueDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<ManualAdvise> getManualAdviseForEnquiry(String finReference) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where FinReference = ? and ma.AdviseType = ? and PaidAmount > ?");
 
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
-		sql.append(
-				" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
-		sql.append(
-				"ft.feetypecode,ft.FEETYPEDESC, FT.TaxApplicable, FT.TaxComponent from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
-		sql.append(
-				"Where FinReference = :FinReference AND MA.AdviseType = :AdviseType And MA.PaidAmount > 0 order by MA.VALUEDATE  ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("AdviseType", 2);
+		List<ManualAdvise> list = jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setInt(2, 2);
+			ps.setInt(3, 0);
+		}, (rs, i) -> {
+			ManualAdvise ma = getRowMapper(rs);
+			return ma;
+		});
 
-		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
-		try {
-			return jdbcTemplate.query(sql.toString(), source, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+		return list.stream().sorted((l1, l2) -> l1.getValueDate().compareTo(l2.getValueDate()))
+				.collect(Collectors.toList());
+	}
+
+	private ManualAdvise getRowMapper(ResultSet rs) throws SQLException {
+		ManualAdvise ma = new ManualAdvise();
+
+		ma.setAdviseID(rs.getLong("AdviseID"));
+		ma.setFinReference(rs.getString("FinReference"));
+		ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+		ma.setAdviseType(rs.getInt("AdviseType"));
+		ma.setAdviseAmount(rs.getBigDecimal("AdviseAmount"));
+		ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+		ma.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+		ma.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+		ma.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+		ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+		ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+		ma.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+		ma.setTaxComponent(rs.getString("TaxComponent"));
+		ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+		ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+		ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+		ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+		ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+		ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+		ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+		ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+		ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+		ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+		return ma;
+	}
+
+	private StringBuilder getSqlQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" AdviseID, FinReference, BalanceAmt, ma.AdviseType, AdviseAmount, ReservedAmt, ValueDate");
+		sql.append(", PaidAmount, WaivedAmount, FeeTypeCode, FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent");
+		sql.append(", PaidCGST, PaidIGST, PaidSGST, PaidUGST, PaidCESS");
+		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS");
+		sql.append(" From ManualAdvise ma");
+		sql.append(" Inner Join FeeTypes ft on ft.FeeTypeId = ma.FeeTypeId");
+
+		return sql;
 	}
 
 	/**
@@ -372,7 +367,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@SuppressWarnings("deprecation")
 	@Override
 	public long getNewPaymentHeaderId() {
-		return getNextId("SeqPaymentHeader");
+		return getNextValue("SeqPaymentHeader");
 	}
 
 }

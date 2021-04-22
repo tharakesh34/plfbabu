@@ -8,6 +8,25 @@
 	<zscript>
 		import org.zkoss.zk.ui.HtmlNativeComponent;
 	</zscript>
+	
+	<!-- PSD#156147 Loan level:Recommendation tab:Unable to enter data in text box available in Recommendation tab START -->
+		<script><![CDATA[
+	zk.afterLoad('ckez', function() {
+   	var xCKeditor = {};
+   	zk.override(ckez.CKeditor.prototype, xCKeditor, {
+      unbind_ : function() {
+            if (!this._editor) {
+                // ensure to destroy failed-initialized editor
+                this._editor = CKEDITOR.instances[this.uuid + '-cnt'];
+            }
+            // the original unbind_ method will destroy this._editor if not null
+            xCKeditor.unbind_.apply(this, arguments);
+      		}
+   		});//zk.override
+	});//zk.afterLoad
+	]]></script>
+	
+	<!-- PSD#156147 Loan level:Recommendation tab:Unable to enter data in text box available in Recommendation tab END -->
 
 	<style>
 
@@ -132,7 +151,7 @@
 						<radiogroup id="remarkType" style="float:right;" />
 					</hlayout>
 					<separator id="separator1" />
-					<ptCKeditor id="remarks" width="99%" height="75px" />
+					<ptCKeditor id="remarks" width="99%" height="130px" />
 					<textbox id="remarksText" multiline="true" rows="3" maxlength="180" height="50px" width="99%" style="resize:none;" />
 					<separator id="separator2" />
 					<listbox id="listboxNotes" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true" style="overflow:auto;"

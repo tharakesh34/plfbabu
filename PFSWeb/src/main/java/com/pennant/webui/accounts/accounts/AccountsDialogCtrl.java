@@ -43,14 +43,14 @@
 package com.pennant.webui.accounts.accounts;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -97,7 +97,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private static final long serialVersionUID = -485666646629753355L;
-	private static final Logger logger = Logger.getLogger(AccountsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AccountsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -268,27 +268,27 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		this.acShortName.setReadonly(true);
 		this.acPrvDayBal.setMaxlength(18);
 		this.acPrvDayBal.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acPrvDayBal.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.acPrvDayBal.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.acPrvDayBal.setScale(0);
 		this.acTodayDr.setMaxlength(18);
 		this.acTodayDr.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayDr.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.acTodayDr.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.acTodayDr.setScale(0);
 		this.acTodayCr.setMaxlength(18);
 		this.acTodayCr.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayCr.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.acTodayCr.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.acTodayCr.setScale(0);
 		this.acTodayNet.setMaxlength(18);
 		this.acTodayNet.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayNet.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.acTodayNet.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.acTodayNet.setScale(0);
 		this.acAccrualBal.setMaxlength(18);
 		this.acAccrualBal.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acAccrualBal.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.acAccrualBal.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.acAccrualBal.setScale(0);
 		this.acTodayBal.setMaxlength(18);
 		this.acTodayBal.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.acTodayBal.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.acTodayBal.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.acTodayBal.setScale(0);
 		this.acOpenDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.acOpenDate.setDisabled(true);

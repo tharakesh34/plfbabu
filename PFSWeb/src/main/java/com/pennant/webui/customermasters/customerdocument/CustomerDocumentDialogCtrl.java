@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
@@ -87,6 +88,8 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -114,11 +117,11 @@ import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
+import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -134,7 +137,7 @@ import com.rits.cloning.Cloner;
  */
 public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private static final long serialVersionUID = -8931742880858169171L;
-	private static final Logger logger = Logger.getLogger(CustomerDocumentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerDocumentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -170,6 +173,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	protected Space space_CustDocSysName;
 	protected Row passwordRow;
 	protected Textbox pdfPassword;
+	protected Textbox remarks;
+	protected Space space_Remarks;
 	// not auto wired variables
 	private CustomerDocument customerDocument; // overHanded per parameter
 	private transient CustomerDocumentListCtrl customerDocumentListCtrl; // overHanded
@@ -207,6 +212,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	private boolean isFinanceProcess = false;
 	private Object financeMainDialogCtrl = null;
+	private String finReference = null;
 	private boolean expDateIsMand = false;
 	private boolean isIssueDateMand = false;
 	private boolean isIdNumMand = false;
@@ -217,6 +223,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private DeviationExecutionCtrl deviationExecutionCtrl;
 	private List<DocumentDetails> verificationDocuments;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
+	public String dmsApplicationNo;
+	public String leadId;
 
 	/**
 	 * default constructor.<br>
@@ -266,9 +274,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				setCustomerDialogCtrl(docDetailDialogCtrl.fetchCustomerDialogCtrl());
 				if (getCustomerDialogCtrl() != null && getCustomerDocument() != null) {
 					isRetailCustomer = getCustomerDialogCtrl().isRetailCustomer();
-					if (StringUtils.equals(PennantConstants.CPRCODE, getCustomerDocument().getCustDocCategory())) {
-						getCustomerDocument()
-								.setCustDocTitle(getCustomerDialogCtrl().getCustIDNumber(PennantConstants.CPRCODE));
+					if (StringUtils.equals(MasterDefUtil.getDocCode(DocType.AADHAAR),
+							getCustomerDocument().getCustDocCategory())) {
+						getCustomerDocument().setCustDocTitle(
+								getCustomerDialogCtrl().getCustIDNumber(MasterDefUtil.getDocCode(DocType.AADHAAR)));
 					} else if (StringUtils.equals(PennantConstants.TRADELICENSE,
 							getCustomerDocument().getCustDocCategory())) {
 						getCustomerDocument().setCustDocTitle(
@@ -282,6 +291,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
+			}
+
+			if (arguments.containsKey("finReference")) {
+				finReference = (String) arguments.get("finReference");
 			}
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -387,6 +400,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				setCustomerDocumentListCtrl(null);
 			}
 
+			if (arguments.containsKey("dmsApplicationNo")) {
+				this.dmsApplicationNo = (String) arguments.get("dmsApplicationNo");
+			}
+
+			if (arguments.containsKey("leadId")) {
+				this.leadId = (String) arguments.get("leadId");
+			}
+
 			// set Field Properties
 			doSetFieldProperties();
 			getBorderLayoutHeight();
@@ -442,6 +463,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIssuedCountry.setValueColumn("CountryCode");
 		this.custDocIssuedCountry.setDescColumn("CountryDesc");
 		this.custDocIssuedCountry.setValidateColumns(new String[] { "CountryCode" });
+
+		this.remarks.setMaxlength(500);
+
 		if (getCustomerDocument().isDocIsPasswordProtected()) {
 			this.passwordRow.setVisible(true);
 		}
@@ -471,6 +495,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnSave"));
+		this.btnUploadDoc.setVisible(getUserWorkspace().isAllowed("button_CustomerDocumentDialog_btnUploadDoc"));
 		this.btnCancel.setVisible(false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -683,9 +708,16 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				amedia = new AMedia(aCustomerDocument.getCustDocName(), null, null,
 						aCustomerDocument.getCustDocImage());
 			}
+
+			//If the document come from DMS then extension not available in DocName then format is null.
+			if (amedia != null && amedia.getFormat() == null) {
+				amedia = new AMedia(aCustomerDocument.getCustDocName(), aCustomerDocument.getCustDocType(), null,
+						aCustomerDocument.getCustDocImage());
+			}
 			finDocumentPdfView.setContent(amedia);
 		}
 		this.recordStatus.setValue(aCustomerDocument.getRecordStatus());
+		this.remarks.setValue(aCustomerDocument.getRemarks());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -745,7 +777,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			CustomerDocument details = (CustomerDocument) this.documnetName.getAttribute("data");
 			aCustomerDocument.setCustDocImage(details.getCustDocImage());
 			aCustomerDocument.setCustDocType(details.getCustDocType());
-			aCustomerDocument.setDocRefId(Long.MIN_VALUE);
+			aCustomerDocument.setDocRefId(details.getDocRefId());
 			aCustomerDocument.setDocIsPasswordProtected(details.isDocIsPasswordProtected());
 			aCustomerDocument.setPdfMappingRef(details.getPdfMappingRef());
 			aCustomerDocument.setDocIsPdfExtRequired(details.isDocIsPdfExtRequired());
@@ -774,6 +806,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aCustomerDocument.setRemarks(this.remarks.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -785,6 +822,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 			throw new WrongValuesException(wvea);
 		}
+		aCustomerDocument.setFinReference(StringUtils.trimToEmpty(finReference));
 		aCustomerDocument.setLovDescdocExpDateIsMand(expDateIsMand);
 		aCustomerDocument.setDocIssueDateMand(isIssueDateMand);
 		aCustomerDocument.setDocIdNumMand(isIdNumMand);
@@ -923,10 +961,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (StringUtils.isNotBlank(value)) {
 				String masterDocType = customerDocumentService.getDocTypeByMasterDefByCode("DOC_TYPE", value);
 				String regex = PennantRegularExpressions.REGEX_ALPHANUM_CODE;
-				if (StringUtils.equalsIgnoreCase(PennantConstants.PANNUMBER, masterDocType)) {
+				if (StringUtils.equalsIgnoreCase(DocType.PAN.name(), masterDocType)) {
 					regex = PennantRegularExpressions.REGEX_PANNUMBER;
-				} else if (StringUtils.equalsIgnoreCase(PennantConstants.CPRCODE, masterDocType)) {
+				} else if (StringUtils.equalsIgnoreCase(DocType.AADHAAR.name(), masterDocType)) {
 					regex = PennantRegularExpressions.REGEX_AADHAR_NUMBER;
+				} else if (StringUtils.equalsIgnoreCase(DocType.TAX_IDENTIFICATION_NUMBER.name(), masterDocType)) {
+					regex = PennantRegularExpressions.REGEX_GSTIN;
 				}
 				if (StringUtils.isNotBlank(regex)) {
 					custDocTitle.setConstraint(new PTStringValidator(
@@ -968,6 +1008,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_pdf_password.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
+		if (!this.remarks.isReadonly()) {
+			this.remarks
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDocumentDialog_Remarks.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_CHAR, false));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -986,6 +1032,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocExpDate.setConstraint("");
 		this.custDocIssuedOn.setConstraint("");
 		this.custDocVerifiedBy.setConstraint("");
+		this.remarks.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1076,7 +1123,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		String tranType = PennantConstants.TRAN_WF;
 
 		if (isFinanceProcess
-				&& StringUtils.equals(PennantConstants.PANNUMBER, aCustomerDocument.getCustDocCategory())) {
+				&& StringUtils.equals(MasterDefUtil.getDocCode(DocType.PAN), aCustomerDocument.getCustDocCategory())) {
 			MessageUtil.showError("Document with PAN Number Can't be deleted!!!");
 		} else {
 
@@ -1165,7 +1212,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 		this.custDocType.setReadonly(isReadOnly("CustomerDocumentDialog_custDocType"));
 		this.custDocTitle.setReadonly(isReadOnly("CustomerDocumentDialog_custDocTitle"));
-		this.btnUploadDoc.setDisabled(isReadOnly("CustomerDocumentDialog_custDocIssuedCountry"));
 		this.custDocSysName.setReadonly(isReadOnly("CustomerDocumentDialog_custDocSysName"));
 		this.pdfPassword.setReadonly(isReadOnly("CustomerDocumentDialog_custDocSysName"));
 		this.custDocRcvdOn.setDisabled(isReadOnly("CustomerDocumentDialog_custDocRcvdOn"));
@@ -1176,7 +1222,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIsVerified.setDisabled(isReadOnly("CustomerDocumentDialog_custDocIsVerified"));
 		this.custDocVerifiedBy.setReadonly(isReadOnly("CustomerDocumentDialog_custDocVerifiedBy"));
 		this.custDocIsAcrive.setDisabled(isReadOnly("CustomerDocumentDialog_custDocIsAcrive"));
-
+		this.remarks.setReadonly(isReadOnly("CustomerDocumentDialog_remarks"));
 		if (!isNewRecord()) {
 			this.custDocType.setReadonly(true);
 			this.btnSearchPRCustid.setVisible(false);
@@ -1228,6 +1274,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.custDocIsVerified.setDisabled(true);
 			this.custDocVerifiedBy.setReadonly(true);
 			this.custDocIsAcrive.setDisabled(true);
+			this.remarks.setReadonly(true);
 		}
 	}
 
@@ -1236,7 +1283,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow) {
+		if (isWorkFlowEnabled() || isCustomerWorkflow || isFinanceProcess) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1260,6 +1307,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIsVerified.setDisabled(true);
 		this.custDocVerifiedBy.setReadonly(true);
 		this.custDocIsAcrive.setDisabled(true);
+		this.remarks.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1287,6 +1335,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocTitle.setValue("");
 		this.custDocSysName.setValue("");
 		this.pdfPassword.setValue("");
+		this.remarks.setValue("");
 		this.custDocRcvdOn.setText("");
 		this.custDocExpDate.setText("");
 		this.custDocIssuedOn.setText("");
@@ -1403,6 +1452,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		// fill the CustomerDocument object with the components data
 		doWriteComponentsToBean(aCustomerDocument);
 		checkDocumentExpired(aCustomerDocument);
+		if (financeMainDialogCtrl != null) {
+			aCustomerDocument.setApplicationNo(((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo());
+			aCustomerDocument.setOfferId(((FinanceMainBaseCtrl) financeMainDialogCtrl).getLeadId());
+		} else {
+			aCustomerDocument.setApplicationNo(StringUtils.trimToEmpty(this.dmsApplicationNo));
+			aCustomerDocument.setOfferId(StringUtils.trimToEmpty(this.leadId));
+		}
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
@@ -2095,20 +2151,20 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		logger.debug(Literal.ENTERING);
 		try {
 
-			List<DocType> allowed = new ArrayList<>();
-			allowed.add(DocType.PDF);
-			allowed.add(DocType.JPEG);
-			allowed.add(DocType.JPG);
-			allowed.add(DocType.PNG);
-			allowed.add(DocType.DOC);
-			allowed.add(DocType.DOCX);
-			allowed.add(DocType.XLS);
-			allowed.add(DocType.XLSX);
-			allowed.add(DocType.ZIP);
-			allowed.add(DocType.Z7);
-			allowed.add(DocType.RAR);
-			allowed.add(DocType.TXT);
-			allowed.add(DocType.MSG);
+			List<com.pennanttech.pennapps.core.DocType> allowed = new ArrayList<>();
+			allowed.add(com.pennanttech.pennapps.core.DocType.PDF);
+			allowed.add(com.pennanttech.pennapps.core.DocType.JPEG);
+			allowed.add(com.pennanttech.pennapps.core.DocType.JPG);
+			allowed.add(com.pennanttech.pennapps.core.DocType.PNG);
+			allowed.add(com.pennanttech.pennapps.core.DocType.DOC);
+			allowed.add(com.pennanttech.pennapps.core.DocType.DOCX);
+			allowed.add(com.pennanttech.pennapps.core.DocType.XLS);
+			allowed.add(com.pennanttech.pennapps.core.DocType.XLSX);
+			allowed.add(com.pennanttech.pennapps.core.DocType.ZIP);
+			allowed.add(com.pennanttech.pennapps.core.DocType.Z7);
+			allowed.add(com.pennanttech.pennapps.core.DocType.RAR);
+			allowed.add(com.pennanttech.pennapps.core.DocType.TXT);
+			allowed.add(com.pennanttech.pennapps.core.DocType.MSG);
 
 			if (!MediaUtil.isValid(media, allowed)) {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
@@ -2177,13 +2233,19 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 
 			textbox.setValue(fileName);
+
 			if (textbox.getAttribute("data") == null) {
 				CustomerDocument documentDetails = new CustomerDocument("", docType, fileName, ddaImageData);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			} else {
 				CustomerDocument documentDetails = (CustomerDocument) textbox.getAttribute("data");
 				documentDetails.setCustDocType(docType);
 				documentDetails.setCustDocImage(ddaImageData);
+				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocUri(null);
+				documentDetails.setLovDescNewImage(true);
+
 				textbox.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {

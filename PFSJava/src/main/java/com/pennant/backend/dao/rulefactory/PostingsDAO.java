@@ -83,7 +83,7 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsbyFinanceBranch(String branchCode);
 
-	List<ReturnDataSet> getPostingsByVasref(String finReference, String finEvent);
+	List<ReturnDataSet> getPostingsByVasref(String finReference, String[] finEvent);
 
 	List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals);
 
@@ -99,4 +99,5 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> linkedTranId, boolean reversal);
 
+	List<ReturnDataSet> getPostings(String postRef, String finEvent);
 }

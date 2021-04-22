@@ -1957,14 +1957,14 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="49" author="Varaprasad.K" dbms="mssql">
+	<changeSet id="49.1" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
 				insert into GST_INVOICE_SEQUENCE_TEMP (EntityCode, StateCode, MonthYear, TransactionType, SeqNo)
 				select EntityCode, StateCode, MonthYear, TransactionType, cast(max(SeqNo) as bigint) SeqNo from (
 				select SUBSTRING(InvoiceNo, 1, 2) EntityCode, SUBSTRING(InvoiceNo, 3, 2) StateCode
 				, SUBSTRING(InvoiceNo, 5, 2) + SUBSTRING(InvoiceNo, 7, 2) MonthYear, SUBSTRING(InvoiceNo, 9, 1) TransactionType, SUBSTRING(InvoiceNo, 10, len(InvoiceNo)-8) SeqNo 
-				from GST_INVOICE_TXN )T group by EntityCode, StateCode, MonthYear, TransactionType
+				from GST_INVOICE_TXN WHERE InvoiceNo is not null)T group by EntityCode, StateCode, MonthYear, TransactionType
 				order by EntityCode, StateCode, TransactionType;
 			]]>
 		</sql>
@@ -2330,11 +2330,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.10" author="murthy.y" dbms="mssql">
+	<changeSet id="100.10.1" author="murthy.y" dbms="mssql">
 		 <sql splitStatements="false">
 				<![CDATA[
                    MERGE INTO tax_details_stg1 cd
-                   USING (Select distinct top 100 percent  referenceid +(select max(headerid) from (select headerid from tax_header 
+                   USING (Select distinct top 100 percent  referenceid +(select COALESCE(max(headerid), 0) from (select headerid from tax_header 
 																			union select headerid from tax_header_Temp)T) +1000 new_referenceid,   
 																			referenceid old_referenceid
 																			from tax_details_stg1 order by referenceid)T2 
@@ -2344,7 +2344,19 @@
 				]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="100.11_pre" author="naveenkumar.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM TAX_HEADER where HEADERID < 0;
+				DELETE FROM TAX_HEADER_TEMP where HEADERID < 0;
+				
+				DELETE FROM TAX_DETAILS where ID < 0;
+				DELETE FROM TAX_DETAILS_TEMP where ID < 0;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="100.11" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2413,11 +2425,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.12" author="murthy.y" dbms="mssql">
+	<changeSet id="100.12.1" author="murthy.y" dbms="mssql">
 		 <sql splitStatements="false">
 				<![CDATA[
 					MERGE INTO tax_details_stg1 cd
-					using(  Select distinct Top  100 percent id +(select max(id) from (select id from tax_details 
+					using(  Select distinct Top  100 percent id +(select COALESCE(max(id), 0) from (select id from tax_details 
 																	union select id from tax_details_Temp)T) +1000 new_tax_detailid,   
 																	id old_tax_detailid
 																	from tax_details_stg1 order by id)T2 
@@ -2438,7 +2450,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="100.13" author="murthy.y" dbms="mssql">
+	<changeSet id="100.13.1" author="murthy.y" dbms="mssql">
 		<sql splitStatements="false">
 			<![CDATA[
 				DECLARE @Seq1 VARCHAR(10)
@@ -2446,7 +2458,7 @@
 				
 				DECLARE @SQL1 VARCHAR(4000) ;
 				SET @SQL1 = '
-				ALTER Seq1UENCE Seq1Tax_Details
+				ALTER SEQUENCE SeqTax_Details
 				RESTART WITH ' + @Seq1 +  '
 				INCREMENT BY 1
 				MINVALUE -9223372036854775808
@@ -3014,5 +3026,42 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="31" author="sivasai.p">
+		<dropNotNullConstraint tableName="WIFFinFeeDetail_Temp" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
 
+	<changeSet id="31.1" author="sivasai.p">
+		<dropNotNullConstraint tableName="WIFFinFeeDetail" columnName="TaxHeaderId" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="PSD#164364.1_pre" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes');
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#164364.1.1" author="sudheer.t">
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="finminterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="finmaxterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES" columnName="findftterms" newDataType="int" />
+	</changeSet>
+
+	<changeSet id="PSD#164364.2.1" author="sudheer.t">
+		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finminterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="finmaxterm"  newDataType="int" />
+		<modifyDataType tableName="RMTFINANCETYPES_TEMP" columnName="findftterms" newDataType="int" />
+	</changeSet>
+
+	<changeSet id="PSD#164364.1_post" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtfinancetypes');
+				select deps_restore_dependencies ('plf', 'rmtfinancetypes_temp');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

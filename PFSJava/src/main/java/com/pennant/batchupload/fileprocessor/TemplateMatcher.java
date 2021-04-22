@@ -8,7 +8,8 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,7 +18,7 @@ import com.pennant.batchupload.customexception.ValidationException;
 import com.pennanttech.batchupload.util.BatchProcessorUtil;
 
 public class TemplateMatcher {
-	private static final Logger logger = Logger.getLogger(TemplateMatcher.class);
+	private static final Logger logger = LogManager.getLogger(TemplateMatcher.class);
 	// Uploaded excel 
 	private Workbook targetWorkbook = null; // Uploaded excel
 	// main template, from resources/BatchUpload_Templates directory

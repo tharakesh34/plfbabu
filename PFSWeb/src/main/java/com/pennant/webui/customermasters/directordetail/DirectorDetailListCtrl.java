@@ -44,7 +44,8 @@ package com.pennant.webui.customermasters.directordetail;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DirectorDetailListCtrl extends GFCBaseListCtrl<DirectorDetail> {
 	private static final long serialVersionUID = -5634641691791820344L;
-	private static final Logger logger = Logger.getLogger(DirectorDetailListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DirectorDetailListCtrl.class);
 
 	protected Window window_DirectorDetailList;
 	protected Borderlayout borderLayout_DirectorDetailList;

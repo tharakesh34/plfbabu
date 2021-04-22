@@ -46,7 +46,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -83,7 +84,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(EntityDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(EntityDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -216,6 +217,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.pinCode.setValueType(DataType.LONG);
 		this.pinCode.setInputAllowed(false);
 		this.pinCode.setValidateColumns(new String[] { "PinCodeId" });
+		this.pinCode.setTextBoxWidth(180);
 		this.pinCode.setTextBoxWidth(180);
 
 		this.entityCode.setMaxlength(8);
@@ -594,8 +596,9 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		if (aEntity.getPinCodeId() != null) {
 			this.pinCode.setAttribute("pinCodeId", aEntity.getPinCodeId());
+		} else {
+			this.pinCode.setAttribute("pinCodeId", null);
 		}
-
 		this.pinCode.setValue(aEntity.getPinCode(), aEntity.getPinCodeName());
 		this.active.setChecked(aEntity.isActive());
 		this.gstinAvailable.setChecked(aEntity.isGstinAvailable());
@@ -626,6 +629,32 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 		this.cINNumber.setValue(aEntity.getcINNumber());
 
 		this.recordStatus.setValue(aEntity.getRecordStatus());
+
+		if (!aEntity.isNew()) {
+			ArrayList<Filter> filters = new ArrayList<Filter>();
+
+			if (this.country.getValue() != null && !this.country.getValue().isEmpty()) {
+				Filter filterPin0 = new Filter("PCCountry", country.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin0);
+			}
+
+			if (this.stateCode.getValue() != null && !this.stateCode.getValue().isEmpty()) {
+				Filter filterPin1 = new Filter("PCProvince", stateCode.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin1);
+			}
+
+			if (this.cityCode.getValue() != null && !this.cityCode.getValue().isEmpty()) {
+				Filter filterPin2 = new Filter("City", this.cityCode.getValue(), Filter.OP_EQUAL);
+				filters.add(filterPin2);
+			}
+
+			Filter[] filterPin = new Filter[filters.size()];
+			for (int i = 0; i < filters.size(); i++) {
+				filterPin[i] = filters.get(i);
+			}
+			this.pinCode.setFilters(filterPin);
+
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -695,6 +724,8 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 				if (!StringUtils.isEmpty(obj.toString())) {
 					aEntity.setPinCodeId(Long.valueOf((obj.toString())));
 				}
+			} else {
+				aEntity.setPinCodeId(null);
 			}
 			aEntity.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {

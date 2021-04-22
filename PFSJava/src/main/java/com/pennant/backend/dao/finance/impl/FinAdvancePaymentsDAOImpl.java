@@ -51,7 +51,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -59,7 +60,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -77,7 +78,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> implements FinAdvancePaymentsDAO {
-	private static Logger logger = Logger.getLogger(FinAdvancePaymentsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinAdvancePaymentsDAOImpl.class);
 
 	public FinAdvancePaymentsDAOImpl() {
 		super();
@@ -128,8 +129,6 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	 */
 	@Override
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where PaymentId = ?");
 
@@ -137,13 +136,14 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		logger.trace(Literal.SQL + sql.toString());
 
+		long paymentId = finAdvancePayments.getPaymentId();
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finAdvancePayments.getPaymentId() }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in FinAdvancePayments{} table for the specified PaymentId >> {}", type,
+					paymentId);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 
 	}
@@ -155,6 +155,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", Description, PaymentType, LlReferenceNo, LlDate, CustContribution, SellerContribution");
 		sql.append(", Remarks, BankCode, PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode");
 		sql.append(", PhoneAreaCode, PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy");
+		sql.append(", VasReference ");
 		sql.append(", POIssued, PartnerBankID, TransactionRef, RealizationDate, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", LinkedTranId, RecordType, WorkflowId, HoldDisbursement");
@@ -173,27 +174,18 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(final String id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
-		sql.append("  Where FinReference = ?");
+		sql.append(" Where FinReference = ?");
 
 		FinAdvancePaymentsRowMapper rowMapper = new FinAdvancePaymentsRowMapper(type);
 
 		logger.trace(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, id);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, id);
+
+		}, rowMapper);
 	}
 
 	/**
@@ -256,6 +248,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		insertSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
 		insertSql.append(
 				" PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy,POIssued,PartnerBankID,LinkedTranId,TransactionRef, RealizationDate, ");
+		insertSql.append(" VasReference, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, HoldDisbursement)");
 		insertSql.append(" Values(:PaymentId, :FinReference, :PaymentSeq ,:DisbSeq, :PaymentDetail, :AmtToBeReleased,");
@@ -265,6 +258,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		insertSql.append(" :PayableLoc, :PrintingLoc, :ValueDate, :BankBranchID, :PhoneCountryCode, :PhoneAreaCode, ");
 		insertSql.append(
 				" :PhoneNumber, :ClearingDate, :Status, :Active, :InputDate, :DisbCCy, :POIssued, :PartnerBankID, :LinkedTranId, :TransactionRef, :RealizationDate ,");
+		insertSql.append(" :VasReference, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :HoldDisbursement)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -309,6 +303,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		updateSql.append(" PhoneNumber = :PhoneNumber, ClearingDate = ClearingDate, Status = :Status,");
 		updateSql.append(
 				" Active = :Active, InputDate = :InputDate, DisbCCy = :DisbCCy, POIssued = :POIssued, PartnerBankID =:PartnerBankID,TransactionRef = :TransactionRef, RealizationDate = :RealizationDate, ");
+		updateSql.append(" VasReference = :VasReference, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
@@ -454,6 +449,11 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			paramMap.addValue("LLDATE", disbursement.getClearingDate());
 		}
 
+		if (disbursement.getLastMntOn() != null) {
+			sql.append(", LastMntOn= :LastMntOn");
+			paramMap.addValue("LastMntOn", disbursement.getLastMntOn());
+		}
+
 		sql.append("  Where PAYMENTID = :PAYMENTID  AND STATUS = :OLDSTATUS");
 
 		paramMap.addValue("STATUS", disbursement.getStatus());
@@ -516,18 +516,31 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setFinReference(finReference);
 
+		List<String> status = new ArrayList<>();
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+
 		StringBuilder selectSql = new StringBuilder("select COUNT(*)");
 		selectSql.append(" From FinAdvancePayments");
 		selectSql.append(type);
 		selectSql.append(" Where FinReference = :FinReference");
 
+		if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+			status.add(DisbursementConstants.STATUS_APPROVED);
+			status.add(DisbursementConstants.STATUS_AWAITCON);
+			status.add(DisbursementConstants.STATUS_PAID);
+			status.add(DisbursementConstants.STATUS_REALIZED);
+
+			selectSql.append(" AND Status  in(:Status)");
+			paramSource.addValue("Status", status);
+		}
+
 		logger.debug("selectSql: " + selectSql.toString());
 		int recordCount = 0;
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		paramSource.addValue("FinReference", finReference);
 
 		logger.debug("Leaving");
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, Integer.class);
 		} catch (Exception dae) {
 			recordCount = 0;
 		}
@@ -565,27 +578,13 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	@Override
 	public int getCountByFinReference(String finReference) {
+		StringBuilder sql = new StringBuilder("select Max(PaymentSeq)");
+		sql.append(" From FinAdvancePayments");
+		sql.append(" Where FinReference = ?");
 
-		int count = 0;
-		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
-		finAdvancePayments.setFinReference(finReference);
+		logger.trace(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("select Max(paymentseq)");
-		selectSql.append(" From FinAdvancePayments");
-		selectSql.append(" Where FinReference = :FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
-
-		logger.debug("Leaving");
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-
-		} catch (Exception e) {
-			logger.info(e);
-			count = 0;
-		}
-		return count;
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Integer.class);
 	}
 
 	@Override
@@ -628,26 +627,38 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 	@Override
 	public int getCountByPaymentId(String finReference, long paymentId) {
-		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
-		finAdvancePayments.setFinReference(finReference);
-		finAdvancePayments.setPaymentId(paymentId);
+		StringBuilder sql = new StringBuilder("select COUNT(*)");
+		sql.append(" From FinAdvancePayments");
+		sql.append(" Where FinReference = ? AND PaymentID = ?");
 
-		StringBuilder selectSql = new StringBuilder("select COUNT(*)");
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, paymentId },
+				Integer.class);
+	}
+
+	@Override
+	public int getFinAdvanceByVasRef(String finReference, String vasReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder selectSql = new StringBuilder(" Select Count(1) ");
 		selectSql.append(" From FinAdvancePayments");
-		selectSql.append(" Where FinReference = :FinReference AND PaymentID = :PaymentId");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference = :FinReference AND VasReference = :VasReference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		int recordCount = 0;
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		logger.debug(Literal.SQL + selectSql.toString());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinReference", finReference);
+		parameterSource.addValue("VasReference", vasReference);
 
-		logger.debug("Leaving");
+		int count = 0;
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (Exception dae) {
-			recordCount = 0;
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), parameterSource, Integer.class);
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
 		}
-
-		return recordCount;
+		logger.debug(Literal.LEAVING);
+		return count;
 	}
 
 	private class FinAdvancePaymentsRowMapper implements RowMapper<FinAdvancePayments> {
@@ -691,6 +702,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			finAdvPayments.setActive(rs.getBoolean("Active"));
 			finAdvPayments.setInputDate(rs.getTimestamp("InputDate"));
 			finAdvPayments.setDisbCCy(rs.getString("DisbCCy"));
+			finAdvPayments.setVasReference(rs.getString("VasReference"));
 			finAdvPayments.setpOIssued(rs.getBoolean("POIssued"));
 			finAdvPayments.setPartnerBankID(rs.getLong("PartnerBankID"));
 			finAdvPayments.setTransactionRef(rs.getString("TransactionRef"));
@@ -726,5 +738,22 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			return finAdvPayments;
 
 		}
+	}
+
+	@Override
+	public void updateLLDate(FinAdvancePayments finAdvancePayments, String type) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update FinAdvancePayments");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append("  Set LLDate = :llDate, Status = :status, LinkedTranId = :linkedTranId");
+		updateSql.append("  Where FinReference = :FinReference and PaymentSeq = :paymentSeq");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
 	}
 }

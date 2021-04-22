@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 
@@ -79,7 +80,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> implements VehicleDealerService {
-	private static final Logger logger = Logger.getLogger(VehicleDealerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VehicleDealerServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private VehicleDealerDAO vehicleDealerDAO;
 	private CustomerDAO customerDAO;
@@ -271,6 +272,10 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				vehicleDealer.setRecordType("");
+				VehicleDealer dealer = getVehicleDealerDAO().getVehicleDealerById(vehicleDealer.getDealerId(), "");
+				if (dealer != null) {
+					vehicleDealer.setVersion(dealer.getVersion() + 1);
+				}
 				getVehicleDealerDAO().update(vehicleDealer, "");
 			}
 		}
@@ -525,7 +530,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 
 	@Override
 	public AuditDetail doValidations(VehicleDealer vehicleDealer) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = new AuditDetail();
 		// validate address
@@ -545,7 +550,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			String[] valueParm = new String[2];
 			valueParm[0] = Labels.getLabel("label_DealerType");
 			valueParm[1] = vehicleDealer.getDealerType();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90702", "", valueParm)));
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 		}
 
 		City city = cityDAO.getCityById(vehicleDealer.getDealerCountry(), vehicleDealer.getDealerProvince(),
@@ -580,7 +585,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 		}
 
 		// validate BankBranchID
-		if (vehicleDealer.getBankBranchID() > 0) {
+		if (vehicleDealer.getBankBranchID() != null && vehicleDealer.getBankBranchID() > 0) {
 			BankBranch bankBranch = bankBranchService.getApprovedBankBranchById(vehicleDealer.getBankBranchID());
 			if (bankBranch == null) {
 				String[] valueParm = new String[1];
@@ -600,9 +605,10 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 				}
 			}
 			if (!accTypeSts) {
-				String[] valueParm = new String[1];
-				valueParm[0] = vehicleDealer.getAccountType();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90308", "", valueParm)));
+				String[] valueParm = new String[2];
+				valueParm[0] = "Account Type";
+				valueParm[1] = vehicleDealer.getAccountType();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 			}
 		}
 

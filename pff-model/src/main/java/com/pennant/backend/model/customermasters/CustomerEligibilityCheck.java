@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class CustomerEligibilityCheck implements Serializable {
 
@@ -30,9 +32,22 @@ public class CustomerEligibilityCheck implements Serializable {
 	private String custOtherIncome;
 	private BigDecimal custOtherIncomeAmt = BigDecimal.ZERO;
 
+	private String sellerType;
+	private String vehicleCtg;
+	private String emiratesReg;
+	private boolean thirdPartyReg = false;
+	private String vehicleFinFor;
+	private String agreeName;
+	private String assetProduct;
+	private String propertyCategory;
+	private String assetPurpose;
+	private boolean approvedDealerExists;
+	private boolean nonApprovedDealerExists;
+
 	private int noOfTerms;
 	private String finRepayMethod;
 	private boolean stepFinance;
+	private boolean alwDPSP;
 	private boolean alwPlannedDefer;
 
 	private BigDecimal tenure = BigDecimal.ZERO;
@@ -97,6 +112,12 @@ public class CustomerEligibilityCheck implements Serializable {
 	private boolean chequeOrDDAvailable;
 	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
 
+	private BigDecimal cibilScore;
+	private String custCity;
+	private String bureauDelinquency;
+	private BigDecimal calculatedAnnualNetSalary = BigDecimal.ZERO;
+	private Map<String, Object> dataMap;
+
 	/*
 	 * private String custCIF; private String custSubSector = ""; private String custCOB = ""; private String
 	 * custDftBranch; private long custGroupID = 0; private String custGroupSts; private boolean custIsBlocked = false;
@@ -123,6 +144,16 @@ public class CustomerEligibilityCheck implements Serializable {
 	 */
 	private BigDecimal netLoanAmount;
 	Map<String, Object> extendedFields = new HashMap<>();
+	private String loanFlag;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("cibilScore");
+		excludeFields.add("bureaDelinquency");
+		excludeFields.add("calculatedAnnualNetSalary");
+		excludeFields.add("custCity");
+		return excludeFields;
+	}
 
 	public CustomerEligibilityCheck() {
 
@@ -348,6 +379,22 @@ public class CustomerEligibilityCheck implements Serializable {
 		this.custCtgCode = custCtgCode;
 	}
 
+	public String getSellerType() {
+		return sellerType;
+	}
+
+	public void setSellerType(String sellerType) {
+		this.sellerType = sellerType;
+	}
+
+	public boolean isThirdPartyReg() {
+		return thirdPartyReg;
+	}
+
+	public void setThirdPartyReg(boolean thirdPartyReg) {
+		this.thirdPartyReg = thirdPartyReg;
+	}
+
 	public BigDecimal getFinProfitRate() {
 		return finProfitRate;
 	}
@@ -362,6 +409,14 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setStepFinance(boolean stepFinance) {
 		this.stepFinance = stepFinance;
+	}
+
+	public boolean isAlwDPSP() {
+		return alwDPSP;
+	}
+
+	public void setAlwDPSP(boolean alwDPSP) {
+		this.alwDPSP = alwDPSP;
 	}
 
 	public boolean isAlwPlannedDefer() {
@@ -410,6 +465,22 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setDownpaySupl(BigDecimal downpaySupl) {
 		this.downpaySupl = downpaySupl;
+	}
+
+	public String getVehicleCtg() {
+		return vehicleCtg;
+	}
+
+	public void setVehicleCtg(String vehicleCtg) {
+		this.vehicleCtg = vehicleCtg;
+	}
+
+	public String getEmiratesReg() {
+		return emiratesReg;
+	}
+
+	public void setEmiratesReg(String emiratesReg) {
+		this.emiratesReg = emiratesReg;
 	}
 
 	public BigDecimal getCustYearOfExp() {
@@ -582,12 +653,36 @@ public class CustomerEligibilityCheck implements Serializable {
 		ConstructStage = constructStage;
 	}
 
+	public String getVehicleFinFor() {
+		return vehicleFinFor;
+	}
+
+	public void setVehicleFinFor(String vehicleFinFor) {
+		this.vehicleFinFor = vehicleFinFor;
+	}
+
+	public String getAgreeName() {
+		return agreeName;
+	}
+
+	public void setAgreeName(String agreeName) {
+		this.agreeName = agreeName;
+	}
+
 	public String getReqFinType() {
 		return reqFinType;
 	}
 
 	public void setReqFinType(String reqFinType) {
 		this.reqFinType = reqFinType;
+	}
+
+	public String getPropertyCategory() {
+		return propertyCategory;
+	}
+
+	public void setPropertyCategory(String propertyCategory) {
+		this.propertyCategory = propertyCategory;
 	}
 
 	public boolean isDdaModifiedCheck() {
@@ -604,6 +699,38 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setRefundAmount(BigDecimal refundAmount) {
 		this.refundAmount = refundAmount;
+	}
+
+	public String getAssetProduct() {
+		return assetProduct;
+	}
+
+	public void setAssetProduct(String assetProduct) {
+		this.assetProduct = assetProduct;
+	}
+
+	public String getAssetPurpose() {
+		return assetPurpose;
+	}
+
+	public void setAssetPurpose(String assetPurpose) {
+		this.assetPurpose = assetPurpose;
+	}
+
+	public boolean isApprovedDealerExists() {
+		return approvedDealerExists;
+	}
+
+	public void setApprovedDealerExists(boolean approvedDealerExists) {
+		this.approvedDealerExists = approvedDealerExists;
+	}
+
+	public boolean isNonApprovedDealerExists() {
+		return nonApprovedDealerExists;
+	}
+
+	public void setNonApprovedDealerExists(boolean nonApprovedDealerExists) {
+		this.nonApprovedDealerExists = nonApprovedDealerExists;
 	}
 
 	public BigDecimal getCoAppRepayBank() {
@@ -784,6 +911,54 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setNetLoanAmount(BigDecimal netLoanAmount) {
 		this.netLoanAmount = netLoanAmount;
+	}
+
+	public BigDecimal getCibilScore() {
+		return cibilScore;
+	}
+
+	public void setCibilScore(BigDecimal cibilScore) {
+		this.cibilScore = cibilScore;
+	}
+
+	public String getBureauDelinquency() {
+		return bureauDelinquency;
+	}
+
+	public void setBureauDelinquency(String bureauDelinquency) {
+		this.bureauDelinquency = bureauDelinquency;
+	}
+
+	public BigDecimal getCalculatedAnnualNetSalary() {
+		return calculatedAnnualNetSalary;
+	}
+
+	public void setCalculatedAnnualNetSalary(BigDecimal calculatedAnnualNetSalary) {
+		this.calculatedAnnualNetSalary = calculatedAnnualNetSalary;
+	}
+
+	public String getCustCity() {
+		return custCity;
+	}
+
+	public void setCustCity(String custCity) {
+		this.custCity = custCity;
+	}
+
+	public Map<String, Object> getDataMap() {
+		return dataMap;
+	}
+
+	public void setDataMap(Map<String, Object> dataMap) {
+		this.dataMap = dataMap;
+	}
+
+	public String getLoanFlag() {
+		return loanFlag;
+	}
+
+	public void setLoanFlag(String loanFlag) {
+		this.loanFlag = loanFlag;
 	}
 
 }

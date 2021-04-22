@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -22,6 +23,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.MandateConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -30,7 +32,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.mandate.dao.MandateProcessDAO;
 
 public class MandateProcessDAOImpl extends SequenceDao<Object> implements MandateProcessDAO {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 
 	@Override
 	public long saveMandateRequests(List<Long> mandateIds) {
@@ -97,6 +99,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		sql.append(" PERIODICITY FREQUENCY,");
 		sql.append(" STATUS,");
 		sql.append(" PARTNERBANKNAME PARTNER_BANK,");
+		sql.append(" BRANCHIFSCCODE PARTNER_BANK_IFSC,");
 		sql.append(" LASTMNTON REGISTERED_DATE,");
 		sql.append(" BANK_BRANCH_NAME,");
 		sql.append(" UTILITYCODE UTILITY_CODE,");
@@ -208,7 +211,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 						mandateId = obj.toString();
 					}
 
-					logMandateHistory(Long.valueOf(mandateId), id);
+					logMandateHistory(new Long(mandateId), id);
 					return id;
 				}
 			});
@@ -303,39 +306,115 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 	}
 
 	@Override
-	public List<Long> getMandateList(String entityCode) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
-		try {
-			sql = new StringBuilder("Select mandateID ");
-			sql.append("from  INT_MANDATE_REQUEST_VIEW where entitycode =:entityCode");
-			MapSqlParameterSource paramMap = new MapSqlParameterSource();
-			paramMap.addValue("entityCode", entityCode);
-
-			logger.debug("Query--->" + sql.toString());
-			return jdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
+	public List<String> getEntityCodes() {
+		String sql = "Select EntityCode from Entity";
+		return jdbcOperations.queryForList(sql, new Object[] {}, String.class);
 	}
 
 	@Override
-	public List<String> getEntityCodes() {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
-		try {
-			sql = new StringBuilder("Select EntityCode ");
-			sql.append("from  Entity ");
-			MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-
-			logger.debug("Query--->" + sql.toString());
-			return jdbcTemplate.queryForList(sql.toString(), mapSqlParameterSource, String.class);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+	public void deleteMandateRequests(List<Long> mandateIds) {
+		List<Long> mandateSet = new ArrayList<>();
+		Long[] result = new Long[mandateSet.size()];
+		for (Long mandateId : mandateIds) {
+			mandateSet.add(mandateId);
+			result = mandateSet.toArray(result);
+			if (result.length > 499) {
+				delete(result);
+				mandateSet.clear();
+			}
 		}
-		logger.debug(Literal.LEAVING);
-		return null;
+
+		if (!(result == null)) {
+			delete(result);
+			mandateSet.clear();
+		}
 	}
+
+	private void delete(Long[] result) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM MANDATE_REQUESTS ");
+		sql.append("WHERE MANDATEID IN (:MANDATEID)");
+
+		logger.debug("Query--->" + sql.toString());
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("MANDATEID", Arrays.asList(result));
+
+		this.jdbcTemplate.update(sql.toString(), paramMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void deleteMandateStatus(List<Long> mandateIds) {
+
+		List<Long> mandateSet = new ArrayList<>();
+		Long[] result = new Long[mandateSet.size()];
+		for (Long mandateId : mandateIds) {
+			mandateSet.add(mandateId);
+			result = mandateSet.toArray(result);
+			if (result.length > 499) {
+				deleteStatus(result);
+				mandateSet.clear();
+			}
+		}
+
+		if (!(result == null)) {
+			deleteStatus(result);
+			mandateSet.clear();
+		}
+	}
+
+	private void deleteStatus(Long[] result) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM MANDATESSTATUS ");
+		sql.append("WHERE MANDATEID IN (:MANDATEID) ");
+		sql.append("AND STATUS = :AC");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("MANDATEID", Arrays.asList(result));
+		paramMap.addValue("AC", MandateConstants.STATUS_AWAITCON);
+
+		this.jdbcTemplate.update(sql.toString(), paramMap);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public List<Long> getMandateList(String entityCode) {
+		String sql = "Select MandateID from MANDATES Where Entitycode = ?";
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode }, Long.class);
+	}
+
+	@Override
+	public List<Long> getMandateList(String entityCode, String partnerBankCode) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select MandateID");
+		sql.append(" from MANDATES M");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID");
+		sql.append(" Where Entitycode = ? and PartnerBankCode = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode, partnerBankCode }, Long.class);
+	}
+
+	@Override
+	public List<String> getPartnerBankCodeByEntity(String entityCode) {
+		String sql = "Select PartnerbankCode from PartnerBanks Where Entity = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		return jdbcOperations.queryForList(sql, new Object[] { entityCode }, String.class);
+	}
+
 }

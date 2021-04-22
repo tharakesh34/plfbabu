@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
@@ -37,7 +38,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.rits.cloning.Cloner;
 
 public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction> implements ReScheduleService {
-	private static Logger logger = Logger.getLogger(ReScheduleServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(ReScheduleServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
@@ -346,6 +347,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		// Set Deferred scheduled date and schedule method first time
 		chkFirstRpyDate = false;
+		boolean suplRentUpdated = false;
 		Date newFirstRpyDate = null;
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
 			curSchd = scheduleData.getFinanceScheduleDetails().get(i);
@@ -381,11 +383,30 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				}
 			}
 
+			// Supplement Rent & Increased Cost Re-Setting
+			if (curSchd.getSchDate().compareTo(fromDate) >= 0) {
+
+				if (!suplRentUpdated) {
+					if (prvSchd.getSchDate().compareTo(financeMain.getFinStartDate()) == 0) {
+						financeMain.setCurSuplRent(financeMain.getSupplementRent());
+						financeMain.setCurIncrCost(financeMain.getIncreasedCost());
+					} else {
+						financeMain.setCurSuplRent(prvSchd.getSuplRent());
+						financeMain.setCurIncrCost(prvSchd.getIncrCost());
+					}
+					suplRentUpdated = true;
+				}
+			}
+
 			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) >= 0) {
 				if (chkFirstRpyDate && newFirstRpyDate == null) {
 					newFirstRpyDate = curSchd.getSchDate();
 				}
 				chkFirstRpyDate = true;
+			}
+
+			if (financeMain.isTDSApplicable()) {
+				curSchd.setTDSApplicable(true);
 			}
 
 			if (fromDate.compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
@@ -404,10 +425,13 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 
-		Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
-		if (recalLockTill == null) {
-			recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
-		}
+		//DE#1550(24-10-2020) - While doing the ReScheduling, RPS is not plotting properly in case of Grace.
+		/*
+		 * Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate(); if (recalLockTill == null) {
+		 * recalLockTill = finScheduleData.getFinanceMain().getMaturityDate(); }
+		 */
+
+		Date recalLockTill = finServiceInstruction.getFromDate();
 
 		// Rate Modification for All Modified Schedules
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -433,6 +457,19 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null
 							? BigDecimal.ZERO : finServiceInstruction.getMargin());
 					curSchd.setActRate(finServiceInstruction.getActualRate());
+
+					// Advised Rates Setting
+					if (i != 0 && StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR,
+							scheduleData.getFinanceType().getFinCategory())) {
+						if (prvSchd != null) {
+							curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null
+									? prvSchd.getAdvPftRate() : BigDecimal.ZERO);
+							curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
+							curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null
+									? BigDecimal.ZERO : prvSchd.getAdvMargin());
+						}
+					}
+
 				}
 			}
 
@@ -530,6 +567,11 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		sd.setCalculatedRate(prvSchd.getCalculatedRate());
 		sd.setSchdMethod(prvSchd.getSchdMethod());
 		sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
+		sd.setAdvBaseRate(prvSchd.getAdvBaseRate());
+		sd.setAdvMargin(prvSchd.getAdvMargin());
+		sd.setAdvPftRate(prvSchd.getAdvPftRate());
+		sd.setSuplRent(prvSchd.getSuplRent());
+		sd.setIncrCost(prvSchd.getIncrCost());
 
 		finScheduleData.getFinanceScheduleDetails().add(sd);
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));

@@ -51,7 +51,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
@@ -85,6 +86,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -107,7 +109,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final long serialVersionUID = -6959194080451993569L;
-	private static final Logger logger = Logger.getLogger(FinDocumentDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinDocumentDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -125,6 +127,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected Space space_docReceivedDt;
 	protected Space space_docBarcode;
 	// protected Space space_docBarcode;
+	protected Textbox remarks;
+	protected Space space_Remarks;
 
 	protected Div finDocumentDiv; // autowired
 
@@ -320,6 +324,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		this.documnetName.setMaxlength(200);
 		this.docBarcode.setMaxlength(20);
+		this.remarks.setMaxlength(500);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -440,16 +445,18 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (getDocumentDetails().getDocImage() != null) {
 			final InputStream data = new ByteArrayInputStream(getDocumentDetails().getDocImage());
 			String docName = documnetName.getValue();
-			if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
+			if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_PDF)) {
 				amedia = new AMedia(docName, "pdf", "application/pdf", data);
-			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)
-					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_JPG)) {
+			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_IMAGE)
+					|| getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_JPG)) {
 				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
-			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
-					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
+			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_PNG)) {
+				amedia = new AMedia(docName, "jpeg", "image/png", data);
+			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_WORD)
+					|| getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx",
 						"application/vnd.openxmlformats-officedocument.wordprocessingml.document", data);
-			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
+			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_EXCEL)) {
 				amedia = new AMedia(docName, "xlsx",
 						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)) {
@@ -458,7 +465,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_RAR)) {
 				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
-			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_TXT)) {
+			} else if (getDocumentDetails().getDoctype().equalsIgnoreCase(PennantConstants.DOC_TYPE_TXT)) {
 				amedia = new AMedia(docName, "txt", "text/plain", data);
 			}
 			Filedownload.save(amedia);
@@ -534,6 +541,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else {
 				amedia = new AMedia(aDocumentDetails.getDocName(), null, null, aDocumentDetails.getDocImage());
 			}
+
+			//If the document come from DMS then extension not available in DocName then format is null.
+			if (amedia != null && amedia.getFormat() == null) {
+				amedia = new AMedia(aDocumentDetails.getDocName(), aDocumentDetails.getDoctype(), null,
+						aDocumentDetails.getDocImage());
+			}
 			finDocumentPdfView.setContent(amedia);
 		}
 
@@ -542,6 +555,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		this.docOriginal.setChecked(aDocumentDetails.isDocOriginal());
 		this.docBarcode.setValue(aDocumentDetails.getDocBarcode());
+		this.remarks.setValue(aDocumentDetails.getRemarks());
 		/*
 		 * if (this.docOriginal.isChecked()) { this.docBarcode.setReadonly(false); } else {
 		 * this.docBarcode.setValue(""); }
@@ -573,7 +587,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);
+		if (StringUtils.equals(moduleName, CollateralConstants.MODULE_NAME)) {
+			aDocumentDetails.setDocModule(CollateralConstants.MODULE_NAME);
+		} else {
+			aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);
+		}
 		try {
 			if (this.docCategory.getValue() == null
 					|| this.docCategory.getValue().equals(PennantConstants.List_Select)) {
@@ -600,11 +618,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				DocumentDetails details = (DocumentDetails) this.documnetName.getAttribute("data");
 				aDocumentDetails.setDocImage(details.getDocImage());
 				aDocumentDetails.setDoctype(details.getDoctype());
+				aDocumentDetails.setDocRefId(details.getDocRefId());
 			} else {
 				aDocumentDetails.setDocImage(null);
 				aDocumentDetails.setDoctype(null);
+				aDocumentDetails.setDocRefId(Long.MIN_VALUE);
 			}
-			aDocumentDetails.setDocRefId(Long.MIN_VALUE);
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -648,6 +667,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		try {
 			aDocumentDetails.setDocBarcode(this.docBarcode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aDocumentDetails.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -791,6 +816,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
+		if (this.remarks.isReadonly()) {
+			this.remarks
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_Remarks.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_CHAR, false));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -802,6 +833,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		setValidationOn(false);
 		this.documnetName.setConstraint("");
 		this.docBarcode.setConstraint("");
+		this.remarks.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -945,6 +977,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.documnetName.setDisabled(true);
 			this.btnUploadDoc.setDisabled(!isEditable);
 			this.docReceived.setDisabled(!isEditable);
+			this.remarks.setReadonly(!isEditable);
 		}
 
 		logger.debug("Leaving");
@@ -971,6 +1004,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.documnetName.setReadonly(true);
+		this.remarks.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1230,7 +1264,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.documnetName.setAttribute("data", null);
 			Clients.clearWrongValue(docReceived);
 		} else {
-			this.docReceivedDt.setReadonly(true);
+			this.docReceivedDt.setDisabled(true);
 			this.space_docReceivedDt.setSclass("");
 			// this.documnetName.setReadonly(false);
 			this.btnUploadDoc.setVisible(true);
@@ -1412,11 +1446,15 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (textbox.getAttribute("data") == null) {
 				DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
 						fileName, ddaImageData);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			} else {
 				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
 				documentDetails.setDoctype(docType);
 				documentDetails.setDocImage(ddaImageData);
+				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocUri(null);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {

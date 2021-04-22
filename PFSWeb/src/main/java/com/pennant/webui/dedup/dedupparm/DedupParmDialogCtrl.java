@@ -51,7 +51,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
@@ -106,7 +107,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	private static final long serialVersionUID = -3541636402188022162L;
-	private static final Logger logger = Logger.getLogger(DedupParmDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DedupParmDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -157,6 +158,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	boolean comboSelected = false;
 	private String fieldType = null;
 	boolean likeCondition = false;
+	String similarPercentage = "";
 
 	// not auto wired vars
 	private DedupParm dedupParm; // overhanded per param
@@ -247,6 +249,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			if (arguments.containsKey("dedupParmListCtrl")) {
 				if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER)
 						|| moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
+						|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 						|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 					this.rowCustCtgCode.setVisible(true);
 					this.row_Collateral.setVisible(false);
@@ -414,7 +417,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 */
 	public void doWriteBeanToComponents(DedupParm aDedupParm) {
 		logger.debug("Entering");
-		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)) {
+		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
+				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)) {
 			fillComboBox(this.custCtgCode, aDedupParm.getQuerySubCode(), this.custCategoryList, "");
 		} else if (moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 			custCategoryList = PennantStaticListUtil.getLimitCategories();
@@ -451,6 +455,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		try {
 			if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER)
 					|| moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
+					|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 					|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 				if (!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex() < 1) {
 					this.sQLQuery.setValue("");
@@ -506,7 +511,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -561,8 +566,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 			// Fetches the List of DedupFields
 			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_FINANCE)) {
-				objectFieldList = (List<BuilderTable>) getDedupFieldsService()
-						.getFieldList(FinanceConstants.DEDUP_FINANCE);
+				objectFieldList = getDedupFieldsService().getFieldList(FinanceConstants.DEDUP_FINANCE);
 				// Method for Building tree with /Without existing params
 				buildingTree(sqlQueryValueList, aDedupParm);
 			}
@@ -578,9 +582,10 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			}
 
 			if (StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_CUSTOMER)
-					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_BLACKLIST)) {
+					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_BLACKLIST)
+					|| StringUtils.equals(aDedupParm.getQueryModule(), FinanceConstants.DEDUP_POLICE)) {
 				if (!aDedupParm.isNewRecord()) {
-					objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(
+					objectFieldList = getDedupFieldsService().getFieldList(
 							this.custCtgCode.getSelectedItem().getValue().toString() + aDedupParm.getQueryModule());
 					// Method for Building tree with /Without existing params
 					buildingTree(sqlQueryValueList, aDedupParm);
@@ -617,8 +622,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			this.sQLQuery.setValue("");
 			this.tab_queryDesign.setSelected(true);
 			if (treechildren != null) {
-				Component comp = (Component) combo.getParent().getFirstChild().getNextSibling().getNextSibling()
-						.getNextSibling().getNextSibling().getNextSibling();
+				Component comp = combo.getParent().getFirstChild().getNextSibling().getNextSibling().getNextSibling()
+						.getNextSibling().getNextSibling();
 				Combobox cb = new Combobox();
 				Textbox tb = new Textbox();
 				if (comp instanceof Combobox) {
@@ -662,8 +667,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			this.sQLQuery.setValue("");
 			this.tab_queryDesign.setSelected(true);
 			if (treechildren != null) {
-				Component comp = (Component) combo.getParent().getFirstChild().getNextSibling().getNextSibling()
-						.getNextSibling().getNextSibling().getNextSibling();
+				Component comp = combo.getParent().getFirstChild().getNextSibling().getNextSibling().getNextSibling()
+						.getNextSibling().getNextSibling();
 				Combobox cb = new Combobox();
 				Textbox tb = new Textbox();
 				if (comp instanceof Combobox) {
@@ -703,7 +708,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			ctgCode = "COLLATERAL_" + ctgCode + "_ED";
 			objectFieldList = PennantAppUtil.getDynamicColumnsList(ctgCode);
 		} else {
-			objectFieldList = (List<BuilderTable>) getDedupFieldsService().getFieldList(
+			objectFieldList = getDedupFieldsService().getFieldList(
 					this.custCtgCode.getSelectedItem().getValue().toString() + getDedupParm().getQueryModule());
 		}
 		// Method for Building tree with /Without existing params
@@ -736,7 +741,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	public void buildingTree(List<String> queryValues, DedupParm aDedupParm) throws Exception {
 		logger.debug("Entering");
 
-		Component component1 = (Component) tree;
+		Component component1 = tree;
 		itemList.add(component1);
 		treechildren = new Treechildren();
 		treeitem = new Treeitem();
@@ -821,7 +826,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		Combobox comboBox = new Combobox();
 		Comboitem item;
 		for (int i = 0; i < objectFieldList.size(); i++) {
-			BuilderTable builderTables = (BuilderTable) objectFieldList.get(i);
+			BuilderTable builderTables = objectFieldList.get(i);
 			item = new Comboitem();
 			item.setLabel(builderTables.getFieldDesc());
 			item.setValue(builderTables.getFieldName());
@@ -956,7 +961,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		if (!isItemSibling) {
 			parent = cmp.getParent();
 		} else {
-			parent = (Component) itemList.get(itemList.size() - 2);
+			parent = itemList.get(itemList.size() - 2);
 		}
 
 		final String msg = Labels.getLabel("message.information.only6Rows");
@@ -970,7 +975,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			} else {
 				if ((parent instanceof Tree) && parentCount == 1) {
 					if (parent.getChildren().get(0) instanceof Treechildren) {
-						((Component) parent.getChildren().get(0)).appendChild(treeitem);
+						parent.getChildren().get(0).appendChild(treeitem);
 					} else {
 						parent.appendChild(treeitem);
 						parentCount++;
@@ -1032,7 +1037,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 						if (child.get(j) instanceof Treeitem) {
 							found = 1;
 							if (length == 1) {
-								nextcomp = (Component) child.get(j);
+								nextcomp = child.get(j);
 							}
 							length = length + 1;
 						} else {
@@ -1098,7 +1103,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		logger.debug("Entering");
 
 		// Add treeItem to Component itemList
-		Component component = (Component) treeitem;
+		Component component = treeitem;
 		String condition = "";
 		itemList.add(component);
 
@@ -1262,16 +1267,16 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		// condition structure of tree for editing logic
 		if (qryBraketCount > 1) {
 			if (itemList.size() > 1) {
-				component = (Component) itemList.get(itemList.size() - 2);
+				component = itemList.get(itemList.size() - 2);
 			} else {
-				component = (Component) itemList.get(itemList.size() - 1);
+				component = itemList.get(itemList.size() - 1);
 			}
 			addSubButtonLogic(component);
 		} else if (isItemSibling) {
 			if (itemList.size() > 1) {
-				component = (Component) itemList.get(itemList.size() - 1);
+				component = itemList.get(itemList.size() - 1);
 			} else {
-				component = (Component) itemList.get(itemList.size());
+				component = itemList.get(itemList.size());
 			}
 			addButtonLogic(component);
 		}
@@ -1347,6 +1352,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 		String resultQuery = "";
 		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
+				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 				|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 			resultQuery = "select " + PennantConstants.CUST_DEDUP_LIST_FIELDS + " from CustomersDedup_View";
 			if (!this.custCtgCode.isDisabled() && this.custCtgCode.getSelectedIndex() < 1) {
@@ -1369,6 +1375,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		}
 
 		if (moduleName.equals(FinanceConstants.DEDUP_CUSTOMER) || moduleName.equals(FinanceConstants.DEDUP_BLACKLIST)
+				|| moduleName.equals(FinanceConstants.DEDUP_POLICE)
 				|| moduleName.equals(FinanceConstants.DEDUP_LIMITS)) {
 			resultQuery = resultQuery + " and lovDescCustCtgType='"
 					+ this.custCtgCode.getSelectedItem().getValue().toString() + "'";
@@ -1419,7 +1426,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 			String elementDesc = "";
 			for (int i = 0; i < selectionComp.getChildren().size(); i++) {
 				if (selectionComp.getChildren().get(i) instanceof Combobox) {
-					Component combo = (Combobox) selectionComp.getChildren().get(i);
+					Component combo = selectionComp.getChildren().get(i);
 
 					// Validate getting value from 'combo' is related to
 					// comboBox or not
@@ -1447,9 +1454,24 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 						actualBlob = actualBlob + comboValue + "," + "(" + ",";
 					} else if (comboCount == 2) {
-						strSqlQuery = strSqlQuery + comboValue;
-						if ("LIKE".equalsIgnoreCase(comboValue.trim())) {
+						if (StringUtils.contains(comboValue.trim(), "SIMILARITY")) {
+							String fieldName = "";
+							if ((((Combobox) combo).getPreviousSibling().getPreviousSibling()) instanceof Space) {
+								fieldName = ((Combobox) ((Combobox) combo).getPreviousSibling()).getSelectedItem()
+										.getValue().toString();
+							} else {
+								fieldName = ((Combobox) ((Combobox) combo).getPreviousSibling().getPreviousSibling())
+										.getSelectedItem().getValue().toString();
+							}
+							strSqlQuery = StringUtils.substring(strSqlQuery, 0,
+									StringUtils.lastIndexOf(strSqlQuery, "(") + 1);
+							strSqlQuery = strSqlQuery + "SIMILARITY (" + fieldName;
+							similarPercentage = StringUtils.substring(comboValue, 10);
+						} else if ("LIKE".equalsIgnoreCase(comboValue.trim())) {
+							strSqlQuery = strSqlQuery + comboValue;
 							likeCondition = true;
+						} else {
+							strSqlQuery = strSqlQuery + comboValue;
 						}
 						actualBlob = actualBlob + comboValue + ",";
 						comboCount++;
@@ -1476,14 +1498,23 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 					if (likeCondition) {
 						strSqlQuery = strSqlQuery + ":" + element;
 						likeCondition = false;
+					} else if (!StringUtils.equals(similarPercentage, "")) {
+						strSqlQuery = strSqlQuery + ", :" + element + " )*100 >= " + similarPercentage;
+						similarPercentage = "";
 					} else {
 						strSqlQuery = strSqlQuery + ":" + element;
-						if (StringUtils.contains(getFieldType(), "varchar")) {
+						if (StringUtils.contains(getFieldType(), "varchar")
+								|| StringUtils.contains(getFieldType(), "character varying")) {
 							if (App.DATABASE == Database.SQL_SERVER) {
 								strSqlQuery = strSqlQuery + " AND (" + element + " IS NOT NULL AND " + element
 										+ " != '') ";
 							} else {
 								strSqlQuery = strSqlQuery + " AND " + element + " IS NOT NULL ";
+							}
+
+							if (App.DATABASE == Database.POSTGRES
+									&& StringUtils.contains(getFieldType(), "character varying")) {
+								strSqlQuery = strSqlQuery + " AND " + element + " !='' ";
 							}
 						}
 					}
@@ -1497,7 +1528,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 					comboCount++;
 				} else {
 					// repeating the logic for getting values from components
-					doBuildQuery((Component) selectionComp.getChildren().get(i));
+					doBuildQuery(selectionComp.getChildren().get(i));
 				}
 			}
 		}

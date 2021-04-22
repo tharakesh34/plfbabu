@@ -7,9 +7,11 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,9 +70,9 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.batch.model.BatchProcessStatus;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.eod.step.StepUtil.Step;
 import com.pennanttech.pff.external.GSTDownloadService;
@@ -83,7 +85,7 @@ import com.pennanttech.pff.process.collection.CollectionDataDownloadProcess;
  */
 public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 4309463490869641570L;
-	private static final Logger logger = Logger.getLogger(BatchAdminCtrl.class);
+	private static Logger logger = LogManager.getLogger(BatchAdminCtrl.class);
 
 	protected Window window_BatchAdmin;
 	protected Textbox lable_LastBusiness_Date;
@@ -113,6 +115,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution microEOD;
 	protected ProcessExecution microEODMonitor;
 	protected ProcessExecution prepareCustomerQueue;
+	protected ProcessExecution dmsRetrieveProcess;
 
 	private JobExecution jobExecution;
 
@@ -131,6 +134,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static boolean allowEODStartOnSameDay = false;
 	private boolean allowClearParameters = true;
 	private static String QDP = null;
+	private static int EOD_BATCH_REFRESH_TIME = -1;
+	private static String EOD_BATCH_MONITOR = "NA";
+	private static int EOD_THREAD_COUNT = -1;
 
 	public BatchAdminCtrl() {
 		super();
@@ -138,6 +144,11 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$window_BatchAdmin(Event event) throws Exception {
+
+		if (EOD_BATCH_REFRESH_TIME == -1) {
+			EOD_BATCH_REFRESH_TIME = SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME");
+		}
+
 		if (allowClearParameters) {
 			doClearParameters();
 		}
@@ -152,7 +163,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		if (!isInitialise) {
 			setDates();
-			this.timer.setDelay(SysParamUtil.getValueAsInt("EOD_BATCH_REFRESH_TIME"));
+			this.timer.setDelay(EOD_BATCH_REFRESH_TIME);
 			noOfthread.setValue(SysParamUtil.getValueAsInt("EOD_THREAD_COUNT"));
 			this.borderLayoutBatchAdmin.setHeight(getBorderLayoutHeight());
 			isInitialise = true;
@@ -289,6 +300,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		allowEODStartOnSameDay = false;
 		allowClearParameters = false;
 		QDP = null;
+		EODUtil.setDatesReload(true);
 	}
 
 	/**
@@ -329,18 +341,25 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	private void setDates() {
-		lable_Value_Date.setValue(SysParamUtil.getAppValueDate(DateFormat.LONG_DATE));
-		lable_NextBusiness_Date
-				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
-		lable_LastBusiness_Date
-				.setValue(DateUtility.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+		if (EODUtil.isDatesReload()) {
+			lable_Value_Date.setValue(DateUtil.formatToLongDate(SysParamUtil.getAppDate()));
+			lable_NextBusiness_Date
+					.setValue(DateUtil.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT)));
+			lable_LastBusiness_Date
+					.setValue(DateUtil.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST)));
+			EODUtil.setDatesReload(false);
+		}
 	}
 
 	private void setRunningStatus(boolean collectionProcess) {
 		String jobStatus = this.jobExecution.getStatus().toString();
 
+		if (EOD_BATCH_MONITOR.equals("NA")) {
+			EOD_BATCH_MONITOR = SysParamUtil.getValueAsString("EOD_BATCH_MONITOR");
+		}
+
 		try {
-			if ("Y".equals(SysParamUtil.getValueAsString("EOD_BATCH_MONITOR"))) {
+			if ("Y".equals(EOD_BATCH_MONITOR)) {
 				if (!islock) {
 					doFillStepExecutions(BatchMonitor.getStepExecution(this.jobExecution.getJobInstance()));
 				}
@@ -355,6 +374,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.btnStartJob.setLabel("Restart");
 			this.btnStartJob.setTooltiptext("Restart Job");
 			estimatedTime.setValue("");
+			EODUtil.setDatesReload(true);
+			setDates();
 		}
 
 		if ("COMPLETED".equals(jobStatus)) {
@@ -362,6 +383,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			this.btnStartJob.setTooltiptext("Start");
 			this.lable_current_step.setValue("");
 			estimatedTime.setValue("");
+			EODUtil.setDatesReload(true);
 			setDates();
 
 			String jobStatusMsg = "";
@@ -400,7 +422,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		String msg = "";
 		if ("Start".equals(this.btnStartJob.getLabel())) {
-			args[0] = DateUtility.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
+			args[0] = DateUtil.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
 			msg = Labels.getLabel("labe_start_job", args);
 		} else {
 			msg = Labels.getLabel("labe_reStart_job");
@@ -417,6 +439,35 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (StringUtils.equals("I", status)) {
 			MessageUtil.showError("Auto Approval of Disbursements is InProcess..");
 			return;
+		}
+
+		if (ImplementationConstants.ALLOW_EOD_INTERVAL_VALIDATION) {
+
+			if (this.jobExecution != null && StringUtils.equals(this.jobExecution.getExitStatus().getExitCode(),
+					FlowExecutionStatus.COMPLETED.toString())) {
+				int eODTimeInterval = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_INTERVAL_TIME);
+				Date sysDate = DateUtil.getSysDate();
+				Date lastJobExecutionTime = jobExecution.getEndTime();
+				if (eODTimeInterval != 0) {
+					int days = DateUtil.getDaysBetween(sysDate, lastJobExecutionTime);
+					int hours = 0;
+
+					if (days == 0) {
+						hours = hours + Integer
+								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+					} else {
+						hours = days * 24;
+						lastJobExecutionTime = DateUtility.addDays(lastJobExecutionTime, days);
+						hours = hours + Integer
+								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+					}
+
+					if (hours < eODTimeInterval) {
+						MessageUtil.showError(Labels.getLabel("label_EOD_BEFORE_TIME") + eODTimeInterval + " hours");
+						return;
+					}
+				}
+			}
 		}
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
@@ -715,6 +766,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (status == null) {
 			return;
 		}
+
+		if (EOD_THREAD_COUNT == -1) {
+			EOD_THREAD_COUNT = SysParamUtil.getValueAsInt("EOD_THREAD_COUNT");
+		}
+
+		noOfthread.setValue(EOD_THREAD_COUNT);
 
 		boolean containsKey = status.getKeyAttributes().containsKey(EodConstants.DATA_TOTALCUSTOMER);
 

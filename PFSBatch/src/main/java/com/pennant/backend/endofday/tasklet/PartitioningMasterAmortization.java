@@ -67,7 +67,7 @@ public class PartitioningMasterAmortization implements Partitioner {
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		Date valueDate = SysParamUtil.getAppValueDate();
-		logger.info("STARTAm ortization Thread Allocation On {}", valueDate);
+		logger.info("START: Amortization Thread Allocation On {}", valueDate);
 
 		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
 		Date amzMonth = DateUtility.addDays(prvAMZMonth, 1);
@@ -87,7 +87,7 @@ public class PartitioningMasterAmortization implements Partitioner {
 			return partitionData;
 		}
 
-		long noOfRows = Math.round((Double.valueOf(finsCount) / Double.valueOf(threadCount)));
+		long noOfRows = Math.round((new Double(finsCount) / new Double(threadCount)));
 
 		if (finsCount < threadCount) {
 			recordsLessThanThread = true;

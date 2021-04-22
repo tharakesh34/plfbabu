@@ -47,19 +47,23 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -70,6 +74,7 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
@@ -81,18 +86,24 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.gstn.validation.impl.TestCustomerPaymentService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -112,7 +123,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private static final long serialVersionUID = -8421583705358772016L;
-	private static final Logger logger = Logger.getLogger(PayOrderIssueDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PayOrderIssueDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -123,6 +134,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	protected Textbox finReference;
 	protected Grid grid_Basicdetails;
 	protected Button btnCMSTest;
+	protected Listbox listboxVasRecording;
 
 	// not auto wired variables
 	public PayOrderIssueHeader payOrderIssueHeader;
@@ -169,6 +181,9 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	//Test
 	@Autowired(required = false)
 	private TestCustomerPaymentService testCustomerPaymentService;
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+	private VASConfigurationDAO vASConfigurationDAO;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 
 	/**
 	 * default constructor.<br>
@@ -460,8 +475,12 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		disbursementInstCtrl.setFinanceDisbursement(aPayOrderIssueHeader.getFinanceDisbursements());
 		disbursementInstCtrl.setDocumentDetails(aPayOrderIssueHeader.getDocumentDetails());
-		List<ErrorDetail> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
-				aPayOrderIssueHeader.isLoanApproved());
+		List<ErrorDetail> valid = new ArrayList<>();
+		if (!"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+				&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+			valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
+					aPayOrderIssueHeader.isLoanApproved());
+		}
 		valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 		if (valid != null && !valid.isEmpty()) {
 			for (ErrorDetail errorDetails : valid) {
@@ -472,6 +491,15 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		doRemoveValidation();
 
+		showErrorMessage(wve);
+
+		aPayOrderIssueHeader.setRecordStatus(this.recordStatus.getValue());
+		aPayOrderIssueHeader.setFinAdvancePaymentsList(getFinAdvancePaymentsList());
+		setPayOrderIssueHeader(aPayOrderIssueHeader);
+		logger.debug("Leaving");
+	}
+
+	private void showErrorMessage(ArrayList<WrongValueException> wve) {
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -479,11 +507,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-
-		aPayOrderIssueHeader.setRecordStatus(this.recordStatus.getValue());
-		aPayOrderIssueHeader.setFinAdvancePaymentsList(getFinAdvancePaymentsList());
-		setPayOrderIssueHeader(aPayOrderIssueHeader);
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -706,6 +729,38 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		// fill the PayOrderIssueHeader object with the components data
 		doWriteComponentsToBean(aPayOrderIssueHeader);
 
+		boolean paymentRevese = false;
+		String recordStatus = userAction.getSelectedItem().getValue().toString();
+		if (CollectionUtils.isNotEmpty(aPayOrderIssueHeader.getFinAdvancePaymentsList())) {
+			if (!PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)
+					&& !PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)
+					&& !PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus)) {
+
+				List<ErrorDetail> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
+						aPayOrderIssueHeader.isLoanApproved());
+				valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
+				if (valid != null && !valid.isEmpty()) {
+					ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+					for (ErrorDetail errorDetails : valid) {
+						wve.add(new WrongValueException(this.label_AdvancePayments_Title, errorDetails.getError()));
+					}
+					showErrorMessage(wve);
+				}
+
+				for (FinAdvancePayments payment : aPayOrderIssueHeader.getFinAdvancePaymentsList()) {
+					if (DisbursementConstants.STATUS_REVERSED.equals(payment.getStatus())) {
+						paymentRevese = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (paymentRevese && MessageUtil.confirm("Disbursement status is " + DisbursementConstants.STATUS_REVERSED
+				+ ". Do you want to proceed?") == MessageUtil.NO) {
+			return;
+		}
+
 		isNew = aPayOrderIssueHeader.isNew();
 		String tranType = "";
 
@@ -913,9 +968,137 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails,
 			List<VASRecording> vasRecordings) {
 		logger.debug("Entering");
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+			String entityCode = "";
+			if (financeMain != null) {
+				entityCode = financeMain.getLovDescEntityCode();
+			}
+			finAdvancePaymentsService.processVasInstructions(vasRecordings, finAdvancePayDetails, entityCode);
+		}
 		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails, false, vasRecordings);
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		logger.debug("Leaving");
+	}
+
+	private void doFillVASRecordingDetails(List<VASRecording> vasRecordingList) {
+		logger.debug(" Entering ");
+
+		if (vasRecordingList != null && vasRecordingList.size() > 0) {
+
+			BigDecimal grandTotal = BigDecimal.ZERO;
+			for (VASRecording vasDetail : vasRecordingList) {
+
+				VASConfiguration configuration = vasDetail.getVasConfiguration();
+
+				if (configuration == null) {
+					configuration = this.vASConfigurationDAO.getVASConfigurationByCode(vasDetail.getProductCode(), "");
+				}
+
+				VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
+						.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), "_view");
+				BigDecimal subTotal = BigDecimal.ZERO;
+				if (vasProviderAccDetail != null) {
+					Listcell lc;
+					Listitem item = new Listitem();
+					lc = new Listcell("");
+					lc.setParent(item);
+					lc = new Listcell(vasProviderAccDetail.getProviderDesc());
+					lc.setParent(item);
+					lc = new Listcell(vasProviderAccDetail.getPaymentMode());
+					lc.setParent(item);
+
+					lc = new Listcell(vasProviderAccDetail.getBankName());
+					lc.setParent(item);
+					lc = new Listcell(vasProviderAccDetail.getProviderDesc());
+					lc.setParent(item);
+
+					lc = new Listcell(vasProviderAccDetail.getAccountNumber());
+					lc.setParent(item);
+					grandTotal = grandTotal.add(vasDetail.getFee());
+					subTotal = subTotal.add(vasDetail.getFee());
+					lc = new Listcell(PennantApplicationUtil.amountFormate(vasDetail.getFee(), ccyformat));
+					lc.setParent(item);
+
+					if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+						lc = new Listcell(vasDetail.getInsStatus());
+					} else {
+						lc = new Listcell(PennantConstants.RECORD_TYPE_NEW);
+
+					}
+					lc.setParent(item);
+
+					if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+						lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
+
+					} else {
+						lc = new Listcell("");
+					}
+					lc.setParent(item);
+
+					if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+						lc = new Listcell("");
+
+					} else {
+						lc = new Listcell(PennantConstants.RCD_ADD);
+					}
+
+					lc.setParent(item);
+
+					item.setAttribute("data", vasProviderAccDetail);
+					ComponentsCtrl.applyForward(item, "onDoubleClick=onVASRecordingItemDoubleClicked");
+					listboxVasRecording.appendChild(item);
+				}
+
+			}
+
+			//group total
+			if (listboxVasRecording != null && listboxVasRecording.getItems().size() > 0) {
+				// Display Totals On Footer
+				addListItem(listboxVasRecording, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"),
+						grandTotal, false);
+			}
+
+		}
+		logger.debug(" Leaving ");
+	}
+
+	private void addListItem(Listbox listbox, String lable, BigDecimal total, boolean footer) {
+		//sub total Display Totals On Footer
+		Listgroupfoot item = new Listgroupfoot();
+		Listitem listitem = new Listitem();
+
+		Listcell listcell;
+
+		listcell = new Listcell();
+		listcell.setSpan(5);
+		setParent(footer, listcell, item, listitem);
+
+		listcell = new Listcell(lable);
+		listcell.setStyle("font-weight:bold");
+		setParent(footer, listcell, item, listitem);
+
+		listcell = new Listcell(PennantApplicationUtil.amountFormate(total, ccyformat));
+		listcell.setStyle("text-align:right;font-weight:bold");
+		setParent(footer, listcell, item, listitem);
+
+		listcell = new Listcell();
+		listcell.setSpan(3);
+		setParent(footer, listcell, item, listitem);
+
+		if (footer) {
+			listbox.appendChild(item);
+		} else {
+			listbox.appendChild(listitem);
+		}
+
+	}
+
+	private void setParent(boolean footer, Listcell listcell, Listgroupfoot item, Listitem listitem) {
+		if (footer) {
+			listcell.setParent(item);
+		} else {
+			listcell.setParent(listitem);
+		}
 	}
 
 	/**
@@ -951,16 +1134,50 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getFinFeeDetailList())) {
+			disbursementInstCtrl.setFinFeeDetailList(this.payOrderIssueHeader.getFinFeeDetailList());
+		}
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getvASRecordings())) {
+			disbursementInstCtrl.setVasRecordingList(this.payOrderIssueHeader.getvASRecordings());
+		}
+
 		disbursementInstCtrl.onClickNew(this.payOrderIssueListCtrl, this, ModuleType_POISSUE,
-				getFinAdvancePaymentsList(), payOrderIssueHeader);
+				getFinAdvancePaymentsList(), payOrderIssueHeader, null);
 
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getFinFeeDetailList())) {
+			disbursementInstCtrl.setFinFeeDetailList(this.payOrderIssueHeader.getFinFeeDetailList());
+		}
+		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getvASRecordings())) {
+			disbursementInstCtrl.setVasRecordingList(this.payOrderIssueHeader.getvASRecordings());
+		}
 		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule,
 				payOrderIssueHeader);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onVASRecordingItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		Listitem selectedItem = this.listboxVasRecording.getSelectedItem();
+		final VASProviderAccDetail aVasProviderAccDetail = (VASProviderAccDetail) selectedItem.getAttribute("data");
+
+		Map<String, Object> arg = new HashMap<String, Object>();
+		arg.put("enqiryModule", true);
+		arg.put("vASProviderAccDetail", aVasProviderAccDetail);
+		arg.put("isDisbInst", true);
+
+		try {
+			Executions.createComponents(
+					"/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailDialog.zul", null, arg);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1138,14 +1355,18 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				} else {
 					datasetList = getPayOrderIssueService().getDisbursementPostings(financeMain.getFinReference(),
 							AccountEventConstants.ACCEVENT_DISBINS);
-				}
-				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-					List<ReturnDataSet> insList = getPayOrderIssueService()
-							.getInsurancePostings(financeMain.getFinReference());
+					List<ReturnDataSet> insList = getPayOrderIssueService().getDisbursementPostings(
+							financeMain.getFinReference(), AccountEventConstants.ACCEVENT_INSPAY);
 					if (CollectionUtils.isNotEmpty(insList)) {
 						datasetList.addAll(insList);
 					}
 				}
+				//TODO:Ganesh Need to remove
+				/*
+				 * if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) { List<ReturnDataSet> insList =
+				 * getPayOrderIssueService() .getInsurancePostings(financeMain.getFinReference()); if
+				 * (CollectionUtils.isNotEmpty(insList)) { datasetList.addAll(insList); } }
+				 */
 				doFillAccounting(datasetList);
 			}
 
@@ -1241,6 +1462,26 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
 		this.disbursementInstCtrl = disbursementInstCtrl;
+	}
+
+	public VASProviderAccDetailDAO getvASProviderAccDetailDAO() {
+		return vASProviderAccDetailDAO;
+	}
+
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	}
+
+	public VASConfigurationDAO getvASConfigurationDAO() {
+		return vASConfigurationDAO;
+	}
+
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

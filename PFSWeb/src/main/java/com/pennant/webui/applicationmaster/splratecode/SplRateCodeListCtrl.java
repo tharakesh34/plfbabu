@@ -44,7 +44,8 @@ package com.pennant.webui.applicationmaster.splratecode;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class SplRateCodeListCtrl extends GFCBaseListCtrl<SplRateCode> {
 	private static final long serialVersionUID = 7426008145901571944L;
-	private static final Logger logger = Logger.getLogger(SplRateCodeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SplRateCodeListCtrl.class);
 
 	protected Window window_SplRateCodeList;
 	protected Borderlayout borderLayout_SplRateCodeList;

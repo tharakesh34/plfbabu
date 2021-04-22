@@ -42,7 +42,6 @@
 package com.pennant.webui.finance.financemain;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,7 +51,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -93,6 +93,7 @@ import com.pennant.backend.service.finance.ChangeTDSService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -109,7 +110,7 @@ import com.rits.cloning.Cloner;
  */
 public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ChangeTDSDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ChangeTDSDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -165,6 +166,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected transient Date previousLTDEndDate;
 
 	private List<LowerTaxDeduction> oldLowerTaxDeductionDetail = new ArrayList<LowerTaxDeduction>();
+	String allowTaxDeduction = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
 
 	/**
 	 * default constructor.<br>
@@ -261,7 +263,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 					this.userAction = setRejectRecordStatus(this.userAction);
 				} else {
 					this.userAction = setListRecordStatus(this.userAction);
-					//					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
+					// getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
 				}
 			} else {
 				this.south.setHeight("0px");
@@ -283,29 +285,31 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		logger.debug("Entering");
 		this.tdsPercentage.setMaxlength(5);
 		this.tdsPercentage.setFormat(PennantConstants.rateFormate9);
-		this.tdsPercentage.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.tdsPercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.tdsPercentage.setScale(2);
 		this.tdsStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.tdsEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.tdsLimit.setProperties(false, getCcyFormat());
 
-		if (isTDSChecked && istdsAllowToModify) {
-			this.row_TDS2.setVisible(true);
-			this.label_TdsPercentage.setVisible(true);
-			this.tdsPercentage.setVisible(true);
-			this.row_TDS3.setVisible(true);
+		if (PennantConstants.YES.equals(allowTaxDeduction)) {
+			if (isTDSChecked && istdsAllowToModify) {
+				this.row_TDS2.setVisible(true);
+				this.label_TdsPercentage.setVisible(true);
+				this.tdsPercentage.setVisible(true);
+				this.row_TDS3.setVisible(true);
 
-		} else {
-			this.row_TDS2.setVisible(false);
-			this.label_TdsPercentage.setVisible(false);
-			this.tdsPercentage.setVisible(false);
+			} else {
+				this.row_TDS2.setVisible(false);
+				this.label_TdsPercentage.setVisible(false);
+				this.tdsPercentage.setVisible(false);
 
-		}
-		if (isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsStartDate() != null
-				&& finMaintainInstruction.getTdsEndDate() != null) {
-			this.row_TDS3.setVisible(true);
-		} else {
-			this.row_TDS3.setVisible(false);
+			}
+			if (isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsStartDate() != null
+					&& finMaintainInstruction.getTdsEndDate() != null) {
+				this.row_TDS3.setVisible(true);
+			} else {
+				this.row_TDS3.setVisible(false);
+			}
 		}
 		logger.debug("Leaving");
 	}
@@ -316,7 +320,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 
-		//getUserWorkspace().allocateAuthorities(this.pageRightName, getRole(), menuItemRightName);
+		// getUserWorkspace().allocateAuthorities(this.pageRightName, getRole(), menuItemRightName);
 
 		getUserWorkspace().allocateAuthorities(pageRightName, getRole());
 
@@ -424,7 +428,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 				wve.add(we);
 			}
 		} else {
-			finMaintainInstruction.setTdsPercentage(null);
+			finMaintainInstruction.setTdsPercentage(BigDecimal.ZERO);
 			finMaintainInstruction.setTdsStartDate(null);
 			finMaintainInstruction.setTdsEndDate(null);
 			finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);
@@ -449,7 +453,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 				wve.add(we);
 			}
 
-			if (DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate) <= 0) {
+			if (this.tdsStartDate.getValue() != null && previousLTDEndDate != null
+					&& DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate) <= 0) {
 				throw new WrongValueException(this.tdsStartDate, Labels.getLabel("FRQ_DATE_MISMATCH", new String[] {
 						"Previous LTD End Date", Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));
 			}
@@ -1054,21 +1059,22 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 */
 	public void onCheck$tDSApplicable(Event event) throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-
-		if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
-			this.row_TDS2.setVisible(true);
-			this.label_TdsPercentage.setVisible(true);
-			this.tdsPercentage.setVisible(true);
-			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-			this.tdsPercentage.setValue(tdsPerc);
-			this.row_TDS3.setVisible(true);
-		} else {
-			this.row_TDS2.setVisible(false);
-			this.label_TdsPercentage.setVisible(false);
-			this.tdsPercentage.setVisible(false);
-			this.row_TDS3.setVisible(false);
+		if (PennantConstants.YES.equals(allowTaxDeduction)) {
+			if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
+				this.row_TDS2.setVisible(true);
+				this.label_TdsPercentage.setVisible(true);
+				this.tdsPercentage.setVisible(true);
+				BigDecimal tdsPerc = new BigDecimal(
+						SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+				this.tdsPercentage.setValue(tdsPerc);
+				this.row_TDS3.setVisible(true);
+			} else {
+				this.row_TDS2.setVisible(false);
+				this.label_TdsPercentage.setVisible(false);
+				this.tdsPercentage.setVisible(false);
+				this.row_TDS3.setVisible(false);
+			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 

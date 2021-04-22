@@ -28,7 +28,7 @@ public class TestPosidexRequestService {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new PosidexDataExtarct(dataSource, Long.valueOf(1000), DateUtil.getSysDate(), DateUtil.getSysDate())
+			new PosidexDataExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate())
 					.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 		} catch (Exception e) {
 			e.printStackTrace();

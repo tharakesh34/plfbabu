@@ -42,7 +42,8 @@
  */
 package com.pennant.webui.reports;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -61,7 +62,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class ReportSearchTemplatePromptDialogCtrl extends GFCBaseCtrl<ReportSearchTemplate> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private static final Logger logger = Logger.getLogger(ReportSearchTemplatePromptDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReportSearchTemplatePromptDialogCtrl.class);
 
 	protected Window window_ReportSearchTemplateDialog;
 	protected Textbox templateName;

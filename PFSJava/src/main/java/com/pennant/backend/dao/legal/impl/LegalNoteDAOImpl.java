@@ -49,15 +49,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.legal.LegalNoteDAO;
 import com.pennant.backend.model.legal.LegalNote;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>LegalNote</code> with set of CRUD operations.
  */
 public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNoteDAO {
-	private static Logger logger = Logger.getLogger(LegalNoteDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LegalNoteDAOImpl.class);
 
 	public LegalNoteDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNot
 		legalNote.setLegalNoteId(legalNoteId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(legalNote);
-		RowMapper<LegalNote> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LegalNote.class);
+		RowMapper<LegalNote> rowMapper = BeanPropertyRowMapper.newInstance(LegalNote.class);
 
 		try {
 			legalNote = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -177,8 +178,8 @@ public class LegalNoteDAOImpl extends SequenceDao<LegalNote> implements LegalNot
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (legalNote.getId() == Long.MIN_VALUE) {
-			legalNote.setId(getNextId("SeqLegalNotes"));
-			logger.debug("get NextID:" + legalNote.getId());
+			legalNote.setId(getNextValue("SeqLegalNotes"));
+			logger.debug("get NextValue:" + legalNote.getId());
 		}
 
 		// Execute the SQL, binding the arguments.

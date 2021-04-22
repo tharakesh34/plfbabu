@@ -79,6 +79,7 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	private Long feeTypeID;
 	private String feeTypeCode;
 	private String feeTypeDesc;
+	private String sPLRule;
 
 	private boolean waiver;
 	private boolean allowDeviation;
@@ -106,6 +107,7 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 		this.setRuleId(id);
 	}
 
+	@Override
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -115,6 +117,7 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("feeTypeDesc");
+		excludeFields.add("sPLRule");
 
 		return excludeFields;
 	}
@@ -123,10 +126,12 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
+	@Override
 	public long getId() {
 		return ruleId;
 	}
 
+	@Override
 	public void setId(long id) {
 		this.ruleId = id;
 	}
@@ -362,4 +367,21 @@ public class Rule extends AbstractWorkflowEntity implements Entity {
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
 	}
+
+	public String getsQLRule() {
+		return sQLRule;
+	}
+
+	public void setsQLRule(String sQLRule) {
+		this.sQLRule = sQLRule;
+	}
+
+	public String getSPLRule() {
+		return sPLRule;
+	}
+
+	public void setSPLRule(String sPLRule) {
+		this.sPLRule = sPLRule;
+	}
+
 }

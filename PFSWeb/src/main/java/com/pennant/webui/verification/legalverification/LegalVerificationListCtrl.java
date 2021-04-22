@@ -2,7 +2,8 @@ package com.pennant.webui.verification.legalverification;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -36,7 +37,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LegalVerificationListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LegalVerificationListCtrl.class);
 
 	protected Window window_LegalVerification;
 	protected Borderlayout borderLayout_LegalVerificationList;
@@ -50,6 +51,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 	protected Listheader listheader_LoanReference;
 	protected Listheader listheader_Agency;
 	protected Listheader listheader_CreatedOn;
+	protected Listheader listheader_VerificationCategory;
 
 	// checkRights
 	protected Button button_LegalVerificationList_LegalVerificationSearch;
@@ -124,6 +126,7 @@ public class LegalVerificationListCtrl extends GFCBaseListCtrl<LegalVerification
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
 		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
+		registerField("verificationCategory");
 		// Render the page and display the data.
 		doRenderPage();
 		search();

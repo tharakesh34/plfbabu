@@ -2,7 +2,8 @@ package com.pennanttech.framework.component.dataengine;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.ListModel;
@@ -17,7 +18,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.model.DataEngineLog;
 
 public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
-	private static final Logger logger = Logger.getLogger(ExceptionLogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ExceptionLogCtrl.class);
 	private static final long serialVersionUID = 1L;
 
 	protected Window window;

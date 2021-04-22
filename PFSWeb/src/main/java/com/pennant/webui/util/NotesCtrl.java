@@ -51,7 +51,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -93,7 +94,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	private static final long serialVersionUID = -1351367303946249042L;
-	private static final Logger logger = Logger.getLogger(NotesCtrl.class);
+	private static final Logger logger = LogManager.getLogger(NotesCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -336,8 +337,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		doClearMessage();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		aNotes.setRemarks(remarks.getValue());
-
 		if (!isFinanceNotes) {
 
 			if (this.remarksText.getValue() == null || this.remarksText.getValue().trim().length() <= 0) {
@@ -346,6 +345,10 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				aNotes.setRemarks(this.remarksText.getValue().trim());
 			}
 
+		} else if (this.remarks.getValue() != null) {
+			String remarkVal = remarks.getValue().split("\t")[1].split("<")[0];
+			remarks.setValue(remarkVal);
+			aNotes.setRemarks(remarks.getValue());
 		}
 
 		if (wve.size() > 0) {
@@ -686,7 +689,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				lc = new Listcell();
 				Html html = new Html();
 				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
-				html.setContent(StringEscapeUtils.escapeHtml(note.getRemarks()));
+				html.setContent(note.getRemarks());
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);

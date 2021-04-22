@@ -67,6 +67,7 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal inProcess = BigDecimal.ZERO;
 
 	private String taxType = "";
+	@XmlElement
 	private String feeTypeCode = "";
 	private long feeId;
 	private Long taxHeaderId;
@@ -91,6 +92,69 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	public ReceiptAllocationDetail() {
 		super();
+	}
+
+	public ReceiptAllocationDetail copyEntity() {
+		ReceiptAllocationDetail entity = new ReceiptAllocationDetail();
+		entity.setReceiptAllocationid(this.receiptAllocationid);
+		entity.setReceiptID(this.receiptID);
+		entity.setAllocationID(this.allocationID);
+		entity.setAllocationType(this.allocationType);
+		entity.setTypeDesc(this.typeDesc);
+		entity.setAllocationTo(this.allocationTo);
+		entity.setTotRecv(this.totRecv);
+		entity.setDueAmount(this.dueAmount);
+		entity.setDueGST(this.dueGST);
+		entity.setTotalDue(this.totalDue);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setPaidGST(this.paidGST);
+		entity.setTotalPaid(this.totalPaid);
+		entity.setWaivedAmount(this.waivedAmount);
+		entity.setWaivedAvailable(this.waivedAvailable);
+		entity.setPaidAvailable(this.paidAvailable);
+		entity.setWaiverAccepted(this.waiverAccepted);
+		entity.setBalance(this.balance);
+		entity.setPaidCGST(this.paidCGST);
+		entity.setPaidSGST(this.paidSGST);
+		entity.setPaidIGST(this.paidIGST);
+		entity.setPaidUGST(this.paidUGST);
+		entity.setPaidCESS(this.paidCESS);
+		entity.setPercCGST(this.percCGST);
+		entity.setPercSGST(this.percSGST);
+		entity.setPercIGST(this.percIGST);
+		entity.setPercUGST(this.percUGST);
+		entity.setPercCESS(this.percCESS);
+		entity.setPaidNow(this.paidNow);
+		entity.setWaivedNow(this.waivedNow);
+		entity.setWaivedCGST(this.waivedCGST);
+		entity.setWaivedSGST(this.waivedSGST);
+		entity.setWaivedIGST(this.waivedIGST);
+		entity.setWaivedUGST(this.waivedUGST);
+		entity.setWaivedCESS(this.waivedCESS);
+		entity.setWaivedGST(this.waivedGST);
+		entity.setDueCGST(this.dueCGST);
+		entity.setDueSGST(this.dueSGST);
+		entity.setDueIGST(this.dueIGST);
+		entity.setDueUGST(this.dueUGST);
+		entity.setDueCESS(this.dueCESS);
+		entity.setInProcess(this.inProcess);
+		entity.setTaxType(this.taxType);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeId(this.feeId);
+		entity.setTaxHeaderId(this.taxHeaderId);
+		entity.setTaxHeader(this.taxHeader == null ? null : this.taxHeader.copyEntity());
+		entity.setSubListAvailable(this.isSubListAvailable);
+		entity.setEditable(this.isEditable);
+		this.subList.stream().forEach(e -> entity.getSubList().add(e.copyEntity()));
+		entity.setDispayOrder(this.dispayOrder);
+		entity.setTdsPaidNow(this.tdsPaidNow);
+		entity.setTdsWaivedNow(this.tdsWaivedNow);
+		entity.setTdsDue(this.tdsDue);
+		entity.setTdsPaid(this.tdsPaid);
+		entity.setTdsWaived(this.tdsWaived);
+		entity.setTdsReq(this.isTdsReq);
+		entity.setPercTds(this.percTds);
+		return entity;
 	}
 
 	public long getReceiptAllocationid() {

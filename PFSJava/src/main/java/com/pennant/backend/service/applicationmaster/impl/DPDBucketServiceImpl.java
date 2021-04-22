@@ -43,7 +43,8 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>DPDBucket</b>.<br>
  */
 public class DPDBucketServiceImpl extends GenericService<DPDBucket> implements DPDBucketService {
-	private static final Logger logger = Logger.getLogger(DPDBucketServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DPDBucketServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DPDBucketDAO dPDBucketDAO;

@@ -2,7 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="covenantDialogWindow" border="normal" apply="${covenantsDialogCtrl}" sizable="false">
 			<borderlayout id="borderlayoutFinCovenantType">
@@ -37,8 +37,8 @@
 						</hbox>
 					</div>
 				</north>
-				<center border="none" autoscroll="true">
-					<div>
+				<center border="none">
+					<div style="overflow:auto" width="100%" height="100%">
 						<groupbox id="gb_basicDetails" sclass="gb-dialog">
 							<caption label="Basic Details"></caption>
 							<grid sclass="GridLayoutNoBorder" fixedLayout="true">
@@ -93,168 +93,243 @@
 								</rows>
 							</grid>
 						</groupbox>
-						<groupbox id="gb_alertDetails" sclass="gb-dialog">
-							<caption label="Covenant Details"></caption>
-							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-								<columns>
-									<column width="20%" />
-									<column width="30%" />
-									<column width="20%" />
-									<column width="30%" />
-								</columns>
 
-								<rows>
-									<row id="rw_manrole">
-										<label value="${c:l('label_FinCovenantTypeDialog_MandRole.value')}" id="label_FinCovenantTypeDialog_MandRole" />
-										<hbox>
-											<extendedcombobox id="mandRole" />
-										</hbox>
-									</row>
-									<row>
-										<label value="${c:l('label_FinCovenantTypeDialog_AlwOTC.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="otc" />
-										</hbox>
-									</row>
-									<row>
-										<label value="${c:l('label_FinCovenantTypeDialog_AlwPostpone.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="pdd" />
-										</hbox>
-										<label value="${c:l('label_FinCovenantTypeDialog_RecvbleDate.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<datebox id="receivableDate" width="120px" />
-										</hbox>
-									</row>
-									<row id="rw_allowedPostpone">
-										<label value="${c:l('label_CovenantTypeDialog_AllowPostPonement.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="allowPostponment" />
-										</hbox>
-										<label value="${c:l('label_CovenantDocumentDialog_ExtendedDate.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<datebox id="extendedDate" width="120px" />
-										</hbox>
-									</row>
-									<row id="row_documentRecieved">
-										<label value="${c:l('label_CovenantsDialog_DocumentRecieved.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="documentRecieved" />
-										</hbox>
-										<label value="${c:l('label_CovenantsDialog_DocumentRecievedDate.value')}" id="label_CovenantsDialog_DocumentRecievedDate" />
-										<hbox>
-											<space spacing="2px" />
-											<datebox id="documentRecievedDate" width="120px" disabled="true" />
-										</hbox>
-									</row>
-									<row>
-										<label value="${c:l('label_CovenantsDialog_CovenantFrequency.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<combobox id="covenantFrequency" width="180px" />
-										</hbox>
-									</row>
-									<row>
-										<label id="label_AlertsRequired" value="${c:l('label_CovenantTypeDialog_AlertsRequired.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<checkbox id="alertsRequired" />
-										</hbox>
-										<label value="${c:l('label_CovenantsDialog_CovenantNextFrequencyDate.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<datebox id="covenantNextFrequencyDate" width="120px" disabled="true" />
-										</hbox>
-									</row>
-									<row id="row6">
-										<label id="label_AlertType" value="${c:l('label_CovenantTypeDialog_AlertType.value')}" />
-										<hbox>
-											<space id="space_AlertToRoles" spacing="2px" />
-											<combobox id="alertType" width="90px" />
-										</hbox>
-										<label value="${c:l('label_CovenantsDialog_NotifyTo.value')}" id="label_CovenantsDialog_NotifyTo" />
-										<hbox>
-											<extendedcombobox id="notifyTo" />
-										</hbox>
-									</row>
-									<row>
-										<label value="${c:l('label_CovenantsDialog_CovenantGraceDays.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<intbox id="covenantGraceDays" width="90px" maxlength="14" />
-										</hbox>
-										<label value="${c:l('label_CovenantsDialog_CovenantGraceDueDate.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<datebox id="covenantGraceDueDate" width="120px" disabled="true" />
-										</hbox>
-									</row>
-									<row id="row_alertDays">
-										<label value="${c:l('label_CovenantsDialog_AlertDays.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<intbox id="alertDays" width="90px" maxlength="14" />
-										</hbox>
-									</row>
-									<row>
-										<cell>
-											<label value="${c:l('label_CovenantsDialog_Remarks.value')}" />
-										</cell>
-										<cell colspan="3" width="100%">
-											<hbox width="100%">
-												<space spacing="2px" />
-												<textbox id="remarks" multiline="true" rows="3" />
+						<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
+							<tabs id="tabsIndexCenter">
+								<tab id="covenantDetailsTab" label="${c:l('Tab_CovenantSetUp_BasicDetails.label')}" />
+								<tab id="additionalRemarksTab" label="${c:l('Tab_Covenant_AdditionalRemarks.label')}"
+									visible="false" />
+							</tabs>
+							<tabpanels id="tabpanelsBoxIndexCenter">
+								<tabpanel style="overflow:auto" ca:data-scrollable="true">
+									<div id="covenantDetailsTabDiv" height="100%" style="overflow:auto">
+										<groupbox id="gb_alertDetails" sclass="gb-dialog">
+											<caption label="Covenant Details"></caption>
+											<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+												<columns>
+													<column width="20%" />
+													<column width="30%" />
+													<column width="20%" />
+													<column width="30%" />
+												</columns>
+
+												<rows>
+													<row id="rw_manrole">
+														<label
+															value="${c:l('label_FinCovenantTypeDialog_MandRole.value')}" id="label_FinCovenantTypeDialog_MandRole" />
+														<hbox>
+															<extendedcombobox id="mandRole" />
+														</hbox>
+													</row>
+													<row>
+														<label
+															value="${c:l('label_FinCovenantTypeDialog_AlwOTC.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<checkbox id="otc" />
+														</hbox>
+													</row>
+													<row>
+														<label
+															value="${c:l('label_FinCovenantTypeDialog_AlwPostpone.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<checkbox id="pdd" />
+														</hbox>
+														<label
+															value="${c:l('label_FinCovenantTypeDialog_RecvbleDate.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<datebox id="receivableDate" width="120px" />
+														</hbox>
+													</row>
+													<row id="rw_allowedPostpone">
+														<label
+															value="${c:l('label_CovenantTypeDialog_AllowPostPonement.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<checkbox id="allowPostponment" />
+														</hbox>
+														<label
+															value="${c:l('label_CovenantDocumentDialog_ExtendedDate.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<datebox id="extendedDate" width="120px" />
+														</hbox>
+													</row>
+													<row id="row_documentRecieved" visible="false">
+														<label
+															value="${c:l('label_CovenantsDialog_DocumentRecieved.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<checkbox id="documentRecieved" />
+														</hbox>
+														<label
+															value="${c:l('label_CovenantsDialog_DocumentRecievedDate.value')}"
+															id="label_CovenantsDialog_DocumentRecievedDate" />
+														<hbox>
+															<space spacing="2px" />
+															<datebox id="documentRecievedDate" width="120px"
+																disabled="true" />
+														</hbox>
+													</row>
+													<row>
+														<label
+															value="${c:l('label_CovenantsDialog_CovenantFrequency.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<combobox id="covenantFrequency" width="180px" />
+														</hbox>
+													</row>
+													<row>
+														<label id="label_AlertsRequired"
+															value="${c:l('label_CovenantTypeDialog_AlertsRequired.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<checkbox id="alertsRequired" />
+														</hbox>
+														<label
+															value="${c:l('label_CovenantsDialog_CovenantNextFrequencyDate.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<datebox id="covenantNextFrequencyDate" width="120px"
+																disabled="true" />
+														</hbox>
+													</row>
+													<row id="row6">
+														<label id="label_AlertType"
+															value="${c:l('label_CovenantTypeDialog_AlertType.value')}" />
+														<hbox>
+															<space id="space_AlertToRoles" spacing="2px" />
+															<combobox id="alertType" width="90px" />
+														</hbox>
+														<label value="${c:l('label_CovenantsDialog_NotifyTo.value')}"
+															id="label_CovenantsDialog_NotifyTo" />
+														<hbox>
+															<extendedcombobox id="notifyTo" />
+														</hbox>
+													</row>
+													<row>
+														<label
+															value="${c:l('label_CovenantsDialog_CovenantGraceDays.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<intbox id="covenantGraceDays" width="90px" maxlength="14" />
+														</hbox>
+														<label
+															value="${c:l('label_CovenantsDialog_CovenantGraceDueDate.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<datebox id="covenantGraceDueDate" width="120px"
+																disabled="true" />
+														</hbox>
+													</row>
+													<row id="row_alertDays">
+														<label value="${c:l('label_CovenantsDialog_AlertDays.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<intbox id="alertDays" width="90px" maxlength="14" />
+														</hbox>
+													</row>
+													<row>
+														<cell>
+															<label
+																value="${c:l('label_CovenantsDialog_Remarks.value')}" />
+														</cell>
+														<cell colspan="3" width="100%">
+															<hbox width="100%">
+																<space spacing="2px" />
+																<textbox id="remarks" multiline="true" rows="3" />
+															</hbox>
+														</cell>
+													</row>
+													<row id="row_standardValue">
+														<label
+															value="${c:l('label_CovenantsDialog_StandardValue.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<textbox id="standardValue" width="120px" maxlength="14" />
+														</hbox>
+														<label
+															value="${c:l('label_CovenantsDialog_ActualValue.value')}" />
+														<hbox>
+															<space spacing="2px" />
+															<textbox id="actualValue" width="120px" />
+														</hbox>
+													</row>
+												</rows>
+											</grid>
+										</groupbox>
+
+										<div sclass="z-toolbar" style="padding:0">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+												height="100%" width="100%" widths="35%,30%,35%">
+												<!-- COMMON BUTTONS -->
+												<toolbar align="start" sclass="toolbar-start" width="300px">
+													<hbox align="center" style="padding: 0px">
+														<label value="Document Details"
+															style="font-weight:bold; font-size: 11px;" />
+													</hbox>
+												</toolbar>
+
+												<toolbar align="end"
+													style="float:right; border-style: none; padding:0px;" height="100%">
+													<button id="btnCovenantReceived" label="Covenant Received"
+														tooltiptext="Covenant Received"
+														autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose, btnCovenantReceived"
+														sclass="z-toolbarbutton" />
+												</toolbar>
 											</hbox>
-										</cell>
-									</row>
-									<row id="row_standardValue">
-										<label value="${c:l('label_CovenantsDialog_StandardValue.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<textbox id="standardValue" width="120px" maxlength="14" />
-										</hbox>
-										<label value="${c:l('label_CovenantsDialog_ActualValue.value')}" />
-										<hbox>
-											<space spacing="2px" />
-											<textbox id="actualValue" width="120px" />
-										</hbox>
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
+										</div>
+										<listbox id="listboxDocuments" fixedLayout="true" sizedByContent="true"
+											tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false"
+											span="true" style="border:none;" width="100%">
+											<listhead sizable="false">
+												<listheader label="${c:l('label_CovenantsDialog_DocumentDate.value')}"
+													sort="false" hflex="min" />
+												<listheader
+													label="${c:l('label_CovenantDocumentDialog_CovenantType.value')}" sort="false" hflex="min" />
+												<listheader label="${c:l('label_CovenantsDialog_DocumentName.value')}"
+													sort="false" hflex="min" />
+												<listheader label="${c:l('label_CovenantsDialog_DocumentUpload.value')}"
+													sort="false" hflex="min" />
 
-						<div sclass="z-toolbar" style="padding:0">
-							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%" widths="35%,30%,35%">
-								<!-- COMMON BUTTONS -->
-								<toolbar align="start" sclass="toolbar-start" width="300px">
-									<hbox align="center" style="padding: 0px">
-										<label value="Document Details" style="font-weight:bold; font-size: 11px;" />
-									</hbox>
-								</toolbar>
+											</listhead>
+										</listbox>
+									</div>
+								</tabpanel>
 
-								<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
-									<button id="btnCovenantReceived" label="Covenant Received" tooltiptext="Covenant Received"
-										autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose, btnCovenantReceived"
-										sclass="z-toolbarbutton" />
-								</toolbar>
-							</hbox>
-						</div>
-						<listbox id="listboxDocuments" fixedLayout="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
-							emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false" span="true" style="border:none;">
-							<listhead sizable="false">
-								<listheader label="${c:l('label_CovenantsDialog_DocumentDate.value')}" sort="false" hflex="min" />
-								<listheader label="${c:l('label_CovenantDocumentDialog_CovenantType.value')}" sort="false" hflex="min" />
-								<listheader label="${c:l('label_CovenantsDialog_DocumentName.value')}" sort="false" hflex="min" />
-								<listheader label="${c:l('label_CovenantsDialog_DocumentUpload.value')}" sort="false" hflex="min" />
-
-							</listhead>
-						</listbox>
+								<tabpanel id="additionalRemarksTabPanel" visible="false">
+									<groupbox style="border:none;" width="100%" height="100%">
+										<div height="100%">
+											<grid style="border:none;">
+												<columns>
+													<column width="70px" />
+													<column />
+													<column />
+													<column />
+												</columns>
+												<rows>
+													<row>
+														<cell>
+															<label
+																value="${c:l('label_CovenantsDialog_AdditionalRemarks.value')}" />
+														</cell>
+														<cell colspan="4" width="100%">
+															<hbox>
+																<space spacing="2px" />
+																<textbox id="additionalRemarks" multiline="true"
+																	rows="20"/>
+															</hbox>
+														</cell>
+													</row>
+												</rows>
+											</grid>
+										</div>
+									</groupbox>
+								</tabpanel>
+							</tabpanels>
+						</tabbox>
 					</div>
 				</center>
 				<south id="south" height="0px" border="none">

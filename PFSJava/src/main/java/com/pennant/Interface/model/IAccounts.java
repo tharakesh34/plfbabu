@@ -24,6 +24,7 @@ public class IAccounts implements java.io.Serializable {
 	private BigDecimal acAvailableBal;
 	private String lovValue;
 	private String division;
+	private String iban;
 
 	//For Temporary Purpose in Core banking
 	private String tranAc;
@@ -194,6 +195,14 @@ public class IAccounts implements java.io.Serializable {
 
 	public void setTranAc(String tranAc) {
 		this.tranAc = tranAc;
+	}
+
+	public String getIban() {
+		return iban;
+	}
+
+	public void setIban(String iban) {
+		this.iban = iban;
 	}
 
 }

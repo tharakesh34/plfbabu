@@ -47,7 +47,8 @@ import java.util.ArrayList;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> implements WIFFinanceMainService {
-	private static final Logger logger = Logger.getLogger(WIFFinanceMainServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(WIFFinanceMainServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

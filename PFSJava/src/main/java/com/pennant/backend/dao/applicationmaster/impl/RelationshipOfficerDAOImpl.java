@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>RelationshipOfficer</code> with set of CRUD operations.
  */
 public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> implements RelationshipOfficerDAO {
-	private static Logger logger = Logger.getLogger(RelationshipOfficerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RelationshipOfficerDAOImpl.class);
 
 	public RelationshipOfficerDAOImpl() {
 		super();
@@ -101,13 +102,13 @@ public class RelationshipOfficerDAOImpl extends BasicDao<RelationshipOfficer> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(relationshipOfficer);
-		RowMapper<RelationshipOfficer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(RelationshipOfficer.class);
+		RowMapper<RelationshipOfficer> typeRowMapper = BeanPropertyRowMapper.newInstance(RelationshipOfficer.class);
 
 		try {
 			relationshipOfficer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn("Records are not found in RelationshipOfficers{} for the specified ROfficerCode >> {}", type,
+					id);
 			relationshipOfficer = null;
 		}
 		logger.debug("Leaving");

@@ -2,7 +2,8 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -10,10 +11,10 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.eod.service.UploadFinPftDetailService;
-import com.pennant.app.util.DateUtility;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class UploadFinProfitDetails implements Tasklet {
-	private Logger logger = Logger.getLogger(UploadFinProfitDetails.class);
+	private Logger logger = LogManager.getLogger(UploadFinProfitDetails.class);
 
 	private UploadFinPftDetailService uploadFinPftDetailService;
 
@@ -27,7 +28,7 @@ public class UploadFinProfitDetails implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getAppValueDate();
+		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
 		logger.debug("START: Upload Profit Details for Value Date: " + dateValueDate);
 
@@ -35,7 +36,7 @@ public class UploadFinProfitDetails implements Tasklet {
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
 
 		try {
-			getUploadFinPftDetailService().doUploadPftDetails(context);
+			uploadFinPftDetailService.doUploadPftDetails(context);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw e;

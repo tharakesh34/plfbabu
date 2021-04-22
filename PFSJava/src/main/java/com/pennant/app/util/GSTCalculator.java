@@ -20,6 +20,7 @@ import com.pennant.backend.dao.rmtmasters.GSTRateDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.GSTRate;
@@ -41,7 +42,6 @@ public class GSTCalculator {
 	private static ProvinceDAO provinceDAO;
 	private static FinanceMainDAO financeMainDAO;
 	private static FinanceTaxDetailDAO financeTaxDetailDAO;
-	private static RuleExecutionUtil ruleExecutionUtil;
 	private static GSTRateDAO gstRateDAO;
 
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
@@ -56,8 +56,8 @@ public class GSTCalculator {
 	private static String GST_DEFAULT_STATE_CODE = null;
 
 	public GSTCalculator(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
-			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil, GSTRateDAO gstRateDAO) {
-		initilize(ruleDAO, branchDAO, provinceDAO, financeMainDAO, financeTaxDetailDAO, ruleExecutionUtil, gstRateDAO);
+			FinanceTaxDetailDAO financeTaxDetailDAO, GSTRateDAO gstRateDAO) {
+		initilize(ruleDAO, branchDAO, provinceDAO, financeMainDAO, financeTaxDetailDAO, gstRateDAO);
 	}
 
 	/**
@@ -211,6 +211,8 @@ public class GSTCalculator {
 		}
 
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
+		//setting the customer residential status
+		dataMap.put("custResidentialSts", custResdSts);
 		String ruleCode;
 		BigDecimal totalGST = BigDecimal.ZERO;
 		if (isGSTCalculationOnMaster()) {
@@ -364,10 +366,6 @@ public class GSTCalculator {
 			dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.TEMP_TAB);
 		}
 
-		if (MapUtils.isEmpty(dataMap)) {
-			dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.VIEW);
-		}
-
 		String finBranch = (String) dataMap.computeIfAbsent("FinBranch", ft -> "");
 		String custBranch = (String) dataMap.computeIfAbsent("CustBranch", ft -> "");
 		String custProvince = (String) dataMap.computeIfAbsent("CustProvince", ft -> "");
@@ -378,6 +376,8 @@ public class GSTCalculator {
 		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
 
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
+		//setting the customer residential status
+		dataMap.put("custResidentialSts", custResdSts);
 		return dataMap;
 	}
 
@@ -390,19 +390,21 @@ public class GSTCalculator {
 		if (StringUtils.isBlank(custBranch)) {
 			return gstExecutionMap;
 		}
-
-		if (finBranch == null) {
+		//getting empty string for some cases
+		if (StringUtils.isEmpty(finBranch)) {
 			finBranch = custBranch;
 		}
 
 		Branch branch = deriveGSTBranch(finBranch);
 
-		Province fromState = provinceDAO.getProvinceById(branch.getBranchCountry(), branch.getBranchProvince(), "");
+		if (branch != null) {
+			Province fromState = provinceDAO.getProvinceById(branch.getBranchCountry(), branch.getBranchProvince(), "");
 
-		if (fromState != null) {
-			gstExecutionMap.put("fromState", fromState.getCPProvince());
-			gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
-			gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			if (fromState != null) {
+				gstExecutionMap.put("fromState", fromState.getCPProvince());
+				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+			}
 		}
 
 		String toStateCode = "";
@@ -454,7 +456,6 @@ public class GSTCalculator {
 	}
 
 	private static Branch deriveGSTBranch(String finBranch) {
-		Branch branch = branchDAO.getBranchById(finBranch, "");
 		if (GST_DEFAULT_FROM_STATE_PARAM == null) {
 			GST_DEFAULT_FROM_STATE_PARAM = SMTParameterConstants.GST_DEFAULT_FROM_STATE;
 			GST_DEFAULT_FROM_STATE = SysParamUtil.isAllowed(GST_DEFAULT_FROM_STATE_PARAM);
@@ -463,17 +464,20 @@ public class GSTCalculator {
 					GST_DEFAULT_STATE_CODE = SysParamUtil
 							.getValueAsString(SMTParameterConstants.GST_DEFAULT_STATE_CODE);
 				}
-				String defaultFinBranch = GST_DEFAULT_STATE_CODE;
-				branch = branchDAO.getBranchById(defaultFinBranch, "");
 			}
 		}
-		return branch;
+
+		if (GST_DEFAULT_FROM_STATE) {
+			finBranch = GST_DEFAULT_STATE_CODE;
+		}
+
+		return branchDAO.getBranchById(finBranch, "");
 	}
 
 	private static BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
 		BigDecimal result = BigDecimal.ZERO;
 		try {
-			Object exereslut = ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
+			Object exereslut = RuleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
 			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
 				result = BigDecimal.ZERO;
 			} else {
@@ -531,13 +535,12 @@ public class GSTCalculator {
 	}
 
 	private void initilize(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
-			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil, GSTRateDAO gstRateDAO) {
+			FinanceTaxDetailDAO financeTaxDetailDAO, GSTRateDAO gstRateDAO) {
 		GSTCalculator.ruleDAO = ruleDAO;
 		GSTCalculator.branchDAO = branchDAO;
 		GSTCalculator.provinceDAO = provinceDAO;
 		GSTCalculator.financeMainDAO = financeMainDAO;
 		GSTCalculator.financeTaxDetailDAO = financeTaxDetailDAO;
-		GSTCalculator.ruleExecutionUtil = ruleExecutionUtil;
 		GSTCalculator.gstRateDAO = gstRateDAO;
 	}
 
@@ -552,4 +555,60 @@ public class GSTCalculator {
 		return gstAmount;
 	}
 
+	public static void calculateActualGST(FeeWaiverDetail detail, TaxAmountSplit taxSplit,
+			Map<String, BigDecimal> gstPercentages) {
+		if (taxSplit == null) {
+			return;
+		}
+
+		if (detail == null) {
+			return;
+		}
+
+		TaxAmountSplit tas = null;
+
+		String taxComponent = detail.getTaxComponent();
+		BigDecimal taxableAmt = detail.getAdviseAmount().add(detail.getWaivedAmount());
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+			tas = GSTCalculator.getExclusiveGST(taxableAmt, gstPercentages);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+			tas = GSTCalculator.getInclusiveGST(taxableAmt, gstPercentages);
+		}
+
+		BigDecimal diffGST = BigDecimal.ZERO;
+
+		BigDecimal payableGST = taxSplit.gettGST().add(detail.getWaiverGST());
+
+		if (payableGST.compareTo(tas.gettGST()) > 0) {
+			diffGST = payableGST.subtract(tas.gettGST());
+			taxSplit.settGST(taxSplit.gettGST().subtract(diffGST));
+			taxSplit.setNetAmount(taxSplit.getNetAmount().subtract(diffGST));
+		}
+
+		if (diffGST.compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
+
+		BigDecimal waivedTaxableAmt = detail.getWaivedAmount().add(detail.getWaiverGST());
+		TaxAmountSplit paidGSTSplit = GSTCalculator.getInclusiveGST(waivedTaxableAmt, gstPercentages);
+
+		BigDecimal prvCGst = paidGSTSplit.getcGST();
+		BigDecimal prvSGst = paidGSTSplit.getsGST();
+		BigDecimal prvIGst = paidGSTSplit.getiGST();
+		BigDecimal prvUGst = paidGSTSplit.getuGST();
+		BigDecimal prvCess = paidGSTSplit.getCess();
+
+		BigDecimal diffCGST = taxSplit.getcGST().add(prvCGst).subtract(tas.getcGST());
+		BigDecimal diffSGST = taxSplit.getsGST().add(prvSGst).subtract(tas.getsGST());
+		BigDecimal diffIGST = taxSplit.getiGST().add(prvIGst).subtract(tas.getiGST());
+		BigDecimal diffUGST = taxSplit.getuGST().add(prvUGst).subtract(tas.getuGST());
+		BigDecimal diffCESS = taxSplit.getCess().add(prvCess).subtract(tas.getCess());
+
+		taxSplit.setcGST(taxSplit.getcGST().subtract(diffCGST));
+		taxSplit.setsGST(taxSplit.getsGST().subtract(diffSGST));
+		taxSplit.setiGST(taxSplit.getiGST().subtract(diffIGST));
+		taxSplit.setuGST(taxSplit.getuGST().subtract(diffUGST));
+		taxSplit.setCess(taxSplit.getCess().subtract(diffCESS));
+	}
 }

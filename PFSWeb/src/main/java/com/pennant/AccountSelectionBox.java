@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AccountSelectionBox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
-	private static final Logger logger = Logger.getLogger(AccountSelectionBox.class);
+	private static final Logger logger = LogManager.getLogger(AccountSelectionBox.class);
 
 	// Constants for the Manager Cheques 
 	public static final String MGRCHQ_CR_FIN_EVENT = "MGRCHQCR";

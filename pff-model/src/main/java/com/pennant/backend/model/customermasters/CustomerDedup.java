@@ -90,9 +90,11 @@ public class CustomerDedup implements Serializable {
 	private String aadharNumber;
 	private String fatherName;
 	private String motherName;
+	@XmlElement(name = "voterId")
 	private String voterID;
 	private String rationCard;
 	private String lpgNumber;
+	@XmlElement(name = "drivingLicense")
 	private String drivingLicenceNo;
 
 	public CustomerDedup() {

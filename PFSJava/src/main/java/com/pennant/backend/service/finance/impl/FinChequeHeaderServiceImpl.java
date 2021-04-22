@@ -49,7 +49,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -69,6 +70,7 @@ import com.pennant.backend.service.pdc.impl.ChequeHeaderServiceImpl;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.StageTabConstants;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -78,7 +80,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>ChequeHeader</b>.<br>
  */
 public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> implements FinChequeHeaderService {
-	private static final Logger logger = Logger.getLogger(ChequeHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ChequeHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
@@ -130,12 +132,14 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader, TableType tableType) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
+		auditHeader = businessValidation(auditHeader, PennantConstants.method_saveOrUpdate);
+		/**
+		 * Commented because the business validation not required it is calling from Finance detail service impl save or
+		 * update Need to change the code.
+		 */
+		/*
+		 * if (!auditHeader.isNextProcess()) { logger.info(Literal.LEAVING); return auditHeader; }
+		 */
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
@@ -262,7 +266,9 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		String auditTranType = "";
 
-		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+		if (StringUtils.equals(PennantConstants.method_saveOrUpdate, method)
+				|| StringUtils.equals(PennantConstants.method_doApprove, method)
+				|| StringUtils.equals(PennantConstants.method_doReject, method)) {
 			if (chequeHeader.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
@@ -321,7 +327,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				detail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+			if (StringUtils.equals(PennantConstants.method_saveOrUpdate, method) && (isRcdType)) {
 				detail.setNewRecord(true);
 			}
 
@@ -448,11 +454,14 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader, "doApprove");
-
-		if (!auditHeader.isNextProcess()) {
-			return auditHeader;
-		}
+		auditHeader = businessValidation(auditHeader, PennantConstants.method_doApprove);
+		/**
+		 * Commented because the business validation not required it is calling from Finance detail service impl save or
+		 * update Need to change the code.
+		 */
+		/*
+		 * if (!auditHeader.isNextProcess()) { return auditHeader; }
+		 */
 
 		ChequeHeader chequeHeader = new ChequeHeader();
 		BeanUtils.copyProperties((ChequeHeader) auditHeader.getAuditDetail().getModelData(), chequeHeader);
@@ -518,10 +527,12 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		for (ChequeDetail detail : chequeDetails) {
 			if (!detail.isNewRecord()) {
-				if (detail.getDocImage() != null || detail.getDocumentRef() == Long.MIN_VALUE) {
+				if (detail.getDocImage() != null) {
 					dd.setUserDetails(detail.getUserDetails());
-
-					byte[] arr1 = getDocumentImage(detail.getDocumentRef());
+					byte[] arr1 = null;
+					if (detail.getDocumentRef() != null && detail.getDocumentRef() > 0) {
+						arr1 = getDocumentImage(detail.getDocumentRef());
+					}
 					byte[] arr2 = detail.getDocImage();
 
 					if (!Arrays.equals(arr1, arr2)) {
@@ -577,11 +588,14 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
+		auditHeader = businessValidation(auditHeader, PennantConstants.method_doReject);
+		/**
+		 * Commented because the business validation not required it is calling from Finance detail service impl save or
+		 * update Need to change the code.
+		 */
+		/*
+		 * if (!auditHeader.isNextProcess()) { logger.info(Literal.LEAVING); return auditHeader; }
+		 */
 
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -681,58 +695,72 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		chequeHeader.setRecordStatus(financeMain.getRecordStatus());
 
-		// Check the unique keys.
-		if (chequeHeader.isNew() && chequeHeaderDAO.isDuplicateKey(chequeHeader.getHeaderID(),
-				financeDetail.getFinReference(), chequeHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[2];
+		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.And Without tab validations are coming issue fixed.
+		String strTabId = StringUtils.leftPad(String.valueOf(StageTabConstants.Cheque), 3, "0");
+		boolean isTabVisible = true;
+		String roles = "";
 
-			parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + chequeHeader.getFinReference();
-			parameters[1] = PennantJavaUtil.getLabel("label_HeaderID") + ": " + chequeHeader.getHeaderID();
-
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
-		}
-
-		List<ChequeDetail> chequeDetailList = chequeHeader.getChequeDetailList();
-		boolean isListContainsPDC = false;
-		if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
-			for (ChequeDetail chequeDetail : chequeDetailList) {
-				if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC)
-						|| StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_UDC)) {
-					isListContainsPDC = true;
-				}
-				if (chequeDetail.isNew() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
-						chequeDetail.getBankBranchID(), chequeDetail.getAccountNo(), chequeDetail.getChequeSerialNo(),
-						TableType.BOTH_TAB)) {
-
-					String[] parameters = new String[3];
-
-					parameters[0] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_BankBranchID.value") + ": "
-							+ chequeDetail.getBankBranchID();
-					parameters[1] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_AccNumber.value") + ": "
-							+ chequeDetail.getAccountNo();
-					parameters[2] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value") + ": "
-							+ chequeDetail.getChequeSerialNo();
-
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
-				}
+		if (financeDetail.getShowTabDetailMap().containsKey(strTabId)) {
+			roles = financeDetail.getShowTabDetailMap().get(strTabId);
+			if (!StringUtils.contains(roles, financeMain.getRoleCode() + ",")) {
+				isTabVisible = false;
 			}
 		}
 
-		// if finance Payment Method is PDC and there is no PDC cheques.
-		String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
-		if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)
-				&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinSourceID())) {
-			if (!isListContainsPDC) {
+		if (isTabVisible) {
+			// Check the unique keys.
+			if (chequeHeader.isNew()
+					&& chequeHeaderDAO.isDuplicateKey(chequeHeader.getHeaderID(), financeDetail.getFinReference(),
+							chequeHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 				String[] parameters = new String[2];
+
 				parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + chequeHeader.getFinReference();
-				parameters[1] = PennantJavaUtil.getLabel("label_PDC_Cheque");
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", parameters, null));
+				parameters[1] = PennantJavaUtil.getLabel("label_HeaderID") + ": " + chequeHeader.getHeaderID();
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 			}
+			List<ChequeDetail> chequeDetailList = chequeHeader.getChequeDetailList();
+			boolean isListContainsPDC = false;
+			if (chequeDetailList != null && !chequeDetailList.isEmpty()) {
+				for (ChequeDetail chequeDetail : chequeDetailList) {
+					if (StringUtils.equals(chequeDetail.getChequeType(), FinanceConstants.REPAYMTH_PDC) && !StringUtils
+							.equals(chequeDetail.getChequeStatus(), PennantConstants.CHEQUESTATUS_CANCELLED)) {
+						isListContainsPDC = true;
+					}
+					if (chequeDetail.isNew() && chequeDetailDAO.isDuplicateKey(chequeDetail.getChequeDetailsID(),
+							chequeDetail.getBankBranchID(), chequeDetail.getAccountNo(),
+							chequeDetail.getChequeSerialNo(), TableType.BOTH_TAB)) {
+
+						String[] parameters = new String[3];
+
+						parameters[0] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_BankBranchID.value") + ": "
+								+ chequeDetail.getBankBranchID();
+						parameters[1] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_AccNumber.value") + ": "
+								+ chequeDetail.getAccountNo();
+						parameters[2] = PennantJavaUtil.getLabel("label_ChequeDetailDialog_ChequeSerialNo.value") + ": "
+								+ chequeDetail.getChequeSerialNo();
+
+						auditDetail
+								.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
+					}
+				}
+			}
+			// if finance Payment Method is PDC and there is no PDC cheques.
+			String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
+			if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)
+					&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API,
+							financeDetail.getFinScheduleData().getFinanceMain().getFinSourceID())) {
+				//PSD#163298 Issue addressed for validation raised While Resubmitting.
+				if (!isListContainsPDC && !StringUtils.contains(chequeHeader.getRecordStatus(), "Resubmit")) {
+					String[] parameters = new String[2];
+					parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": "
+							+ chequeHeader.getFinReference();
+					parameters[1] = PennantJavaUtil.getLabel("label_PDC_Cheque");
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", parameters, null));
+				}
+			}
+			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 		}
-
-		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}

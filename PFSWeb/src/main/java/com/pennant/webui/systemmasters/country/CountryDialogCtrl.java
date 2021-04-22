@@ -43,12 +43,12 @@
 package com.pennant.webui.systemmasters.country;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -80,7 +80,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 	private static final long serialVersionUID = 223801324705386693L;
-	private static final Logger logger = Logger.getLogger(CountryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CountryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -190,15 +190,15 @@ public class CountryDialogCtrl extends GFCBaseCtrl<Country> {
 		this.countryDesc.setMaxlength(50);
 		this.countryParentLimit.setMaxlength(21);
 		this.countryParentLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.countryParentLimit.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.countryParentLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.countryParentLimit.setScale(0);
 		this.countryResidenceLimit.setMaxlength(21);
 		this.countryResidenceLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.countryResidenceLimit.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.countryResidenceLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.countryResidenceLimit.setScale(0);
 		this.countryRiskLimit.setMaxlength(21);
 		this.countryRiskLimit.setFormat(PennantApplicationUtil.getAmountFormate(0));
-		this.countryRiskLimit.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.countryRiskLimit.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.countryRiskLimit.setScale(0);
 
 		if (isWorkFlowEnabled()) {

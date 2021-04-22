@@ -50,7 +50,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -79,7 +80,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class ProvinceServiceImpl extends GenericService<Province> implements ProvinceService {
-	private static final Logger logger = Logger.getLogger(ProvinceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ProvinceServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProvinceDAO provinceDAO;
@@ -820,12 +821,12 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 	 */
 	public Province getApprovedProvinceByEntityCode(String cPCountry, String cPProvince, String entityCode) {
 
-		Province province = getProvinceDAO().getProvinceById(cPCountry, cPProvince, "_AView");
-
-		if (province != null) {
-			province.setTaxDetailList(
-					taxDetailService.getTaxDetailsbyEntityCode(province.getCPProvince(), entityCode, "_AView"));
+		Province province = provinceDAO.getProvinceById(cPCountry, cPProvince, "_AView");
+		if (province == null) {
+			return null;
 		}
+		province.setTaxDetailList(
+				taxDetailService.getTaxDetailsbyEntityCode(province.getCPProvince(), entityCode, "_AView"));
 
 		return province;
 	}

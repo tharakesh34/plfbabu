@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions> {
 	private static final long serialVersionUID = -3093280086658721485L;
-	private static final Logger logger = Logger.getLogger(SanctionConditionsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SanctionConditionsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -204,6 +205,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
+		this.sanctionCondition.setMaxlength(500);
+		this.status.setMaxlength(40);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -444,8 +447,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + " : "
-				+ asanctionConditions.getId();
+				+ Labels.getLabel("label_SanctionConditionsDialog_SanctionCondition.value") + " : "
+				+ asanctionConditions.getSeqNo();
 
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.isBlank(asanctionConditions.getRecordType())) {
@@ -678,7 +681,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 						.getSanctionConditionsDetailList().get(i);
 
 				if (asanctionConditions.getSeqNo() == sanctionConditions.getSeqNo()) {
-
+					errParm[0] = Labels.getLabel("label_SanctionConditionsDialog_SanctionCondition.value");
+					errParm[1] = String.valueOf(sanctionConditions.getSeqNo());
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),

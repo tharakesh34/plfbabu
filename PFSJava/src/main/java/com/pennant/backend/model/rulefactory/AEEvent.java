@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 
 public class AEEvent implements Serializable {
@@ -61,9 +62,12 @@ public class AEEvent implements Serializable {
 	private boolean uAmzExists = false;
 	private boolean cpzChgExists = false;
 	private boolean bpiIncomized = false;
+	private boolean simulateAccounting;
 
 	// Advise Movement
 	private ManualAdviseMovements movement;
+
+	private EventProperties eventProperties = new EventProperties();
 
 	//Cash Management
 	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
@@ -410,6 +414,22 @@ public class AEEvent implements Serializable {
 
 	public void setMovement(ManualAdviseMovements movement) {
 		this.movement = movement;
+	}
+
+	public boolean isSimulateAccounting() {
+		return simulateAccounting;
+	}
+
+	public void setSimulateAccounting(boolean simulateAccounting) {
+		this.simulateAccounting = simulateAccounting;
+	}
+
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
 	}
 
 }

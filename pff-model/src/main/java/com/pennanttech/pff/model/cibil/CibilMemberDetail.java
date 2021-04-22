@@ -17,6 +17,9 @@ public class CibilMemberDetail implements Serializable {
 	private String delimiter;
 	private String fileFormate;
 
+	private String id;
+	private String type;
+
 	public CibilMemberDetail() {
 		super();
 	}
@@ -107,6 +110,22 @@ public class CibilMemberDetail implements Serializable {
 
 	public void setFileFormate(String fileFormate) {
 		this.fileFormate = fileFormate;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

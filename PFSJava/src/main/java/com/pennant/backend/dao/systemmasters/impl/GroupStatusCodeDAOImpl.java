@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.GroupStatusCodeDAO;
 import com.pennant.backend.model.systemmasters.GroupStatusCode;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements GroupStatusCodeDAO {
-	private static Logger logger = Logger.getLogger(GroupStatusCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GroupStatusCodeDAOImpl.class);
 
 	public GroupStatusCodeDAOImpl() {
 		super();
@@ -94,8 +95,7 @@ public class GroupStatusCodeDAOImpl extends BasicDao<GroupStatusCode> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(groupStatusCode);
-		RowMapper<GroupStatusCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(GroupStatusCode.class);
+		RowMapper<GroupStatusCode> typeRowMapper = BeanPropertyRowMapper.newInstance(GroupStatusCode.class);
 
 		try {
 			groupStatusCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

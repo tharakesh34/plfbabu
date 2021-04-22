@@ -81,6 +81,7 @@ public class RuleListModelItemRenderer implements ListitemRenderer<Rule>, Serial
 
 		item.setAttribute("ruleCode", rule.getRuleCode());
 		item.setAttribute("ruleEvent", rule.getRuleEvent());
+		item.setAttribute("active", rule.isActive());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onRuleItemDoubleClicked");
 	}

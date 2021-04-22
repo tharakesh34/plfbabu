@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.customermasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
 import com.pennant.backend.model.customermasters.CustomerGroup;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements CustomerGroupDAO {
-	private static Logger logger = Logger.getLogger(CustomerGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerGroupDAOImpl.class);
 
 	public CustomerGroupDAOImpl() {
 		super();
@@ -96,7 +97,7 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
-		RowMapper<CustomerGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGroup.class);
+		RowMapper<CustomerGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGroup.class);
 
 		try {
 			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -127,7 +128,7 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGroup);
-		RowMapper<CustomerGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGroup.class);
+		RowMapper<CustomerGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerGroup.class);
 
 		try {
 			customerGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -194,7 +195,7 @@ public class CustomerGroupDAOImpl extends SequenceDao<CustomerGroup> implements 
 		logger.debug("Entering");
 
 		if (customerGroup.getCustGrpID() == 0 || customerGroup.getCustGrpID() == Long.MIN_VALUE) {
-			customerGroup.setCustGrpID(getNextId("SeqCustomerGroups"));
+			customerGroup.setCustGrpID(getNextValue("SeqCustomerGroups"));
 		}
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into CustomerGroups");

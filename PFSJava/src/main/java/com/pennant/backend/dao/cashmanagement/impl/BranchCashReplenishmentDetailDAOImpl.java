@@ -4,13 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.cashmanagement.BranchCashReplenishmentDetailDAO;
 import com.pennant.backend.model.cashmanagement.BranchCashReplenishmentDetail;
@@ -20,7 +21,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class BranchCashReplenishmentDetailDAOImpl extends BasicDao<BranchCashReplenishmentDetail>
 		implements BranchCashReplenishmentDetailDAO {
-	private static Logger logger = Logger.getLogger(BranchCashReplenishmentDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchCashReplenishmentDetailDAOImpl.class);
 
 	@Override
 	public boolean addReplenishmentDetail(BranchCashReplenishmentDetail branchCashReplenishmentDetail) {
@@ -88,7 +89,7 @@ public class BranchCashReplenishmentDetailDAOImpl extends BasicDao<BranchCashRep
 		detail.setProcessId(processId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
-		RowMapper<BranchCashReplenishmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<BranchCashReplenishmentDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(BranchCashReplenishmentDetail.class);
 		list = jdbcTemplate.query(selectSql.toString(), paramSource, rowMapper);
 
@@ -115,7 +116,7 @@ public class BranchCashReplenishmentDetailDAOImpl extends BasicDao<BranchCashRep
 		detail.setBatchId(batchId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
-		RowMapper<BranchCashReplenishmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<BranchCashReplenishmentDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(BranchCashReplenishmentDetail.class);
 		list = jdbcTemplate.query(selectSql.toString(), paramSource, rowMapper);
 

@@ -52,7 +52,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
@@ -121,7 +122,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(JVPostingDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(JVPostingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -306,8 +307,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				getJVPosting().setCurrency(aCurrency.getCcyCode());
 			}
 			doSetFieldProperties();
-			this.listBoxJVPostingEntry.setHeight(this.borderLayoutHeight - 350 + "px");
-			this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 350 + "px");
+			this.listBoxJVPostingEntry.setHeight(this.borderLayoutHeight - 280 + "px");
+			this.listBoxJVPostingAccounting.setHeight(this.borderLayoutHeight - 280 + "px");
 			doShowDialog(getJVPosting());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -863,6 +864,8 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
+
+		int currFormatter = CurrencyUtil.getFormat(getJVPosting().getCurrency());
 		this.batchReference.setMaxlength(50);
 
 		this.expReference.setMandatoryStyle(false);
@@ -900,11 +903,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.debitCount.setMaxlength(10);
 		this.creditsCount.setMaxlength(10);
 		this.totDebitsByBatchCcy.setMaxlength(18);
-		this.totDebitsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(this.totDebitsByBatchCcy.getValue(),
-				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totDebitsByBatchCcy.setFormat(PennantApplicationUtil.getAmountFormate(currFormatter));
 		this.totCreditsByBatchCcy.setMaxlength(18);
-		this.totCreditsByBatchCcy.setFormat(PennantApplicationUtil.amountFormate(this.totCreditsByBatchCcy.getValue(),
-				CurrencyUtil.getFormat(getJVPosting().getCurrency())));
+		this.totCreditsByBatchCcy.setFormat(PennantApplicationUtil.getAmountFormate(currFormatter));
+
 		/*
 		 * this.expAmount.setMaxlength(18); this.expAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		 * this.expAmount.setScale(2);
@@ -1235,9 +1237,13 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					new PTStringValidator(Labels.getLabel("label_JVPostingDialog_BatchCcy.value"), null, true, true));
 		}
 		// Cmt Ccy
-		if (this.postingBranch.isButtonVisible()) {
+		if (this.postingBranch.isButtonVisible() && !this.postingBranch.isReadonly()
+				&& this.postingBranch.isMandatory()) {
 			this.postingBranch.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_JVPostingDialog_PostingBranch.value"), null, true, true));
+		} else {
+			this.postingBranch.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_JVPostingDialog_PostingBranch.value"), null, false, true));
 		}
 	}
 
@@ -1481,7 +1487,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
+					processCompleted = true;
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else {
 					JVPosting tJVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
@@ -1873,7 +1881,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				this.listBoxJVPostingEntry.appendChild(item);
 			}
 		}
-		if (baseCCy.getValue().equals(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY))
+		if (baseCCy.getValue().equals(SysParamUtil.getAppCurrency())
 				|| baseCCy.getValue().equals(AccountConstants.CURRENCY_KWD)) {
 			creditAmount = creditAmount.setScale(3, RoundingMode.HALF_DOWN);//FIXME--CHECK: SET BASED ON CURRENCY SELECTION
 			debitAmount = debitAmount.setScale(3, RoundingMode.HALF_DOWN);
@@ -1925,6 +1933,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 	}
 
 	private void setFilters(String postValue) {
+
+		this.postingBranch.setMandatoryStyle(true);
+
 		if (StringUtils.equals(postValue, PennantConstants.List_Select)) {
 			addFilters("", "", "");
 		}
@@ -1939,6 +1950,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		}
 		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_LIMIT)) {
 			addFilters("LimitHeader", "HeaderId", "ResponsibleBranch");
+		}
+		if (StringUtils.equals(postValue, FinanceConstants.POSTING_AGAINST_ENTITY)) {
+			addFilters("Entity", "EntityCode", "EntityDesc");
+			this.postingBranch.setMandatoryStyle(false);
 		}
 	}
 

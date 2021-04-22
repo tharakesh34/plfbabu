@@ -80,7 +80,9 @@
 						<listbox id="listBoxPartnerBank" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_PartnerBankCode" label="${c:l('listheader_PartnerBankCode.label')}" sort="auto"
+							<listheader id="listheader_PartnerBankID" label="${c:l('listheader_PartnerBankID.label')}"
+								sort="auto" hflex="min" />
+							<listheader id="listheader_PartnerBankCode" label="${c:l('listheader_PartnerBankCode.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_PartnerBankName" label="${c:l('listheader_PartnerBankName.label')}" sort="auto"
 									hflex="min" />

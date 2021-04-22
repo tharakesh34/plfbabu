@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -29,7 +30,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluation>
 		implements ItemWriter<CollateralRevaluation> {
-	private static Logger logger = Logger.getLogger(CovenantAlerts.class);
+	private static Logger logger = LogManager.getLogger(CovenantAlerts.class);
 
 	private SecurityUserDAO securityUserDAO;
 	private FinanceMainDAO financeMainDAO;

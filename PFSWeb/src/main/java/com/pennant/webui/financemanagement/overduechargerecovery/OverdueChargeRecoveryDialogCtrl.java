@@ -52,7 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -105,7 +106,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRecovery> {
 
 	private static final long serialVersionUID = 728436178283801925L;
-	private static final Logger logger = Logger.getLogger(OverdueChargeRecoveryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(OverdueChargeRecoveryDialogCtrl.class);
 
 	/*
 	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ All the components that are defined here
@@ -636,7 +637,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 								Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 										new String[] {
 												Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-												PennantAppUtil.formatAmount(reqWaiver, format, false) }));
+												PennantAppUtil.formatAmount(reqWaiver, format) }));
 					}
 				} else if (this.finODCWaived.getValue() == null) {
 					this.finODCWaived.setValue(new BigDecimal(0));
@@ -1330,7 +1331,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 				throw new WrongValueException(this.finODCWaived,
 						Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
 								new String[] { Labels.getLabel("label_OverdueChargeRecoveryDialog_FinODCWaived.value"),
-										PennantAppUtil.formatAmount(reqWaiver, format, false) }));
+										PennantAppUtil.formatAmount(reqWaiver, format) }));
 			}
 		} else if (this.finODCWaived.getValue() == null) {
 			this.finODCWaived.setValue(new BigDecimal(0));

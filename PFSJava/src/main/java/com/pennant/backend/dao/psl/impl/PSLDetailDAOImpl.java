@@ -46,7 +46,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>PSLDetail</code> with set of CRUD operations.
  */
 public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDAO {
-	private static Logger logger = Logger.getLogger(PSLDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PSLDetailDAOImpl.class);
 
 	public PSLDetailDAOImpl() {
 		super();
@@ -75,8 +76,6 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 
 	@Override
 	public PSLDetail getPSLDetail(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, CategoryCode, WeakerSection, LandHolding, LandArea, Sector, Amount");
 		sql.append(", SubCategory, Purpose, EndUse, LoanPurpose, EligibleAmount, Version, LastMntOn");
@@ -90,52 +89,48 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where finReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<PSLDetail>() {
-						@Override
-						public PSLDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							PSLDetail psl = new PSLDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
+				PSLDetail psl = new PSLDetail();
 
-							psl.setFinReference(rs.getString("FinReference"));
-							psl.setCategoryCode(rs.getString("CategoryCode"));
-							psl.setWeakerSection(rs.getString("WeakerSection"));
-							psl.setLandHolding(rs.getString("LandHolding"));
-							psl.setLandArea(rs.getString("LandArea"));
-							psl.setSector(rs.getString("Sector"));
-							psl.setAmount(rs.getDouble("Amount"));
-							psl.setSubCategory(rs.getString("SubCategory"));
-							psl.setPurpose(rs.getString("Purpose"));
-							psl.setEndUse(rs.getString("EndUse"));
-							psl.setLoanPurpose(rs.getString("LoanPurpose"));
-							psl.setEligibleAmount(rs.getBigDecimal("EligibleAmount"));
-							psl.setVersion(rs.getInt("Version"));
-							psl.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							psl.setLastMntBy(rs.getLong("LastMntBy"));
-							psl.setRecordStatus(rs.getString("RecordStatus"));
-							psl.setRoleCode(rs.getString("RoleCode"));
-							psl.setNextRoleCode(rs.getString("NextRoleCode"));
-							psl.setTaskId(rs.getString("TaskId"));
-							psl.setNextTaskId(rs.getString("NextTaskId"));
-							psl.setRecordType(rs.getString("RecordType"));
-							psl.setWorkflowId(rs.getLong("WorkflowId"));
+				psl.setFinReference(rs.getString("FinReference"));
+				psl.setCategoryCode(rs.getString("CategoryCode"));
+				psl.setWeakerSection(rs.getString("WeakerSection"));
+				psl.setLandHolding(rs.getString("LandHolding"));
+				psl.setLandArea(rs.getString("LandArea"));
+				psl.setSector(rs.getString("Sector"));
+				psl.setAmount(rs.getDouble("Amount"));
+				psl.setSubCategory(rs.getString("SubCategory"));
+				psl.setPurpose(rs.getString("Purpose"));
+				psl.setEndUse(rs.getString("EndUse"));
+				psl.setLoanPurpose(rs.getString("LoanPurpose"));
+				psl.setEligibleAmount(rs.getBigDecimal("EligibleAmount"));
+				psl.setVersion(rs.getInt("Version"));
+				psl.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				psl.setLastMntBy(rs.getLong("LastMntBy"));
+				psl.setRecordStatus(rs.getString("RecordStatus"));
+				psl.setRoleCode(rs.getString("RoleCode"));
+				psl.setNextRoleCode(rs.getString("NextRoleCode"));
+				psl.setTaskId(rs.getString("TaskId"));
+				psl.setNextTaskId(rs.getString("NextTaskId"));
+				psl.setRecordType(rs.getString("RecordType"));
+				psl.setWorkflowId(rs.getLong("WorkflowId"));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								psl.setWeakerSectionName(rs.getString("WeakerSectionName"));
-								psl.setPurposeName(rs.getString("PurposeName"));
-								psl.setEndUseName(rs.getString("EndUseName"));
-							}
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					psl.setWeakerSectionName(rs.getString("WeakerSectionName"));
+					psl.setPurposeName(rs.getString("PurposeName"));
+					psl.setEndUseName(rs.getString("EndUseName"));
+				}
 
-							return psl;
-						}
-					});
+				return psl;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in PSLDetail{} table/view for the specified FinReference >> {}", type,
+					finReference);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

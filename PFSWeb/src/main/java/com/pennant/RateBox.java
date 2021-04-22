@@ -43,9 +43,9 @@
 package com.pennant;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Constraint;
@@ -60,7 +60,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class RateBox extends Hbox {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(RateBox.class);
+	private static final Logger logger = LogManager.getLogger(RateBox.class);
 
 	private Space space;
 	private ExtendedCombobox baseRateBox;
@@ -97,7 +97,7 @@ public class RateBox extends Hbox {
 		marginRate = new Decimalbox();
 		marginRate.setMaxlength(13);
 		marginRate.setFormat(PennantConstants.rateFormate9);
-		marginRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		marginRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		marginRate.setScale(9);
 		marginRate.setPlaceholder("margin");
 		marginRate.setHeight("23px");
@@ -110,7 +110,7 @@ public class RateBox extends Hbox {
 		effRate.setReadonly(true);
 		effRate.setMaxlength(13);
 		effRate.setFormat(PennantConstants.rateFormate9);
-		effRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		effRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		effRate.setScale(9);
 		effRate.setHeight("23px");
 		effRate.setWidth("79px");

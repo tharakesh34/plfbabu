@@ -43,11 +43,11 @@
 package com.pennant.provisions;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
@@ -76,7 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	private static final long serialVersionUID = -2437455376763752382L;
-	private static final Logger logger = Logger.getLogger(CoreProvisionListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CoreProvisionListCtrl.class);
 
 	protected Window window_CoreProvisionList;
 	protected Borderlayout borderLayout_CoreProvisionList;
@@ -138,24 +138,16 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("extPagedListService");
 		List<Provision> provisionList = pagedListService.getBySearchObject(searchObject);
-		List<Provision> processedProvisions = getProvisionService().getProcessedProvisions();
+		//List<Provision> processedProvisions = getProvisionService().getProcessedProvisions();
 
-		if (processedProvisions.isEmpty()) {
-			// render provisionList if processed provisions are empty
-			getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList);
-		} else {
-			for (Provision provision : processedProvisions) {
-				Iterator<Provision> it = provisionList.iterator();
-				while (it.hasNext()) {
-					Provision provisions = (Provision) it.next();
-					if (provision.getFinReference().equals(provisions.getFinReference())) {
-						it.remove();
-					}
-				}
-			}
-			getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList);
-		}
-
+		/*
+		 * if (processedProvisions.isEmpty()) { // render provisionList if processed provisions are empty
+		 * getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList); } else {
+		 * for (Provision provision : processedProvisions) { Iterator<Provision> it = provisionList.iterator(); while
+		 * (it.hasNext()) { Provision provisions = (Provision) it.next(); if
+		 * (provision.getFinReference().equals(provisions.getFinReference())) { it.remove(); } } }
+		 * getPagedListWrapper().initList(provisionList, this.listBoxProvisions, this.pagingCoreProvisionList); }
+		 */
 		this.listBoxProvisions.setItemRenderer(new CoreProvisionListModelItemRender());
 		listBoxProvisions.setCheckmark(true);
 		listBoxProvisions.setMultiple(true);

@@ -1,7 +1,8 @@
 package com.pennanttech.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -14,6 +15,7 @@ import com.pennant.validation.DocumentDetailsGroup;
 import com.pennant.validation.GetFinDocumentDetailsGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennanttech.controller.DocumentController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.document.DocumentService;
@@ -22,9 +24,9 @@ import com.pennanttech.pffws.DocumentSoapService;
 import com.pennanttech.ws.model.customer.DocumentList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class DocumentWebServiceImpl implements DocumentRestService, DocumentSoapService {
+public class DocumentWebServiceImpl extends ExtendedTestClass implements DocumentRestService, DocumentSoapService {
 
-	private static final Logger logger = Logger.getLogger(DocumentWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DocumentWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
 	private DocumentController documentController;

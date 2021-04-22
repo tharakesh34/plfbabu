@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -15,6 +17,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private long covenantId;
 	private Long documentId;
 	private Date receivableDate;
+	@XmlElement
 	private Date frequencyDate;
 	private Date documentReceivedDate;
 	private boolean newRecord = false;
@@ -24,9 +27,13 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 	private DocumentDetails documentDetail;
 	private String covenantType;
 	private String docCategory;
+	@XmlElement
 	private String docName;
+	@XmlElement
 	private String doctype;
 	private Long custId;
+	@XmlElement(name = "docContent")
+	private byte[] docImage;
 
 	public CovenantDocument() {
 		super();
@@ -41,6 +48,7 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 		excludeFields.add("docCategory");
 		excludeFields.add("frequencyDate");
 		excludeFields.add("custId");
+		excludeFields.add("docImage");
 
 		return excludeFields;
 	}
@@ -175,6 +183,14 @@ public class CovenantDocument extends AbstractWorkflowEntity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
 	}
 
 }

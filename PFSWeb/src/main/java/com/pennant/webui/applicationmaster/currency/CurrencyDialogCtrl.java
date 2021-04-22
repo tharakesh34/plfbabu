@@ -43,12 +43,12 @@
 package com.pennant.webui.applicationmaster.currency;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -82,7 +82,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 	private static final long serialVersionUID = -2843265056714842214L;
-	private static final Logger logger = Logger.getLogger(CurrencyDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CurrencyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -208,21 +208,21 @@ public class CurrencyDialogCtrl extends GFCBaseCtrl<Currency> {
 		this.ccySymbol.setMaxlength(3);
 		this.ccyMinorCcyDesc.setMaxlength(50);
 		this.ccyMinorCcyUnits.setFormat(PennantConstants.defaultNoLimiterFormate);
-		this.ccyMinorCcyUnits.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.ccyMinorCcyUnits.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.ccyMinorCcyUnits.setScale(0);
 		this.ccyDrRateBasisCode.setMaxlength(8);
 		this.ccyCrRateBasisCode.setMaxlength(8);
 		this.ccySpotRate.setMaxlength(15);
 		this.ccySpotRate.setFormat(PennantConstants.rateFormate9);
-		this.ccySpotRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.ccySpotRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.ccySpotRate.setScale(9);
 		this.ccyUserRateBuy.setMaxlength(15);
 		this.ccyUserRateBuy.setFormat(PennantConstants.rateFormate9);
-		this.ccyUserRateBuy.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.ccyUserRateBuy.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.ccyUserRateBuy.setScale(9);
 		this.ccyUserRateSell.setMaxlength(15);
 		this.ccyUserRateSell.setFormat(PennantConstants.rateFormate9);
-		this.ccyUserRateSell.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.ccyUserRateSell.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.ccyUserRateSell.setScale(9);
 
 		this.ccyDrRateBasisCode.setModuleName("InterestRateBasisCode");

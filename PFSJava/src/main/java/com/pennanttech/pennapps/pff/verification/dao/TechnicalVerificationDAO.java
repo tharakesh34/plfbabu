@@ -32,11 +32,11 @@ public interface TechnicalVerificationDAO extends BasicCrudDao<TechnicalVerifica
 
 	List<TechnicalVerification> getTvListByCollRef(String collRef);
 
-	List<Verification> getTvValuation(List<Long> verificationIDs);
+	List<Verification> getTvValuation(List<Long> verificationIDs, String type);
 
 	void updateValuationAmount(Verification verification, TableType tableType);
 
-	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName);
+	Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column);
 
 	String getPropertyCity(String collRef, String subModuleName);
 

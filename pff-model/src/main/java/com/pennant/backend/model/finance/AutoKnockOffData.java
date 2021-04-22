@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.eventproperties.EventProperties;
+
 public class AutoKnockOffData implements Serializable {
 	private static final long serialVersionUID = -388636206896888118L;
 
@@ -19,6 +21,7 @@ public class AutoKnockOffData implements Serializable {
 	private long payableId;
 	private String payableType;
 	private String reason;
+	private EventProperties eventProperties = new EventProperties();
 
 	public AutoKnockOffData() {
 		super();
@@ -110,6 +113,14 @@ public class AutoKnockOffData implements Serializable {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
 	}
 
 }

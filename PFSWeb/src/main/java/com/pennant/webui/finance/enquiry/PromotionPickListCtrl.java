@@ -50,8 +50,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -112,24 +115,22 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul file.
+ * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityCheck.zul file.
  */
 public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(PromotionPickListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PromotionPickListCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component
-	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_PromotionPickList;
 
 	protected Borderlayout borderlayoutEligibilityCheck;
 	protected Groupbox gb_BasicDetails;
 
-	// Basic Details
+	//Basic Details
 	protected Textbox customerCIF;
 	protected Label customerName;
 	protected Hbox hbox_custSelection;
@@ -140,8 +141,6 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 	private RuleService ruleService;
 	private FinanceDetailService financeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
-
 	protected List<String> feildList = null;
 	protected Map<String, BMTRBFldDetails> fldDetailsMap = null;
 
@@ -172,9 +171,8 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -197,11 +195,9 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		appendCustomerDetailTab();
 
 		/*
-		 * this.borderlayoutEligibilityCheck.setHeight(getBorderLayoutHeight()+100);
-		 * menuWest = borderlayout.getWest(); groupboxMenu = (Groupbox)
-		 * borderlayout.getFellowIfAny("groupbox_menu"); menuWest.setVisible(false);
-		 * groupboxMenu.setVisible(false);
-		 * this.window_PromotionPickList.setParent(groupboxMenu.getParent());
+		 * this.borderlayoutEligibilityCheck.setHeight(getBorderLayoutHeight()+100); menuWest = borderlayout.getWest();
+		 * groupboxMenu = (Groupbox) borderlayout.getFellowIfAny("groupbox_menu"); menuWest.setVisible(false);
+		 * groupboxMenu.setVisible(false); this.window_PromotionPickList.setParent(groupboxMenu.getParent());
 		 */
 		setDialog(DialogType.EMBEDDED);
 
@@ -217,8 +213,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	}
 
 	/**
-	 * Creates a page from a zul-file in a tab in the center area of the
-	 * borderlayout.
+	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -274,7 +269,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	private CustomerEligibilityCheck setCustomerEligibilityData(Customer customer) {
 		logger.debug("Entering");
 
-		// Customer Eligibility Amounts Calculation
+		//Customer Eligibility Amounts Calculation
 		BigDecimal financeAmount = PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter);
 
 		BigDecimal curFinAmount = BigDecimal.ZERO;
@@ -299,7 +294,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	 * 
 	 * @throws ParseException
 	 */
-	public void onClick$btnStimulate(Event event) throws InterruptedException, ParseException {
+	public void onClick$btnStimulate(Event event) throws InterruptedException, ScriptException, ParseException {
 		logger.debug("Entering" + event.toString());
 
 		if (this.existing.isChecked()) {
@@ -316,7 +311,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			}
 		}
 
-		// Customer Details Tab ---> Customer Details
+		// Customer Details Tab ---> Customer Details 
 		if (getCustomerDialogCtrl() != null) {
 			if (getCustomerDialogCtrl().getCustomerDetails() != null) {
 				getCustomerDialogCtrl().doSave_CustomerDetail(getFinanceDetail(), false);
@@ -334,7 +329,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		}
 
 		try {
-			// Setting Data
+			//Setting Data
 			CustomerEligibilityCheck custElgCheck = setCustomerEligibilityData(
 					getFinanceDetail().getCustomerDetails().getCustomer());
 			HashMap<String, Object> fieldsandvalues = custElgCheck.getDeclaredFieldValues();
@@ -349,7 +344,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 				FinanceEligibility financeEligibility = null;
 				for (FinanceType detail : promotionDetailList) {
 
-					// Rule List Execution
+					//Rule List Execution
 					fieldsandvalues.put("reqFinType", detail.getFinType());
 					fieldsandvalues.put("reqProduct", detail.getFinCategory());
 					fieldsandvalues.put("reqCampaign", "");
@@ -358,11 +353,12 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 					fieldsandvalues.put("noOfTerms", detail.getFinDftTerms());
 
 					fieldsandvalues.put("stepFinance", detail.isStepFinance());
+					fieldsandvalues.put("alwDPSP", detail.isAllowDownpayPgm());
 					fieldsandvalues.put("alwPlannedDefer", detail.isAlwPlanDeferment());
 
-					// Currency Conversions if Currency Constants Exists in Rule
+					//Currency Conversions if Currency Constants Exists in Rule 
 					String sqlRule = rule.getSQLRule();
-					sqlRule = getRuleExecutionUtil().replaceCurrencyCode(sqlRule, null);
+					sqlRule = RuleExecutionUtil.replaceCurrencyCode(sqlRule, null);
 
 					String returnType = rule.getReturnType();
 					RuleReturnType ruleReturnType = null;
@@ -379,8 +375,8 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 						ruleReturnType = RuleReturnType.OBJECT;
 					}
 
-					// Rule Execution Process
-					Object object = getRuleExecutionUtil().executeRule(sqlRule, fieldsandvalues, null, ruleReturnType);
+					//Rule Execution Process
+					Object object = RuleExecutionUtil.executeRule(sqlRule, fieldsandvalues, null, ruleReturnType);
 
 					financeEligibility = new FinanceEligibility();
 					financeEligibility.setCustCIF(this.customerCIF.getValue());
@@ -390,9 +386,8 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 					financeEligibility.setPromotionDesc(detail.getFinTypeDesc());
 					financeEligibility.setFinCategory(detail.getFinCategory());
 					financeEligibility.setFinAssetType(detail.getFinAssetType());
-					financeEligibility
-							.setRepayProfitRate(detail.getFinIntRate().compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO
-									: detail.getFinIntRate());
+					financeEligibility.setRepayProfitRate(detail.getFinIntRate().compareTo(BigDecimal.ZERO) == 0
+							? BigDecimal.ZERO : detail.getFinIntRate());
 					financeEligibility.setNumberOfTerms(detail.getFinDftTerms());
 					financeEligibility.setProductFeature(detail.getRemarks());
 					financeEligibility.setElgAmount(new BigDecimal(object.toString()));
@@ -421,7 +416,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	private List<FinanceType> getPromotionDetails() {
 		logger.debug("Entering");
 
-		// Fetch Workflow Defined Promotion Types
+		//Fetch Workflow Defined Promotion Types
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<FinanceType> finWorflowSearchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
 		finWorflowSearchObject.addTabelName("LMTFinanceWorkFlowDef");
@@ -436,14 +431,14 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			finTypes.add(financeType.getFinType());
 		}
 
-		// Fetch Promotion Type Details
+		//Fetch Promotion Type Details
 		JdbcSearchObject<FinanceType> jdbcSearchObject = new JdbcSearchObject<FinanceType>(FinanceType.class);
 		jdbcSearchObject.addTabelName("RMTFinanceTypes_AView");
 		jdbcSearchObject.addFilter(Filter.equalTo("FinIsActive", 1));
 		jdbcSearchObject.addFilter(Filter.notEqual("Product", ""));
 		jdbcSearchObject.addFilter(Filter.in("FinType", finTypes));
 
-		// Field Details
+		//Field Details
 		jdbcSearchObject.addField("Product");
 		jdbcSearchObject.addField("LovDescPromoFinTypeDesc");
 		jdbcSearchObject.addField("FinType");
@@ -455,6 +450,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		jdbcSearchObject.addField("Remarks");
 		jdbcSearchObject.addField("AlwPlanDeferment");
 		jdbcSearchObject.addField("StepFinance");
+		jdbcSearchObject.addField("AllowDownpayPgm");
 		jdbcSearchObject.addField("FinAssetType");
 
 		List<FinanceType> returnFintypes = pagedListService.getBySearchObject(jdbcSearchObject);
@@ -500,7 +496,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		customer.setLovDescCustCtgCodeName(PennantConstants.PFF_CUSTCTG_INDIV);
 		customer.setCustCIF(getCustomerDetailsService().getNewProspectCustomerCIF());
 		customer.setCustCRCPR("");
-		customer.setCustBaseCcy(SysParamUtil.getValueAsString("APP_DFT_CURR"));
+		customer.setCustBaseCcy(SysParamUtil.getAppCurrency());
 		customer.setCustLng(SysParamUtil.getValueAsString("APP_LNG"));
 
 		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
@@ -516,7 +512,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		customer.setLovDescCustRiskCountryName(defaultCountry.getCountryDesc());
 		customer.setLovDescCustNationalityName(defaultCountry.getCountryDesc());
 
-		// Setting Primary Relation Ship Officer
+		//Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = getRelationshipOfficerService()
 				.getApprovedRelationshipOfficerById(getUserWorkspace().getLoggedInUser().getUserName());
 		if (officer != null) {
@@ -524,14 +520,14 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			customer.setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 
-		// Setting User Branch to Customer Branch
+		//Setting User Branch to Customer Branch
 		Branch branch = getBranchService().getApprovedBranchById(getUserWorkspace().getLoggedInUser().getBranchCode());
 		if (branch != null) {
 			customer.setCustDftBranch(branch.getBranchCode());
 			customer.setLovDescCustDftBranchName(branch.getBranchDesc());
 		}
 
-		// Setting User Branch to Customer Branch
+		//Setting User Branch to Customer Branch
 		CustomerType customerType = getCustomerTypeService()
 				.getApprovedCustomerTypeById(PennantConstants.DEFAULT_CUST_TYPE);
 		if (customerType != null) {
@@ -622,7 +618,8 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		if (doClose(false)) {
@@ -679,14 +676,6 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {

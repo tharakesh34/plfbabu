@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,13 +41,13 @@ import com.pennanttech.dataengine.util.DataEngineUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public class CorporateCibilReport extends BasicDao<Object> {
 	protected static final Logger logger = LoggerFactory.getLogger(CorporateCibilReport.class);
-	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_CORPORATE_EXTRACT_STATUS");
-
+	public static DataEngineStatus EXTRACT_STATUS = StepUtil.CIBIL_EXTRACT_CORPORATE;
 	private static final String DATE_FORMAT = "ddMMyyyy";
 	private CibilFileInfo fileInfo;
 	private CibilMemberDetail memberDetails;
@@ -203,10 +202,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		StringBuilder builder = new StringBuilder(reportLocation);
 		builder.append(File.separator);
 		builder.append(memberId);
-		builder.append("-");
+		builder.append("_");
 		builder.append(DateUtil.getSysDate("ddMMYYYY"));
-		builder.append("-");
-		builder.append(DateUtil.getSysDate("Hmmss"));
+		//builder.append("_");
+		//builder.append(DateUtil.getSysDate("Hmmss"));
 		builder.append(".txt");
 		reportName = new File(builder.toString());
 
@@ -1432,15 +1431,16 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		}
 
 	}
-
+	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	private void initlize() {
-		memberDetails = cibilService.getMemberDetails(PennantConstants.PFF_CUSTCTG_CORP);
+		memberDetails = cibilService.getMemberDetailsByType(PennantConstants.PFF_CUSTCTG_CORP,
+				PennantConstants.PFF_CIBIL_TYPE_GENERATE);
 		totalRecords = 0;
 		processedRecords = 0;
 		successCount = 0;
 		failedCount = 0;
 
-		EXTRACT_STATUS.reset();
+		//EXTRACT_STATUS.reset();
 	}
 
 	private String updateRemarks() {
@@ -1591,7 +1591,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			value = BigDecimal.ZERO;
 		}
 
-		value = value.setScale(0, RoundingMode.DOWN);
+		value = value.setScale(0, BigDecimal.ROUND_DOWN);
 
 		addField(record, value.toString());
 	}

@@ -261,6 +261,24 @@
 													<label id="label_FinanceMainDialog_GraceBaseRate" value="${c:l('label_FinanceMainDialog_GraceBaseRate.value')}" />
 													<ratebox id="graceRate" />
 												</row>
+												<row id="row_GrcAdvBaseRate" visible="false">
+													<label id="label_FinanceMainDialog_GrcAdvBaseRate" value="${c:l('label_FinanceMainDialog_GrcAdvBaseRate.value')}" />
+													<extendedcombobox id="grcAdvBaseRate" />
+													<label id="label_FinanceMainDialog_GrcAdvMargin" value="${c:l('label_FinanceMainDialog_GrcAdvMargin.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="grcAdvMargin" width="125px" maxlength="15" style="text-align:right" />
+														<space spacing="2px" />
+														<decimalbox id="grcAdvEffRate" width="120px" maxlength="15" readonly="true" tabindex="-1" />
+													</hbox>
+												</row>
+												<row id="row_GrcAdvPftRate" visible="false">
+													<label id="label_FinanceMainDialog_GrcAdvPftRate" value="${c:l('label_FinanceMainDialog_GrcAdvPftRate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="grcAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
+													</hbox>
+												</row>
 												<row id="row_FinGrcRates" visible="false">
 													<label id="label_FinanceMainDialog_FinGrcMinRate" value="${c:l('label_FinanceMainDialog_FinGrcMinRate.value')}" />
 													<hbox>
@@ -371,6 +389,30 @@
 												<row id="repayBaseRateRow" visible="false">
 													<label id="label_FinanceMainDialog_RepayBaseRate" value="${c:l('label_FinanceMainDialog_RepayBaseRate.value')}" />
 													<ratebox id="repayRate" />
+												</row>
+												<row id="row_RpyAdvBaseRate" visible="false">
+													<label id="label_FinanceMainDialog_RpyAdvBaseRate" value="${c:l('label_FinanceMainDialog_RpyAdvBaseRate.value')}" />
+													<extendedcombobox id="rpyAdvBaseRate" />
+													<label id="label_FinanceMainDialog_RpyAdvMargin" value="${c:l('label_FinanceMainDialog_RpyAdvMargin.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="rpyAdvMargin" width="125px" maxlength="15" style="text-align:right" />
+														<space spacing="2px" />
+														<decimalbox id="rpyAdvEffRate" width="120px" maxlength="15" readonly="true" tabindex="-1" />
+													</hbox>
+												</row>
+												<row id="row_RpyAdvPftRate" visible="false">
+													<label id="label_FinanceMainDialog_RpyAdvPftRate" value="${c:l('label_FinanceMainDialog_RpyAdvPftRate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="rpyAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
+													</hbox>
+												</row>
+												<row id="row_supplementRent" visible="false">
+													<label id="label_FinanceMainDialog_SupplementRent" value="${c:l('label_FinanceMainDialog_SupplementRent.value')}" />
+													<currencyBox id="supplementRent" />
+													<label id="label_FinanceMainDialog_IncreasedCost" value="${c:l('label_FinanceMainDialog_IncreasedCost.value')}" />
+													<currencyBox id="increasedCost" />
 												</row>
 												<row id="row_FinRepRates" visible="false">
 													<label id="label_FinanceMainDialog_FinMinRate" value="${c:l('label_FinanceMainDialog_FinMinRate.value')}" />

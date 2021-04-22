@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -33,6 +33,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -285,6 +286,7 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 					" cif, custId, custName, keyReference, collateralType, collateralRef,contactNumber1, createdon, ");
 			sql.append(
 					" contactNumber2, collateralCcy, collateralLoc, reasonCode, reasonDesc, agencyName, agency, productCategory, verificationcategory,");
+			sql.append("loanType, lovDescLoanTypeName, sourcingBranch, lovDescSourcingBranch,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -335,12 +337,14 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	}
 
 	@Override
-	public List<Verification> getTvValuation(List<Long> verificationIDs) {
+	public List<Verification> getTvValuation(List<Long> verificationIDs, String type) {
 		logger.debug(Literal.ENTERING); // Prepare the SQL. 
 		StringBuilder sql = new StringBuilder(
 				"SELECT VERIFICATIONID AS ID, COLLATERALREF REFERENCEFOR, VALUATIONAMOUNT, AGENCYNAME, ");
 		sql.append(
-				" FINALVALAMT, DECISIONONVAL AS FINALVALDECISION, FINALVALREMARKS,COLLATERALTYPE,RECORDSTATUS AS TVRECORDSTATUS FROM VERIFICATION_TV_VIEW ");
+				" FINALVALAMT, DECISIONONVAL AS FINALVALDECISION, FINALVALREMARKS,COLLATERALTYPE,RECORDSTATUS AS TVRECORDSTATUS");
+		sql.append(" FROM VERIFICATION_TV");
+		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" WHERE RECORDSTATUS = :RECORDSTATUS ");
 		sql.append(" AND VERIFICATIONID IN (:VERIFICATIONIDS) ");
 		// Execute the SQL, binding the arguments. 
@@ -377,16 +381,14 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 	}
 
 	@Override
-	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName) {
-		StringBuilder sql = null;
-		Map<String, Object> mapValues = new HashMap<>();
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
-		sql.append(" select  T.TOTALVALUATIONASPE from (select t1.reference from collateral_");
+	public Map<String, Object> getCostOfPropertyValue(String collRef, String subModuleName, String column) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select T.").append(column).append(" from (select T1.");
+		sql.append(column).append(", T1.reference from collateral_");
 		sql.append(subModuleName);
 		sql.append("_ed T1");
 		sql.append(" union all");
-		sql.append(" select T1.TOTALVALUATIONASPE,t1.reference from collateral_");
+		sql.append(" select T1.").append(column).append(", T1.reference from collateral_");
 		sql.append(subModuleName);
 		sql.append("_ed_temp T1");
 		sql.append(" where not exists");
@@ -394,29 +396,41 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append(subModuleName);
 		sql.append("_ed");
 		sql.append(" where reference = T1.reference))t where t.reference = :reference");
-		source = new MapSqlParameterSource();
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", collRef);
+
 		try {
-			mapValues = jdbcTemplate.queryForMap(sql.toString(), source);
+			return jdbcTemplate.queryForMap(sql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not found in Collateral{}_ed main and tables for the specified Reference >> {}",
+					subModuleName, collRef);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		return mapValues;
+
+		return new HashMap<>();
 	}
 
 	@Override
 	public String getPropertyCity(String collRef, String subModuleName) {
-		StringBuilder sql = null;
 
-		String propCity = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
-		sql.append(" select t.PROPERTYCITY from (select T1.PROPERTYCITY, T1.reference from collateral_");
+		String column = "CITY";
+		//Agency filter issue based on Collateral City
+		String value = ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN;
+		if (StringUtils.isNotBlank(value)) {
+			column = value;
+		}
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select t.").append(column).append(" from (select T1.").append(column);
+		sql.append(", T1.reference from collateral_");
 		sql.append(subModuleName);
 		sql.append("_ed T1");
 		sql.append(" union all");
-		sql.append(" select T1.PROPERTYCITY, T1.reference from collateral_");
+		sql.append(" select T1.").append(column).append(", T1.reference from collateral_");
 		sql.append(subModuleName);
 		sql.append("_ed_temp T1");
 		sql.append(" where not exists");
@@ -425,15 +439,17 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 		sql.append("_ed");
 		sql.append(" where reference = T1.reference))t where t.reference = :reference");
 
-		source = new MapSqlParameterSource();
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", collRef);
+
 		try {
-			propCity = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (DataAccessException e) {
+			return jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		return propCity;
+		return null;
 	}
 
 	@Override

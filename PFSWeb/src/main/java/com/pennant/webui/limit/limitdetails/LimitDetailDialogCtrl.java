@@ -55,7 +55,8 @@ import java.util.Set;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -122,7 +123,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LimitDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LimitDetailDialogCtrl.class);
 
 	/*
 	 * ************************************************************************ All the components that are defined here
@@ -771,7 +772,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			this.limiDialogRule.setDescription(aLimitHeader.getQueryDesc());
 
 		} else {
-			aLimitHeader.setLimitCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+			aLimitHeader.setLimitCcy(SysParamUtil.getAppCurrency());
 			this.active.setChecked(true);
 		}
 
@@ -1370,7 +1371,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				if (StringUtils.isNotBlank(aLimitHeader.getCustCIF())) {
 					reference = aLimitHeader.getCustCIF();
 				} else {
-					reference = aLimitHeader.getCustGrpCode();
+					reference = aLimitHeader.getRuleCode();
 				}
 				String msg = PennantApplicationUtil.getSavingStatus(aLimitHeader.getRoleCode(),
 						aLimitHeader.getNextRoleCode(), reference, " Limit Setup ", aLimitHeader.getRecordStatus());

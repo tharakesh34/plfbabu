@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AbstractListController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 6332080471910971732L;
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private static final int SEARCH_ROW_SIZE = 27;
 	private static final int LIST_ROW_SIZE = 26;

@@ -1,15 +1,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AccountTypeGroupDAO;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
@@ -21,7 +22,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> implements AccountTypeGroupDAO {
-	private static Logger logger = Logger.getLogger(AccountTypeGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AccountTypeGroupDAOImpl.class);
 
 	public AccountTypeGroupDAOImpl() {
 		super();
@@ -57,8 +58,7 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountTypeGroup);
-		RowMapper<AccountTypeGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AccountTypeGroup.class);
+		RowMapper<AccountTypeGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountTypeGroup.class);
 
 		try {
 			accountTypeGroup = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -126,8 +126,8 @@ public class AccountTypeGroupDAOImpl extends SequenceDao<AccountTypeGroup> imple
 		logger.debug(Literal.ENTERING);
 
 		if (accountTypeGroup.getId() == Long.MIN_VALUE) {
-			accountTypeGroup.setId(getNextId("SeqAccountTypeGroup"));
-			logger.debug("get NextID:" + accountTypeGroup.getId());
+			accountTypeGroup.setId(getNextValue("SeqAccountTypeGroup"));
+			logger.debug("get NextValue:" + accountTypeGroup.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AccountTypeGroup");

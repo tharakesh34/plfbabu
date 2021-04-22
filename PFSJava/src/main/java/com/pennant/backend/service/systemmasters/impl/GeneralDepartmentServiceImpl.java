@@ -43,7 +43,8 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.TableType;
 public class GeneralDepartmentServiceImpl extends GenericService<GeneralDepartment>
 		implements GeneralDepartmentService {
 
-	private static Logger logger = Logger.getLogger(GeneralDepartmentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GeneralDepartmentDAOImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private GeneralDepartmentDAO generalDepartmentDAO;

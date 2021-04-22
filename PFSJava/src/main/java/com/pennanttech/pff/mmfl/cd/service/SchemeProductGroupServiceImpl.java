@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -23,7 +24,7 @@ import com.pennattech.pff.mmfl.cd.dao.SchemeProductGroupDAO;
 
 public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductGroup>
 		implements SchemeProductGroupService {
-	private static final Logger logger = Logger.getLogger(SchemeProductGroupServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SchemeProductGroupServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SchemeProductGroupDAO schemeProductGroupDAO;

@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -93,7 +94,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(AccountMappingDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AccountMappingDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -108,7 +109,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 	private transient AccountMappingListCtrl accountMappingListCtrl;
 	private transient AccountMappingService accountMappingService;
-	private RuleExecutionUtil ruleExecutionUtil;
 
 	/**
 	 * default constructor.<br>
@@ -275,7 +275,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 					executeMap.put("acType", transactionEntry.getAccountType());
 					executeMap.put("ae_finType", financeType.getFinType());
-					String glCode = (String) ruleExecutionUtil.executeRule(rule == null ? "" : rule.getSQLRule(),
+					String glCode = (String) RuleExecutionUtil.executeRule(rule == null ? "" : rule.getSQLRule(),
 							executeMap, null, RuleReturnType.CALCSTRING);
 
 					if (StringUtils.isBlank(glCode) || glCodeList.contains(glCode)) {
@@ -1083,14 +1083,6 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 	public void setAccountMappingService(AccountMappingService accountMappingService) {
 		this.accountMappingService = accountMappingService;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setAccountMapping(AccountMapping accountMapping) {

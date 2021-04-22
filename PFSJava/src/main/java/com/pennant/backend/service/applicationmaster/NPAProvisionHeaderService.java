@@ -49,6 +49,7 @@ import com.pennant.backend.model.applicationmaster.AssetClassificationHeader;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennanttech.pff.core.TableType;
 
 public interface NPAProvisionHeaderService {
@@ -71,11 +72,15 @@ public interface NPAProvisionHeaderService {
 
 	NPAProvisionHeader getNPAProvisionHeader(NPAProvisionHeader nPAProvisionHeader, TableType tableType);
 
-	boolean getIsFinTypeExists(String string, TableType view);
+	boolean getIsFinTypeExists(String finType, Long npaTemplateId, TableType type);
 
 	List<NPAProvisionDetail> getNPAProvisionDetailList(long id, TableType view);
 
 	NPAProvisionHeader getNewNPAProvisionHeader(NPAProvisionHeader nPAProvisionHeader, TableType view);
 
-	NPAProvisionHeader getNPAHeaderByFinType(String finType, TableType view);
+	NPAProvisionHeader getNewNPAProvisionHeaderByTemplate(NPAProvisionHeader provisionHeader, TableType tableType);
+
+	List<Rule> getRuleByModuleAndEvent(String module, String event, String tableType);
+
+	List<NPAProvisionHeader> getNPAProvisionsListByFintype(String finType, TableType tableType);
 }

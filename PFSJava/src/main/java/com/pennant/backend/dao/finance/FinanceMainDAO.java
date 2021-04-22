@@ -43,7 +43,6 @@
 package com.pennant.backend.dao.finance;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,15 +50,21 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
+import com.pennant.backend.model.ddapayments.DDAPayments;
+import com.pennant.backend.model.finance.BulkDefermentChange;
+import com.pennant.backend.model.finance.BulkProcessDetails;
+import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinanceMainDAO {
@@ -124,8 +129,6 @@ public interface FinanceMainDAO {
 
 	boolean isFinReferenceExists(String id, String type, boolean isWIF);
 
-	void listUpdate(ArrayList<FinanceMain> financeMain, String type);
-
 	List<String> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
 
 	List<BigDecimal> getActualPftBal(String finReference, String type);
@@ -142,6 +145,10 @@ public interface FinanceMainDAO {
 	List<String> getFinanceReferenceList();
 
 	FinanceSummary getFinanceProfitDetails(String finRef);
+
+	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
+
+	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
 
 	Boolean saveRejectFinanceDetails(FinanceMain financeMain);
 
@@ -182,6 +189,17 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceMainByRef(String reference, String type, boolean isRejectFinance);
 
+	// Rollover Finance Details
+	List<String> getRollOverLimitRefList();
+
+	List<String> getRollOverFinTypeList(String limitRef);
+
+	List<Date> getRollOverDateList(String limitRef, String finType);
+
+	List<RolledoverFinanceDetail> getFinanceList(String limitRef, String finType, Date rolloverDate);
+
+	List<DDAPayments> getDDAPaymentsList(String repaymthAutodda, Date appDate);
+
 	FinanceMain getFinanceMainForManagerCheque(String finReference, String type);
 
 	void updateRepaymentAmount(String finReference, BigDecimal repaymentAmount);
@@ -192,7 +210,7 @@ public interface FinanceMainDAO {
 
 	String getCurrencyByAccountNo(String accountNo);
 
-	void updateMaturity(String finReference, String closingStatus, boolean finIsActive);
+	void updateMaturity(String finReference, String closingStatus, boolean finIsActive, Date date);
 
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
 
@@ -245,6 +263,8 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinMainsForEODByFinRef(String finReference, boolean isActive);
 
+	int getFinanceMainByBank(String bankCode, String type);
+
 	void updateFinanceInEOD(FinanceMain financeMain, List<String> updateFields, boolean rateRvw);
 
 	void updatePaymentInEOD(FinanceMain financeMain);
@@ -292,9 +312,15 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getUnApprovedFinances();
 
 	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
-			String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
+			String purpose, boolean wif);// ### 18-07-2018 Ticket ID :
+																																			// 124998,receipt upload
 
-	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ### 12-07-2018 Ticket ID : 12499
+	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ###
+																							// 12-07-2018
+																							// Ticket
+																							// ID
+																							// :
+																							// 12499
 
 	// ### 10-09-2018,Ticket id:124998
 	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
@@ -302,7 +328,7 @@ public interface FinanceMainDAO {
 	FinanceType getFinTypeDetailsByFinreferene(String finReference, String string, boolean b);
 
 	// ### 10-10-2018,Ticket id:124998
-	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
+	FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif);
 
 	boolean isDeveloperFinance(String finReference, String type, boolean wif);
 
@@ -328,7 +354,12 @@ public interface FinanceMainDAO {
 
 	FinanceMain isFlexiLoan(String finReference);
 
-	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ### 17-07-2018 Ticket ID : 127950
+	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ###
+																							// 17-07-2018
+																							// Ticket
+																							// ID
+																							// :
+																							// 127950
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
@@ -341,6 +372,8 @@ public interface FinanceMainDAO {
 	boolean isFinActive(String finReference);
 
 	String getFinanceMainByRcdMaintenance(String finReference, String type);
+
+	FinanceMain getRcdMaintenanceByRef(String finReference, String type);
 
 	void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize);
 
@@ -414,5 +447,37 @@ public interface FinanceMainDAO {
 	FinanceMain getFinBasicDetails(String finReference, String type);
 
 	void updateDeductFeeDisb(FinanceMain financeMain, TableType tableType);
+
+	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
+
+	List<UserPendingCases> getUserPendingCasesDetails(String userLogin, String roleCode);
+
+	FinanceMain getFinDetailsForHunter(String leadId, String type);
+
+	DMSQueue getOfferIdByFin(DMSQueue dmsQueue);
+
+	void updatePmay(String finReference, boolean pmay, String type);
+
+	FinCustomerDetails getDetailsByOfferID(String offerID);
+
+	List<FinanceMain> getFinanceByInvReference(String finReference, String type);
+
+	List<String> getInvestmentFinRef(String finReference, String type);
+
+	List<String> getParentRefifAny(String finReference, String type, boolean isFromAgr);
+
+	Date getClosedDate(String finReference);
+
+	void updateTdsApplicable(FinanceMain financeMain);
+
+	boolean ispmayApplicable(String finReference, String type);
+
+	void updateRepaymentAmount(FinanceMain financeMain);
+
+	void updateRestructure(String finReference, boolean restructure);
+
+	void updateWriteOffStatus(String finReference, boolean writeoffLoan);
+
+	FinanceMain getFinCategoryByFinRef(String finReference);
 
 }

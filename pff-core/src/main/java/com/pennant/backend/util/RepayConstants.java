@@ -101,6 +101,8 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_ONLINE = "ONLINE";
 	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
 	public static final String RECEIPTMODE_MOBILE = "MOBILE";
+	public static final String RECEIPTMODE_DIGITAL = "DIGITAL";
+	public static final String RECEIPTMODE_BANKDEPOSIT = "BANKDEPT";
 	// 2. Back-end Process Receipt Modes
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
 	public static final String RECEIPTMODE_ADVINT = "ADVINT";
@@ -136,7 +138,7 @@ public class RepayConstants {
 	public static final String ALLOCATION_LPFT = "LPFT";
 	public static final String ALLOCATION_ODC = "ODC";
 	public static final String ALLOCATION_FEE = "FEE";
-	//public static final String ALLOCATION_INS = "INS";
+	public static final String ALLOCATION_INS = "INS";
 	public static final String ALLOCATION_MANADV = "MANADV";
 	public static final String ALLOCATION_BOUNCE = "BOUNCE";
 
@@ -200,6 +202,8 @@ public class RepayConstants {
 	public static final String PEXC_FAILURE = "F";
 	public static final String PEXC_APPROV = "A";
 	public static final String PEXC_BOUNCE = "B";
+	public static final String PEXC_PAID = "PAID";
+	public static final String PEXC_FAILED = "FAILED";
 
 	// Receipt Payment Statuses
 	public static final String PAYSTATUS_APPROVED = "A";
@@ -221,6 +225,8 @@ public class RepayConstants {
 	public static final String PAYMENT_DOWNLOAD = "D";
 	public static final String PAYMENT_SUCCESS = "S";
 	public static final String PAYMENT_FAILURE = "F";
+	public static final String PAYMENT_PAID = "PAID";
+	public static final String PAYMENT_FAILED = "FAILED";
 
 	// presentmentResponse statuscodes
 	public static final String PRES_SUCCESS = "PR000";
@@ -238,9 +244,19 @@ public class RepayConstants {
 	//Received from
 	public static final String RECEIVED_CUSTOMER = "Customer";
 	public static final String RECEIVED_GOVT = "GOVERMENT";
+	public static final String RECEIVED_NONLOAN = "NON LOAN";
 
 	// Waiver types
 	public static final String INTEREST_WAIVER = "I"; // Profit Waiver
 	public static final String PRINCIPAL_WAIVER = "P"; // Principle Waiver
 
+	// For Non Lan Receipt
+	public static final String NONLAN_RECEIPT_NOTAPPLICABLE = "N";
+	public static final String NONLAN_RECEIPT_CUSTOMER = "C";
+
+	public static final String RECEIPT_MODE = "RCTMODE";
+	public static final String RECEIPT_CHANNEL = "RCTCHNL";
+	public static final String SUB_RECEIPT_MODE = "SUBRCTMODE";
+	public static final String RECEIPT_SOURCE = "RCTSRC";
+	public static final String RECEIPT_CHANNEL_MOBILE = "MOB";
 }

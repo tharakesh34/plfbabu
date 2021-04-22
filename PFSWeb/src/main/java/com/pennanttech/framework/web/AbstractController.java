@@ -11,7 +11,8 @@ import java.util.Map;
 import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.access.annotation.Secured;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -36,6 +37,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.South;
@@ -53,7 +55,6 @@ import com.pennant.FrequencyBox;
 import com.pennant.QueryBuilder;
 import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -63,7 +64,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.pagging.PagedListWrapper;
@@ -83,7 +83,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public abstract class AbstractController<T> extends GenericForwardComposer<Component> implements Serializable {
 	private static final long serialVersionUID = -1171206258809472640L;
-	private static final Logger logger = Logger.getLogger(AbstractController.class);
+	private static final Logger logger = LogManager.getLogger(AbstractController.class);
 
 	public static final int LIST_AREA_HEIGHT_OFFSET = 58;
 
@@ -212,7 +212,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 		doSetProperties();
 
-		renderListOnLoad = SysParamUtil.isAllowed(SMTParameterConstants.LIST_RENDER_ON_LOAD);
+		renderListOnLoad = ImplementationConstants.LIST_RENDER_ON_LOAD;
 
 	}
 
@@ -745,6 +745,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				((AccountSelectionBox) component).setReadonly(true);
 			} else if (component instanceof FrequencyBox) {
 				((FrequencyBox) component).setDisabled(true);
+			} else if (component instanceof Radio) {
+				((Radio) component).setDisabled(true);
 			}
 		} else {
 			if (component instanceof Combobox) {
@@ -793,6 +795,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				((AccountSelectionBox) component).setReadonly(false);
 			} else if (component instanceof FrequencyBox) {
 				((FrequencyBox) component).setDisabled(false);
+			} else if (component instanceof Radio) {
+				((Radio) component).setDisabled(false);
 			}
 		}
 	}

@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implements CustomerCategoryDAO {
-	private static Logger logger = Logger.getLogger(CustomerCategoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerCategoryDAOImpl.class);
 
 	public CustomerCategoryDAOImpl() {
 		super();
@@ -93,8 +94,7 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCategory);
-		RowMapper<CustomerCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerCategory.class);
+		RowMapper<CustomerCategory> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerCategory.class);
 
 		try {
 			customerCategory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

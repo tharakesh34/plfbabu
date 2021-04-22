@@ -56,6 +56,8 @@ public interface CovenantTypeDAO extends BasicCrudDao<CovenantType> {
 
 	CovenantType getCovenantTypeId(String covenanttype, String category, String type);
 
+	List<CovenantType> getCvntTypesByCatgy(String CategoryName, String type);
+
 	List<String> getRules();
 
 }

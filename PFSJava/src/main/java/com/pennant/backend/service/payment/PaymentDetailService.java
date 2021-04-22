@@ -85,4 +85,6 @@ public interface PaymentDetailService {
 
 	PaymentInstruction getPaymentInstructionDetails(long paymentId, String type);
 
+	long getPymntsCustId(long paymentId);
+
 }

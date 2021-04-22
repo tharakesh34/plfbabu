@@ -86,6 +86,34 @@ public class FinTypeAccounting extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FinTypeAccounting copyEntity() {
+		FinTypeAccounting entity = new FinTypeAccounting();
+		entity.setFinType(this.finType);
+		entity.setEvent(this.event);
+		entity.setEventDesc(this.eventDesc);
+		entity.setAccountSetID(this.accountSetID);
+		entity.setLovDescAccountingName(this.lovDescAccountingName);
+		entity.setLovDescEventAccountingName(this.lovDescEventAccountingName);
+		entity.setMandatory(this.mandatory);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setModuleId(this.moduleId);
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("eventDesc");

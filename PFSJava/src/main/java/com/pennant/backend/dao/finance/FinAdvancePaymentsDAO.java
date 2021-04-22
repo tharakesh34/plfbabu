@@ -93,4 +93,7 @@ public interface FinAdvancePaymentsDAO {
 
 	int getCountByPaymentId(String finReference, long paymentId);
 
+	int getFinAdvanceByVasRef(String finReference, String vasReference, String type);
+
+	void updateLLDate(FinAdvancePayments finAdvancePayments, String type);
 }

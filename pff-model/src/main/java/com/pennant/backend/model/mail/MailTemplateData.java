@@ -23,6 +23,7 @@ public class MailTemplateData {
 	private String custAddrProvince = "";
 	private String custAddrDistrict = "";
 	private String custAddrPincode = "";
+	private String custSalutation = "";
 
 	// User Details
 	private String userName = "";
@@ -90,6 +91,8 @@ public class MailTemplateData {
 	private String totalProfitPaid = "";
 	private String totalProfitBalance = "";
 	private String nextRepayDate = "";
+	private String emiAmount = "";
+	private String repayAmount = "";
 
 	// User Branch Address Details
 	private String finBranchAddrLine1 = "";
@@ -112,6 +115,7 @@ public class MailTemplateData {
 	private String feeAmount = "";
 	private String insAmount = "";
 	private String finType = "";
+	private String finTypeDesc = "";
 
 	// Receipts
 	private String amount = "";
@@ -121,7 +125,6 @@ public class MailTemplateData {
 	private String bounceReason = "";
 	private String cancellationReason = "";
 	private String limitAmount = "";
-
 	// ---------------------------------
 
 	// facility
@@ -145,6 +148,15 @@ public class MailTemplateData {
 	private String auditedDate;
 	private String auditYear;
 	private int auditPeriod;
+
+	// Treasury Investment
+	private String investmentRef;
+	private String totPrincipalAmt;
+	private String startDate;
+	private String principalInvested;
+	private String principalMaturity;
+	private String principalDueToInvest;
+	private String avgPftRate;
 
 	// Provision
 	private String principalDue;
@@ -180,6 +192,10 @@ public class MailTemplateData {
 	private String receiptPurpose;
 	private String drawingPower;
 	private String currentDate;
+	//Including grace and installments
+	private String totalTenor;
+
+	private String qryDesc;
 
 	public MailTemplateData() {
 
@@ -299,6 +315,14 @@ public class MailTemplateData {
 
 	public void setCustAddrPincode(String custAddrPincode) {
 		this.custAddrPincode = custAddrPincode;
+	}
+
+	public String getCustSalutation() {
+		return custSalutation;
+	}
+
+	public void setCustSalutation(String custSalutation) {
+		this.custSalutation = custSalutation;
 	}
 
 	public String getUserName() {
@@ -869,6 +893,62 @@ public class MailTemplateData {
 		this.auditPeriod = auditPeriod;
 	}
 
+	public String getInvestmentRef() {
+		return investmentRef;
+	}
+
+	public void setInvestmentRef(String investmentRef) {
+		this.investmentRef = investmentRef;
+	}
+
+	public String getTotPrincipalAmt() {
+		return totPrincipalAmt;
+	}
+
+	public void setTotPrincipalAmt(String totPrincipalAmt) {
+		this.totPrincipalAmt = totPrincipalAmt;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getPrincipalInvested() {
+		return principalInvested;
+	}
+
+	public void setPrincipalInvested(String principalInvested) {
+		this.principalInvested = principalInvested;
+	}
+
+	public String getPrincipalMaturity() {
+		return principalMaturity;
+	}
+
+	public void setPrincipalMaturity(String principalMaturity) {
+		this.principalMaturity = principalMaturity;
+	}
+
+	public String getPrincipalDueToInvest() {
+		return principalDueToInvest;
+	}
+
+	public void setPrincipalDueToInvest(String principalDueToInvest) {
+		this.principalDueToInvest = principalDueToInvest;
+	}
+
+	public String getAvgPftRate() {
+		return avgPftRate;
+	}
+
+	public void setAvgPftRate(String avgPftRate) {
+		this.avgPftRate = avgPftRate;
+	}
+
 	public String getGraceTerms() {
 		return graceTerms;
 	}
@@ -1360,6 +1440,46 @@ public class MailTemplateData {
 
 	public void setLimitAmount(String limitAmount) {
 		this.limitAmount = limitAmount;
+	}
+
+	public String getEmiAmount() {
+		return emiAmount;
+	}
+
+	public void setEmiAmount(String emiAmount) {
+		this.emiAmount = emiAmount;
+	}
+
+	public String getRepayAmount() {
+		return repayAmount;
+	}
+
+	public void setRepayAmount(String repayAmount) {
+		this.repayAmount = repayAmount;
+	}
+
+	public String getTotalTenor() {
+		return totalTenor;
+	}
+
+	public void setTotalTenor(String totalTenor) {
+		this.totalTenor = totalTenor;
+	}
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
+	}
+
+	public String getQryDesc() {
+		return qryDesc;
+	}
+
+	public void setQryDesc(String qryDesc) {
+		this.qryDesc = qryDesc;
 	}
 
 }

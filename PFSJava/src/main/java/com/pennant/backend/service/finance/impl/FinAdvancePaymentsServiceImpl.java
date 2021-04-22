@@ -45,15 +45,18 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,14 +67,20 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -82,6 +91,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -97,8 +107,11 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
@@ -107,7 +120,7 @@ import com.pennanttech.pff.external.BankAccountValidationService;
  */
 public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePayments>
 		implements FinAdvancePaymentsService {
-	private static final Logger logger = Logger.getLogger(FinAdvancePaymentsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinAdvancePaymentsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PostingsDAO postingsDAO;
@@ -125,6 +138,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private transient PennyDropService pennyDropService;
 	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
+	private DocumentDetailsDAO documentDetailsDAO;
+
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+	private VASConfigurationDAO vASConfigurationDAO;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -171,11 +188,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentsById(String id, String type) {
-		logger.debug("Entering");
-		List<FinAdvancePayments> finAdvancePayments = getFinAdvancePaymentsDAO().getFinAdvancePaymentsByFinRef(id,
-				type);
-		logger.debug("Leaving");
-		return finAdvancePayments;
+		return finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(id, type);
 	}
 
 	@Override
@@ -277,13 +290,18 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				if (saveRecord) {
 					if (approveRec) {
 						finPayment.setOnlineProcReq(true);
-						finPayment.setStatus(DisbursementConstants.STATUS_APPROVED);
 					}
 					getFinAdvancePaymentsDAO().save(finPayment, tableType);
+					if (finPayment.getDocImage() != null) {
+						saveDocumentDetails(finPayment);
+					}
 				}
 
 				if (updateRecord) {
 					getFinAdvancePaymentsDAO().update(finPayment, tableType);
+					if (finPayment.getDocImage() != null) {
+						saveDocumentDetails(finPayment);
+					}
 				}
 
 				if (deleteRecord) {
@@ -403,12 +421,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceDetail financeDetail) {
-		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeDetail);
+			String auditTranType, String usrLanguage, FinanceDetail financeDetail, boolean isApi) {
+		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeDetail, isApi);
 	}
 
 	private List<AuditDetail> doValidation(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceDetail financeDetail) {
+			String auditTranType, String usrLanguage, FinanceDetail financeDetail, boolean isApi) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -416,7 +434,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			List<AuditDetail> advancePayAuditDetails = getAdvancePaymentAuditDetail(finAdvancePayments, auditTranType,
 					method, workflowId);
 			for (AuditDetail auditDetail : advancePayAuditDetails) {
-				validateAdvancePayment(auditDetail, method, usrLanguage, financeDetail);
+				validateAdvancePayment(auditDetail, method, usrLanguage, financeDetail, isApi);
 			}
 			auditDetails.addAll(advancePayAuditDetails);
 		}
@@ -522,7 +540,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method,
-			FinanceDetail financeDetail) {
+			FinanceDetail financeDetail, boolean isApi) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAdvancePayments finAdvancePay = (FinAdvancePayments) auditDetail.getModelData();
@@ -542,8 +560,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = finAdvancePay.getFinReference();
-		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+		valueParm[0] = String.valueOf(finAdvancePay.getPaymentId());
+		errParm[0] = PennantJavaUtil.getLabel("label_PaymentId") + ": " + valueParm[0];
 
 		if (finAdvancePay.isNew()) { // for New record or new record into work flow
 
@@ -631,7 +649,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65033", errParm, valueParm), usrLanguage));
 				}
-			} else if (!StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)) {
+			} else if (!StringUtils.equals(finAdvancePay.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IFT)
+					&& !isApi) {
 				String[] errParam = new String[1];
 				errParam[0] = finAdvancePay.getPaymentType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -725,6 +744,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinScheduleData schd = financeDetail.getFinScheduleData();
 		if (schd != null && schd.getDisbursementDetails() != null) {
 			for (FinanceDisbursement disbursement : schd.getDisbursementDetails()) {
+				if (disbursement.getLinkedDisbId() != 0) {
+					continue;
+				}
 				totPOAmount = totPOAmount.add(disbursement.getDisbAmount());
 			}
 		}
@@ -767,12 +789,55 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 
 		if (isQDPProcess(financeDetail)
-				|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				&& FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())) {
 			processDisbursments(financeDetail);
 			// Postings preparation
-			generateAccounting(financeDetail);
+			if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+				if (!ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+					generateAccounting(financeDetail);
+				}
+			}
 			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, financeDetail.isDisbStp()));
 			delete(financeDetail.getAdvancePaymentsList(), "_Temp", "");
+			return auditDetails;
+		} else if (ImplementationConstants.ALW_QDP_CUSTOMIZATION
+				&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+				&& StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
+						PennantConstants.RCD_STATUS_APPROVED)
+				&& financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
+			int i = 0;
+			for (FinAdvancePayments finAdPayment : finAdvancePayList) {
+				if (finAdPayment.getStatus().equalsIgnoreCase(DisbursementConstants.STATUS_PRINT)) {
+					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(finAdPayment.getPaymentType())
+							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(finAdPayment.getPaymentType())) {
+						finAdPayment.setStatus(DisbursementConstants.STATUS_PAID);
+						++i;
+						finAdvancePaymentsDAO.updateLLDate(finAdPayment, "");
+						String[] fields = PennantJavaUtil.getFieldDetails(finAdPayment,
+								finAdPayment.getExcludeFields());
+						auditDetails.add(new AuditDetail(auditTranType, i, fields[0], fields[1],
+								finAdPayment.getBefImage(), finAdPayment));
+					}
+				}
+			}
+			return auditDetails;
+		} else if (ImplementationConstants.ALW_QDP_CUSTOMIZATION
+				&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
+				&& StringUtils.contains(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
+						"Resubmit")
+				&& financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
+			int i = 0;
+			for (FinAdvancePayments finAdPayment : finAdvancePayList) {
+				if (finAdPayment.getStatus().equalsIgnoreCase(DisbursementConstants.STATUS_PRINT)) {
+
+					finAdPayment.setStatus(DisbursementConstants.STATUS_REJECTED);
+					++i;
+					finAdvancePaymentsDAO.updateLLDate(finAdPayment, "");
+					String[] fields = PennantJavaUtil.getFieldDetails(finAdPayment, finAdPayment.getExcludeFields());
+					auditDetails.add(new AuditDetail(auditTranType, i, fields[0], fields[1], finAdPayment.getBefImage(),
+							finAdPayment));
+				}
+			}
 			return auditDetails;
 		} else {
 			auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, auditTranType, financeDetail.isDisbStp()));
@@ -823,9 +888,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		if (CollectionUtils.isNotEmpty(advPayList)) {
 			for (int i = 0; i < advPayList.size(); i++) {
 				FinAdvancePayments advPayment = advPayList.get(i);
-				if (finAdvanceMap.containsKey(advPayment.getDisbSeq() + "_" + advPayment.getPaymentSeq())) {
-					advPayment.setLinkedTranId(
-							finAdvanceMap.get(advPayment.getDisbSeq() + "_" + advPayment.getPaymentSeq()));
+				if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
+					advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
 				}
 			}
 		}
@@ -897,6 +961,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			 * if (financeMain.isQuickDisb() && checkMode) { if (!StringUtils.equals(finAdvPayment.getPaymentType(),
 			 * DisbursementConstants.PAYMENT_TYPE_CHEQUE)) { checkMode = false; } }
 			 */
+
+			//Skip the instruction if it is related to VAS
+			if (StringUtils.equals(DisbursementConstants.PAYMENT_DETAIL_VAS, finAdvPayment.getPaymentDetail())) {
+				continue;
+			}
+
 			if (!isDeleteRecord(finAdvPayment)) {
 				int key = finAdvPayment.getDisbSeq();
 
@@ -1004,6 +1074,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					continue;
 				}
 
+				// exclude inst based schedules
+				if (financeDisbursement.getLinkedDisbId() != 0) {
+					continue;
+				}
+
 				if (!group) {
 					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())) {
 						continue;
@@ -1039,11 +1114,255 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	}
 
+	/**
+	 * Method for validating VAS Instructions.<br>
+	 * Every VAS if the fee is greater than 0 then it is having an instruction <br>
+	 * Every VAS Instruction must be in the fee with amount greater than 0.<br>
+	 * 
+	 * @param advPaymentsList
+	 * @param validate
+	 * @return
+	 */
+	public List<ErrorDetail> validateVasInstructions(List<VASRecording> vasRecordingList,
+			List<FinAdvancePayments> advPaymentsList, boolean validate) {
+		logger.debug(Literal.ENTERING);
+		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
+		if (validate) {
+			//If the fee is greater than 0 then it is having an instruction.
+			if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+
+				for (VASRecording vasRecording : vasRecordingList) {
+
+					if (vasRecording.getFee().compareTo(BigDecimal.ZERO) <= 0) {
+						continue;
+					}
+
+					//if the given VAS fee has no Instruction
+					FinAdvancePayments advancePayments = getVasInstruction(advPaymentsList,
+							vasRecording.getVasReference());
+					if (advancePayments == null) {
+						String[] errParm = new String[1];
+						String[] valueParm = new String[1];
+						errParm[0] = vasRecording.getVasReference();
+						valueParm[0] = vasRecording.getVasReference();
+						ErrorDetail error = new ErrorDetail(PennantConstants.KEY_FIELD, "VINST01", errParm, valueParm);
+						errorList.add(error);
+						//if the given VAS fee has not matched with Instruction amount
+					} else if (vasRecording.getFee().compareTo(advancePayments.getAmtToBeReleased()) != 0) {
+						String[] errParm = new String[1];
+						String[] valueParm = new String[1];
+						errParm[0] = vasRecording.getVasReference();
+						valueParm[0] = vasRecording.getVasReference();
+						ErrorDetail error = new ErrorDetail(PennantConstants.KEY_FIELD, "VINST03", errParm, valueParm);
+						errorList.add(error);
+					}
+				}
+			}
+
+			//VAS Instruction must be in the fee with amount greater than 0
+			if (CollectionUtils.isNotEmpty(advPaymentsList)) {
+
+				for (FinAdvancePayments finAdvancePayments : advPaymentsList) {
+
+					if (!StringUtils.equals(finAdvancePayments.getPaymentDetail(),
+							DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+						continue;
+					}
+
+					if (isDeleteRecord(finAdvancePayments)) {
+						continue;
+					}
+					//if instruction is there and finance having no VasRecording
+					VASRecording vasRecording = getVasInst(finAdvancePayments.getVasReference(), vasRecordingList);
+					if (vasRecording == null) {
+						String[] errParm = new String[1];
+						String[] valueParm = new String[1];
+						errParm[0] = finAdvancePayments.getVasReference();
+						valueParm[0] = finAdvancePayments.getVasReference();
+						ErrorDetail error = new ErrorDetail(PennantConstants.KEY_FIELD, "VINST02", errParm, valueParm);
+						errorList.add(error);
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorList;
+	}
+
+	/**
+	 * Method to get the AdvancePayment instruction for the given VasReference.
+	 * 
+	 * @param list
+	 * @param vasReference
+	 * @return
+	 */
+	private FinAdvancePayments getVasInstruction(List<FinAdvancePayments> list, String vasReference) {
+		FinAdvancePayments advancePayments = null;
+		if (CollectionUtils.isEmpty(list)) {
+			return advancePayments;
+		}
+		for (FinAdvancePayments finAdvancePayments : list) {
+
+			if (!StringUtils.equalsIgnoreCase(finAdvancePayments.getPaymentDetail(),
+					DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+				continue;
+			}
+			if (!StringUtils.equalsIgnoreCase(vasReference, finAdvancePayments.getVasReference())) {
+				continue;
+			}
+
+			if (isDeleteRecord(finAdvancePayments)) {
+				continue;
+			}
+
+			return finAdvancePayments;
+		}
+		return advancePayments;
+	}
+
+	@Override
+	public List<FinAdvancePayments> processVasInstructions(List<VASRecording> vasRecordingList,
+			List<FinAdvancePayments> curAdvPaymentsList, String entityCode) {
+		logger.debug(Literal.ENTERING);
+		if (curAdvPaymentsList == null) {
+			curAdvPaymentsList = new ArrayList<>(1);
+		}
+
+		//Process VASRecording
+		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+			for (VASRecording vasRecording : vasRecordingList) {
+				if (isVasInstExists(curAdvPaymentsList, vasRecording.getVasReference())) {
+					continue;
+				}
+				VASConfiguration configuration = vasRecording.getVasConfiguration();
+				if (configuration == null) {
+					configuration = this.vASConfigurationDAO.getVASConfigurationByCode(vasRecording.getProductCode(),
+							"");
+				}
+				if (configuration == null) {
+					continue;
+				}
+				VASProviderAccDetail vasProvAccDetail = vASProviderAccDetailDAO
+						.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), entityCode, "_Aview");
+				if (vasProvAccDetail == null) {
+					continue;
+				}
+				FinAdvancePayments advancePayments = new FinAdvancePayments();
+				advancePayments.setFinReference(vasRecording.getFinReference());
+				advancePayments.setVasReference(vasRecording.getVasReference());
+				advancePayments.setNewRecord(true);
+				advancePayments.setWorkflowId(0);
+				advancePayments.setPaymentSeq(getNextPaymentSequence(curAdvPaymentsList));
+				advancePayments.setPaymentDetail(DisbursementConstants.PAYMENT_DETAIL_VAS);
+				advancePayments.setRecordType(PennantConstants.RCD_ADD);
+				advancePayments.setVersion(1);
+				advancePayments.setRecordStatus("");
+				advancePayments.setDisbCCy("INR");
+				advancePayments.setDisbSeq(1);
+				advancePayments.setStatus(DisbursementConstants.STATUS_NEW);
+				advancePayments.setLLDate(SysParamUtil.getAppDate());
+				advancePayments.setAmtToBeReleased(vasRecording.getFee());
+				advancePayments.setPaymentType(vasProvAccDetail.getPaymentMode());
+				advancePayments.setPartnerBankID(vasProvAccDetail.getPartnerBankId());
+				advancePayments.setPartnerbankCode(vasProvAccDetail.getPartnerBankCode());
+				advancePayments.setPartnerBankName(vasProvAccDetail.getPartnerBankName());
+
+				switch (advancePayments.getPaymentType()) {
+
+				case DisbursementConstants.PAYMENT_TYPE_CHEQUE:
+				case DisbursementConstants.PAYMENT_TYPE_DD:
+					advancePayments.setBankCode(vasProvAccDetail.getBankCode());
+					advancePayments.setBankName(vasProvAccDetail.getBankName());
+					advancePayments.setLiabilityHoldName(vasProvAccDetail.getProviderDesc());
+					advancePayments.setPrintingLoc(vasProvAccDetail.getBranchCode());
+					advancePayments.setPrintingLocDesc(vasProvAccDetail.getBranchDesc());
+					//SIZE not matched
+					//advancePayments.setLLReferenceNo(vasProvAccDetail.getAccountNumber());
+				case DisbursementConstants.PAYMENT_TYPE_IMPS:
+				case DisbursementConstants.PAYMENT_TYPE_NEFT:
+				case DisbursementConstants.PAYMENT_TYPE_RTGS:
+				case DisbursementConstants.PAYMENT_TYPE_IFT:
+				case DisbursementConstants.PAYMENT_TYPE_IST:
+					advancePayments.setBankBranchID(vasProvAccDetail.getBankBranchID());
+					advancePayments.setCity(vasProvAccDetail.getBranchCity());
+					advancePayments.setBranchBankCode(vasProvAccDetail.getBankCode());
+					advancePayments.setBranchBankName(vasProvAccDetail.getBankName());
+					advancePayments.setBranchDesc(vasProvAccDetail.getBranchDesc());
+					advancePayments.setiFSC(vasProvAccDetail.getIfscCode());
+					advancePayments.setBeneficiaryAccNo(vasProvAccDetail.getAccountNumber());
+					advancePayments.setBeneficiaryName(vasProvAccDetail.getProviderDesc());
+				default:
+					break;
+				}
+
+				curAdvPaymentsList.add(advancePayments);
+			}
+		}
+		//Process Existing instructions
+		Iterator<FinAdvancePayments> itr = curAdvPaymentsList.iterator();
+		while (itr.hasNext()) {
+			FinAdvancePayments finAdvancePayments = itr.next();
+			if (StringUtils.isBlank(finAdvancePayments.getVasReference())
+					|| PennantConstants.List_Select.equals(finAdvancePayments.getVasReference())) {
+				continue;
+			}
+			VASRecording vasRecording = getVasInst(finAdvancePayments.getVasReference(), vasRecordingList);
+			if (vasRecording == null) {
+				//need to remove that instruction;
+				if (PennantConstants.RCD_ADD.equals(finAdvancePayments.getRecordType())) {
+					itr.remove();
+				} else {
+					finAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				}
+				continue;
+			}
+			//Check VAS Amount(Update)
+			if (finAdvancePayments.getAmtToBeReleased().compareTo(vasRecording.getFee()) != 0) {
+				//TODO: Need to check data set req or not
+				//finAdvancePayments.setAmtToBeReleased(vasRecording.getFee());
+			}
+
+		}
+		logger.debug(Literal.LEAVING);
+		return curAdvPaymentsList;
+	}
+
+	private VASRecording getVasInst(String vasReference, List<VASRecording> vasRecordingList) {
+		if (CollectionUtils.isEmpty(vasRecordingList)) {
+			return null;
+		}
+		for (VASRecording vasRecording : vasRecordingList) {
+			if (StringUtils.equals(vasReference, vasRecording.getVasReference())) {
+				if (PennantConstants.RECORD_TYPE_CAN.equals(vasRecording.getRecordType())) {
+					return null;
+				}
+				return vasRecording;
+			}
+		}
+		return null;
+	}
+
+	private boolean isVasInstExists(List<FinAdvancePayments> curAdvPaymentsList, String vasReference) {
+		logger.debug(Literal.ENTERING);
+		if (CollectionUtils.isEmpty(curAdvPaymentsList)) {
+			return false;
+		}
+		for (FinAdvancePayments finAdvancePayments : curAdvPaymentsList) {
+			if (StringUtils.equals(vasReference, finAdvancePayments.getVasReference())) {
+				return true;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
 	private boolean isDeleteRecord(FinAdvancePayments aFinAdvancePayments) {
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
-				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
-				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
+		String recordType = aFinAdvancePayments.getRecordType();
+		String status = aFinAdvancePayments.getStatus();
+		if (PennantConstants.RECORD_TYPE_CAN.equals(recordType) || PennantConstants.RECORD_TYPE_DEL.equals(recordType)
+				|| DisbursementConstants.STATUS_CANCEL.equals(status)
+				|| DisbursementConstants.STATUS_REJECTED.equals(status)
+				|| DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(status)) {
 			return true;
 		}
 		return false;
@@ -1058,6 +1377,32 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 		return noValidation;
+	}
+
+	private void saveDocumentDetails(FinAdvancePayments finPayment) {
+		DocumentDetails details = new DocumentDetails();
+		details.setDocModule(DisbursementConstants.DISB_MODULE);
+		details.setDoctype(finPayment.getDocType());
+		details.setDocCategory(DisbursementConstants.DISB_DOC_TYPE);
+		details.setDocName(finPayment.getDocumentName());
+		details.setLastMntBy(finPayment.getLastMntBy());
+		details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+		details.setDocImage(finPayment.getDocImage());
+		details.setReferenceId(String.valueOf(finPayment.getPaymentId()));
+		details.setFinReference(finPayment.getFinReference());
+
+		saveDocument(DMSModule.FINANCE, DMSModule.DISBINST, details);
+		DocumentDetails oldDocumentDetails = documentDetailsDAO.getDocumentDetails(details.getReferenceId(),
+				details.getDocCategory(), details.getDocModule(), TableType.MAIN_TAB.getSuffix());
+
+		if (oldDocumentDetails != null && oldDocumentDetails.getDocId() != Long.MIN_VALUE) {
+			details.setDocId(oldDocumentDetails.getDocId());
+			documentDetailsDAO.update(details, TableType.MAIN_TAB.getSuffix());
+		} else {
+			documentDetailsDAO.save(details, TableType.MAIN_TAB.getSuffix());
+		}
 	}
 
 	@Override
@@ -1185,5 +1530,21 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	public void setPennyDropService(PennyDropService pennyDropService) {
 		this.pennyDropService = pennyDropService;
+	}
+
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	}
+
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	public DocumentDetailsDAO getDocumentDetailsDAO() {
+		return documentDetailsDAO;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
 	}
 }

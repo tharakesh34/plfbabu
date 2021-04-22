@@ -73,4 +73,7 @@ public interface IncomeTypeDAO extends BasicCrudDao<IncomeType> {
 	boolean isDuplicateKey(String incomeTypeCode, String incomeExpense, String category, TableType tableType);
 
 	List<IncomeType> getIncomeTypeList();
+
+	List<IncomeType> getDefaultIncomeTypeList();
+
 }

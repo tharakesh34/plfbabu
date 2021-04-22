@@ -6,7 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.external.posidex.PosidexDataExtarct;
 
 public class Posidex implements Tasklet {
-	private Logger logger = Logger.getLogger(Posidex.class);
+	private Logger logger = LogManager.getLogger(Posidex.class);
 
 	private Date valueDate;
 	private Date appDate;
@@ -56,7 +57,7 @@ public class Posidex implements Tasklet {
 
 			DataEngineStatus status = PosidexDataExtarct.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new PosidexProcessThread(Long.valueOf(1000))).start();
+			new Thread(new PosidexProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 

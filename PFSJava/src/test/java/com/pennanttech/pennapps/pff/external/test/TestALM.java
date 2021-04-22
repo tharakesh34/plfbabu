@@ -28,7 +28,7 @@ public class TestALM {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new ALMExtarct(dataSource, Long.valueOf(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process();
+			new ALMExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

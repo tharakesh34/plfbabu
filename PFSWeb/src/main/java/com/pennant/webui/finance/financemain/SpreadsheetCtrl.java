@@ -11,7 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -55,7 +56,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(SpreadsheetCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SpreadsheetCtrl.class);
 
 	protected Window window_SpreadSheetDialog;
 	protected Button button_FetchData;
@@ -687,5 +688,10 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
 		this.customerIncomeList = customerIncomeList;
+	}
+
+	public boolean doSave(Radiogroup userAction, boolean b) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

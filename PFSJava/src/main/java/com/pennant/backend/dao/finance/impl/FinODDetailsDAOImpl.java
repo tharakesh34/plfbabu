@@ -48,22 +48,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
@@ -75,6 +79,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>FinODDetails model</b> class.<br>
@@ -103,7 +108,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		parameterSource.addValue("FinReference", finReference);
 		parameterSource.addValue("FinODSchdDate", schdDate);
 
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			logger.debug(Literal.LEAVING);
@@ -136,7 +141,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", FinCurODPri = :FinCurODPri, FinCurODPft = :FinCurODPft");
 		sql.append(", FinCurODDays = :FinCurODDays, TotPenaltyAmt = :TotPenaltyAmt, TotWaived = :TotWaived");
 		sql.append(", TotPenaltyPaid = :TotPenaltyPaid, TotPenaltyBal = :TotPenaltyBal, FinLMdfDate = :FinLMdfDate");
-		sql.append(", LPIAmt = :LPIAmt, LPIPaid = :LPIPaid, LPIBal = :LPIBal, LPIWaived = :LPIWaived");
+		sql.append(", LPIPaid = :LPIPaid, LPIBal = :LPIBal, LPIWaived = :LPIWaived");
 		sql.append(", LpCpz = :LpCpz, LpCpzAmount = :LpCpzAmount, LpCurCpzBal = :LpCurCpzBal");
 		sql.append(" where FinReference = :FinReference and FinODSchdDate = :FinODSchdDate");
 		return sql;
@@ -187,24 +192,50 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	}
 
 	@Override
-	public void updateODDetailsBatch(List<FinODDetails> overdues) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Update FinODDetails");
-		sql.append(" set  FinODTillDate = :FinODTillDate, FinCurODAmt = :FinCurODAmt");
-		sql.append(", FinCurODPri = :FinCurODPri, FinCurODPft= :FinCurODPft");
-		sql.append(", FinCurODDays = :FinCurODDays, TotPenaltyAmt = :TotPenaltyAmt, TotWaived = :TotWaived");
-		sql.append(", TotPenaltyPaid = :TotPenaltyPaid, TotPenaltyBal = :TotPenaltyBal, FinLMdfDate = :FinLMdfDate");
-		sql.append(", LPIAmt = :LPIAmt, LPIPaid = :LPIPaid, LPIBal = :LPIBal, LPIWaived = :LPIWaived");
-		sql.append(" where FinReference = :FinReference and FinODSchdDate = :FinODSchdDate");
-		sql.append(" and FinODFor =:FinODFor");
+	public int updateODDetailsBatch(List<FinODDetails> overdues) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update FinODDetails set");
+		sql.append(" FinODTillDate = ?, FinCurODAmt = ?, FinCurODPri = ?, FinCurODPft = ?, FinCurODDays = ?");
+		sql.append(", TotPenaltyAmt = ?, TotWaived = ?, TotPenaltyPaid = ?, TotPenaltyBal = ?, FinLMdfDate = ?");
+		sql.append(", LPIAmt = ?, LPIPaid = ?, LPIBal = ?, LPIWaived = ?");
+		sql.append(" where FinReference = ? and FinODSchdDate = ? and FinODFor = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(overdues.toArray());
-		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		logger.debug(Literal.LEAVING);
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinODDetails od = overdues.get(i);
+
+				int index = 1;
+
+				ps.setDate(index++, JdbcUtil.getDate(od.getFinODTillDate()));
+				ps.setBigDecimal(index++, od.getFinCurODAmt());
+				ps.setBigDecimal(index++, od.getFinCurODPri());
+				ps.setBigDecimal(index++, od.getFinCurODPft());
+				ps.setInt(index++, od.getFinCurODDays());
+				ps.setBigDecimal(index++, od.getTotPenaltyAmt());
+				ps.setBigDecimal(index++, od.getTotWaived());
+				ps.setBigDecimal(index++, od.getTotPenaltyPaid());
+				ps.setBigDecimal(index++, od.getTotPenaltyBal());
+				ps.setDate(index++, JdbcUtil.getDate(od.getFinLMdfDate()));
+				ps.setBigDecimal(index++, od.getLPIAmt());
+				ps.setBigDecimal(index++, od.getLPIPaid());
+				ps.setBigDecimal(index++, od.getLPIBal());
+				ps.setBigDecimal(index++, od.getLPIWaived());
+
+				ps.setString(index++, od.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+				ps.setString(index++, od.getFinODFor());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return overdues.size();
+			}
+		}).length;
+
 	}
 
 	@Override
@@ -225,22 +256,60 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug(Literal.LEAVING);
 	}
 
+	private String updateTotalsQuery() {
+		StringBuilder sql = new StringBuilder("Update FinODDetails");
+		sql.append(" Set TotPenaltyAmt = (? + TotPenaltyAmt)");
+		sql.append(", TotWaived = (? + TotWaived)");
+		sql.append(", TotPenaltyPaid = (? + TotPenaltyPaid)");
+		sql.append(", TotPenaltyBal = (? + TotPenaltyBal)");
+		sql.append(" Where FinReference = ? AND FinODSchdDate = ?");
+		return sql.toString();
+	}
+
+	private void updateTotals(FinODDetails od, PreparedStatement ps) throws SQLException {
+		int index = 1;
+		ps.setBigDecimal(index++, od.getTotPenaltyAmt());
+		ps.setBigDecimal(index++, od.getTotWaived());
+		ps.setBigDecimal(index++, od.getTotPenaltyPaid());
+		ps.setBigDecimal(index++, od.getTotPenaltyBal());
+
+		ps.setString(index++, od.getFinReference());
+		ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+	}
+
 	// FIXME: PV 09AUG19. Doubt. How come both paid and balance are setting with
 	// addition.
 	// Need to see impact on fields LpCurCpzBal
 	@Override
 	public void updateTotals(FinODDetails finOdDetails) {
+		String sql = updateTotalsQuery();
+
+		this.jdbcOperations.update(sql, ps -> {
+			updateTotals(finOdDetails, ps);
+		});
+	}
+
+	@Override
+	public void updateTotals(List<FinODDetails> list) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Update FinODDetails ");
-		sql.append(" Set TotPenaltyAmt= (:TotPenaltyAmt + TotPenaltyAmt), TotWaived= (:TotWaived + TotWaived), ");
-		sql.append(
-				" TotPenaltyPaid= (:TotPenaltyPaid + TotPenaltyPaid),  TotPenaltyBal= (:TotPenaltyBal + TotPenaltyBal) ");
-		sql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate ");
+		String sql = updateTotalsQuery();
+		logger.trace(Literal.SQL + sql);
 
-		logger.debug("updateSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				FinODDetails od = list.get(index);
+				updateTotals(od, ps);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+
+		});
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -363,7 +432,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			finODDetails = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -396,7 +465,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("FinReference", finReference);
@@ -514,8 +583,6 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	 */
 	@Override
 	public List<FinODDetails> getFinODDByFinRef(String finReference, Date odSchdDate) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate");
 		sql.append(", FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft");
@@ -535,71 +602,59 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			sql.append(" and FinODSchdDate >= ?");
 		}
 
-		sql.append(" ORDER BY FinODSchdDate");
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					if (odSchdDate != null) {
-						ps.setDate(index++, JdbcUtil.getDate(odSchdDate));
-					}
-				}
-			}, new RowMapper<FinODDetails>() {
-				@Override
-				public FinODDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinODDetails finODDetails = new FinODDetails();
+		List<FinODDetails> finODDetails = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+			if (odSchdDate != null) {
+				ps.setDate(index++, JdbcUtil.getDate(odSchdDate));
+			}
+		}, (rs, rowNum) -> {
+			FinODDetails odd = new FinODDetails();
 
-					finODDetails.setFinReference(rs.getString("FinReference"));
-					finODDetails.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
-					finODDetails.setFinODFor(rs.getString("FinODFor"));
-					finODDetails.setFinBranch(rs.getString("FinBranch"));
-					finODDetails.setFinType(rs.getString("FinType"));
-					finODDetails.setCustID(rs.getLong("CustID"));
-					finODDetails.setFinODTillDate(rs.getTimestamp("FinODTillDate"));
-					finODDetails.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
-					finODDetails.setFinCurODPri(rs.getBigDecimal("FinCurODPri"));
-					finODDetails.setFinCurODPft(rs.getBigDecimal("FinCurODPft"));
-					finODDetails.setFinMaxODAmt(rs.getBigDecimal("FinMaxODAmt"));
-					finODDetails.setFinMaxODPri(rs.getBigDecimal("FinMaxODPri"));
-					finODDetails.setFinMaxODPft(rs.getBigDecimal("FinMaxODPft"));
-					finODDetails.setGraceDays(rs.getInt("GraceDays"));
-					finODDetails.setIncGraceDays(rs.getBoolean("IncGraceDays"));
-					finODDetails.setFinCurODDays(rs.getInt("FinCurODDays"));
-					finODDetails.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
-					finODDetails.setTotWaived(rs.getBigDecimal("TotWaived"));
-					finODDetails.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
-					finODDetails.setTotPenaltyBal(rs.getBigDecimal("TotPenaltyBal"));
-					finODDetails.setLPIAmt(rs.getBigDecimal("LPIAmt"));
-					finODDetails.setLPIPaid(rs.getBigDecimal("LPIPaid"));
-					finODDetails.setLPIBal(rs.getBigDecimal("LPIBal"));
-					finODDetails.setLPIWaived(rs.getBigDecimal("LPIWaived"));
-					finODDetails.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
-					finODDetails.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
-					finODDetails.setODChargeType(rs.getString("ODChargeType"));
-					finODDetails.setODGraceDays(rs.getInt("ODGraceDays"));
-					finODDetails.setODChargeCalOn(rs.getString("ODChargeCalOn"));
-					finODDetails.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
-					finODDetails.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
-					finODDetails.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
-					finODDetails.setFinLMdfDate(rs.getTimestamp("FinLMdfDate"));
-					finODDetails.setODRuleCode(rs.getString("ODRuleCode"));
-					finODDetails.setLpCpz(rs.getBoolean("LpCpz"));
-					finODDetails.setLpCpzAmount(rs.getBigDecimal("LpCpzAmount"));
-					finODDetails.setLpCurCpzBal(rs.getBigDecimal("LpCurCpzBal"));
+			odd.setFinReference(rs.getString("FinReference"));
+			odd.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
+			odd.setFinODFor(rs.getString("FinODFor"));
+			odd.setFinBranch(rs.getString("FinBranch"));
+			odd.setFinType(rs.getString("FinType"));
+			odd.setCustID(rs.getLong("CustID"));
+			odd.setFinODTillDate(rs.getTimestamp("FinODTillDate"));
+			odd.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
+			odd.setFinCurODPri(rs.getBigDecimal("FinCurODPri"));
+			odd.setFinCurODPft(rs.getBigDecimal("FinCurODPft"));
+			odd.setFinMaxODAmt(rs.getBigDecimal("FinMaxODAmt"));
+			odd.setFinMaxODPri(rs.getBigDecimal("FinMaxODPri"));
+			odd.setFinMaxODPft(rs.getBigDecimal("FinMaxODPft"));
+			odd.setGraceDays(rs.getInt("GraceDays"));
+			odd.setIncGraceDays(rs.getBoolean("IncGraceDays"));
+			odd.setFinCurODDays(rs.getInt("FinCurODDays"));
+			odd.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
+			odd.setTotWaived(rs.getBigDecimal("TotWaived"));
+			odd.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
+			odd.setTotPenaltyBal(rs.getBigDecimal("TotPenaltyBal"));
+			odd.setLPIAmt(rs.getBigDecimal("LPIAmt"));
+			odd.setLPIPaid(rs.getBigDecimal("LPIPaid"));
+			odd.setLPIBal(rs.getBigDecimal("LPIBal"));
+			odd.setLPIWaived(rs.getBigDecimal("LPIWaived"));
+			odd.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
+			odd.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
+			odd.setODChargeType(rs.getString("ODChargeType"));
+			odd.setODGraceDays(rs.getInt("ODGraceDays"));
+			odd.setODChargeCalOn(rs.getString("ODChargeCalOn"));
+			odd.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
+			odd.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
+			odd.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
+			odd.setFinLMdfDate(rs.getTimestamp("FinLMdfDate"));
+			odd.setODRuleCode(rs.getString("ODRuleCode"));
+			odd.setLpCpz(rs.getBoolean("LpCpz"));
+			odd.setLpCpzAmount(rs.getBigDecimal("LpCpzAmount"));
+			odd.setLpCurCpzBal(rs.getBigDecimal("LpCurCpzBal"));
 
-					return finODDetails;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return odd;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return sort(finODDetails);
 	}
 
 	@Override
@@ -710,7 +765,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			finODDetails = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -762,6 +817,38 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public void updateLatePftTotals(List<FinODDetails> list) {
+		StringBuilder sql = new StringBuilder("Update FinODDetails");
+		sql.append(" Set LPIPaid= LPIPaid + ?, LPIBal=LPIBal - ? - ?");
+		sql.append(", LPIWaived = LPIWaived + ?");
+		sql.append(" Where FinReference = ? and FinODSchdDate = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinODDetails od = list.get(i);
+				int index = 1;
+				ps.setBigDecimal(index++, od.getPaidNow());
+				ps.setBigDecimal(index++, od.getPaidNow());
+				ps.setBigDecimal(index++, od.getWaivedNow());
+				ps.setBigDecimal(index++, od.getWaivedNow());
+				ps.setString(index++, od.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	// FIXME: PV 09AUG19. Add fields related to LpCurCpzBal
 	@Override
 	public void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid) {
@@ -800,7 +887,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			finODDetails = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -871,8 +958,6 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	 */
 	@Override
 	public List<FinODDetails> getFinODBalByFinRef(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate");
 		sql.append(", FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft");
@@ -882,70 +967,59 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal");
 		sql.append(" from FinODDetails");
 		sql.append("  Where FinReference = ?");
-		sql.append(" order by FinODSchdDate");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL, sql);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<FinODDetails>() {
-				@Override
-				public FinODDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinODDetails fod = new FinODDetails();
+		List<FinODDetails> odList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+		}, (rs, rowNum) -> {
+			FinODDetails fod = new FinODDetails();
 
-					fod.setFinReference(rs.getString("FinReference"));
-					fod.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
-					fod.setFinODFor(rs.getString("FinODFor"));
-					fod.setFinBranch(rs.getString("FinBranch"));
-					fod.setFinType(rs.getString("FinType"));
-					fod.setCustID(rs.getLong("CustID"));
-					fod.setFinODTillDate(rs.getTimestamp("FinODTillDate"));
-					fod.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
-					fod.setFinCurODPri(rs.getBigDecimal("FinCurODPri"));
-					fod.setFinCurODPft(rs.getBigDecimal("FinCurODPft"));
-					fod.setFinMaxODAmt(rs.getBigDecimal("FinMaxODAmt"));
-					fod.setFinMaxODPri(rs.getBigDecimal("FinMaxODPri"));
-					fod.setFinMaxODPft(rs.getBigDecimal("FinMaxODPft"));
-					fod.setGraceDays(rs.getInt("GraceDays"));
-					fod.setIncGraceDays(rs.getBoolean("IncGraceDays"));
-					fod.setFinCurODDays(rs.getInt("FinCurODDays"));
-					fod.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
-					fod.setTotWaived(rs.getBigDecimal("TotWaived"));
-					fod.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
-					fod.setTotPenaltyBal(rs.getBigDecimal("TotPenaltyBal"));
-					fod.setLPIAmt(rs.getBigDecimal("LPIAmt"));
-					fod.setLPIPaid(rs.getBigDecimal("LPIPaid"));
-					fod.setLPIBal(rs.getBigDecimal("LPIBal"));
-					fod.setLPIWaived(rs.getBigDecimal("LPIWaived"));
-					fod.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
-					fod.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
-					fod.setODChargeType(rs.getString("ODChargeType"));
-					fod.setODGraceDays(rs.getInt("ODGraceDays"));
-					fod.setODChargeCalOn(rs.getString("ODChargeCalOn"));
-					fod.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
-					fod.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
-					fod.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
-					fod.setFinLMdfDate(rs.getTimestamp("FinLMdfDate"));
-					fod.setODRuleCode(rs.getString("ODRuleCode"));
-					fod.setLpCpz(rs.getBoolean("LpCpz"));
-					fod.setLpCpzAmount(rs.getBigDecimal("LpCpzAmount"));
-					fod.setLpCurCpzBal(rs.getBigDecimal("LpCurCpzBal"));
-					fod.setLockODRecalCal(rs.getBoolean("LockODRecalCal"));
+			fod.setFinReference(rs.getString("FinReference"));
+			fod.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
+			fod.setFinODFor(rs.getString("FinODFor"));
+			fod.setFinBranch(rs.getString("FinBranch"));
+			fod.setFinType(rs.getString("FinType"));
+			fod.setCustID(rs.getLong("CustID"));
+			fod.setFinODTillDate(rs.getTimestamp("FinODTillDate"));
+			fod.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
+			fod.setFinCurODPri(rs.getBigDecimal("FinCurODPri"));
+			fod.setFinCurODPft(rs.getBigDecimal("FinCurODPft"));
+			fod.setFinMaxODAmt(rs.getBigDecimal("FinMaxODAmt"));
+			fod.setFinMaxODPri(rs.getBigDecimal("FinMaxODPri"));
+			fod.setFinMaxODPft(rs.getBigDecimal("FinMaxODPft"));
+			fod.setGraceDays(rs.getInt("GraceDays"));
+			fod.setIncGraceDays(rs.getBoolean("IncGraceDays"));
+			fod.setFinCurODDays(rs.getInt("FinCurODDays"));
+			fod.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
+			fod.setTotWaived(rs.getBigDecimal("TotWaived"));
+			fod.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
+			fod.setTotPenaltyBal(rs.getBigDecimal("TotPenaltyBal"));
+			fod.setLPIAmt(rs.getBigDecimal("LPIAmt"));
+			fod.setLPIPaid(rs.getBigDecimal("LPIPaid"));
+			fod.setLPIBal(rs.getBigDecimal("LPIBal"));
+			fod.setLPIWaived(rs.getBigDecimal("LPIWaived"));
+			fod.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
+			fod.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
+			fod.setODChargeType(rs.getString("ODChargeType"));
+			fod.setODGraceDays(rs.getInt("ODGraceDays"));
+			fod.setODChargeCalOn(rs.getString("ODChargeCalOn"));
+			fod.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
+			fod.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
+			fod.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
+			fod.setFinLMdfDate(rs.getTimestamp("FinLMdfDate"));
+			fod.setODRuleCode(rs.getString("ODRuleCode"));
+			fod.setLpCpz(rs.getBoolean("LpCpz"));
+			fod.setLpCpzAmount(rs.getBigDecimal("LpCpzAmount"));
+			fod.setLpCurCpzBal(rs.getBigDecimal("LpCurCpzBal"));
+			fod.setLockODRecalCal(rs.getBoolean("LockODRecalCal"));
 
-					return fod;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return fod;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return odList.stream().sorted((od1, od2) -> od1.getFinODSchdDate().compareTo(od2.getFinODSchdDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -962,7 +1036,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -978,48 +1052,91 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	 * Method for Finance Overdue Details Insertion
 	 */
 	@Override
-	public void saveList(List<FinODDetails> finOdDetails) {
-		logger.debug(Literal.ENTERING);
+	public int saveList(List<FinODDetails> odList) {
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" FinODDetails");
+		sql.append(" (FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate");
+		sql.append(", FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft, GraceDays");
+		sql.append(", IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal");
+		sql.append(", FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType");
+		sql.append(", ODGraceDays, LpCpz, LpCpzAmount, LpCurCpzBal, ODChargeCalOn, ODChargeAmtOrPerc");
+		sql.append(", ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		StringBuilder sql = new StringBuilder("Insert Into FinODDetails");
-		sql.append(" (FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate,");
-		sql.append(" FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft,");
-		sql.append(" GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid,");
-		sql.append(" TotPenaltyBal, FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived,");
-		sql.append(" ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ");
-		sql.append(" LpCpz, LpCpzAmount, LpCurCpzBal, ");
-		sql.append(" ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode ) ");
-		sql.append(" Values");
-		sql.append("(:FinReference, :FinODSchdDate, :FinODFor, :FinBranch, :FinType, :CustID, :FinODTillDate,");
-		sql.append(" :FinCurODAmt, :FinCurODPri, :FinCurODPft, :FinMaxODAmt, :FinMaxODPri, :FinMaxODPft,");
-		sql.append(" :GraceDays, :IncGraceDays, :FinCurODDays, :TotPenaltyAmt, :TotWaived, :TotPenaltyPaid,");
-		sql.append(" :TotPenaltyBal, :FinLMdfDate, :LPIAmt, :LPIPaid, :LPIBal, :LPIWaived, ");
-		sql.append(" :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, ");
-		sql.append(" :LpCpz, :LpCpzAmount, :LpCurCpzBal, ");
-		sql.append(" :ODChargeCalOn, :ODChargeAmtOrPerc, :ODAllowWaiver, :ODMaxWaiverPerc, :ODRuleCode )");
+		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		logger.debug("insertSql: " + sql.toString());
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinODDetails odd = odList.get(i);
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finOdDetails.toArray());
-		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+				int index = 1;
+
+				ps.setString(index++, odd.getFinReference());
+				ps.setDate(index++, JdbcUtil.getDate(odd.getFinODSchdDate()));
+				ps.setString(index++, odd.getFinODFor());
+				ps.setString(index++, odd.getFinBranch());
+				ps.setString(index++, odd.getFinType());
+				ps.setLong(index++, JdbcUtil.setLong(odd.getCustID()));
+				ps.setDate(index++, JdbcUtil.getDate(odd.getFinODTillDate()));
+				ps.setBigDecimal(index++, odd.getFinCurODAmt());
+				ps.setBigDecimal(index++, odd.getFinCurODPri());
+				ps.setBigDecimal(index++, odd.getFinCurODPft());
+				ps.setBigDecimal(index++, odd.getFinMaxODAmt());
+				ps.setBigDecimal(index++, odd.getFinMaxODPri());
+				ps.setBigDecimal(index++, odd.getFinMaxODPft());
+				ps.setInt(index++, odd.getGraceDays());
+				ps.setBoolean(index++, odd.isIncGraceDays());
+				ps.setInt(index++, odd.getFinCurODDays());
+				ps.setBigDecimal(index++, odd.getTotPenaltyAmt());
+				ps.setBigDecimal(index++, odd.getTotWaived());
+				ps.setBigDecimal(index++, odd.getTotPenaltyPaid());
+				ps.setBigDecimal(index++, odd.getTotPenaltyBal());
+				ps.setDate(index++, JdbcUtil.getDate(odd.getFinLMdfDate()));
+				ps.setBigDecimal(index++, odd.getLPIAmt());
+				ps.setBigDecimal(index++, odd.getLPIPaid());
+				ps.setBigDecimal(index++, odd.getLPIBal());
+				ps.setBigDecimal(index++, odd.getLPIWaived());
+				ps.setBoolean(index++, odd.isApplyODPenalty());
+				ps.setBoolean(index++, odd.isODIncGrcDays());
+				ps.setString(index++, odd.getODChargeType());
+				ps.setInt(index++, odd.getODGraceDays());
+				ps.setBoolean(index++, odd.isLpCpz());
+				ps.setBigDecimal(index++, odd.getLpCpzAmount());
+				ps.setBigDecimal(index++, odd.getLpCurCpzBal());
+				ps.setString(index++, odd.getODChargeCalOn());
+				ps.setBigDecimal(index++, odd.getODChargeAmtOrPerc());
+				ps.setBoolean(index++, odd.isODAllowWaiver());
+				ps.setBigDecimal(index++, odd.getODMaxWaiverPerc());
+				ps.setString(index++, odd.getODRuleCode());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return odList.size();
+			}
+		}).length;
 	}
 
 	@Override
 	public void deleteAfterODDate(String finReference, Date odDate) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Delete From FinODDetails");
+		sql.append(" Where FinReference = ?");
+		sql.append(" and FinOdSchdDate >= ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinOdSchdDate", odDate);
-		source.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder sql = new StringBuilder(" Delete From FinODDetails ");
-		sql.append(" Where FinReference = :FinReference");
-		sql.append(" AND FinOdSchdDate >= :FinOdSchdDate ");
+		this.jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-		logger.debug("deleteSql: " + sql.toString());
-		this.jdbcTemplate.update(sql.toString(), source);
-		logger.debug(Literal.LEAVING);
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, finReference);
+				ps.setDate(2, JdbcUtil.getDate(odDate));
+			}
+
+		});
 	}
 
 	/**
@@ -1139,6 +1256,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" from FinODDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = ?");
+		sql.append(" order by FinODSchdDate");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -1242,7 +1360,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custId);
 
-		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -1259,11 +1377,13 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("ODChargeCalOn", FinanceConstants.ODCALON_PIPD);
+		source.addValue("ODChargeCalOnFRQ", FinanceConstants.ODCALON_PIPD_FRQ);
+		source.addValue("ODChargeCalOnEOM", FinanceConstants.ODCALON_PIPD_EOM);
 
 		StringBuilder sql = new StringBuilder(" SELECT count(FinReference) ");
 		sql.append(" FROM FInODDetails WHERE FinReference = :FinReference AND FinCurODAmt = 0 ");
-		sql.append(" AND TotPenaltyBal > 0 AND ODChargeCalOn =:ODChargeCalOn ");
+		sql.append(" AND TotPenaltyBal > 0 AND ");
+		sql.append(" (ODChargeCalOn = :ODChargeCalOnFRQ OR ODChargeCalOn = :ODChargeCalOnEOM)");
 
 		logger.debug("selectSql: " + sql.toString());
 		int pipdMthdCount = 0;
@@ -1278,4 +1398,58 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		return pipdMthdCount > 0 ? true : false;
 	}
 
+	@Override
+	public FinODDetails getFinODByFinRef(String finReference, Date odSchdDate) {
+		FinODDetails finODDetails = new FinODDetails();
+		finODDetails.setFinReference(finReference);
+		finODDetails.setFinODSchdDate(odSchdDate);
+
+		StringBuilder sql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
+		sql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
+		sql.append(" FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays, FinCurODDays,");
+		sql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
+		sql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
+		sql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
+		sql.append(" FinLMdfDate, ODRuleCode");
+
+		sql.append(" From FinODDetails");
+
+		if (App.DATABASE == Database.SQL_SERVER) {
+			sql.append(EodConstants.SQL_NOLOCK);
+		}
+
+		sql.append(" Where FinReference =:FinReference ");
+
+		if (odSchdDate != null) {
+			sql.append(" AND FinODSchdDate = :FinODSchdDate ");
+		}
+
+		sql.append(" ORDER BY FinODSchdDate");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
+		RowMapper<FinODDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinODDetails.class);
+
+		//FinODDetails finODDetails = null;
+
+		try {
+			finODDetails = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		}
+
+		return finODDetails;
+	}
+
+	public static List<FinODDetails> sort(List<FinODDetails> odDetails) {
+		if (odDetails != null && odDetails.size() > 0) {
+			Collections.sort(odDetails, new Comparator<FinODDetails>() {
+				@Override
+				public int compare(FinODDetails detail1, FinODDetails detail2) {
+					return DateUtil.compare(detail1.getFinODSchdDate(), detail2.getFinODSchdDate());
+				}
+			});
+		}
+
+		return odDetails;
+	}
 }

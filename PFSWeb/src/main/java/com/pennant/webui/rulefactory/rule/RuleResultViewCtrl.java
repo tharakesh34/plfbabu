@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import javax.script.ScriptException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -27,17 +30,15 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/RuleFactorry/Rule/RuleResultView.zul file.
+ * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/RuleResultView.zul file.
  */
 public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(RuleResultViewCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RuleResultViewCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component
-	 * with the same 'id' in the ZUL-file are getting autowired by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_RuleResultValues;
 	protected Rows rows_ruleValues;
@@ -48,7 +49,6 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	protected RuleResultDialogCtrl ruleResultDialogCtrl;
 	protected FinCreditRevSubCategoryDialogCtrl finCreditRevSubCategoryDialogCtrl;
 
-	private RuleExecutionUtil ruleExecutionUtil;
 	private List<ValueLabel> variablesList = null;
 	private String unKnwVar = "Math,round,pow,sqrt";
 
@@ -67,8 +67,8 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -112,7 +112,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			if (rows_ruleValues.getVisibleItemCount() == 0) {
-				BigDecimal result = (BigDecimal) ruleExecutionUtil.executeRule(amountRuleFormula, null, null,
+				BigDecimal result = (BigDecimal) RuleExecutionUtil.executeRule(amountRuleFormula, null, null,
 						RuleReturnType.DECIMAL);
 				this.btn_Simulate.setVisible(false);
 				setRuleResult(result);
@@ -153,7 +153,8 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -162,7 +163,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * On click event for simulate button
 	 */
-	public void onClick$btn_Simulate(Event event) throws InterruptedException {
+	public void onClick$btn_Simulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -173,8 +174,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 
 			for (ValueLabel valueLabel : variablesList) {
 				decimalbox = (Decimalbox) rows_ruleValues.getFellowIfAny(valueLabel.getValue());
-				map.put(valueLabel.getValue(),
-						decimalbox.getValue() == null ? Double.valueOf(0) : decimalbox.getValue());
+				map.put(valueLabel.getValue(), decimalbox.getValue() == null ? new Double(0) : decimalbox.getValue());
 			}
 
 			if (this.ruleResultDialogCtrl != null) {
@@ -186,7 +186,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 			}
 
 			// Execute the Rule
-			BigDecimal result = (BigDecimal) this.ruleExecutionUtil.executeRule("Result = " + rule, map, null,
+			BigDecimal result = (BigDecimal) RuleExecutionUtil.executeRule("Result = " + rule, map, null,
 					RuleReturnType.DECIMAL);
 
 			setRuleResult(result);
@@ -211,22 +211,13 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 
 			/*
 			 * try{ if(ruleResult.toString().contains(".")){ BigDecimal fractionValue = new
-			 * BigDecimal(ruleResult.toString().substring(ruleResult.toString().indexOf(".")
-			 * +1)); if(fractionValue.compareTo(BigDecimal.ZERO) == 0){
+			 * BigDecimal(ruleResult.toString().substring(ruleResult.toString().indexOf(".")+1));
+			 * if(fractionValue.compareTo(BigDecimal.ZERO) == 0){
 			 * this.result_label.setValue(PennantApplicationUtil.amountFormate( new
-			 * BigDecimal(ruleResult.toString().substring(0,
-			 * ruleResult.toString().indexOf("."))), PennantConstants.defaultCCYDecPos)); }
-			 * } }catch(Exception e){ logger.info(e.getMessage()); }
+			 * BigDecimal(ruleResult.toString().substring(0, ruleResult.toString().indexOf("."))),
+			 * PennantConstants.defaultCCYDecPos)); } } }catch(Exception e){ logger.info(e.getMessage()); }
 			 */
 		}
 		// make result row visible and set value
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 }

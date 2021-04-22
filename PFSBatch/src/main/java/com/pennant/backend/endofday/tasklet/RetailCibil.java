@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.external.cibil.RetailCibilReport;
 
@@ -26,7 +27,7 @@ public class RetailCibil implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = (Date) context.getStepContext().getJobExecutionContext().get("APP_VALUEDATE");
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
 		try {
 			logger.info("START CIBIL Process for the value date {}", valueDate);

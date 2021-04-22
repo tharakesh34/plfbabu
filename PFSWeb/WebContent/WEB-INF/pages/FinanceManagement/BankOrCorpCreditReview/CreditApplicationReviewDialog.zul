@@ -158,8 +158,8 @@
 						<toolbar align="end" sclass="toolbar-end" visible="false">
 							<button id="button_addDetails" label="${c:l('label_addDetails')}" />
 						</toolbar>
-						<tabbox width="99%" id="tabBoxIndexCenter" height="auto" style="overflow:auto;">
-							<tabs id="tabsIndexCenter" height="auto" style="overflow:auto;" />
+						<tabbox width="99%" id="tabBoxIndexCenter" height="auto">
+							<tabs id="tabsIndexCenter" height="auto" />
 							<tabpanels id="tabpanelsBoxIndexCenter" height="auto" style="overflow:auto;" />
 						</tabbox>
 					</groupbox>

@@ -65,7 +65,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -102,6 +103,7 @@ import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
@@ -110,9 +112,10 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.customermasters.Customer;
@@ -186,7 +189,7 @@ import com.rits.cloning.Cloner;
  */
 public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(ReceiptsEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptsEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -224,7 +227,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Combobox receiptChannel;
 	protected Combobox subReceiptMode;
 	protected Datebox receiptDate;
+	protected Datebox receivedDate;
 	protected CurrencyBox receiptAmount;
+	protected CurrencyBox tDSAmount;
 	protected Combobox excessAdjustTo;
 	protected Decimalbox remBalAfterAllocation;
 	protected Decimalbox custPaid;
@@ -244,7 +249,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row row_CancelReason;
 	protected Row row_CancelDate;
 	protected ExtendedCombobox cancelReason;
-	protected ExtendedCombobox cancelRemarks;
+	protected Textbox cancelRemarks;
 	protected Row row_ReceiptModeStatus;
 	protected Hbox hbox_ReceiptDialog_DepositDate;
 
@@ -267,6 +272,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
 	protected ExtendedCombobox finDivision;
+	protected Combobox sourceofFund;
 
 	protected Label scheduleLabel;
 	protected Combobox effScheduleMethod;
@@ -351,7 +357,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private ReceiptService receiptService;
 	private ReceiptCancellationService receiptCancellationService;
 	private FinanceDetailService financeDetailService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private AccountEngineExecution engineExecution;
 	private CommitmentService commitmentService;
 	private ReceiptCalculator receiptCalculator;
@@ -405,7 +410,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// For EarlySettlement Reason functionality
 	private ExtendedCombobox earlySettlementReason;
+	protected ExtendedCombobox closureType;
 	ReasonCode reasonCodeData;
+	private List<ValueLabel> sourceofFundList = PennantAppUtil.getFieldCodeList("SOURCE");
 
 	/**
 	 * default constructor.<br>
@@ -577,8 +584,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.receivedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.paidByCustomer.setFormat(amountFormat);
 		this.receiptAmount.setProperties(true, formatter);
+		this.tDSAmount.setProperties(false, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.cancelReason.setModuleName("RejectDetail");
@@ -628,7 +637,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bounceCode.setReadonly(true);
 		this.cancelReason.setReadonly(true);
 		this.cancelRemarks.setReadonly(true);
-		this.cancelRemarks.setMandatoryStyle(false);
 		this.collectionAgentId.setReadonly(true);
 		this.fundingAccount.setReadonly(true);
 
@@ -666,6 +674,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.cashierBranch);
 		readOnlyComponent(true, this.postBranch);
 		readOnlyComponent(true, this.finDivision);
+		this.sourceofFund.setDisabled(true);
 
 		appendScheduleMethod(receiptData.getReceiptHeader());
 
@@ -693,6 +702,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.earlySettlementReason.setValueType(DataType.LONG);
 		this.earlySettlementReason.setValidateColumns(new String[] { "Id" });
 		readOnlyComponent(true, this.earlySettlementReason);
+
+		this.closureType.setMandatoryStyle(false);
+		this.closureType.setModuleName("ClosureType");
+		this.closureType.setValueColumn("Code");
+		this.closureType.setDescColumn("Description");
+		this.closureType.setDisplayStyle(2);
+		this.closureType.setValidateColumns(new String[] { "Code" });
+		readOnlyComponent(true, this.closureType);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -836,8 +853,13 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.row_BankCode.setVisible(false);
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
-				this.row_PaymentRef.setVisible(false);
-				this.row_DepositBank.setVisible(false);
+				if (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE) {
+					this.row_PaymentRef.setVisible(true);
+					this.row_DepositBank.setVisible(true);
+				} else {
+					this.row_PaymentRef.setVisible(false);
+					this.row_DepositBank.setVisible(false);
+				}
 				readOnlyComponent(true, this.fundingAccount);
 
 			} else {
@@ -898,8 +920,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.cancelReason.setValue(rch.getCancelReason(), rch.getCancelReasonDesc());
 			this.cancelDate.setVisible(true);
 			this.cancelDate.setValue(rch.getBounceDate());
+			this.cancelRemarks.setValue(rch.getCancelRemarks());
 			if (rch.getBounceDate() == null) {
-				this.bounceDate.setValue(DateUtility.getAppDate());
+				this.bounceDate.setValue(SysParamUtil.getAppDate());
 			}
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 			this.realizationDate.setValue(rch.getRealizationDate());
@@ -1176,8 +1199,11 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		fillComboBox(receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
 		this.receiptMode.setValue(rch.getReceiptMode());
 		this.receiptDate.setValue(rch.getReceiptDate());
+		this.receivedDate.setValue(rch.getReceivedDate());
 		this.receiptAmount.setValue(rch.getReceiptAmount());
 		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
+		this.tDSAmount.setValue(PennantApplicationUtil.formateAmount(rch.getTdsAmount(), formatter));
+		this.tDSAmount.setDisabled(true);
 
 		this.receivedFrom.setValue(rch.getReceivedFrom());
 		this.panNumber.setValue(rch.getPanNumber());
@@ -1194,6 +1220,18 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.postBranch.setValue(rch.getPostBranch(), rch.getPostBranchDesc());
 		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
 		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
+		this.valueDate.setValue(rch.getValueDate());
+		if (rch.getClosureTypeId() != null) {
+			this.closureType.setValue(String.valueOf(rch.getClosureTypeId()));
+			this.closureType.setDescription(rch.getClosureTypeDesc());
+		}
+		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
+			this.knockOffType.setValue("Auto");
+		} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(rch.getKnockOffType())) {
+			this.knockOffType.setValue("Manual");
+		} else {
+			this.knockOffType.setValue("");
+		}
 
 		if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(rch.getKnockOffType())) {
 			this.knockOffType.setValue("Auto");
@@ -1227,7 +1265,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.paymentRef.setValue(rcd.getPaymentRef());
 					this.externalRefrenceNumber.setValue(rch.getExtReference());
 					boolean partnerBankReq = false;
-					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, rcd.getPaymentType())) {
+					if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CASH, rcd.getPaymentType())
+							|| (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE)) {
 						partnerBankReq = true;
 					}
 
@@ -1239,6 +1278,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 		}
+		fillComboBox(this.sourceofFund, rch.getSourceofFund(), sourceofFundList, "");
 
 		setBalances();
 		checkByReceiptMode(rch.getReceiptMode(), false);
@@ -1671,6 +1711,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		BigDecimal totInsPaid = BigDecimal.ZERO;
 		BigDecimal totSchdFeePaid = BigDecimal.ZERO;
+		BigDecimal totSchdSuplRentPaid = BigDecimal.ZERO;
+		BigDecimal totSchdIncrCostPaid = BigDecimal.ZERO;
 
 		Listcell lc;
 		Listitem item;
@@ -1747,10 +1789,19 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdSuplRentPayNow(), formatter));
+				lc.setStyle("text-align:right;");
+				totSchdSuplRentPaid = totSchdSuplRentPaid.add(repaySchd.getSchdSuplRentPayNow());
+				lc.setParent(item);
+				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdIncrCostPayNow(), formatter));
+				lc.setStyle("text-align:right;");
+				totSchdIncrCostPaid = totSchdIncrCostPaid.add(repaySchd.getSchdIncrCostPayNow());
+				lc.setParent(item);
 
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPftSchdWaivedNow())
 						.add(repaySchd.getPrincipalSchdPayNow().add(repaySchd.getPriSchdWaivedNow()))
 						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
+						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
 						.add(repaySchd.getLatePftSchdPayNow().add(repaySchd.getLatePftSchdWaivedNow()))
 						.add(repaySchd.getPenaltyPayNow().add(repaySchd.getWaivedAmt()).subtract(refundPft));
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, formatter));
@@ -1758,7 +1809,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				lc.setParent(item);
 
 				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
-						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal());
+						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal())
+						.add(repaySchd.getSchdSuplRentBal()).add(repaySchd.getSchdIncrCostBal());
 
 				lc = new Listcell(PennantAppUtil.amountFormate(
 						netBalance.subtract(netPay.subtract(totalCharge).subtract(totalLatePft)), formatter));
@@ -1778,6 +1830,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			paymentMap.put("insPaid", totInsPaid);
 			paymentMap.put("schdFeePaid", totSchdFeePaid);
+			paymentMap.put("schdSuplRentPaid", totSchdSuplRentPaid);
+			paymentMap.put("schdIncrCostPaid", totSchdIncrCostPaid);
 
 			doFillSummaryDetails(paymentMap);
 		}
@@ -2053,7 +2107,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 				finRefList.add(finMain.getFinReference());
 			}
-			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+
+			if (CollectionUtils.isNotEmpty(finRefList)) {
+				finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
+			}
 		}
 
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -2120,8 +2177,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			strXML = StringEscapeUtils.escapeJavaScript(strXML);
 			chartDetail.setStrXML(strXML);
 
-			Executions.createComponents("/Charts/Chart.zul",
-					(Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
+			Executions.createComponents("/Charts/Chart.zul", tabpanelsBoxIndexCenter.getFellowIfAny("graphTabPanel"),
 					Collections.singletonMap("chartDetail", chartDetail));
 		}
 		chartDetailList = new ArrayList<ChartDetail>(); // Resetting
@@ -2140,7 +2196,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			String reportName = "Receipt";
 			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
 			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
-			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
+			AgreementEngine engine = new AgreementEngine(templatePath);
 			engine.setTemplate(templateName);
 			engine.loadTemplate();
 			reportName = "Receipt_" + this.finReference.getValue() + "_"
@@ -2335,14 +2391,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public AccountingDetailDialogCtrl getAccountingDetailDialogCtrl() {
@@ -2684,6 +2732,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		return eventManager;
 	}
 
+	@Override
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
 	}

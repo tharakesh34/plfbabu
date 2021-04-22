@@ -10,35 +10,32 @@
 				.east-centered .z-east-collapsed { display: flex; flex-direction: column; justify-content: center; }
 				.east-centered .z-east-collapsed .z-borderlayout-icon { display: none; color: #fff !important; font-size: 13px;
 				z-index: 25;}
-				.z-icon-angle-double-right:before{content: "\f00d"; color: #fff;}
+				.z-borderlayout-icon {background: #365b85;}
+				.z-icon-angle-double-right:before{content: "\f00d"; color: #fff; width: 100%; }
+				.z-icon-angle-double-right:hover {background: #bc5c5c !important; }
 				.east-centered .z-east-collapsed .z-east-title { align-self: center;
 				width: initial!important; transform-origin: center
 				center!important; padding: 0 10px; transform:
 				rotate(90deg); color: #fff; background: #365b85; font-style: normal;
 				text-overflow:
-				ellipsis; overflow: hidden; height: 21px; font-family: "PT
-				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px; white-space: nowrap;}
+				ellipsis; overflow: hidden; height: 21px;
+				font-family: "PT Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif;
+    			font-size: 13px; font-weight: 400; }
 
-				.z-east-header { font-family:
-				"PT Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px;
-				font-weight: normal; font-style: normal;
-				height: 25px; border-bottom: 1px solid #e3e3e3; padding: 6px
-				6px 5px; line-height: 13px; overflow: hidden; cursor:
-				default; white-space: nowrap; background: #bc5c5c;
+				.z-east-header { font-family: "PT
+				Sans",Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 13px;
+				font-weight: normal; font-style: normal; height:
+				25px; border-bottom: 1px solid #e3e3e3; padding: 6px
+				6px 5px; line-height: 13px; overflow: hidden; cursor: default;
+				white-space: nowrap; background: #bc5c5c;
 				color: #fff; }
 
-				.z-tabs-content { display: table; width: 2000%
-				!important; height: 100% !important; border-collapse: separate;
-				border-spacing: 0; margin: 0; padding: 0;
-				list-style-image: none; list-style-position: outside;
+				.z-tabs-content { display: table; width: 2000% !important;
+				height: 100% !important; border-collapse: separate;
+				border-spacing: 0; margin: 0; padding: 0; list-style-image: none;
+				list-style-position: outside;
 				list-style-type: none; }
-
-				.z-borderlayout-icon:hover { color:
-				#fff; background:#bc5c5c;}
-
-				.z-groupbox-content { display: block; height: inherit; border: 1px solid #c5c5c5; border-top-width: 0;
-				padding: 4px 3px 3px; overflow:
-				auto; zoom: 1; }
+				.z-groupbox-content {overflow: auto;}
 
 			</style>
 			<borderlayout id="borderlayoutFinAdvancePayments" sclass="east-centered">
@@ -48,17 +45,19 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
 								<button id="btnNew" visible="false" tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnEdit" visible="false" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnDelete" visible="false" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
+								<button id="btnReverse" label="${c:l('label_btnReverse')}" visible="false" tooltiptext="${c:l('btnReverse.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnSave" visible="false" tooltiptext="${c:l('btnSave.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnCancel" visible="false" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 								<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnReverse" sclass="z-toolbarbutton" />
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
@@ -99,7 +98,7 @@
 										</hbox>
 									</row>
 
-									<row>
+									<row id ="row_DisbDate">
 										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
@@ -108,11 +107,24 @@
 											<decimalbox id="disbDateAmount" readonly="true" width="155px"
 												style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 										</hbox>
-
-										<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
+										<label id="label_llDate"
+											value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
 										<hbox id="hbox_llDate">
 											<space spacing="2px" sclass="mandatory" />
 											<datebox id="llDate" width="155px" />
+										</hbox>
+									</row>
+									<row id="row_vasReference">
+										<label
+											value="${c:l('label_FinAdvancePaymentsDialog_VasReference.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" />
+											<combobox id="vasReference"
+												width="155px" />
+											<decimalbox id="vasAmount"
+												readonly="true" width="155px"
+												style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 										</hbox>
 									</row>
 									<row>
@@ -143,7 +155,7 @@
 											<textbox id="transactionRef" width="150px" />
 										</hbox>
 									</row>
-									<row>
+									<row id ="row_disbdetails">
 										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementAddedAmount.value')}" />
 										<hbox>
 											<currencyBox id="disbursementAddedAmount" />
@@ -154,7 +166,7 @@
 											<currencyBox id="totalDisbursementAmount" />
 										</hbox>
 									</row>
-									<row>
+									<row id ="row_expensedetails">
 										<label value="${c:l('label_FinAdvancePaymentsDialog_OtherExpenses.value')}" />
 										<hbox>
 											<currencyBox id="otherExpenses" />
@@ -212,6 +224,12 @@
 										<hbox>
 											<space spacing="2px" />
 											<checkbox id="holdDisbursement" />
+										</hbox>
+										<label id="label_FinAdvancePaymentsDialog_DisbDoc" value="${c:l('label_FinAdvancePaymentsDialog_DisbDoc.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<textbox id="documentName" width="150px" maxlength="200" readonly="true" />
+											<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
 										</hbox>
 									</row>
 								</rows>
@@ -347,12 +365,12 @@
 						</groupbox>
 					</div>
 				</center>
-				<east id="eastDocument" title="Disbursement Document" size="40%" flex="true" open="false" collapsible="true"
+				<east id="eastDocument" title="DisbursementDocument" size="40%" flex="true" open="false" collapsible="true"
 					slidable="false" visible="false">
 					<borderlayout>
 						<center>
 							<div height="100%">
-								<iframe id="docName" width="100%" height="100%" />
+								<iframe id="disbDoc" width="100%" height="100%" />
 							</div>
 						</center>
 					</borderlayout>

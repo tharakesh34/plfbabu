@@ -48,20 +48,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -70,7 +73,7 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods implementation for the <b>documentDetails model</b> class.<br>
  */
 public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> implements DocumentDetailsDAO {
-	private static Logger logger = Logger.getLogger(DocumentDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DocumentDetailsDAOImpl.class);
 
 	public DocumentDetailsDAOImpl() {
 		super();
@@ -189,19 +192,26 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	public long save(DocumentDetails documentDetails, String type) {
 		logger.debug("Entering");
 
-		if (documentDetails.getDocId() == Long.MIN_VALUE || documentDetails.getDocId() == 0) {
+		if (documentDetails.getDocId() == Long.MIN_VALUE || documentDetails.getDocId() <= 0) {
 			documentDetails.setDocId(getNextValue("SeqDocumentDetails"));
+		}
+		/*
+		 * final loan approval stage record type is not changed to blank To address the both we are making here record
+		 * type as empty(AS per our framework main table record type should be empty)
+		 */
+		if (StringUtils.isEmpty(type)) {
+			documentDetails.setRecordType("");
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DocumentDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal, DocBarcode");
+				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal, DocBarcode, Remarks");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID)");
 		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId, :FinEvent,");
 		insertSql.append(
-				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal,:DocBarcode ,:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal,:DocBarcode , :Remarks, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -232,12 +242,12 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		StringBuilder insertSql = new StringBuilder("Insert Into DocumentDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode");
+				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, DocRefId, instructionUID)");
 		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId,:FinEvent");
 		insertSql.append(
-				", :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived,  :docOriginal , :DocBarcode, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+				", :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived,  :docOriginal , :DocBarcode, :Remarks, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -270,7 +280,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		updateSql.append(
 				" ReferenceId=:ReferenceId, FinEvent=:FinEvent, DocPurpose = :DocPurpose, DocUri = :DocUri, DocReceivedDate = :DocReceivedDate");
 		updateSql.append(
-				", DocReceived = :DocReceived, DocOriginal  =:docOriginal , DocBarcode = :DocBarcode, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
+				", DocReceived = :DocReceived, DocOriginal  =:docOriginal , DocBarcode = :DocBarcode, Remarks = :Remarks, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
 		updateSql.append(
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, docRefId = :docRefId,instructionUID = :instructionUID ");
@@ -289,11 +299,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 	@Override
 	public List<DocumentDetails> getDocumentDetailsByRef(String ref, String module, String finEvent, String type) {
-		logger.debug("Entering");
-
 		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
 		sql.append(
-				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode,");
+				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
 		sql.append(" from DocumentDetails");
@@ -302,123 +310,163 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		/*
 		 * if(StringUtils.isNotBlank(finEvent)){ sql.append(" AND (FinEvent = :FinEvent OR FinEvent = '' )"); }
 		 */
-		logger.debug("selectSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		DocumentDetails documentDetails = new DocumentDetails();
 		documentDetails.setReferenceId(ref);
 		documentDetails.setDocModule(module);
 		documentDetails.setFinEvent(finEvent);
 
-		logger.debug("selectSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
-
-		List<DocumentDetails> documents = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-
-		logger.debug("Leaving");
-		return documents;
-	}
-
-	@Override
-	public List<DocumentDetails> getDocumentDetailsByRef(String ref, String module, String type) {
-		logger.debug("Entering");
-
-		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
-		sql.append(
-				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
-		sql.append(" from DocumentDetails");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where ReferenceId = :ReferenceId AND DocModule=:DocModule ");
-		logger.debug("selectSql: " + sql.toString());
-
-		DocumentDetails documentDetails = new DocumentDetails();
-		documentDetails.setReferenceId(ref);
-		documentDetails.setDocModule(module);
-
-		logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
-
-		logger.debug("Leaving");
+		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
 	}
 
 	@Override
+	public List<DocumentDetails> getDocumentDetailsByRef(String ref, String module, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DocId, DocModule, DocCategory, Doctype, DocName");
+		sql.append(", ReferenceId, FinEvent, DocPurpose, DocUri, DocReceivedDate");
+		sql.append(", DocReceived, DocOriginal, DocBarcode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID");
+		sql.append(" From DocumentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ReferenceId = ? and DocModule= ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, ref);
+			ps.setString(index++, module);
+		}, (rs, rowNum) -> {
+			DocumentDetails dd = new DocumentDetails();
+
+			dd.setDocId(rs.getLong("DocId"));
+			dd.setDocModule(rs.getString("DocModule"));
+			dd.setDocCategory(rs.getString("DocCategory"));
+			dd.setDoctype(rs.getString("Doctype"));
+			dd.setDocName(rs.getString("DocName"));
+			dd.setReferenceId(rs.getString("ReferenceId"));
+			dd.setFinEvent(rs.getString("FinEvent"));
+			dd.setDocPurpose(rs.getString("DocPurpose"));
+			dd.setDocUri(rs.getString("DocUri"));
+			dd.setDocReceivedDate(JdbcUtil.getDate(rs.getDate("DocReceivedDate")));
+			dd.setDocReceived(rs.getBoolean("DocReceived"));
+			dd.setDocOriginal(rs.getBoolean("DocOriginal"));
+			dd.setDocBarcode(rs.getString("DocBarcode"));
+			dd.setVersion(rs.getInt("Version"));
+			dd.setLastMntBy(rs.getLong("LastMntBy"));
+			dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			dd.setRecordStatus(rs.getString("RecordStatus"));
+			dd.setRoleCode(rs.getString("RoleCode"));
+			dd.setNextRoleCode(rs.getString("NextRoleCode"));
+			dd.setTaskId(rs.getString("TaskId"));
+			dd.setNextTaskId(rs.getString("NextTaskId"));
+			dd.setRecordType(rs.getString("RecordType"));
+			dd.setWorkflowId(rs.getLong("WorkflowId"));
+			dd.setDocRefId(rs.getLong("docRefId"));
+			dd.setInstructionUID(rs.getLong("instructionUID"));
+
+			return dd;
+		});
+
+	}
+
+	@Override
 	public DocumentDetails getDocumentDetails(long id, String type) {
-		logger.debug("Entering");
-		DocumentDetails documentDetails = new DocumentDetails();
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DocId, DocModule, DocCategory, DocReceivedDate, DocReceived, DocOriginal, DocBarcode");
+		sql.append(", Remarks, Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, InstructionUID");
+		sql.append(" From DocumentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where DocId = ?");
 
-		documentDetails.setId(id);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select DocId, DocModule, DocCategory, DocReceivedDate, DocReceived, DocOriginal,DocBarcode,");
-		selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
-		selectSql.append(" From DocumentDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where DocId =:DocId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, i) -> {
+				DocumentDetails dd = new DocumentDetails();
+
+				dd.setDocId(rs.getLong("DocId"));
+				dd.setDocModule(rs.getString("DocModule"));
+				dd.setDocCategory(rs.getString("DocCategory"));
+				dd.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+				dd.setDocReceived(rs.getBoolean("DocReceived"));
+				dd.setDocOriginal(rs.getBoolean("DocOriginal"));
+				dd.setDocBarcode(rs.getString("DocBarcode"));
+				dd.setRemarks(rs.getString("Remarks"));
+				dd.setDoctype(rs.getString("Doctype"));
+				dd.setDocName(rs.getString("DocName"));
+				dd.setDocRefId(rs.getLong("DocRefId"));
+				dd.setReferenceId(rs.getString("ReferenceId"));
+				dd.setFinEvent(rs.getString("FinEvent"));
+				dd.setDocUri(rs.getString("DocUri"));
+				dd.setVersion(rs.getInt("Version"));
+				dd.setLastMntBy(rs.getLong("LastMntBy"));
+				dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				dd.setRecordStatus(rs.getString("RecordStatus"));
+				dd.setRoleCode(rs.getString("RoleCode"));
+				dd.setNextRoleCode(rs.getString("NextRoleCode"));
+				dd.setTaskId(rs.getString("TaskId"));
+				dd.setNextTaskId(rs.getString("NextTaskId"));
+				dd.setRecordType(rs.getString("RecordType"));
+				dd.setWorkflowId(rs.getLong("WorkflowId"));
+				dd.setInstructionUID(rs.getLong("InstructionUID"));
+
+				return dd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			documentDetails = null;
+			logger.warn("Record is not found in DocumentDetails{} for the specified DocId >> {}", id);
 		}
 
-		logger.debug("Leaving");
-
-		return documentDetails;
+		return null;
 	}
 
 	@Override
 	public DocumentDetails getDocumentDetailsById(long id, String type, boolean readAttachment) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		DocumentDetails documentDetails = new DocumentDetails();
 
 		documentDetails.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select DocId, DocModule, DocCategory, T2.DocImage,DocReceivedDate,DocReceived, DocOriginal,DocBarcode,");
+				"Select DocId, DocModule, DocCategory,DocReceivedDate,DocReceived, DocOriginal,DocBarcode, Remarks,");
 
 		if (readAttachment) {
-			selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, T1.DocUri,");
+			selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, T1.DocUri,  T2.DocImage,");
 		} else {
-			selectSql.append(" Doctype, DocName, ReferenceId, FinEvent, DocPurpose,");
+			selectSql.append(" Doctype, DocName, ReferenceId, FinEvent, DocPurpose, DocUri,");
 		}
 
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
 		selectSql.append(" From DocumentDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" T1 Inner Join ");
-		selectSql.append(" DocumentManager T2 ON T1.DocRefId = T2.Id");
+		if (readAttachment) {
+			selectSql.append(" T1 Inner Join ");
+			selectSql.append(" DocumentManager T2 ON T1.DocRefId = T2.Id");
+		}
 		selectSql.append(" Where DocId =:DocId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
+		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
 
 		try {
 			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			documentDetails = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
 
 		return documentDetails;
 	}
@@ -434,35 +482,58 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 */
 	@Override
 	public DocumentDetails getDocumentDetails(String referenceId, String category, String module, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DocId, DocModule, DocCategory, Doctype, DocName, ReferenceId, FinEvent, DocPurpose");
+		sql.append(", DocUri, DocReceivedDate, DocReceived, DocOriginal, DocBarcode, Remarks, Version");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, InstructionUID, DocRefId");
+		sql.append(" From DocumentDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ReferenceId = ? and DocCategory = ? and DocModule = ?");
 
-		DocumentDetails documentDetails = new DocumentDetails();
-		documentDetails.setReferenceId(referenceId);
-		documentDetails.setDocCategory(category);
-		documentDetails.setDocModule(module);
-
-		StringBuilder selectSql = new StringBuilder("Select DocId, DocModule, DocCategory, ");
-		selectSql.append(
-				" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode,");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID, DocRefId ");
-		selectSql.append(" From DocumentDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ReferenceId =:ReferenceId AND DocCategory =:DocCategory AND DocModule =:DocModule");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DocumentDetails.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			documentDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { referenceId, category, module },
+					(rs, i) -> {
+						DocumentDetails dd = new DocumentDetails();
+
+						dd.setDocId(rs.getLong("DocId"));
+						dd.setDocModule(rs.getString("DocModule"));
+						dd.setDocCategory(rs.getString("DocCategory"));
+						dd.setDoctype(rs.getString("Doctype"));
+						dd.setDocName(rs.getString("DocName"));
+						dd.setReferenceId(rs.getString("ReferenceId"));
+						dd.setFinEvent(rs.getString("FinEvent"));
+						dd.setDocPurpose(rs.getString("DocPurpose"));
+						dd.setDocUri(rs.getString("DocUri"));
+						dd.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+						dd.setDocReceived(rs.getBoolean("DocReceived"));
+						dd.setDocOriginal(rs.getBoolean("DocOriginal"));
+						dd.setDocBarcode(rs.getString("DocBarcode"));
+						dd.setRemarks(rs.getString("Remarks"));
+						dd.setVersion(rs.getInt("Version"));
+						dd.setLastMntBy(rs.getLong("LastMntBy"));
+						dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+						dd.setRecordStatus(rs.getString("RecordStatus"));
+						dd.setRoleCode(rs.getString("RoleCode"));
+						dd.setNextRoleCode(rs.getString("NextRoleCode"));
+						dd.setTaskId(rs.getString("TaskId"));
+						dd.setNextTaskId(rs.getString("NextTaskId"));
+						dd.setRecordType(rs.getString("RecordType"));
+						dd.setWorkflowId(rs.getLong("WorkflowId"));
+						dd.setInstructionUID(rs.getLong("InstructionUID"));
+						dd.setDocRefId(rs.getLong("DocRefId"));
+
+						return dd;
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			documentDetails = null;
+			logger.warn(
+					"Record is not found in DocumentDetails{} for the specified ReferenceId >> ? and DocCategory >> ? and DocModule >> ?",
+					type, referenceId, category, module);
 		}
-		logger.debug("Leaving");
-		return documentDetails;
+
+		return null;
 	}
 
 	@Override
@@ -519,5 +590,27 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 			logger.warn(Literal.EXCEPTION, e);
 			return 0;
 		}
+	}
+
+	@Override
+	public void deleteDocumentByDocumentId(DocumentDetails documentDetails, String type) {
+
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Delete from COVENANT_DOCUMENTS");
+		sql.append(type);
+		sql.append(" Where DocumentId = :DocumentId");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DocumentId", documentDetails.getDocId());
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		} catch (Exception e) {
+		}
+		logger.debug(Literal.LEAVING);
 	}
 }

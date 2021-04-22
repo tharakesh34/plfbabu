@@ -5,13 +5,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -26,14 +28,17 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RateChangeServiceImpl extends GenericService<FinServiceInstruction> implements RateChangeService {
-	private static final Logger logger = Logger.getLogger(RateChangeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(RateChangeServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceStepDetailDAO financeStepDetailDAO;
 	private FinanceMainDAO financeMainDAO;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	
 
 	/**
 	 * Method for perform the Rate change action
@@ -86,6 +91,13 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			isCalSchedule = false;
 		}
 
+		//if (StringUtils.equals(finScheduleData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPINST)) {
+		if (StringUtils.isNotEmpty(moduleDefiner) && finScheduleData.getFinanceMain().isStepFinance()) {
+			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
+					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
+		}
+		//}
+
 		FinScheduleData finSchData = null;
 		finSchData = ScheduleCalculator.changeRate(finScheduleData, finServiceInst.getBaseRate(),
 				finServiceInst.getSplRate(),
@@ -118,7 +130,33 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		boolean isWIF = finSrvInst.isWif();
 		String finReference = finSrvInst.getFinReference();
 
+		boolean instExists = finServiceInstructionDAO.isFinServiceInstExists(finReference, "_Temp");
+
+		if (instExists) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;//Some one else processed this record {finReference} 
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41005", "", valueParm), lang));
+			return auditDetail;
+		}
+
+
 		FinanceMain financeMain = financeMainDAO.getFinanceBasicDetailByRef(finReference, isWIF);
+
+		if (StringUtils.equals(UploadConstants.RATE_CHANGE_UPLOAD, finSrvInst.getReqFrom())) {
+			finSrvInst.setPftDaysBasis(financeMain.getProfitDaysBasis());
+
+			if (finSrvInst.getToDate() == null) {
+				finSrvInst.setToDate(financeMain.getMaturityDate());
+			}
+
+			if (finSrvInst.getFromDate() == null) {
+				finSrvInst.setFromDate(SysParamUtil.getAppDate());
+			}
+
+			if (StringUtils.isBlank(finSrvInst.getBaseRate())) {
+				finSrvInst.setBaseRate(null);
+			}
+		}
 
 		// validate from date with finStart date and maturity date
 		if (DateUtility.compare(finSrvInst.getFromDate(), DateUtility.getAppDate()) < 0
@@ -132,7 +170,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		}
 
 		// validate to date
-		if (finSrvInst.getToDate().compareTo(financeMain.getMaturityDate()) >= 0
+		if (finSrvInst.getToDate().compareTo(financeMain.getMaturityDate()) > 0
 				|| finSrvInst.getToDate().compareTo(finSrvInst.getFromDate()) < 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "ToDate";
@@ -371,6 +409,14 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 
 	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
 		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
+		return finServiceInstructionDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
 
 }

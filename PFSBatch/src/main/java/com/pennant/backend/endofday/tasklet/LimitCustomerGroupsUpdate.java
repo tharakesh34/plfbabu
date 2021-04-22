@@ -16,13 +16,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class LimitCustomerGroupsUpdate implements Tasklet {
@@ -39,7 +39,8 @@ public class LimitCustomerGroupsUpdate implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
+
 		logger.info("START Limit Customer Groups On {}", valueDate);
 		BatchUtil.setExecutionStatus(context, StepUtil.CUSTOMER_GROUP_LIMITS_UPDATE);
 

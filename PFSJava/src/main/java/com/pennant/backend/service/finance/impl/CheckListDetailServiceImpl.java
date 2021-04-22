@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
@@ -32,7 +33,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CheckListDetailServiceImpl implements CheckListDetailService {
-	private static final Logger logger = Logger.getLogger(CheckListDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CheckListDetailServiceImpl.class);
 
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
@@ -551,6 +552,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RCD_DEL)) {
 				getFinanceCheckListReferenceDAO().delete(finChecklistRef, tableType);
 			} else if (finChecklistRef.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				finChecklistRef.setRecordType("");
 				getFinanceCheckListReferenceDAO().update(finChecklistRef, tableType);
 			}
 
@@ -637,8 +639,10 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 					for (FinanceCheckListReference fincListRefTemp : tempFinCheckListRefList) {
 						if (finCheckListRef.getQuestionId() == fincListRefTemp.getQuestionId()
 								&& finCheckListRef.getAnswer() == fincListRefTemp.getAnswer()) {
-							tempFinCheckListRef = fincListRefTemp;
-							break;
+							if (finCheckListRef.getInstructionUID() == fincListRefTemp.getInstructionUID()) {
+								tempFinCheckListRef = fincListRefTemp;
+								break;
+							}
 						}
 					}
 				}
@@ -646,8 +650,10 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 					for (FinanceCheckListReference fincListRefBef : befFinCheckListRefList) {
 						if (finCheckListRef.getQuestionId() == fincListRefBef.getQuestionId()
 								&& finCheckListRef.getAnswer() == fincListRefBef.getAnswer()) {
-							befFinCheckListRef = fincListRefBef;
-							break;
+							if (finCheckListRef.getInstructionUID() == fincListRefBef.getInstructionUID()) {
+								befFinCheckListRef = fincListRefBef;
+								break;
+							}
 						}
 					}
 				}

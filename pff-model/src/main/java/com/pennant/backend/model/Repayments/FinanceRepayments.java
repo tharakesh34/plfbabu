@@ -33,6 +33,8 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	// Fee Details
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
 	private BigDecimal schdInsPaid = BigDecimal.ZERO;
+	private BigDecimal schdSuplRentPaid = BigDecimal.ZERO;
+	private BigDecimal schdIncrCostPaid = BigDecimal.ZERO;
 
 	// not in database
 	private BigDecimal lovDescSchdPriPaid = BigDecimal.ZERO;
@@ -49,6 +51,45 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 
 	public FinanceRepayments() {
 
+	}
+
+	public FinanceRepayments copyEntity() {
+		FinanceRepayments entity = new FinanceRepayments();
+		entity.setFinReference(this.finReference);
+		entity.setFinPostDate(this.finPostDate);
+		entity.setFinRpyFor(this.finRpyFor);
+		entity.setFinPaySeq(this.finPaySeq);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setFinRpyAmount(this.finRpyAmount);
+		entity.setFinSchdDate(this.finSchdDate);
+		entity.setFinValueDate(this.finValueDate);
+		entity.setFinBranch(this.finBranch);
+		entity.setFinType(this.finType);
+		entity.setFinCustID(this.finCustID);
+		entity.setReceiptId(this.receiptId);
+		entity.setPenaltyPaid(this.penaltyPaid);
+		entity.setPenaltyWaived(this.penaltyWaived);
+		entity.setFinSchdPriPaid(this.finSchdPriPaid);
+		entity.setFinSchdPftPaid(this.finSchdPftPaid);
+		entity.setFinSchdTdsPaid(this.finSchdTdsPaid);
+		entity.setFinTotSchdPaid(this.finTotSchdPaid);
+		entity.setFinFee(this.finFee);
+		entity.setFinWaiver(this.finWaiver);
+		entity.setFinRefund(this.finRefund);
+		entity.setSchdFeePaid(this.schdFeePaid);
+		entity.setSchdInsPaid(this.schdInsPaid);
+		entity.setSchdSuplRentPaid(this.schdSuplRentPaid);
+		entity.setSchdIncrCostPaid(this.schdIncrCostPaid);
+		entity.setLovDescSchdPriPaid(this.lovDescSchdPriPaid);
+		entity.setLovDescSchdPftPaid(this.lovDescSchdPftPaid);
+		entity.setRepayBal(this.RepayBal);
+		entity.setRepaypri(this.Repaypri);
+		entity.setRepayPft(this.RepayPft);
+		entity.setRepayPenal(this.RepayPenal);
+		entity.setRepayWaiver(this.RepayWaiver);
+		entity.setRepayRefund(this.RepayRefund);
+		entity.setWaiverId(this.waiverId);
+		return entity;
 	}
 
 	@Override
@@ -285,6 +326,22 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 
 	public void setSchdInsPaid(BigDecimal schdInsPaid) {
 		this.schdInsPaid = schdInsPaid;
+	}
+
+	public BigDecimal getSchdSuplRentPaid() {
+		return schdSuplRentPaid;
+	}
+
+	public void setSchdSuplRentPaid(BigDecimal schdSuplRentPaid) {
+		this.schdSuplRentPaid = schdSuplRentPaid;
+	}
+
+	public BigDecimal getSchdIncrCostPaid() {
+		return schdIncrCostPaid;
+	}
+
+	public void setSchdIncrCostPaid(BigDecimal schdIncrCostPaid) {
+		this.schdIncrCostPaid = schdIncrCostPaid;
 	}
 
 	public BigDecimal getFinSchdTdsPaid() {

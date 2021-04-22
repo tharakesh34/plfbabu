@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.AddressTypeDAO;
 import com.pennant.backend.model.systemmasters.AddressType;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * DAO methods implementation for the <b>AddressType model</b> class.<br>
  */
 public class AddressTypeDAOImpl extends BasicDao<AddressType> implements AddressTypeDAO {
-	private static Logger logger = Logger.getLogger(AddressTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AddressTypeDAOImpl.class);
 
 	public AddressTypeDAOImpl() {
 		super();
@@ -97,7 +98,7 @@ public class AddressTypeDAOImpl extends BasicDao<AddressType> implements Address
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(addressType);
-		RowMapper<AddressType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AddressType.class);
+		RowMapper<AddressType> typeRowMapper = BeanPropertyRowMapper.newInstance(AddressType.class);
 
 		try {
 			addressType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

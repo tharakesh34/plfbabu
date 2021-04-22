@@ -2,7 +2,8 @@ package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class PresentmentDetailImportChangesListCtrl extends GFCBaseCtrl<PresentmentDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PresentmentDetailImportChangesListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PresentmentDetailImportChangesListCtrl.class);
 
 	protected Window window_PresentmentDetailList;
 	protected Borderlayout borderLayout_PresentmentDetailList;

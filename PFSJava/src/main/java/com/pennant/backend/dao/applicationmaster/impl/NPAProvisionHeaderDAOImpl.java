@@ -45,7 +45,9 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -54,7 +56,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPAProvisionHeaderDAO;
 import com.pennant.backend.model.applicationmaster.AssetClassificationDetail;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>NPAProvisionHeader</code> with set of CRUD operations.
  */
 public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> implements NPAProvisionHeaderDAO {
-	private static Logger logger = Logger.getLogger(NPAProvisionHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NPAProvisionHeaderDAOImpl.class);
 
 	public NPAProvisionHeaderDAOImpl() {
 		super();
@@ -83,12 +84,12 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT  id, entity, finType, ");
+		sql.append("SELECT  id, entity, finType, NpaTemplateId");
 		if (type.contains("View")) {
-			sql.append("entityName, finTypeName,");
+			sql.append(", EntityName, finTypeName, NpaTemplateCode, NpaTemplateDesc");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, ");
-		sql.append("   TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, ");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From NPA_PROVISION_HEADER");
 		sql.append(type);
 		sql.append(" Where id = :id");
@@ -100,8 +101,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		provisionHeader.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(provisionHeader);
-		RowMapper<NPAProvisionHeader> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPAProvisionHeader.class);
+		RowMapper<NPAProvisionHeader> rowMapper = BeanPropertyRowMapper.newInstance(NPAProvisionHeader.class);
 
 		try {
 			provisionHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -114,12 +114,12 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 	}
 
 	@Override
-	public boolean isDuplicateKey(long id, String entity, String finType, TableType tableType) {
+	public boolean isDuplicateKey(long id, String entity, String finType, Long npaTemplateId, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "entity = :entity AND finType = :finType AND id != :id";
+		String whereClause = "entity = :entity AND finType = :finType AND npaTemplateId = :npaTemplateId AND id != :id";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -140,6 +140,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		paramSource.addValue("id", id);
 		paramSource.addValue("entity", entity);
 		paramSource.addValue("finType", finType);
+		paramSource.addValue("npaTemplateId", npaTemplateId);
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -162,11 +163,11 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into NPA_PROVISION_HEADER");
 		sql.append(tableType.getSuffix());
-		sql.append(" (id, entity, finType, ");
+		sql.append(" (id, entity, finType, NpaTemplateId, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		sql.append(" NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :id, :entity, :finType, ");
+		sql.append(" :id, :entity, :finType, :NpaTemplateId,");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId,");
 		sql.append(" :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -190,7 +191,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update NPA_PROVISION_HEADER");
 		sql.append(tableType.getSuffix());
-		sql.append(" set entity = :entity, finType = :finType, ");
+		sql.append(" set entity = :entity, finType = :finType, NpaTemplateId = :NpaTemplateId,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -291,7 +292,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		assetClassificationHeader.setId(listHeaderId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assetClassificationHeader);
-		RowMapper<AssetClassificationHeader> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AssetClassificationHeader> rowMapper = BeanPropertyRowMapper
 				.newInstance(AssetClassificationHeader.class);
 
 		try {
@@ -306,18 +307,19 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 	}
 
 	@Override
-	public boolean getIsFinTypeExists(String finType, TableType type) {
+	public boolean getIsFinTypeExists(String finType, Long npaTemplateId, TableType type) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
 		StringBuilder selectSql = new StringBuilder("Select Count(*) From NPA_PROVISION_HEADER");
 		selectSql.append(type.getSuffix());
-		selectSql.append(" Where finType = :FinType");
+		selectSql.append(" Where finType = :FinType and NpaTemplateId = :NpaTemplateId");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("FinType", finType);
+		source.addValue("NpaTemplateId", npaTemplateId);
 
 		try {
 			if (jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class) > 0) {
@@ -331,39 +333,102 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 	}
 
 	@Override
-	public NPAProvisionHeader getNPAProvisionByFintype(String finType, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT  id, entity, finType, ");
+	public NPAProvisionHeader getNPAProvisionByFintype(String finType, Long npaTemplateId, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Entity, FinType, NpaTemplateId");
 		if (tableType.getSuffix().contains("View")) {
-			sql.append("entityName, finTypeName,");
+			sql.append(", EntityName, FinTypeName");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, ");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From NPA_PROVISION_HEADER");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from NPA_PROVISION_HEADER");
 		sql.append(tableType.getSuffix());
-		sql.append(" Where finType = :finType");
+		sql.append(" Where finType = ? and npaTemplateId = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		NPAProvisionHeader provisionHeader = new NPAProvisionHeader();
-		provisionHeader.setFinType(finType);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(provisionHeader);
-		RowMapper<NPAProvisionHeader> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPAProvisionHeader.class);
-
 		try {
-			provisionHeader = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType, npaTemplateId },
+					(rs, rowNum) -> {
+						NPAProvisionHeader pa = new NPAProvisionHeader();
+
+						pa.setId(rs.getLong("Id"));
+						pa.setEntity(rs.getString("Entity"));
+						pa.setFinType(rs.getString("FinType"));
+						pa.setNpaTemplateId(rs.getLong("NpaTemplateId"));
+
+						if (tableType.getSuffix().contains("View")) {
+							pa.setEntityName(rs.getString("EntityName"));
+							pa.setFinTypeName(rs.getString("FinTypeName"));
+						}
+
+						pa.setVersion(rs.getInt("Version"));
+						pa.setLastMntOn(rs.getTimestamp("LastMntOn"));
+						pa.setLastMntBy(rs.getLong("LastMntBy"));
+						pa.setRecordStatus(rs.getString("RecordStatus"));
+						pa.setRoleCode(rs.getString("RoleCode"));
+						pa.setNextRoleCode(rs.getString("NextRoleCode"));
+						pa.setTaskId(rs.getString("TaskId"));
+						pa.setNextTaskId(rs.getString("NextTaskId"));
+						pa.setRecordType(rs.getString("RecordType"));
+						pa.setWorkflowId(rs.getLong("WorkflowId"));
+
+						return pa;
+					});
 		} catch (EmptyResultDataAccessException e) {
-			provisionHeader = null;
+			logger.info("Record not Found in NPA_PROVISION_HEADER{} for the FinType >>{}", tableType.getSuffix(),
+					finType);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return provisionHeader;
+		return null;
+	}
+
+	@Override
+	public List<NPAProvisionHeader> getNPAProvisionsListByFintype(String finType, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, Entity, FinType, NpaTemplateId");
+		if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
+			sql.append(", EntityName, FinTypeName, NpaTemplateCode, NpaTemplateDesc");
+		}
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From NPA_PROVISION_HEADER");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where finType = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finType);
+		}, (rs, i) -> {
+			NPAProvisionHeader ah = new NPAProvisionHeader();
+
+			ah.setId(rs.getLong("Id"));
+			ah.setEntity(rs.getString("Entity"));
+			ah.setFinType(rs.getString("FinType"));
+			ah.setNpaTemplateId(rs.getLong("NpaTemplateId"));
+
+			if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
+				ah.setEntityName(rs.getString("EntityName"));
+				ah.setFinTypeName(rs.getString("FinTypeName"));
+				ah.setNpaTemplateDesc(rs.getString("NpaTemplateDesc"));
+				ah.setNpaTemplateCode(rs.getString("NpaTemplateCode"));
+			}
+
+			ah.setVersion(rs.getInt("Version"));
+			ah.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ah.setLastMntBy(rs.getLong("LastMntBy"));
+			ah.setRecordStatus(rs.getString("RecordStatus"));
+			ah.setRoleCode(rs.getString("RoleCode"));
+			ah.setNextRoleCode(rs.getString("NextRoleCode"));
+			ah.setTaskId(rs.getString("TaskId"));
+			ah.setNextTaskId(rs.getString("NextTaskId"));
+			ah.setRecordType(rs.getString("RecordType"));
+			ah.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return ah;
+
+		});
 	}
 
 }

@@ -76,14 +76,16 @@ public interface NPAProvisionHeaderDAO extends BasicCrudDao<NPAProvisionHeader> 
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long id, String entity, String finType, TableType tableType);
+	boolean isDuplicateKey(long id, String entity, String finType, Long npaTemplateId, TableType tableType);
 
 	List<AssetClassificationDetail> getAssetHeaderIdList(String finType, TableType type);
 
 	AssetClassificationHeader getAssetClassificationCodesList(long listHeaderId, TableType aview);
 
-	boolean getIsFinTypeExists(String finType, TableType type);
+	boolean getIsFinTypeExists(String finType, Long npaTemplateId, TableType type);
 
-	NPAProvisionHeader getNPAProvisionByFintype(String finType, TableType tableType);
+	NPAProvisionHeader getNPAProvisionByFintype(String finType, Long npaTemplateId, TableType tableType);
+
+	List<NPAProvisionHeader> getNPAProvisionsListByFintype(String finType, TableType tableType);
 
 }

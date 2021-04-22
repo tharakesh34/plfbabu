@@ -46,7 +46,8 @@ package com.pennant.backend.service.applicationmaster.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 public class FinanceApplicationCodeServiceImpl extends GenericService<AddressType>
 		implements FinanceApplicationCodeService {
 
-	private static Logger logger = Logger.getLogger(FinanceApplicationCodeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceApplicationCodeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceApplicationCodeDAO financeApplicationCodeDAO;

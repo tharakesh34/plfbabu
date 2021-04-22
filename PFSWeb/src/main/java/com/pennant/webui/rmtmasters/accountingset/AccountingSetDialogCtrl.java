@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
@@ -105,7 +106,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private static final long serialVersionUID = 8602015982512929710L;
-	private static final Logger logger = Logger.getLogger(AccountingSetDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AccountingSetDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -147,6 +148,9 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private PagedListWrapper<TransactionEntry> TransactionEntryPagedListWrapper;
 	int listRows;
 	private boolean saveRecord = false;
+
+	protected Listheader listheader_AccType;
+	protected Listheader listheader_AmountRule;
 
 	/**
 	 * default constructor.<br>
@@ -244,8 +248,10 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 															 */
 		this.eventCode.setValidateColumns(new String[] { "AEEventCode" });
 
-		this.listheader_Account.setVisible(false);
-		this.listheader_PostToSystem.setVisible(false);
+		if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_AHB)) {
+			this.listheader_Account.setVisible(false);
+			this.listheader_PostToSystem.setVisible(false);
+		}
 
 		this.hbox_EntryByInvestment.setVisible(ImplementationConstants.ALLOW_RIA);
 		this.listheader_ByInvestor.setVisible(ImplementationConstants.ALLOW_RIA);

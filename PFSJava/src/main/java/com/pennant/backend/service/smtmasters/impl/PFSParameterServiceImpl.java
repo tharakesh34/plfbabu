@@ -46,7 +46,8 @@ package com.pennant.backend.service.smtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.model.GlobalVariable;
  * 
  */
 public class PFSParameterServiceImpl extends GenericService<PFSParameter> implements PFSParameterService {
-	private static Logger logger = Logger.getLogger(PFSParameterServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(PFSParameterServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PFSParameterDAO pFSParameterDAO;

@@ -49,13 +49,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.model.finance.FinStatusDetail;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements FinanceSuspHeadDAO {
-	private static Logger logger = Logger.getLogger(FinanceSuspHeadDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceSuspHeadDAOImpl.class);
 
 	public FinanceSuspHeadDAOImpl() {
 		super();
@@ -119,8 +120,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		RowMapper<FinanceSuspHead> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceSuspHead.class);
+		RowMapper<FinanceSuspHead> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceSuspHead.class);
 
 		try {
 			financeSuspHead = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -134,8 +134,6 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 	@Override
 	public Date getFinSuspDate(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinSuspDate");
 		sql.append(" From FinSuspHead");
@@ -146,10 +144,9 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1 }, Date.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.trace(Literal.EXCEPTION, e);
+			logger.warn("Records are not found in FinSuspHead table for this FinReference >> {} ", finReference);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -321,8 +318,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspDetails);
-		RowMapper<FinanceSuspDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceSuspDetails.class);
+		RowMapper<FinanceSuspDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceSuspDetails.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -342,8 +338,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinStatusDetail.class);
+		RowMapper<FinStatusDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinStatusDetail.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

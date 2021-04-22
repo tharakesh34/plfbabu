@@ -65,6 +65,58 @@ public class ProjectedAccrual implements Serializable {
 
 	}
 
+	public ProjectedAccrual copyEntity() {
+		ProjectedAccrual entity = new ProjectedAccrual();
+		entity.setFinReference(this.finReference);
+		entity.setFinType(this.finType);
+		entity.setAccruedOn(this.accruedOn);
+		entity.setSchdDate(this.schdDate);
+		entity.setSchdPri(this.schdPri);
+		entity.setSchdPft(this.schdPft);
+		entity.setSchdTot(this.schdTot);
+		entity.setSchSeq(this.schSeq);
+		entity.setPftOnSchDate(this.pftOnSchDate);
+		entity.setCpzOnSchDate(this.cpzOnSchDate);
+		entity.setRepayOnSchDate(this.repayOnSchDate);
+		entity.setRvwOnSchDate(this.rvwOnSchDate);
+		entity.setBalanceForPftCal(this.balanceForPftCal);
+		entity.setCalculatedRate(this.calculatedRate);
+		entity.setProfitCalc(this.profitCalc);
+		entity.setProfitSchd(this.profitSchd);
+		entity.setPrincipalSchd(this.principalSchd);
+		entity.setDisbAmount(this.disbAmount);
+		entity.setDownPaymentAmount(this.downPaymentAmount);
+		entity.setCpzAmount(this.cpzAmount);
+		entity.setFeeChargeAmt(this.feeChargeAmt);
+		entity.setSchdPriPaid(this.schdPriPaid);
+		entity.setSchdPftPaid(this.schdPftPaid);
+		entity.setSchPftPaid(this.schPftPaid);
+		entity.setSchPriPaid(this.schPriPaid);
+		entity.setSpecifier(this.specifier);
+		entity.setClosingStatus(this.closingStatus);
+		entity.setEmiAdv(this.emiAdv);
+		entity.setAdvFlag(this.advFlag);
+		entity.setCcyEditField(this.ccyEditField);
+		entity.setCcyMinorCcyUnits(this.ccyMinorCcyUnits);
+		entity.setFinStartDate(this.finStartDate);
+		entity.setMaturityDate(this.maturityDate);
+		entity.setProjAccrualID(this.projAccrualID);
+		entity.setPftAmz(this.pftAmz);
+		entity.setPftAccrued(this.pftAccrued);
+		entity.setCumulativeAccrued(this.cumulativeAccrued);
+		entity.setPOSAccrued(this.pOSAccrued);
+		entity.setCumulativePOS(this.cumulativePOS);
+		entity.setNoOfDays(this.noOfDays);
+		entity.setCumulativeDays(this.cumulativeDays);
+		entity.setAMZPercentage(this.aMZPercentage);
+		entity.setPartialPaymentID(this.partialPaymentID);
+		entity.setPartialPaidAmt(this.partialPaidAmt);
+		entity.setPartialAMZPerc(this.partialAMZPerc);
+		entity.setMonthEnd(this.monthEnd);
+		entity.setAvgPOS(this.avgPOS);
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

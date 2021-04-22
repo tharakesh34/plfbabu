@@ -100,15 +100,16 @@
 							<toolbar></toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
-								<label id="label_windowTitle" value="${c:l('label_ActivityLog_Title')}" sclass="label-heading" />
+								<label id="label_windowTitle" value="${c:l('label_ActivityLog_Title')}"
+									sclass="label-heading" />
 							</toolbar>
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+									tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" label="CLOSE" tooltiptext="${c:l('btnClose.tooltiptext')}"
 									autodisable="btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnClose" label="CLOSE" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -135,20 +136,21 @@
 									</groupbox>
 								</row>
 								<row id="row1" spans="6" style="padding-top: 5px;grid-auto-rows:auto;" height="auto">
-									<listbox id="listBoxActivityLog" sizedByContent="true" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
+									<listbox id="listBoxActivityLog" sizedByContent="true" span="true"
+										emptyMessage="${c:l('listbox.emptyMessage')}">
 										<listhead sizable="false">
-											<listheader id="listheader_ActivityLog_RoleCode" label="${c:l('listheader_ActivityLog_RoleCode.label')}"
-												hflex="min" />
-											<listheader id="listheader_ActivityLog_Action" label="${c:l('listheader_ActivityLog_Action.label')}"
-												hflex="min" />
-											<listheader id="listheader_ActivityLog_LastMntBy" label="${c:l('listheader_ActivityLog_LastMntBy.label')}"
-												hflex="min" />
-											<listheader id="listheader_ActivityLog_Date" label="${c:l('listheader_ActivityLog_Date.label')}"
-												hflex="min" />
-											<listheader id="listheader_ActivityLog_Duration" label="${c:l('listheader_ActivityLog_Duration.label')}"
-												hflex="min" />
-											<listheader id="listheader_ActivityLog_Note" label="${c:l('listheader_ActivityLog_Note.label')}"
-												hflex="min" />
+											<listheader id="listheader_ActivityLog_RoleCode"
+												label="${c:l('listheader_ActivityLog_RoleCode.label')}" hflex="min" />
+											<listheader id="listheader_ActivityLog_Action"
+												label="${c:l('listheader_ActivityLog_Action.label')}" hflex="min" />
+											<listheader id="listheader_ActivityLog_LastMntBy"
+												label="${c:l('listheader_ActivityLog_LastMntBy.label')}" hflex="min" />
+											<listheader id="listheader_ActivityLog_Date"
+												label="${c:l('listheader_ActivityLog_Date.label')}" hflex="min" />
+											<listheader id="listheader_ActivityLog_Duration"
+												label="${c:l('listheader_ActivityLog_Duration.label')}" hflex="min" />
+											<listheader id="listheader_ActivityLog_Note"
+												label="${c:l('listheader_ActivityLog_Note.label')}" hflex="min" />
 										</listhead>
 									</listbox>
 								</row>

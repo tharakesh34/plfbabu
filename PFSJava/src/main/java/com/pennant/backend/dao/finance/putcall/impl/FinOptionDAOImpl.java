@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
 import com.pennant.backend.model.finance.finoption.FinOption;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptionDAO {
-	private static Logger logger = Logger.getLogger(FinOptionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinOptionDAOImpl.class);
 
 	@Override
 	public String save(FinOption finoption, TableType tableType) {
@@ -128,7 +129,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		finOption.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finOption);
-		RowMapper<FinOption> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOption.class);
+		RowMapper<FinOption> rowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -169,7 +170,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		RowMapper<FinOption> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOption.class);
+		RowMapper<FinOption> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
@@ -193,7 +194,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finreference);
 
-		RowMapper<FinOption> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOption.class);
+		RowMapper<FinOption> rowMapper = BeanPropertyRowMapper.newInstance(FinOption.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), source, rowMapper);

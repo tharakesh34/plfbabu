@@ -8,7 +8,8 @@ import java.util.List;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse;
 
 public class DisbAutoUploadService extends BasicDao<Object> {
-	private static final Logger logger = Logger.getLogger(DisbAutoUploadService.class);
+	private static final Logger logger = LogManager.getLogger(DisbAutoUploadService.class);
 
 	private DefaultDisbursementResponse defaultDisbursementResponse;
 	private DataEngineConfig dataEngineConfig;

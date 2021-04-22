@@ -43,38 +43,32 @@
 
 package com.pennant.backend.service.financemanagement;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennant.backend.model.financemanagement.ProvisionAmount;
+import com.pennanttech.pff.core.TableType;
 
 public interface ProvisionService {
 
 	Provision getProvision();
 
-	Provision getNewProvision();
-
-	AuditHeader saveOrUpdate(AuditHeader auditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
-
-	Provision getProvisionById(String id, boolean isEnquiry);
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	Provision getApprovedProvisionById(String id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader auditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doApprove(AuditHeader auditHeader);
 
-	AuditHeader doReject(AuditHeader auditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doReject(AuditHeader auditHeader);
 
 	FinanceProfitDetail getProfitDetailById(String finReference);
 
-	List<Provision> getProcessedProvisions();
+	Provision getProvisionById(String finReference, TableType tableType);
 
-	Provision getProvisionById(String finReference, String tableType);
+	List<ProvisionAmount> getProvisionAmounts(long id, TableType mainTab);
+
 }

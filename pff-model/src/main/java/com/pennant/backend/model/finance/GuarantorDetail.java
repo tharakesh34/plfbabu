@@ -68,7 +68,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String name;
 	@XmlElement
-	private BigDecimal guranteePercentage;
+	private BigDecimal guranteePercentage = BigDecimal.ZERO;
 	@XmlElement
 	private String mobileNo;
 	@XmlElement

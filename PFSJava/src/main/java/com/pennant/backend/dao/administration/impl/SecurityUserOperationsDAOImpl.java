@@ -49,14 +49,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.model.administration.SecurityOperation;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> implements SecurityUserOperationsDAO {
-	private static Logger logger = Logger.getLogger(SecurityUserOperationsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserOperationsDAOImpl.class);
 
 	/**
 	 * This method returns new SecurityUserOperations Object
@@ -117,7 +118,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		selectSql.append(" where UsrID=:UsrID");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
-		RowMapper<SecurityUserOperations> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityUserOperations> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityUserOperations.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -145,7 +146,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		selectSql.append("FROM SecUserOperations where UsrID=:UsrID and RoleID=:RoleID");
 		logger.debug("selectSql : " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUserOperations);
-		RowMapper<SecurityUserOperations> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SecurityUserOperations> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SecurityUserOperations.class);
 
 		try {
@@ -341,8 +342,7 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 		user.setUsrID(userId);
 		StringBuilder selectSql = new StringBuilder();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(user);
-		RowMapper<SecurityOperation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityOperation.class);
+		RowMapper<SecurityOperation> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityOperation.class);
 
 		if (isAssigned) {
 			selectSql.append("select * from SecOperations_View where OprID in");
@@ -387,48 +387,61 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 
 	@Override
 	public List<String> getUsersByRoles(String[] roleCodes) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select distinct U.UsrLogin");
+		StringBuilder sql = new StringBuilder("Select distinct U.UsrLogin");
 		sql.append(" from SecUsers U");
 		sql.append(" inner join SecUserOperations UO on UO.UsrID = U.UsrID");
 		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
 		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID");
-		sql.append(" where R.RoleCd in (:RoleCodes)");
+		sql.append(" where R.RoleCd in (");
 
-		// Execute the SQL, binding the arguments.
+		for (int i = 0; i < roleCodes.length; i++) {
+			sql.append(" ?,");
+		}
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
+
 		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("RoleCodes", Arrays.asList(roleCodes));
 
-		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (int i = 0; i < roleCodes.length; i++) {
+				ps.setString(index++, roleCodes[i]);
+			}
+		}, (rs, rowNum) -> {
+			return rs.getString("UsrLogin");
+		});
 	}
 
 	@Override
 	public List<String> getUsersByRoles(String[] roleCodes, String division, String branch) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("select distinct U.UsrLogin");
 		sql.append(" from SecUsers U");
 		sql.append(" inner join SecUserOperations UO on UO.UsrID = U.UsrID");
 		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
 		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID");
 		sql.append(" inner join SecurityUserDivBranch UDB on UDB.UsrID = U.UsrID");
-		sql.append(" where R.RoleCd in (:RoleCodes)");
-		sql.append(" and UDB.UserDivision = :UserDivision and UDB.UserBranch = :UserBranch");
+		sql.append(" where R.RoleCd in (");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("RoleCodes", Arrays.asList(roleCodes));
-		paramSource.addValue("UserDivision", division);
-		paramSource.addValue("UserBranch", branch);
+		for (int i = 0; i < roleCodes.length; i++) {
+			sql.append(" ?,");
+		}
+		sql.deleteCharAt(sql.length() - 1);
+		sql.append(")");
+		sql.append(" and UDB.UserDivision = ? and UDB.UserBranch = ?");
 
-		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		logger.trace(Literal.SQL + sql);
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			for (int i = 0; i < roleCodes.length; i++) {
+				ps.setString(index++, roleCodes[i]);
+			}
+			ps.setString(index++, division);
+			ps.setString(index++, branch);
+		}, (rs, rowNum) -> {
+			return rs.getString("UsrLogin");
+		});
 	}
 
 	/**
@@ -455,6 +468,6 @@ public class SecurityUserOperationsDAOImpl extends SequenceDao<SecurityUser> imp
 
 	@Override
 	public long getNextValue() {
-		return getNextId("SeqSecUserOperations");
+		return getNextValue("SeqSecUserOperations");
 	}
 }

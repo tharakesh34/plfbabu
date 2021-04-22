@@ -57,7 +57,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -117,7 +118,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(UploadSecondaryMandateListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(UploadSecondaryMandateListCtrl.class);
 
 	protected Window window_SecondaryMandateList;
 	protected Borderlayout borderLayout_MandateList;
@@ -551,8 +552,8 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		}
 		// validate accountHolder name
 		if (StringUtils.isNotBlank(mandate.getAccHolderName())) {
-			Pattern pattern = Pattern
-					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACC_HOLDER_NAME));
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
 			Matcher matcher = pattern.matcher(mandate.getAccHolderName());
 
 			if (matcher.matches() == false) {

@@ -2,9 +2,8 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<script type="text/javascript" src="/deviceUtils/printerutil.js" />
 
@@ -33,18 +32,15 @@
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
-						<label id="windowTitle" value="${c:l('window_ReceiptDialog.title')}" sclass="label-heading"
-							style="padding-left: 125%;" />
+						<label id="windowTitle" value="${c:l('window_ReceiptDialog.title')}" sclass="label-heading" style="padding-left: 125%;" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
-							tooltiptext="${c:l('btnHelp.tooltiptext')}"
+						<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
 							sclass="z-toolbarbutton" />
-						<button id="btnClose" label="${c:l('btnClose.label')}"
-							tooltiptext="${c:l('btnClose.tooltiptext')}"
+						<button id="btnClose" label="${c:l('btnClose.label')}" tooltiptext="${c:l('btnClose.tooltiptext')}"
 							autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose"
 							sclass="z-toolbarbutton" />
 					</toolbar>
@@ -56,16 +52,14 @@
 					<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
 						<tabs id="tabsIndexCenter">
 							<tab id="receiptDetailsTab" label="${c:l('label_ReceiptDialog_ReceiptDetails')}" />
-							<tab id="effectiveScheduleTab" label="${c:l('label_ReceiptDialog_EffectiveSchedule')}"
-								visible="false" />
+							<tab id="effectiveScheduleTab" label="${c:l('label_ReceiptDialog_EffectiveSchedule')}" visible="false" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto">
 								<div>
 									<groupbox style="border:0px;">
 										<caption label="${c:l('label_ReceiptDialog_LoanSummary')}" />
-										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px"
-											width="100%">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
 											<columns>
 												<column width="200px" />
 												<column />
@@ -78,20 +72,22 @@
 													<hbox>
 														<space spacing="2px" />
 														<textbox id="custCIF" width="180px" readonly="true" />
-														<button id="btnSearchCustCIF"
-															tooltiptext="${c:l('label_ReceiptDialog_CustID.value')}" image="/images/icons/more.png"
+														<button id="btnSearchCustCIF" tooltiptext="${c:l('label_ReceiptDialog_CustID.value')}" image="/images/icons/more.png"
 															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose" />
 													</hbox>
 													<label value="${c:l('label_ReceiptDialog_FinReference.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<textbox id="finReference" width="150px" readonly="true" />
-														<button id="btnSearchFinreference"
-															tooltiptext="${c:l('label_ReceiptDialog_FinReference.value')}" image="/images/icons/more.png"
-															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose" />
+														<button id="btnSearchFinreference" tooltiptext="${c:l('label_ReceiptDialog_FinReference.value')}"
+															image="/images/icons/more.png"
+															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btn_LinkedLoan" />
 														<space spacing="8px" />
-														<button id="btn_LinkedLoan"
-															label="${c:l('label_ReceiptDialog_LinkedLoan.value')}" />
+														<button
+															id="btn_LinkedLoan"
+															label="${c:l('label_ReceiptDialog_LinkedLoan.value')}"
+															autodisable="btnReceipt,btnChangeReceipt,btnCalcReceipts,btnNotes,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess,btnHelp,btnClose,btn_LinkedLoan" />
+
 													</hbox>
 												</row>
 												<row>
@@ -110,14 +106,12 @@
 													<label value="${c:l('label_ReceiptDialog_FinCcy.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<textbox id="finCcy" readonly="true" width="180px"
-															disabled="true" />
+														<textbox id="finCcy" readonly="true" width="180px" disabled="true" />
 													</hbox>
 													<label value="${c:l('label_ReceiptDialog_PaidByCustomer.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<decimalbox id="paidByCustomer" width="180px" disabled="true"
-															style="font-weight:bold;" />
+														<decimalbox id="paidByCustomer" width="180px" disabled="true" style="font-weight:bold;" />
 													</hbox>
 												</row>
 											</rows>
@@ -142,48 +136,56 @@
 													<label value="${c:l('label_ReceiptDialog_ReceiptPurpose.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="receiptPurpose" width="180px" readonly="true"
-															disabled="true" />
+														<combobox id="receiptPurpose" width="180px" readonly="true" disabled="true" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ReceiptDialog_CashierBranch"
-														value="${c:l('label_ReceiptDialog_CashierBranch.value')}" />
+													<label id="label_ReceiptDialog_CashierBranch" value="${c:l('label_ReceiptDialog_CashierBranch.value')}" />
 													<extendedcombobox id="cashierBranch" />
+													<label id="label_ReceiptDialog_SourceofFund" value="${c:l('label_ReceiptDialog_SourceofFund.value')}"/>
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="sourceofFund" width="180px"/>
+													</hbox>
 												</row>
 												<row visible="false">
-													<label id="label_ReceiptDialog_PostBranch"
-														value="${c:l('label_ReceiptDialog_PostBranch.value')}" />
+													<label id="label_ReceiptDialog_PostBranch" value="${c:l('label_ReceiptDialog_PostBranch.value')}" />
 													<extendedcombobox id="postBranch" />
-													<label id="label_ReceiptDialog_FinDivision"
-														value="${c:l('label_ReceiptDialog_FinDivision.value')}" />
+													<label id="label_ReceiptDialog_FinDivision" value="${c:l('label_ReceiptDialog_FinDivision.value')}" />
 													<extendedcombobox id="finDivision" />
 												</row>
 												<row>
 													<label value="${c:l('label_ReceiptDialog_ReceiptMode.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="receiptMode" width="180px" readonly="true"
-															disabled="true" />
+														<combobox id="receiptMode" width="180px" readonly="true" disabled="true" />
 													</hbox>
 													<label id="receiptTypeLabel" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="subReceiptMode" width="180px" readonly="true"
-															visible="false" disabled="true" />
-														<combobox id="receiptChannel" width="180px" readonly="true"
-															visible="false" disabled="true" />
+														<combobox id="subReceiptMode" width="180px" readonly="true" visible="false" disabled="true" />
+														<combobox id="receiptChannel" width="180px" readonly="true" visible="false" disabled="true" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ReceiptPayment_ReceiptDate"
-														value="${c:l('label_ReceiptPayment_ReceiptDate.value')}" />
+													<label id="label_ReceiptPayment_ReceiptDate" value="${c:l('label_ReceiptPayment_ReceiptDate.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<datebox id="receiptDate" width="190px" disabled="true" />
 													</hbox>
 													<label value="${c:l('label_ReceiptDialog_ReceiptAmount.value')}" />
 													<currencyBox id="receiptAmount" disabled="true" />
+												</row>
+												<row>
+													<label value="${c:l('label_ReceiptPayment_tDSAmount.value')}" />
+													<currencyBox id="tDSAmount" />
+												</row>
+												<row>
+												<label id="label_ReceiptPayment_ReceivedDate" value="${c:l('label_ReceiptPayment_ReceivedDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="receivedDate" width="190px" disabled="true"/>
+													</hbox>
 												</row>
 												<row visible="false">
 													<label value="${c:l('label_ReceiptDialog_ExcessAdjustTo.value')}" />
@@ -192,32 +194,27 @@
 													</hbox>
 												</row>
 												<row visible="false">
-													<label
-														value="${c:l('label_ReceiptDialog_RemBalAfterAllocation.value')}" />
+													<label value="${c:l('label_ReceiptDialog_RemBalAfterAllocation.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<decimalbox id="remBalAfterAllocation" width="180px"
-															disabled="true" style="font-weight:bold;" />
+														<decimalbox id="remBalAfterAllocation" width="180px" disabled="true" style="font-weight:bold;" />
 													</hbox>
 													<label value="${c:l('label_ReceiptDialog_CustToBePaid.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<decimalbox id="custPaid" width="180px" disabled="true"
-															style="font-weight:bold;" />
+														<decimalbox id="custPaid" width="180px" disabled="true" style="font-weight:bold;" />
 													</hbox>
 												</row>
 												<row id="row_ReceiptModeStatus" visible="false">
-													<label id="label_ReceiptDialog_ReceiptModeStatus"
-														value="${c:l('label_ReceiptDialog_ReceiptModeStatus.value')}" visible="true" />
+													<label id="label_ReceiptDialog_ReceiptModeStatus" value="${c:l('label_ReceiptDialog_ReceiptModeStatus.value')}"
+														visible="true" />
 													<hbox id="hbox_ReceiptModeStatus" visible="false">
 														<space spacing="2px" sclass="mandatory" />
-														<combobox id="receiptModeStatus" width="180px" readonly="true"
-															disabled="true" />
+														<combobox id="receiptModeStatus" width="180px" readonly="true" disabled="true" />
 													</hbox>
 												</row>
 												<row id="row_RealizationDate" visible="false">
-													<label id="label_ReceiptDialog_RealizationDate"
-														value="${c:l('label_ReceiptDialog_RealizationDate.value')}" />
+													<label id="label_ReceiptDialog_RealizationDate" value="${c:l('label_ReceiptDialog_RealizationDate.value')}" />
 													<hbox id="hbox_ReceiptDialog_RealizationDate">
 														<space spacing="2px" sclass="mandatory" />
 														<datebox id="realizationDate" width="100px" disabled="true" />
@@ -232,59 +229,49 @@
 													</hbox>
 												</row>
 												<row id="row_BounceReason" visible="false">
-													<label id="label_ReceiptDialog_BounceReason"
-														value="${c:l('label_ReceiptDialog_BounceReason.value')}" />
+													<label id="label_ReceiptDialog_BounceReason" value="${c:l('label_ReceiptDialog_BounceReason.value')}" />
 													<extendedcombobox id="bounceCode" />
-													<label id="label_ReceiptDialog_BounceCharge"
-														value="${c:l('label_ReceiptDialog_BounceCharge.value')}" />
+													<label id="label_ReceiptDialog_BounceCharge" value="${c:l('label_ReceiptDialog_BounceCharge.value')}" />
 													<currencyBox id="bounceCharge" disabled="true" />
 												</row>
 												<row id="row_BounceRemarks" visible="false">
-													<label id="label_ReceiptDialog_BounceRemarks"
-														value="${c:l('label_ReceiptDialog_BounceRemarks.value')}" />
+													<label id="label_ReceiptDialog_BounceRemarks" value="${c:l('label_ReceiptDialog_BounceRemarks.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<textbox id="bounceRemarks" width="180px" disabled="true" />
 													</hbox>
-													<label id="label_ReceiptDialog_BounceDate"
-														value="${c:l('label_ReceiptDialog_BounceDate.value')}" />
+													<label id="label_ReceiptDialog_BounceDate" value="${c:l('label_ReceiptDialog_BounceDate.value')}" />
 													<hbox id="hbox_ReceiptDialog_BounceDate">
 														<space spacing="2px" sclass="mandatory" />
 														<datebox id="bounceDate" width="100px" disabled="true" />
 													</hbox>
 												</row>
 												<row id="row_CancelReason" visible="false">
-													<label id="label_ReceiptDialog_CancelReason"
-														value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
+													<label id="label_ReceiptDialog_CancelReason" value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
 													<extendedcombobox id="cancelReason" />
 
-													<label id="label_ReceiptDialog_CancelRemark"
-														value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />
-													<extendedcombobox id="cancelRemarks" />
+													<label id="label_ReceiptDialog_CancelRemark" value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />
+													<textbox id="cancelRemarks" />
 												</row>
 												<row id="row_CancelDate" visible="false">
-													<label id="label_ReceiptDialog_CancelDate"
-														value="${c:l('label_ReceiptDialog_CancelDate.value')}" />
+													<label id="label_ReceiptDialog_CancelDate" value="${c:l('label_ReceiptDialog_CancelDate.value')}" />
 													<hbox id="hbox_ReceiptDialog_CanceDate">
 														<space spacing="2px" />
 														<datebox id="cancelDate" width="100px" disabled="true" />
 													</hbox>
 												</row>
 												<row id="row_knockOffRef" visible="false">
-													<label id="label_ReceiptDialog_KnockoffReferenec"
-														value="${c:l('label_ReceiptDialog_KnockoffReferenec.value')}" />
+													<label id="label_ReceiptDialog_KnockoffReferenec" value="${c:l('label_ReceiptDialog_KnockoffReferenec.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<textbox id="knockoffReferenec" width="180px" readonly="true"
-															disabled="true" />
+														<textbox id="knockoffReferenec" width="180px" readonly="true" disabled="true" />
 													</hbox>
 												</row>
 											</rows>
 										</grid>
 									</groupbox>
 									<groupbox id="gb_KnockOffDetails" visible="false">
-										<caption id="caption_knockOffDetail"
-											label="${c:l('label_ReceiptDialog_KnockoffDetail.value')}" />
+										<caption id="caption_knockOffDetail" label="${c:l('label_ReceiptDialog_KnockoffDetail.value')}" />
 										<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
 											<columns>
 												<column width="200px" />
@@ -294,54 +281,44 @@
 											</columns>
 											<rows>
 												<row>
-													<label id="label_ReceiptDialog_kncockoffPurpose"
-														value="${c:l('label_ReceiptDialog_kncockoffPurpose.value')}" />
+													<label id="label_ReceiptDialog_kncockoffPurpose" value="${c:l('label_ReceiptDialog_kncockoffPurpose.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="knockOffPurpose" width="190px" readonly="true"
-															disabled="true" />
+														<combobox id="knockOffPurpose" width="190px" readonly="true" disabled="true" />
 													</hbox>
-													<label id="label_ReceiptDialog_kncockAllocMethod"
-														value="${c:l('label_ReceiptDialog_kncockAllocMethod.value')}" />
+													<label id="label_ReceiptDialog_kncockAllocMethod" value="${c:l('label_ReceiptDialog_kncockAllocMethod.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<combobox id="allocateMethod" width="190px" disabled="true" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ReceiptDialog_kncockoffFrom"
-														value="${c:l('label_ReceiptDialog_kncockoffFrom.value')}" />
+													<label id="label_ReceiptDialog_kncockoffFrom" value="${c:l('label_ReceiptDialog_kncockoffFrom.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="knockOffFrom" width="190px" readonly="true"
-															disabled="true" />
+														<combobox id="knockOffFrom" width="190px" readonly="true" disabled="true" />
 													</hbox>
 
 												</row>
 												<row>
-													<label id="label_ReceiptPayment_KnockoffReceiptDate"
-														value="${c:l('label_ReceiptPayment_KnockoffReceiptDate.value')}" />
+													<label id="label_ReceiptPayment_KnockoffReceiptDate" value="${c:l('label_ReceiptPayment_KnockoffReceiptDate.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<datebox id="knockOffReceiptDate" width="190px" readonly="true"
-															disabled="true" />
+														<datebox id="knockOffReceiptDate" width="190px" readonly="true" disabled="true" />
 													</hbox>
 													<label value="${c:l('label_ReceiptDialog_KnockoffAmount.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<currencyBox id="knockOffAmount" readonly="true"
-															disabled="true" />
+														<currencyBox id="knockOffAmount" readonly="true" disabled="true" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ReceiptPayment_KnockoffRemark"
-														value="${c:l('label_ReceiptPayment_KnockoffRemark.value')}" />
+													<label id="label_ReceiptPayment_KnockoffRemark" value="${c:l('label_ReceiptPayment_KnockoffRemark.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<textbox id="knockOffRemark" width="190px" disabled="true" />
 													</hbox>
-													<label id="label_ReceiptDialog_KnockEffectScheduleMthd"
-														value="${c:l('label_ReceiptDialog_KnockEffectScheduleMthd.value')}" />
+													<label id="label_ReceiptDialog_KnockEffectScheduleMthd" value="${c:l('label_ReceiptDialog_KnockEffectScheduleMthd.value')}" />
 													<hbox id="hbox_KnockEffectScheduleMthd">
 														<space spacing="2px" />
 														<combobox id="KnockEffectScheduleMthd" disabled="true" />
@@ -351,8 +328,7 @@
 										</grid>
 									</groupbox>
 									<groupbox id="gb_TransactionDetails" visible="true">
-										<caption id="caption_receiptDetail"
-											label="${c:l('label_ReceiptDialog_TranscactionDetail.value')}" />
+										<caption id="caption_receiptDetail" label="${c:l('label_ReceiptDialog_TranscactionDetail.value')}" />
 										<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
 											<columns>
 												<column width="200px" />
@@ -362,14 +338,12 @@
 											</columns>
 											<rows>
 												<row>
-													<label id="label_ReceiptDialog_ReceivedFrom"
-														value="${c:l('label_ReceiptDialog_ReceivedFrom.value')}" />
+													<label id="label_ReceiptDialog_ReceivedFrom" value="${c:l('label_ReceiptDialog_ReceivedFrom.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<combobox id="receivedFrom" width="180px" disabled="true" />
 													</hbox>
-													<label id="label_ReceiptDialog_PanNumber"
-														value="${c:l('label_ReceiptDialog_PanNumber.value')}" />
+													<label id="label_ReceiptDialog_PanNumber" value="${c:l('label_ReceiptDialog_PanNumber.value')}" />
 													<hbox>
 														<space id="panSpace" spacing="2px" />
 														<textbox id="panNumber" width="180px" disabled="true" />
@@ -379,56 +353,51 @@
 													<label value="${c:l('label_ReceiptDialog_AllocationMethod.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="allocationMethod" width="180px" readonly="true"
-															disabled="true" />
+														<combobox id="allocationMethod" width="180px" readonly="true" disabled="true" />
 													</hbox>
 
 													<label id="scheduleLabel" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="effScheduleMethod" width="180px" readonly="true"
-															visible="false" disabled="true" />
-														<combobox id="excessAdjustTo" width="180px" readonly="true"
-															visible="false" disabled="true" />
+														<combobox id="effScheduleMethod" width="180px" readonly="true" visible="false" disabled="true" />
+														<combobox id="excessAdjustTo" width="180px" readonly="true" visible="false" disabled="true" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ReceiptDialog_CollectionAgentId"
-														value="${c:l('label_ReceiptDialog_CollectionAgentId.value')}" />
+													<label id="label_ReceiptDialog_CollectionAgentId" value="${c:l('label_ReceiptDialog_CollectionAgentId.value')}" />
 													<extendedcombobox id="collectionAgentId" width="180px" />
 												</row>
 												<row>
-													<label id="label_ReceiptDialog_externalRefrenceNumber"
-														value="${c:l('label_ReceiptDialog_externalRefrenceNumber.value')}" />
+													<label id="label_ReceiptDialog_externalRefrenceNumber" value="${c:l('label_ReceiptDialog_externalRefrenceNumber.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<uppercasebox id="externalRefrenceNumber" width="180px"
-															disabled="true" />
+														<uppercasebox id="externalRefrenceNumber" width="180px" disabled="true" />
 													</hbox>
-													<label id="label_ReceiptDialog_Remarks"
-														value="${c:l('label_ReceiptDialog_Remarks.value')}" />
+													<label id="label_ReceiptDialog_Remarks" value="${c:l('label_ReceiptDialog_Remarks.value')}" />
 													<hbox id="hbox_ReceiptDialog_Remarks">
 														<textbox id="remarks" width="180px" disabled="true" />
 													</hbox>
 												</row>
 												<row id="row_DepositBank">
-													<label id="label_ReceiptDialog_PartnerBankCode"
-														value="${c:l('label_ReceiptDialog_PartnerBankCode.value')}" />
+													<label id="label_ReceiptDialog_PartnerBankCode" value="${c:l('label_ReceiptDialog_PartnerBankCode.value')}" />
 													<extendedcombobox id="fundingAccount" />
 
 												</row>
 												<row id="row_DepositDate" visible="false">
-													<label id="label_ReceiptDialog_DepositDate"
-														value="${c:l('label_ReceiptDialog_DepositDate.value')}" />
+													<label id="label_ReceiptDialog_DepositDate" value="${c:l('label_ReceiptDialog_DepositDate.value')}" />
 													<hbox id="hbox_ReceiptDialog_DepositDate" visible="false">
 														<space spacing="2px" />
 														<datebox id="depositDate" width="100px" disabled="true" />
 													</hbox>
 												</row>
 												<row>
-													<label id="label_ReceiptDialog_EarlySettlementReason"
-														value="${c:l('label_ReceiptDialog_EarlySettlementReason.value')}" />
+													<label id="label_ReceiptDialog_EarlySettlementReason" value="${c:l('label_ReceiptDialog_EarlySettlementReason.value')}" />
 													<extendedcombobox id="earlySettlementReason" width="180px" />
+												</row>
+												<row>
+													<label id="label_ClosureTypes"
+														value="${c:l('label_ClosureTypes.value')}" />
+													<extendedcombobox id="closureType" width="180px" />
 												</row>
 											</rows>
 										</grid>
@@ -445,25 +414,21 @@
 											</columns>
 											<rows>
 												<row id="row_favourNo" visible="false">
-													<label id="label_ReceiptDialog_favourNo"
-														value="${c:l('label_ReceiptDialog_favourNo.value')}" />
+													<label id="label_ReceiptDialog_favourNo" value="${c:l('label_ReceiptDialog_favourNo.value')}" />
 													<hbox id="hbox_ReceiptDialog_favourNo">
 														<space spacing="2px" />
 														<uppercasebox id="favourNo" width="180px" disabled="true" />
 													</hbox>
-													<label id="label_ReceiptDialog_ValueDate"
-														value="${c:l('label_ReceiptDialog_ValueDate.value')}" />
+													<label id="label_ReceiptDialog_ValueDate" value="${c:l('label_ReceiptDialog_ValueDate.value')}" />
 													<hbox id="hbox_ReceiptDialog_ValueDate">
 														<space spacing="2px" />
 														<datebox id="valueDate" width="100px" disabled="true" />
 													</hbox>
 												</row>
 												<row id="row_BankCode" visible="false">
-													<label id="label_ReceiptDialog_BankCode"
-														value="${c:l('label_ReceiptDialog_IssuingBank.value')}" />
+													<label id="label_ReceiptDialog_BankCode" value="${c:l('label_ReceiptDialog_IssuingBank.value')}" />
 													<extendedcombobox id="bankCode" />
-													<label id="label_ReceiptDialog_favourName"
-														value="${c:l('label_ReceiptDialog_favourName.value')}" />
+													<label id="label_ReceiptDialog_favourName" value="${c:l('label_ReceiptDialog_favourName.value')}" />
 													<hbox id="hbox_ReceiptDialog_favourName">
 														<space spacing="2px" />
 														<textbox id="favourName" width="180px" disabled="true" />
@@ -471,29 +436,25 @@
 												</row>
 												<row id="row_DepositNo" visible="false">
 
-													<label id="label_ReceiptDialog_depositNo" visible="false"
-														value="${c:l('label_ReceiptDialog_depositNo.value')}" />
+													<label id="label_ReceiptDialog_depositNo" visible="false" value="${c:l('label_ReceiptDialog_depositNo.value')}" />
 													<hbox id="hbox_ReceiptDialog_depositNo" visible="false">
 														<space spacing="2px" />
 														<uppercasebox id="depositNo" width="180px" disabled="true" />
 													</hbox>
 												</row>
 												<row id="row_PaymentRef" visible="false">
-													<label id="label_ReceiptDialog_tranReference"
-														value="${c:l('label_ReceiptDialog_tranReference.value')}" />
+													<label id="label_ReceiptDialog_tranReference" value="${c:l('label_ReceiptDialog_tranReference.value')}" />
 													<hbox id="hbox_ReceiptDialog_tranReference">
 														<space spacing="2px" />
 														<uppercasebox id="transactionRef" width="180px" disabled="true" />
 													</hbox>
 												</row>
 												<row id="row_ChequeAcNo" visible="false">
-													<label id="label_ReceiptDialog_ChequeAccountNo"
-														value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
+													<label id="label_ReceiptDialog_ChequeAccountNo" value="${c:l('label_ReceiptDialog_ChequeAccountNo.value')}" />
 													<accountSelectionBox id="chequeAcNo" width="180px" />
 												</row>
 												<row id="row_remarks" visible="false">
-													<label id="label_ReceiptDialog_paymentReference"
-														value="${c:l('label_ReceiptDialog_paymentReference.value')}" />
+													<label id="label_ReceiptDialog_paymentReference" value="${c:l('label_ReceiptDialog_paymentReference.value')}" />
 													<hbox id="hbox_ReceiptDialog_paymentReference">
 														<space spacing="2px" />
 														<uppercasebox id="paymentRef" width="180px" disabled="true" />
@@ -509,25 +470,23 @@
 										<listbox id="listBoxExcess" fixedLayout="true" sizedByContent="true" span="true"
 											emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%" multiple="false">
 											<listhead sizable="false" style="padding:0px;position:relative;">
-												<listheader label="${c:l('listheader_ReceiptDialog_AmountType.label')}"
-													sort="false" hflex="min" />
-												<listheader
-													label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}" align="right" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_AmountType.label')}" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_AmountPaidNow.label')}" align="right" sort="false"
+													hflex="min" />
 											</listhead>
 										</listbox>
 									</groupbox>
 									<groupbox id="gb_Receivalble" closable="false">
 										<caption label="${c:l('label_ReceiptDialog_ReceivableDetails')}" />
-										<listbox id="listBoxPastdues" fixedLayout="true" sizedByContent="true"
-											span="true" emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
+										<listbox id="listBoxPastdues" fixedLayout="true" sizedByContent="true" span="true"
+											emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
 											<listhead sizable="false" style="padding:0px;position:relative;">
-												<listheader label="${c:l('listheader_ReceiptDialog_Receivables.label')}"
+												<listheader label="${c:l('listheader_ReceiptDialog_Receivables.label')}" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right"
 													sort="false" hflex="min" />
-												<listheader
-													label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right" sort="false" hflex="min" />
 
-												<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}"
-													align="right" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right" sort="false"
+													hflex="min" />
 
 											</listhead>
 										</listbox>
@@ -537,8 +496,7 @@
 							</tabpanel>
 							<tabpanel style="overflow:auto">
 								<groupbox id="gb_commonDetails" mold="3d">
-									<grid id="scheduleGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
-										style="border:0px" width="100%">
+									<grid id="scheduleGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
 										<columns>
 											<column width="200px" />
 											<column />
@@ -561,28 +519,25 @@
 											<row>
 												<label value="${c:l('label_ReceiptDialog_FinReference.value')}" />
 												<label id="finSchReference" style="font-weight:bold" />
-												<label id="label_FinGracePeriodEndDate"
-													value="${c:l('label_ReceiptDialog_FinGracePeriodEndDate.value')}" />
+												<label id="label_FinGracePeriodEndDate" value="${c:l('label_ReceiptDialog_FinGracePeriodEndDate.value')}" />
 												<label id="finSchGracePeriodEndDate" style="font-weight:bold" />
 											</row>
 											<row visible="false">
-												<label
-													value="${c:l('label_ReceiptDialog_EffectiveRateOfReturn.value')}" />
+												<label value="${c:l('label_ReceiptDialog_EffectiveRateOfReturn.value')}" />
 												<label id="effectiveRateOfReturn" style="font-weight:bold;" />
-												<label value="${c:l('label_ReceiptDialog_AnualizedPercRate.value')}"
-													visible="false" />
+												<label value="${c:l('label_ReceiptDialog_AnualizedPercRate.value')}" visible="false" />
 												<label id="anualizedPercRate" style="font-weight:bold;" />
 											</row>
 										</rows>
 									</grid>
 								</groupbox>
 								<toolbar align="start" visible="false" style="border-style: none;" width="100%">
-									<button id="btnPrintSchedule" label="${c:l('label_Print')}"
-										tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}" style="float:right;" visible="false" />
+									<button id="btnPrintSchedule" label="${c:l('label_Print')}" tooltiptext="${c:l('btnPrintSchedule.tooltiptext')}"
+										style="float:right;" visible="false" />
 									<space width="2px" />
 								</toolbar>
-								<listbox id="listBoxSchedule" emptyMessage="${c:l('listbox.emptyMessage')}"
-									fixedLayout="true" sizedByContent="true" span="true" width="100%" height="100%" multiple="false">
+								<listbox id="listBoxSchedule" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+									sizedByContent="true" span="true" width="100%" height="100%" multiple="false">
 									<listhead sizable="false" style="padding:0px;position:relative;">
 										<listheader hflex="min" />
 										<listheader id="listheader_ReceiptSchedule_Date" hflex="min" value=""
@@ -591,32 +546,32 @@
 											label="${c:l('listheader_ScheduleEvent.label')}" />
 										<listheader id="listheader_ReceiptSchedule_CalProfit" hflex="min" align="right"
 											label="${c:l('listheader_CalProfit.label')}" />
+										<listheader id="listheader_ReceiptSchedule_SupplementRent" hflex="min" visible="false" align="right" />
+										<listheader id="listheader_ReceiptSchedule_IncreasedCost" hflex="min" visible="false" align="right" />
 										<listheader id="listheader_ReceiptSchedule_SchFee" hflex="min" align="right"
 											label="${c:l('listheader_SchFee.label')}" visible="false" />
-										<listheader id="listheader_ScheduleDetailDialog_SchTax" hflex="min"
-											label="${c:l('listheader_SchTax.label')}" align="right" />
+										<listheader id="listheader_ScheduleDetailDialog_SchTax" hflex="min" label="${c:l('listheader_SchTax.label')}"
+											align="right" />
 										<listheader id="listheader_ReceiptSchedule_TDSAmount" hflex="min" align="right"
 											label="${c:l('listheader_TDSAmount.label')}" />
+										<listheader id="listheader_ReceiptSchedule_SchAdvProfit" hflex="min" visible="false" align="right" />
 										<listheader id="listheader_ReceiptSchedule_SchProfit" hflex="min" align="right"
 											label="${c:l('listheader_SchProfit.label')}" />
 										<listheader id="listheader_ReceiptSchedule_Principal" hflex="min" align="right"
 											label="${c:l('listheader_Principal.label')}" />
+										<listheader id="listheader_ReceiptSchedule_AdvTotal" hflex="min" visible="false" align="right" />
+										<listheader id="listheader_ReceiptSchedule_Rebate" hflex="min" visible="false" align="right" />
 										<listheader id="listheader_ReceiptSchedule_Total" hflex="min" align="right"
 											label="${c:l('listheader_Total.label')}" />
 										<listheader id="listheader_ScheduleEndBal" hflex="min" align="right"
 											label="${c:l('listheader_ScheduleEndBal.label')}" />
-										<listheader id="listheader_LimitChange" hflex="min" align="right"
-											visible="false" />
-										<listheader id="listheader_AvailableLimit" hflex="min" align="right"
-											visible="false" />
+										<listheader id="listheader_LimitChange" hflex="min" align="right" visible="false" />
+										<listheader id="listheader_AvailableLimit" hflex="min" align="right" visible="false" />
 										<listheader id="listheader_ODLimit" hflex="min" align="right" visible="false" />
-										<listheader visible="false" id="listHeader_planEMIHDates" hflex="min"
-											align="center" />
-										<listheader id="listHeader_cashFlowEffect" hflex="min" align="right"
-											visible="false" />
+										<listheader visible="false" id="listHeader_planEMIHDates" hflex="min" align="center" />
+										<listheader id="listHeader_cashFlowEffect" hflex="min" align="right" visible="false" />
 										<listheader id="listHeader_vSProfit" hflex="min" align="right" visible="false" />
-										<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right"
-											visible="false" />
+										<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" visible="false" />
 									</listhead>
 								</listbox>
 							</tabpanel>
@@ -628,8 +583,7 @@
 						<caption label="${c:l('Action')}" />
 						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
-							<label id="label_ReceiptDialog_RecordStatus"
-								value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+							<label id="label_ReceiptDialog_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 							<label id="recordStatus" />
 						</hbox>
 					</groupbox>

@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -60,6 +61,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import com.pennant.backend.model.WSReturnStatus;
@@ -75,7 +77,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
-		"feeDues", "foreClosureFees", "stepPolicyDetails", "financeScheduleDetails",
+		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",
 		"finODPenaltyRate", "apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary",
 		"vasRecordingList", "outstandingPri", "subventionDetail", "receiptAllocations", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")
@@ -123,6 +125,9 @@ public class FinScheduleData implements Serializable {
 	private Date finSuspDate;
 	private String feeEvent;
 
+	@XmlElement(name = "insurance")
+	private List<Insurance> insuranceList = new ArrayList<>();//DDP : TO BE REMOVED TODO
+	private List<FinInsurances> finInsuranceList = new ArrayList<>();
 	@XmlElement(name = "rateInstruction")
 	private List<RateInstruction> rateInstruction = new ArrayList<>();
 	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
@@ -199,6 +204,8 @@ public class FinScheduleData implements Serializable {
 	@XmlElement(name = "hostReference")
 	private String oldFinReference;
 
+	private RestructureDetail restructureDetail;
+
 	public FinScheduleData() {
 		super();
 	}
@@ -216,6 +223,17 @@ public class FinScheduleData implements Serializable {
 	}
 
 	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails) {
+		this.stepPolicyDetails = stepPolicyDetails;
+	}
+
+	public void setStepPolicyDetails(List<FinanceStepPolicyDetail> stepPolicyDetails, boolean sort) {
+		//Steps needs to sort based on specifier and step no for schedule calculation if step calculated on Amount.
+		if (sort && CollectionUtils.isNotEmpty(stepPolicyDetails)) {
+			stepPolicyDetails = stepPolicyDetails.stream()
+					.sorted(Comparator.comparing(FinanceStepPolicyDetail::getStepSpecifier)
+							.thenComparingInt(FinanceStepPolicyDetail::getStepNo))
+					.collect(Collectors.toList());
+		}
 		this.stepPolicyDetails = stepPolicyDetails;
 	}
 
@@ -425,6 +443,14 @@ public class FinScheduleData implements Serializable {
 		this.feeEvent = feeEvent;
 	}
 
+	public List<Insurance> getInsuranceList() {
+		return insuranceList;
+	}
+
+	public void setInsuranceList(List<Insurance> insuranceList) {
+		this.insuranceList = insuranceList;
+	}
+
 	public List<RateInstruction> getRateInstruction() {
 		return rateInstruction;
 	}
@@ -489,6 +515,14 @@ public class FinScheduleData implements Serializable {
 
 	public void setPlanEMIHDates(List<Date> planEMIHDates) {
 		this.planEMIHDates = planEMIHDates;
+	}
+
+	public List<FinInsurances> getFinInsuranceList() {
+		return finInsuranceList;
+	}
+
+	public void setFinInsuranceList(List<FinInsurances> finInsuranceList) {
+		this.finInsuranceList = finInsuranceList;
 	}
 
 	public List<FinODDetails> getFinODDetails() {
@@ -714,4 +748,13 @@ public class FinScheduleData implements Serializable {
 	public void setIrrSDList(List<IRRScheduleDetail> irrSDList) {
 		this.irrSDList = irrSDList;
 	}
+
+	public RestructureDetail getRestructureDetail() {
+		return restructureDetail;
+	}
+
+	public void setRestructureDetail(RestructureDetail restructureDetail) {
+		this.restructureDetail = restructureDetail;
+	}
+
 }

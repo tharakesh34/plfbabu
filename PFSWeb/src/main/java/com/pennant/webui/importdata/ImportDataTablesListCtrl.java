@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ImportDataTablesListCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -886667223042963669L;
-	private static final Logger logger = Logger.getLogger(ImportDataTablesListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ImportDataTablesListCtrl.class);
 
 	protected Window window_ImportData; // autowired
 	protected Listbox listBoxcoreBanking; // autowired

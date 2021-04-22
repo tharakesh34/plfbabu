@@ -123,6 +123,9 @@
 	<bean id="closedFacilityJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean" p:jobDetail-ref="closedFacilityJobSchedular"
 		p:startDelay="10000" p:cronExpression="0 0/3 * * * ?" />
 
+	<bean id="autoHuntingTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean" p:jobDetail-ref="autoHuntingJobSchedular"
+		p:startDelay="1000" p:cronExpression="0/5 * * * * ?" />
+
 	<!-- ******************************************************************************* -->
 	<!-- ********************* Scheduler Factory Bean Definition ********************** -->
 	<!-- ******************************************************************************* -->
@@ -136,6 +139,7 @@
 				<!-- <ref bean="ddaPaymentInitJobTrigger" /> -->
 				<!-- <ref bean="ddaPaymentResJobTrigger" /> -->
 				<!-- <ref bean="closedFacilityJobTrigger" /> -->
+				<!-- <ref bean="autoHuntingTrigger" /> -->
 
 			</list>
 		</property>

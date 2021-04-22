@@ -3,7 +3,8 @@ package com.pennant.webui.financemanagement.receipts;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -45,7 +46,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = Logger.getLogger(ReceiptEnquiryListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptEnquiryListCtrl.class);
 
 	protected Window window_ReceiptEnquiryList;
 	protected Borderlayout borderLayout_ReceiptEnquiryList;
@@ -65,6 +66,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_ReceiptCustName;
 	protected Listheader listheader_ReceiptStatus;
 	protected Listheader listheader_ReceiptReceiptId;
+	protected Listheader listheader_ReceiptExtReference;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -78,6 +80,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Textbox finBranch;
 	protected Uppercasebox transactionRef;
 	protected Longbox receiptId;
+	protected Uppercasebox externalReference;
 
 	protected Listbox sortOperator_ReceiptReference;
 	protected Listbox sortOperator_ReceiptCustomer;
@@ -88,6 +91,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_ReceiptFinBranch;
 	protected Listbox sortOperator_ReceiptTranRef;
 	protected Listbox sortOperator_ReceiptReceiptId;
+	protected Listbox sortOperator_ExternalReference;
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -110,9 +114,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.module = getArgument("module");
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "FeeReceipt";
-			super.tableName = "FINRECEIPTHEADER_FEDVIEW";
-			super.queueTableName = "FINRECEIPTHEADER_FEDVIEW";
-			super.enquiryTableName = "FINRECEIPTHEADER_FEDVIEW";
+			super.tableName = "FinReceiptHeader_FEDView";
+			super.queueTableName = "FinReceiptHeader_FEDView";
+			super.enquiryTableName = "FinReceiptHeader_FEDView";
 		} else {
 			super.moduleCode = "FinReceiptHeader";
 			super.tableName = "FinReceiptHeader_View";
@@ -136,7 +140,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerButton(btnSearch);
 
 		registerField("finCcy");
-		registerField("receiptId", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
+		registerField("receiptID", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
 				Operators.NUMERIC);
 		registerField("reference", listheader_ReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_ReceiptReference, Operators.STRING);
@@ -145,7 +149,11 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		fillComboBox(this.purpose, "", PennantStaticListUtil.getReceiptPurpose(), "");
 		registerField("receiptPurpose", listheader_ReceiptPurpose, SortOrder.NONE, purpose, sortOperator_ReceiptPurpose,
 				Operators.STRING);
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
+			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModesByFeePayment(), "");
+		} else {
+			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		}
 		registerField("receiptMode", listheader_ReceiptMode, SortOrder.NONE, receiptMode,
 				sortOperator_ReceiptReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_ReceiptAmount);
@@ -158,10 +166,11 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				sortOperator_ReceiptFinBranch, Operators.STRING);
 		registerField("transactionRef", listheader_ReceiptRef, SortOrder.NONE, transactionRef,
 				sortOperator_ReceiptTranRef, Operators.STRING);
-		registerField("receiptDate");
+		registerField("receiptDate", listheader_ReceiptDate, SortOrder.NONE);
 
 		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
-
+		registerField("ExtReference", listheader_ReceiptExtReference, SortOrder.NONE, externalReference,
+				sortOperator_ExternalReference, Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		if (enqiryModule) {

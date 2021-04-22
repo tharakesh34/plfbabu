@@ -50,7 +50,18 @@
 							<rows>
 								<row visible="true" id="collateralRow">
 									<label id="label_LVInitiationDialog_Collateral" value="${c:l('label_LVInitiationDialog_Collateral.value')}" />
-									<extendedcombobox id="collateral" />
+									<hbox>
+										<extendedcombobox id="collateral" />
+										<button id="btnSearchCollateralRef" tooltiptext="${c:l('label_CollateralSearch_CollateralRef.tooltiptext')}"
+											image="/images/icons/more.png" autodisable="btnSearchCollateralRef" />
+									</hbox>
+								</row>
+								<row visible="true" id="verificationRow">
+									<label id="label_LVInitiationDialog_VerificationCategory" value="${c:l('label_LVInitiationDialog_VerificationCategory.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="verificationCategory" />
+									</hbox>
 								</row>
 								<row>
 									<label id="label_LVInitiationDialog_Collateral_Documents" value="${c:l('label_LegalVerificationDialog_CollateralDoc.value')}" />

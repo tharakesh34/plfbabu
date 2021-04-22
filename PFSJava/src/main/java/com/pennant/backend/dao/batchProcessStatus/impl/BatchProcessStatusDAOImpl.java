@@ -2,7 +2,8 @@ package com.pennant.backend.dao.batchProcessStatus.impl;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
@@ -11,7 +12,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class BatchProcessStatusDAOImpl extends SequenceDao<Object> implements BatchProcessStatusDAO {
 
-	private static Logger logger = Logger.getLogger(BatchProcessStatusDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BatchProcessStatusDAOImpl.class);
 
 	@Override
 	public String getBatchStatus(String batchName) {

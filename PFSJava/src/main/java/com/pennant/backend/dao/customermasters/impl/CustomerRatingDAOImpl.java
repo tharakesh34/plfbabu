@@ -42,21 +42,17 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerRatingDAO;
 import com.pennant.backend.model.customermasters.CustomerRating;
@@ -70,7 +66,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements CustomerRatingDAO {
-	private static Logger logger = Logger.getLogger(CustomerRatingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerRatingDAOImpl.class);
 
 	public CustomerRatingDAOImpl() {
 		super();
@@ -105,7 +101,7 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
+		RowMapper<CustomerRating> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerRating.class);
 
 		try {
 			customerRating = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -117,12 +113,7 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 		return customerRating;
 	}
 
-	/**
-	 * Method For getting List of Customer related Ratings for Customer
-	 */
 	public List<CustomerRating> getCustomerRatingByCustomer(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustRatingType, CustRatingCode, CustRating, ValueType, Version");
 		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -139,49 +130,37 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<CustomerRating>() {
-				@Override
-				public CustomerRating mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerRating cr = new CustomerRating();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
 
-					cr.setCustID(rs.getLong("CustID"));
-					cr.setCustRatingType(rs.getString("CustRatingType"));
-					cr.setCustRatingCode(rs.getString("CustRatingCode"));
-					cr.setCustRating(rs.getString("CustRating"));
-					cr.setValueType(rs.getBoolean("ValueType"));
-					cr.setVersion(rs.getInt("Version"));
-					cr.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					cr.setLastMntBy(rs.getLong("LastMntBy"));
-					cr.setRecordStatus(rs.getString("RecordStatus"));
-					cr.setRoleCode(rs.getString("RoleCode"));
-					cr.setNextRoleCode(rs.getString("NextRoleCode"));
-					cr.setTaskId(rs.getString("TaskId"));
-					cr.setNextTaskId(rs.getString("NextTaskId"));
-					cr.setRecordType(rs.getString("RecordType"));
-					cr.setWorkflowId(rs.getLong("WorkflowId"));
+		}, (rs, rowNum) -> {
+			CustomerRating cr = new CustomerRating();
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						cr.setLovDescCustRatingTypeName(rs.getString("LovDescCustRatingTypeName"));
-						cr.setLovDesccustRatingCodeDesc(rs.getString("LovDesccustRatingCodeDesc"));
-						cr.setLovDescCustRatingName(rs.getString("LovDescCustRatingName"));
-					}
+			cr.setCustID(rs.getLong("CustID"));
+			cr.setCustRatingType(rs.getString("CustRatingType"));
+			cr.setCustRatingCode(rs.getString("CustRatingCode"));
+			cr.setCustRating(rs.getString("CustRating"));
+			cr.setValueType(rs.getBoolean("ValueType"));
+			cr.setVersion(rs.getInt("Version"));
+			cr.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cr.setLastMntBy(rs.getLong("LastMntBy"));
+			cr.setRecordStatus(rs.getString("RecordStatus"));
+			cr.setRoleCode(rs.getString("RoleCode"));
+			cr.setNextRoleCode(rs.getString("NextRoleCode"));
+			cr.setTaskId(rs.getString("TaskId"));
+			cr.setNextTaskId(rs.getString("NextTaskId"));
+			cr.setRecordType(rs.getString("RecordType"));
+			cr.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return cr;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				cr.setLovDescCustRatingTypeName(rs.getString("LovDescCustRatingTypeName"));
+				cr.setLovDesccustRatingCodeDesc(rs.getString("LovDesccustRatingCodeDesc"));
+				cr.setLovDescCustRatingName(rs.getString("LovDescCustRatingName"));
+			}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return cr;
+		});
 	}
 
 	/**
@@ -201,7 +180,7 @@ public class CustomerRatingDAOImpl extends BasicDao<CustomerRating> implements C
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerRating);
-		RowMapper<CustomerRating> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerRating.class);
+		RowMapper<CustomerRating> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerRating.class);
 
 		List<CustomerRating> customerRatings = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);

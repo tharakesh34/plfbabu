@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -63,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FlagServiceImpl extends GenericService<Flag> implements FlagService {
-	private static final Logger logger = Logger.getLogger(FlagServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FlagServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

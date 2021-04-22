@@ -47,7 +47,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class LimitStructureServiceImpl extends GenericService<LimitStructure> implements LimitStructureService {
-	private static final Logger logger = Logger.getLogger(LimitStructureServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(LimitStructureServiceImpl.class);
 
 	public LimitStructureServiceImpl() {
 		super();

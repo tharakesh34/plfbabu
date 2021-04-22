@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.finance.DealerResponseDAO;
 import com.pennant.backend.model.finance.DealerResponse;
@@ -8,7 +9,7 @@ import com.pennant.backend.service.finance.DealerResponseService;
 
 public class DealerResponseServiceImpl implements DealerResponseService {
 
-	private static final Logger logger = Logger.getLogger(DealerResponseServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DealerResponseServiceImpl.class);
 
 	private DealerResponseDAO dealerResponseDAO;
 

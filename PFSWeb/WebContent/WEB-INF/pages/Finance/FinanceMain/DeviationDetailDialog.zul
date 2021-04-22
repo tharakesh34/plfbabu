@@ -13,6 +13,8 @@
 							<toolbar align="start" sclass="toolbar-start">
 								<button id="btnProceed" label="${c:l('label_Proceed')}" />
 								<button id="btnCancel" label="${c:l('label_Cancel')}" />
+								<button id="btnApprove" label="${c:l('label_Approve')}" />
+								<button id="btnReject" label="${c:l('label_Reject')}" />
 							</toolbar>
 							<toolbar align="center" sclass="toolbar-center">
 								<label value="${c:l('window_deviationDetailDialog.title')}" sclass="label-heading" />

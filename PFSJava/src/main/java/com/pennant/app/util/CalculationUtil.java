@@ -54,6 +54,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
@@ -85,29 +86,38 @@ public class CalculationUtil implements Serializable {
 			endCalendar = tempCalendar;
 		}
 
-		if (strDaysBasis.equals(CalculationConstants.IDB_30U360)) {
+		switch (strDaysBasis) {
+
+		case CalculationConstants.IDB_30U360:
 			return getIDB_30U360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360)) {
+		case CalculationConstants.IDB_30E360:
 			return getIDB_30E360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360I)) {
+		case CalculationConstants.IDB_30E360I:
 			return getIDB_30E360I(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_30EP360)) {
+		case CalculationConstants.IDB_30EP360:
 			return getIDB_30EP360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_ISDA)) {
+		case CalculationConstants.IDB_ACT_ISDA:
 			return getIDB_ACT_ISDA(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365FIXED)) {
+		case CalculationConstants.IDB_ACT_365FIXED:
 			return getIDB_ACT_365FIXED(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_360)) {
+		case CalculationConstants.IDB_ACT_360:
 			return getIDB_ACT_360(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)) {
+		case CalculationConstants.IDB_ACT_365LEAP:
 			return getIDB_ACT_365LEAP(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAPS)) {
+		case CalculationConstants.IDB_ACT_365LEAPS:
 			return getIDB_ACT_365LEAPStart(startCalendar, endCalendar);
-		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
+		case CalculationConstants.IDB_BY_PERIOD:
 			return getIDB_BY_PERIOD(startCalendar, endCalendar);
+		case CalculationConstants.IDB_30E360IH:
+			return getIDB_30E360IH(startCalendar, endCalendar);
+		case CalculationConstants.IDB_30E360IA:
+			return getIDB_30E360IA(startCalendar, endCalendar);
+		case CalculationConstants.IDB_15E360IA:
+			return getIDB_15E360IA(startCalendar, endCalendar);
+		default:
+			return BigDecimal.ONE;
 		}
 
-		return BigDecimal.ONE;
 	}
 
 	private static BigDecimal getIDB_30U360(Calendar startCalendar, Calendar endCalendar) {
@@ -314,12 +324,66 @@ public class CalculationUtil implements Serializable {
 		return dayFactor;
 	}
 
+	private static BigDecimal getIDB_30E360IH(Calendar startCalendar, Calendar endCalendar) {
+		int numberOfDays = calNoOfDays(startCalendar.getTime(), endCalendar.getTime(),
+				CalculationConstants.IDB_30E360I);
+		double days30 = 30d;
+		double daysInYear = 360d;
+
+		double remainderDays = numberOfDays % days30;
+		BigDecimal dayFactor = BigDecimal.ZERO;
+
+		if (remainderDays == 0) {
+			dayFactor = BigDecimal.valueOf(numberOfDays / daysInYear);
+		} else {
+			dayFactor = getIDB_ACT_ISDA(startCalendar, endCalendar);
+		}
+
+		return dayFactor;
+	}
+
+	private static BigDecimal getIDB_30E360IA(Calendar startCalendar, Calendar endCalendar) {
+		int numberOfDays = calNoOfDays(startCalendar.getTime(), endCalendar.getTime(),
+				CalculationConstants.IDB_30E360I);
+		double days30 = 30d;
+		double daysInYear = 360d;
+
+		double remainderDays = numberOfDays % days30;
+		BigDecimal dayFactor = BigDecimal.ZERO;
+
+		if (remainderDays == 0) {
+			dayFactor = BigDecimal.valueOf(numberOfDays / daysInYear);
+		} else {
+			dayFactor = getIDB_ACT_365FIXED(startCalendar, endCalendar);
+		}
+
+		return dayFactor;
+	}
+
+	private static BigDecimal getIDB_15E360IA(Calendar startCalendar, Calendar endCalendar) {
+		int numberOfDays = calNoOfDays(startCalendar.getTime(), endCalendar.getTime(),
+				CalculationConstants.IDB_30E360I);
+		double days15 = 15d;
+		double daysInYear = 360d;
+
+		double remainderDays = numberOfDays % days15;
+
+		BigDecimal dayFactor = BigDecimal.ZERO;
+		if (remainderDays == 0) {
+			dayFactor = BigDecimal.valueOf(numberOfDays / daysInYear);
+		} else {
+			dayFactor = getIDB_ACT_365FIXED(startCalendar, endCalendar);
+		}
+
+		return dayFactor;
+	}
+
 	public static BigDecimal calInterest(Date dtStart, Date dtEnd, BigDecimal principalAmount, String strDaysBasis,
 			BigDecimal rate) {
 		/*
 		 * interest= (Principal * Days Factor * Rate)/100
 		 */
-		MathContext mathContext = new MathContext(RoundingMode.UP.ordinal());
+		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
 		BigDecimal daysFactor = getInterestDays(dtStart, dtEnd, strDaysBasis);
 		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
 				.divide(BigDecimal.valueOf(100));
@@ -331,7 +395,7 @@ public class CalculationUtil implements Serializable {
 		/*
 		 * interest= (Principal * Days Factor * Rate)/100
 		 */
-		MathContext mathContext = new MathContext(RoundingMode.UP.ordinal());
+		MathContext mathContext = new MathContext(BigDecimal.ROUND_UP);
 		BigDecimal interest = ((principalAmount.multiply(daysFactor, mathContext)).multiply(rate, mathContext))
 				.divide(BigDecimal.valueOf(100));
 		return interest;
@@ -413,7 +477,7 @@ public class CalculationUtil implements Serializable {
 			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
 
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_ISDA)) {
-			// return getIDB_ACT_ISDA(startCalendar, endCalendar);
+			//return getIDB_ACT_ISDA(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365FIXED)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_360)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)
@@ -430,8 +494,7 @@ public class CalculationUtil implements Serializable {
 
 			/*
 			 * if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR) &&
-			 * startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) {
-			 * noOfmonths = noOfmonths + 1; }
+			 * startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) { noOfmonths = noOfmonths + 1; }
 			 */
 
 			int numberOfDays = (int) (noOfmonths * 30);
@@ -501,13 +564,13 @@ public class CalculationUtil implements Serializable {
 
 		if (rate.compareTo(BigDecimal.ZERO) != 0) {
 			BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
-					RoundingMode.HALF_DOWN);
+					BigDecimal.ROUND_HALF_DOWN);
 			BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 			BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 			BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
-			return numerator.divide(denominator, 10, RoundingMode.HALF_DOWN);
+			return numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
 		} else {
-			return principle.divide(BigDecimal.valueOf(noOfTerms), 10, RoundingMode.HALF_DOWN);
+			return principle.divide(BigDecimal.valueOf(noOfTerms), 10, BigDecimal.ROUND_HALF_DOWN);
 		}
 
 	}
@@ -531,7 +594,7 @@ public class CalculationUtil implements Serializable {
 
 		actualAmount = (actualAmount.multiply(sellRate).multiply(toCurrency.getCcyMinorCcyUnits()))
 				.divide(buyRate.multiply(fromCurrency.getCcyMinorCcyUnits()), 0, RoundingMode.HALF_DOWN);
-		actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
+		actualAmount = actualAmount.setScale(0, BigDecimal.ROUND_HALF_DOWN);
 
 		return actualAmount;
 
@@ -555,8 +618,13 @@ public class CalculationUtil implements Serializable {
 		String fromCcyCode = fromCcy;
 		String toCcyCode = toCcy;
 
-		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = "";
+		if (ImplementationConstants.ALLOW_MULTI_CCY) {
+			localCcy = SysParamUtil.getAppCurrency();
+		} else {
+			localCcy = ImplementationConstants.BASE_CCY;
+		}
+
 		if (fromCcyCode == null) {
 			fromCcyCode = localCcy;
 		}
@@ -570,7 +638,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency fromCurrency = null;
 		Currency toCurrency = null;
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcyCode, toCcyCode));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcyCode, toCcyCode));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcyCode)) {
 				fromCurrency = currency;
@@ -594,7 +662,7 @@ public class CalculationUtil implements Serializable {
 		String toCcy = toCcyCode;
 
 		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = SysParamUtil.getAppCurrency();
 		if (fromCcy == null) {
 			fromCcy = localCcy;
 		}
@@ -604,7 +672,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency fromCurrency = new Currency();
 		Currency toCurrency = new Currency();
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy, toCcy));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcy, toCcy));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcy)) {
 				fromCurrency = currency;
@@ -633,7 +701,12 @@ public class CalculationUtil implements Serializable {
 		String toCcy = toCcyCode;
 
 		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = SysParamUtil.getAppCurrency();
+
+		if (fromCcy == null || toCcy == null) {
+			localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		}
+
 		if (fromCcy == null) {
 			fromCcy = localCcy;
 		}
@@ -647,7 +720,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency fromCurrency = null;
 		Currency toCurrency = null;
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy, toCcy));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcy, toCcy));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcy)) {
 				fromCurrency = currency;
@@ -661,14 +734,18 @@ public class CalculationUtil implements Serializable {
 	}
 
 	/**
-	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor
-	 * * principalAmt )]
+	 * calculate average profit rate [avgProfitRate = (profitAmt * 100)/(Days Factor * principalAmt )]
 	 * 
-	 * @param (Date)       startDate
-	 * @param (Date)       maturityDate
-	 * @param (String)     profitDaysBasis
-	 * @param (BigDecimal) principalAmt
-	 * @param (BigDecimal) maturityAmount
+	 * @param (Date)
+	 *            startDate
+	 * @param (Date)
+	 *            maturityDate
+	 * @param (String)
+	 *            profitDaysBasis
+	 * @param (BigDecimal)
+	 *            principalAmt
+	 * @param (BigDecimal)
+	 *            maturityAmount
 	 * @return(BigDecimal) avgProfitRate
 	 */
 	public static BigDecimal calcAvgProfitRate(Date startDate, Date maturityDate, String profitDaysBasis,
@@ -704,7 +781,7 @@ public class CalculationUtil implements Serializable {
 		String toCcy = toCcyCode;
 
 		// Base Currency
-		String localCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+		String localCcy = SysParamUtil.getAppCurrency();
 		if (fromCcy == null) {
 			fromCcy = localCcy;
 		}
@@ -718,7 +795,7 @@ public class CalculationUtil implements Serializable {
 
 		Currency toCurrency = null;
 		Currency fromCurrency = null;
-		List<Currency> currencyList = getCurrencyDAO().getCurrencyList(Arrays.asList(fromCcy, toCcy));
+		List<Currency> currencyList = currencyDAO.getCurrencyList(Arrays.asList(fromCcy, toCcy));
 		for (Currency currency : currencyList) {
 			if (currency.getCcyCode().equals(fromCcy)) {
 				fromCurrency = currency;
@@ -745,11 +822,16 @@ public class CalculationUtil implements Serializable {
 	/**
 	 * This method returns the anualizedPercRate using the below values:
 	 * 
-	 * @param finAmount     The Finance Amount
-	 * @param downPayment   The Down Payment Amount
-	 * @param repayPftFrq   The Repay Profit Frequency
-	 * @param numberOfTerms No of Terms
-	 * @param totalProfit   Total Profit Amount
+	 * @param finAmount
+	 *            The Finance Amount
+	 * @param downPayment
+	 *            The Down Payment Amount
+	 * @param repayPftFrq
+	 *            The Repay Profit Frequency
+	 * @param numberOfTerms
+	 *            No of Terms
+	 * @param totalProfit
+	 *            Total Profit Amount
 	 * @return The anualizedPercRate value for the above parameters
 	 */
 	public static BigDecimal calulateAunalizedPercRate(BigDecimal finAmount, BigDecimal downPayment, String repayPftFrq,
@@ -764,19 +846,13 @@ public class CalculationUtil implements Serializable {
 						.multiply(totalProfit).multiply(new BigDecimal(100)))
 				.divide((new BigDecimal("12").multiply(new BigDecimal(numberOfTerms))
 						.multiply(new BigDecimal(numberOfTerms).add(new BigDecimal("1"))))
-								.multiply(new BigDecimal("4").multiply(finAmount.subtract(downPayment) // downPayment is
-																										// subtracted
-																										// (###
-																										// 28-11-2016 -
-																										// PSD Ticket ID
-																										// 124367)
-								).add(totalProfit)), 2, RoundingMode.HALF_DOWN);
+								.multiply(new BigDecimal("4").multiply(finAmount.subtract(downPayment) // downPayment is subtracted (### 28-11-2016 - PSD Ticket ID 124367)
+		).add(totalProfit)), 2, BigDecimal.ROUND_HALF_DOWN);
 		return anualizedPercRate;
 	}
 
 	/**
-	 * This method takes the paymentFrequency as "M0031".. and returns the number of
-	 * terms in one year
+	 * This method takes the paymentFrequency as "M0031".. and returns the number of terms in one year
 	 * 
 	 * @param Paymentfrequency
 	 * @return the number of terms in one year as int value
@@ -813,16 +889,11 @@ public class CalculationUtil implements Serializable {
 		return frqequency;
 	}
 
-	public static CurrencyDAO getCurrencyDAO() {
-		return currencyDAO;
-	}
-
 	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
 		CalculationUtil.currencyDAO = currencyDAO;
 	}
 
 	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
-
 		if (StringUtils.isBlank(roundingMode)) {
 			roundingMode = RoundingMode.HALF_DOWN.name();
 		}
@@ -858,17 +929,17 @@ public class CalculationUtil implements Serializable {
 		return amount;
 	}
 
-	// This formula applicable only for 30/360 with Fixed periods only
+	//This formula applicable only for 30/360 with Fixed periods only
 	public static BigDecimal calDepositPV(BigDecimal fv, BigDecimal intRate, int terms, String frq, String roundingMode,
 			int roundingTarget) {
 		BigDecimal pv = BigDecimal.ZERO;
 
-		// Future Value is ZERO
+		//Future Value is ZERO
 		if (fv.compareTo(BigDecimal.ZERO) == 0) {
 			return pv;
 		}
 
-		// Interest Rate = 0
+		//Interest Rate = 0
 		if (intRate.compareTo(BigDecimal.ZERO) == 0) {
 			pv = roundAmount(fv, roundingMode, roundingTarget);
 			return pv;
@@ -886,7 +957,7 @@ public class CalculationUtil implements Serializable {
 		return pv;
 	}
 
-	// This formula applicable only for 30/360 with Fixed periods only
+	//This formula applicable only for 30/360 with Fixed periods only
 	public static BigDecimal calLoanPVAdvance(BigDecimal intRate, int terms, BigDecimal pmt, BigDecimal fv, int type,
 			String frq, String roundingMode, int roundingTarget) {
 		BigDecimal pv = BigDecimal.ZERO;
@@ -964,6 +1035,17 @@ public class CalculationUtil implements Serializable {
 		totPaidGSTAmount = totPaidGSTAmount.add(manualAdvise.getPaidCESS());
 
 		return totPaidGSTAmount;
+	}
+
+	public static BigDecimal getTotalWaivedGST(ManualAdvise manualAdvise) {
+		BigDecimal totWaivedGSTAmount = BigDecimal.ZERO;
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedCGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedSGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedUGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedIGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(manualAdvise.getWaivedCESS());
+
+		return totWaivedGSTAmount;
 	}
 
 }

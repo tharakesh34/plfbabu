@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class ExtFinanceUploadService {
-	private static final Logger logger = Logger.getLogger(ExtFinanceUploadService.class);
+	private static final Logger logger = LogManager.getLogger(ExtFinanceUploadService.class);
 
 	private boolean isError = false;
 
@@ -283,7 +284,7 @@ public class ExtFinanceUploadService {
 
 		// Building Account Entry Details
 		try {
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+			engineExecution.getAccEngineExecResults(aeEvent);
 			return aeEvent.getReturnDataSet();
 		} catch (Exception e) {
 			logger.debug(e);

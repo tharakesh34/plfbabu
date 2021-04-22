@@ -45,7 +45,8 @@ package com.pennanttech.framework.security.core.service;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.SecLoginlogDAO;
@@ -57,7 +58,7 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 
 public class UserServiceImpl implements UserService {
-	private static final Logger logger = Logger.getLogger(UserServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
 
 	private UserDAO userDAO;
 	private SecurityRightDAO securityRightDAO;

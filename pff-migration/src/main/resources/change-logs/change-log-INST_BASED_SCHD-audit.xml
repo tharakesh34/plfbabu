@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="1" author="Somasekhar">
+		<addColumn tableName="adtrmtfinancetypes">
+			<column name="instbasedschd" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Somasekhar">
+		<addColumn tableName="adtfinancemain">
+			<column name="instbasedschd" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="3" author="Somasekhar">
+		<addColumn tableName="adtfindisbursementdetails">
+			<column name="InstCalReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="4" author="Somasekhar">
+		<addColumn tableName="adtfindisbursementdetails">
+			<column name="linkeddisbid" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="5" author="Somasekhar">
+		<sql>
+			<![CDATA[
+				UPDATE adtrmtfinancetypes SET instbasedschd = 0;
+				UPDATE adtfinancemain SET instbasedschd = 0;
+				UPDATE adtfindisbursementdetails SET InstCalReq = 0;
+				UPDATE adtfindisbursementdetails SET linkeddisbid = 0;		
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="Somasekhar" dbms="postgresql, oracle">
+		<addDefaultValue columnName="instbasedschd" tableName="adtrmtfinancetypes" defaultValue="0" />
+		<addDefaultValue columnName="instbasedschd" tableName="adtfinancemain" defaultValue="0" />
+		<addDefaultValue columnName="InstCalReq" tableName="adtfindisbursementdetails" defaultValue="0" />
+		<addDefaultValue columnName="linkeddisbid" tableName="adtfindisbursementdetails" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="7" author="Somasekhar" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtrmtfinancetypes ADD CONSTRAINT DF_adtrmtfinnctyps_instbsdschd DEFAULT 0 FOR instbasedschd;
+				ALTER TABLE adtfinancemain ADD CONSTRAINT DF_adtfinancemin_instbasedschd DEFAULT 0 FOR instbasedschd;
+				ALTER TABLE adtfindisbursementdetails ADD CONSTRAINT DF_adtfndsbrsmntdtls_InstClRq DEFAULT 0 FOR InstCalReq;
+				ALTER TABLE adtfindisbursementdetails ADD CONSTRAINT DF_adtfndsbursmntdtls_lnkddsbd DEFAULT 0 FOR linkeddisbid;
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>

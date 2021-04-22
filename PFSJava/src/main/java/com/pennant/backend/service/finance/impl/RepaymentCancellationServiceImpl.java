@@ -11,13 +11,15 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -42,6 +44,7 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -59,7 +62,7 @@ import com.rits.cloning.Cloner;
 public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain>
 		implements RepaymentCancellationService {
 
-	private static final Logger logger = Logger.getLogger(RepaymentCancellationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(RepaymentCancellationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 
@@ -562,15 +565,12 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 				}
 
 				// Finance Main Details Update
+				financeMain.setFinStatus(curFinStatus);
+				financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 				financeMain.setClosingStatus(null);
 				financeMain.setFinIsActive(true);
-				financeMain.setFinRepaymentAmount(financeMain.getFinRepaymentAmount().subtract(totalPriAmount));
-
-				getFinanceMainDAO().updateRepaymentAmount(finReference, financeMain.getFinCurrAssetValue()
-						.add(financeMain.getFeeChargeAmt() == null ? BigDecimal.ZERO : financeMain.getFeeChargeAmt())
-						.add(financeMain.getInsuranceAmt() == null ? BigDecimal.ZERO : financeMain.getInsuranceAmt()),
-						financeMain.getFinRepaymentAmount(), curFinStatus, FinanceConstants.FINSTSRSN_MANUAL, true,
-						false);
+				financeMain.setWriteoffLoan(financeMain.isWriteoffLoan());
+				financeMainDAO.updateRepaymentAmount(financeMain);
 
 				//Finance Status Details insertion, if status modified then change to High Risk Level
 				if (isStsChanged) {
@@ -689,6 +689,8 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		//Fee Details
 		schedule.setSchdFeePaid(schedule.getSchdFeePaid().subtract(repayment.getSchdFeePaid()));
 		schedule.setSchdInsPaid(schedule.getSchdInsPaid().subtract(repayment.getSchdInsPaid()));
+		schedule.setSuplRentPaid(schedule.getSuplRentPaid().subtract(repayment.getSchdSuplRentPaid()));
+		schedule.setIncrCostPaid(schedule.getIncrCostPaid().subtract(repayment.getSchdIncrCostPaid()));
 
 		// Finance Schedule Profit Balance Check
 		schedule.setSchPriPaid(false);
@@ -819,12 +821,15 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
-		Date curBDay = DateUtility.getAppDate();
-		for (int i = 0; i < finDetail.getDisbursementDetails().size(); i++) {
-			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinanceMain().getFinReference());
-			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
-			finDetail.getDisbursementDetails().get(i).setDisbIsActive(true);
-			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
+		Date curBDay = SysParamUtil.getAppDate();
+		for (FinanceDisbursement fd : finDetail.getDisbursementDetails()) {
+			fd.setFinReference(finDetail.getFinanceMain().getFinReference());
+			fd.setDisbReqDate(curBDay);
+			fd.setDisbIsActive(true);
+			fd.setDisbDisbursed(true);
+			fd.setLogKey(logKey);
+			fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			fd.setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
 		}
 		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, false);
 

@@ -15,6 +15,15 @@ public class FinExcessAmountReserve implements Serializable {
 		super();
 	}
 
+	public FinExcessAmountReserve copyEntity() {
+		FinExcessAmountReserve entity = new FinExcessAmountReserve();
+		entity.setExcessID(this.excessID);
+		entity.setReceiptSeqID(this.receiptSeqID);
+		entity.setPaymentType(this.paymentType);
+		entity.setReservedAmt(this.reservedAmt);
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

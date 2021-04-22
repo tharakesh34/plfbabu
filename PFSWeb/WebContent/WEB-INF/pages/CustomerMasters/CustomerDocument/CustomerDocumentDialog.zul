@@ -99,7 +99,6 @@
 										<space id="space_CustDocExpDate" spacing="2px" />
 										<datebox id="custDocExpDate" width="150px" />
 									</hbox>
-
 								</row>
 								<row visible="false">
 									<label id="label_CustomerDocumentDialog_CustDocIsVerified" value="${c:l('label_CustomerDocumentDialog_CustDocIsVerified.value')}" />
@@ -127,7 +126,6 @@
 										<checkbox id="custDocIsAcrive" checked="false" />
 									</hbox>
 								</row>
-
 								<row visible="false" id="passwordRow">
 									<label id="label_pdfpasword" value="${c:l('label_CustomerDocumentDialog_pdf_password.value')}" />
 									<hbox>
@@ -135,7 +133,13 @@
 										<textbox id="pdfPassword" type="password" maxlength="200" width="80%" />
 									</hbox>
 								</row>
-
+								<row id="row5">
+									<label id="label_Remarks" value="${c:l('label_CustomerDocumentDialog_Remarks.value')}" />
+									<hbox>
+										<space id="space_Remarks" spacing="2px" />
+										<textbox id="remarks" multiline="true" rows="4" width="250px" style="resize: none;" />
+									</hbox>
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

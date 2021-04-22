@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.ReinstateFinance;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 
 /**
  * Service declaration for methods that depends on <b>ReinstateFinance</b>.<br>
@@ -73,4 +74,7 @@ public interface ReinstateFinanceService {
 	ReinstateFinance getFinanceDetailsById(String finReference);
 
 	List<String> getScheduleEffectModuleList(boolean schdChangeReq);
+
+	public List<ReasonDetailsLog> getResonDetailsLog(String reference);
+
 }

@@ -11,9 +11,9 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.FinMaturityService;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class ProcessInActiveFinances implements Tasklet {
@@ -27,11 +27,14 @@ public class ProcessInActiveFinances implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
+		Date valueDate = eventProperties.getAppValueDate();
+
 		logger.info("START  Process InActive Loans On {}", valueDate);
+
 		BatchUtil.setExecutionStatus(context, StepUtil.PROCESS_INACTIVE_FINANCES);
 
-		if (SysParamUtil.isAllowed(AmortizationConstants.MONTHENDACC_CALREQ)) {
+		if (eventProperties.isMonthEndAccCallReq()) {
 			finMaturityService.processInActiveFinancesAMZ();
 		}
 

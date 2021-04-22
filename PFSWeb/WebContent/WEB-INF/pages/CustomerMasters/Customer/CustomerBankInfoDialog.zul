@@ -181,9 +181,11 @@
 									<textbox id="lwowRatio" />
 								</row>
 								<row>
-									<label id="label_CustomerBankInfoDialog_CCLimit" value="CC Limit" width="150px" />
-									<textbox id="ccLimit" />
-									<label id="label_CustomerBankInfoDialog_TypeOfBanks" value="Type of Banks" />
+									<label id="label_CustomerBankInfoDialog_CCLimit"
+										value="${c:l('label_CustomerBankInfoDialog_CCLimit.value')}" width="150px" />
+									<currencyBox id="ccLimit" />
+									<label id="label_CustomerBankInfoDialog_TypeOfBanks"
+										value="${c:l('label_CustomerBankInfoDialog_TypeOfBanks.value')}" />
 									<combobox id="typeOfBanks" />
 								</row>
 							</rows>
@@ -296,6 +298,38 @@
 							</rows>
 						</grid>
 					</groupbox>
+					<groupbox id="gb_perfios" visible="false">
+						<caption label="${c:l('label_perfios')}" />
+						<toolbar id="toolBar_perfios" align="end" style="border-style: none;">
+							<button id="button_CustomerBankInfoDialog_btnPerfiosDocUpload"
+								label="${c:l('label_btnPerfiosDocUploade')}"
+								tooltiptext="${c:l('button_CustomerBankInfoDialog_btnPerfiosDocUpload.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="button_CustomerBankInfoDialog_btnInitiateperfios,button_CustomerBankInfoDialog_btnPerfiosDocUpload,button_CustomerBankInfoDialog_btnChkperfiosStatus" />
+							<button id="button_CustomerBankInfoDialog_btnInitiateperfios"
+								label="${c:l('label_btnInitiateperfios')}"
+								tooltiptext="${c:l('button_CustomerBankInfoDialog_btnInitiateperfios.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="button_CustomerBankInfoDialog_btnInitiateperfios,button_CustomerBankInfoDialog_btnPerfiosDocUpload,button_CustomerBankInfoDialog_btnChkperfiosStatus" />
+							<button id="button_CustomerBankInfoDialog_btnChkperfiosStatus"
+								label="${c:l('label_btnChkperfiosStatus')}"
+								tooltiptext="${c:l('button_CustomerBankInfoDialog_btnChkperfiosStatus.tooltiptext')}" sclass="z-toolbarbutton"
+								visible="false"
+								autodisable="button_CustomerBankInfoDialog_btnInitiateperfios,button_CustomerBankInfoDialog_btnPerfiosDocUpload,button_CustomerBankInfoDialog_btnChkperfiosStatus" />
+						</toolbar>
+						<listbox id="listBoxDocuments" emptyMessage="${c:l('listbox.emptyMessage')}"
+							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
+							span="true" style="overflow:auto;">
+							<listhead sizable="true" id="listHead_BoxStatements">
+								<listheader id="listheader_DocName" label="${c:l('listheader_DocName.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_FromDate" label="${c:l('listheader_FromDate.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ToDate" label="${c:l('listheader_ToDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_PerfiosReport"
+									label="${c:l('listheader_PerfiosReport.label')}" hflex="min" />
+							</listhead>
+						</listbox>
+					</groupbox>
 					<groupbox>
 						<toolbar id="toolBar_AccBehaviour" align="end" style="border-style: none;" visible="false">
 							<button id="button_CustomerBankInfoDialog_btnAccBehaviour"
@@ -336,6 +370,16 @@
 									label="${c:l('listheader_SettlementCredits.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_ODCCUtl" align="right"
 									label="${c:l('listheader_ODCCUtl.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_Interest" align="right"
+									label="${c:l('listheader_Interest.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_TRF" align="right" label="${c:l('listheader_TRF.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_TotalEmi" align="right"
+									label="${c:l('listheader_TotalEmi.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_TotalSalary" align="right"
+									label="${c:l('listheader_TotalSalary.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_EmiBounces" align="right"
+									label="${c:l('listheader_EmiBounces.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_Delete" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>

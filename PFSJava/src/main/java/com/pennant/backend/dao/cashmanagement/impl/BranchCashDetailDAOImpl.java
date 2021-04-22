@@ -45,14 +45,15 @@ package com.pennant.backend.dao.cashmanagement.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.cashmanagement.BranchCashDetailDAO;
@@ -72,7 +73,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BranchCashDetail</code> with set of CRUD operations.
  */
 public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implements BranchCashDetailDAO {
-	private static Logger logger = Logger.getLogger(BranchCashDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchCashDetailDAOImpl.class);
 
 	public BranchCashDetailDAOImpl() {
 		super();
@@ -96,7 +97,7 @@ public class BranchCashDetailDAOImpl extends BasicDao<BranchCashDetail> implemen
 		branchCashDetail.setBranchCode(branchCode);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(branchCashDetail);
-		RowMapper<BranchCashDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BranchCashDetail.class);
+		RowMapper<BranchCashDetail> rowMapper = BeanPropertyRowMapper.newInstance(BranchCashDetail.class);
 
 		try {
 			branchCashDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

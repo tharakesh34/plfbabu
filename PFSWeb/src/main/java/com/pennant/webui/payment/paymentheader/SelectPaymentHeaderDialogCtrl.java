@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(SelectPaymentHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectPaymentHeaderDialogCtrl.class);
 
 	protected Window window_SelectPaymentHeaderDialog;
 	protected ExtendedCombobox finReference;
@@ -130,7 +131,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		sql.append(" FinReference in (Select FinReference from FinExcessAmount  where BalanceAmt > 0 union ");
 		sql.append(" Select FinReference from ManualAdvise Where  AdviseType = ");
 		sql.append(FinanceConstants.MANUAL_ADVISE_PAYABLE);
-		sql.append(" AND HoldDue=0 And BalanceAmt > 0)");
+		sql.append(" AND HoldDue=0 And adviseAmount - PaidAmount > 0)");
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
@@ -155,8 +156,15 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		if (!doFieldValidation()) {
 			return;
 		}
-		FinanceMain financeMain = paymentHeaderService
-				.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
+
+		boolean payInstInProgess = this.paymentHeaderService.isInstructionInProgress(this.finReference.getValue());
+
+		if (payInstInProgess) {
+			MessageUtil.showMessage("Payment instruction already in progress for - " + this.finReference.getValue());
+			return;
+		}
+
+		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(this.finReference.getValue());
 
 		HashMap<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);

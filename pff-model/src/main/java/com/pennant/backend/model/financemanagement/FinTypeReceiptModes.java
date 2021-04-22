@@ -1,5 +1,6 @@
 package com.pennant.backend.model.financemanagement;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,36 @@ public class FinTypeReceiptModes extends AbstractWorkflowEntity {
 	private FinTypeReceiptModes befImage;
 	private LoggedInUser userDetails;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+	public FinTypeReceiptModes copyEntity() {
+		FinTypeReceiptModes entity = new FinTypeReceiptModes();
+		entity.setFinType(this.finType);
+		entity.setReceiptMode(this.receiptMode);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		this.auditDetailMap.entrySet().stream().forEach(e -> {
+			List<AuditDetail> newList = new ArrayList<AuditDetail>();
+			if (e.getValue() != null) {
+				e.getValue().forEach(
+						auditDetail -> newList.add(auditDetail == null ? null : auditDetail.getNewCopyInstance()));
+				entity.getAuditDetailMap().put(e.getKey(), newList);
+			} else
+				entity.getAuditDetailMap().put(e.getKey(), null);
+		});
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();

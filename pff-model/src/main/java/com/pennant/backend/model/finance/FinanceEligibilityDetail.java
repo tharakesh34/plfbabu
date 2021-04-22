@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.zkoss.json.JSONObject;
+
 @XmlType(propOrder = { "elgRuleCode", "ruleResultType", "ruleResult" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceEligibilityDetail implements Serializable {
@@ -43,6 +45,10 @@ public class FinanceEligibilityDetail implements Serializable {
 	private String roleCode;
 	private String recordStatus;
 	private String deviation;
+	private String splRuleVal;
+
+	@XmlElement
+	private JSONObject json;
 
 	public FinanceEligibilityDetail() {
 
@@ -57,6 +63,8 @@ public class FinanceEligibilityDetail implements Serializable {
 		excludeFields.add("eligibleWithDevaition");
 		excludeFields.add("recordType");
 		excludeFields.add("deviation");
+		excludeFields.add("splRuleVal");
+		excludeFields.add("json");
 		return excludeFields;
 	}
 
@@ -227,6 +235,22 @@ public class FinanceEligibilityDetail implements Serializable {
 
 	public void setDeviation(String deviation) {
 		this.deviation = deviation;
+	}
+
+	public String getSplRuleVal() {
+		return splRuleVal;
+	}
+
+	public void setSplRuleVal(String splRuleVal) {
+		this.splRuleVal = splRuleVal;
+	}
+
+	public JSONObject getJson() {
+		return json;
+	}
+
+	public void setJson(JSONObject json) {
+		this.json = json;
 	}
 
 }

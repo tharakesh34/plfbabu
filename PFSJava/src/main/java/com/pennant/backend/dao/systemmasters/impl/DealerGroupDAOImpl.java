@@ -1,14 +1,15 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.DealerGroupDAO;
 import com.pennant.backend.model.systemmasters.DealerGroup;
@@ -21,7 +22,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements DealerGroupDAO {
 
-	private static Logger logger = Logger.getLogger(DealerGroupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DealerGroupDAOImpl.class);
 
 	public DealerGroupDAOImpl() {
 		super();
@@ -188,7 +189,7 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 		//dealerGroup.setFieldCode("CHANNEL");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(dealerGroup);
-		RowMapper<DealerGroup> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DealerGroup.class);
+		RowMapper<DealerGroup> rowMapper = BeanPropertyRowMapper.newInstance(DealerGroup.class);
 
 		try {
 			dealerGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

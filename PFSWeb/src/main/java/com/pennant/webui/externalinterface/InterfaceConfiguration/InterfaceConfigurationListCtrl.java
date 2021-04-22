@@ -45,7 +45,8 @@ package com.pennant.webui.externalinterface.InterfaceConfiguration;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -72,11 +73,10 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 /**
  * This is the controller class for the
  * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/InterfaceConfigurationList.zul file.
- * 
  */
 public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceConfiguration> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(InterfaceConfigurationListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InterfaceConfigurationListCtrl.class);
 
 	protected Window window_InterfaceConfigurationList;
 	protected Borderlayout borderLayout_InterfaceConfigurationList;
@@ -94,11 +94,11 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	protected Button button_InterfaceConfigurationList_Search;
 
 	// Search Fields
-	protected Textbox code; // autowired
-	protected Textbox description; // autowired
-	protected Combobox type; // autowired
-	protected Combobox notificationType; // autowired
-	protected Checkbox active; // autowired
+	protected Textbox code;
+	protected Textbox description;
+	protected Combobox type;
+	protected Combobox notificationType;
+	protected Checkbox active;
 
 	protected Listbox sortOperator_Code;
 	protected Listbox sortOperator_Description;
@@ -148,10 +148,6 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 				sortOperator_Description, Operators.STRING);
 		registerField("type", listheader_InterfaceConfigurationList_Type, SortOrder.NONE, sortOperator_Type,
 				Operators.STRING);
-		/*
-		 * registerField("notificationType", listheader_InterfaceConfigurationList_NotificationType, SortOrder.NONE,
-		 * sortOperator_NotificationType, Operators.STRING);
-		 */
 		registerField("errorCodes");
 		registerField("active", listheader_InterfaceConfigurationList_active, SortOrder.NONE, active,
 				sortOperator_active, Operators.BOOLEAN);
@@ -198,14 +194,14 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	 */
 
 	public void onInterfaceConfigurationItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxInterfaceConfiguration.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
-		InterfaceConfiguration InterfaceConfiguration = interfaceConfigurationService.getInterfaceConfiguration(id);
+		InterfaceConfiguration interfaceConfiguration = interfaceConfigurationService.getInterfaceConfiguration(id);
 
-		if (InterfaceConfiguration == null) {
+		if (interfaceConfiguration == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
@@ -213,13 +209,13 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  where  Id =? ");
 
-		if (doCheckAuthority(InterfaceConfiguration, whereCond.toString(),
-				new Object[] { InterfaceConfiguration.getId() })) {
+		if (doCheckAuthority(interfaceConfiguration, whereCond.toString(),
+				new Object[] { interfaceConfiguration.getId() })) {
 			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && InterfaceConfiguration.getWorkflowId() == 0) {
-				InterfaceConfiguration.setWorkflowId(getWorkFlowId());
+			if (isWorkFlowEnabled() && interfaceConfiguration.getWorkflowId() == 0) {
+				interfaceConfiguration.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(InterfaceConfiguration);
+			doShowDialogPage(interfaceConfiguration);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -230,14 +226,14 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param InterfaceConfiguration
+	 * @param interfaceConfiguration
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(InterfaceConfiguration InterfaceConfiguration) {
+	private void doShowDialogPage(InterfaceConfiguration interfaceConfiguration) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("interfaceConfiguration", InterfaceConfiguration);
+		arg.put("interfaceConfiguration", interfaceConfiguration);
 		arg.put("interfaceConfigurationListCtrl", this);
 
 		try {
@@ -245,7 +241,7 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 					"/WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/InterfaceServiceList.zul", null,
 					arg);
 		} catch (Exception e) {
-			logger.error("Exception:", e);
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 

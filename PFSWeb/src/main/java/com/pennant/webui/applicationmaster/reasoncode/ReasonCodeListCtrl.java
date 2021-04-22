@@ -45,7 +45,8 @@ package com.pennant.webui.applicationmaster.reasoncode;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -74,7 +75,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ReasonCodeListCtrl extends GFCBaseListCtrl<ReasonCode> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ReasonCodeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReasonCodeListCtrl.class);
 
 	protected Window window_ReasonCodeList;
 	protected Borderlayout borderLayout_ReasonCodeList;

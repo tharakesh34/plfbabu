@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.model.MailData;
@@ -70,7 +71,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class NotificationsServiceImpl extends GenericService<Notifications> implements NotificationsService {
 
-	private static Logger logger = Logger.getLogger(NotificationsServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(NotificationsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private NotificationsDAO notificationsDAO;

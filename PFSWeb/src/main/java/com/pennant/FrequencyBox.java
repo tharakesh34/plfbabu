@@ -46,7 +46,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class FrequencyBox extends Hbox {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(FrequencyBox.class);
+	private static final Logger logger = LogManager.getLogger(FrequencyBox.class);
 
 	private Space space;
 	private Textbox frqValue;

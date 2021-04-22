@@ -59,4 +59,11 @@ public interface FinReceiptDetailDAO {
 	void updateReceiptStatusByReceiptId(long receiptId, String status);
 
 	BigDecimal getUtilizedPartPayAmtByDate(FinReceiptHeader receiptHeader, Date startDate, Date endDate);
+
+	Date getMaxReceiptDate(String finReference, String receiptPurpose, TableType tableType);
+
+	//### 17-12-2020, ST#1627
+	List<FinReceiptDetail> getNonLanReceiptHeader(long receiptID, String type);
+
+	String getReceiptSourceAccType(String receiptSource);
 }

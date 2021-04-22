@@ -8,30 +8,44 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class LegalVerification extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long verificationId;
 	private String cif;
+	@XmlElement
 	private String keyReference;
 	private String collateralType;
 	private String referenceFor;
-
+	@XmlElement
 	private Date verificationDate;
+	@XmlElement
 	private String agentCode;
+	@XmlElement
 	private String agentName;
+	@XmlElement(name = "recommendations")
 	private int status;
+	@XmlElement
 	private Long reason;
+	@XmlElement
 	private String remarks;
+	@XmlElement(name = "name")
 	private String verificationFromName;
 	private int verificationCategory;
 
@@ -45,6 +59,8 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private String documentSubId;
 
 	private List<DocumentDetails> documents = null;
+	@XmlElementWrapper(name = "lvDocuments")
+	@XmlElement(name = "lvDocument")
 	private List<LVDocument> lvDocuments = new ArrayList<>();
 	@XmlTransient
 	private boolean newRecord = false;
@@ -58,6 +74,15 @@ public class LegalVerification extends AbstractWorkflowEntity {
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+
+	@XmlElementWrapper(name = "extendedDetails")
+	@XmlElement(name = "extendedDetail")
+	private List<ExtendedField> extendedDetails;
+
+	@XmlElement
+	private WSReturnStatus returnStatus;
+
+	private String sourceId;
 
 	public LegalVerification() {
 		super();
@@ -89,6 +114,9 @@ public class LegalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("documentId");
 		excludeFields.add("documentSubId");
 		excludeFields.add("verificationCategory");
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
+		excludeFields.add("extendedDetails");
 
 		return excludeFields;
 	}
@@ -339,5 +367,29 @@ public class LegalVerification extends AbstractWorkflowEntity {
 
 	public void setVerificationCategory(int verificationCategory) {
 		this.verificationCategory = verificationCategory;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public List<ExtendedField> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
+		this.extendedDetails = extendedDetails;
 	}
 }

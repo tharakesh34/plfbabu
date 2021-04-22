@@ -3,7 +3,8 @@ package com.pennant.backend.service.payment;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.CustomerPaymentService;
 
 public class PaymentsProcessService {
-	private static final Logger logger = Logger.getLogger(PaymentsProcessService.class);
+	private static final Logger logger = LogManager.getLogger(PaymentsProcessService.class);
 
 	@Autowired(required = false)
 	private CustomerPaymentService customerPaymentService;
@@ -36,7 +37,7 @@ public class PaymentsProcessService {
 		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
 
 		if (CollectionUtils.isEmpty(advancePayments)) {
-			logger.debug("FinAdvancePayments list is emty for the reference :");
+			logger.debug("FinAdvancePayments list is emty");
 			return;
 		}
 

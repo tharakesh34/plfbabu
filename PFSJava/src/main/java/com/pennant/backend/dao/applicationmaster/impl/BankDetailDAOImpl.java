@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetailDAO {
-	private static Logger logger = Logger.getLogger(BankDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BankDetailDAOImpl.class);
 
 	public BankDetailDAOImpl() {
 		super();
@@ -85,7 +86,7 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-		RowMapper<BankDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankDetail.class);
+		RowMapper<BankDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BankDetail.class);
 
 		try {
 			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -114,7 +115,8 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		BankDetail bankDetail = new BankDetail();
 		bankDetail.setId(id);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT BankCode, BankName, BankShortCode, Active,  AccNoLength,");
+		StringBuilder selectSql = new StringBuilder(
+				"Select BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  BMTBankDetail");
@@ -123,7 +125,7 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-		RowMapper<BankDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankDetail.class);
+		RowMapper<BankDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BankDetail.class);
 
 		try {
 			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -179,10 +181,10 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into BMTBankDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength,");
+		sql.append(" (BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength,");
+		sql.append(" values(:BankCode, :BankName, :BankShortCode, :Active, :AccNoLength, :MinAccNoLength,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -208,7 +210,7 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		StringBuilder sql = new StringBuilder("update BMTBankDetail");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength,");
+				" set BankName = :BankName, BankShortCode = :BankShortCode, Active = :Active, AccNoLength = :AccNoLength, MinAccNoLength = :MinAccNoLength,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		sql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
@@ -259,13 +261,13 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 	}
 
 	@Override
-	public int getAccNoLengthByCode(String bankCode, String type) {
+	public BankDetail getAccNoLengthByCode(String bankCode, String type) {
 		logger.debug("Entering");
 
 		BankDetail bankDetail = new BankDetail();
 		bankDetail.setBankCode(bankCode);
 
-		StringBuilder selectSql = new StringBuilder("Select AccNoLength");
+		StringBuilder selectSql = new StringBuilder("Select AccNoLength, MinAccNoLength");
 
 		selectSql.append(" From BMTBankDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -273,12 +275,14 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+		RowMapper<BankDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BankDetail.class);
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return bankDetail;
 		} catch (EmptyResultDataAccessException dae) {
 			logger.debug(dae);
-			return 0;
+			return bankDetail;
 		}
 	}
 

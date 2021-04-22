@@ -10,7 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -33,6 +34,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -41,7 +43,7 @@ import com.pennanttech.service.AmazonS3Bucket;
 public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PresentmentDetailFileDownloadListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PresentmentDetailFileDownloadListCtrl.class);
 
 	private Window window_PresentmentDetailFileDownloadList;
 	private Borderlayout borderLayout_PresentmentDetailFileDownloadList;
@@ -87,7 +89,7 @@ public class PresentmentDetailFileDownloadListCtrl extends GFCBaseListCtrl<FileD
 				listBoxFileDownload, pagingFileDownloadList);
 		setItemRender(new FileDownloadListModelItemRenderer());
 
-		registerField("ID");
+		registerField("ID", SortOrder.DESC);
 		registerField("FileLocation");
 		registerField("FileName");
 		registerField("Status");

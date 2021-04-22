@@ -32,7 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -41,9 +42,9 @@ import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.expenses.LegalExpensesDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
@@ -70,6 +71,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
@@ -78,7 +80,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class JVPostingServiceImpl extends GenericService<JVPosting> implements JVPostingService {
-	private static final Logger logger = Logger.getLogger(JVPostingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(JVPostingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private JVPostingDAO jVPostingDAO;
@@ -221,11 +223,65 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	public boolean doAccountValidation(JVPosting jVPosting, List<JVPostingEntry> distinctEntryList) {
 		logger.debug("Entering");
 
+		boolean isValid = validateAccounts(distinctEntryList);
+
 		// METHOD TO CHECK ALL THE RECORDS ARE VALIDATED OR NOT
-		jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
+		if (isValid) {
+			jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
+		} else {
+			jVPosting.setValidationStatus(PennantConstants.POSTSTS_FAILED);
+		}
 
 		logger.debug("Leaving");
 		return jVPosting.getValidationStatus().equals(PennantConstants.POSTSTS_SUCCESS);
+	}
+
+	private boolean validateAccounts(List<JVPostingEntry> distinctEntryList) {
+		logger.debug("Entering");
+		boolean validationSuccess = true;
+		List<CoreBankAccountDetail> cbAccountsList = new ArrayList<CoreBankAccountDetail>();
+		for (JVPostingEntry aJVPostingEntry : distinctEntryList) {
+			CoreBankAccountDetail iAccount = new CoreBankAccountDetail();
+			iAccount.setAccountNumber(aJVPostingEntry.getAccount());
+			cbAccountsList.add(iAccount);
+		}
+		// Fetch account ids from Equation
+		try {
+			cbAccountsList = getAccountInterfaceService().checkAccountID(cbAccountsList);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			for (JVPostingEntry jVPostingEntry : distinctEntryList) {
+				jVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
+				jVPostingEntry
+						.setValidationStatus(PennantConstants.POSTSTS_FAILED + " : " + (e instanceof InterfaceException
+								? ((InterfaceException) e).getErrorMessage() : e.getMessage()));
+			}
+			return false;
+		}
+
+		if (cbAccountsList != null && cbAccountsList.size() > 0) {
+			for (JVPostingEntry aJVPostingEntry : distinctEntryList) {
+				for (CoreBankAccountDetail accountDetail : cbAccountsList) {
+					if (aJVPostingEntry.getAccount().equalsIgnoreCase(accountDetail.getAccountNumber())) {
+						if (!StringUtils.equals(accountDetail.getErrorCode(), "0000")
+								&& StringUtils.isNotEmpty(accountDetail.getErrorCode())) {
+							aJVPostingEntry.setValidationStatus(
+									accountDetail.getErrorCode() + ":" + accountDetail.getErrorMessage());
+							validationSuccess = false;
+						} else {
+							if (aJVPostingEntry.isExternalAccount()) {
+								aJVPostingEntry.setAcType(accountDetail.getAcType());
+								aJVPostingEntry.setAccountName(accountDetail.getAcShrtName());
+								aJVPostingEntry.setAccCCy(accountDetail.getAcCcy());
+							}
+							aJVPostingEntry.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
+						}
+					}
+				}
+			}
+		}
+		logger.debug("Leaving");
+		return validationSuccess;
 	}
 
 	/**
@@ -1423,7 +1479,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
 					entry.setPostingStatus(PennantConstants.POSTSTS_SUCCESS);
 					entry.setLinkedTranId(linkedTranId);
-					entry.setPostingDate(DateUtility.getAppDate());
+					entry.setPostingDate(SysParamUtil.getAppDate());
 				}
 			}
 			try {

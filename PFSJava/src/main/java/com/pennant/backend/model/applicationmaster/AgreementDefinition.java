@@ -43,6 +43,8 @@
 package com.pennant.backend.model.applicationmaster;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -77,6 +79,7 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	private String moduleName;
 	private boolean allowMultiple;
 	private String moduleType;
+	private boolean pwdProtected;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -89,6 +92,13 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 	public AgreementDefinition(long id) {
 		super();
 		this.setId(id);
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("pwdProtected");
+
+		return excludeFields;
 	}
 
 	// ******************************************************//
@@ -282,5 +292,13 @@ public class AgreementDefinition extends AbstractWorkflowEntity implements Entit
 
 	public void setAutoDownload(boolean autoDownload) {
 		this.autoDownload = autoDownload;
+	}
+
+	public boolean isPwdProtected() {
+		return pwdProtected;
+	}
+
+	public void setPwdProtected(boolean pwdProtected) {
+		this.pwdProtected = pwdProtected;
 	}
 }

@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
@@ -69,7 +70,7 @@ import com.rits.cloning.Cloner;
  */
 public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = Logger.getLogger(ReceiptEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -97,9 +98,12 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Groupbox gb_ReceiptDetails;
 	protected Caption caption_receiptDetail;
 	protected Label label_ReceiptDialog_favourNo;
+	protected Label label_ReceiptDialog_ChequeAccountNo;
+
 	protected Uppercasebox favourNo;
 	protected Datebox valueDate;
 	protected ExtendedCombobox bankCode;
+	protected ExtendedCombobox bankBranch;
 	protected Textbox favourName;
 	protected Datebox depositDate;
 	protected Uppercasebox depositNo;
@@ -139,6 +143,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
 	protected ExtendedCombobox finDivision;
+	protected Textbox extReference;
 
 	protected Groupbox gb_FeeDetail;
 	//TODO: labels are same
@@ -166,6 +171,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox posting_CustCIF;
 	protected Textbox posting_finBranch;
 	protected Listbox listBoxPosting;
+	protected Label labelCustomerFinType;
+	protected Textbox customerFinType;
 
 	/**
 	 * default constructor.<br>
@@ -286,6 +293,12 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			setStatusDetails();
 		}
 
+		this.bankBranch.setModuleName("BankBranch");
+		this.bankBranch.setValueColumn("IFSC");
+		this.bankBranch.setDescColumn("BranchDesc");
+		this.bankBranch.setDisplayStyle(2);
+		this.bankBranch.setValidateColumns(new String[] { "IFSC" });
+
 		this.custID.setModuleName("Customer");
 		this.custID.setMandatoryStyle(true);
 		this.custID.setValueColumn("CustCIF");
@@ -302,6 +315,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setDisplayStyle(2);
 			this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
 			this.groupbox_Finance.setVisible(true);
+			this.labelCustomerFinType.setVisible(false);
+			this.customerFinType.setVisible(false);
 		} else {
 			this.fundingAccount.setModuleName("PartnerBank");
 			this.fundingAccount.setValueColumn("PartnerBankId");
@@ -312,6 +327,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (RepayConstants.RECEIPTTO_CUSTOMER.equals(this.receiptHeader.getRecAgainst())) {
 				this.groupbox_Customer.setVisible(true);
+				this.labelCustomerFinType.setVisible(true);
+				this.customerFinType.setVisible(true);
 			} else if (RepayConstants.RECEIPTTO_OTHER.equals(this.receiptHeader.getRecAgainst())) {
 				this.groupbox_Other.setVisible(true);
 				this.reference.setMaxlength(20);
@@ -375,6 +392,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.favourNo);
 		readOnlyComponent(true, this.valueDate);
 		readOnlyComponent(true, this.bankCode);
+		readOnlyComponent(true, this.bankBranch);
 		readOnlyComponent(true, this.favourName);
 		readOnlyComponent(true, this.depositDate);
 		readOnlyComponent(true, this.depositNo);
@@ -438,10 +456,14 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
+					this.label_ReceiptDialog_ChequeAccountNo.setVisible(true);
+					this.chequeAcNo.setVisible(true);
 					this.label_ReceiptDialog_favourNo
 							.setValue(Labels.getLabel("label_ReceiptDialog_ChequeFavourNo.value"));
 				} else {
-					this.row_ChequeAcNo.setVisible(false);
+					this.row_ChequeAcNo.setVisible(true);
+					this.label_ReceiptDialog_ChequeAccountNo.setVisible(false);
+					this.chequeAcNo.setVisible(false);
 					this.label_ReceiptDialog_favourNo.setValue(Labels.getLabel("label_ReceiptDialog_DDFavourNo.value"));
 				}
 
@@ -477,7 +499,10 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
 
-		this.finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
+		String fintype = StringUtils.trimToEmpty(header.getFinType()) + "-"
+				+ StringUtils.trimToEmpty(header.getFinTypeDesc());
+		this.finType.setValue(fintype);
+		this.customerFinType.setValue(fintype);
 		this.finReference.setValue(header.getReference());
 		this.finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
@@ -487,7 +512,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.remarks.setValue(header.getRemarks());
 
 		// Allocation Basic Details
-		this.allocation_finType.setValue(header.getFinType() + "-" + header.getFinTypeDesc());
+		this.allocation_finType.setValue(fintype);
 		this.allocation_finReference.setValue(header.getReference());
 		this.allocation_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.allocation_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
@@ -529,6 +554,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.valueDate.setValue(receiptDetail.getValueDate());
 					this.bankCode.setValue(receiptDetail.getBankCode());
 					this.bankCode.setDescription(receiptDetail.getBankCodeDesc());
+					this.bankBranch.setValue(receiptDetail.getiFSC());
+					this.bankBranch.setDescription(receiptDetail.getBranchDesc());
 					this.favourName.setValue(receiptDetail.getFavourName());
 					this.depositDate.setValue(receiptDetail.getDepositDate());
 					this.depositNo.setValue(receiptDetail.getDepositNo());
@@ -579,6 +606,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else if (this.groupbox_Customer.isVisible()) {
 			this.custID.setAttribute("custID", header.getReference());
 			this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
+			this.extReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
 		} else if (this.groupbox_Other.isVisible()) {
 			this.reference.setValue(header.getReference());
 		}
@@ -796,7 +824,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			String reportName = "GOLDLOAN_CashierReceipt";
 			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
 			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
-			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
+			AgreementEngine engine = new AgreementEngine(templatePath);
 			engine.setTemplate(templateName);
 			engine.loadTemplate();
 			reportName = "CashierReceipt";
@@ -988,6 +1016,13 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.posting_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.posting_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
 		this.posting_CustCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
+		if (RepayConstants.RECEIPTTO_CUSTOMER.equals(receiptHeader.getRecAgainst())
+				&& StringUtils.isNotBlank(receiptHeader.getExtReference())) {
+			this.posting_finBranch.setValue(header.getPostBranch() + "-" + header.getPostBranchDesc());
+			this.posting_CustCIF.setValue(header.getCustomerCIF() + "-" + header.getCustomerName());
+			//setting Reference as ExtReference
+			this.posting_finReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
+		}
 
 		// Identifying Transaction List
 		List<Long> tranIdList = new ArrayList<>();
@@ -1006,7 +1041,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Posting Details Rendering
 		if (!tranIdList.isEmpty()) {
-			List<ReturnDataSet> postings = postingsDAO.getPostingsByLinkedTranId(tranIdList, true);
+			List<ReturnDataSet> postings = postingsDAO.getPostingsByTransIdList(tranIdList);
 			doFillPostings(postings);
 		}
 		logger.debug(Literal.LEAVING);

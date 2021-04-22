@@ -50,16 +50,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.model.TaskOwners;
@@ -67,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwnersDAO {
-	private static Logger logger = Logger.getLogger(TaskOwnersDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(TaskOwnersDAOImpl.class);
 
 	public TaskOwnersDAOImpl() {
 		super();
@@ -233,7 +235,8 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found in Task_Owners table for the specified Reference >> {} and Role Code >> {}",
+					finReference, roleCode);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -266,8 +269,6 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 
 	@Override
 	public String getUserRoleCodeByRefernce(long userId, String reference, List<String> userRoles) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" RoleCode");
 		sql.append(" from Task_Owners");
@@ -301,6 +302,21 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 			try {
 				return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 			} catch (EmptyResultDataAccessException e1) {
+				logger.warn(
+						"Record not found in Task_Owners table for the specified Reference >> {} and CurrentOwner {} and UserRoles >> {} ",
+						reference, 0, userRoles);
+				return null;
+			}
+		} catch (IncorrectResultSizeDataAccessException e) {
+			try {
+				List<String> list = this.jdbcOperations.queryForList(sql.toString(),
+						new Object[] { reference, userId, 0 }, String.class);
+				if (list != null && list.size() > 0) {
+					return list.get(0);
+				} else {
+					return null;
+				}
+			} catch (EmptyResultDataAccessException e1) {
 				logger.warn(Literal.EXCEPTION, e1);
 				return null;
 			}
@@ -317,7 +333,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 				"SELECT Reference, RoleCode, ActualOwner, CurrentOwner, Processed From Task_Owners");
 		selectSql.append(" Where Reference=:Reference AND RoleCode IN (:RoleCode)");
 
-		RowMapper<TaskOwners> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaskOwners.class);
+		RowMapper<TaskOwners> typeRowMapper = BeanPropertyRowMapper.newInstance(TaskOwners.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}

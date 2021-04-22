@@ -74,7 +74,8 @@ public class DocumentDetailValidation {
 		}
 		DocumentDetails tempDocument = null;
 		if (documentDetails.isWorkflow()) {
-			tempDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(), "_Temp", true);
+			tempDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(), "_Temp",
+					documentDetails.getDocRefId() == null || documentDetails.getDocRefId() <= 0 ? false : true);
 		}
 
 		DocumentDetails befDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(), "",

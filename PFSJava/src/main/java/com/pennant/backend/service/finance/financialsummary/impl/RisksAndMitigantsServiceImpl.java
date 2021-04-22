@@ -47,7 +47,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigants>
 		implements RisksAndMitigantsService {
-	private static Logger logger = Logger.getLogger(RisksAndMitigantsServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(RisksAndMitigantsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private RisksAndMitigantsDAO risksAndMitigantsDAO;

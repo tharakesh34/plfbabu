@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -118,17 +119,18 @@ public class CustomerAddressValidation {
 
 		auditDetail.setErrorDetail(screenValidations(customerAddres));
 
-		boolean isServiceable = getCustomerAddresDAO().isServiceable(customerAddres.getPinCodeId());
+		if (customerAddres.getPinCodeId() != null) {
+			boolean isServiceable = getCustomerAddresDAO().isServiceable(customerAddres.getPinCodeId());
 
-		if (!isServiceable) {
-			valueParm[0] = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
-			valueParm[1] = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip());
+			if (!isServiceable) {
+				valueParm[0] = StringUtils.trimToEmpty(customerAddres.getCustAddrZIP());
+				valueParm[1] = StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrZip());
 
-			errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0] + " For "
-					+ PennantJavaUtil.getLabel("label_AreaName") + "-" + valueParm[1];
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "81005", errParm, null));
+				errParm[0] = PennantJavaUtil.getLabel("label_PinCode") + "-" + valueParm[0] + " For "
+						+ PennantJavaUtil.getLabel("label_AreaName") + "-" + valueParm[1];
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "81005", errParm, null));
+			}
 		}
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerAddres.isWorkflow()) {
@@ -154,12 +156,15 @@ public class CustomerAddressValidation {
 					new String[] {});
 		}
 
-		if (StringUtils.isBlank(customerAddres.getCustAddrStreet())) {
-			return new ErrorDetail(PennantConstants.KEY_FIELD, "30535",
-					new String[] { Labels.getLabel("AddressDetails"),
-							Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
-							Labels.getLabel("listheader_CustAddrType.label"), customerAddres.getCustAddrType() },
-					new String[] {});
+		//FIXME MUR the below is commented in HL
+		if (!ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			if (StringUtils.isBlank(customerAddres.getCustAddrStreet())) {
+				return new ErrorDetail(PennantConstants.KEY_FIELD, "30535",
+						new String[] { Labels.getLabel("AddressDetails"),
+								Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
+								Labels.getLabel("listheader_CustAddrType.label"), customerAddres.getCustAddrType() },
+						new String[] {});
+			}
 		}
 
 		/*

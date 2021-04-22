@@ -70,6 +70,9 @@ public class AssetClassificationHeader extends AbstractWorkflowEntity {
 	private AssetClassificationHeader befImage;
 	private LoggedInUser userDetails;
 	private AssetClassificationDetail classificationDetail;
+	private Long npaTemplateId;
+	private String npaTemplateCode;
+	private String npaTemplateDesc;
 
 	private List<AssetClassificationDetail> assetClassificationDetailList = new ArrayList<AssetClassificationDetail>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -90,6 +93,8 @@ public class AssetClassificationHeader extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("classificationDetail");
+		excludeFields.add("npaTemplateDesc");
+		excludeFields.add("npaTemplateCode");
 		return excludeFields;
 	}
 
@@ -192,4 +197,29 @@ public class AssetClassificationHeader extends AbstractWorkflowEntity {
 	public void setClassificationDetail(AssetClassificationDetail classificationDetail) {
 		this.classificationDetail = classificationDetail;
 	}
+
+	public Long getNpaTemplateId() {
+		return npaTemplateId;
+	}
+
+	public void setNpaTemplateId(Long npaTemplateId) {
+		this.npaTemplateId = npaTemplateId;
+	}
+
+	public String getNpaTemplateCode() {
+		return npaTemplateCode;
+	}
+
+	public void setNpaTemplateCode(String npaTemplateCode) {
+		this.npaTemplateCode = npaTemplateCode;
+	}
+
+	public String getNpaTemplateDesc() {
+		return npaTemplateDesc;
+	}
+
+	public void setNpaTemplateDesc(String npaTemplateDesc) {
+		this.npaTemplateDesc = npaTemplateDesc;
+	}
+
 }

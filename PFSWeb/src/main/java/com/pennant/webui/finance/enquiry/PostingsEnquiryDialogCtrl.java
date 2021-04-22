@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LoanDetailsEnquiryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LoanDetailsEnquiryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.enquiry;
@@ -267,16 +249,16 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		events.append(",'LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', ");
 		events.append("'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING',");
 		events.append("'JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS','LPPAMZ', 'WAIVER', 'INSPAY',");
-		events.append("'ADVDUE', 'WRITEBK', 'OEMSBV', 'PROVSN', 'PROVCHG','PRVSN_MN', 'FEREFUND'");
-
+		events.append("'ADVDUE', 'WRITEBK', 'OEMSBV', 'MIGR', 'PROVSN', 'PROVCHG','PRVSN_MN', 'FEREFUND', 'PRSNT',");
+		events.append("'PRSNTRSP', 'PARTCAN'");
 		if (this.showAccrual.isChecked()) {
 			events.append(",'AMZ','AMZSUSP','AMZ_MON', 'INDAS', 'EXPENSE'");
 		}
 		accEvents = events;
 		if (StringUtils.isNotEmpty(events.toString())) {
-			postingDetails = getFinanceDetailService().getPostingsByFinRefAndEvent(finReference, events.toString(),
+			postingDetails = financeDetailService.getPostingsByFinRefAndEvent(finReference, events.toString(),
 					this.showZeroCals.isChecked(), "", tableType);
-			//29-08-19 Code Removed For insurance postings 
+			// 29-08-19 Code Removed For insurance postings
 		}
 		doGetListItemRenderer(postingDetails);
 		logger.debug("Leaving");

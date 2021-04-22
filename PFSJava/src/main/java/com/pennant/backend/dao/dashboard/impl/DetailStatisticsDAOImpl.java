@@ -2,12 +2,13 @@ package com.pennant.backend.dao.dashboard.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dashboard.DetailStatisticsDAO;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class DetailStatisticsDAOImpl extends BasicDao<DetailStatistics> implements DetailStatisticsDAO {
-	private static Logger logger = Logger.getLogger(DetailStatisticsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DetailStatisticsDAOImpl.class);
 
 	public DetailStatisticsDAOImpl() {
 		super();
@@ -33,8 +34,7 @@ public class DetailStatisticsDAOImpl extends BasicDao<DetailStatistics> implemen
 				"DetailStaticAudit T2 ON T1.AuditId > T2.AuditId AND T1.AuditDate > T2.AuditDate  WHERE AuditTranType='W'");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new DetailStatistics());
-		RowMapper<DetailStatistics> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DetailStatistics.class);
+		RowMapper<DetailStatistics> typeRowMapper = BeanPropertyRowMapper.newInstance(DetailStatistics.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -49,8 +49,7 @@ public class DetailStatisticsDAOImpl extends BasicDao<DetailStatistics> implemen
 		selectSql.append(" WHERE AuditId= :AuditId AND AuditDate=:AuditDate ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatistics);
-		RowMapper<DetailStatistics> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DetailStatistics.class);
+		RowMapper<DetailStatistics> typeRowMapper = BeanPropertyRowMapper.newInstance(DetailStatistics.class);
 		logger.debug("Leaving ");
 
 		DetailStatistics statistics = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
@@ -71,8 +70,7 @@ public class DetailStatisticsDAOImpl extends BasicDao<DetailStatistics> implemen
 				"WHERE ModuleName=:ModuleName AND AuditReference=:AuditReference AND RecordStatus <> 0 ORDER BY LastMntOn Desc");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detailStatistics);
-		RowMapper<DetailStatistics> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DetailStatistics.class);
+		RowMapper<DetailStatistics> typeRowMapper = BeanPropertyRowMapper.newInstance(DetailStatistics.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -121,8 +119,7 @@ public class DetailStatisticsDAOImpl extends BasicDao<DetailStatistics> implemen
 	public List<ChartSetElement> getLabelAndValues(DashboardConfiguration aDashboardConfiguration) {
 		String selectSql = aDashboardConfiguration.getQuery();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aDashboardConfiguration);
-		RowMapper<ChartSetElement> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ChartSetElement.class);
+		RowMapper<ChartSetElement> typeRowMapper = BeanPropertyRowMapper.newInstance(ChartSetElement.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql, beanParameters, typeRowMapper);

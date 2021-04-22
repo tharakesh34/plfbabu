@@ -26,11 +26,12 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.ChangeTDSDAO;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -41,7 +42,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>FinanceMain model</b> class.<br>
  */
 public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDSDAO {
-	private static Logger logger = Logger.getLogger(ChangeTDSDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ChangeTDSDAOImpl.class);
 
 	public ChangeTDSDAOImpl() {
 		super();
@@ -66,7 +67,7 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 		source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		RowMapper<FinanceMain> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		RowMapper<FinanceMain> rowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

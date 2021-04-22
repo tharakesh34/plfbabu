@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		: PennantReferenceIDUtil.java                                           * 	  
+ * FileName    		: ReferenceUtil.java                                           * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -43,186 +43,96 @@
 package com.pennant.app.util;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import com.pennant.backend.dao.collateral.CollateralSetupDAO;
-import com.pennant.backend.dao.collateral.FacilityDetailDAO;
-import com.pennant.backend.dao.configuration.VASRecordingDAO;
-import com.pennant.backend.dao.facility.FacilityDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.collateral.FacilityDetail;
-import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FacilityConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ReferenceUtil implements Serializable {
 	private static final long serialVersionUID = -4965488291173350445L;
-	private static Logger logger = Logger.getLogger(ReferenceUtil.class);
+	private static Logger logger = LogManager.getLogger(ReferenceUtil.class);
 
-	private static FinanceMainDAO financeMainDAO;
-	private static FacilityDAO facilityDAO;
-	private static FacilityDetailDAO facilityDetailDAO;
-	private static CollateralSetupDAO collateralSetupDAO;
-	private static VASRecordingDAO vASRecordingDAO;
 	private static SequenceDao<?> sequenceGenetor;
+	private static com.pennant.backend.dao.SequenceDao<?> sequenceDAO;
 
-	/**
-	 * Method for Generating Sequence Reference Number based on Division code
-	 * 
-	 * @param isWIF
-	 * @param finDivision
-	 * @return
-	 */
-	@Deprecated
-	public static String generateNewFinRef(boolean isWIF, String finDivision) {
-		logger.debug(Literal.ENTERING);
-		long generatedSeqNo = 0;
-		boolean refUpdated = false;
-		String referenceNumber = "";
-		while (!refUpdated) {
-			long befSeqNumber = sequenceGenetor.getSeqNumber("SeqWIFFinanceMain");
+	public ReferenceUtil(SequenceDao<?> sequenceGenetor) {
+		ReferenceUtil.sequenceGenetor = sequenceGenetor;
+	}
 
-			String seqNumString = String.valueOf(befSeqNumber);
+	public static String generateCollateralRef() {
+		logger.info("Generating Collateral Reference...");
+		long seqNumber = sequenceGenetor.getNextValue("SeqCollateralSetup");
+		long YYDayofY = getDateYYJDay();
+		String genNo = "";
 
-			long dateYYJDay = 0;
-			long seqNumber = 1;
+		genNo = String.valueOf(YYDayofY).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0'));
 
-			if (seqNumString.length() <= 5) {
-				try {
-					dateYYJDay = Long.parseLong(seqNumString);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			} else if (seqNumString.length() > 5) {
+		String refNo = CollateralConstants.COLL_DIVISION + genNo;
 
-				try {
-					dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
+		logger.info(String.format("Collateral Reference >> {}", refNo));
 
-				try {
-					seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			}
-
-			if (dateYYJDay != DateUtility.getDateYYJDay()) {
-				dateYYJDay = DateUtility.getDateYYJDay();
-				seqNumber = 1;
-			} else {
-				//seqNumber = seqNumber + 1;
-			}
-			boolean status = true;
-
-			referenceNumber = "";
-
-			while (status) {
-				generatedSeqNo = Long.parseLong(
-						String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
-				boolean isFinIdExist = getFinanceMainDAO().isFinReferenceExists(String.valueOf(generatedSeqNo), "_View",
-						isWIF);
-				if (isFinIdExist) {
-					seqNumber = seqNumber + 1;
-				} else {
-					status = false;
-				}
-			}
-
-			String divisionCode = "";
-			if (StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_RETAIL)) {
-				divisionCode = FinanceConstants.REF_DIVISION_RETAIL;
-			} else if (StringUtils.equals(finDivision, FinanceConstants.FIN_DIVISION_CORPORATE)) {
-				divisionCode = FinanceConstants.REF_DIVISION_CORP;
-			}
-			referenceNumber = divisionCode + generatedSeqNo;
-
-			refUpdated = getFinanceMainDAO().updateSeqNumber(befSeqNumber, generatedSeqNo);
-		}
-		logger.debug(String.format("Fin Reference %s", referenceNumber));
-		logger.debug(Literal.LEAVING);
-		return referenceNumber;
-
+		return refNo;
 	}
 
 	/**
 	 * Method for Preparing Sequence Reference Number for the Collateral Detail module
 	 */
-	public static String generateCollateralRef() {
+	public static String generateCollateralReference() {
 		logger.debug(Literal.ENTERING);
 		long generatedSeqNo = 0;
-		boolean refUpdated = false;
 		String referenceNumber = "";
-		while (!refUpdated) {
-			long befSeqNumber = sequenceGenetor.getSeqNumber("SeqCollateralSetup");
+		//retrieve next seq no from sequence 
+		long befSeqNumber = sequenceGenetor.getNextValue("SeqCollateralSetup");
 
-			String seqNumString = String.valueOf(befSeqNumber).trim();
+		String seqNumString = String.valueOf(befSeqNumber).trim();
 
-			long dateYYJDay = 0;
-			long seqNumber = 1;
-
-			if (seqNumString.length() <= 5) {
-				try {
-					dateYYJDay = Long.parseLong(seqNumString);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			} else if (seqNumString.length() > 5) {
-
-				try {
-					dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-
-				try {
-					seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			}
-
-			if (dateYYJDay != DateUtility.getDateYYJDay()) {
-				dateYYJDay = DateUtility.getDateYYJDay();
+		long dateYYJDay = 0;
+		long seqNumber = 1;
+		//Here we will get seqno in the  inform ofYYDAYOFYEAR 
+		if (seqNumString.length() <= 5) {
+			try {
+				//get first 5 numbers to get the year and day 
+				dateYYJDay = Long.parseLong(seqNumString);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
 				seqNumber = 1;
-			} else {
-				//seqNumber = seqNumber + 1;
 			}
-			boolean status = true;
-
-			referenceNumber = "";
-
-			while (status) {
-				generatedSeqNo = Long.parseLong(
-						String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
-				boolean isExist = getCollateralSetupDAO().isCollReferenceExists(String.valueOf(generatedSeqNo),
-						"_View");
-				if (isExist) {
-					seqNumber = seqNumber + 1;
-				} else {
-					status = false;
-				}
+		} else if (seqNumString.length() > 5) {
+			try {
+				//get first 5 numbers to get the year and day 
+				dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
+				seqNumber = Long.parseLong(seqNumString.substring(5, seqNumString.length()));
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
 			}
-			String moduleCode = CollateralConstants.COLL_DIVISION;
-			referenceNumber = moduleCode + generatedSeqNo;
-
-			refUpdated = getCollateralSetupDAO().updateCollReferene(befSeqNumber, generatedSeqNo);
 		}
-		logger.debug(String.format("Fin Reference %s", referenceNumber));
+		//below condition will restart the collateral seq with 1 on daily basis(YYDAYOFYEAR+SEQNo
+		if (dateYYJDay != DateUtility.getDateYYJDay()) {
+			dateYYJDay = DateUtility.getDateYYJDay();
+			//preparing new seqno
+			String updatedSeq = "00002";
+			String seqString = String.valueOf(dateYYJDay).concat(updatedSeq);
+			long seqNo = Long.valueOf(seqString);
+			//Create a Collateral with Sequence with 1
+			seqNumber = 1;
+			//call sequence update query
+			sequenceDAO.updateSequence("SeqCollateralSetup", seqNo);
+		}
+		generatedSeqNo = Long
+				.parseLong(String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
+		String moduleCode = CollateralConstants.COLL_DIVISION;
+		referenceNumber = moduleCode + generatedSeqNo;
+		logger.debug(String.format("Collateral Reference %s", referenceNumber));
 		logger.debug(Literal.LEAVING);
 		return referenceNumber;
 
@@ -232,200 +142,110 @@ public class ReferenceUtil implements Serializable {
 	 * Method for Preparing Sequence Reference Number for the VAS Module
 	 */
 	public static String generateVASRef() {
-		logger.debug(Literal.ENTERING);
+		logger.info("Generating VAS Reference...");
+		long seqNumber = sequenceGenetor.getNextValue("SeqVasReference");
 
-		long generatedSeqNo = 0;
-		boolean refUpdated = false;
-		String referenceNumber = "";
-		while (!refUpdated) {
-			long befSeqNumber = sequenceGenetor.getSeqNumber("SeqVasReference");
+		long YYDayofY = getDateYYJDay();
+		String genNo = "";
 
-			String seqNumString = String.valueOf(befSeqNumber);
+		genNo = String.valueOf(YYDayofY).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0'));
 
-			long dateYYJDay = 0;
-			long seqNumber = 1;
+		String refNo = VASConsatnts.VAS_DIVISION + genNo;
 
-			if (seqNumString.length() <= 5) {
-				try {
-					dateYYJDay = Long.parseLong(seqNumString);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			} else if (seqNumString.length() > 5) {
-
-				try {
-					dateYYJDay = Long.parseLong(seqNumString.substring(0, 5));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-
-				try {
-					seqNumber = Long.parseLong(StringUtils.trim(seqNumString.substring(5)));
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-					seqNumber = 1;
-				}
-			}
-
-			if (dateYYJDay != DateUtility.getDateYYJDay()) {
-				dateYYJDay = DateUtility.getDateYYJDay();
-				seqNumber = 1;
-			} else {
-				//seqNumber = seqNumber + 1;
-			}
-			boolean status = true;
-
-			referenceNumber = "";
-
-			while (status) {
-				generatedSeqNo = Long.parseLong(
-						String.valueOf(dateYYJDay).concat(StringUtils.leftPad(String.valueOf(seqNumber), 5, '0')));
-				boolean isExist = getvASRecordingDAO()
-						.isVasReferenceExists(String.valueOf(VASConsatnts.VAS_DIVISION + generatedSeqNo), "_View");
-				if (isExist) {
-					seqNumber = seqNumber + 1;
-				} else {
-					status = false;
-				}
-			}
-			String moduleCode = VASConsatnts.VAS_DIVISION;
-			referenceNumber = moduleCode + generatedSeqNo;
-
-			refUpdated = getvASRecordingDAO().updateVasReference(befSeqNumber, generatedSeqNo);
-		}
-
-		logger.debug(String.format("VAS Reference %s", referenceNumber));
-		logger.debug(Literal.LEAVING);
-		return referenceNumber;
-
+		logger.info(String.format("VAS Reference {}", refNo));
+		return refNo;
 	}
 
 	public static String genNewCafRef(String division, String custCtgCode) {
-		logger.debug(Literal.ENTERING);
-		Date appldate = DateUtility.getAppDate();
-		StringBuilder caf = new StringBuilder();
-		//Division
-		if (division.equals(FacilityConstants.FACILITY_COMMERCIAL)) {
-			caf.append("COM");
-		} else if (division.equals(FacilityConstants.FACILITY_CORPORATE)) {
-			caf.append("WBG");
-		}
-		caf.append('/');
-		//Customer Category
-		if (custCtgCode.equals(PennantConstants.PFF_CUSTCTG_SME)) {
-			caf.append("FI");
-		} else if (custCtgCode.equals(PennantConstants.PFF_CUSTCTG_CORP)) {
-			caf.append("CC");
-		} else if (custCtgCode.equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
-			caf.append("IC");
-		}
-		caf.append('/');
+		logger.info("Generating CAF Reference...");
 
-		//Current Year
-		String year = String.valueOf(DateUtility.getYear(appldate));
-		String yearToAppend = year.substring(year.length() - 2);
-		//Unique Sequence
-		long befSeqNumber = sequenceGenetor.getSeqNumber("SeqCAFReference");
+		Date appldate = SysParamUtil.getAppDate();
+		StringBuilder caf = new StringBuilder();
+
+		// Division
+		switch (division) {
+		case FacilityConstants.FACILITY_COMMERCIAL:
+			caf.append("COM/");
+			break;
+		case FacilityConstants.FACILITY_CORPORATE:
+			caf.append("WBG/");
+		default:
+			caf.append("/");
+			break;
+		}
+
+		// Customer Category
+		switch (custCtgCode) {
+		case PennantConstants.PFF_CUSTCTG_SME:
+			caf.append("FI/");
+			break;
+		case PennantConstants.PFF_CUSTCTG_CORP:
+			caf.append("CC/");
+			break;
+		case PennantConstants.PFF_CUSTCTG_INDIV:
+			caf.append("IC/");
+			break;
+		default:
+			caf.append("/");
+			break;
+		}
+
+		String yr = String.valueOf(DateUtil.getYear(appldate)).substring(2);
+
+		long befSeqNumber = sequenceGenetor.getNextValue("SeqCAFReference");
 		befSeqNumber = befSeqNumber + 1;
+
 		if (String.valueOf(befSeqNumber).length() >= 6) {
 			befSeqNumber = 1;
 		}
-		boolean status = true;
-		while (status) {
-			String tempCaf = caf.toString() + StringUtils.leftPad(String.valueOf(befSeqNumber), 5, '0') + "/"
-					+ yearToAppend;
-			Facility facility = getFacilityDAO().getFacilityById(tempCaf, "_View");
-			if (facility != null) {
-				befSeqNumber = befSeqNumber + 1;
-			} else {
-				status = false;
-			}
-		}
 
 		caf.append(StringUtils.leftPad(String.valueOf(befSeqNumber), 5, '0'));
-		caf.append('/');
-		//Current Year
-		caf.append(yearToAppend);
-		sequenceGenetor.setSeqNumber("SeqCAFReference", befSeqNumber);
+		caf.append('/').append(yr);
 
-		logger.debug(String.format("CAF Reference %s", caf.toString()));
-		logger.debug(Literal.LEAVING);
+		logger.info("Generated CAF Reference >> {}...", caf);
 		return caf.toString();
 
 	}
 
 	public static String genNewFacilityRef(String cafRefrence) {
-		logger.debug(Literal.ENTERING);
+		logger.info("Generating Facility Reference...");
+
 		StringBuilder facilityref = new StringBuilder(cafRefrence);
-		//Unique Sequence
-		long befSeqNumber = sequenceGenetor.getSeqNumber("SeqFacilityDetails");
+
+		long befSeqNumber = sequenceGenetor.getNextValue("SeqFacilityDetails");
 		befSeqNumber = befSeqNumber + 1;
+
 		if (String.valueOf(befSeqNumber).length() >= 3) {
 			befSeqNumber = 1;
 		}
-		boolean status = true;
-		while (status) {
-			String tempfacilityref = cafRefrence + "/" + StringUtils.leftPad(String.valueOf(befSeqNumber), 2, '0');
-			FacilityDetail facilityDetail = getFacilityDetailDAO().getFacilityDetailById(tempfacilityref, "_View");
-			if (facilityDetail != null) {
-				befSeqNumber = befSeqNumber + 1;
-			} else {
-				status = false;
-			}
-		}
+
 		facilityref.append('/');
 		facilityref.append(StringUtils.leftPad(String.valueOf(befSeqNumber), 2, '0'));
-		sequenceGenetor.setSeqNumber("SeqFacilityDetails", befSeqNumber);
 
-		logger.debug(String.format("Facility Reference %s", facilityref.toString()));
-		logger.debug(Literal.LEAVING);
+		logger.info("Generated Facility Reference {}", facilityref);
 		return facilityref.toString();
 
 	}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		ReferenceUtil.financeMainDAO = financeMainDAO;
+	public static long genInvetmentNewRef() {
+		logger.info("Generating Investment Reference...");
+		long seqNumber = sequenceGenetor.getNextValue("SeqInvestment");
+
+		long YYDayofY = getDateYYJDay();
+		String genNo = "";
+
+		genNo = String.valueOf(YYDayofY).concat(StringUtils.leftPad(String.valueOf(seqNumber), 6, '0'));
+
+		logger.info("Generated Investment Reference {}", genNo);
+		return Long.valueOf(genNo);
 	}
 
-	public static FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
+	private static long getDateYYJDay() {
+		Calendar curCalendar = Calendar.getInstance();
+		curCalendar.setTime(SysParamUtil.getAppDate());
+
+		return Long.parseLong(String.valueOf(curCalendar.get(Calendar.YEAR)).substring(2)
+				.concat(StringUtils.leftPad(String.valueOf(curCalendar.get(Calendar.DAY_OF_YEAR)), 3, "0")));
 	}
 
-	public void setFacilityDAO(FacilityDAO facilityDAO) {
-		ReferenceUtil.facilityDAO = facilityDAO;
-	}
-
-	public static FacilityDAO getFacilityDAO() {
-		return facilityDAO;
-	}
-
-	public static FacilityDetailDAO getFacilityDetailDAO() {
-		return facilityDetailDAO;
-	}
-
-	public void setFacilityDetailDAO(FacilityDetailDAO facilityDetailDAO) {
-		ReferenceUtil.facilityDetailDAO = facilityDetailDAO;
-	}
-
-	public static CollateralSetupDAO getCollateralSetupDAO() {
-		return collateralSetupDAO;
-	}
-
-	public static void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		ReferenceUtil.collateralSetupDAO = collateralSetupDAO;
-	}
-
-	public static VASRecordingDAO getvASRecordingDAO() {
-		return vASRecordingDAO;
-	}
-
-	public static void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
-		ReferenceUtil.vASRecordingDAO = vASRecordingDAO;
-	}
-
-	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
-		ReferenceUtil.sequenceGenetor = sequenceGenetor;
-	}
 }

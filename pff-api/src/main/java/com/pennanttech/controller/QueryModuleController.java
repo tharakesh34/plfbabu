@@ -3,7 +3,8 @@ package com.pennanttech.controller;
 import java.sql.Timestamp;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -17,9 +18,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.service.impl.FinInstructionServiceImpl;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class QueryModuleController {
+public class QueryModuleController extends ExtendedTestClass {
 
-	private static final Logger logger = Logger.getLogger(FinInstructionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 
 	private QueryDetailService queryDetailService;
 
@@ -27,7 +28,7 @@ public class QueryModuleController {
 		logger.debug(Literal.ENTERING);
 		QueryDetail detail = null;
 
-		//do set document details
+		// do set document details
 		doSetDocumentDetails(queryDetail);
 
 		AuditHeader auditHeader = getAuditHeader(queryDetail, "");

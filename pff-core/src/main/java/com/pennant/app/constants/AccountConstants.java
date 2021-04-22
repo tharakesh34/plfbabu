@@ -54,6 +54,7 @@ public class AccountConstants {
 	public static final String ACTYPES_TAKAFULPROVIDER = "T9";
 	public static final String ACTYPES_COMMITMENT = "YY";
 	public static final String ACTYPES_COMMITCHARGE = "EA";
+	public static final String ACTYPES_COMMODITYBROKER = "EA";
 	public static final String ACTYPES_JVPOSTINGS = "EA,CA,JK";
 	public static final String ACTYPES_COREBANK = "YS";
 	public static final String ACTYPES_ERP = "YS";

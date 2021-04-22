@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.service.externalinterface.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class InterfaceConfigurationServiceImpl extends GenericService<InterfaceConfiguration>
 		implements InterfaceConfigurationService {
-	private static final Logger logger = Logger.getLogger(InterfaceConfigurationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(InterfaceConfigurationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private InterfaceConfigurationDAO interfaceConfigurationDAO;

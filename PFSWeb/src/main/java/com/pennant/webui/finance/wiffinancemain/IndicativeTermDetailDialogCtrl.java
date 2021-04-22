@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -113,7 +114,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDetail> {
 	private static final long serialVersionUID = 5058430665774376406L;
-	private static final Logger logger = Logger.getLogger(IndicativeTermDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(IndicativeTermDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -534,10 +535,10 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 				sheetName = finDivision + "_" + sheetName;
 			}
 
-			AgreementEngine engine = new AgreementEngine(sheetName);
+			AgreementEngine engine = new AgreementEngine();
 			String refNo = detail.getFinScheduleData().getFinanceMain().getFinReference();
 			String reportName = refNo + "_TermSheet.docx";
-			engine.setTemplate("");
+			engine.setTemplate(sheetName);
 			// engine.loadTemplateWithFontSize(11);
 			engine.mergeFields(indicativeTermDetail);
 			byte[] docData = engine.getDocumentInByteArray(SaveFormat.PDF);

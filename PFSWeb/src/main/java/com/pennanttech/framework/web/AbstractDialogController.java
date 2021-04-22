@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -25,17 +26,19 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennanttech.pennapps.core.DocType;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public abstract class AbstractDialogController<T> extends AbstractController<T> {
 	private static final long serialVersionUID = 4993596882485929197L;
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	// Button controller for the CRUD buttons
 	protected transient ButtonStatusCtrl btnCtrl;
@@ -471,6 +474,16 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 
 	public void setEventManager(EventManager eventManager) {
 		this.eventManager = eventManager;
+	}
+
+	protected boolean isBackwardCase(AbstractWorkflowEntity entity) {
+		if (entity.getWorkflowId() == 0) {
+			return false;
+		}
+
+		WorkflowEngine engine = new WorkflowEngine(WorkFlowUtil.getWorkflow(entity.getWorkflowId()).getWorkFlowXml());
+
+		return engine.isBackwardCase(entity.getTaskId(), entity.getNextTaskId().replace(";", ""));
 	}
 
 }

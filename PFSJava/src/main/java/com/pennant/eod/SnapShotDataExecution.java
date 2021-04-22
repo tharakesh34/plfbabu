@@ -9,7 +9,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.backend.dao.eodsnapshot.SnapShotColumnDAO;
@@ -28,7 +29,7 @@ public class SnapShotDataExecution {
 	protected List<SnapShotConfiguration> customerConfigurations;
 	protected List<SnapShotConfiguration> incDownLoadConfigurations;
 
-	private final Logger logger = Logger.getLogger(SnapShotDataExecution.class);
+	private final Logger logger = LogManager.getLogger(SnapShotDataExecution.class);
 
 	private NamedParameterJdbcTemplate snapShotJdbcTemplate;
 

@@ -46,15 +46,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.authorization.AuthorizationLimitDetailDAO;
 import com.pennant.backend.model.authorization.AuthorizationLimitDetail;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLimitDetail>
 		implements AuthorizationLimitDetailDAO {
-	private static Logger logger = Logger.getLogger(AuthorizationLimitDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AuthorizationLimitDetailDAOImpl.class);
 
 	public AuthorizationLimitDetailDAOImpl() {
 		super();
@@ -101,7 +102,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 		authorizationLimitDetail.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AuthorizationLimitDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
@@ -142,7 +143,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 		authorizationLimitDetail.setCode(code);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AuthorizationLimitDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {
@@ -310,7 +311,7 @@ public class AuthorizationLimitDetailDAOImpl extends SequenceDao<AuthorizationLi
 		authorizationLimitDetail.setAuthLimitId(authLimitId);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(authorizationLimitDetail);
-		RowMapper<AuthorizationLimitDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<AuthorizationLimitDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(AuthorizationLimitDetail.class);
 
 		try {

@@ -50,7 +50,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
@@ -105,7 +106,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CovenantDocumentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantDocumentDialogCtrl.class);
 
 	protected Window window_CovenantDocumentDialog;
 
@@ -440,13 +441,11 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	public void doWriteBeanToComponents(CovenantDocument aCovenantDocument) {
 		logger.debug(Literal.ENTERING);
 
-		this.convDocType.setValue(aCovenantDocument.getCovenantType());
-
 		this.docReceivedDate.setValue(aCovenantDocument.getDocumentReceivedDate());
 		this.documentName.setAttribute("data", aCovenantDocument.getDocumentDetail());
-
+		this.convDocType.setValue(StringUtils.trimToEmpty(aCovenantDocument.getDocCategory()));
 		if (aCovenantDocument.getDocumentDetail() != null
-				&& aCovenantDocument.getDocumentDetail().getDocName() != null) {
+				&& StringUtils.isNotEmpty(aCovenantDocument.getDocumentDetail().getDocName())) {
 			this.documentName.setValue(aCovenantDocument.getDocumentDetail().getDocName());
 		} else {
 			this.documentName.setValue(aCovenantDocument.getDocName());
@@ -507,7 +506,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 		try {
 			this.convDocType.getValidatedValue();
-			aCovenantDocument.setCovenantType("PDD");
+			// aCovenantDocument.setCovenantType("PDD");
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -525,8 +524,9 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			aCovenantDocument.setDocName(this.documentName.getValue());
 			if (this.documentName.getAttribute("data") != null) {
 				DocumentDetails details = (DocumentDetails) this.documentName.getAttribute("data");
-				details.setDocRefId(Long.MIN_VALUE);
+				details.setDocRefId(details.getDocRefId());
 				details.setDocReceivedDate(this.docReceivedDate.getValue());
+				details.setDocName(this.documentName.getValue());
 				aCovenantDocument.setDocumentDetail(details);
 			} else {
 				aCovenantDocument.setDocumentDetail(null);
@@ -697,11 +697,15 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			if (textbox.getAttribute("data") == null) {
 				DocumentDetails documentDetails = new DocumentDetails(FinanceConstants.MODULE_NAME, "", docType,
 						fileName, ddaImageData);
+				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);
 			} else {
 				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
 				documentDetails.setDoctype(docType);
 				documentDetails.setDocImage(ddaImageData);
+				documentDetails.setLovDescNewImage(true);
+				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocUri(null);
 				textbox.setAttribute("data", documentDetails);
 				covenantDocument.setDoctype(docType);
 			}
@@ -919,7 +923,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		covenantDocuments = new ArrayList<CovenantDocument>();
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
-		valueParm[0] = aCovenantDocument.getCovenantType();
+		valueParm[0] = aCovenantDocument.getDocCategory();
 		errParm[0] = PennantJavaUtil.getLabel("label_CovenantDocumentDialog_ConvDocType.value") + ":" + valueParm[0];
 		List<CovenantDocument> existingcovenantDocs = null;
 
@@ -1071,8 +1075,9 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 		if (documentDetails.getDocImage() == null) {
 			docImage = dMSService.getById(documentDetails.getDocRefId());
+		} else {
+			docImage = documentDetails.getDocImage();
 		}
-		docImage = documentDetails.getDocImage();
 
 		try (InputStream data = new ByteArrayInputStream(docImage)) {
 			String docName = documentName.getValue();

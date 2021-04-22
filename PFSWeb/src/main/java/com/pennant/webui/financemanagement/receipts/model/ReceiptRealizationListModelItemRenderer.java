@@ -45,6 +45,7 @@ package com.pennant.webui.financemanagement.receipts.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
@@ -85,8 +86,8 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 		lc = new Listcell(
 				PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+		lc = new Listcell(PennantAppUtil.getlabelDesc(header.getReceiptMode(),
+				PennantStaticListUtil.getReceiptModesByFeePayment()));
 		lc.setParent(item);
 		lc = new Listcell(header.getTransactionRef());
 		lc.setParent(item);
@@ -108,6 +109,8 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 		lc = new Listcell(header.getCustShrtName());
 		lc.setParent(item);
 		lc = new Listcell(Labels.getLabel("label_ReceiptCancellationDialog_Status_" + header.getReceiptModeStatus()));
+		lc.setParent(item);
+		lc = new Listcell(StringUtils.trimToEmpty(header.getExtReference()));
 		lc.setParent(item);
 		lc = new Listcell(header.getRecordStatus());
 		lc.setParent(item);

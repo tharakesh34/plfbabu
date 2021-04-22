@@ -50,15 +50,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinTypeFeesDAO {
-	private static Logger logger = Logger.getLogger(FinTypeFeesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinTypeFeesDAOImpl.class);
 
 	public FinTypeFeesDAOImpl() {
 		super();
@@ -220,7 +221,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		selectSql.append(" AND OriginationFee = :Origination  AND ModuleId = :ModuleId And ReferenceId = :ReferenceId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		List<FinTypeFees> schemeFees = this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource,
 				typeRowMapper);
@@ -291,7 +292,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		selectSql.append(" Where T1.OriginationFee = 1 AND T1.FinType = :FinType AND T1.ModuleId = :ModuleId");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
@@ -320,6 +321,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
+		selectSql.append(", FinTypeFeeId,  PercType, PercRule");
 
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -328,7 +330,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		try {
 			finTypeFees = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -375,14 +377,21 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		insertSql.append(" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage,");
 		insertSql.append(" CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId,AlwPreIncomization)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId,AlwPreIncomization");
+		insertSql.append(", FinTypeFeeId, PercType, PercRule)");
 		insertSql.append(" Values(:FinType, :OriginationFee, :FinEvent, :FeeTypeID, :FeeOrder, :ReferenceId,");
 		insertSql.append(" :FeeScheduleMethod, :CalculationType, :RuleCode, :Amount, :Percentage,");
 		insertSql
 				.append(" :CalculateOn, :AlwDeviation, :MaxWaiverPerc, :AlwModifyFee, :AlwModifyFeeSchdMthd, :Active,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(
-				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleId,:AlwPreIncomization)");
+				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleId,:AlwPreIncomization");
+		insertSql.append(", :FinTypeFeeId, :PercType, :PercRule)");
+
+		if (finTypeFees.getFinTypeFeeId() == Long.MIN_VALUE) {
+			finTypeFees.setFinTypeFeeId(getNextValue("SEQFINTYPEFEES"));
+			logger.debug("get NextID:" + finTypeFees.getFinTypeFeeId());
+		}
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
@@ -417,6 +426,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 				" RuleCode = :RuleCode, Amount = :Amount,Percentage = :Percentage, CalculateOn = :CalculateOn, AlwDeviation = :AlwDeviation,  ReferenceId=:ReferenceId,");
 		updateSql.append(
 				" MaxWaiverPerc = :MaxWaiverPerc,AlwModifyFee = :AlwModifyFee, AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd, Active = :Active,AlwPreIncomization=:AlwPreIncomization,");
+		updateSql.append(" PercType = :PercType, PercRule = :PercRule,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
@@ -602,6 +612,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
+		selectSql.append(", FinTypeFeeId, PercType, PercRule");
 
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -613,7 +624,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		source.addValue("ReferenceId", reference);
 		source.addValue("ModuleId", moduleId);
 
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -632,6 +643,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		sql.append(", AlwModifyFee, AlwModifyFeeSchdMthd, Active, AlwPreIncomization, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId, ModuleId");
+		sql.append(", FinTypeFeeId, PercType, PercRule");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent, TdsReq");
@@ -683,6 +695,9 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 			fsd.setRecordType(rs.getString("RecordType"));
 			fsd.setWorkflowId(rs.getLong("WorkflowId"));
 			fsd.setModuleId(rs.getInt("ModuleId"));
+			fsd.setFinTypeFeeId(rs.getLong("FinTypeFeeId"));
+			fsd.setPercType(rs.getString("PercType"));
+			fsd.setPercRule(rs.getString("PercRule"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fsd.setFeeTypeCode(rs.getString("FeeTypeCode"));
@@ -733,7 +748,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		logger.debug("selectListSql: " + selectSql.toString());
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeFees);
-		RowMapper<FinTypeFees> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 
 		try {
 			finTypeFees = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -743,5 +758,35 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		logger.debug("Leaving");
 		return finTypeFees;
 
+	}
+
+	@Override
+	public List<FinTypeFees> getFinTypeFeesList(String finType, boolean origination, String type) {
+		logger.debug("Entering");
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("FinType", finType);
+		mapSqlParameterSource.addValue("Origination", origination);
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT FinTypeFeeId, FinType, OriginationFee, FinEvent, FeeTypeID, FeeOrder,");
+		selectSql.append(
+				" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
+		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active, AlwPreIncomization,");
+		selectSql.append(" PercType, PercRule,");
+		if (type.contains("View")) {
+			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
+		}
+		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
+		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
+
+		selectSql.append(" FROM FinTypeFees");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinType = :FinType AND Active = 1");
+		selectSql.append(" AND OriginationFee = :Origination ");
+
+		logger.debug("selectListSql: " + selectSql.toString());
+		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
 }

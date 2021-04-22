@@ -13,9 +13,14 @@ public class ForeClosureLetter implements Serializable {
 
 	private Date valueDate;
 	private BigDecimal outStandPrincipal = BigDecimal.ZERO;
+	private BigDecimal pricipleAmount = BigDecimal.ZERO;
+	private BigDecimal futurePricipleAmount = BigDecimal.ZERO;
+	private BigDecimal interestAmount = BigDecimal.ZERO;
+	private BigDecimal futureInterestAmount = BigDecimal.ZERO;
 	private BigDecimal accuredIntTillDate = BigDecimal.ZERO;
 	private BigDecimal foreCloseAmount = BigDecimal.ZERO;
 	private BigDecimal excessAmount = BigDecimal.ZERO;
+	private BigDecimal emiInAdvance = BigDecimal.ZERO;
 	private BigDecimal chargeAmount = BigDecimal.ZERO;
 	private BigDecimal bounceCharge = BigDecimal.ZERO;
 	private BigDecimal totalLPIAmount = BigDecimal.ZERO;
@@ -65,6 +70,42 @@ public class ForeClosureLetter implements Serializable {
 		this.outStandPrincipal = outStandPrincipal;
 	}
 
+	public BigDecimal getPricipleAmount() {
+		return pricipleAmount;
+	}
+
+	public void setPricipleAmount(BigDecimal pricipleAmount) {
+		this.pricipleAmount = pricipleAmount;
+	}
+
+	public BigDecimal getFuturePricipleAmount() {
+		return futurePricipleAmount;
+	}
+
+	public void setFuturePricipleAmount(BigDecimal futurePricipleAmount) {
+		this.futurePricipleAmount = futurePricipleAmount;
+	}
+
+	public BigDecimal getInterestAmount() {
+		return interestAmount;
+	}
+
+	public void setInterestAmount(BigDecimal interestAmount) {
+		this.interestAmount = interestAmount;
+	}
+
+	public BigDecimal getFutureInterestAmount() {
+		return futureInterestAmount;
+	}
+
+	public void setFutureInterestAmount(BigDecimal futureInterestAmount) {
+		this.futureInterestAmount = futureInterestAmount;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public BigDecimal getBounceCharge() {
 		return bounceCharge;
 	}
@@ -79,6 +120,14 @@ public class ForeClosureLetter implements Serializable {
 
 	public void setExcessAmount(BigDecimal excessAmount) {
 		this.excessAmount = excessAmount;
+	}
+
+	public BigDecimal getEmiInAdvance() {
+		return emiInAdvance;
+	}
+
+	public void setEmiInAdvance(BigDecimal emiInAdvance) {
+		this.emiInAdvance = emiInAdvance;
 	}
 
 	public BigDecimal getTotalLPIAmount() {

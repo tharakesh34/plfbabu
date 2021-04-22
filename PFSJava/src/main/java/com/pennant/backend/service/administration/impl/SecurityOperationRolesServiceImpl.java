@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -72,7 +73,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class SecurityOperationRolesServiceImpl extends GenericService<SecurityOperationRoles>
 		implements SecurityOperationRolesService {
-	private static Logger logger = Logger.getLogger(SecurityOperationRolesServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityOperationRolesServiceImpl.class);
 
 	private SecurityOperationRolesDAO securityOperationRolesDAO;
 	private SecurityRoleGroupsDAO securityRoleGroupsDAO;

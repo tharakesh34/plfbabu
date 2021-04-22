@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
@@ -46,7 +47,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 
 	private static final long serialVersionUID = -446102445582419907L;
-	private static final Logger logger = Logger.getLogger(SqlViewResultCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SqlViewResultCtrl.class);
 
 	protected Window window_SqlViewResult;
 	protected Button button_SqlViewResult;

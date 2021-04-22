@@ -79,6 +79,12 @@ public class TransactionEntryListModelItemRenderer implements ListitemRenderer<T
 		lc.setParent(item);
 		lc = new Listcell(transactionEntry.getTransDesc());
 		lc.setParent(item);
+		lc = new Listcell(transactionEntry.getLovDescAccountTypeName());
+		lc.setParent(item);
+		String amountRule = transactionEntry.getAmountRule();
+		lc = new Listcell(
+				StringUtils.substring(amountRule, amountRule.indexOf("=") + 1, amountRule.lastIndexOf(";")).trim());
+		lc.setParent(item);
 		lc = new Listcell();
 		Checkbox checkbox = new Checkbox();
 		checkbox.setDisabled(true);

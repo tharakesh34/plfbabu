@@ -11,29 +11,32 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.DateService;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
-import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
-import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
-public class DatesUpdate implements Tasklet {
+public class DatesUpdate extends SequenceDao<Object> implements Tasklet {
 	private Logger logger = LogManager.getLogger(DatesUpdate.class);
 
 	private DateService dateService;
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
-	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
+	private SequenceDao<Object> sequenceDao;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
+		Date valueDate = eventProperties.getAppValueDate();
+
 		logger.info("START Update Dates On {}", valueDate);
 
 		/* Previous Month End ACCRUAL Records to working table to allow indexing for next run */
-		if (SysParamUtil.isAllowed(AmortizationConstants.MONTHENDACC_CALREQ)) {
-			if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0 || SysParamUtil.isAllowed("EOM_ON_EOD")) {
+		if (eventProperties.isMonthEndAccCallReq()) {
+			if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0 || eventProperties.isEomOnEOD()) {
 				Date monthStart = DateUtil.getMonthStart(valueDate);
 				Date prvMonthEnd = DateUtil.addDays(monthStart, -1);
 				Date curMonthEnd = DateUtil.addMonths(monthStart, 1);
@@ -59,8 +62,27 @@ public class DatesUpdate implements Tasklet {
 		/* Check extended month end and update the dates. */
 		dateService.doUpdateAftereod(true);
 
+		resetSequences("SeqCollateralSetup", 1);
+		resetSequences("SeqVasReference", 1);
+		resetSequences("SeqInvestment", 1);
+
+		EODUtil.updateEventProperties(context, eventProperties);
+		EODUtil.setDatesReload(true);
+
 		logger.info("COMPLETE Update Dates On {}", valueDate);
 		return RepeatStatus.FINISHED;
+	}
+
+	private void resetSequences(String seqName, long sequence) {
+		switch (App.DATABASE) {
+		case ORACLE:
+		case MY_SQL:
+			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART START WITH " + sequence);
+		case POSTGRES:
+			jdbcOperations.execute("ALTER SEQUENCE " + seqName + " RESTART WITH " + sequence);
+		default:
+			//
+		}
 	}
 
 	@Autowired
@@ -71,11 +93,6 @@ public class DatesUpdate implements Tasklet {
 	@Autowired
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
 		this.projectedAmortizationDAO = projectedAmortizationDAO;
-	}
-
-	@Autowired
-	public void setGstInvoiceTxnDAO(GSTInvoiceTxnDAO gstInvoiceTxnDAO) {
-		this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
 	}
 
 }

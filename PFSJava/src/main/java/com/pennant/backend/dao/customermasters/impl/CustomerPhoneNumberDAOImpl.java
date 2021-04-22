@@ -42,22 +42,18 @@
 */
 package com.pennant.backend.dao.customermasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -71,7 +67,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> implements CustomerPhoneNumberDAO {
-	private static Logger logger = Logger.getLogger(CustomerPhoneNumberDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerPhoneNumberDAOImpl.class);
 
 	public CustomerPhoneNumberDAOImpl() {
 		super();
@@ -107,13 +103,14 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerPhoneNumber.class);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 
 		try {
 			customerPhoneNumber = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(
+					"Record not found in CustomerPhoneNumbers{} for the specified PhoneCustID >> {} and PhoneTypeCode",
+					type, id, typeCode);
 			customerPhoneNumber = null;
 		}
 		logger.debug("Leaving");
@@ -241,8 +238,6 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 	 * Method for Getting List of Objects in Customers By Using CustID
 	 */
 	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber, PhoneTypePriority");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
@@ -258,50 +253,38 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-				}
-			}, new RowMapper<CustomerPhoneNumber>() {
-				@Override
-				public CustomerPhoneNumber mapRow(ResultSet rs, int rowNum) throws SQLException {
-					CustomerPhoneNumber pno = new CustomerPhoneNumber();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (rs, rowNum) -> {
+			CustomerPhoneNumber pno = new CustomerPhoneNumber();
 
-					pno.setPhoneCustID(rs.getLong("PhoneCustID"));
-					pno.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
-					pno.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
-					pno.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
-					pno.setPhoneNumber(rs.getString("PhoneNumber"));
-					pno.setPhoneTypePriority(rs.getInt("PhoneTypePriority"));
-					pno.setVersion(rs.getInt("Version"));
-					pno.setLastMntBy(rs.getLong("LastMntBy"));
-					pno.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					pno.setRecordStatus(rs.getString("RecordStatus"));
-					pno.setRoleCode(rs.getString("RoleCode"));
-					pno.setNextRoleCode(rs.getString("NextRoleCode"));
-					pno.setTaskId(rs.getString("TaskId"));
-					pno.setNextTaskId(rs.getString("NextTaskId"));
-					pno.setRecordType(rs.getString("RecordType"));
-					pno.setWorkflowId(rs.getLong("WorkflowId"));
+			pno.setPhoneCustID(rs.getLong("PhoneCustID"));
+			pno.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
+			pno.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+			pno.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+			pno.setPhoneNumber(rs.getString("PhoneNumber"));
+			pno.setPhoneTypePriority(rs.getInt("PhoneTypePriority"));
+			pno.setVersion(rs.getInt("Version"));
+			pno.setLastMntBy(rs.getLong("LastMntBy"));
+			pno.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			pno.setRecordStatus(rs.getString("RecordStatus"));
+			pno.setRoleCode(rs.getString("RoleCode"));
+			pno.setNextRoleCode(rs.getString("NextRoleCode"));
+			pno.setTaskId(rs.getString("TaskId"));
+			pno.setNextTaskId(rs.getString("NextTaskId"));
+			pno.setRecordType(rs.getString("RecordType"));
+			pno.setWorkflowId(rs.getLong("WorkflowId"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						pno.setLovDescPhoneTypeCodeName(rs.getString("LovDescPhoneTypeCodeName"));
-						pno.setLovDescPhoneCountryName(rs.getString("LovDescPhoneCountryName"));
-						pno.setPhoneRegex(rs.getString("PhoneRegex"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				pno.setLovDescPhoneTypeCodeName(rs.getString("LovDescPhoneTypeCodeName"));
+				pno.setLovDescPhoneCountryName(rs.getString("LovDescPhoneCountryName"));
+				pno.setPhoneRegex(rs.getString("PhoneRegex"));
+			}
 
-					return pno;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return pno;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomerPhoneType(final long id, String type,
@@ -324,8 +307,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerPhoneNumber.class);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 
 		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -390,8 +372,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerPhoneNumber.class);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 
 		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -478,8 +459,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("PhoneNumber", phoneNumber);
 
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerPhoneNumber.class);
+		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

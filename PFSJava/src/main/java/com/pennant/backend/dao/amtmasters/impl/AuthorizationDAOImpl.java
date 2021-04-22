@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.amtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.AuthorizationDAO;
 import com.pennant.backend.model.amtmasters.Authorization;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements AuthorizationDAO {
-	private static Logger logger = Logger.getLogger(AuthorizationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AuthorizationDAOImpl.class);
 
 	public AuthorizationDAOImpl() {
 		super();
@@ -95,7 +96,7 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorization);
-		RowMapper<Authorization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Authorization.class);
+		RowMapper<Authorization> typeRowMapper = BeanPropertyRowMapper.newInstance(Authorization.class);
 
 		try {
 			authorization = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -124,7 +125,7 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(authorization);
-		RowMapper<Authorization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Authorization.class);
+		RowMapper<Authorization> typeRowMapper = BeanPropertyRowMapper.newInstance(Authorization.class);
 
 		try {
 			authorization = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -188,8 +189,8 @@ public class AuthorizationDAOImpl extends SequenceDao<Authorization> implements 
 	public long save(Authorization authorization, String type) {
 		logger.debug("Entering");
 		if (authorization.getId() == Long.MIN_VALUE) {
-			authorization.setId(getNextId("SeqAMTAuthorization"));
-			logger.debug("get NextID:" + authorization.getId());
+			authorization.setId(getNextValue("SeqAMTAuthorization"));
+			logger.debug("get NextValue:" + authorization.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into AMTAuthorization");

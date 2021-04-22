@@ -43,8 +43,10 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinStatementController;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pffws.FinStatementRestService;
 import com.pennanttech.pffws.FinStatementSoapService;
 import com.pennanttech.util.APIConstants;
@@ -53,7 +55,8 @@ import com.pennanttech.ws.model.statement.FinStatementResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class FinStatementWebServiceImpl implements FinStatementRestService, FinStatementSoapService {
+public class FinStatementWebServiceImpl extends ExtendedTestClass
+		implements FinStatementRestService, FinStatementSoapService {
 	private static final Logger logger = LogManager.getLogger(FinStatementWebServiceImpl.class);
 
 	private FinStatementController finStatementController;
@@ -76,7 +79,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		logger.debug(Literal.ENTERING);
 		// service level validations
 		WSReturnStatus returnStatus = validateStatementRequest(statementRequest);
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = new String[1];
 		logFields[0] = statementRequest.getCif();
 
@@ -203,7 +206,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				}
 			}
 		}
-		// call controller to get NOC details 
+		// call controller to get NOC details
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_NOC);
 
 		logger.debug(Literal.LEAVING);
@@ -251,7 +254,7 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("65031", valueParm));
 			return finStatementResponse;
 		}
-		// call controller to get fore-closure letter 
+		// call controller to get fore-closure letter
 		FinStatementResponse response = finStatementController.getStatement(statementRequest,
 				APIConstants.STMT_FORECLOSURE);
 		logger.debug(Literal.LEAVING);
@@ -635,25 +638,40 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		String[] logFields = new String[1];
 		logFields[0] = statementRequest.getCif();
 		APIErrorHandlerService.logKeyFields(logFields);
-
+		FinanceMain financeMain = null;
+		Date fromDate = statementRequest.getFromDate();
 		String finReference = statementRequest.getFinReference();
+
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
 		} else {
-			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
-			if (count <= 0) {
+			financeMain = financeMainDAO.getFinanceMainForPftCalc(finReference);
+			if (financeMain == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return response;
 			}
 		}
+
+		if (fromDate != null) {
+			if (DateUtil.compare(fromDate, financeMain.getFinStartDate()) < 0
+					|| DateUtil.compare(financeMain.getMaturityDate(), fromDate) < 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "FromDate";
+				valueParm[1] = "FinStartDate";
+				valueParm[2] = "MaturityDate";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30567", valueParm));
+				return response;
+			}
+		}
+
 		statementRequest.setDays(1);
 
-		// call controller to get fore-closure letter 
+		// call controller to get fore-closure letter
 		FinStatementResponse finStatement = null;
 		try {
 			finStatement = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
@@ -689,11 +707,20 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 				}
 			}
 
-			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, "E");
+			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getAllExcessAmountsByRef(finReference, "");
 
 			ForeClosureLetter letter = new ForeClosureLetter();
-			if (excessAmount != null) {
-				letter.setExcessAmount(excessAmount.getBalanceAmt());
+			if (excessAmounts != null) {
+				for (FinExcessAmount excessAmount : excessAmounts) {
+					BigDecimal emiInAdvance = BigDecimal.ZERO;
+					if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EXCESS, excessAmount.getAmountType())) {
+						letter.setExcessAmount(excessAmount.getBalanceAmt());
+					} else if (StringUtils.contains(RepayConstants.EXAMOUNTTYPE_EMIINADV,
+							excessAmount.getAmountType())) {
+						letter.setEmiInAdvance(emiInAdvance.add(excessAmount.getBalanceAmt()));
+					}
+				}
+
 			}
 
 			FinanceSummary summary = finScheduleData.getFinanceSummary();
@@ -729,6 +756,52 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			APIErrorHandlerService.logUnhandledException(e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+	
+	@Override
+	public FinStatementResponse getForeclosureStmtV1(FinStatementRequest statementRequest) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		FinStatementResponse finStatementResponse = new FinStatementResponse();
+		// for logging purpose
+		String[] logFields = new String[1];
+		logFields[0] = statementRequest.getCif();
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		String finReference = statementRequest.getFinReference();
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return finStatementResponse;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return finStatementResponse;
+			}
+		}
+
+		statementRequest.setDays(1);
+		// call controller to get fore-closure letter
+		FinStatementResponse response = finStatementController.getStatement(statementRequest,
+				APIConstants.STMT_FORECLOSUREV1);
+		if (response != null) {
+			response.setCustomer(null);
+			response.setFinance(null);
+			response.setDocImage(null);
+			response.setStatementSOA(null);
+		} else {
+			response = new FinStatementResponse();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			logger.debug(Literal.LEAVING);
+			return response;
+
 		}
 		logger.debug(Literal.LEAVING);
 		return response;

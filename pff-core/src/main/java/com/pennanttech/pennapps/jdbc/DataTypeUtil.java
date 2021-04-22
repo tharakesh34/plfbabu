@@ -49,14 +49,18 @@ public final class DataTypeUtil {
 			return null;
 		}
 
-		if (type == DataType.LONG) {
-			if (StringUtils.isNumeric(value)) {
-				return Long.valueOf(value);
+		try {
+			if (type == DataType.LONG) {
+				if (StringUtils.isNumeric(value)) {
+					return Long.valueOf(value);
+				} else {
+					return null;
+				}
 			} else {
-				return null;
+				return value;
 			}
-		} else {
-			return value;
+		} catch (NumberFormatException e) {
+			return null;
 		}
 	}
 

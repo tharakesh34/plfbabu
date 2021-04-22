@@ -9,7 +9,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -56,7 +57,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssignment> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CollateralAssignmentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralAssignmentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -286,7 +287,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			CollateralSetup collateralSetup = getCollateralSetup(this.collateralRef.getValue());
 			if (collateralSetup == null) {
 				collateralSetup = getCollateralSetupService().getCollateralSetupByRef(this.collateralRef.getValue(), "",
-						true);
+						false);
 			}
 			map.put("collateralSetup", collateralSetup);
 			map.put("fromLoan", true);
@@ -533,17 +534,18 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		int formatter = CurrencyUtil.getFormat(getCollateralAssignment().getCollateralCcy());
 		this.collateralRef.setProperties("CollateralSetup", "CollateralRef", "", true, 20);
 		this.collateralRef.setTextBoxWidth(143);
+		this.collateralRef.setWhereClause(getWhereClause().toString());
 
 		this.bankValuation.setProperties(false, formatter);
 
 		this.assignValuePerc.setMaxlength(6);
 		this.assignValuePerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
-		this.assignValuePerc.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.assignValuePerc.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.assignValuePerc.setScale(2);
 
 		this.availableAssignPerc.setMaxlength(6);
 		this.availableAssignPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
-		this.availableAssignPerc.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.availableAssignPerc.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.availableAssignPerc.setScale(2);
 
 		this.hostReference.setMaxlength(50);
@@ -815,6 +817,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		}
 		getCollateralHeaderDialogCtrl().setCollateralSetups(collateralSetupList);
 		setCollateralTypeList(getFinanceDetail().getCollaterals());
+		getCollateralHeaderDialogCtrl().setCollateralSetups(collateralSetupList);
 		this.collateralRef.setValue(collateralSetup.getCollateralRef());
 		setAssignment(collateralSetup, false);
 	}
@@ -1192,6 +1195,28 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	//Getting the approved collateral setup values from search object and adding the newly created collateral setup list
 	private void setCollateralTypeList(List<CollateralSetup> collateralSetupList) {
 
+		StringBuilder whereClause = getWhereClause();
+
+		Search search = new Search(CollateralSetup.class);
+		search.addTabelName("CollateralSetup_AView");
+		search.addWhereClause(whereClause.toString());
+		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
+
+		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
+			collateralSetupSearchList = new ArrayList<CollateralSetup>();
+		}
+
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			collateralSetupSearchList.addAll(collateralSetupList);
+		}
+		//Setting null if collateralSetupSearchList is empty to throw the validation for collateralRef
+		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
+			collateralSetupSearchList = null;
+		}
+		this.collateralRef.setList(collateralSetupSearchList);
+	}
+
+	private StringBuilder getWhereClause() {
 		StringBuilder whereClause = new StringBuilder();
 		if (StringUtils.isNotEmpty(finType)) {
 			String collateralTypes = getFinanceTypeService().getAllowedCollateralTypes(finType);
@@ -1231,20 +1256,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 					.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
 			whereClause.append(customerId).append(")) )");
 		}
-
-		Search search = new Search(CollateralSetup.class);
-		search.addTabelName("CollateralSetup_AView");
-		search.addWhereClause(whereClause.toString());
-		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
-
-		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
-			collateralSetupSearchList = new ArrayList<CollateralSetup>();
-		}
-
-		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			collateralSetupSearchList.addAll(collateralSetupList);
-		}
-		this.collateralRef.setList(collateralSetupSearchList);
+		return whereClause;
 	}
 
 	// WorkFlow Components

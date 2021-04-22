@@ -106,8 +106,7 @@
 								<rows>
 									<row>
 										<label id="label_LimitRule" value="${c:l('label_LimitDetailsList_RuleCode.value')}" />
-										<extendedcombobox id="limiDialogRule">
-										</extendedcombobox>
+										<extendedcombobox id="limiDialogRule"></extendedcombobox>
 										<label id="label_LimitRuleValue" visible="false" value="${c:l('label_CustomerDialog_BasedOn.value')}" />
 										<label id="limiDialogRuleValue" visible="false" />
 									</row>

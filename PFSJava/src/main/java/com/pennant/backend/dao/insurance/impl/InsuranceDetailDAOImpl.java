@@ -1,16 +1,16 @@
 package com.pennant.backend.dao.insurance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.model.insurance.InsuranceDetails;
@@ -54,8 +54,7 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		sql.append(" Where Reference = :Reference");
 		logger.debug("selectSql: " + sql.toString());
 
-		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InsuranceDetails.class);
+		RowMapper<InsuranceDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceDetails.class);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
@@ -92,8 +91,7 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		sql.append(" Where Id = :Id");
 		logger.debug("selectSql: " + sql.toString());
 
-		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InsuranceDetails.class);
+		RowMapper<InsuranceDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceDetails.class);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Id", id);
@@ -305,9 +303,7 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 	 * 
 	 */
 	@Override
-	public void updatePaymentStatus(InsurancePaymentInstructions instruction) {
-		logger.debug(Literal.ENTERING);
-
+	public int updatePaymentStatus(InsurancePaymentInstructions instruction) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Update INSURANCEPAYMENTINSTRUCTIONS");
@@ -321,10 +317,10 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		paramMap.addValue("REALIZATIONDATE", instruction.getRealizationDate());
 		paramMap.addValue("ID", instruction.getId());
 
-		logger.debug(Literal.SQL + sql);
-		this.jdbcTemplate.update(sql.toString(), paramMap);
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.update(sql.toString(), paramMap);
+
 	}
 
 	@Override
@@ -415,4 +411,52 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		logger.debug(Literal.LEAVING);
 
 	}
+
+	@Override
+	public InsurancePaymentInstructions getInsurancePaymentInstructionStatus(long id) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Status from INSURANCEPAYMENTINSTRUCTIONS");
+		sql.append(" Where id = ?");
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				InsurancePaymentInstructions ipi = new InsurancePaymentInstructions();
+				ipi.setStatus(rs.getString(1));
+				return ipi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in INSURANCEPAYMENTINSTRUCTIONS table/view for the specified ID >> {} ", id);
+		}
+
+		return null;
+	}
+
+	@Override
+	public InsurancePaymentInstructions getInsurancePaymentInstructionById(long id) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT LINKEDTRANID, ID, PAYMENTAMOUNT, PAYMENTTYPE, PROVIDERID");
+		sql.append(", ENTITYCODE, PAYMENTCCY FROM INSURANCEPAYMENTINSTRUCTIONS");
+		sql.append("  WHERE ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				InsurancePaymentInstructions ipi = new InsurancePaymentInstructions();
+				ipi.setLinkedTranId(rs.getLong("LINKEDTRANID"));
+				ipi.setId(rs.getLong("ID"));
+				ipi.setPaymentAmount(rs.getBigDecimal("PAYMENTAMOUNT"));
+				ipi.setPaymentType(rs.getString("PAYMENTTYPE"));
+				ipi.setProviderId(rs.getLong("PROVIDERID"));
+				ipi.setEntityCode(rs.getString("ENTITYCODE"));
+				ipi.setEntityCode(rs.getString("PAYMENTCCY"));
+				return ipi;
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in INSURANCEPAYMENTINSTRUCTIONS table/view for the specified ID >> {} ", id);
+		}
+		return null;
+	}
+
 }

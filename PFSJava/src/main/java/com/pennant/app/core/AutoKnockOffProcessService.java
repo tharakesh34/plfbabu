@@ -78,7 +78,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.rits.cloning.Cloner;
 
 public class AutoKnockOffProcessService extends ServiceHelper {
 	private static final long serialVersionUID = 1L;
@@ -92,20 +91,18 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 	private transient EntityDAO entityDAO;
 	private transient ManualAdviseDAO manualAdviseDAO;
 
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
 	public void processAutoKnockOff(AutoKnockOffData knockOffData) throws Exception {
 		String finreference = knockOffData.getFinReference();
 		List<AutoKnockOffFeeMapping> feeMappingList = knockOffData.getFeeMappingList();
 
 		FinReceiptData receiptData = getFinReceiptDataById(finreference, AccountEventConstants.ACCEVENT_REPAY);
+
 		BigDecimal receiptAmount = BigDecimal.ZERO;
 		BigDecimal availableAmount = knockOffData.getBalAmount();
 		BigDecimal emiAmount = BigDecimal.ZERO;
 
 		FinReceiptHeader header = receiptData.getReceiptHeader();
+
 		header.setReference(finreference);
 		header.setReceiptDate(knockOffData.getValueDate());
 		header.setValueDate(knockOffData.getValueDate());
@@ -130,6 +127,10 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		receiptData.setAllocList(header.getAllocations());
 		receiptData.setValueDate(valueDate);
 		header.setValueDate(null);
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		if (fm != null) {
+			fm.setEventProperties(knockOffData.getEventProperties());
+		}
 		receiptData = receiptCalculator.initiateReceipt(receiptData, false);
 
 		header = receiptData.getReceiptHeader();
@@ -231,9 +232,13 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		header.setReceiptAmount(receiptAmount);
 
 		header.getXcessPayables().add(xcessPayable);
-		Cloner cloner = new Cloner();
-		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
-		List<FinanceScheduleDetail> finSchdDtls = cloner.deepClone(finScheduleData.getFinanceScheduleDetails());
+
+		FinScheduleData fsd = receiptData.getFinanceDetail().getFinScheduleData();
+
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+		for (FinanceScheduleDetail schd : fsd.getFinanceScheduleDetails()) {
+			schedules.add(schd.copyEntity());
+		}
 
 		receiptData.setBuildProcess("R");
 		for (ReceiptAllocationDetail allocate : allocationDtls) {
@@ -248,7 +253,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		}
 
 		receiptCalculator.initiateReceipt(receiptData, false);
-		finScheduleData.setFinanceScheduleDetails(finSchdDtls);
+		fsd.setFinanceScheduleDetails(schedules);
 		repaymentProcessUtil.processAutoKnockOff(receiptData);
 		knockOffData.setUtilzedAmount(knockOffData.getUtilzedAmount().add(receiptAmount));
 		knockOffData.setReceiptId(receiptData.getReceiptHeader().getReceiptID());
@@ -333,26 +338,26 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		scheduleData.setFinReference(finReference);
 
 		// Finance Details from Main Table View
-		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, "_AView", false);
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
 
-		if (financeMain == null) {
+		if (fm == null) {
 			logger.debug(Literal.LEAVING);
 			return receiptData;
 		}
 
 		FinReceiptHeader receiptHeader = new FinReceiptHeader();
 		receiptData.setReceiptHeader(receiptHeader);
-		receiptHeader.setReference(financeMain.getFinReference());
+		receiptHeader.setReference(fm.getFinReference());
 
-		Entity entity = entityDAO.getEntity(financeMain.getLovDescEntityCode(), "");
+		Entity entity = entityDAO.getEntity(fm.getLovDescEntityCode(), "");
 		if (entity != null) {
-			financeMain.setEntityDesc(entity.getEntityDesc());
+			fm.setEntityDesc(entity.getEntityDesc());
 		}
 
-		scheduleData.setFinanceMain(financeMain);
+		scheduleData.setFinanceMain(fm);
 
 		// Finance Type Details from Table
-		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
+		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(fm.getFinType(), "_ORGView");
 
 		scheduleData.setFinanceType(financeType);
 
@@ -369,10 +374,10 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		scheduleData.setFinPftDeatil(profitDetail);
 
 		// Finance Customer Details from main view
-		if (financeMain.getCustID() != 0 && financeMain.getCustID() != Long.MIN_VALUE) {
+		if (fm.getCustID() != 0 && fm.getCustID() != Long.MIN_VALUE) {
 			CustomerDetails customerDetails = new CustomerDetails();
-			customerDetails.setCustomer(customerDAO.getCustomerByID(financeMain.getCustID(), "_AView"));
-			customerDetails.setCustID(financeMain.getCustID());
+			customerDetails.setCustomer(customerDAO.getCustomerByID(fm.getCustID(), "_AView"));
+			customerDetails.setCustID(fm.getCustID());
 			financeDetail.setCustomerDetails(customerDetails);
 		}
 
@@ -427,5 +432,9 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 }

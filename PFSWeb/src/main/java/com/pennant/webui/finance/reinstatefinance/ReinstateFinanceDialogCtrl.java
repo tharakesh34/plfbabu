@@ -54,8 +54,10 @@ import java.util.Map;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -84,6 +86,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
+import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -108,7 +111,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	private static final long serialVersionUID = -6945930303723518608L;
-	private static final Logger logger = Logger.getLogger(ReinstateFinanceDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReinstateFinanceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -131,6 +134,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	protected Textbox rejectRemarks;
 	protected Textbox rejectedBy;
 	protected Datebox rejectedOn;
+	protected Textbox rejectReason;
 
 	protected Groupbox gb_RejectDetails;
 	protected Groupbox gb_financeDetails;
@@ -423,6 +427,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		if (StringUtils.isNotBlank(finReference)) {
 			ReinstateFinance reinstateFinance = getReinstateFinanceService().getFinanceDetailsById(finReference);
 			if (reinstateFinance != null) {
+				List<ReasonDetailsLog> reasonDetailsLog = getReinstateFinanceService().getResonDetailsLog(finReference);
 				finFormatter = CurrencyUtil.getFormat(reinstateFinance.getFinCcy());
 				setCurrencyFieldProperties();
 				this.finReference.setValue(reinstateFinance.getFinReference());
@@ -447,6 +452,17 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 				this.gb_RejectDetails.setVisible(true);
 				this.gb_financeDetails.setVisible(true);
+
+				String rejectReason = "";
+				if (CollectionUtils.isNotEmpty(reasonDetailsLog)) {
+					for (ReasonDetailsLog reasonDetailLog : reasonDetailsLog) {
+						if (StringUtils.isNotEmpty(rejectReason)) {
+							rejectReason = rejectReason.concat(",");
+						}
+						rejectReason = rejectReason.concat(reasonDetailLog.getRejectReasonDesc());
+					}
+					this.rejectReason.setValue(rejectReason);
+				}
 			} else {
 				doClear();
 			}
@@ -677,6 +693,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		this.rejectRemarks.setReadonly(true);
 		this.rejectedBy.setReadonly(true);
 		this.rejectedOn.setDisabled(true);
+		this.rejectReason.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -868,7 +885,9 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
+					processCompleted = true;
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
 					List<String> finTypeList = getReinstateFinanceService().getScheduleEffectModuleList(true);

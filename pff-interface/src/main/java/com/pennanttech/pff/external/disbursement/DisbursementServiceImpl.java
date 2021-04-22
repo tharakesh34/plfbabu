@@ -102,7 +102,6 @@ public class DisbursementServiceImpl implements DisbursementService {
 						event = Event.MOVE_TO_S3_BUCKET;
 						protocol = "Amazon s3";
 					}
-
 				}
 			}
 

@@ -46,7 +46,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -75,17 +76,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMasters/CustomerGroup/customerGroupDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerGroup/customerGroupDialog.zul file.
  */
 public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	private static final long serialVersionUID = 4865083782879144591L;
-	private static final Logger logger = Logger.getLogger(CustomerGroupDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerGroupDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component
-	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CustomerGroupDialog; // autoWired
 	protected Longbox custGrpID; // autoWired
@@ -122,9 +121,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected CustomerGroup object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected CustomerGroup object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -181,7 +179,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		// Empty sent any required attributes
+		//Empty sent any required attributes
 		this.custGrpCode.setMaxlength(8);
 		this.custGrpDesc.setMaxlength(50);
 		this.custGrpRO1.setMaxlength(8);
@@ -202,8 +200,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -276,7 +273,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -299,7 +297,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerGroup CustomerGroup
+	 * @param aCustomerGroup
+	 *            CustomerGroup
 	 */
 	public void doWriteBeanToComponents(CustomerGroup aCustomerGroup) {
 		logger.debug("Entering");
@@ -383,8 +382,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerGroup
 	 * @throws InterruptedException
@@ -685,9 +683,11 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aCustomerGroup (CustomerGroup)
+	 * @param aCustomerGroup
+	 *            (CustomerGroup)
 	 * 
-	 * @param tranType       (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -759,10 +759,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 					auditHeader = getAuditHeader(aCustomerGroup, PennantConstants.TRAN_WF);
 					if ("doDdeDedup".equals(list[i])) {
 						processCompleted = doSaveProcess(auditHeader, null);
-					} else if ("doApprove".equals(list[i])) {
-						processCompleted = doSaveProcess(auditHeader, "doApprove");
-					} else if ("doReject".equals(list[i])) {
-						processCompleted = doSaveProcess(auditHeader, "doReject");
+					} else {
+						processCompleted = doSaveProcess(auditHeader, list[i]);
 					}
 					if (!processCompleted) {
 						break;
@@ -780,9 +778,11 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method      (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -794,6 +794,7 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		CustomerGroup aCustomerGroup = (CustomerGroup) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
+
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
@@ -873,7 +874,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -890,7 +892,8 @@ public class CustomerGroupDialogCtrl extends GFCBaseCtrl<CustomerGroup> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event (Event)
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

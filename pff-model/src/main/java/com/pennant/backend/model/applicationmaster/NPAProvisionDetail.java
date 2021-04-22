@@ -77,6 +77,9 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 	private long assetClassificationId = 0;
 	private String assetCode;
 	private int assetStageOrder;
+	private boolean newPrvDetail;
+	private Long ruleId;
+	private boolean active;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -91,6 +94,44 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public NPAProvisionDetail copyEntity() {
+		NPAProvisionDetail entity = new NPAProvisionDetail();
+		entity.setId(this.id);
+		entity.setHeaderId(this.headerId);
+		entity.setHeaderIdName(this.headerIdName);
+		entity.setNPAActive(this.nPAActive);
+		entity.setDPDdays(this.dPDdays);
+		entity.setNPARepayApprtnmnt(this.nPARepayApprtnmnt);
+		entity.setIntSecPerc(this.intSecPerc);
+		entity.setIntUnSecPerc(this.intUnSecPerc);
+		entity.setRegSecPerc(this.regSecPerc);
+		entity.setRegUnSecPerc(this.regUnSecPerc);
+		entity.setEntity(this.entity);
+		entity.setFinType(this.finType);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setAssetClassificationId(this.assetClassificationId);
+		entity.setAssetCode(this.assetCode);
+		entity.setAssetStageOrder(this.assetStageOrder);
+		entity.setNewPrvDetail(this.newPrvDetail);
+		entity.setRuleId(this.ruleId);
+		entity.setActive(this.active);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("headerIdName");
@@ -98,6 +139,7 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		excludeFields.add("assetStageOrder");
 		excludeFields.add("entity");
 		excludeFields.add("finType");
+		excludeFields.add("newPrvDetail");
 		return excludeFields;
 	}
 
@@ -125,11 +167,11 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		this.headerIdName = headerIdName;
 	}
 
-	public boolean isnPAActive() {
+	public boolean isNPAActive() {
 		return nPAActive;
 	}
 
-	public void setnPAActive(boolean nPAActive) {
+	public void setNPAActive(boolean nPAActive) {
 		this.nPAActive = nPAActive;
 	}
 
@@ -257,4 +299,27 @@ public class NPAProvisionDetail extends AbstractWorkflowEntity {
 		this.finType = finType;
 	}
 
+	public boolean isNewPrvDetail() {
+		return newPrvDetail;
+	}
+
+	public void setNewPrvDetail(boolean newPrvDetail) {
+		this.newPrvDetail = newPrvDetail;
+	}
+
+	public Long getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(Long ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 }

@@ -37,6 +37,7 @@ public class FinanceTypeResponse implements Serializable {
 	private RepayDetail repayDetail;
 	private OverdueDetail overdueDetail;
 	private OverdueProfitDetail overdueProfitDetail;
+	private Insurance insurance;
 	private FeeRule feeRule;
 	private StepDetail stepDetail;
 	private String promotionDesc;
@@ -114,6 +115,14 @@ public class FinanceTypeResponse implements Serializable {
 
 	public void setOverdueProfitDetail(OverdueProfitDetail overdueProfitDetail) {
 		this.overdueProfitDetail = overdueProfitDetail;
+	}
+
+	public Insurance getInsurance() {
+		return insurance;
+	}
+
+	public void setInsurance(Insurance insurance) {
+		this.insurance = insurance;
 	}
 
 	public FeeRule getFeeRule() {

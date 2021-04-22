@@ -1,5 +1,5 @@
 /**
-D * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -58,7 +58,8 @@ import java.util.Map;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -73,10 +74,11 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -93,17 +95,23 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.FinCollateralMark;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
@@ -111,6 +119,9 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.collateral.CollateralMarkProcess;
+import com.pennant.backend.service.dda.DDAControllerService;
+import com.pennant.backend.service.dda.DDAProcessService;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
@@ -118,7 +129,9 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -127,6 +140,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -142,7 +156,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(FinanceMaintenanceDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceMaintenanceDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -186,7 +200,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected transient String oldVar_finWriteoffPayAccount;
 
 	private FinanceMaintenanceService financeMaintenanceService;
+	private DDAControllerService ddaControllerService;
+	private DDAProcessService ddaProcessService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
+	private CollateralMarkProcess collateralMarkProcess;
 
 	protected Label label_FinanceMainDialog_FinAssetValue;
 	protected Label label_FinanceMainDialog_ODFinAssetValue;
@@ -199,6 +216,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected CurrencyBox finAssetValue;
 	protected Label netFinAmount;
 	protected Checkbox manualSchedule;
+	protected Checkbox underConstruction;
 	protected Row row_ManualSchedule;
 	protected Textbox finDivisionName;
 	protected Hbox hbox_PromotionProduct;
@@ -206,6 +224,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private Label label_FinanceMainDialog_FinType;
 	private Label label_FinanceMainDialog_FinReference;
 	private Label label_FinanceMainDialog_FinBranch;
+	protected Combobox cbTdsType;
+	private Label label_FinanceMainDialog_TDSType;
+	private List<ValueLabel> tdsTypeList = PennantStaticListUtil.getTdsTypes();
 
 	/**
 	 * default constructor.<br>
@@ -279,6 +300,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			isEnquiry = true;
 			setMainWindow(window_FinanceMaintenanceDialog);
+
+			setProductCode("Murabaha");
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -360,7 +383,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.mandateRef);
 		}
 
-		//Accounts should be displayed only to the Banks
+		// Accounts should be displayed only to the Banks
 		if (!ImplementationConstants.ACCOUNTS_APPLICABLE) {
 			this.row_DisbAccId.setVisible(false);
 			this.downPayAccount.setVisible(false);
@@ -368,7 +391,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		this.finAssetValue.setProperties(false, format);
 		this.finCurrentAssetValue.setProperties(false, format);
-		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
+		// Field visibility & Naming for FinAsset value and finCurrent asset
+		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
 	}
@@ -395,6 +419,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.row_ODStartDate.setVisible(true);
 			this.row_pftServicingODLimit.setVisible(true);
 			this.noOfTermsRow.setVisible(false);
+			this.row_RpyAdvPftRate.setVisible(false);
 			this.gb_gracePeriodDetails.setVisible(false);
 			this.row_manualSteps.setVisible(false);
 			this.row_stepFinance.setVisible(false);
@@ -404,11 +429,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.defermentsRow.setVisible(false);
 			this.row_MaturityDate.setVisible(false);
 			this.repayRateBasisRow.setVisible(false);
+			this.row_RpyAdvBaseRate.setVisible(false);
 			this.row_FinRepRates.setVisible(false);
 			this.scheduleMethodRow.setVisible(false);
 			this.rpyPftFrqRow.setVisible(false);
 			this.rpyRvwFrqRow.setVisible(false);
 			this.rpyCpzFrqRow.setVisible(false);
+			this.row_supplementRent.setVisible(false);
 			this.rpyFrqRow.setVisible(false);
 			this.odRpyFrqRow.setVisible(true);
 			this.row_salesDept.setVisible(false);
@@ -429,6 +456,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						.setValue(Labels.getLabel("label_FinanceMainDialog_FinOverDftLimit.value"));
 				this.label_FinanceMainDialog_FinCurrentAssetValue.setValue("");
 				this.finCurrentAssetValue.setVisible(false);
+				this.gb_ddaRequest.setVisible(false);
 			} else {
 				if (!isOverdraft && financeType.isFinIsAlwMD()) {
 					readOnlyComponent(isReadOnly("FinanceMainDialog_finAssetValue"), this.finAssetValue);
@@ -559,6 +587,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void onSelect$finRepayMethod(Event event) {
 		logger.debug("Entering" + event.toString());
+		doCheckDDA();
 		doCheckMandate(getComboboxValue(this.finRepayMethod), this.custID.longValue(), true);
 		logger.debug("Leaving" + event.toString());
 	}
@@ -574,7 +603,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else {
 			readOnlyComponent(true, this.mandateRef);
 			this.mandateRef.setValue("");
-			this.mandateRef.setAttribute("mandateID", Long.valueOf(0));
+			this.mandateRef.setAttribute("mandateID", new Long(0));
 		}
 		addMandateFiletrs(val, CustID);
 
@@ -695,13 +724,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Accounting
 			appendAccountingDetailTab(true);
 		}
-		//Append Extended Field Details
+		// Append Extended Field Details
 		appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
 
 		// fill the components with the Finance Flags Data and Display
 		doFillFinFlagsList(aFinanceDetail.getFinFlagsDetails());
 
-		//Showing Product Details for Promotion Type
+		// Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision() + " - "
 				+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescFinDivisionName());
 		if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct())) {
@@ -718,10 +747,35 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else {
 			this.row_ManualSchedule.setVisible(false);
 		}
-
+		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
+		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
 		this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), format));
 		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
 		setNetFinanceAmount(true);
+
+		// TDS Type Changes
+		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+		if (this.tDSApplicable.isChecked()) {
+			String excludeFields = "," + PennantConstants.TDS_USER_SELECTION + ",";
+			fillComboBox(this.cbTdsType, aFinanceMain.getTdsType(), tdsTypeList, excludeFields);
+			if (financeType.isTdsApplicable()
+					&& StringUtils.equalsIgnoreCase(financeType.getTdsType(), PennantConstants.TDS_USER_SELECTION)) {
+				this.cbTdsType.setVisible(true);
+				this.label_FinanceMainDialog_TDSType.setVisible(true);
+				this.cbTdsType.setDisabled(isReadOnly("FinanceMainDialog_TDSType"));
+			} else {
+				this.cbTdsType.setVisible(true);
+				this.cbTdsType.setDisabled(true);
+			}
+		} else {
+			Comboitem comboitem = new Comboitem();
+			comboitem.setValue(PennantConstants.List_Select);
+			this.cbTdsType.appendChild(comboitem);
+			this.cbTdsType.setSelectedItem(comboitem);
+			this.label_FinanceMainDialog_TDSType.setVisible(false);
+			this.cbTdsType.setVisible(false);
+			this.cbTdsType.setDisabled(true);
+		}
 
 		logger.debug("Leaving");
 	}
@@ -822,16 +876,17 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				if (downPayment.compareTo(this.finAmount.getValidateValue()) > 0) {
 					throw new WrongValueException(this.downPayBank,
-							Labels.getLabel("MAND_FIELD_MIN", new String[] {
-									Labels.getLabel("label_FinanceMainDialog_DownPayment.value"), reqDwnPay.toString(),
-									PennantAppUtil.formatAmount(this.finAmount.getActualValue(), format, false) }));
+							Labels.getLabel("MAND_FIELD_MIN",
+									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayment.value"),
+											reqDwnPay.toString(),
+											PennantAppUtil.formatAmount(this.finAmount.getActualValue(), format) }));
 				}
 
 				if (downPayment.compareTo(reqDwnPay) == -1) {
 					throw new WrongValueException(this.downPayBank,
 							Labels.getLabel("PERC_MIN",
 									new String[] { Labels.getLabel("label_FinanceMainDialog_DownPayBS.value"),
-											PennantAppUtil.formatAmount(reqDwnPay, format, false) }));
+											PennantAppUtil.formatAmount(reqDwnPay, format) }));
 				}
 			}
 			aFinanceMain
@@ -876,7 +931,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		aFinanceSchData = super.doWriteSchData(aFinanceSchData);
+		aFinanceSchData = super.doWriteSchData(aFinanceSchData, false);
 
 		FinanceMain finMain = aFinanceSchData.getFinanceMain();
 
@@ -916,7 +971,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 			if (this.row_FinAssetValue.isVisible()) {
-				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
+				// Validate if the total disbursement amount exceeds maximum
+				// disbursement Amount
 				if (((StringUtils.isEmpty(moduleDefiner)
 						|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)))) {
 					if (this.finCurrentAssetValue.getActualValue() != null
@@ -931,13 +987,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.isReadonly()
 						? this.finAssetValue.getActualValue() : this.finAssetValue.getValidateValue(), format));
 			}
-			//Validation  on finAsset And fin Current Asset value based on field visibility
+			// Validation on finAsset And fin Current Asset value based on field
+			// visibility
 
 			if (!isOverDraft) {
 				if (financeType.isFinIsAlwMD()) {
 					if (this.row_FinAssetValue.isVisible() && StringUtils.isEmpty(moduleDefiner)) {
 
-						//If max disbursement amount less than prinicpal amount validate the amount
+						// If max disbursement amount less than prinicpal amount
+						// validate the amount
 						aFinanceMain.setFinAssetValue(
 								PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), format));
 						aFinanceMain.setFinCurrAssetValue(
@@ -966,6 +1024,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+		}
+
+		try {
+			if (isValidComboValue(this.cbTdsType, Labels.getLabel("label_FinanceMainDialog_TDSType.Value"))) {
+				aFinanceMain.setTdsType(getComboboxValue(this.cbTdsType));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
@@ -1246,7 +1312,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			int format = CurrencyUtil.getFormat(finMain.getFinCcy());
 
-			Date curBDay = DateUtility.getAppDate();
+			Date curBDay = SysParamUtil.getAppDate();
 			aeEvent = AEAmounts.procAEAmounts(finMain,
 					getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(), new FinanceProfitDetail(),
 					eventCode, curBDay, curBDay);
@@ -1255,6 +1321,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// AmountCodes Setting the FinwriteoffPayAmount
 			amountCodes.setWoPayAmt(
 					PennantApplicationUtil.unFormateAmount(this.finWriteoffPayAmount.getActualValue(), format));
+			amountCodes.setFinType(finMain.getFinType());
 
 			Map<String, Object> dataMap = aeEvent.getDataMap();
 			dataMap = amountCodes.getDeclaredFieldValues();
@@ -1264,11 +1331,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Loop Repetition for Multiple Disbursement
 
 			List<ReturnDataSet> returnSetEntries = null;
-			Map<String, FeeRule> map = null;
+			Map<String, FeeRule> map = new HashMap<>();
+
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
+					FinanceConstants.MODULEID_FINTYPE));
 
 			dataMap.putAll(map);
 			aeEvent.setDataMap(dataMap);
-			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+			getEngineExecution().getAccEngineExecResults(aeEvent);
 
 			returnSetEntries = aeEvent.getReturnDataSet();
 			accountingSetEntries.addAll(returnSetEntries);
@@ -1659,6 +1729,32 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if (this.gb_ddaRequest.isVisible()) {
+			if (!recSave && !buildEvent) {
+				if (!this.bankName.isReadonly()) {
+					this.bankName.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_FinanceMaintenanceDialog_BankName.value"), null, true, true));
+				}
+				if (!this.iban.isReadonly()) {
+					this.iban.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_FinanceMaintenanceDialog_IBAN.value"),
+									PennantRegularExpressions.REGEX_ALPHANUM_FL23, true));
+				}
+				if (this.hbox_Finance_IfscCode.isVisible() && !this.ifscCode.isReadonly()) {
+					this.ifscCode.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_FinanceMaintenanceDialog_IBAN.value"),
+									PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+				}
+			}
+		}
+
+		if (this.tDSApplicable.isChecked() && getComboboxValue(this.cbTdsType).equals(PennantConstants.List_Select)) {
+			if (!this.cbTdsType.isDisabled()) {
+				this.cbTdsType.setConstraint(
+						new StaticListValidator(tdsTypeList, Labels.getLabel("label_FinanceMainDialog_TDSType.value")));
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1733,6 +1829,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDChargeType.setConstraint("");
 		this.oDChargeAmtOrPerc.setConstraint("");
 		this.oDMaxWaiverPerc.setConstraint("");
+
+		// FinanceMain Details Tab ---> 5. DDA Registration Details
+		this.bankName.setConstraint("");
+		this.iban.setConstraint("");
+		this.ifscCode.setConstraint("");
+		this.accountType.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -1894,7 +1996,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						refreshMaintainList();
 					}
 
-					// Mail Alert Notification for Customer/Dealer/Provider...etc
+					// Mail Alert Notification for
+					// Customer/Dealer/Provider...etc
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
 						FinanceMain financeMain = afinanceDetail.getFinScheduleData().getFinanceMain();
@@ -1946,12 +2049,13 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.odStartDate);
+		readOnlyComponent(true, this.underConstruction);
 		this.odFinAssetValue.setDisabled(isReadOnly("FinanceMainDialog_finAmount"));
 
 		this.finWriteoffPayAmount.setReadonly(isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			this.finWriteoffPayAmount.setMandatory(!isReadOnly("FinanceMainDialog_WriteoffPayAmount"));
-			//PSD# 145425
+			// PSD# 145425
 			if (PennantConstants.RCD_STATUS_RESUBMITTED
 					.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getRecordStatus())
 					|| (PennantConstants.RCD_STATUS_SAVED
@@ -1995,6 +2099,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.finWriteoffPayAccount.setReadonly(true);
 		this.finWriteoffPayAmount.setReadonly(true);
 		this.manualSchedule.setDisabled(true);
+		readOnlyComponent(true, this.underConstruction);
 		logger.debug("Leaving");
 	}
 
@@ -2025,17 +2130,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		boolean isNew = false;
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		Radio selectedUserAction = this.userAction.getSelectedItem();
-		if (selectedUserAction != null) {
-			if ("Save".equalsIgnoreCase(selectedUserAction.getLabel())
-					|| "Cancel".equalsIgnoreCase(selectedUserAction.getLabel())
-					|| selectedUserAction.getLabel().contains("Reject")
-					|| selectedUserAction.getLabel().contains("Resubmit")
-					|| selectedUserAction.getLabel().contains("Decline")) {
+		String actionLabel = this.userAction.getSelectedItem().getLabel();
+		if (actionLabel != null) {
+			if ("Save".equalsIgnoreCase(actionLabel) || "Cancel".equalsIgnoreCase(actionLabel)
+					|| actionLabel.contains("Reject") || actionLabel.contains("Resubmit")
+					|| actionLabel.contains("Decline")) {
 				recSave = true;
 				aFinanceDetail.setActionSave(true);
 			}
-			aFinanceDetail.setUserAction(selectedUserAction.getLabel());
+			aFinanceDetail.setUserAction(actionLabel);
 		}
 
 		aFinanceDetail.setAccountingEventCode(eventCode);
@@ -2051,16 +2154,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// fill the financeMain object with the components data
 		doWriteComponentsToBean(aFinanceDetail);
 
-		if (selectedUserAction != null) {
-			if (!("Cancel".equalsIgnoreCase(selectedUserAction.getLabel())
-					|| selectedUserAction.getLabel().contains("Reject")
-					|| selectedUserAction.getLabel().contains("Resubmit")
-					|| selectedUserAction.getLabel().contains("Decline"))) {
-
-				boolean isActive = getFinanceMaintenanceService().isFinActive(aFinanceMain.getFinReference());
-				if (!isActive) {
-					MessageUtil
-							.showError("Loan is in inactive state. Please check and cancel the basic details action.");
+		if (actionLabel != null && !("Cancel".equalsIgnoreCase(actionLabel) || actionLabel.contains("Reject")
+				|| actionLabel.contains("Resubmit") || actionLabel.contains("Decline"))) {
+			if (!(PennantConstants.TRAN_WF.equals(aFinanceMain.getClosingStatus()))) {
+				if (!financeMaintenanceService.isFinActive(aFinanceMain.getFinReference())) {
+					MessageUtil.showError(Labels.getLabel("label_Inactive_Loans"));
 					return;
 				}
 			}
@@ -2142,11 +2240,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, true);
 			}
 			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, true);
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -2174,6 +2272,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 							continue;
 						}
+
+						if (curDisb.getLinkedDisbId() != 0) {
+							continue;
+						}
+
 						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount())
 								.add(aFinanceMain.getFeeChargeAmt().add(aFinanceMain.getInsuranceAmt()));
 					}
@@ -2247,6 +2350,17 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinanceCollaterals(null);
 		}
 
+		// save the FinanceMain Extension details
+		if (StringUtils.equals(getComboboxValue(this.finRepayMethod), FinanceConstants.REPAYMTH_AUTODDA)
+				&& !StringUtils.isBlank(this.repayAcctId.getValue()) && !this.repayAcctId.isReadonly()) {
+
+			FinanceMainExt financeMainExt = new FinanceMainExt();
+			financeMainExt.setFinReference(aFinanceMain.getFinReference());
+			financeMainExt.setRepayIBAN(this.repayAcctId.getSelectedAccount().getIban());
+			financeMainExt.setIfscCode(this.ifscCode.getValue());
+			getFinanceMainExtService().saveFinanceMainExtDetails(financeMainExt);
+		}
+
 		if (isFeeReExecute) {
 			String message = Labels.getLabel("label_FeeExecute");
 			MessageUtil.showMessage(message);
@@ -2296,7 +2410,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
-				if (!"Save".equalsIgnoreCase(selectedUserAction.getLabel())) {
+				if (!"Save".equalsIgnoreCase(actionLabel)) {
 
 					FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 					Notification notification = new Notification();
@@ -2529,7 +2643,21 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
+
+					if (FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN.equals(moduleDefiner)) {
+						// Validate DDA process
+						// =====================
+						try {
+							processCompleted = doDDAProcess(aFinanceDetail);
+						} catch (InterfaceException pfe) {
+							MessageUtil.showError(pfe);
+							processCompleted = false;
+						}
+					} else {
+						processCompleted = true;
+					}
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 
 					if (FinanceConstants.FINSER_EVENT_BASICMAINTAIN.equals(moduleDefiner)) {
 						// Validate Collateral details and process
@@ -2617,11 +2745,145 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterfaceException
 	 */
 	private boolean doCollateralProcess(FinanceDetail financeDetail) throws InterfaceException {
-		logger.debug("NOT IMPLEMENTED");
+		logger.debug("Entering");
 
-		// Perform collateral marking and release.
+		boolean processCompleted = true;
 
-		return true;
+		// Validate collateral marking
+		List<FinCollaterals> collateralList = financeDetail.getFinanceCollaterals();
+
+		List<FinCollateralMark> prvCollateralList = new ArrayList<FinCollateralMark>();
+
+		// fetch previous collateral List for the finance
+		String finReference = financeDetail.getFinScheduleData().getFinReference();
+		prvCollateralList = getCollateralMarkProcess().getCollateralList(finReference);
+
+		List<FinCollaterals> collateralMarkList = new ArrayList<FinCollaterals>();
+
+		if (collateralList != null && !collateralList.isEmpty() && prvCollateralList != null
+				&& !prvCollateralList.isEmpty()) {
+			// Compare prvCollateral List and current Collateral List to find
+			// Mark collateral
+			for (FinCollaterals collateral : collateralList) {
+				for (FinCollateralMark prvCollateral : prvCollateralList) {
+					if (!StringUtils.equals(collateral.getReference(), prvCollateral.getDepositID())) {
+						collateralMarkList.add(collateral);
+					} else {
+						break;
+					}
+				}
+			}
+
+			// Send Collateral Mark request to middleware
+
+			List<FinCollateralMark> collatDeMarkList = new ArrayList<FinCollateralMark>();
+
+			// Compare prvCollateral List and current Collateral List to find
+			// DE-Mark collateral
+			for (FinCollateralMark prvCollateral : prvCollateralList) {
+				for (FinCollaterals collateral : collateralList) {
+					if (!StringUtils.equals(collateral.getReference(), prvCollateral.getDepositID())) {
+						collatDeMarkList.add(prvCollateral);
+					} else {
+						break;
+					}
+				}
+			}
+
+			// send Collateral mark request to middleware
+			getCollateralMarkProcess().markCollateral(collateralMarkList);
+
+			// send Collateral de-mark request to middleware
+			getCollateralMarkProcess().doCollateralDemark(collatDeMarkList);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Method for validate Repay Method and take below actions<br>
+	 * 1. PDC-->DDA(DDA Registration)<br>
+	 * 2. STL-->DDA(DDA Registration)<br>
+	 * 3. DDA-->PDC(DDA Cancellation)<br>
+	 * 4. DDA-->STL(DDA Cancellation)<br>
+	 * 5. DDA-->DDA(DDA Re-Registartion)
+	 * 
+	 * @param financeDetail
+	 * @throws InterfaceException
+	 * @throws InterruptedException
+	 */
+	private boolean doDDAProcess(FinanceDetail financeDetail) throws InterfaceException, InterruptedException {
+		logger.debug("Entering");
+
+		boolean processCompleted = true;
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		String finReference = financeMain.getFinReference();
+		String reqType = PennantConstants.REQ_TYPE_REG;
+
+		// fetch existing DDA registration details
+		DDAProcessData ddaProcessData = getDdaProcessService().getDDADetailsById(finReference, reqType);
+
+		if (ddaProcessData != null) {
+			if (!StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
+				String message = Labels.getLabel("REPAY_DDA_" + financeMain.getFinRepayMethod());
+
+				if (MessageUtil.confirm(message) == MessageUtil.YES) {
+					getDdaControllerService().cancelDDARegistration(finReference);
+					processCompleted = true;
+				} else {
+					processCompleted = false;
+				}
+
+			} else if (StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
+
+				if (isDDADataChanged(ddaProcessData)) {
+					if (MessageUtil.confirm(Labels.getLabel("REPAY_DDA_DDA")) == MessageUtil.YES) {
+
+						// send DDA Cancellation request
+						getDdaControllerService().cancelDDARegistration(finReference);
+
+						// send DDA Registration request
+						getDdaControllerService().doDDARequestProcess(financeDetail, false);
+
+						processCompleted = true;
+					} else {
+						processCompleted = false;
+					}
+				} else {
+					processCompleted = true;
+				}
+			}
+		} else {
+			if (StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
+				// send DDA Registration request
+				getDdaControllerService().doDDARequestProcess(financeDetail, false);
+			}
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	private boolean isDDADataChanged(DDAProcessData ddaProcessData) {
+		logger.debug("Entering");
+
+		// Bank Name
+		if (!StringUtils.equals(this.bankName.getValue(), ddaProcessData.getBankName())) {
+			return true;
+		}
+		// Account Type
+		if (!StringUtils.equals(getComboboxValue(this.accountType), ddaProcessData.getAccountType())) {
+			return true;
+		}
+		// IBAN
+		if (!StringUtils.equals(this.iban.getValue(), ddaProcessData.getIban())) {
+			return true;
+		}
+
+		logger.debug("Leaving");
+		return false;
 	}
 
 	/**
@@ -3097,13 +3359,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		FinanceMain financeMain = super.getFinanceMain();
 		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		financeMain.setDownPayment(
-				PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue() == null ? BigDecimal.ZERO
+				PennantApplicationUtil.unFormateAmount(this.downPayBank.getActualValue() == null ? BigDecimal.ZERO
 						: this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue() == null
 								? BigDecimal.ZERO : this.downPaySupl.getActualValue()),
 						format));
-		financeMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), format));
+		financeMain
+				.setFinAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), format));
 		financeMain.setFinCurrAssetValue(
-				PennantAppUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), format));
+				PennantApplicationUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), format));
 		return financeMain;
 	}
 
@@ -3198,11 +3461,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getJointAccountDetailDialogCtrl() != null) {
 			if (getJointAccountDetailDialogCtrl().getGuarantorDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getGuarantorDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_GuarantorDetail(aFinanceDetail, false);
 			}
 			if (getJointAccountDetailDialogCtrl().getJountAccountDetailList() != null
 					&& getJointAccountDetailDialogCtrl().getJountAccountDetailList().size() > 0) {
-				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail);
+				getJointAccountDetailDialogCtrl().doSave_JointAccountDetail(aFinanceDetail, false);
 			}
 		} else {
 			aFinanceDetail.setJountAccountDetailList(null);
@@ -3350,7 +3613,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (flagMap.containsKey(flagCode)) {
 				// Do Nothing
 
-				//Removing from map to identify existing modifications
+				// Removing from map to identify existing modifications
 				flagMap.remove(flagCode);
 			} else {
 				FinFlagsDetail afinFlagsDetail = new FinFlagsDetail();
@@ -3364,7 +3627,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Removing unavailable records from DB by using Workflow details
+		// Removing unavailable records from DB by using Workflow details
 		if (flagMap.size() > 0) {
 			for (int i = 0; i < finFlagsDetailList.size(); i++) {
 				FinFlagsDetail finFlagsDetail = finFlagsDetailList.get(i);
@@ -3393,7 +3656,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (dataObject instanceof String) {
 			this.mandateRef.setValue(dataObject.toString());
-			this.mandateRef.setAttribute("mandateID", Long.valueOf(0));
+			this.mandateRef.setAttribute("mandateID", new Long(0));
 		} else {
 			Mandate details = (Mandate) dataObject;
 			if (details != null) {
@@ -3406,15 +3669,26 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private void addMandateFiletrs(String repaymethod, long custid) {
 
-		// 1.Mandate Swap is allowed after the registration process is completed 
-		// 2.Mandate already tagged to the current loan should also made available.
-		// 3.Open mandate should be made available even it is linked to another loan
+		// 1.Mandate Swap is allowed after the registration process is completed
+		// 2.Mandate already tagged to the current loan should also made
+		// available.
+		// 3.Open mandate should be made available even it is linked to another
+		// loan
 		// 4.Mandate should be active
 		// 5.For ECS registration not required
 
 		repaymethod = StringUtils.trimToEmpty(repaymethod);
+		//this change is to display co-applicant mandates along with primary customer 
+		List<Long> custIds = new ArrayList<Long>(1);
+		custIds.add(custid);
+		if (ImplementationConstants.MANDATE_ALLOW_CO_APP && getFinanceDetail() != null) {
+			for (JointAccountDetail accountDetail : getFinanceDetail().getJountAccountDetailList()) {
+				custIds.add(accountDetail.getCustID());
+			}
+		}
+
 		Filter[] filters = new Filter[3];
-		filters[0] = new Filter("CustID", custid, Filter.OP_EQUAL);
+		filters[0] = new Filter("CustID", custIds, Filter.OP_IN);
 		filters[1] = new Filter("MandateType", repaymethod, Filter.OP_EQUAL);
 		filters[2] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.mandateRef.setFilters(filters);
@@ -3457,6 +3731,30 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
 		this.financeReferenceDetailService = financeReferenceDetailService;
+	}
+
+	public DDAProcessService getDdaProcessService() {
+		return ddaProcessService;
+	}
+
+	public void setDdaProcessService(DDAProcessService ddaProcessService) {
+		this.ddaProcessService = ddaProcessService;
+	}
+
+	public DDAControllerService getDdaControllerService() {
+		return ddaControllerService;
+	}
+
+	public void setDdaControllerService(DDAControllerService ddaControllerService) {
+		this.ddaControllerService = ddaControllerService;
+	}
+
+	public CollateralMarkProcess getCollateralMarkProcess() {
+		return collateralMarkProcess;
+	}
+
+	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
+		this.collateralMarkProcess = collateralMarkProcess;
 	}
 
 	public List<FinFlagsDetail> getFinFlagsDetailList() {

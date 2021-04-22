@@ -54,7 +54,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -78,7 +79,7 @@ import com.rits.cloning.Cloner;
 public class RepayCalculator implements Serializable {
 
 	private static final long serialVersionUID = 8062681791631293126L;
-	private static Logger logger = Logger.getLogger(RepayCalculator.class);
+	private static Logger logger = LogManager.getLogger(RepayCalculator.class);
 	private RepayData repayData;
 	private BigDecimal balanceRepayAmount = BigDecimal.ZERO;
 	private boolean setEarlyPayAmt = false;
@@ -87,8 +88,7 @@ public class RepayCalculator implements Serializable {
 	private SubHeadRule subHeadRule;
 	private Map<Date, FinanceScheduleDetail> scheduleMap = null;
 
-	Date curBussniessDate = DateUtility.getAppDate();
-	private RuleExecutionUtil ruleExecutionUtil;
+	Date curBussniessDate = SysParamUtil.getAppDate();
 	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
 	private FinanceMainDAO financeMainDAO;
 	private OverdueChargeRecoveryDAO recoveryDAO;
@@ -173,6 +173,7 @@ public class RepayCalculator implements Serializable {
 		repayMain.setDateMatuirty(financeMain.getMaturityDate());
 		repayMain.setAccrued(repayData.getAccruedTillLBD());
 		repayMain.setRepayAccountId(financeMain.getRepayAccountId());
+		repayMain.setFinAccount(financeMain.getFinAccount());
 		repayMain.setFinCustPftAccount(financeMain.getFinCustPftAccount());
 		repayMain.setPendindODCharges(repayData.getPendingODC());
 		repayMain.setEarlyPayEffectOn(financeMain.getLovDescFinScheduleOn());
@@ -288,11 +289,18 @@ public class RepayCalculator implements Serializable {
 				continue;
 			}
 
+			// Skip if indicative rate
+			if (curSchd.isCalOnIndRate()) {
+				continue;
+			}
+
 			// Add schedule repayment if scheduled profit or principal to be paid
 			if (curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()).compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()).compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid()).compareTo(BigDecimal.ZERO) > 0
-					|| curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid()).compareTo(BigDecimal.ZERO) > 0) {
+					|| curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid()).compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getIncrCost().subtract(curSchd.getIncrCostPaid()).compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSuplRent().subtract(curSchd.getSuplRentPaid()).compareTo(BigDecimal.ZERO) > 0) {
 
 				repayData = addRepayRecord(financeMain, repayData, curSchd, prvSchd, i, false, isReCal, method, false,
 						null, processMethod);
@@ -471,6 +479,10 @@ public class RepayCalculator implements Serializable {
 		// Fee Details on Each Schedule Wise
 		rsd.setSchdIns(curSchd.getInsSchd());
 		rsd.setSchdInsPaid(curSchd.getSchdInsPaid());
+		rsd.setSchdSuplRent(curSchd.getSuplRent());
+		rsd.setSchdSuplRentPaid(curSchd.getSuplRentPaid());
+		rsd.setSchdIncrCost(curSchd.getIncrCost());
+		rsd.setSchdIncrCostPaid(curSchd.getIncrCostPaid());
 		rsd.setSchdFee(curSchd.getFeeSchd());
 		rsd.setSchdFeePaid(curSchd.getSchdFeePaid());
 
@@ -821,9 +833,10 @@ public class RepayCalculator implements Serializable {
 		}
 
 		rsd.setRepayNet(rsd.getProfitSchdPayNow().add(rsd.getPrincipalSchdPayNow()).add(rsd.getSchdInsPayNow())
-				.add(rsd.getSchdFeePayNow()));
+				.add(rsd.getSchdSuplRentPayNow()).add(rsd.getSchdIncrCostPayNow()).add(rsd.getSchdFeePayNow()));
 		rsd.setRepayBalance(rsd.getPrincipalSchdBal().add(rsd.getProfitSchdBal()).add(rsd.getSchdInsBal())
-				.add(rsd.getSchdFeeBal()).subtract(rsd.getRepayNet()));
+				.add(rsd.getSchdSuplRentBal()).add(rsd.getSchdIncrCostBal()).add(rsd.getSchdFeeBal())
+				.subtract(rsd.getRepayNet()));
 		rsd.setRefundMax(BigDecimal.ZERO);
 		rsd.setRefundReq(BigDecimal.ZERO);
 		rsd.setAllowRefund(false);
@@ -874,6 +887,24 @@ public class RepayCalculator implements Serializable {
 		}
 		rsd.setSchdInsBal(rsd.getSchdIns().subtract(rsd.getSchdInsPaid()));
 		balanceRepayAmount = balanceRepayAmount.subtract(rsd.getSchdInsPayNow());
+
+		//	2. Supplementary Rent Amount
+		if (balanceRepayAmount.compareTo(rsd.getSchdSuplRent().subtract(rsd.getSchdSuplRentPaid())) > 0) {
+			rsd.setSchdSuplRentPayNow(rsd.getSchdSuplRent().subtract(rsd.getSchdSuplRentPaid()));
+		} else {
+			rsd.setSchdSuplRentPayNow(balanceRepayAmount);
+		}
+		rsd.setSchdSuplRentBal(rsd.getSchdSuplRent().subtract(rsd.getSchdSuplRentPaid()));
+		balanceRepayAmount = balanceRepayAmount.subtract(rsd.getSchdSuplRentPayNow());
+
+		//	3. Increased Cost Amount
+		if (balanceRepayAmount.compareTo(rsd.getSchdIncrCost().subtract(rsd.getSchdIncrCostPaid())) > 0) {
+			rsd.setSchdIncrCostPayNow(rsd.getSchdIncrCost().subtract(rsd.getSchdIncrCostPaid()));
+		} else {
+			rsd.setSchdIncrCostPayNow(balanceRepayAmount);
+		}
+		rsd.setSchdIncrCostBal(rsd.getSchdIncrCost().subtract(rsd.getSchdIncrCostPaid()));
+		balanceRepayAmount = balanceRepayAmount.subtract(rsd.getSchdIncrCostPayNow());
 
 		//	4. Scheduled Fee Amount
 		if (balanceRepayAmount.compareTo(rsd.getSchdFee().subtract(rsd.getSchdFeePaid())) > 0) {
@@ -943,7 +974,7 @@ public class RepayCalculator implements Serializable {
 		//Refund Rule Execution for Max Allowed Refund Amount
 		BigDecimal refundResult = BigDecimal.ZERO;
 		subHeadRule.setREFUNDPFT(calRefundPft);
-		refundResult = (BigDecimal) getRuleExecutionUtil().executeRule(this.sqlRule,
+		refundResult = (BigDecimal) RuleExecutionUtil.executeRule(this.sqlRule,
 				this.subHeadRule.getDeclaredFieldValues(), repayData.getRepayMain().getFinCcy(),
 				RuleReturnType.DECIMAL);
 
@@ -1042,9 +1073,10 @@ public class RepayCalculator implements Serializable {
 				}
 
 				rsd.setRepayNet(rsd.getProfitSchdPayNow().add(rsd.getPrincipalSchdPayNow()).add(rsd.getSchdInsPayNow())
-						.add(rsd.getSchdFeePayNow()));
+						.add(rsd.getSchdSuplRentPayNow()).add(rsd.getSchdIncrCostPayNow()).add(rsd.getSchdFeePayNow()));
 				rsd.setRepayBalance(rsd.getPrincipalSchdBal().add(rsd.getProfitSchdBal()).add(rsd.getSchdInsBal())
-						.add(rsd.getSchdFeeBal()).subtract(rsd.getRepayNet()));
+						.add(rsd.getSchdSuplRentBal()).add(rsd.getSchdIncrCostBal()).add(rsd.getSchdFeeBal())
+						.subtract(rsd.getRepayNet()));
 				repayData.getRepayMain().setRepayAmountNow(balanceRepayAmount);
 				repayData.getRepayMain().setRepayAmountExcess(balanceRepayAmount);
 
@@ -1067,14 +1099,6 @@ public class RepayCalculator implements Serializable {
 
 	public void setRepayData(RepayData repayData) {
 		this.repayData = repayData;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
 	}
 
 	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {

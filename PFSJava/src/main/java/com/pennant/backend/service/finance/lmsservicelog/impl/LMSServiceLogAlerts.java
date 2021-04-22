@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -24,7 +25,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LMSServiceLogAlerts {
-	private static Logger logger = Logger.getLogger(LMSServiceLogAlerts.class);
+	private static Logger logger = LogManager.getLogger(LMSServiceLogAlerts.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private CustomerDetailsService customerDetailsService;

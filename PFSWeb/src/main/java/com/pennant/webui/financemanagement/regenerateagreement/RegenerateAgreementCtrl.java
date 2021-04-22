@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -51,7 +52,7 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	private static final long serialVersionUID = -8965600625656119486L;
 
-	private static final Logger logger = Logger.getLogger(RegenerateAgreementCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RegenerateAgreementCtrl.class);
 
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinanceDetailService financeDetailService;
@@ -293,12 +294,11 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private void generateDocument(FinanceDetail financeDetail, DocumentDetails docDetails,
 			AgreementDetail agreementDetail) {
-		String aggPath = "";
 		String docName = docDetails.getDocName();
 		String docType = docDetails.getDoctype();
 		AgreementEngine engine;
 		try {
-			engine = new AgreementEngine(aggPath);
+			engine = new AgreementEngine();
 			engine.setTemplate(docName);
 			engine.loadTemplate();
 			engine.mergeFields(agreementDetail);

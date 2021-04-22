@@ -46,7 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
@@ -96,7 +97,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5081318673331825306L;
-	private static final Logger logger = Logger.getLogger(FeeWaiverEnquiryListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FeeWaiverEnquiryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -343,6 +344,9 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				Events.postEvent("onFinanceItemDoubleClicked", window_FeeWaiverEnquiry, event);
 			}
 
+		}
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL)) {
+			this.listheader_RecordStatus.setVisible(false);
 		}
 		if (isEnquiry) {
 			this.listheader_FinProduct.setVisible(false);
@@ -927,19 +931,28 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// Default Sort on the table
-		StringBuilder whereClause = new StringBuilder(" FinIsActive = 1 ");
 
-		if (App.DATABASE == Database.ORACLE) {
-			whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
+		StringBuilder whereClause = new StringBuilder();
+		if (!isEnquiry) {
+			whereClause.append(" FinIsActive = 1");
+			if (App.DATABASE == Database.ORACLE) {
+				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
+			} else {
+				// for postgredb sometimes record type is null or empty('')
+				whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
+						+ moduleDefiner + "' ) ");
+			}
+
+			// Filtering added based on user branch and division
+			whereClause.append(" AND FinReference IN (Select FinReference from FeeWaiverHeader)");
+			whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
+
 		} else {
-			// for postgredb sometimes record type is null or empty('')
-			whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
-					+ moduleDefiner + "' ) ");
-		}
+			// Filtering added based on user branch and division
+			whereClause.append(" FinReference IN (Select FinReference from FeeWaiverHeader)");
+			whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
 
-		// Filtering added based on user branch and division
-		whereClause.append(" AND FinReference IN (Select FinReference from FeeWaiverHeader)");
-		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
+		}
 
 		searchObject.addWhereClause(whereClause.toString());
 		setSearchObj(searchObject);
@@ -1084,7 +1097,8 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		//Filter[] rcdTypeFilter = new Filter[2];
 		//rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
 		//	rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
-		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
+		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
 			//this.searchObject.addFilterOr(rcdTypeFilter);
 		}

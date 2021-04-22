@@ -14,7 +14,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,7 +40,7 @@ import com.pennanttech.pff.external.DisbursementRequest;
 import com.pennanttech.pff.model.disbursment.DisbursementData;
 
 public class DefaultDisbursementRequest extends AbstractInterface implements DisbursementRequest {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final Logger logger = LogManager.getLogger(getClass());
 
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I, IFT;
@@ -271,6 +272,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		parameterMap.put("USER_DEPT_CODE", userDetails.getDepartmentCode());
 		parameterMap.put("USER_BRANCH_CODE", userDetails.getBranchCode());
 		parameterMap.put("USER_BRANCH_NAME", userDetails.getBranchName());
+		parameterMap.put("ddMMYY", DateUtil.getSysDate("ddMMyy"));
 
 		try {
 			if ("DISB_EXPORT_DEFAULT".equals(configName) || "DISB_EXPORT_HDFC".equals(configName)) {
@@ -326,6 +328,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		sql.append(" LLDATE DISBURSEMENT_DATE,");
 		sql.append(" PAYABLELOC DRAWEE_LOCATION,");
 		sql.append(" PRINTINGLOC PRINT_LOCATION,");
+		sql.append(" CHEQUE_NUMBER,");
 		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
 		sql.append(" CUSTOMER_MOBILE,");
 		sql.append(" CUSTOMER_EMAIL,");
@@ -365,7 +368,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		sql.append(" CHANNEL,");
 		sql.append(" PARTNERBANK_ID,");
 		sql.append(" PARTNERBANK_CODE,");
-		sql.append(" PARTNERBANK_ACCOUNT");
+		sql.append(" PARTNERBANK_ACCOUNT,");
+		sql.append(" TRANSACTION_TYPE_CODE");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 
@@ -384,7 +388,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					//rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
 					rowMap.put("RESP_BATCH_ID", 0);
 					rowMap.put("TRANSACTIONREF", null);
-					rowMap.put("CHEQUE_NUMBER", null);
+					//rowMap.put("CHEQUE_NUMBER", null);
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);

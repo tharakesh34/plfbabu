@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.VASController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.VASRestService;
@@ -30,9 +32,9 @@ import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class VASWebServiceImpl implements VASSoapService, VASRestService {
+public class VASWebServiceImpl extends ExtendedTestClass implements VASSoapService, VASRestService {
 
-	private static final Logger logger = Logger.getLogger(VASWebServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VASWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
 	private VASConfigurationService vASConfigurationService;
@@ -42,8 +44,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 	/**
 	 * it fetches the approved records from the VasStructure.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return VASConfiguration
 	 */
 	@Override
@@ -144,7 +145,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				return returnStatus;
 			}
 
-			//for logging purpose
+			// for logging purpose
 			String[] logFields = new String[3];
 			logFields[0] = vasRecording.getProductCode();
 			logFields[1] = vasRecording.getPostingAgainst();
@@ -213,7 +214,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return response;
 			}
-			//for logging purpose
+			// for logging purpose
 			String[] logFields = new String[3];
 			logFields[0] = vasRecording.getProductCode();
 			logFields[1] = vasRecording.getPostingAgainst();

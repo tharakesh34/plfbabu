@@ -43,7 +43,6 @@
 package com.pennant.webui.rmtmasters.promotion;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,7 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -116,6 +116,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
+import com.pennant.webui.rmtmasters.financetype.FinTypeInsuranceListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -131,7 +132,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PromotionDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PromotionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -223,6 +224,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Component accountingDetailWindow;
 
 	protected FinTypeFeesListCtrl finTypeFeesListCtrl;
+	protected FinTypeInsuranceListCtrl finTypeInsuranceListCtrl;
 	protected FinTypeAccountingListCtrl finTypeAccountingListCtrl;
 
 	private boolean isCompReadonly = false;
@@ -319,19 +321,19 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.promotionDesc.setMaxlength(50);
 		this.actualInterestRate.setMaxlength(13);
 		this.actualInterestRate.setFormat(PennantConstants.rateFormate9);
-		this.actualInterestRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.actualInterestRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.actualInterestRate.setScale(9);
 		this.finMinTerm.setMaxlength(3);
 		this.finMaxTerm.setMaxlength(3);
 
 		this.finMinRate.setMaxlength(13);
 		this.finMinRate.setFormat(PennantConstants.rateFormate9);
-		this.finMinRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.finMinRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.finMinRate.setScale(9);
 
 		this.finMaxRate.setMaxlength(13);
 		this.finMaxRate.setFormat(PennantConstants.rateFormate9);
-		this.finMaxRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.finMaxRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.finMaxRate.setScale(9);
 
 		this.finType.setModuleName("FinanceType");
@@ -387,7 +389,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 			this.subventionRate.setMaxlength(13);
 			this.subventionRate.setFormat(PennantConstants.rateFormate9);
-			this.subventionRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+			this.subventionRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 			this.subventionRate.setScale(9);
 
 			this.dbdFeetype.setModuleName("FeeType");
@@ -882,6 +884,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("finCcy", this.finCcy);
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("finTypeInsuranceList", this.promotion.getFinTypeInsurancesList());
 
 			insuranceDetailWindow = Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceList.zul",
@@ -1329,6 +1332,10 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (this.finTypeFeesListCtrl != null) {
 			aPromotion.setFinTypeFeesList(this.finTypeFeesListCtrl.doSave());
+		}
+
+		if (this.finTypeInsuranceListCtrl != null) {
+			aPromotion.setFinTypeInsurancesList(this.finTypeInsuranceListCtrl.getFinTypeInsuranceList());
 		}
 
 		if (wve.isEmpty() && this.finTypeAccountingListCtrl != null) {
@@ -2451,6 +2458,10 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	public void setFinTypeFeesListCtrl(FinTypeFeesListCtrl finTypeFeesListCtrl) {
 		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
+	}
+
+	public void setFinTypeInsuranceListCtrl(FinTypeInsuranceListCtrl finTypeInsuranceListCtrl) {
+		this.finTypeInsuranceListCtrl = finTypeInsuranceListCtrl;
 	}
 
 	public void setFinTypeAccountingListCtrl(FinTypeAccountingListCtrl finTypeAccountingListCtrl) {

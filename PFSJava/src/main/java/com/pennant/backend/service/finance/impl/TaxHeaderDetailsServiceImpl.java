@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> implements TaxHeaderDetailsService {
-	private static final Logger logger = Logger.getLogger(TaxHeaderDetailsServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(TaxHeaderDetailsServiceImpl.class);
 
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 
@@ -28,8 +29,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 		logger.debug("Entering");
 
 		if (taxHeader.isNewRecord()) {
-			long taxHeaderId = getTaxHeaderDetailsDAO().save(taxHeader, tableType);
-			taxHeader.setHeaderId(taxHeaderId);
+			getTaxHeaderDetailsDAO().save(taxHeader, tableType);
 		} else {
 			getTaxHeaderDetailsDAO().update(taxHeader, tableType);
 		}

@@ -43,7 +43,8 @@
 
 package com.pennant.backend.service.systemmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class SubSectorServiceImpl extends GenericService<SubSector> implements SubSectorService {
 
-	private static Logger logger = Logger.getLogger(SubSectorServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(SubSectorServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SubSectorDAO subSectorDAO;

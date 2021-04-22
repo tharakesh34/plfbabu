@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -81,6 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.jdbc.DataTypeUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
@@ -92,7 +94,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchResult;
  */
 public class ExtendedMultipleSearchListBox extends Window implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ExtendedMultipleSearchListBox.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedMultipleSearchListBox.class);
 	private Textbox _textbox;
 
 	private Button _searchButton;
@@ -405,7 +407,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			Filter[] filters = new Filter[fieldString.length];
 
 			for (int i = 0; i < fieldString.length; i++) {
-				filters[i] = new Filter(fieldString[i], "%" + searchText + "%", Filter.OP_LIKE);
+				filters[i] = getSearchFilter(fieldString[i], searchText);
 			}
 			this.jdbcSearchObject.addFilterOr(filters);
 		}
@@ -528,6 +530,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		this.jdbcSearchObject.setFirstResult(start);
 		this.jdbcSearchObject.setMaxResults(getPageSize());
 		this.jdbcSearchObject.addTabelName(getModuleMapping().getLovTableName());
+		showOrder(this.jdbcSearchObject, getModuleMapping().getLovFields());
 
 		if (this.filters != null) {
 			for (int i = 0; i < filters.length; i++) {
@@ -560,5 +563,22 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
 		}
 
+	}
+
+	private Filter getSearchFilter(String field, String value) {
+		Object object = DataTypeUtil.getValueAsObject(field, value, getModuleMapping().getModuleClass());
+
+		if (object instanceof String) {
+			return new Filter(field, "%" + value + "%", Filter.OP_LIKE);
+		} else {
+			return new Filter(field, object, Filter.OP_EQUAL);
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void showOrder(JdbcSearchObject jdbcSearchObject, String[] lovFields) {
+		if (StringUtils.equals(getModuleMapping().getModuleName(), "FileBatchStatus")) {
+			this.jdbcSearchObject.addSort(lovFields[0], true);
+		}
 	}
 }

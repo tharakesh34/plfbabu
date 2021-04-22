@@ -52,7 +52,8 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 
@@ -81,7 +82,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class DashboardConfigurationServiceImpl extends GenericService<DashboardConfiguration>
 		implements DashboardConfigurationService {
-	Logger logger = Logger.getLogger(DashboardConfigurationServiceImpl.class);
+	Logger logger = LogManager.getLogger(DashboardConfigurationServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DashboardConfigurationDAO dashboardConfigurationDAO;

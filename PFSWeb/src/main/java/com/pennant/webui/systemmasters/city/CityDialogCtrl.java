@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -81,7 +82,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	private static final long serialVersionUID = -210929672381582779L;
-	private static final Logger logger = Logger.getLogger(CityDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CityDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -347,7 +348,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCity.setValue(aCity.getPCCity());
 		this.pCCityName.setValue(aCity.getPCCityName());
 		this.bankRefNo.setValue(aCity.getBankRefNo());
-		fillComboBox(this.pCCityClass, aCity.getpCCityClassification(), cityClassList, "");
+		fillComboBox(this.pCCityClass, aCity.getPCCityClassification(), cityClassList, "");
 		this.recordStatus.setValue(aCity.getRecordStatus());
 		this.cityIsActive.setChecked(aCity.isCityIsActive());
 
@@ -403,7 +404,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			wve.add(we);
 		}
 		try {
-			aCity.setpCCityClassification(this.pCCityClass.getSelectedItem().getValue().toString());
+			aCity.setPCCityClassification(this.pCCityClass.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

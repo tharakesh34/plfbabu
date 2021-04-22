@@ -46,15 +46,16 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinFeeRefundDAO;
 import com.pennant.backend.model.finance.FinFeeRefundDetails;
@@ -73,7 +74,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> implements FinFeeRefundDAO {
-	private static Logger logger = Logger.getLogger(FinFeeRefundDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeRefundDAOImpl.class);
 
 	public FinFeeRefundDAOImpl() {
 		super();
@@ -186,6 +187,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		if (type.contains("View")) {
 			sql.append(
 					" ,Fintype, FinBranch, FinCcy, lovDescCustCIF, LovDescCustShrtName, fintypedesc, branchdesc, custId ");
+			sql.append(" , FinTDSApplicable ");
 		}
 		sql.append(" FROM  FinFeeRefundHeader");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -193,8 +195,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeRefundHeader);
-		RowMapper<FinFeeRefundHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeRefundHeader.class);
+		RowMapper<FinFeeRefundHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundHeader.class);
 		try {
 			finFeeRefundHeader = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -230,8 +231,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(FinFeeRefund);
-		RowMapper<FinFeeRefundDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeRefundDetails.class);
+		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
 		try {
 			FinFeeRefund = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -256,7 +256,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal,");
+		sql.append(" Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTds,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -268,8 +268,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
 		mapSqlParameterSource.addValue("HeaderId", headerId);
-		RowMapper<FinFeeRefundDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeRefundDetails.class);
+		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
 
 		return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
 	}
@@ -282,11 +281,11 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		StringBuilder sql = new StringBuilder("insert into FinFeeRefundDetails");
 		sql.append(type);
 
-		sql.append("(Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal,");
+		sql.append("(Id, HeaderId, FeeId, RefundAmount, RefundAmtGST, RefundAmtOriginal, RefundAmtTDS,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId )");
 		sql.append(" Values ");
-		sql.append("(:Id, :HeaderId, :FeeId, :RefundAmount, :RefundAmtGST, :RefundAmtOriginal,");
+		sql.append("(:Id, :HeaderId, :FeeId, :RefundAmount, :RefundAmtGST, :RefundAmtOriginal, :RefundAmtTDS,");
 		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
@@ -318,8 +317,9 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		sql.append(type);
 		sql.append(" Set Id = :Id, HeaderId = :HeaderId, FeeId = :FeeId, RefundAmount = :RefundAmount, ");
 		sql.append(" RefundAmtGST = :RefundAmtGST, RefundAmtOriginal = :RefundAmtOriginal,");
-		sql.append(" Version = :Version,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,RecordStatus = :RecordStatus,");
-		sql.append(" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RefundAmtTDS = :RefundAmtTDS, Version = :Version, LastMntBy = :LastMntBy, ");
+		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode, ");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, ");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where Id = :Id");
 
@@ -392,13 +392,13 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		prvsFinFeeRefund.setFeeId(feeID);
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select Sum(refundAmount) as TotRefundAmount, ");
-		sql.append(" Sum(refundAmtGST) as TotRefundAmtGST, Sum(refundAmtOriginal) as TotRefundAmtOriginal ");
+		sql.append(" Sum(refundAmtGST) as TotRefundAmtGST, Sum(refundAmtOriginal) as TotRefundAmtOriginal ,");
+		sql.append(" Sum(refundAmtTDS) as TotRefundAmtTDS");
 		sql.append(" FROM  FinFeeRefundDetails");
 		sql.append(" Where FeeId =:FeeId");
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(prvsFinFeeRefund);
-		RowMapper<PrvsFinFeeRefund> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PrvsFinFeeRefund.class);
+		RowMapper<PrvsFinFeeRefund> typeRowMapper = BeanPropertyRowMapper.newInstance(PrvsFinFeeRefund.class);
 		try {
 			prvsFinFeeRefund = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -409,4 +409,33 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		return prvsFinFeeRefund;
 	}
 
+	@Override
+	public FinFeeRefundDetails getPrvRefundDetails(long headerId, long feeID) {
+		logger.debug(Literal.ENTERING);
+
+		FinFeeRefundDetails finFeeRefundDetails = new FinFeeRefundDetails();
+		finFeeRefundDetails.setFeeId(feeID);
+		finFeeRefundDetails.setHeaderId(headerId);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Sum(RefundAmount) RefundAmount, Sum(RefundAmtGST) RefundAmtGST");
+		sql.append(", Sum(RefundAmtOriginal) RefundAmtOriginal, Sum(RefundAmtTDS) RefundAmtTDS");
+		sql.append(" From FinFeeRefundDetails");
+		sql.append(" Where HeaderId <> :HeaderId and FeeId = :FeeId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeRefundDetails);
+		RowMapper<FinFeeRefundDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeRefundDetails.class);
+
+		try {
+			finFeeRefundDetails = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			finFeeRefundDetails = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return finFeeRefundDetails;
+	}
 }

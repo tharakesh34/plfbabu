@@ -1,13 +1,14 @@
 package com.pennanttech.pff.incomeexpensedetail.dao;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -16,7 +17,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader> implements IncomeExpenseHeaderDAO {
-	private static Logger logger = Logger.getLogger(IncomeExpenseHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(IncomeExpenseHeaderDAOImpl.class);
 
 	@Override
 	public IncomeExpenseHeader getIncomeExpenseHeader(long id, String type) {
@@ -26,8 +27,7 @@ public class IncomeExpenseHeaderDAOImpl extends SequenceDao<IncomeExpenseHeader>
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from org_income_expense_header").append(type).append(" where id=:id");
 
-		RowMapper<IncomeExpenseHeader> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(IncomeExpenseHeader.class);
+		RowMapper<IncomeExpenseHeader> rowMapper = BeanPropertyRowMapper.newInstance(IncomeExpenseHeader.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 

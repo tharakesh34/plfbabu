@@ -2,8 +2,9 @@ package com.pennant.webui.applicationmaster.loantypeKnockoff;
 
 import java.util.List;
 import java.util.Map;
-import org.apache.logging.log4j.Logger;
+
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -17,6 +18,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+
 import com.pennant.backend.model.finance.FinTypeKnockOff;
 import com.pennant.backend.service.applicationmaster.LoanTypeKnockOffService;
 import com.pennant.webui.applicationmaster.loantypeKnockoff.model.LoanTypeKnockOffModelItemRender;

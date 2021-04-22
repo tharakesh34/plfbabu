@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Label;
@@ -29,7 +30,7 @@ public class BounceDetailsListCtrl extends GFCBaseCtrl<ReceiptAllocationDetail> 
 	 * 
 	 */
 	private static final long serialVersionUID = -1289603949144743239L;
-	private static final Logger logger = Logger.getLogger(BounceDetailsListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BounceDetailsListCtrl.class);
 
 	protected Window window_BounceDetails;
 	protected Listbox listBounceDetails;

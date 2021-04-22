@@ -1,19 +1,21 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
+import com.pennant.backend.model.finance.ExtBreDetails;
+import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -46,8 +48,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetail);
-		RowMapper<CreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewDetails.class);
+		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
 
 		try {
 			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -75,17 +76,14 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CreditReviewData");
-		selectSql.append(
-				" Where FinReference = :FinReference AND TemplateName = :TemplateName AND TemplateVersion = :TemplateVersion");
+		selectSql.append(" Where FinReference = :FinReference AND TemplateName = :TemplateName ");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<CreditReviewData> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewData.class);
+		RowMapper<CreditReviewData> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewData.class);
 
 		try {
 			creditReviewData = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
 			creditReviewData = null;
 		}
 
@@ -175,7 +173,24 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		logger.debug(Literal.ENTERING);
 		StringBuilder selectSql = new StringBuilder();
 		StringBuilder whereCondition = new StringBuilder();
-		whereCondition.append(" Product = :Product");
+
+		if (StringUtils.isNotEmpty(creditReviewDetail.getProduct())) {
+			whereCondition.append(" Product = :Product");
+		}
+
+		if (StringUtils.isNotEmpty(creditReviewDetail.getEmploymentType())) {
+			if (StringUtils.isNotEmpty(whereCondition.toString())) {
+				whereCondition.append(" and ");
+			}
+			whereCondition.append(" EmploymentType = :EmploymentType ");
+		}
+
+		if (StringUtils.isNotEmpty(creditReviewDetail.getEligibilityMethod())) {
+			if (StringUtils.isNotEmpty(whereCondition.toString())) {
+				whereCondition.append(" and ");
+			}
+			whereCondition.append(" EligibilityMethod = :EligibilityMethod ");
+		}
 
 		selectSql.append(
 				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS, FieldKeys");
@@ -188,17 +203,57 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetail);
-		RowMapper<CreditReviewDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CreditReviewDetails.class);
+		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
 
 		try {
 			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
 			creditReviewDetail = null;
+		} catch (Exception e) {
+			creditReviewDetail = null;
+			logger.debug(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return creditReviewDetail;
+	}
+
+	@Override
+	public ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewConfig) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("select * from BREExtCreditReviewConfig where CreditReviewType =:CreditReviewType");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extCreditReviewConfig);
+		RowMapper<ExtCreditReviewConfig> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtCreditReviewConfig.class);
+
+		try {
+			extCreditReviewConfig = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			extCreditReviewConfig = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return extCreditReviewConfig;
+	}
+
+	@Override
+	public ExtBreDetails getExtBreDetailsByRef(String finReference) {
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT * ");
+		selectSql.append(" FROM  EXTBreDetails");
+		selectSql.append(" Where finReference = :finReference");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finReference", finReference);
+		RowMapper<ExtBreDetails> rowMapper = BeanPropertyRowMapper.newInstance(ExtBreDetails.class);
+		try {
+			return jdbcTemplate.queryForObject(selectSql.toString(), source, rowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 }

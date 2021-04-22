@@ -8,7 +8,8 @@ import java.util.List;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -41,7 +42,7 @@ import com.rits.cloning.Cloner;
 
 public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHeader>
 		implements ReceiptRealizationService {
-	private static final Logger logger = Logger.getLogger(ReceiptRealizationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptRealizationServiceImpl.class);
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
@@ -234,7 +235,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 					.getFinScheduleDetails(receiptHeader.getReference(), "", false);
 			if (isSchdFullyPaid(receiptHeader.getReference(), schdList)) {
 				getFinanceMainDAO().updateMaturity(receiptHeader.getReference(), FinanceConstants.CLOSE_STATUS_MATURED,
-						false);
+						false, null);
 			}
 		}
 
@@ -362,6 +363,18 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 			// Insurance
 			if ((curSchd.getInsSchd().subtract(curSchd.getSchdInsPaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+
+			// Supplementary Rent
+			if ((curSchd.getSuplRent().subtract(curSchd.getSuplRentPaid())).compareTo(BigDecimal.ZERO) > 0) {
+				fullyPaid = false;
+				break;
+			}
+
+			// Increased Cost
+			if ((curSchd.getIncrCost().subtract(curSchd.getIncrCostPaid())).compareTo(BigDecimal.ZERO) > 0) {
 				fullyPaid = false;
 				break;
 			}

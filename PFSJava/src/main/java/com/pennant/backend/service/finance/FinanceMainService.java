@@ -85,8 +85,10 @@ public interface FinanceMainService {
 
 	long getLoanWorkFlowIdByFinRef(String loanReference, String type);
 
-	FinanceMain getFinanceMain(String finReference, String[] columns);
+	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
 
 	Date getClosedDateByFinRef(String finReference);
+
+	Date getFinClosedDate(String finReference);
 
 }

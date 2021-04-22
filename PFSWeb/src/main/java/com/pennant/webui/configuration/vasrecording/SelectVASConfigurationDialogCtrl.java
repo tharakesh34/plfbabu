@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -96,7 +97,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(SelectVASConfigurationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectVASConfigurationDialogCtrl.class);
 
 	protected Window window_SelectVASConfiguration;
 	protected ExtendedCombobox productType;
@@ -331,7 +332,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasRecording.setEntityDesc(this.entityCode.getDescription());
 		} else if (this.loanRow.isVisible() && this.loanType.getAttribute("financeMain") != null) {
 			FinanceMain financeMain = (FinanceMain) this.loanType.getAttribute("financeMain");
-			vasRecording.setEntityCode(financeMain.getEntityCode());
+			vasRecording.setEntityCode(financeMain.getLovDescEntityCode());
 			vasRecording.setEntityDesc(financeMain.getLovDescEntityCode());
 
 		} else if (isFinanceProcess && getFinanceDetail() != null) {
@@ -385,6 +386,12 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(),
 					vasConfiguration.getRecAgainst());
 			vasRecording.setVasCustomer(vasCustomer);
+			//passing financeDetail object for pre and post script validations
+			if (this.loanRow.isVisible() && getFinanceDetail() == null) {
+				FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailsForPmay(loanType.getValue());
+				setFinanceDetail(financeDetail);
+			}
+
 		}
 
 		vasRecording.setVasConfiguration(vasConfiguration);

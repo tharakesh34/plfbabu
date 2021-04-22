@@ -11,7 +11,8 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -51,7 +52,7 @@ import com.pennanttech.pff.staticlist.AppStaticList;
  */
 public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(DataExtractionListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DataExtractionListCtrl.class);
 
 	protected Window window_DataExtractionList;
 

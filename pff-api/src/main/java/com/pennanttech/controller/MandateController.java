@@ -8,14 +8,14 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
@@ -45,8 +45,8 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class MandateController {
-	private final Logger logger = Logger.getLogger(getClass());
+public class MandateController extends ExtendedTestClass {
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private MandateService mandateService;
 	private BankBranchService bankBranchService;
@@ -88,11 +88,11 @@ public class MandateController {
 			mandate.setVersion(1);
 			mandate.setMandateCcy(SysParamUtil.getAppCurrency());
 			mandate.setStatus(MandateConstants.STATUS_NEW);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = mandateService.doApprove(auditHeader);
@@ -163,7 +163,7 @@ public class MandateController {
 
 		WSReturnStatus response = new WSReturnStatus();
 		try {
-			//set the default values for mandate 
+			// set the default values for mandate
 			prepareRequiredData(mandate);
 
 			Mandate prvMandate = mandateService.getApprovedMandateById(mandate.getMandateID());
@@ -177,11 +177,11 @@ public class MandateController {
 			// copy properties
 			BeanUtils.copyProperties(mandate, prvMandate);
 
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(prvMandate, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			// call update service method
@@ -217,7 +217,7 @@ public class MandateController {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = new WSReturnStatus();
 		try {
-			//get the mandate by the mandateId
+			// get the mandate by the mandateId
 			Mandate mandate = mandateService.getApprovedMandateById(mandateID);
 
 			prepareRequiredData(mandate);
@@ -225,11 +225,11 @@ public class MandateController {
 			mandate.setNewRecord(false);
 			mandate.setVersion(mandate.getVersion() + 1);
 
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			auditHeader = mandateService.doApprove(auditHeader);
@@ -266,7 +266,7 @@ public class MandateController {
 		try {
 			List<Mandate> mandatesList = mandateService.getApprovedMandatesByCustomerId(customer.getCustID());
 			if (!mandatesList.isEmpty()) {
-				//set the amount in words for response
+				// set the amount in words for response
 				for (Mandate mandate : mandatesList) {
 					BigDecimal maxlimt = PennantApplicationUtil.formateAmount(mandate.getMaxLimit(),
 							CurrencyUtil.getFormat(mandate.getMandateCcy()));
@@ -329,11 +329,11 @@ public class MandateController {
 		logger.debug(Literal.ENTERING);
 		Mandate response = null;
 		AuditHeader auditHeader = null;
-		//set status
+		// set status
 		mandate.setApproveMandate(true);
 		mandate.setStatus(MandateConstants.STATUS_APPROVED);
 
-		//set mandate detail and get audit header detail
+		// set mandate detail and get audit header detail
 		auditHeader = doSetMandateDefault(mandate);
 
 		try {
@@ -401,12 +401,12 @@ public class MandateController {
 		mandate.setVersion(1);
 		mandate.setMandateCcy(SysParamUtil.getAppCurrency());
 
-		//get the header details from the request
+		// get the header details from the request
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
 		AuditHeader auditHeader = getAuditHeader(mandate, PennantConstants.TRAN_WF);
 
-		//set the headerDetails to AuditHeader
+		// set the headerDetails to AuditHeader
 		auditHeader.setApiHeader(reqHeaderDetails);
 
 		logger.debug(Literal.LEAVING);
@@ -435,7 +435,7 @@ public class MandateController {
 		mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		mandate.setIFSC(bankBranch.getIFSC());
 		mandate.setBankBranchID(bankBranch.getBankBranchID());
-		mandate.setInputDate(DateUtility.getAppDate());
+		mandate.setInputDate(SysParamUtil.getAppDate());
 		mandate.setLastMntBy(userDetails.getUserId());
 		mandate.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		mandate.setSourceId(APIConstants.FINSOURCE_ID_API);

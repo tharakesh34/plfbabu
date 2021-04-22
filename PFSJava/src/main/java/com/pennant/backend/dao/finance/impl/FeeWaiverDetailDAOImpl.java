@@ -47,15 +47,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.TableType;
  */
 
 public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> implements FeeWaiverDetailDAO {
-	private static Logger logger = Logger.getLogger(FeeWaiverDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FeeWaiverDetailDAOImpl.class);
 
 	public FeeWaiverDetailDAOImpl() {
 		super();
@@ -191,8 +192,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverDetail);
-		RowMapper<FeeWaiverDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FeeWaiverDetail.class);
+		RowMapper<FeeWaiverDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeWaiverDetail.class);
 
 		try {
 			return jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -213,6 +213,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		sql.append(", fd.FeeTypeCode, fd.WaiverType, fd.ReceivedAmount, fd.WaivedAmount, fd.BalanceAmount");
 		sql.append(", fd.CurrWaiverAmount, fd.FeeTypeDesc, fd.actualreceivable");
 		sql.append(", fd.receivablegst, fd.curractualwaiver, fd.currwaivergst, fh.valueDate, su.usrFName waivedBy");
+		sql.append(", fd.TaxApplicable, fd.taxComponent, fh.finreference");
 		sql.append(" from FeeWaiverDetails fd");
 		sql.append(" inner join FeeWaiverHeader fh on fh.waiverId = fd.waiverId");
 		sql.append(" left join SecUsers su on fh.lastMntBy = su.usrid");
@@ -225,8 +226,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("FinReference", finReference);
 
-		RowMapper<FeeWaiverDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FeeWaiverDetail.class);
+		RowMapper<FeeWaiverDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeWaiverDetail.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
@@ -243,7 +243,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select sum(currwaivergst)");
-		sql.append(" from plf.feewaiverheader fh");
+		sql.append(" from feewaiverheader fh");
 		sql.append(" LEFT JOIN feewaiverdetails fwd on fwd.waiverid = fh.waiverid");
 		sql.append(" where adviseId = :adviseId and FinReference = :FinReference and currwaiveramount > 0 ");
 

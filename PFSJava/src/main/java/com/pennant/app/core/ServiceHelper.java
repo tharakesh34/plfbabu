@@ -46,9 +46,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -56,19 +54,21 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
+import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -77,9 +77,11 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
+import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
+import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -90,8 +92,8 @@ import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
 import com.pennant.backend.model.eod.EODConfig;
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -105,24 +107,26 @@ import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 abstract public class ServiceHelper implements Serializable {
+
 	private static final long serialVersionUID = 4165353615228874397L;
-	protected static Logger logger = Logger.getLogger(ServiceHelper.class.getClass());
+	protected static Logger logger = LogManager.getLogger(ServiceHelper.class.getClass());
 
 	private DataSource dataSource;
 	//customer
 	protected CustomerDAO customerDAO;
-	private CustomerStatusCodeDAO customerStatusCodeDAO;
+	protected CustomerStatusCodeDAO customerStatusCodeDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	//Loan
 	protected FinanceTypeDAO financeTypeDAO;
-	private FinanceMainDAO financeMainDAO;
+	protected FinanceMainDAO financeMainDAO;
 	protected FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private RepayInstructionDAO repayInstructionDAO;
-	private FinanceDisbursementDAO financeDisbursementDAO;
-	private FinanceRepaymentsDAO financeRepaymentsDAO;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	protected RepayInstructionDAO repayInstructionDAO;
+	protected FinanceDisbursementDAO financeDisbursementDAO;
+	protected FinanceRepaymentsDAO financeRepaymentsDAO;
+	protected FinanceProfitDetailDAO financeProfitDetailDAO;
 	protected FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
-	private PresentmentDetailDAO presentmentDetailDAO;
+	protected FinInsurancesDAO finInsurancesDAO;
+	protected PresentmentDetailDAO presentmentDetailDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	//accounting
 	private FinContributorDetailDAO finContributorDetailDAO;
@@ -130,23 +134,24 @@ abstract public class ServiceHelper implements Serializable {
 	private PostingsDAO postingsDAO;
 	private SecondaryAccountDAO secondaryAccountDAO;
 	private AccountProcessUtil accountProcessUtil;
-	private PostingsPreparationUtil postingsPreparationUtil;
+	protected PostingsPreparationUtil postingsPreparationUtil;
 	//over due
-	private FinODDetailsDAO finODDetailsDAO;
+	protected FinODDetailsDAO finODDetailsDAO;
 	protected ProvisionDAO provisionDAO;
 	protected ProvisionMovementDAO provisionMovementDAO;
-	private ProjectedAmortizationDAO projectedAmortizationDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
-	private RuleDAO ruleDAO;
+	protected ProjectedAmortizationDAO projectedAmortizationDAO;
+	protected RuleDAO ruleDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
-	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	protected ExtendedFieldDetailsService extendedFieldDetailsService;
 	protected FinExcessAmountDAO finExcessAmountDAO;
+	protected FinLogEntryDetailDAO finLogEntryDetailDAO;
+	protected SubventionDetailDAO subventionDetailDAO;
 
 	@Autowired
-	private EODConfigDAO eodConfigDAO;
+	protected EODConfigDAO eodConfigDAO;
 	private static EODConfig eodConfig;
 
-	public long getAccountingID(FinanceMain main, String eventCode) {
+	public Long getAccountingID(FinanceMain main, String eventCode) {
 		//FIXME: PV:  28AUG19. No Separate Accounting for Promotion
 		/*
 		 * if (StringUtils.isNotBlank(main.getPromotionCode())) { return
@@ -160,14 +165,14 @@ abstract public class ServiceHelper implements Serializable {
 				FinanceConstants.MODULEID_FINTYPE);
 	}
 
-	public final AEEvent postAccountingEOD(AEEvent aeEvent) throws Exception {
-		aeEvent.setPostingUserBranch("EOD");//FIXME
+	public final void postAccountingEOD(AEEvent aeEvent) throws Exception {
+		aeEvent.setPostingUserBranch("EOD");
 		aeEvent.setEOD(true);
-		return getPostingsPreparationUtil().postAccountingEOD(aeEvent);
+		postingsPreparationUtil.postAccountingEOD(aeEvent);
 	}
 
 	public final void saveAccountingEOD(List<ReturnDataSet> returnDataSets) throws Exception {
-		getPostingsPreparationUtil().saveAccountingEOD(returnDataSets);
+		postingsPreparationUtil.saveAccountingEOD(returnDataSets);
 	}
 
 	/**
@@ -257,7 +262,7 @@ abstract public class ServiceHelper implements Serializable {
 	 * @return
 	 */
 	public final List<SecondaryAccount> getSecondaryAccounts(String finReference) {
-		return getSecondaryAccountDAO().getSecondaryAccountsByFinRef(finReference, "");
+		return secondaryAccountDAO.getSecondaryAccountsByFinRef(finReference, "");
 	}
 
 	/**
@@ -282,33 +287,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	}
 
-	public FinanceProfitDetail getFinPftDetailRef(String finMainRef, List<FinanceProfitDetail> listprofitDetails) {
-		FinanceProfitDetail profitDetail = null;
-		Iterator<FinanceProfitDetail> it = listprofitDetails.iterator();
-		while (it.hasNext()) {
-			FinanceProfitDetail financeProfitDetail = (FinanceProfitDetail) it.next();
-			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
-				profitDetail = financeProfitDetail;
-				it.remove();
-				break;
-			}
-		}
-		return profitDetail;
-	}
-
-	public List<FinanceScheduleDetail> getFinSchdDetailRef(String finMainRef, List<FinanceScheduleDetail> finSchdlist) {
-		List<FinanceScheduleDetail> finSchedulelist = new ArrayList<FinanceScheduleDetail>();
-		Iterator<FinanceScheduleDetail> it = finSchdlist.iterator();
-		while (it.hasNext()) {
-			FinanceScheduleDetail financeProfitDetail = (FinanceScheduleDetail) it.next();
-			if (StringUtils.equals(financeProfitDetail.getFinReference(), finMainRef)) {
-				finSchedulelist.add(financeProfitDetail);
-				it.remove();
-			}
-		}
-		return finSchedulelist;
-	}
-
 	public void loadEODConfig() {
 		try {
 			List<EODConfig> list = eodConfigDAO.getEODConfig();
@@ -321,64 +299,44 @@ abstract public class ServiceHelper implements Serializable {
 		}
 	}
 
-	public FinContributorDetailDAO getFinContributorDetailDAO() {
-		return finContributorDetailDAO;
+	protected boolean isOldestDueOverDue(FinanceScheduleDetail curSchd) {
+		if (ImplementationConstants.ALLOW_OLDEST_DUE) {
+			FinODDetails od = finODDetailsDAO.getFinODByFinRef(curSchd.getFinReference(), curSchd.getSchDate());
+			if (od != null && (od.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0
+					&& (od.getFinCurODPft().compareTo(BigDecimal.ZERO) > 0
+							|| od.getFinCurODPri().compareTo(BigDecimal.ZERO) > 0))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setFinContributorDetailDAO(FinContributorDetailDAO finContributorDetailDAO) {
 		this.finContributorDetailDAO = finContributorDetailDAO;
 	}
 
-	public PostingsDAO getPostingsDAO() {
-		return postingsDAO;
-	}
-
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
 	}
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public SecondaryAccountDAO getSecondaryAccountDAO() {
-		return secondaryAccountDAO;
 	}
 
 	public void setSecondaryAccountDAO(SecondaryAccountDAO secondaryAccountDAO) {
 		this.secondaryAccountDAO = secondaryAccountDAO;
 	}
 
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
-	public CustomerStatusCodeDAO getCustomerStatusCodeDAO() {
-		return customerStatusCodeDAO;
-	}
-
 	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
 		this.customerStatusCodeDAO = customerStatusCodeDAO;
-	}
-
-	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
-		return financeProfitDetailDAO;
 	}
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
@@ -393,88 +351,48 @@ abstract public class ServiceHelper implements Serializable {
 		this.dataSource = dataSource;
 	}
 
-	public FinTypeAccountingDAO getFinTypeAccountingDAO() {
-		return finTypeAccountingDAO;
-	}
-
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
 		this.finTypeAccountingDAO = finTypeAccountingDAO;
-	}
-
-	public RepayInstructionDAO getRepayInstructionDAO() {
-		return repayInstructionDAO;
 	}
 
 	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
 		this.repayInstructionDAO = repayInstructionDAO;
 	}
 
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
-	}
-
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
-	}
-
-	public FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
 	}
 
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
-	}
-
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
-	}
-
-	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
-		return financeRepaymentsDAO;
 	}
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public FinFeeScheduleDetailDAO getFinFeeScheduleDetailDAO() {
-		return finFeeScheduleDetailDAO;
 	}
 
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
 
-	public PresentmentDetailDAO getPresentmentDetailDAO() {
-		return presentmentDetailDAO;
+	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
+		this.finInsurancesDAO = finInsurancesDAO;
 	}
 
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
 		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 
-	public AccountProcessUtil getAccountProcessUtil() {
-		return accountProcessUtil;
-	}
-
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
-	}
-
-	public CustomerQueuingDAO getCustomerQueuingDAO() {
-		return customerQueuingDAO;
 	}
 
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
@@ -485,48 +403,20 @@ abstract public class ServiceHelper implements Serializable {
 		this.provisionDAO = provisionDAO;
 	}
 
-	public EODConfigDAO getEodConfigDAO() {
-		return eodConfigDAO;
-	}
-
 	public EODConfig getEodConfig() {
 		return eodConfig;
-	}
-
-	public ProjectedAmortizationDAO getProjectedAmortizationDAO() {
-		return projectedAmortizationDAO;
 	}
 
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
 		this.projectedAmortizationDAO = projectedAmortizationDAO;
 	}
 
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public RuleDAO getRuleDAO() {
-		return ruleDAO;
-	}
-
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
 
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
-	}
-
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
-		return extendedFieldDetailsService;
 	}
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
@@ -537,16 +427,24 @@ abstract public class ServiceHelper implements Serializable {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
-	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
-		return finServiceInstructionDAO;
-	}
-
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
 
+	public FinLogEntryDetailDAO getFinLogEntryDetailDAO() {
+		return finLogEntryDetailDAO;
+	}
+
+	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
+		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
+	}
+
 	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
 		this.provisionMovementDAO = provisionMovementDAO;
+	}
+
+	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
+		this.subventionDetailDAO = subventionDetailDAO;
 	}
 
 }

@@ -44,7 +44,8 @@ package com.pennant.util;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -55,7 +56,7 @@ public class MySerializationListener
 		implements EventListener<Event>, EventInterceptor, java.io.Serializable, ComponentSerializationListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(MySerializationListener.class);
+	private static final Logger logger = LogManager.getLogger(MySerializationListener.class);
 
 	public MySerializationListener() {
 	}

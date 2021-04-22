@@ -19,7 +19,8 @@ import org.apache.cxf.interceptor.LoggingMessage;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.APIHeader;
@@ -33,10 +34,10 @@ import com.pennanttech.ws.log.model.APILogDetail;
  */
 
 public class LogRequestInterceptor extends LoggingInInterceptor {
-	static final Logger log = Logger.getLogger(LogRequestInterceptor.class);
+	static final Logger log = LogManager.getLogger(LogRequestInterceptor.class);
 
 	private APILogDetailDAO apiLogDetailDAO;
-	SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
+	private SimpleDateFormat dateFormat = new SimpleDateFormat(PennantConstants.APIDateFormatter);
 
 	public LogRequestInterceptor() {
 		super(Phase.RECEIVE);

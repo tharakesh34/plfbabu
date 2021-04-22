@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class HolidayMaster extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 7047561032260705575L;
-	private static final Logger logger = Logger.getLogger(HolidayMaster.class);
+	private static final Logger logger = LogManager.getLogger(HolidayMaster.class);
 
 	private String holidayCode;
 	private String holidayCodeDesc;

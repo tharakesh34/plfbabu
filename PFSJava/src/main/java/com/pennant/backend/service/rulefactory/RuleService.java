@@ -93,7 +93,11 @@ public interface RuleService {
 
 	Rule getApprovedRule(String ruleCode, String ruleModule, String ruleEvent);
 
+	public Rule getActiveRuleByID(final String id, final String module, final String event, boolean active);
+
 	List<Rule> getGSTRuleDetails(String ruleModule, String type);
 
 	List<Rule> getEligibilityRules(List<String> ruleCodes);
+
+	Rule getRuleById(String code, String module, String event, String type);
 }

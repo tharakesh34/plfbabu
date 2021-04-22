@@ -8,4 +8,6 @@ public interface DisbursementProcess {
 	void updateStatus(Object... params);
 
 	FinAdvancePayments getFinAdvancePayments(FinAdvancePayments finAdvancePayments);
+
+	int processDisbursement(FinAdvancePayments finadv);
 }

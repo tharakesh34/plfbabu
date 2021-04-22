@@ -39,35 +39,283 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="false">
-				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-						<columns>
-							<column width="15%" />
-							<column width="35%" />
-							<column width="15%" />
-							<column width="35%" />
-						</columns>
-						<rows>
-							<row id="row0">
-								<label id="label_name" value="${c:l('label_BuilderProjcetDialog_name.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="name" maxlength="50" width="200px" />
-								</hbox>
-								<label id="label_segmentation" value="${c:l('label_BuilderProjcetDialog_builderId.value')}" />
-								<extendedcombobox id="builderId" />
-							</row>
-							<row id="row1">
-								<label id="label_apfNo" value="${c:l('label_BuilderProjcetDialog_apfNo.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<textbox id="apfNo" maxlength="20" width="200px" />
-								</hbox>
-							</row>
-						</rows>
-					</grid>
-				</groupbox>
+			<center border="none" autoscroll="true">
+				<div width="100%">
+					<groupbox id="gb_basicDetails"></groupbox>
+					<tabbox width="100%">
+						<tabs id="tabsIndexCenter">
+							<tab label="${c:l('label_BuilderProjcetDialog_ProjectDetails.value')}" id="tabProjectDetails" />
+							<tab label="${c:l('label_BuilderProjectDialog_ProjectUnits.value')}" id="tabProjectUnits" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto" id="tp_ProjectDetails">
+								<div id="divKeyDetails">
+									<groupbox id="gb_keyDetails">
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
+											<columns>
+												<column width="220px" />
+												<column width="360px" />
+												<column width="220px" />
+												<column width="360px" />
+											</columns>
+											<rows>
+												<row visible="true">
+													<label id="label_name" value="${c:l('label_BuilderProjcetDialog_name.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<uppercasebox id="name" width="200px" />
+													</hbox>
+													<label id="label_buildercompany" value="${c:l('label_BuilderProjcetDialog_builderId.value')}" />
+													<extendedcombobox id="builderId" />
+												</row>
+												<row>
+													<label id="label_apfNo" value="${c:l('label_BuilderProjcetDialog_apfNo.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="apfNo" maxlength="20" width="200px" />
+													</hbox>
+													<label id="label_registrationNumber" value="${c:l('label_BuilderProjectDialog_registrationNumber.value')}">
+													</label>
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="registrationNumber" width="200px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_commencementCertificateNo" value="${c:l('label_BuilderProjcetDialog_commencementCertificateNo.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="commencementCertificateNo" width="200px" />
+													</hbox>
+													<label id="label_commencementCertificateIssuingAuthority" value="${c:l('label_BuilderProjectDialog_commencementCertificateIssuingAuthority.value')}">
+													</label>
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="commencecrtfctissuingauthority" width="200px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_addressLine1" value="${c:l('label_BuilderProjectDialog_addressLine1.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<textbox id="addressLine1" width="200px" />
+													</hbox>
+													<label id="label_addressLine2" value="${c:l('label_BuilderProjectDialog_addressLine2.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<textbox id="addressLine2" width="200px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_addressLine3" value="${c:l('label_BuilderProjectDialog_addressLine3.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="addressLine3" width="200px" />
+													</hbox>
+													<label id="label_landmark" value="${c:l('label_BuilderProjectDialog_landmark.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="landmark" width="200px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_AreaOrLocality" value="${c:l('label_BuilderProjectDialog_AreaOrLocality.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="areaOrLocality" width="200px" />
+													</hbox>
+													<label id="label_City" value="${c:l('label_BuilderProjectDialog_City.value')}" />
+													<extendedcombobox id="city" />
+
+												</row>
+												<row>
+													<label id="label_State" value="${c:l('label_BuilderProjectDialog_State.value')}" />
+													<extendedcombobox id="state" />
+													<label id="label_Code" value="${c:l('label_BuilderProjectDialog_Code.value')}" />
+													<extendedcombobox id="pinCode" />
+												</row>
+												<row>
+													<label id="label_ProjectType" value="${c:l('label_BuilderProjectDialog_ProjectType.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="projectType" width="150px" />
+													</hbox>
+													<label id="label_TypesOfApf" value="${c:l('label_BuilderProjectDialog_TypesOfApf.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="typesOfApf" width="150px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_TotalPlotArea" value="${c:l('label_BuilderProjectDialog_TotalPlotArea.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<intbox id="totalPlotArea" width="150px" />
+													</hbox>
+													<label id="label_ConstructedArea" value="${c:l('label_BuilderProjectDialog_ConstructedArea.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<intbox id="constructedArea" width="150px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_TotalUnits" value="${c:l('label_BuilderProjectDialog_TotalUnits.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<intbox id="totalUnits" width="200px" />
+													</hbox>
+													<label id="label_NumberOfTowers" value="${c:l('label_BuilderProjectDialog_NumberOfTowers.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<intbox id="numberOfTowers" width="200px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_NoOfIndependentHouses" value="${c:l('label_BuilderProjectDialog_NoOfIndependentHouses.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<intbox id="noOfIndependentHouses" width="200px" />
+													</hbox>
+													<label id="label_ProjectStartDate" value="${c:l('label_BuilderProjectDialog_ProjectStartDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="projectStartDate" width="150px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_ProjectEndDate" value="${c:l('label_BuilderProjectDialog_ProjectEndDate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<datebox id="projectEndDate" width="150px" />
+													</hbox>
+													<label id="label_TechnicalDone" value="${c:l('label_BuilderProjectDialog_TechnicalDone.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="technicalDone" width="150px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_LegalDone" value="${c:l('label_BuilderProjectDialog_LegalDone.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="legalDone" width="150px" />
+													</hbox>
+													<label id="label_RCUDone" value="${c:l('label_BuilderProjectDialog_RCUDone.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="rcuDone" width="150px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_ConstructionCompletionPercentage" value="${c:l('label_BuilderProjectDialog_ConstructionCompletionPercentage.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="constrctincompletionpercentage" width="200px" />
+													</hbox>
+													<label id="label_DisbursalRecommendedPercentage" value="${c:l('label_BuilderProjectDialog_DisbursalRecommendedPercentage.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="disbursalRecommendedPercentage" width="200px" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_Remarks" value="${c:l('label_BuilderProjectDialog_Remarks.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="remarks" width="250px" multiline="true" height="60px" style="resize: none;" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+
+									<groupbox id="gb_beneficiaryDetails">
+										<caption label="${c:l('beneficiaryDetails')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label id="label_IFSC" value="${c:l('label_BuilderProjectDialog_IFSC.value')}" />
+													<hbox>
+														<extendedcombobox id="bankBranchID" />
+													</hbox>
+													<label id="label_BuilderProjectDialog__BankName" value="${c:l('label_BuilderProjectDialog__BankName.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="bankName" readonly="true" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_Branch" value="${c:l('label_BuilderProjectDialog_Branch.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="branch" readonly="true" />
+													</hbox>
+													<label id="label_BuilderProjectDialog__BeneficiaryName" value="${c:l('label_BuilderProjectDialog__BeneficiaryName.value')}" />
+													<hbox>
+														<space spacing="2px" id="space_BeneficiaryName" />
+														<textbox id="beneficiaryName" />
+													</hbox>
+												</row>
+
+												<row>
+													<label id="label_BuilderProjectDialog_AccountNo" value="${c:l('label__BuilderProjectDialog_AccountNo.value')}" />
+													<hbox>
+														<space spacing="2px" id="space_AccountNo" />
+														<textbox id="accountNo" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+								</div>
+							</tabpanel>
+							<tabpanel style="overflow:auto" id="tp_ProjectUnits">
+								<groupbox sclass="gb_dialog">
+									<div sclass="z-toolbar" style="padding:0">
+										<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+											<toolbar align="start" style="border:none;">
+												<label value="${c:l('ProjectUnits')}" sclass="listboxHeading">
+												</label>
+											</toolbar>
+											<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+												<button id="btnNewProjectUnits" label="${c:l('label_New')}" tooltiptext="${c:l('button_NewProjectUnits.tooltiptext')}"
+													autodisable="btnNewProjectUnits" />
+											</toolbar>
+										</hbox>
+									</div>
+									<listbox id="listBoxProjectUnits" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}"
+										width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+										<listhead sizable="true">
+											<listheader id="listheaderUnitType" label="${c:l('listheader_UnitType.label')}" sort="false"
+												hflex="min" />
+											<listheader id="listheaderTower" label="${c:l('listheader_Tower.label')}" sort="false" hflex="min" />
+											<listheader id="listheaderFloorNumber" label="${c:l('listheader_FloorNumber.label')}" sort="false"
+												hflex="min" />
+											<listheader id="listheaderUnitNumber" label="${c:l('listheader_UnitNumber.label')}" sort="false"
+												hflex="min" />
+											<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="false" hflex="min" />
+										</listhead>
+									</listbox>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
 			</center>
 			<south sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">
@@ -81,4 +329,4 @@
 			</south>
 		</borderlayout>
 	</window>
-</zk> 
+</zk>

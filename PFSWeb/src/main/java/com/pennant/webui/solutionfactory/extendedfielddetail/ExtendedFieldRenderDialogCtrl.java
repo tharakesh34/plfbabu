@@ -10,7 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -47,7 +48,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * 
 	 */
 	private static final long serialVersionUID = -995824171042829810L;
-	private static final Logger logger = Logger.getLogger(ExtendedFieldRenderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldRenderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -488,77 +489,132 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 					Listcell lc = new Listcell();
 					String fieldType = "";
 					if (fieldTypeMap.containsKey(fieldName) && checkFieldType) {
-
 						ExtendedFieldDetail fieldDetail = fieldTypeMap.get(fieldName);
 						fieldType = fieldDetail.getFieldType();
 
-						if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_DATE)) {
-							cellValue = DateUtil.formatToLongDate((Date) fieldValue);
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_DATETIME)) {
-							cellValue = DateUtil.format((Date) fieldValue, DateFormat.LONG_DATE_TIME);
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_TIME)) {
-							cellValue = DateUtil.format((Date) fieldValue, DateFormat.LONG_TIME);
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_INT)) {
+						switch (fieldType) {
+						case ExtendedFieldConstants.FIELDTYPE_DATE:
+							Date date = null;
+							if (fieldValue != null && fieldValue instanceof Date) {
+								date = (Date) fieldValue;
+							}
+							cellValue = DateUtil.formatToLongDate(date);
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_DATETIME:
+							Date dateTime = null;
+							if (fieldValue != null && fieldValue instanceof Date) {
+								dateTime = (Date) fieldValue;
+							}
+							cellValue = DateUtil.format(dateTime, DateFormat.LONG_DATE_TIME);
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_TIME:
+							Date time = null;
+							if (fieldValue != null && fieldValue instanceof Date) {
+								time = (Date) fieldValue;
+							}
+
+							cellValue = DateUtil.format(time, DateFormat.LONG_TIME);
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_INT:
+							String integer = "0";
+							if (fieldValue != null) {
+								integer = String.valueOf(fieldValue);
+							}
+
+							cellValue = integer;
+
+							lc.setStyle("text-align:right");
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_LONG:
 							cellValue = String.valueOf(fieldValue);
 							lc.setStyle("text-align:right");
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_LONG)) {
-							cellValue = String.valueOf(fieldValue);
-							lc.setStyle("text-align:right");
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_STATICCOMBO)) {
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_STATICCOMBO:
 							if (!StringUtils.equals(String.valueOf(fieldValue), PennantConstants.List_Select)) {
 								cellValue = String.valueOf(fieldValue);
 							}
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO)) {
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_MULTISTATICCOMBO:
 							if (!StringUtils.equals(String.valueOf(fieldValue), PennantConstants.List_Select)) {
 								cellValue = String.valueOf(fieldValue);
 							}
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {
-							cellValue = PennantApplicationUtil.formatRate(Double.valueOf(String.valueOf(fieldValue)),
-									fieldDetail.getFieldPrec());
-							lc.setStyle("text-align:right");
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_DECIMAL)) {
-							cellValue = PennantApplicationUtil.amountFormate(new BigDecimal(String.valueOf(fieldValue)),
-									fieldDetail.getFieldPrec());
-							lc.setStyle("text-align:right");
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_AMOUNT)) {
-							cellValue = PennantApplicationUtil.amountFormate(new BigDecimal(String.valueOf(fieldValue)),
-									format);
-							lc.setStyle("text-align:right");
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_PERCENTAGE)) {
-							if (fieldValue == null) {
-								cellValue = PennantApplicationUtil.formatRate(Double.valueOf(0),
-										fieldDetail.getFieldPrec());
-							} else {
-								cellValue = PennantApplicationUtil.formatRate(
-										Double.valueOf(String.valueOf(fieldValue)), fieldDetail.getFieldPrec());
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_ACTRATE:
+							Double rate = Double.valueOf("0");
+							if (fieldValue != null) {
+								rate = Double.valueOf(String.valueOf(fieldValue));
 							}
+
+							cellValue = PennantApplicationUtil.formatRate(rate, fieldDetail.getFieldPrec());
 							lc.setStyle("text-align:right");
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_BOOLEAN)) {
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_DECIMAL:
+							BigDecimal decimal = BigDecimal.ZERO;
+							if (fieldValue != null) {
+								decimal = new BigDecimal(String.valueOf(fieldValue));
+							}
+
+							cellValue = PennantApplicationUtil.amountFormate(decimal, fieldDetail.getFieldPrec());
+
+							lc.setStyle("text-align:right");
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
+							BigDecimal amount = BigDecimal.ZERO;
+							if (fieldValue != null) {
+								amount = new BigDecimal(String.valueOf(fieldValue));
+							}
+
+							cellValue = PennantApplicationUtil.amountFormate(amount, format);
+							lc.setStyle("text-align:right");
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
+							Double percentage = Double.valueOf("0");
+							if (fieldValue != null) {
+								percentage = Double.valueOf(String.valueOf(fieldValue));
+							}
+
+							cellValue = PennantApplicationUtil.formatRate(percentage, fieldDetail.getFieldPrec());
+							lc.setStyle("text-align:right");
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_BOOLEAN:
 							Checkbox checkbox = new Checkbox();
 							checkbox.setDisabled(true);
 							if (fieldValue != null) {
-								checkbox.setChecked(Integer.parseInt(fieldValue.toString()) == 1 ? true : false);
+								if (fieldValue instanceof Boolean) {
+									checkbox.setChecked((boolean) fieldValue);
+								} else {
+									checkbox.setChecked(Integer.parseInt(fieldValue.toString()) == 1 ? true : false);
+								}
 							}
 							lc.appendChild(checkbox);
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_FRQ)) {
-							cellValue = FrequencyUtil.getFrequencyDetail(String.valueOf(fieldValue))
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_FRQ:
+							if (fieldValue == null) {
+								fieldValue = "";
+							}
+							cellValue = FrequencyUtil.getFrequencyDetail(fieldValue.toString())
 									.getFrequencyDescription();
-						} else if (StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_BASERATE)) {
+							break;
+						case ExtendedFieldConstants.FIELDTYPE_BASERATE:
 							cellValue = detail.get(fieldName + "_BR") + "/" + detail.get(fieldName + "_SR") + "/"
 									+ PennantApplicationUtil.formatRate(
 											Double.valueOf(String.valueOf(detail.get(fieldName + "_MR"))), 9);
-						} else {
+							break;
+						default:
 							cellValue = String.valueOf(fieldValue == null ? "" : fieldValue);
+							break;
 						}
+
 					}
 
 					//Setting Value to List Cell
-					if (!StringUtils.equals(fieldType, ExtendedFieldConstants.FIELDTYPE_BOOLEAN)) {
+					if (!ExtendedFieldConstants.FIELDTYPE_BOOLEAN.equals(fieldType)) {
 						lc.setLabel(cellValue);
 					}
 
 					item.appendChild(lc);
 				}
+
 				item.setAttribute("data", fieldValueDetail);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onExtendedFieldItemDoubleClicked");
 				listBoxExtendedFieldRenderdetails.appendChild(item);

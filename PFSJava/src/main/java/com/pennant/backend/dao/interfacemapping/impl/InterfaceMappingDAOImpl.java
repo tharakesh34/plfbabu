@@ -45,14 +45,15 @@ package com.pennant.backend.dao.interfacemapping.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.interfacemapping.InterfaceMappingDAO;
 import com.pennant.backend.model.interfacemapping.InterfaceMapping;
@@ -64,7 +65,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> implements InterfaceMappingDAO {
-	private static Logger logger = Logger.getLogger(InterfaceMappingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(InterfaceMappingDAOImpl.class);
 
 	public InterfaceMappingDAOImpl() {
 		super();
@@ -99,8 +100,7 @@ public class InterfaceMappingDAOImpl extends SequenceDao<InterfaceMapping> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceMapping);
-		RowMapper<InterfaceMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InterfaceMapping.class);
+		RowMapper<InterfaceMapping> typeRowMapper = BeanPropertyRowMapper.newInstance(InterfaceMapping.class);
 
 		try {
 			interfaceMapping = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

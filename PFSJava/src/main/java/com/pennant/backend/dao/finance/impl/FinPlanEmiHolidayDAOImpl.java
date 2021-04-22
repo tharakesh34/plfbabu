@@ -47,7 +47,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -60,7 +61,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * DAO methods implementation for the <b>AgreementFieldDetails model</b> class.<br>
  */
 public class FinPlanEmiHolidayDAOImpl extends BasicDao<FinPlanEmiHoliday> implements FinPlanEmiHolidayDAO {
-	private static Logger logger = Logger.getLogger(FinPlanEmiHolidayDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinPlanEmiHolidayDAOImpl.class);
 
 	public FinPlanEmiHolidayDAOImpl() {
 		super();

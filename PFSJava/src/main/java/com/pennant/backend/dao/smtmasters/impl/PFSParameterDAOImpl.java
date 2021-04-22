@@ -1,52 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PFSParameterDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-07-2011    														*
- *                                                                  						*
- * Modified Date    :  12-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PFSParameterDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-07-2011 * * Modified
+ * Date : 12-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-07-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
 package com.pennant.backend.dao.smtmasters.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,11 +32,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 import com.pennant.backend.model.smtmasters.PFSParameter;
@@ -95,45 +72,41 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		sql.append(", SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntOn");
 		sql.append(", LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId");
-		sql.append(" from SMTparameters");
+		sql.append(" From SMTParameters");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where SysParmCode = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<PFSParameter>() {
-						@Override
-						public PFSParameter mapRow(ResultSet rs, int rowNum) throws SQLException {
-							PFSParameter smtp = new PFSParameter();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, i) -> {
+				PFSParameter smtp = new PFSParameter();
 
-							smtp.setSysParmCode(rs.getString("SysParmCode"));
-							smtp.setSysParmDesc(rs.getString("SysParmDesc"));
-							smtp.setSysParmType(rs.getString("SysParmType"));
-							smtp.setSysParmMaint(rs.getBoolean("SysParmMaint"));
-							smtp.setSysParmValue(rs.getString("SysParmValue"));
-							smtp.setSysParmLength(rs.getInt("SysParmLength"));
-							smtp.setSysParmDec(rs.getInt("SysParmDec"));
-							smtp.setSysParmList(rs.getString("SysParmList"));
-							smtp.setSysParmValdMod(rs.getString("SysParmValdMod"));
-							smtp.setSysParmDescription(rs.getString("SysParmDescription"));
-							smtp.setVersion(rs.getInt("Version"));
-							smtp.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							smtp.setLastMntBy(rs.getLong("LastMntBy"));
-							smtp.setRecordStatus(rs.getString("RecordStatus"));
-							smtp.setRoleCode(rs.getString("RoleCode"));
-							smtp.setNextRoleCode(rs.getString("NextRoleCode"));
-							smtp.setTaskId(rs.getString("TaskId"));
-							smtp.setNextTaskId(rs.getString("NextTaskId"));
-							smtp.setRecordType(rs.getString("RecordType"));
-							smtp.setWorkflowId(rs.getLong("WorkflowId"));
+				smtp.setSysParmCode(rs.getString("SysParmCode"));
+				smtp.setSysParmDesc(rs.getString("SysParmDesc"));
+				smtp.setSysParmType(rs.getString("SysParmType"));
+				smtp.setSysParmMaint(rs.getBoolean("SysParmMaint"));
+				smtp.setSysParmValue(rs.getString("SysParmValue"));
+				smtp.setSysParmLength(rs.getInt("SysParmLength"));
+				smtp.setSysParmDec(rs.getInt("SysParmDec"));
+				smtp.setSysParmList(rs.getString("SysParmList"));
+				smtp.setSysParmValdMod(rs.getString("SysParmValdMod"));
+				smtp.setSysParmDescription(rs.getString("SysParmDescription"));
+				smtp.setVersion(rs.getInt("Version"));
+				smtp.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				smtp.setLastMntBy(rs.getLong("LastMntBy"));
+				smtp.setRecordStatus(rs.getString("RecordStatus"));
+				smtp.setRoleCode(rs.getString("RoleCode"));
+				smtp.setNextRoleCode(rs.getString("NextRoleCode"));
+				smtp.setTaskId(rs.getString("TaskId"));
+				smtp.setNextTaskId(rs.getString("NextTaskId"));
+				smtp.setRecordType(rs.getString("RecordType"));
+				smtp.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return smtp;
-						}
-					});
+				return smtp;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("System parameter not exists with the parameter code {}.", id);
+			logger.warn("Record is not found in SMTParameters{} for the specified SysParmCode >> {}", type, id);
 		}
 
 		return null;
@@ -226,59 +199,43 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 */
 	@Override
 	public void update(PFSParameter pFSParameter, String type) {
-		int recordCount = 0;
-		logger.debug("Entering ");
-		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SysParmDesc = :SysParmDesc, ");
-		updateSql.append(" SysParmType = :SysParmType, SysParmMaint = :SysParmMaint, ");
-		updateSql.append(" SysParmValue = :SysParmValue, SysParmLength = :SysParmLength, ");
-		updateSql.append(" SysParmDec = :SysParmDec, SysParmList = :SysParmList, ");
-		updateSql.append(" SysParmValdMod = :SysParmValdMod, SysParmDescription = :SysParmDescription, ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where SysParmCode =:SysParmCode");
+		StringBuilder sql = new StringBuilder("Update SMTparameters");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set SysParmDesc = :SysParmDesc, ");
+		sql.append(" SysParmType = :SysParmType, SysParmMaint = :SysParmMaint, ");
+		sql.append(" SysParmValue = :SysParmValue, SysParmLength = :SysParmLength, ");
+		sql.append(" SysParmDec = :SysParmDec, SysParmList = :SysParmList, ");
+		sql.append(" SysParmValdMod = :SysParmValdMod, SysParmDescription = :SysParmDescription, ");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" Where SysParmCode =:SysParmCode");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
+			sql.append(" AND Version= :Version-1");
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving ");
 	}
 
-	/**
-	 * This method updates the Record SMTparameters or SMTparameters_Temp. update System Parameter value by key
-	 * SysParmCode
-	 * 
-	 * @param sysParmCode
-	 * @param sysParmValue
-	 * @param type
-	 */
 	@Override
 	public void update(String sysParmCode, String sysParmValue, String type) {
-		logger.debug("Entering ");
+		StringBuilder sql = new StringBuilder("Update SMTparameters");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set SysParmValue = ?");
+		sql.append(" Where SysParmCode = ?");
 
-		PFSParameter pFSParameter = new PFSParameter();
-		pFSParameter.setSysParmCode(sysParmCode);
-		pFSParameter.setSysParmValue(sysParmValue);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, sysParmValue);
+			ps.setString(2, sysParmCode);
 
-		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SysParmValue = :SysParmValue ");
-		updateSql.append(" Where SysParmCode =:SysParmCode");
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving ");
+		});
 	}
 
 	/**
@@ -312,7 +269,7 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		selectSql.append(" Version , LastMntBy, LastMntOn From SMTparameters");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new PFSParameter());
 
-		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
+		RowMapper<PFSParameter> typeRowMapper = BeanPropertyRowMapper.newInstance(PFSParameter.class);
 		List<PFSParameter> systemParms = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");
@@ -323,40 +280,25 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * Method for get the list of Global Variable records
 	 */
 	public List<GlobalVariable> getGlobaVariables() {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, Code, Name, Value, Type");
 		sql.append(" from GlobalVariables");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					// FIXME
-				}
-			}, new RowMapper<GlobalVariable>() {
-				@Override
-				public GlobalVariable mapRow(ResultSet rs, int rowNum) throws SQLException {
-					GlobalVariable gv = new GlobalVariable();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+		}, (rs, rowNum) -> {
+			GlobalVariable gv = new GlobalVariable();
 
-					gv.setId(rs.getLong("Id"));
-					gv.setCode(rs.getString("Code"));
-					gv.setName(rs.getString("Name"));
-					gv.setValue(rs.getString("Value"));
-					gv.setType(rs.getString("Type"));
+			gv.setId(rs.getLong("Id"));
+			gv.setCode(rs.getString("Code"));
+			gv.setName(rs.getString("Name"));
+			gv.setValue(rs.getString("Value"));
+			gv.setType(rs.getString("Type"));
 
-					return gv;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return gv;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 }

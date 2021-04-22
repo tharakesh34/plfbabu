@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.customermasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -11,7 +12,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class CoreCustomerDAOImpl extends BasicDao<Customer> implements CoreCustomerDAO {
 
-	private static Logger logger = Logger.getLogger(CoreCustomerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CoreCustomerDAOImpl.class);
 
 	public CoreCustomerDAOImpl() {
 		super();

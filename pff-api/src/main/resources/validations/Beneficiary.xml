@@ -101,7 +101,7 @@
 		</field>
 
 
-		<field name="accHolderName">
+		<!-- <field name="accHolderName">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>acHolderName is Mandatory</message>
 				<groups>
@@ -129,7 +129,7 @@
 				</groups>
 				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
 			</constraint>
-		</field>
+		</field> -->
 
 
 		<!-- <field name="phoneCountryCode"> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>phoneCountryCode 

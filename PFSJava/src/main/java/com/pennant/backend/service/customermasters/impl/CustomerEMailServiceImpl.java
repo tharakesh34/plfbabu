@@ -47,7 +47,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> implements CustomerEMailService {
 
-	private static Logger logger = Logger.getLogger(CustomerEMailServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerEMailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerEMailDAO customerEMailDAO;

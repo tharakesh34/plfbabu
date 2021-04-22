@@ -43,6 +43,7 @@
 package com.pennant.backend.service.solutionfactory;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -75,5 +76,8 @@ public interface ExtendedFieldDetailService {
 
 	//### 08-05-2018 Development Iteam 81
 	boolean isFieldAssignedToRule(String fieldName);
+
+	Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName, String event,
+			String field, String type);
 
 }

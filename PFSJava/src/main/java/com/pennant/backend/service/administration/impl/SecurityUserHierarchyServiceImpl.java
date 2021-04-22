@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.administration.SecurityUserHierarchyDAO;
 import com.pennant.backend.model.administration.ReportingManager;
@@ -58,7 +59,7 @@ import com.pennant.backend.service.administration.SecurityUserHierarchyService;
 
 public class SecurityUserHierarchyServiceImpl extends GenericService<SecurityUserHierarchy>
 		implements SecurityUserHierarchyService {
-	private static Logger logger = Logger.getLogger(SecurityUserHierarchyServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserHierarchyServiceImpl.class);
 
 	private SecurityUserHierarchyDAO securityUserHierarchyDAO;
 

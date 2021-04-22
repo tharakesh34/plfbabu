@@ -93,6 +93,8 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 	private Long partnerBankId;
 	private String partnerBankCode;
 	private String partnerBankName;
+	private String branchCity;
+	private String branchCode;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -118,6 +120,8 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 		excludeFields.add("bankCode");
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
+		excludeFields.add("branchCity");
+		excludeFields.add("branchCode");
 		return excludeFields;
 	}
 
@@ -307,6 +311,22 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 
 	public void setPartnerBankName(String partnerBankName) {
 		this.partnerBankName = partnerBankName;
+	}
+
+	public String getBranchCity() {
+		return branchCity;
+	}
+
+	public void setBranchCity(String branchCity) {
+		this.branchCity = branchCity;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
 	}
 
 }

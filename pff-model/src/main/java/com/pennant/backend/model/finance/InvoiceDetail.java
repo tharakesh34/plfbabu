@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 public class InvoiceDetail extends AbstractEntity {
@@ -22,6 +23,7 @@ public class InvoiceDetail extends AbstractEntity {
 	private boolean origination;
 	private boolean isWaiver;
 	private boolean dbInvSetReq;
+	private EventProperties eventProperties = new EventProperties();
 
 	public InvoiceDetail() {
 		super();
@@ -137,6 +139,14 @@ public class InvoiceDetail extends AbstractEntity {
 
 	public void setFpriAmount(BigDecimal fpriAmount) {
 		this.fpriAmount = fpriAmount;
+	}
+
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
 	}
 
 }

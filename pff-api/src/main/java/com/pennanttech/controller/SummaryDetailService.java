@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -39,8 +40,8 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.util.APIConstants;
 
-public class SummaryDetailService {
-	private static final Logger logger = Logger.getLogger(SummaryDetailService.class);
+public class SummaryDetailService extends ExtendedTestClass {
+	private static final Logger logger = LogManager.getLogger(SummaryDetailService.class);
 
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	protected FinODDetailsDAO finODDetailsDAO;
@@ -73,8 +74,7 @@ public class SummaryDetailService {
 			finPftDetail = accrualService.calProfitDetails(financeMain, curSchd.getFinanceScheduleDetails(),
 					finPftDetail, DateUtility.getAppDate());
 
-			// override repay profit rate with FinProfitdetail calculated value(which is
-			// latest).
+			// override repay profit rate with FinProfitdetail calculated value(which is latest).
 			financeMain.setRepayProfitRate(finPftDetail.getCurReducingRate());
 			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
 			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
@@ -88,8 +88,7 @@ public class SummaryDetailService {
 			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
 			// Total future Installments
-			// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() +
-			// finPftDetail.getNOODInst());
+			// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
 			summary.setFutureInst(finPftDetail.getFutureInst());
 			summary.setFutureTenor(
 					DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
@@ -101,6 +100,9 @@ public class SummaryDetailService {
 			summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
 			summary.setOutStandProfit(finPftDetail.getTotalPftBal());
 			summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
+			summary.setPrincipal(finPftDetail.getTdSchdPriBal());
+			summary.setFuturePrincipal(finPftDetail.getTotalPriBal().subtract(finPftDetail.getTdSchdPriBal()));
+			summary.setInterest(finPftDetail.getTdSchdPftBal());
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				summary.setSanctionAmt(financeMain.getFinAssetValue());
@@ -108,8 +110,7 @@ public class SummaryDetailService {
 				summary.setAvailableAmt(summary.getSanctionAmt().subtract(summary.getUtilizedAmt()));
 			}
 
-			// As part of Bajaj implementation this field is required for GetLoan & SOA
-			// API's only.
+			// As part of Bajaj implementation this field is required for GetLoan & SOA API's only.
 			summary.setAdvPaymentAmount(BigDecimal.ZERO);
 
 			// set Finance closing status
@@ -130,7 +131,7 @@ public class SummaryDetailService {
 					Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 						@Override
 						public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-							return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
+							return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
 						}
 					});
 
@@ -432,8 +433,7 @@ public class SummaryDetailService {
 	}
 
 	public FinScheduleData resetScheduleDetail(FinScheduleData finScheduleData) {
-		// Resetting Maturity Terms & Summary details rendering in case of Reduce
-		// maturity cases
+		// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
 		if (finScheduleData == null || finScheduleData.getFinanceScheduleDetails() == null) {
 			return finScheduleData;
 		}

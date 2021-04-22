@@ -74,8 +74,6 @@ public class ReinstateFinanceListModelItemRenderer implements ListitemRenderer<R
 		Listcell lc;
 		lc = new Listcell(reinstateFinance.getFinType());
 		lc.setParent(item);
-		lc = new Listcell(reinstateFinance.getFinCategory());
-		lc.setParent(item);
 		lc = new Listcell(reinstateFinance.getCustCIF());
 		lc.setParent(item);
 		lc = new Listcell(reinstateFinance.getFinReference());

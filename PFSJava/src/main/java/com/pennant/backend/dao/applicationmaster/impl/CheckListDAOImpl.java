@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CheckListDAO;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckListDAO {
-	private static Logger logger = Logger.getLogger(CheckListDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CheckListDAOImpl.class);
 
 	public CheckListDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckLis
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkList);
-		RowMapper<CheckList> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CheckList.class);
+		RowMapper<CheckList> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckList.class);
 
 		try {
 			checkList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -162,8 +163,8 @@ public class CheckListDAOImpl extends SequenceDao<CheckList> implements CheckLis
 	public long save(CheckList checkList, String type) {
 		logger.debug("Entering");
 		if (checkList.getId() == Long.MIN_VALUE) {
-			checkList.setId(getNextId("SeqBMTCheckList"));
-			logger.debug("get NextID:" + checkList.getId());
+			checkList.setId(getNextValue("SeqBMTCheckList"));
+			logger.debug("get NextValue:" + checkList.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into BMTCheckList");

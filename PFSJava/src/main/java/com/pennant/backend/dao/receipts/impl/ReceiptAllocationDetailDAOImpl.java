@@ -49,17 +49,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocationDetail>
 		implements ReceiptAllocationDetailDAO {
-	private static Logger logger = Logger.getLogger(ReceiptAllocationDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReceiptAllocationDetailDAOImpl.class);
 
 	public ReceiptAllocationDetailDAOImpl() {
 		super();
@@ -83,6 +84,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
 		sql.append(", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId");
+		sql.append(", TdsDue, TdsPaid, TdsWaived");
 		sql.append(", TdsDue, TdsPaid, TdsWaived");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -118,7 +120,10 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 					rad.setPaidGST(rs.getBigDecimal("PaidGST"));
 					rad.setTotalDue(rs.getBigDecimal("TotalDue"));
 					rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
-					rad.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+					rad.setTaxHeaderId(rs.getLong("TaxHeaderId"));//TdsDue,TdsPaid,TdsWaived
+					rad.setTdsDue(rs.getBigDecimal("TdsDue"));
+					rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+					rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));
 					rad.setTdsDue(rs.getBigDecimal("TdsDue"));
 					rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
 					rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));
@@ -156,30 +161,56 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 	@Override
 	public void saveAllocations(List<ReceiptAllocationDetail> allocations, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
 		for (ReceiptAllocationDetail allocation : allocations) {
 			if (allocation.getReceiptAllocationid() == Long.MIN_VALUE) {
 				allocation.setReceiptAllocationid(getNextValue("SeqReceiptAllocationDetail"));
-				logger.debug("get NextID:" + allocation.getReceiptAllocationid());
 			}
 		}
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into ReceiptAllocationDetail");
 		sql.append(tableType.getSuffix());
-		sql.append("(ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
-		sql.append(
-				", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId,TdsDue,TdsPaid,TdsWaived)");
-		sql.append(" Values(:ReceiptAllocationid, :ReceiptID, :AllocationID, :AllocationType, :AllocationTo");
-		sql.append(
-				", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue, :WaivedGST, :TaxHeaderId,:TdsDue,:TdsPaid,:TdsWaived)");
+		sql.append(" (ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
+		sql.append(", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue");
+		sql.append(", WaivedGST, TaxHeaderId, TdsDue, TdsPaid, TdsWaived");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(allocations.toArray());
-		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+		this.jdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ReceiptAllocationDetail rAD = allocations.get(i);
+
+				int index = 1;
+
+				ps.setLong(index++, rAD.getReceiptAllocationid());
+				ps.setLong(index++, rAD.getReceiptID());
+				ps.setInt(index++, rAD.getAllocationID());
+				ps.setString(index++, rAD.getAllocationType());
+				ps.setLong(index++, rAD.getAllocationTo());
+				ps.setBigDecimal(index++, rAD.getPaidAmount());
+				ps.setBigDecimal(index++, rAD.getWaivedAmount());
+				ps.setString(index++, rAD.getWaiverAccepted());
+				ps.setBigDecimal(index++, rAD.getPaidGST());
+				ps.setBigDecimal(index++, rAD.getTotalDue());
+				ps.setBigDecimal(index++, rAD.getWaivedGST());
+				ps.setLong(index++, JdbcUtil.setLong(rAD.getTaxHeaderId()));
+				ps.setBigDecimal(index++, rAD.getTdsDue());
+				ps.setBigDecimal(index++, rAD.getTdsPaid());
+				ps.setBigDecimal(index++, rAD.getTdsWaived());
+
+			}
+
+			@Override
+			public int getBatchSize() {
+				return allocations.size();
+			}
+		});
+
 	}
 
 	//MIGRATION PURPOSE
@@ -211,7 +242,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		List<ReceiptAllocationDetail> allocations = null;
 
 		try {
-			RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+			RowMapper<ReceiptAllocationDetail> typeRowMapper = BeanPropertyRowMapper
 					.newInstance(ReceiptAllocationDetail.class);
 			allocations = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {

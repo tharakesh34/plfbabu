@@ -2,6 +2,7 @@ package com.pennanttech.webui.verification;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,8 +11,9 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -23,6 +25,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -83,8 +86,8 @@ import com.pennanttech.pff.core.TableType;
 public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final long serialVersionUID = 8661799804403963415L;
 	private static final Logger logger = LogManager.getLogger(TVerificationDialogCtrl.class);
-	private static final String COSTOFPROPERTY = "COSTOFPROPERTY";
-	private static final String TOTALVALUATIONASPE = "TOTALVALUATIONASPE";
+	private static final String DOCVALUE = ImplementationConstants.VER_TV_COLL_ED_PROP_COST_COLUMN;
+	private static final String TOTALVALUATIONASPE = ImplementationConstants.VER_TV_COLL_ED_PROP_VAL_COLUMN;
 
 	protected Window window_TVerificationDialog;
 	protected Groupbox finBasicdetails;
@@ -194,7 +197,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		doCheckRights();
 		doShowDialog();
 
-		if (StringUtils.equals("Approved", financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
+		if (!enqiryModule && StringUtils.equals("Approved",
+				financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
 			//renderVerificationForAddDisbursement(financeDetail.getCollateralAssignmentList(), financeDetail);
 		}
 
@@ -247,9 +251,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void setVerifications() {
 		List<CollateralAssignment> collaterls = null;
 
-		if (initType) {
-			collaterls = financeDetail.getCollateralAssignmentList();
-		}
+		collaterls = financeDetail.getCollateralAssignmentList();
 
 		verifications = getFinalVerifications(collaterls, financeDetail);
 
@@ -273,7 +275,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 
 		if (verificationIDs.size() > 0) {
-			List<Verification> verificationList = technicalVerificationService.getTvValuation(verificationIDs);
+			List<Verification> verificationList = technicalVerificationService.getTvValuation(verificationIDs, "_View");
 			valuationDetails.addAll(verificationList);
 		}
 
@@ -299,17 +301,24 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
+		//Get Document Value from collateral extended fields.
+
 		for (Verification veri : verifications) {
 			String collRef = veri.getReferenceFor();
-			if (!collateralCOP.containsKey(collRef.concat(COSTOFPROPERTY))) {
-				Map<String, Object> valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef,
-						veri.getCollateralType());
+			if (!collateralCOP.containsKey(collRef.concat(DOCVALUE))) {
+				Map<String, Object> valAmounts = new HashMap<>();
+				if (StringUtils.isNotEmpty(veri.getCollateralType())) {
+					valAmounts = technicalVerificationService.getCostOfPropertyValue(collRef, veri.getCollateralType(),
+							TOTALVALUATIONASPE);
+				}
 				if (!valAmounts.isEmpty()) {
-					if (valAmounts.get(COSTOFPROPERTY) instanceof String) {
-						collateralCOP.put(collRef.concat(COSTOFPROPERTY),
-								new BigDecimal(valAmounts.get(COSTOFPROPERTY).toString()));
+					if (valAmounts.get(DOCVALUE) != null) {
+						collateralCOP.put(collRef.concat(DOCVALUE),
+								(PennantApplicationUtil.formateAmount(
+										new BigDecimal(valAmounts.get(DOCVALUE).toString()),
+										PennantConstants.defaultCCYDecPos)));
 					}
-					if (valAmounts.get(TOTALVALUATIONASPE) instanceof String) {
+					if (valAmounts.get(TOTALVALUATIONASPE) != null) {
 						collateralCOP.put(collRef.concat(TOTALVALUATIONASPE),
 								new BigDecimal(valAmounts.get(TOTALVALUATIONASPE).toString()));
 					}
@@ -317,13 +326,15 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		for (Verification verification : verifications) {
-			if (collateralCOP.containsKey(verification.getReferenceFor().concat(COSTOFPROPERTY))) {
-				verification.setValueForCOP(collateralCOP.get(verification.getReferenceFor().concat(COSTOFPROPERTY)));
-			}
-			if (collateralCOP.containsKey(verification.getReferenceFor().concat(TOTALVALUATIONASPE))) {
-				verification.setFinalValAsPerPE(
-						collateralCOP.get(verification.getReferenceFor().concat(TOTALVALUATIONASPE)));
+		if (!collateralCOP.isEmpty()) {
+			for (Verification verification : verifications) {
+				if (collateralCOP.containsKey(verification.getReferenceFor().concat(DOCVALUE))) {
+					verification.setValueForCOP(collateralCOP.get(verification.getReferenceFor().concat(DOCVALUE)));
+				}
+				if (collateralCOP.containsKey(verification.getReferenceFor().concat(TOTALVALUATIONASPE))) {
+					verification.setFinalValAsPerPE(
+							collateralCOP.get(verification.getReferenceFor().concat(TOTALVALUATIONASPE)));
+				}
 			}
 		}
 
@@ -352,8 +363,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (CollectionUtils.isNotEmpty(financeDetail.getCollaterals().get(0).getExtendedFieldRenderList())) {
 					Map<String, Object> map = financeDetail.getCollaterals().get(0).getExtendedFieldRenderList().get(0)
 							.getMapValues();
-					propCity = String.valueOf(map.get("PROPERTYCITY"));
+					propCity = String.valueOf(map.get(ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN));
 				}
+				collateralCity.put(financeDetail.getCollaterals().get(0).getCollateralRef(), propCity);
 			}
 			renderList(getFinalVerifications(collaterals, financeDetail));
 		}
@@ -416,11 +428,26 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// Set the old verification fields back.
 		List<Verification> oldVerifications = getOldVerifications();
-		tempVerifications.addAll(oldVerifications);
+		//PSD#157163 UAT2 : TV Initiation : able to initiate TV for deleted collateral.
+		List<Verification> tempOldVerifications = new ArrayList<>();
+		if (enqiryModule) {
+			collaterals = Collections.emptyList();
+			tempOldVerifications.addAll(oldVerifications);
+		}
+		if (CollectionUtils.isNotEmpty(collaterals)) {
+			for (Verification verification : oldVerifications) {
+				for (CollateralAssignment collateral : collaterals) {
+					if (StringUtils.equals(verification.getReferenceFor(), collateral.getCollateralRef())) {
+						tempOldVerifications.add(verification);
+					}
+				}
+			}
+		}
+		tempVerifications.addAll(tempOldVerifications);
 		for (Verification previous : tempVerifications) {
 			if (previous.getReinitid() != null) {
 				verifications.add(previous);
-				oldVerifications.remove(previous);
+				tempOldVerifications.remove(previous);
 				continue;
 			}
 
@@ -430,7 +457,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				for (CollateralAssignment collateral : collaterals) {
 					if (StringUtils.equals(collateral.getCollateralRef(), previous.getReferenceFor())) {
 						boolean collateralChanged = false;
-						if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+						if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 							collateralChanged = technicalVerificationService.isCollateralChanged(previous,
 									TableType.TEMP_TAB);
 						} else {
@@ -462,7 +489,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				} else {
 					current.setNewRecord(false);
 				}
-				oldVerifications.remove(previous);
+				tempOldVerifications.remove(previous);
 				newcollateralMap.put(current.getReferenceFor(), current);
 				collateralMap.remove(current.getReferenceFor());
 			}
@@ -470,7 +497,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		verifications.addAll(newcollateralMap.values());
 		verifications.addAll(collateralMap.values());
-		verifications.addAll(oldVerifications);
+		verifications.addAll(tempOldVerifications);
 
 		for (Verification object : verifications) {
 			if ((deletedSet.contains(object.getReferenceFor()) && (object.isNew()
@@ -630,25 +657,32 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void onchangeVerificationType(Combobox cfiv, ExtendedCombobox cAgency, ExtendedCombobox cReason) {
 		RequestType type;
-		type = RequestType.getType(Integer.parseInt(cfiv.getSelectedItem().getValue()));
+		type = RequestType.getType(NumberUtils.toInt(cfiv.getSelectedItem().getValue()));
 
-		switch (type) {
-		case INITIATE:
-			cAgency.setReadonly(false);
-			cReason.setValue("");
-			cReason.setReadonly(true);
-			break;
-		case WAIVE:
-			cAgency.setValue("");
-			cAgency.setReadonly(true);
-			cReason.setReadonly(false);
-			break;
-		default:
+		if (type == null) {
 			cAgency.setValue("");
 			cReason.setValue("");
 			cAgency.setReadonly(true);
 			cReason.setReadonly(true);
-			break;
+		} else {
+			switch (type) {
+			case INITIATE:
+				cAgency.setReadonly(false);
+				cReason.setValue("");
+				cReason.setReadonly(true);
+				break;
+			case WAIVE:
+				cAgency.setValue("");
+				cAgency.setReadonly(true);
+				cReason.setReadonly(false);
+				break;
+			default:
+				cAgency.setValue("");
+				cReason.setValue("");
+				cAgency.setReadonly(true);
+				cReason.setReadonly(true);
+				break;
+			}
 		}
 	}
 
@@ -907,7 +941,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				requestType.setDisabled(true);
 			}
 
-			fillComboBox(requestType, reqType, list);
+			fillComboBox(requestType, reqType, list, "");
 
 			requestType.setParent(listCell);
 			listCell.setParent(item);
@@ -931,7 +965,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				verificationCategory.setDisabled(true);
 			}
 
-			fillComboBox(verificationCategory, verificationCate, verificationCatList);
+			fillComboBox(verificationCategory, verificationCate, verificationCatList,
+					"," + VerificationCategory.ONEPAGER.getKey().toString().concat(","));
 			listCell.appendChild(verificationCategory);
 			listCell.setParent(item);
 
@@ -1108,11 +1143,31 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void onClickAgencyButton(ForwardEvent event) throws Exception {
+
+		int noOfVerification = 0;
+
 		Listitem listItem = (Listitem) event.getData();
+		Label referenceFor = (Label) getComponent(listItem, "ReferenceFor");
+
+		List<Listitem> listItems = this.listBoxTechnicalVerification.getItems();
+
+		if (CollectionUtils.isNotEmpty(listItems)) {
+			for (Listitem listIt : listItems) {
+				Label collateralRef = (Label) getComponent(listIt, "ReferenceFor");
+				if (StringUtils.equals(collateralRef.getValue(), referenceFor.getValue())) {
+					noOfVerification++;
+				}
+
+				if (noOfVerification == 3) {
+					MessageUtil.showMessage(Labels.getLabel("label_TVInitiation_AgencyValidation.value"));
+					return;
+				}
+			}
+		}
+
 		Label refType = (Label) getComponent(listItem, "ReferenceType");
 		Label reference = (Label) getComponent(listItem, "Reference");
 		Label custName = (Label) getComponent(listItem, "CustName");
-		Label referenceFor = (Label) getComponent(listItem, "ReferenceFor");
 		Verification verification = new Verification();
 		verification.setNewRecord(true);
 		verification.setReferenceType(refType.getValue());
@@ -1166,7 +1221,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		listCell.appendChild(requestType);
 		listCell.setParent(item);
 		list.remove(3);
-		fillComboBox(requestType, RequestType.INITIATE.getKey(), list);
+		fillComboBox(requestType, RequestType.INITIATE.getKey(), list, "");
 
 		//Verification Category
 		Combobox verificationCategory = new Combobox();
@@ -1184,10 +1239,16 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				verificationCate = VerificationCategory.EXTERNAL.getKey();
 			}
 
-			fillComboBox(verificationCategory, verificationCate, verificationCatList);
+			fillComboBox(verificationCategory, verificationCate, verificationCatList, "");
 			listCell.appendChild(verificationCategory);
 			listCell.setParent(item);
+
+			fillComboBox(verificationCategory, verificationCate, verificationCatList,
+					"," + VerificationCategory.ONEPAGER.getKey().toString().concat(","));
 		}
+
+		listCell.appendChild(verificationCategory);
+		listCell.setParent(item);
 
 		// Agency
 		listCell = new Listcell();
@@ -1313,18 +1374,18 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (decision == Decision.SELECT.getKey()) {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
-			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList));
+			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList), "");
 		} else if (status == TVStatus.NEGATIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			if (decision == Decision.APPROVE.getKey()) {
 				vrf.setDecision(Decision.SELECT.getKey());
 			}
-			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList));
+			fillComboBox(combobox, vrf.getDecision(), filterDecisions(decisionList), "");
 		} else if (requestType == RequestType.WAIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
-			fillComboBox(combobox, decision, filterDecisions(decisionList));
+			fillComboBox(combobox, decision, filterDecisions(decisionList), "");
 		} else {
-			fillComboBox(combobox, decision, Decision.getList());
+			fillComboBox(combobox, decision, Decision.getList(), "");
 		}
 	}
 
@@ -1353,6 +1414,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			collateralCity.put(collRef, propCity);
 		}
 
+		if (collateralCity.containsKey(collRef) && StringUtils.isBlank(collateralCity.get(collRef))) {
+			collateralCity.put(collRef, propCity);
+		}
+
 		agency.setModuleName("VerificationAgencies");
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
@@ -1377,10 +1442,11 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					String[] agencies = new String[2];
 					agencies[0] = VerificationCategory.INTERNAL.getValue();
 					agencies[1] = VerificationCategory.ONEPAGER.getValue();
-
 					agencyFilter[1] = new Filter("DealerName", agencies, Filter.OP_NOT_IN);
+					//Commented the below lines to fix the external agency filter issue as per the core version
 					//agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
 					//agencyFilter[2] = new Filter("DealerCity", collateralCity.get(collRef), Filter.OP_EQUAL);
+
 				}
 			}
 		}
@@ -1500,7 +1566,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "VerificationCategory":
 			String verCategory = ((Combobox) getComponent(listitem, "VerificationCategory")).getSelectedItem()
 					.getValue();
-			item.setVerificationCategory(Integer.parseInt(verCategory));
+			if (!verCategory.equals(PennantConstants.List_Select)) {
+				item.setVerificationCategory(Integer.parseInt(verCategory));
+			}
 			break;
 		case "Reason":
 			ExtendedCombobox reason = ((ExtendedCombobox) getComponent(listitem, "Reason"));
@@ -1537,7 +1605,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Textbox textbox = (Textbox) getComponent(listitem, "ReInitRemarks");
 			item.setDecisionRemarks(textbox.getValue());
 			if (item.getDecision() == Decision.OVERRIDE.getKey() && StringUtils.isEmpty(item.getDecisionRemarks())) {
-				throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
+				throw new WrongValueException(textbox, Labels.getLabel("label_OVERRIDE_Validation"));
 			}
 			break;
 		default:
@@ -1665,13 +1733,26 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list) {
+	private void fillComboBox(Combobox combobox, int value, List<ValueLabel> list, String excludeFields) {
 		combobox.getChildren().clear();
+
+		combobox.getChildren().clear();
+		Comboitem comboitem = new Comboitem();
+		comboitem.setValue(PennantConstants.List_Select);
+		comboitem.setLabel(Labels.getLabel("Combo.Select"));
+		combobox.appendChild(comboitem);
+		combobox.setSelectedItem(comboitem);
+		combobox.setReadonly(true);
+
 		for (ValueLabel valueLabel : list) {
-			Comboitem comboitem = new Comboitem();
-			comboitem.setValue(valueLabel.getValue());
-			comboitem.setLabel(valueLabel.getLabel());
-			combobox.appendChild(comboitem);
+
+			if (!excludeFields.contains("," + valueLabel.getValue() + ",")) {
+				comboitem = new Comboitem();
+				comboitem.setValue(valueLabel.getValue());
+				comboitem.setLabel(valueLabel.getLabel());
+				combobox.appendChild(comboitem);
+			}
+
 			if (Integer.parseInt(valueLabel.getValue()) == value) {
 				combobox.setSelectedItem(comboitem);
 			}
@@ -1709,7 +1790,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.userAction = userAction;
 		doClearMessage();
 
-		if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+		if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 			doSetValidation();
 		} else if (!recSave) {
 			doSetValidation();
@@ -1754,7 +1835,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						}
 
 						//For request type waive skip the collateral validations 
-						if (verification.getRequestType() != 2 && verification.getRequestType() != 3) {
+						if (verification.getRequestType() != 2 || verification.getRequestType() != 3) {
 							if (!"OK".equals(verification.getFinalValDecision())) {
 								MessageUtil.showError("Collateral final valuation not met.");
 								return false;
@@ -1774,6 +1855,20 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						.equals(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT)) {
 					loanAmt = financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue();
 				}
+				String formatFinalValAmt = PennantApplicationUtil.amountFormate(finalvalAmt,
+						PennantConstants.defaultCCYDecPos);
+				String formatLoanAmt = PennantApplicationUtil.amountFormate(loanAmt, PennantConstants.defaultCCYDecPos);
+				for (Verification verification : verificationList) {
+					//For request type waive skip the collateral validations
+					if (!(verification.getRequestType() == RequestType.REQUEST.getKey()
+							|| verification.getRequestType() == RequestType.WAIVE.getKey())) {
+						if (finalvalAmt.compareTo(loanAmt) < 0) {
+							MessageUtil.showError("Valuation amount :".concat(formatFinalValAmt)
+									.concat(" is lesser than the loan amount :".concat(formatLoanAmt)));
+							return false;
+						}
+					}
+				}
 
 				BigDecimal collAssignment = BigDecimal.ZERO;
 
@@ -1785,7 +1880,6 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						for (CollateralAssignment collData : financeDetail.getTempCollateralAssignmentList()) {
 							if (verification.getReferenceFor().equals(collData.getCollateralRef())) {
 								collAssignment = collAssignment.add(collData.getBankValuation());
-								System.out.println(collAssignment);
 							}
 						}
 					}
@@ -1840,6 +1934,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		arg.put("verifications", verifications);
 		arg.put("tVerificationDialogCtrl", this);
 		arg.put("enqiryModule", enqiryModule);
+		arg.put("financeDetail", financeDetail);
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FinalValuationDialog.zul",
 					null, arg);
@@ -1864,6 +1959,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.TV, PennantConstants.TRAN_WF, initType);
 			refreshList();
+			String msg = Labels.getLabel("TV_INITIATION",
+					new String[] { financeDetail.getFinScheduleData().getFinReference() });
+			Clients.showNotification(msg, "info", null, null, -1);
 			closeDialog();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

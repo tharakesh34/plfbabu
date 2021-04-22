@@ -46,11 +46,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
@@ -133,28 +135,39 @@ public class FrequencyUtil implements Serializable {
 				Labels.getLabel("label_Select_W7") };
 	}
 
+	private static List<ValueLabel> frequencyCodes = null;
+
+	private static ValueLabel getValueLabel(String value, String labelKey) {
+		return new ValueLabel(value, Labels.getLabel(labelKey));
+	}
+
 	public static List<ValueLabel> getFrequency() {
-		List<ValueLabel> frequencyCode = new ArrayList<ValueLabel>();
 
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_YEARLY, Labels.getLabel("label_Select_Yearly")));
-
-		String brInrtRvwFrqDayValReq = SysParamUtil
-				.getValueAsString(SMTParameterConstants.ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ);
-		if (StringUtils.equals(brInrtRvwFrqDayValReq, PennantConstants.YES)) {
-			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_2YEARLY, Labels.getLabel("label_Select_2Yearly")));
-			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_3YEARLY, Labels.getLabel("label_Select_3Yearly")));
+		if (CollectionUtils.isNotEmpty(frequencyCodes)) {
+			return frequencyCodes;
 		}
-		frequencyCode
-				.add(new ValueLabel(FrequencyCodeTypes.FRQ_HALF_YEARLY, Labels.getLabel("label_Select_HalfYearly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_QUARTERLY, Labels.getLabel("label_Select_Quarterly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_BIMONTHLY, Labels.getLabel("label_Select_BiMonthly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_MONTHLY, Labels.getLabel("label_Select_Monthly")));
-		frequencyCode
-				.add(new ValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, Labels.getLabel("label_Select_Fortnightly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_BIWEEKLY, Labels.getLabel("label_Select_BiWeekly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_WEEKLY, Labels.getLabel("label_Select_Weekly")));
-		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_DAILY, Labels.getLabel("label_Select_Daily")));
-		return frequencyCode;
+
+		frequencyCodes = new ArrayList<>();
+
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_YEARLY, "label_Select_Yearly"));
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ)) {
+			frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_2YEARLY, "label_Select_2Yearly"));
+			frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_3YEARLY, "label_Select_3Yearly"));
+		}
+
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_HALF_YEARLY, "label_Select_HalfYearly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_QUARTERLY, "label_Select_Quarterly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIMONTHLY, "label_Select_BiMonthly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_MONTHLY, "label_Select_Monthly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_FORTNIGHTLY, "label_Select_Fortnightly"));
+		if (ImplementationConstants.FRQ_15DAYS_REQ) {
+			frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_15DAYS, "label_Select_15DAYS"));
+		}
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_BIWEEKLY, "label_Select_BiWeekly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_WEEKLY, "label_Select_Weekly"));
+		frequencyCodes.add(getValueLabel(FrequencyCodeTypes.FRQ_DAILY, "label_Select_Daily"));
+		return frequencyCodes;
 	}
 
 	public static String getRepayFrequencyLabel(String frequency) {
@@ -184,6 +197,9 @@ public class FrequencyUtil implements Serializable {
 			break;
 		case FrequencyCodeTypes.FRQ_FORTNIGHTLY:
 			repayFrequency = Labels.getLabel("label_Select_Fortnightly");
+			break;
+		case FrequencyCodeTypes.FRQ_15DAYS:
+			repayFrequency = Labels.getLabel("label_Select_15DAYS");
 			break;
 		case FrequencyCodeTypes.FRQ_BIWEEKLY:
 			repayFrequency = Labels.getLabel("label_Select_BiWeekly");
@@ -276,6 +292,9 @@ public class FrequencyUtil implements Serializable {
 		case 'F':
 			arrfrqMonth.add(new ValueLabel(M00, Labels.getLabel("label_Select_Fortnightly")));
 			break;
+		case 'T':
+			arrfrqMonth.add(new ValueLabel(M00, Labels.getLabel("label_Select_15DAYS")));
+			break;
 		case 'X':
 			arrfrqMonth.add(new ValueLabel(M00, Labels.getLabel("label_Select_BiWeekly")));
 			break;
@@ -312,6 +331,9 @@ public class FrequencyUtil implements Serializable {
 			case 'X':
 			case 'F':
 				days = 14;
+				break;
+			case 'T':
+				days = 15;
 				break;
 			case 'W':
 				days = 7;
@@ -480,6 +502,16 @@ public class FrequencyUtil implements Serializable {
 
 			frequencyDetail.setFrequencyDescription(
 					Labels.getLabel("label_Select_Fortnightly") + "," + frequencyDetail.getFrequencyDay());
+			break;
+		case 'T':
+
+			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 1, 15, frequencyDetail));
+			if (frequencyDetail.getErrorDetails() != null) {
+				return frequencyDetail;
+			}
+
+			frequencyDetail.setFrequencyDescription(
+					Labels.getLabel("label_Select_15DAYS") + "," + frequencyDetail.getFrequencyDay());
 			break;
 
 		case 'X':
@@ -825,6 +857,12 @@ public class FrequencyUtil implements Serializable {
 			return getQHYSchedule(terms, baseDate, frequencyDetails, handlerType, 1, includeBaseDate);
 		case 'F':
 			return getFortnightlySchedule(terms, baseDate, frequencyDetails, handlerType, 14, includeBaseDate);
+		case 'T':
+			/*
+			 * Satish K : going with getFortnightlySchedule method only, since a parameter for days given. so changed
+			 * the days to 15 which will meet the requirement.may be we need to rename the method
+			 */
+			return getFortnightlySchedule(terms, baseDate, frequencyDetails, handlerType, 15, includeBaseDate);
 		case 'X':
 			return getBiWeeklySchedule(terms, baseDate, frequencyDetails, handlerType, includeBaseDate);
 		case 'W':
@@ -952,6 +990,12 @@ public class FrequencyUtil implements Serializable {
 
 			} else {
 				nday = day + increment;
+				if (nMONTH == Calendar.FEBRUARY) {
+					int maxdays = baseDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+					if (nday > maxdays) {
+						nday = maxdays;
+					}
+				}
 			}
 
 			baseDate.set(nYEAR, nMONTH, nday);
@@ -1154,7 +1198,20 @@ public class FrequencyUtil implements Serializable {
 			}
 
 			return false;
+		case 'T':
+			int daysAdd = 0;
+			if (dayOfMonth > 15) {
+				daysAdd = -15;
+			} else {
+				daysAdd = 15;
+			}
 
+			if (dayOfMonth == freqDetails.getFrequencyDay()
+					|| (dayOfMonth + daysAdd) == freqDetails.getFrequencyDay()) {
+				return true;
+			}
+
+			return false;
 		case 'M':
 
 			return validateDate(freqDetails.getFrequencyDay(), day, maxDaysOfMonth);
@@ -1375,7 +1432,22 @@ public class FrequencyUtil implements Serializable {
 					return FrequencyCodeTypes.INVALID_CODE;
 				}
 				break;
+			case 'T':
+				if (frqDay1 == 15 || frqDay1 == 31) {
+					if (frqDay2 != 15 && frqDay2 != 31) {
+						return FrequencyCodeTypes.INVALID_DATE;
+					}
+				}
 
+				if ((frqDay2 % 15) != frqDay1) {
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+
+				// TODO: Verify whether it is required or not
+				if (frqCode2 == 'D' || frqCode2 == 'M' || frqCode2 == 'F') {
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				break;
 			case 'M':
 				if (frqDay1 != frqDay2) {
 					return FrequencyCodeTypes.INVALID_DATE;

@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AssignmentPartnerDAO;
 import com.pennant.backend.model.applicationmaster.AssignmentPartner;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>AssignmentPartner</code> with set of CRUD operations.
  */
 public class AssignmentPartnerDAOImpl extends SequenceDao<AssignmentPartner> implements AssignmentPartnerDAO {
-	private static Logger logger = Logger.getLogger(AssignmentPartnerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AssignmentPartnerDAOImpl.class);
 
 	public AssignmentPartnerDAOImpl() {
 		super();
@@ -96,8 +97,7 @@ public class AssignmentPartnerDAOImpl extends SequenceDao<AssignmentPartner> imp
 		assignmentPartner.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assignmentPartner);
-		RowMapper<AssignmentPartner> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AssignmentPartner.class);
+		RowMapper<AssignmentPartner> rowMapper = BeanPropertyRowMapper.newInstance(AssignmentPartner.class);
 
 		try {
 			assignmentPartner = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

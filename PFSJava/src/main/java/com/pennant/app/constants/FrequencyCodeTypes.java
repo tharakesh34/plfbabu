@@ -52,6 +52,8 @@ public class FrequencyCodeTypes {
 	public static final String FRQ_MONTHLY = "M";
 	public static final String FRQ_BIMONTHLY = "B";
 	public static final String FRQ_FORTNIGHTLY = "F";
+	//For every 15 days . just like FORTNIGHTLY  but here periods will considered as 24(360/15) and days will considered 15
+	public static final String FRQ_15DAYS = "T";
 	public static final String FRQ_BIWEEKLY = "X";
 	public static final String FRQ_WEEKLY = "W";
 	public static final String FRQ_DAILY = "D";

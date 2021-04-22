@@ -53,9 +53,9 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.ProjectedAmortizationService;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class PrepareIncomeAMZDetails implements Tasklet {
@@ -65,7 +65,8 @@ public class PrepareIncomeAMZDetails implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
+
 		logger.info("START : Prepare Income AMZ Details {}", valueDate);
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()

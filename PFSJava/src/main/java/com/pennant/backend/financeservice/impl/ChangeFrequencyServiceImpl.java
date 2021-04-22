@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
@@ -35,7 +36,7 @@ import com.rits.cloning.Cloner;
 
 public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruction>
 		implements ChangeFrequencyService {
-	private static Logger logger = Logger.getLogger(ChangeFrequencyServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(ChangeFrequencyServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -322,6 +323,11 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		sd.setCalculatedRate(prvSchd.getCalculatedRate());
 		sd.setSchdMethod(prvSchd.getSchdMethod());
 		sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
+		sd.setAdvBaseRate(prvSchd.getAdvBaseRate());
+		sd.setAdvMargin(prvSchd.getAdvMargin());
+		sd.setAdvPftRate(prvSchd.getAdvPftRate());
+		sd.setSuplRent(prvSchd.getSuplRent());
+		sd.setIncrCost(prvSchd.getIncrCost());
 
 		finScheduleData.getFinanceScheduleDetails().add(sd);
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));

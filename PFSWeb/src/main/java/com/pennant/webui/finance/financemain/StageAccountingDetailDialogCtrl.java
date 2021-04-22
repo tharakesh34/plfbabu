@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -99,7 +100,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(StageAccountingDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(StageAccountingDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -391,7 +392,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 		dataMap.putAll(feeRuleDetailMap);
 		aeEvent.setDataMap(dataMap);
-		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
+		engineExecution.getAccEngineExecResults(aeEvent);
 
 		List<ReturnDataSet> accountingSetEntries = aeEvent.getReturnDataSet();
 

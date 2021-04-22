@@ -44,12 +44,14 @@
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
+import com.pennant.backend.model.finance.FinFeeConfig;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -125,5 +127,12 @@ public interface FinFeeDetailService {
 	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
 
 	Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> finFeeReceipt);
+
+	BigDecimal calDropLineLPOS(FinScheduleData finScheduleData, Date appDate);
+
+	void convertGSTFinFeeConfig(FinFeeDetail finFeeDetail, FinFeeConfig finFeeConfig, FinanceDetail financeDetail,
+			Map<String, BigDecimal> taxPercentages);
+
+	List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type);
 
 }

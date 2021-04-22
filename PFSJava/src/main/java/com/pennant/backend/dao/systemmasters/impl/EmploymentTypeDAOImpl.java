@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.EmploymentTypeDAO;
 import com.pennant.backend.model.systemmasters.EmploymentType;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class EmploymentTypeDAOImpl extends BasicDao<EmploymentType> implements EmploymentTypeDAO {
-	private static Logger logger = Logger.getLogger(EmploymentTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(EmploymentTypeDAOImpl.class);
 
 	public EmploymentTypeDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class EmploymentTypeDAOImpl extends BasicDao<EmploymentType> implements E
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(employmentType);
-		RowMapper<EmploymentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(EmploymentType.class);
+		RowMapper<EmploymentType> typeRowMapper = BeanPropertyRowMapper.newInstance(EmploymentType.class);
 
 		try {
 			employmentType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

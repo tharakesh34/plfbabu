@@ -93,7 +93,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private String taxComponent;
 	private Long taxHeaderId;
 	private String finReference;// Display Field
-	private BigDecimal adviseAmount;
+	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private TaxHeader taxHeader = new TaxHeader();
 
 	public FeeWaiverDetail() {

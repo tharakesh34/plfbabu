@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
 import com.pennant.backend.model.applicationmaster.RejectDetail;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements RejectDetailDAO {
-	private static Logger logger = Logger.getLogger(RejectDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RejectDetailDAOImpl.class);
 
 	public RejectDetailDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rejectDetail);
-		RowMapper<RejectDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RejectDetail.class);
+		RowMapper<RejectDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(RejectDetail.class);
 
 		try {
 			rejectDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

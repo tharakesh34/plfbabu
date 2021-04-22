@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.eodsnapshot.SnapShotCondition;
 import com.pennant.backend.model.eodsnapshot.SnapShotConfiguration;
@@ -16,7 +17,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SnapShotService extends SnapShotDataExecution {
 
-	private static final Logger logger = Logger.getLogger(SnapShotService.class);
+	private static final Logger logger = LogManager.getLogger(SnapShotService.class);
 	private boolean snapCleared = false;
 
 	public boolean intialiseSanpshot() {

@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
@@ -38,7 +39,7 @@ import com.pennanttech.pff.settlementprocess.webui.SettlementProcessUploadRespon
 
 public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<SettlementProcess> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(SettlementProcessDownloadListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SettlementProcessDownloadListCtrl.class);
 
 	private Window window_SettlementProcessDownLoad;
 	private Borderlayout borderLayout_SettlementProcessDownload;

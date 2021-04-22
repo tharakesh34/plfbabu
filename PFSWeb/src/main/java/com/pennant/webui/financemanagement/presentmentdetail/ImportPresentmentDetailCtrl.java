@@ -1,11 +1,13 @@
 package com.pennant.webui.financemanagement.presentmentdetail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.media.Media;
@@ -14,7 +16,6 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
-import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
@@ -26,13 +27,18 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -41,6 +47,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -48,7 +55,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 4783031677099154138L;
-	private static final Logger logger = Logger.getLogger(ImportPresentmentDetailCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ImportPresentmentDetailCtrl.class);
 
 	protected Window window_ImportPresentmentDetails;
 
@@ -76,6 +83,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private Media media = null;
 
 	PresentmentImportProcess presentmentImportProcess;
+	List<ValueLabel> defaultPaymentType;
+	private ValidateRecord presentmentRespValidation;
 
 	public ImportPresentmentDetailCtrl() {
 		super();
@@ -101,7 +110,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE))
 						? true : false;
 
-		if (allowInstrumentType) {
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			this.rowInstrumentType.setVisible(true);
 			doSetFieldProperties();
 			grid_Default.setVisible(false);
@@ -116,7 +125,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.panelRows.setVisible(false);
 		}
 
-		if (!allowInstrumentType) {
+		if (!allowInstrumentType && ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			if (processExecution == null) {
 				processExecution = new ProcessExecution();
 				createPanel(processExecution, PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT);
@@ -156,7 +165,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
 
 		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
-		if (configName == null) {
+		if (StringUtils.isEmpty(configName)) {
 			configName = "PRESENTMENT_RESPONSE";
 		}
 
@@ -178,14 +187,60 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
-		logger.debug(Literal.LEAVING);
+		if (allowInstrumentType) {
+			fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
+			logger.debug(Literal.LEAVING);
 
-		if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
-				&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
-						|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED))) {
-			this.btnSave.setDisabled(true);
+			if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
+					&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
+							|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED))) {
+				this.btnSave.setDisabled(true);
+			}
+		} else if (!ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+			defaultPaymentType = new ArrayList<ValueLabel>(1);
+			defaultPaymentType.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST,
+					Labels.getLabel("label_Presentment_Default")));
+			fillComboBox(this.instrumentType, Labels.getLabel("label_Presentment_Default"), defaultPaymentType, "");
+			this.instrumentType.setSelectedIndex(1);
+			setConfigData();
+			this.instrumentType.setDisabled(true);
 		}
+
+	}
+
+	public void setConfigData() {
+		String instrumentTypeConfigName = "";
+		if (allowInstrumentType) {
+			String instType = "";
+
+			if ("#".equals(getComboboxValue(this.instrumentType))) {
+				return;
+			}
+
+			instType = this.instrumentType.getSelectedItem().getValue();
+			this.txtFileName.setValue("");
+
+			instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
+			instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
+
+		} else {
+			instrumentTypeConfigName = "PRESENTMENT_RESPONSE";
+		}
+
+		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
+		if (configName == null) {
+			configName = "PRESENTMENT_RESPONSE";
+		}
+
+		try {
+			config = dataEngineConfig.getConfigurationByName(configName);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+			return;
+		}
+		PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
+
+		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
 	}
 
 	/**
@@ -208,7 +263,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		}
 		txtFileName.setText(media.getName());
 
-		if (allowInstrumentType) {
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			String mediaName = media.getName();
 			String prefix = config.getFilePrefixName();
 			String extension = config.getFileExtension();
@@ -312,23 +367,32 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		if (allowInstrumentType) {
-			PresentmentDetailService service = (PresentmentDetailService) SpringUtil
+		FinanceRepaymentsDAO frDAO = (FinanceRepaymentsDAO) SpringBeanUtil.getBean("financeRepaymentsDAO");
+		PostingsPreparationUtil ppu = (PostingsPreparationUtil) SpringBeanUtil.getBean("postingsPreparationUtil");
+
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
+			PresentmentDetailService service = (PresentmentDetailService) SpringBeanUtil
 					.getBean("presentmentDetailService");
-			DataSource source = (DataSource) SpringUtil.getBean("dataSource");
-			NotificationService notificationService = (NotificationService) SpringUtil.getBean("notificationService");
+			DataSource source = (DataSource) SpringBeanUtil.getBean("dataSource");
+			NotificationService notificationService = (NotificationService) SpringBeanUtil
+					.getBean("notificationService");
 
-			PresentmentDetailExtract detailExtract = new PresentmentDetailExtract(source, service, notificationService);
-			detailExtract.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
-			detailExtract.setUserDetails(getUserWorkspace().getLoggedInUser());
-			detailExtract.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
-			detailExtract.setMediaOnly(getMedia());
-			detailExtract.setPresentmentImportProcess(presentmentImportProcess);
+			PresentmentDetailExtract pde = new PresentmentDetailExtract(source, service, notificationService);
+			pde.setInstrumentType(this.instrumentType.getSelectedItem().getValue());
+			pde.setUserDetails(getUserWorkspace().getLoggedInUser());
+			pde.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
+			pde.setMediaOnly(getMedia());
+			pde.setPresentmentImportProcess(presentmentImportProcess);
+			pde.setFinanceRepaymentsDAO(frDAO);
+			pde.setPostingsPreparationUtil(ppu);
+			pde.setPresentmentRespValidation(presentmentRespValidation);
 
-			Thread thread = new Thread(detailExtract);
+			Thread thread = new Thread(pde);
 			thread.start();
 			Thread.sleep(1000);
 		} else {
+			fileImport.setFinanceRepaymentsDAO(frDAO);
+			fileImport.setPostingsPreparationUtil(ppu);
 			if (processExecution.getChildren() != null) {
 				processExecution.getChildren().clear();
 			}
@@ -381,7 +445,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onTimer$timer(Event event) {
-		if (allowInstrumentType) {
+		if (allowInstrumentType || !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			List<Row> rows = this.panelRows.getChildren();
 			for (Row row : rows) {
 				List<Hbox> hboxs = row.getChildren();
@@ -433,4 +497,9 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
+	@Autowired(required = false)
+	@Qualifier(value = "presentmentRespValidation")
+	public void setPresentmentRespValidation(ValidateRecord presentmentRespValidation) {
+		this.presentmentRespValidation = presentmentRespValidation;
+	}
 }

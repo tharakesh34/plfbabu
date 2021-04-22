@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
 
 public class TrailBalance implements Tasklet {
-	private Logger logger = Logger.getLogger(TrailBalance.class);
+	private Logger logger = LogManager.getLogger(TrailBalance.class);
 
 	private Date valueDate;
 	private Date appDate;
@@ -56,7 +57,7 @@ public class TrailBalance implements Tasklet {
 
 			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new TrailBalanceProcessThread(Long.valueOf(1000))).start();
+			new Thread(new TrailBalanceProcessThread(new Long(1000))).start();
 			BatchUtil.setExecutionStatus(context, status);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -88,8 +89,7 @@ public class TrailBalance implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("Trail Balance Request Service started...");
-				// new TrailBalanceEngine(dataSource, userId, valueDate,
-				// appDate).extractReport(TrailBalanceEngine.Dimension.STATE);
+				//new TrailBalanceEngine(dataSource, userId, valueDate, appDate).extractReport(TrailBalanceEngine.Dimension.STATE);
 			} catch (Exception e) {
 				TrailBalanceEngine.EXTRACT_STATUS.setStatus("F");
 				logger.error(Literal.EXCEPTION, e);

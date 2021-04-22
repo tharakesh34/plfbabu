@@ -9,14 +9,19 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
+import com.pennant.backend.util.PennantRegularExpressions;
+
 public class PTPhoneNumberValidator implements Constraint {
 	private String fieldParm;
 	private boolean mandatory = false;
-	private final String PHONE_REGEX = "^[0-9]{11}";
+	private String REGEX_PHONE = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PHONE);
 	private int maxLength = 11;
-	private final String PHONE_COUNTRY_REGEX = "^[1-9]{1}[0-9]{0,3}";
-	private final String PHONE_AREA_REGEX = "^[1-9]{1}[0-9]{0,3}";
-	private final String PHONE_NUMBER_REGEX = "[0-9]{6,8}";
+	private final String REGEX_PHONE_COUNTRY = PennantRegularExpressions
+			.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_COUNTRY);
+	private final String REGEX_PHONE_AREA = PennantRegularExpressions
+			.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_AREA);
+	private final String REGEX_PHONE_NUMBER = PennantRegularExpressions
+			.getRegexMapper(PennantRegularExpressions.REGEX_PHONE_NUMBER);
 
 	public static final int VALIDATE_COUNTRY = 1;
 	public static final int VALIDATE_AREACODE = 2;
@@ -63,28 +68,28 @@ public class PTPhoneNumberValidator implements Constraint {
 			Matcher matcher = null;
 			switch (validateCode) {
 			case VALIDATE_COUNTRY:
-				pattern = Pattern.compile(PHONE_COUNTRY_REGEX);
+				pattern = Pattern.compile(REGEX_PHONE_COUNTRY);
 				matcher = pattern.matcher(compValue);
 				if (!matcher.matches()) {
 					return Labels.getLabel("FIELD_PHONE_COUNTRY", new String[] { fieldParm });
 				}
 				break;
 			case VALIDATE_AREACODE:
-				pattern = Pattern.compile(PHONE_AREA_REGEX);
+				pattern = Pattern.compile(REGEX_PHONE_AREA);
 				matcher = pattern.matcher(compValue);
 				if (!matcher.matches()) {
 					return Labels.getLabel("FIELD_PHONE_AREACODE", new String[] { fieldParm });
 				}
 				break;
 			case VALIDATE_NUMBER:
-				pattern = Pattern.compile(PHONE_NUMBER_REGEX);
+				pattern = Pattern.compile(REGEX_PHONE_NUMBER);
 				matcher = pattern.matcher(compValue);
 				if (!matcher.matches()) {
 					return Labels.getLabel("FIELD_PHONE_NUMBER", new String[] { fieldParm });
 				}
 				break;
 			default:
-				pattern = Pattern.compile(PHONE_REGEX);
+				pattern = Pattern.compile(REGEX_PHONE);
 				matcher = pattern.matcher(compValue);
 
 				if (!matcher.matches()) {

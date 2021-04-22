@@ -44,7 +44,8 @@ package com.pennant.webui.bmtmasters.product;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 	private static final long serialVersionUID = -6951358943287040101L;
-	private static final Logger logger = Logger.getLogger(ProductListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ProductListCtrl.class);
 
 	protected Window window_ProductList;
 	protected Borderlayout borderLayout_ProductList;
@@ -112,17 +113,15 @@ public class ProductListCtrl extends GFCBaseListCtrl<Product> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 		//FIXME: Changed by Pradeep. Not sure about the previous condition correctness. Remove the comment after testing.
-
 		if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
-
 			Filter[] filters = new Filter[4];
 			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
 			filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
 			filters[2] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_EQUAL);
 			filters[3] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL);
+
 			this.searchObject.addFilterOr(filters);
 		} else {
-
 			this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
 			this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL);
 			this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CD);

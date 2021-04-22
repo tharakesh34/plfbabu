@@ -46,13 +46,14 @@ package com.pennant.backend.dao.financemanagement.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.financemanagement.FinSuspHoldDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinSuspHoldDAO {
-	private static Logger logger = Logger.getLogger(FinSuspHoldDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinSuspHoldDAOImpl.class);
 
 	public FinSuspHoldDAOImpl() {
 		super();
@@ -135,7 +136,7 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinS
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
-		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
+		RowMapper<FinSuspHold> typeRowMapper = BeanPropertyRowMapper.newInstance(FinSuspHold.class);
 
 		try {
 			finSuspHold = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -202,7 +203,7 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinS
 		logger.debug("Entering");
 
 		if (finSuspHold.getId() == Long.MIN_VALUE) {
-			finSuspHold.setSuspHoldID(getNextId("SeqFinSuspHold"));
+			finSuspHold.setSuspHoldID(getNextValue("SeqFinSuspHold"));
 		}
 
 		StringBuilder insertSql = new StringBuilder();
@@ -292,7 +293,7 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinS
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
-		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
+		RowMapper<FinSuspHold> typeRowMapper = BeanPropertyRowMapper.newInstance(FinSuspHold.class);
 
 		try {
 			finSuspHoldTemp = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -326,7 +327,7 @@ public class FinSuspHoldDAOImpl extends SequenceDao<FinSuspHold> implements FinS
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finSuspHold);
-		RowMapper<FinSuspHold> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinSuspHold.class);
+		RowMapper<FinSuspHold> typeRowMapper = BeanPropertyRowMapper.newInstance(FinSuspHold.class);
 
 		try {
 			List<FinSuspHold> finSuspHoldTemp = this.jdbcTemplate.query(selectSql.toString(), beanParameters,

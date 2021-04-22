@@ -45,13 +45,15 @@ package com.pennant.webui.loanquery.querydetail;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
@@ -83,7 +85,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -130,7 +131,7 @@ import freemarker.template.Configuration;
  */
 public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(QueryDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(QueryDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -436,12 +437,14 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				documentDetail.setDocReceivedDate(SysParamUtil.getAppDate());
 				documentDetail.setVersion(1);
 				documentDetail.setLastMntBy(getUserWorkspace().getUserId());
+				documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				//				documentDetail.setCustId();
 				textbox.setAttribute("data", documentDetail);
 			} else {
 				DocumentDetails documentDetail = (DocumentDetails) textbox.getAttribute("data");
 				documentDetail.setDocImage(docData);
 				documentDetail.setDocModule(FinanceConstants.QUERY_MANAGEMENT);
+				documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				textbox.setAttribute("data", documentDetail);
 			}
 		} catch (Exception ex) {
@@ -961,6 +964,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			if (obj != null) {
 				aQueryDetail.setCategoryId(Long.valueOf(String.valueOf(obj)));
 				aQueryDetail.setCategoryCode(String.valueOf(this.qryCategory.getAttribute("Code")));
+				aQueryDetail.setCategoryDescription(qryCategory.getDescription());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1078,10 +1082,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
 
+		aQueryDetail.setFinType(this.finReference.getDescription());
 		// raisedUsrrole
 		aQueryDetail.setRaisedUsrRole(this.roleCode);
 
-		// Finance Type Setting is required as it is used in Interface.
+		//Finance Type Setting is required as it is used in Interface.
 		if (this.financeMain != null) {
 			aQueryDetail.setFinType(this.financeMain.getFinType());
 		} else if (getFinanceMainService() != null && reference != null
@@ -1151,6 +1156,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					|| (StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()),
 							String.valueOf(queryDetail.getRaisedBy())))) {
 				List<String> list = new ArrayList<>();
+				Date appDate = SysParamUtil.getAppDate();
 				if ((queryDetail.getStatus().equals("Open")
 						&& !StringUtils.equals(String.valueOf(getUserWorkspace().getUserId()),
 								String.valueOf(queryDetail.getRaisedBy())))
@@ -1162,7 +1168,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.row5.setVisible(true);
 					this.row6.setVisible(false);
 					this.responseBy.setValue(getUserWorkspace().getUserDetails().getUsername());
-					this.responseOn.setValue(DateUtility.getAppDate());
+					this.responseOn.setValue(appDate);
 					readOnlyComponent(false, this.docRemarks);
 					readOnlyComponent(false, this.btnUploadDoc);
 					readOnlyComponent(false, this.btnUploadDocs);
@@ -1191,7 +1197,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 					this.responseOn.setValue(queryDetail.getResponseOn());
 					this.closerNotes.setValue("");
 					this.closerBy.setValue(getUserWorkspace().getUserDetails().getUsername());
-					this.closerOn.setValue(DateUtility.getAppDate());
+					this.closerOn.setValue(appDate);
 					readOnlyComponent(false, this.status);
 
 					readOnlyComponent(false, this.docRemarks);

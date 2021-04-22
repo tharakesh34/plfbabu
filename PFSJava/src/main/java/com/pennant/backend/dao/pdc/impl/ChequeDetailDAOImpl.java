@@ -47,20 +47,23 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -72,7 +75,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ChequeDetail</code> with set of CRUD operations.
  */
 public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeDetailDAO {
-	private static Logger logger = Logger.getLogger(ChequeDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ChequeDetailDAOImpl.class);
 
 	public ChequeDetailDAOImpl() {
 		super();
@@ -101,7 +104,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		chequeDetail.setChequeDetailsID(chequeDetailsID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
-		RowMapper<ChequeDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeDetail.class);
+		RowMapper<ChequeDetail> rowMapper = BeanPropertyRowMapper.newInstance(ChequeDetail.class);
 
 		try {
 			chequeDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -139,7 +142,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		chequeDetail.setHeaderID(headerID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
-		RowMapper<ChequeDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ChequeDetail.class);
+		RowMapper<ChequeDetail> rowMapper = BeanPropertyRowMapper.newInstance(ChequeDetail.class);
 		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 
 	}
@@ -324,6 +327,29 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 	}
 
 	@Override
+	public int updateChequeStatus(List<PresentmentDetail> presentments) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update ChequeDetail Set Chequestatus = ?");
+		sql.append(" where ChequeDetailsId = ?");
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				PresentmentDetail pd = presentments.get(index);
+				ps.setString(1, PennantConstants.CHEQUESTATUS_PRESENT);
+				ps.setLong(2, pd.getMandateId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return presentments.size();
+			}
+		}).length;
+	}
+
+	@Override
 	public void updateChequeStatus(long chequeDetailsId, String chequestatus) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = null;
@@ -351,8 +377,8 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" CHEQUEDETAIL");
-		sql.append(" Set Chequestatus = :Chequestatus");
-		sql.append(" where ChequeDetailsId = :ChequeDetailsId");
+		sql.append(" Set Chequestatus = ?");
+		sql.append(" where ChequeDetailsId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 

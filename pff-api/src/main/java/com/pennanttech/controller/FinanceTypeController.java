@@ -3,7 +3,8 @@ package com.pennanttech.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.bmtmasters.ProductDAO;
@@ -20,6 +21,7 @@ import com.pennanttech.ws.model.financetype.BasicDetail;
 import com.pennanttech.ws.model.financetype.FinanceTypeRequest;
 import com.pennanttech.ws.model.financetype.FinanceTypeResponse;
 import com.pennanttech.ws.model.financetype.GraceDetail;
+import com.pennanttech.ws.model.financetype.Insurance;
 import com.pennanttech.ws.model.financetype.OverdueDetail;
 import com.pennanttech.ws.model.financetype.OverdueProfitDetail;
 import com.pennanttech.ws.model.financetype.ProductType;
@@ -28,9 +30,9 @@ import com.pennanttech.ws.model.financetype.RepayDetail;
 import com.pennanttech.ws.model.financetype.StepDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class FinanceTypeController {
+public class FinanceTypeController extends ExtendedTestClass {
 
-	private static final Logger logger = Logger.getLogger(FinanceTypeController.class);
+	private static final Logger logger = LogManager.getLogger(FinanceTypeController.class);
 
 	private FinanceTypeService financeTypeService;
 	private StepPolicyService stepPolicyService;
@@ -51,6 +53,7 @@ public class FinanceTypeController {
 					FinanceConstants.MODULEID_PROMOTION, true);
 			financeType.setFInTypeFromPromotiion(promotion);
 			financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
+			financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
 			financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
 		}
 
@@ -94,6 +97,13 @@ public class FinanceTypeController {
 				response.setOverdueProfitDetail(overduProfit);
 			}
 
+			// prepare FinanceType Insurance details
+			if (finTypeRequest.isInsuranceDetailReq()) {
+				Insurance insurance = new Insurance();
+				BeanUtils.copyProperties(financeType, insurance);
+				response.setInsurance(insurance);
+			}
+
 			// prepare FinanceType Step details
 			if (finTypeRequest.isStepDetailReq()) {
 				StepDetail stepDetail = new StepDetail();
@@ -116,7 +126,7 @@ public class FinanceTypeController {
 
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
-			//for logging purpose
+			// for logging purpose
 			APIErrorHandlerService.logReference(response.getFinType());
 		}
 

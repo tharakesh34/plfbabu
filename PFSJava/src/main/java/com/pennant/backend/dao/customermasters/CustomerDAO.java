@@ -212,4 +212,10 @@ public interface CustomerDAO {
 
 	Customer getCustomerForPresentment(long id);
 
+	boolean isCustTypeExists(String custType, String type);
+
+	String getExternalCibilResponse(String cif, String tableName);
+
+	List<String> isDuplicateCRCPR(long custId, String custCRCPR, String custCtgCode);
+
 }

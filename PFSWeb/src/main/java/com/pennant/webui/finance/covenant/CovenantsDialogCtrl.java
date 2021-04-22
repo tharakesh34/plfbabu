@@ -45,6 +45,7 @@
  */
 package com.pennant.webui.finance.covenant;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -55,7 +56,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -78,10 +80,13 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -127,7 +132,7 @@ import com.pennanttech.pff.staticlist.AppStaticList;
  */
 public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CovenantsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding compoonent with the same 'id' in the zul-file
@@ -164,6 +169,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	protected Textbox tbdocumentdate;
 	protected Textbox tbdocumentName;
 	protected Listbox listboxDocuments;
+	protected Textbox additionalRemarks;
+	protected Tab additionalRemarksTab;
+	protected Tabpanel additionalRemarksTabPanel;
+	protected Tab covenantDetailsTab;
 
 	private Covenant covenant;
 	private transient boolean newFinance;
@@ -405,6 +414,11 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				this.btnSave.setVisible(false);
 			}
 
+			if (ImplementationConstants.COVENANT_ADTNL_REMARKS) {
+				additionalRemarksTab.setVisible(true);
+				this.additionalRemarksTabPanel.setVisible(true);
+			}
+
 			this.covenantDialogWindow.setHeight("85%");
 			this.covenantDialogWindow.setWidth("100%");
 			this.gbStatusDetails.setVisible(false);
@@ -450,10 +464,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		readOnlyComponent(isReadOnly("CovenantDialog_Alerttoroles"), this.notifyTo.getButton());
 		readOnlyComponent(isReadOnly("CovenantDialog_Alertdays"), this.alertDays);
 		readOnlyComponent(isReadOnly("CovenantDialog_Internaluse"), this.internalUse);
-		readOnlyComponent(isReadOnly("CovenantDialog_Description"), this.description);
-		readOnlyComponent(isReadOnly("CovenantDialog_Additionalfield1"), this.remarks);
-		readOnlyComponent(isReadOnly("CovenantDialog_Additionalfield2"), this.standardValue);
-		readOnlyComponent(isReadOnly("CovenantDialog_Additionalfield3"), this.actualValue);
+		this.description.setReadonly(true);
+		//readOnlyComponent(isReadOnly("CovenantDialog_Description"), this.description);
+		readOnlyComponent(isReadOnly("CovenantDialog_Remarks"), this.remarks);
+		readOnlyComponent(isReadOnly("CovenantDialog_AdditionalRemarks"), this.additionalRemarks);
+		readOnlyComponent(isReadOnly("CovenantDialog_StandardValue"), this.standardValue);
+		readOnlyComponent(isReadOnly("CovenantDialog_ActualValue"), this.actualValue);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -506,12 +522,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setReadonly(true);
 		this.otc.setDisabled(true);
 		this.pdd.setDisabled(true);
-		this.receivableDate.setReadonly(true);
+		this.receivableDate.setDisabled(true);
 		this.alwWaiver.setDisabled(true);
 		this.documentRecieved.setDisabled(true);
 		this.allowPostponment.setDisabled(true);
-		this.extendedDate.setReadonly(true);
-		this.covenantFrequency.setReadonly(true);
+		this.extendedDate.setDisabled(true);
+		this.covenantFrequency.setDisabled(true);
 		this.alertsRequired.setDisabled(true);
 		this.alertType.setDisabled(true);
 		this.covenantGraceDays.setReadonly(true);
@@ -519,8 +535,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.notifyTo.setReadonly(true);
 		this.internalUse.setDisabled(true);
 		this.remarks.setReadonly(true);
+		this.additionalRemarks.setReadonly(true);
 		this.standardValue.setReadonly(true);
 		this.actualValue.setReadonly(true);
+		this.btnCovenantReceived.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -548,7 +566,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CovenantDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CovenantDialog_btnSave"));
-			this.btnCovenantReceived.setVisible(getUserWorkspace().isAllowed("button_CovenantDialog_btnNew"));
+			this.btnCovenantReceived.setVisible(getUserWorkspace().isAllowed("button_CovenantDialog_DocReceived"));
 		}
 
 		this.btnCancel.setVisible(false);
@@ -593,8 +611,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setMaxlength(500);
 		this.alertDays.setMaxlength(3);
 		this.covenantGraceDays.setMaxlength(3);
-		this.description.setWidth("850px");
+		this.description.setWidth("850px");	
 		this.remarks.setWidth("850px");
+		this.remarks.setMaxlength(500);
+
+		this.additionalRemarks.setWidth("1200px");
+		this.additionalRemarks.setMaxlength(10000);
 
 		if ("Maintanance".equals(module) || enqiryModule) {
 			this.rw_manrole.setVisible(false);
@@ -644,6 +666,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			covenantType.setAlertToRoles(covenant.getAlertToRoles());
 			covenantType.setAlertsRequired(covenant.isAlertsRequired());
 			covenantType.setAlertType(covenant.getAlertType());
+			covenantType.setAllowedPaymentModes(covenant.getAllowedPaymentModes());
 			this.covenantType.setObject(covenantType);
 		}
 
@@ -686,7 +709,11 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.notifyTo.setSelectedValues(map);
 		}
 
-		this.description.setValue(covenant.getDescription());
+		this.description.setValue(covenantType.getDescription());
+
+		if (covenant.getRemarks1() != null) {
+			this.additionalRemarks.setValue(new String(covenant.getRemarks1(), StandardCharsets.UTF_8));
+		}
 		this.pdd.setChecked(covenant.isPdd());
 
 		this.otc.setChecked(covenant.isOtc());
@@ -845,11 +872,18 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		}
 
 		try {
-			covenant.setRemarks(this.description.getValue());
+			covenant.setCovenantTypeDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
+		try {
+			String addRemarks = this.additionalRemarks.getValue();
+			covenant.setRemarks1(addRemarks.getBytes(StandardCharsets.UTF_8));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			covenant.setAllowWaiver(this.alwWaiver.isChecked());
 		} catch (WrongValueException we) {
@@ -947,6 +981,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 		try {
 			covenant.setAdditionalField1(this.remarks.getValue());
+			covenant.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1012,6 +1047,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		doRemoveLOVValidation();
 
 		if (!wve.isEmpty()) {
+			this.covenantDetailsTab.setSelected(true);
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
@@ -1056,6 +1092,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		if (!this.description.isReadonly() && description.length() > 0) {
 			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_Covenant_Description.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
+		
+		if (!this.additionalRemarks.isReadonly()) {
+			this.additionalRemarks.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CovenantsDialog_AdditionalRemarks.value"),
+							null, false));
 		}
 
 		if (!this.receivableDate.isReadonly() && this.pdd.isChecked()) {
@@ -1199,6 +1241,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.description.setErrorMessage("");
 		this.mandRole.setErrorMessage("");
 		this.receivableDate.setErrorMessage("");
+		this.additionalRemarks.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1402,7 +1445,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				acovenant.setRecordType(PennantConstants.RCD_ADD);
 			}
 		}
-
+		acovenant.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		if (CollectionUtils.isEmpty(covenantsList)) {
 			if (!recordAdded) {
 				covenants.add(acovenant);
@@ -1689,8 +1732,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 	public void oncheckPDD() {
 		if (this.pdd.isChecked()) {
-			this.receivableDate.setDisabled(false);
-			this.allowPostponment.setDisabled(false);
+			this.receivableDate.setDisabled(enqiryModule);
+			this.allowPostponment.setDisabled(enqiryModule);
 			this.documentRecieved.setChecked(false);
 			this.documentRecieved.setDisabled(true);
 		} else {
@@ -1703,7 +1746,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	}
 
 	public void onCheckALwWaiver() {
-		if (this.alwWaiver.isChecked() || enqiryModule) {
+		if (this.alwWaiver.isChecked()) {
 			this.pdd.setDisabled(true);
 			this.pdd.setChecked(false);
 			this.otc.setChecked(false);
@@ -1923,9 +1966,24 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	public void onClick$btnCovenantReceived(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		Clients.clearWrongValue(this.listboxDocuments);
+		Boolean flag = false;
+		if (this.pdd.isChecked() || this.otc.isChecked()
+				|| this.mandRole.getValue() != null && !this.mandRole.getValue().equals("")) {
+			flag = true;
+		} else {
+			MessageUtil.showError("Please select either PDD or OTC or Mandatory Role");
+			return;
+		}
 
+		Clients.clearWrongValue(this.listboxDocuments);
 		CovenantDocument covenantDocument = new CovenantDocument();
+		if (this.pdd.isChecked()) {
+			covenantDocument.setCovenantType(PennantConstants.COVENANT_PDD);
+		} else if (this.otc.isChecked()) {
+			covenantDocument.setCovenantType(PennantConstants.COVENANT_OTC);
+		} else if (this.mandRole.getValue() != null && !this.mandRole.getValue().equals("")) {
+			covenantDocument.setCovenantType(PennantConstants.COVENANT_LOS);
+		}
 		covenantDocument.setNewRecord(true);
 		showCovenantDocumentView(covenantDocument);
 
@@ -1987,11 +2045,11 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 			lc.setParent(item);
 			if (this.pdd.isChecked()) {
-				lc = new Listcell("PDD");
+				lc = new Listcell(PennantConstants.COVENANT_PDD);
 			} else if (this.otc.isChecked()) {
-				lc = new Listcell("OTC");
+				lc = new Listcell(PennantConstants.COVENANT_OTC);
 			} else if (this.mandRole.getValue() != null && !this.mandRole.getValue().equals("")) {
-				lc = new Listcell("LOS");
+				lc = new Listcell(PennantConstants.COVENANT_LOS);
 			}
 
 			lc.setParent(item);
@@ -2018,10 +2076,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 	private void saveDocumentDetails(List<CovenantDocument> covenantDocuments) {
 		logger.debug(Literal.ENTERING);
-
-		if (financeMainDialogCtrl != null) {
-			documentDetailDialogCtrl = financeMainDialogCtrl.getDocumentDetailDialogCtrl();
-		}
 
 		ArrayList<DocumentDetails> list = new ArrayList<>();
 		Map<String, DocumentDetails> map = new HashMap<>();
@@ -2161,6 +2215,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 		this.covenantType.setValue(covenantTypeObject.getCode());
 		this.covenantType.setDescription(covenantTypeObject.getDescription());
+		//setting the covenant type(master) payment methods to covenant object
+		if (this.covenant != null) {
+			this.covenant.setAllowedPaymentModes(covenantType.getAllowedPaymentModes());
+		}
 
 		if ("LOS".equals(covenantTypeObject.getCovenantType())) {
 			onCheckLOS(covenantTypeObject.getCovenantType());
@@ -2213,7 +2271,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getSelectedValues(ExtendedCombobox extendedCombobox) {
 		Object object = extendedCombobox.getAttribute("data");
-		return (Map<String, Object>) object;
+		if (object instanceof Map<?, ?>) {
+			return (Map<String, Object>) object;
+		}
+		return null;
 	}
 
 	public void disablePDDDetailsGroup() {

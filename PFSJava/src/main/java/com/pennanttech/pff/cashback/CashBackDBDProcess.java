@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -18,14 +19,16 @@ import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.finance.CashBackProcessService;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.subvention.dao.SubventionProcessDAO;
 
 public class CashBackDBDProcess {
 
-	private static final Logger logger = Logger.getLogger(CashBackDBDProcess.class);
+	private static final Logger logger = LogManager.getLogger(CashBackDBDProcess.class);
 
 	private CashBackDetailDAO cashBackDetailDAO;
 	private PromotionDAO promotionDAO;
 	private CashBackProcessService cashBackProcessService;
+	private SubventionProcessDAO subventionProcessDAO;
 
 	/**
 	 * Method for Processing all Cash back details which are not refunded
@@ -40,6 +43,11 @@ public class CashBackDBDProcess {
 		for (CashBackDetail detail : cashBackDetailsList) {
 
 			Promotion promotion = promotionDAO.getPromotionByReferenceId(detail.getPromotionSeqId(), "");
+
+			long likedTranId = subventionProcessDAO.getLinkedTranIdByHostReference(detail.getHostReference());
+			if (likedTranId <= 0) {
+				continue;
+			}
 
 			Date cbDate = null;
 			// Identify the date on which date cash back should be automated
@@ -97,6 +105,10 @@ public class CashBackDBDProcess {
 
 	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
 		this.cashBackProcessService = cashBackProcessService;
+	}
+
+	public void setSubventionProcessDAO(SubventionProcessDAO subventionProcessDAO) {
+		this.subventionProcessDAO = subventionProcessDAO;
 	}
 
 }

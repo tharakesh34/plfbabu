@@ -36,7 +36,7 @@
 
 	<bean id="corporatecibilTaskLet" class="com.pennant.backend.endofday.tasklet.CorporateCibil" />
 
-	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate" />
+	<bean id="datesUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.DatesUpdate" parent="sequenceDao" />
 
 	<bean id="limitsUpdateTaskLet" class="com.pennant.backend.endofday.tasklet.LimitsUpdate" />
 
@@ -110,6 +110,21 @@
 		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	<!-- Future Account Holds -->
+	<bean id="futureInstallmentHoldsTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="target" ref="futureInstallmentHoldsTarget" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="futureInstallmentHoldsTarget" class="com.pennant.backend.endofday.tasklet.FutureInstallmentHolds">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="accountInterfaceService" ref="accountInterfaceService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+	</bean>
 	<!-- Provisions Postings TBD -->
 	<bean id="provisionPostingsTasklet" class="com.pennant.backend.endofday.tasklet.ProvisionPostings">
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -146,6 +161,20 @@
 	</bean>
 	<bean id="commitmentExpiryProcessTarget" class="com.pennant.backend.endofday.tasklet.CommitmentExpiryProcess">
 		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- Month End Download Details Updation -->
+	<bean id="monthEndDownloadProcessTasklet" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="target" ref="monthEndDownloadProcessTarget" />
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="monthEndDownloadProcessTarget" class="com.pennant.backend.endofday.tasklet.MonthEndDownloadProcess">
+		<property name="dailyDownloadInterfaceService" ref="dailyDownloadInterfaceService" />
+		<property name="accountNumberUtil" ref="accountNumberUtil" />
 	</bean>
 
 	<bean id="processInActiveFinancesTaskLet" class="com.pennant.backend.endofday.tasklet.ProcessInActiveFinances" />
@@ -205,4 +234,14 @@
 		scope="step" parent="basicDao" />
 
 	<bean id="autoKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnockOffDAOImpl" parent="basicDao" />
+
+	<bean id="customerDataPreperationTaskLet" class="com.pennant.backend.endofday.tasklet.CustomerDataExport" />
+
+	<bean id="masterDataPreparationTaskLet" class="com.pennant.backend.endofday.tasklet.MasterDataExport" />
+
+	<bean id="dmsRetrieveProcessTaskLet" class="com.pennant.backend.endofday.tasklet.DMSRetrieveProcess" />
+
+	<bean id="cashFlowPreperationTaskLet" class="com.pennant.backend.endofday.tasklet.CashFlowPreperation">
+		<property name="cashFlowService" ref="cashFlowService" />
+	</bean>
 </beans>

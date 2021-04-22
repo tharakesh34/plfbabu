@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.rulefactory.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rulefactory.OverdueChargeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class OverdueChargeDAOImpl extends BasicDao<OverdueCharge> implements OverdueChargeDAO {
-	private static Logger logger = Logger.getLogger(OverdueChargeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(OverdueChargeDAOImpl.class);
 
 	public OverdueChargeDAOImpl() {
 		super();
@@ -134,7 +135,7 @@ public class OverdueChargeDAOImpl extends BasicDao<OverdueCharge> implements Ove
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(overdueCharge);
-		RowMapper<OverdueCharge> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(OverdueCharge.class);
+		RowMapper<OverdueCharge> typeRowMapper = BeanPropertyRowMapper.newInstance(OverdueCharge.class);
 
 		try {
 			overdueCharge = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

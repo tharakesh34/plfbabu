@@ -45,7 +45,8 @@ package com.pennant.webui.financemanagement.provisionmovement;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
@@ -73,7 +74,6 @@ import com.pennant.backend.service.financemanagement.ProvisionMovementService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.provision.ProvisionListCtrl;
 import com.pennant.webui.financemanagement.provisionmovement.model.ProvisionMovementListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -85,7 +85,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMovement> {
 	private static final long serialVersionUID = -1620412127444337321L;
-	private static final Logger logger = Logger.getLogger(ProvisionMovementEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ProvisionMovementEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -231,22 +231,24 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 		this.finBranch.setValue(aProvision.getFinBranch());
 		this.finType.setValue(aProvision.getFinType());
 		this.custID.setValue(aProvision.getCustID());
-		this.lovDescCustCIF.setValue(aProvision.getLovDescCustCIF());
-		this.custShrtName.setValue(aProvision.getLovDescCustShrtName());
-		this.useNFProv.setChecked(aProvision.isUseNFProv());
-		this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
+		this.lovDescCustCIF.setValue(aProvision.getCustCIF());
+		this.custShrtName.setValue(aProvision.getCustShrtName());
+		//this.useNFProv.setChecked(aProvision.isUseNFProv());
+		//this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
 		this.provisionedAmt.setValue(aProvision.getProvisionedAmt());
-		this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
-		this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
-		this.dueTotal.setValue(
-				PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
-		this.nonFormulaProv.setValue(
-				PennantAppUtil.formateAmount(aProvision.getNonFormulaProv().add(aProvision.getProfitDue()), format));
+		/*
+		 * this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
+		 * this.profitDue.setValue(PennantAppUtil.formateAmount(aProvision.getProfitDue(), format));
+		 * this.dueTotal.setValue(
+		 * PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
+		 */
+		//this.nonFormulaProv.setValue(
+		//		PennantAppUtil.formateAmount(aProvision.getNonFormulaProv().add(aProvision.getProfitDue()), format));
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvision.getLastFullyPaidDate());
-		this.calProvisionedAmt.setValue(aProvision.getProvisionAmtCal());
+		//this.calProvisionedAmt.setValue(aProvision.getProvisionAmtCal());
 
-		doFilllistbox(aProvision.getProvisionMovementList());
+		//doFilllistbox(aProvision.getProvisionMovementList());
 
 		logger.debug("Leaving");
 	}

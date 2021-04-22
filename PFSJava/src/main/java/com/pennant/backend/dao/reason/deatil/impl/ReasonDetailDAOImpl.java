@@ -3,15 +3,16 @@ package com.pennant.backend.dao.reason.deatil.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -24,7 +25,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements ReasonDetailDAO {
-	private static Logger logger = Logger.getLogger(ReasonDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReasonDetailDAOImpl.class);
 
 	public ReasonDetailDAOImpl() {
 		super();
@@ -61,7 +62,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug("insertSql: " + sql.toString());
 
 		if (reasonHeader.getId() == Long.MIN_VALUE) {
-			reasonHeader.setId(getNextId("SeqReasonHeader"));
+			reasonHeader.setId(getNextValue("SeqReasonHeader"));
 		}
 
 		try {
@@ -100,7 +101,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select RH.Module, RH.Reference, RH.Remarks, RH.Rolecode, SR.RoleDesc");
 		sql.append(", RH.Activity, RC.Code, RC.Description, RH.Touser, SU.UsrLogin, SU.Usrfname");
-		sql.append(", SU.Usrmname ,SU.Usrlname , RH.Logtime ");
+		sql.append(", SU.Usrmname ,SU.Usrlname , RH.Logtime, RS.Description as rejectReasonDesc");
 		sql.append(" from ReasonHeader RH");
 		sql.append(" inner join ReasonDetails RD ON RH.ID = RD.HeaderId");
 		sql.append(" inner join Reasons RS ON RS.ID = RD.ReasonID");
@@ -115,7 +116,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		source.addValue("Reference", reference);
 
 		try {
-			RowMapper<ReasonDetailsLog> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
+			RowMapper<ReasonDetailsLog> mapper = BeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
 			return this.jdbcTemplate.query(sql.toString(), source, mapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -137,7 +138,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
-		RowMapper<ReasonHeader> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonHeader.class);
+		RowMapper<ReasonHeader> mapper = BeanPropertyRowMapper.newInstance(ReasonHeader.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), source, mapper);
@@ -228,7 +229,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		paramSource.addValue("Code", code);
 		paramSource.addValue("ReasonCategoryCode", PennantConstants.LOAN_CANCEL);
 		paramSource.addValue("ReasonTypeCode", PennantConstants.LOAN_CANCEL);
-		RowMapper<ReasonCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCode.class);
+		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

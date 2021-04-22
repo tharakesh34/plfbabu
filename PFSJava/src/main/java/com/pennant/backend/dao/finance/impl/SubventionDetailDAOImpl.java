@@ -43,18 +43,21 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.model.finance.SubventionDetail;
@@ -68,7 +71,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>SubventionDetail</code> with set of CRUD operations.
  */
 public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implements SubventionDetailDAO {
-	private static Logger logger = Logger.getLogger(SubventionDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SubventionDetailDAOImpl.class);
 
 	public SubventionDetailDAOImpl() {
 		super();
@@ -76,34 +79,53 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 
 	@Override
 	public SubventionDetail getSubventionDetail(String finReference, String type) {
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" finReference, method, type, rate, periodRate, discountRate, ");
-		sql.append(" tenure, startDate, endDate, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, Method, Type, Rate, PeriodRate, DiscountRate");
+		sql.append(", Tenure, StartDate, EndDate");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From SubventionDetails");
-		sql.append(type);
-		sql.append(" Where finReference = :finReference");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where finReference = ?");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		SubventionDetail subventionDetail = new SubventionDetail();
-		subventionDetail.setFinReference(finReference);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subventionDetail);
-		RowMapper<SubventionDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SubventionDetail.class);
-
 		try {
-			subventionDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
+					new RowMapper<SubventionDetail>() {
+						@Override
+						public SubventionDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+							SubventionDetail sd = new SubventionDetail();
+
+							sd.setFinReference(rs.getString("FinReference"));
+							sd.setMethod(rs.getString("Method"));
+							sd.setType(rs.getString("Type"));
+							sd.setRate(rs.getBigDecimal("Rate"));
+							sd.setPeriodRate(rs.getBigDecimal("PeriodRate"));
+							sd.setDiscountRate(rs.getBigDecimal("DiscountRate"));
+							sd.setTenure(rs.getInt("Tenure"));
+							sd.setStartDate(rs.getTimestamp("StartDate"));
+							sd.setEndDate(rs.getTimestamp("EndDate"));
+							sd.setVersion(rs.getInt("Version"));
+							sd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+							sd.setLastMntBy(rs.getLong("LastMntBy"));
+							sd.setRecordStatus(rs.getString("RecordStatus"));
+							sd.setRoleCode(rs.getString("RoleCode"));
+							sd.setNextRoleCode(rs.getString("NextRoleCode"));
+							sd.setTaskId(rs.getString("TaskId"));
+							sd.setNextTaskId(rs.getString("NextTaskId"));
+							sd.setRecordType(rs.getString("RecordType"));
+							sd.setWorkflowId(rs.getLong("WorkflowId"));
+
+							return sd;
+						}
+					});
+
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
-			subventionDetail = null;
 		}
 
-		return subventionDetail;
+		return null;
 	}
 
 	@Override
@@ -235,7 +257,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subVenschedule);
-		RowMapper<SubventionScheduleDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SubventionScheduleDetail> rowMapper = BeanPropertyRowMapper
 				.newInstance(SubventionScheduleDetail.class);
 
 		try {
@@ -271,7 +293,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subventionScheduleDetail);
-		RowMapper<SubventionScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<SubventionScheduleDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(SubventionScheduleDetail.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

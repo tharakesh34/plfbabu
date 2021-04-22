@@ -5,14 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -21,7 +22,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 
 public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail> implements IncomeExpenseDetailDAO {
-	private static final Logger logger = Logger.getLogger(IncomeExpenseDetailDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(IncomeExpenseDetailDAOImpl.class);
 
 	@Override
 	public long save(IncomeExpenseDetail incomeExpenseDetail, String type) {
@@ -114,8 +115,7 @@ public class IncomeExpenseDetailDAOImpl extends SequenceDao<IncomeExpenseDetail>
 		paramSource.addValue("id", id);
 		paramSource.addValue("type", incomeType);
 
-		RowMapper<IncomeExpenseDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(IncomeExpenseDetail.class);
+		RowMapper<IncomeExpenseDetail> rowMapper = BeanPropertyRowMapper.newInstance(IncomeExpenseDetail.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

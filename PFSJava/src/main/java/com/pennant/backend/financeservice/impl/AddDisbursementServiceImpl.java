@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -29,22 +32,26 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction>
 		implements AddDisbursementService {
-	private static Logger logger = Logger.getLogger(AddDisbursementServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AddDisbursementServiceImpl.class);
 
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceStepDetailDAO financeStepDetailDAO;
 	private FinanceDataValidation financeDataValidation;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
+	private ChangeGraceEndService changeGraceEndService;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 
 	/**
 	 * Method for perform add disbursement action
@@ -64,6 +71,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		BigDecimal oldTotalPft = financeMain.getTotalGrossPft();
+		BigDecimal disbAmount = BigDecimal.ZERO;
 
 		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 		if (financeScheduleDetails.size() > 0) {
@@ -106,29 +114,47 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		 */
 
 		// Step POS Case , setting Step Details to Object
-		if (StringUtils.isNotEmpty(moduleDefiner)
-				&& StringUtils.equals(financeMain.getRecalType(), CalculationConstants.RPYCHG_STEPPOS)) {
+		if (StringUtils.isNotEmpty(moduleDefiner) && finScheduleData.getFinanceMain().isStepFinance()) {
 			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
-					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false));
+					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false), true);
 		}
 
 		//financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
 		//financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
 
-		// Plan EMI Holidays Resetting after Add Disbursement
-		if (finSchData.getFinanceMain().isPlanEMIHAlw()) {
-			finSchData.getFinanceMain().setEventFromDate(financeMain.getRecalFromDate());
-			finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
-			finSchData.getFinanceMain().setRecalFromDate(financeMain.getRecalFromDate());
-			finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
-			finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
+		for (FinanceDisbursement curDisb : finScheduleData.getDisbursementDetails()) {
 
-			if (StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(),
-					FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
-			} else {
-				finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
+			/*
+			 * if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus()) ||
+			 * StringUtils.equals(DisbursementConstants.DISBTYPE_FLEXI, curDisb.getDisbType())) { continue; }
+			 */
+			disbAmount = disbAmount.add(curDisb.getDisbAmount());
+		}
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		if (finMain.isAllowGrcPeriod() && finMain.isEndGrcPeriodAftrFullDisb()) {
+			if (finMain.getFinAssetValue().compareTo(disbAmount.add(amount)) == 0
+					&& finMain.getGrcPeriodEndDate().compareTo(finMain.getEventFromDate()) > 0) {
+
+				// reset grace n repay fields and end grace period
+				changeGraceEndService.changeGraceEnd(finSchData, true);
+			}
+		} else {
+
+			// Plan EMI Holidays Resetting after Add Disbursement
+			if (finSchData.getFinanceMain().isPlanEMIHAlw()) {
+				finSchData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+				finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
+				finSchData.getFinanceMain().setRecalFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
+				finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
+				finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
+
+				if (StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(),
+						FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+					finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
+				} else {
+					finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
+				}
 			}
 		}
 
@@ -174,10 +200,11 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			return auditDetail;
 		}
 		// It shouldn't be past date when compare to appdate
-		if (fromDate.compareTo(DateUtility.getAppDate()) != 0) {// || fromDate.compareTo(financeMain.getMaturityDate()) >= 0
+		Date appDate = SysParamUtil.getAppDate();
+		if (fromDate.compareTo(appDate) != 0) {// || fromDate.compareTo(financeMain.getMaturityDate()) >= 0
 			String[] valueParm = new String[2];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			valueParm[1] = "application Date:" + DateUtility.formatToShortDate(DateUtility.getAppDate());
+			valueParm[1] = "application Date:" + DateUtility.formatToShortDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 		}
 
@@ -222,7 +249,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			// Schedule Outstanding amount calculation
 			List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
 			BigDecimal closingbal = BigDecimal.ZERO;
-			BigDecimal remainingBal = BigDecimal.ZERO;
 			for (int i = 0; i < schList.size(); i++) {
 				if (DateUtility.compare(schList.get(i).getSchDate(), fromDate) > 0) {
 					break;
@@ -469,6 +495,16 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 
+		//validate and allow only single instruction where instruction based schedule
+		if (financeMain.isInstBasedSchd() && finServiceInstruction.isQuickDisb()) {
+			if (CollectionUtils.isNotEmpty(financeDetail.getAdvancePaymentsList())
+					&& financeDetail.getAdvancePaymentsList().size() > 1) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Only one Instruction allowed";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+			}
+		}
+
 		BigDecimal totalDisbAmtFromInst = BigDecimal.ZERO;
 		if (financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
 			for (FinAdvancePayments finAdvancePayment : financeDetail.getAdvancePaymentsList()) {
@@ -517,6 +553,42 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		return null;
 	}
 
+	@Override
+	public AuditDetail doCancelDisbValidations(FinanceDetail financeDetail) {
+		logger.info(Literal.ENTERING);
+		AuditDetail auditDetail = new AuditDetail();
+		FinScheduleData schd = financeDetail.getFinScheduleData();
+		FinanceMain fm = schd.getFinanceMain();
+		List<ErrorDetail> errorDetailList = financeDataValidation.disbursementValidation(financeDetail);
+
+		if (CollectionUtils.isNotEmpty(errorDetailList)) {
+			for (ErrorDetail errorDetails : errorDetailList) {
+				auditDetail.setErrorDetail(errorDetails);
+			}
+			return auditDetail;
+		}
+
+		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
+		if (advancePayments == null) {
+			return auditDetail;
+		}
+
+		List<FinanceDisbursement> disbursements = schd.getDisbursementDetails();
+		for (FinAdvancePayments advPayments : advancePayments) {
+			advPayments.setDisbSeq(disbursements.size());
+		}
+
+		List<ErrorDetail> errors = finAdvancePaymentsService.validateFinAdvPayments(advancePayments, disbursements, fm,
+				true);
+		for (ErrorDetail erroDetails : errors) {
+			auditDetail.setErrorDetail(
+					ErrorUtil.getErrorDetail(new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
+		}
+
+		logger.info(Literal.LEAVING);
+		return auditDetail;
+	}
+
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
@@ -547,6 +619,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
+		this.changeGraceEndService = changeGraceEndService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

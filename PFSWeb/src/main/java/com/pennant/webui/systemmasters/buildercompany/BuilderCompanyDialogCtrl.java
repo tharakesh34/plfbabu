@@ -43,7 +43,6 @@
 package com.pennant.webui.systemmasters.buildercompany;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -83,6 +83,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.systemmasters.BuilderCompany;
+import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.systemmasters.BuilderCompanyService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -109,7 +111,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(BuilderCompanyDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BuilderCompanyDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -131,6 +133,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	protected Textbox address2;
 	protected Textbox address3;
 	protected ExtendedCombobox city;
+	protected ExtendedCombobox state;
 	protected ExtendedCombobox code;
 	protected Intbox devavailablity;
 	protected Decimalbox magnitude;
@@ -276,13 +279,20 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.city.setValueColumn("PCCity");
 		this.city.setDescColumn("PCCityName");
 		this.city.setValidateColumns(new String[] { "PCCity" });
+		this.city.setMandatoryStyle(true);
+
+		//state
+		this.state.setModuleName("Province");
+		this.state.setValueColumn("CPProvince");
+		this.state.setDescColumn("CPProvinceName");
+		this.state.setValidateColumns(new String[] { "CPProvince" });
+		this.state.setMandatoryStyle(true);
 
 		this.code.setModuleName("PinCode");
-		this.code.setValueColumn("PinCodeId");
+		this.code.setValueColumn("PinCode");
 		this.code.setDescColumn("AreaName");
-		this.code.setValueType(DataType.LONG);
-		this.code.setValidateColumns(new String[] { "PinCodeId" });
-		this.code.setInputAllowed(false);
+		this.code.setValidateColumns(new String[] { "PinCode" });
+		this.code.setMandatoryStyle(true);
 		this.bankBranch.setModuleName("BankBranch");
 		this.bankBranch.setValueColumn("BranchCode");
 		this.bankBranch.setDescColumn("BranchDesc");
@@ -296,7 +306,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 
 		this.absavailablity.setMaxlength(19);
 		this.absavailablity.setFormat(PennantConstants.rateFormate9);
-		this.absavailablity.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.absavailablity.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.absavailablity.setScale(2);
 		this.totalProj.setMaxlength(3);
 		this.approved.setMaxlength(30);
@@ -309,10 +319,12 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.limitOnAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.limitOnUnits.setMaxlength(16);
 		this.limitOnUnits.setFormat(PennantConstants.rateFormate11);
-		this.limitOnUnits.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.limitOnUnits.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.limitOnUnits.setScale(2);
 		this.currentExpUni.setMaxlength(18);
 		this.currentExpAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.dateOfInCop.setFormat(PennantConstants.dateFormat);
+		this.dateOfInCop.setConstraint("no future");
 		this.noOfProj.setMaxlength(3);
 		this.assHLPlayers.setMaxlength(3);
 		this.onGoingProj.setMaxlength(3);
@@ -449,22 +461,6 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onFulfill$code(Event event) {
-		logger.debug("Entering" + event.toString());
-		Object dataObject = code.getObject();
-		if (dataObject instanceof String || dataObject == null) {
-			this.code.setValue("");
-			this.code.setDescription("");
-			this.code.setAttribute("pinCodeId", null);
-		} else {
-			PinCode details = (PinCode) dataObject;
-			this.code.setAttribute("pinCodeId", details.getPinCodeId());
-			this.code.setValue(details.getPinCode());
-		}
-		logger.debug("Leaving" + event.toString());
-
-	}
-
 	public void onChange$apfType(Event event) {
 		logger.debug(Literal.ENTERING);
 		String apfType = this.apfType.getSelectedItem().getValue();
@@ -494,7 +490,13 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			this.space_OnGoingProj.setSclass("");
 			this.space_Recommendation.setSclass("");
 			this.space_CityType.setSclass("");
-			this.apfType.setConstraint("");
+			this.recommendation.setConstraint("");
+			this.recommendation.clearErrorMessage();
+			this.assHLPlayers.clearErrorMessage();
+			this.noOfProj.clearErrorMessage();
+			this.magintudeInLacs.clearErrorMessage();
+			this.expInBusiness.clearErrorMessage();
+			this.onGoingProj.clearErrorMessage();
 		}
 	}
 
@@ -570,9 +572,12 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.address2.setValue(aBuilderCompany.getAddress2());
 		this.address3.setValue(aBuilderCompany.getAddress3());
 		this.city.setValue(aBuilderCompany.getCity());
+		this.state.setValue(aBuilderCompany.getState());
 
 		if (aBuilderCompany.getPinCodeId() != null) {
 			this.code.setAttribute("pinCodeId", aBuilderCompany.getPinCodeId());
+		} else {
+			this.code.setAttribute("pinCodeId", null);
 		}
 
 		this.code.setValue(StringUtils.trimToEmpty(aBuilderCompany.getCode()),
@@ -614,6 +619,14 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.recordStatus.setValue(aBuilderCompany.getRecordStatus());
 		doEnableRequiredFields(aBuilderCompany.getApfType());
 
+		if (!aBuilderCompany.isNew()) {
+			Filter[] filterPin = new Filter[1];
+
+			if (aBuilderCompany.getCity() != null && !aBuilderCompany.getCity().isEmpty()) {
+				filterPin[0] = new Filter("City", aBuilderCompany.getCity(), Filter.OP_EQUAL);
+				this.code.setFilters(filterPin);
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -645,10 +658,10 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		//CustId
 		try {
 			Customer customerDetails = fetchCustomerData();
-			if (customerDetails == null && StringUtils.isNotEmpty(custCIF.getValue())) {
-				throw new WrongValueException(custCIF, Labels.getLabel("Cust_NotFound"));
+			if (customerDetails != null && StringUtils.isNotEmpty(custCIF.getValue())) {
+				//throw new WrongValueException(custCIF, Labels.getLabel("Cust_NotFound"));
+				aBuilderCompany.setCustId(customerDetails.getCustID());
 			}
-			aBuilderCompany.setCustId(this.custId.getValue() == null ? 0 : this.custId.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -681,6 +694,11 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			wve.add(we);
 		}
 		try {
+			aBuilderCompany.setState(this.state.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
 			aBuilderCompany.setEntityType(this.entityType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -691,6 +709,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 				if (!StringUtils.isEmpty(obj.toString())) {
 					aBuilderCompany.setPinCodeId(Long.valueOf((obj.toString())));
 				}
+			} else {
+				aBuilderCompany.setPinCodeId(null);
 			}
 			aBuilderCompany.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
@@ -782,6 +802,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			wve.add(we);
 		}
 		try {
+			doValidate(this.noOfProj, "label_BuilderCompanyDialog_NoOfProj.value");
 			aBuilderCompany.setNoOfProj(this.noOfProj.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -824,22 +845,26 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			wve.add(we);
 		}
 		try {
+			doValidate(this.assHLPlayers, "label_BuilderCompanyDialog_AssHLPlayers.value");
 			aBuilderCompany.setAssHLPlayers(this.assHLPlayers.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
+			doValidate(this.onGoingProj, "label_BuilderCompanyDialog_OnGoingProj.value");
 			aBuilderCompany.setOnGoingProj(this.onGoingProj.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
+			doValidate(this.expInBusiness, "label_BuilderCompanyDialog_ExpInBusiness.value");
 			aBuilderCompany.setExpInBusiness(this.expInBusiness.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aBuilderCompany.setMagintudeInLacs(this.magintudeInLacs.getValue());
+			doValidate(this.magintudeInLacs, "label_BuilderCompanyDialog_MagintudeInLacs.value");
+			aBuilderCompany.setMagintudeInLacs(this.magintudeInLacs.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -865,6 +890,17 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doValidate(Intbox component, String lable) {
+		Integer value = component.getValue();
+		if (value == null && PennantConstants.BRANCH_APF.equals(getComboboxValue(this.apfType))) {
+			throw new WrongValueException(component,
+					Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel(lable) }));
+		} else if (value != null && value < 0) {
+			throw new WrongValueException(component,
+					Labels.getLabel("NUMBER_NOT_NEGATIVE", new String[] { Labels.getLabel(lable) }));
+		}
 	}
 
 	/**
@@ -896,7 +932,10 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 				btnCancel.setVisible(false);
 			}
 		}
-
+		if (enqiryModule) {
+			this.btnCtrl.setBtnStatus_Enquiry();
+			this.btnNotes.setVisible(false);
+		}
 		doWriteBeanToComponents(builderCompany);
 		setDialog(DialogType.EMBEDDED);
 
@@ -936,8 +975,12 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 					Labels.getLabel("label_BuilderCompanyDialog_Approved.value"), approvedList, false));
 		}
 		if (!this.city.isReadonly()) {
-			this.city.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_City.value"),
-					null, false, false));
+			this.city.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_City.value"), null, true, true));
+		}
+		if (!this.state.isReadonly()) {
+			this.state.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_State.value"), null, true, true));
 		}
 
 		if (!this.entityType.isDisabled()) {
@@ -945,8 +988,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 					Labels.getLabel("label_BuilderCompanyDialog_entityType.value"), builderEntityTypeList, false));
 		}
 		if (!this.code.isReadonly()) {
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_Code.value"),
-					null, false, false));
+			this.code.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BuilderCompanyDialog_Code.value"), null, true, true));
 		}
 		if (!this.bankName.isReadonly()) {
 			this.bankName.setConstraint(new PTStringValidator(
@@ -1036,62 +1079,15 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 					new PTDecimalValidator(Labels.getLabel("label_BuilderCompanyDialog_CurrentExpAmt.value"),
 							PennantConstants.defaultCCYDecPos, false, false));
 		}
-		/*
-		 * if (!this.magintudeInLacs.isReadonly()) { this.magintudeInLacs.setConstraint( new
-		 * PTDecimalValidator(Labels.getLabel("label_BuilderCompanyDialog_MagintudeInLacs.value"),
-		 * PennantConstants.defaultCCYDecPos, false, false, 999)); }
-		 */
 		if (!this.noOfProjCons.isReadonly()) {
 			this.noOfProjCons.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_BuilderCompanyDialog_NoOfProjCons.value"), false, false, 0, 9999));
 		}
 		if (this.apfType.getSelectedItem() != null
 				&& this.apfType.getSelectedItem().getValue().equals(PennantConstants.BRANCH_APF)) {
-
-			if (this.assHLPlayers.getValue() >= 0) {
-				this.assHLPlayers.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_AssHLPlayers.value"), false, false, 0, 9999));
-			} else {
-				this.assHLPlayers.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_AssHLPlayers.value"), true, false, 0, 9999));
-			}
-			if (this.noOfProj.getValue() >= 0) {
-				this.noOfProj.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_NoOfProj.value"), false, false, 0, 99999));
-			} else {
-				this.noOfProj.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_NoOfProj.value"), true, false, 0, 99999));
-			}
-			if (this.magintudeInLacs.getValue() >= 0) {
-				this.magintudeInLacs.setConstraint(
-						new PTDecimalValidator(Labels.getLabel("label_BuilderCompanyDialog_MagintudeInLacs.value"),
-								PennantConstants.defaultCCYDecPos, false, false, 999));
-			} else {
-				this.magintudeInLacs.setConstraint(
-						new PTDecimalValidator(Labels.getLabel("label_BuilderCompanyDialog_MagintudeInLacs.value"),
-								PennantConstants.defaultCCYDecPos, true, false, 999));
-			}
-			/*
-			 * this.noOfProjCons.setConstraint( new
-			 * PTNumberValidator(Labels.getLabel("label_BuilderCompanyDialog_NoOfProjCons.value"), false, false, 1,
-			 * 9999));
-			 */
 			this.recommendation.setConstraint(new PTListValidator(
 					Labels.getLabel("label_BuilderCompanyDialog_Recommendation.value"), recommendationList, true));
-			if (this.expInBusiness.getValue() >= 0) {
-				this.expInBusiness.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_ExpInBusiness.value"), false, false, 0, 9999));
-			} else {
-				this.expInBusiness.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_ExpInBusiness.value"), true, false, 0, 9999));
-			}
-			if (this.expInBusiness.getValue() >= 0) {
-				this.onGoingProj.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_OnGoingProj.value"), false, false, 0, 9999));
-			} else {
-				this.onGoingProj.setConstraint(new PTNumberValidator(
-						Labels.getLabel("label_BuilderCompanyDialog_OnGoingProj.value"), true, false, 0, 9999));
-			}
+
 			String cityTypeValue = this.cityType.getSelectedItem().getValue();
 			if (StringUtils.equals(cityTypeValue, PennantConstants.List_Select)) {
 				this.cityType.setConstraint(new StaticListValidator(PennantStaticListUtil.getcityType(),
@@ -1099,18 +1095,6 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 			}
 
 		} else {
-
-			this.assHLPlayers.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_BuilderCompanyDialog_AssHLPlayers.value"), false, false, 0, 9999));
-			this.noOfProj.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_BuilderCompanyDialog_NoOfProj.value"), false, false, 0, 99999));
-			this.magintudeInLacs.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_BuilderCompanyDialog_MagintudeInLacs.value"), 2, false, false, 999));
-			this.onGoingProj.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_BuilderCompanyDialog_OnGoingProj.value"), false, false, 0, 9999));
-
-			this.expInBusiness.setConstraint(new PTNumberValidator(
-					Labels.getLabel("label_BuilderCompanyDialog_ExpInBusiness.value"), false, false, 0, 9999));
 			this.recommendation.setConstraint("");
 			this.cityType.setConstraint("");
 			String cityTypeValue = this.cityType.getSelectedItem().getValue();
@@ -1135,6 +1119,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.apfType.setConstraint("");
 		this.cityType.setConstraint("");
 		this.city.setConstraint("");
+		this.state.setConstraint("");
 		this.entityType.setConstraint("");
 		this.code.setConstraint("");
 		this.bankName.setConstraint("");
@@ -1180,6 +1165,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.apfType.setErrorMessage("");
 		this.cityType.setErrorMessage("");
 		this.city.setErrorMessage("");
+		this.state.setErrorMessage("");
 		this.entityType.setErrorMessage("");
 		this.code.setErrorMessage("");
 		this.bankName.setErrorMessage("");
@@ -1367,6 +1353,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		readOnlyComponent(isReadOnly("BuilderCompanyDialog_Address2"), this.address2);
 		readOnlyComponent(isReadOnly("BuilderCompanyDialog_Address3"), this.address3);
 		readOnlyComponent(isReadOnly("BuilderCompanyDialog_City"), this.city);
+		readOnlyComponent(isReadOnly("BuilderCompanyDialog_State"), this.state);
 		readOnlyComponent(isReadOnly("BuilderCompanyDialog_Code"), this.code);
 		readOnlyComponent(isReadOnly("BuilderCompanyDialog_DevAvailablity"), this.devavailablity);
 		readOnlyComponent(isReadOnly("BuilderCompanyDialog_Magnitude"), this.magnitude);
@@ -1420,6 +1407,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		readOnlyComponent(true, this.groupId);
 		readOnlyComponent(true, this.custId);
 		readOnlyComponent(true, this.city);
+		readOnlyComponent(true, this.state);
 		readOnlyComponent(true, this.entityType);
 		readOnlyComponent(true, this.code);
 		readOnlyComponent(true, this.bankName);
@@ -1450,6 +1438,10 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		this.apfType.setSelectedIndex(0);
 		this.cityType.setSelectedIndex(0);
 		this.city.setDescription("");
+		this.city.setValue("");
+		this.state.setValue("");
+		this.state.setDescription("");
+		this.code.setValue("");
 		this.code.setDescription("");
 		this.bankName.setValue("");
 		this.bankBranch.setDescription("");
@@ -1675,18 +1667,6 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		return processCompleted;
 	}
 
-	public void onFulfill$city(Event event) {
-		logger.debug("Entering" + event.toString());
-		doSetPinCode();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	private void doSetPinCode() {
-		Filter[] filtersProvince = new Filter[1];
-		filtersProvince[0] = new Filter("City", this.city.getValue(), Filter.OP_EQUAL);
-		this.code.setFilters(filtersProvince);
-	}
-
 	public int getCcyFormat() {
 		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	}
@@ -1700,6 +1680,158 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBuilderCompany.getBefImage(), aBuilderCompany);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, aBuilderCompany.getUserDetails(),
 				getOverideMap());
+	}
+
+	public void onFulfill$state(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = state.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			fillPindetails(null, null);
+		} else {
+			Province province = (Province) dataObject;
+			if (province == null) {
+				fillPindetails(null, null);
+			}
+			if (province != null) {
+				this.state.setErrorMessage("");
+				pcProvince = this.state.getValue();
+				fillPindetails(null, pcProvince);
+			}
+		}
+
+		this.city.setObject("");
+		this.code.setObject("");
+		this.city.setValue("");
+		this.city.setDescription("");
+		this.code.setValue("");
+		this.code.setDescription("");
+		fillCitydetails(pcProvince);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * based on state param ,city will be filtered
+	 * 
+	 * @param state
+	 */
+	private void fillCitydetails(String state) {
+		logger.debug(Literal.ENTERING);
+
+		this.city.setModuleName("City");
+		this.city.setValueColumn("PCCity");
+		this.city.setDescColumn("PCCityName");
+		this.city.setValidateColumns(new String[] { "PCCity" });
+		Filter[] filters = new Filter[1];
+		if (state != null && !state.isEmpty()) {
+			filters[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
+		} else {
+			filters[0] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
+		}
+		this.city.setFilters(filters);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * onFulfill custAddrCity
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$city(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = city.getObject();
+
+		String cityValue = null;
+		if (dataObject instanceof String) {
+			this.city.setValue("");
+			this.city.setDescription("");
+			fillPindetails(null, null);
+		} else {
+			City city = (City) dataObject;
+			if (city != null) {
+				this.city.setErrorMessage("");
+				this.state.setErrorMessage("");
+
+				this.state.setValue(city.getPCProvince());
+				this.state.setDescription(city.getLovDescPCProvinceName());
+				cityValue = this.city.getValue();
+			} else {
+				fillCitydetails(state.getValue());
+			}
+		}
+
+		fillPindetails(cityValue, this.state.getValue());
+
+		this.code.setObject("");
+		this.code.setValue("");
+		this.code.setDescription("");
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * based on param values,custaddrzip is filtered
+	 * 
+	 * @param cityValue
+	 * @param provice
+	 */
+
+	private void fillPindetails(String cityValue, String provice) {
+		logger.debug(Literal.ENTERING);
+
+		this.code.setModuleName("PinCode");
+		this.code.setValueColumn("PinCode");
+		this.code.setDescColumn("AreaName");
+		this.code.setValidateColumns(new String[] { "PinCode" });
+		Filter[] filters = new Filter[1];
+
+		if (cityValue != null && !cityValue.isEmpty()) {
+			filters[0] = new Filter("City", cityValue, Filter.OP_EQUAL);
+		} else if (provice != null && !provice.isEmpty()) {
+			filters[0] = new Filter("PCProvince", provice, Filter.OP_EQUAL);
+		} else {
+			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		}
+		this.code.setFilters(filters);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * onFulfill custAddrZip.based on custAddrZip,custAddrCity and custAddrprovince will auto populate
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$code(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = code.getObject();
+		if (dataObject instanceof String) {
+			this.code.setValue("");
+			this.code.setDescription("");
+		} else {
+			PinCode pinCode = (PinCode) dataObject;
+			if (pinCode != null) {
+				this.city.setValue(pinCode.getCity());
+				this.city.setDescription(pinCode.getPCCityName());
+				this.state.setValue(pinCode.getPCProvince());
+				this.state.setDescription(pinCode.getLovDescPCProvinceName());
+
+				this.city.setErrorMessage("");
+				this.state.setErrorMessage("");
+				this.code.setErrorMessage("");
+			} else {
+				fillPindetails(city.getValue(), state.getValue());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setBuilderCompanyService(BuilderCompanyService builderCompanyService) {

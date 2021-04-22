@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -17,7 +19,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.model.finance.FinAutoApprovalDetails;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -33,7 +34,7 @@ import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
  */
 public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDetails>
 		implements FinAutoApprovalDetailDAO {
-	private static Logger logger = Logger.getLogger(FinAutoApprovalDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinAutoApprovalDetailDAOImpl.class);
 
 	public FinAutoApprovalDetailDAOImpl() {
 		super();
@@ -276,7 +277,7 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 
 		parmSource.addValue("FinReference", finReference);
 		parmSource.addValue("quickDisb", true);
-		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		RowMapper<FinanceType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
 			financeType = this.jdbcTemplate.queryForObject(sql.toString(), parmSource, typeRowMapper);
@@ -303,5 +304,18 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 		}
 
 		return autoApprove;
+	}
+	
+	@Override
+	public boolean isQDPCase(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select COUNT(1)");
+		sql.append(" From FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ? And QuickDisb = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1 }, Integer.class) > 0
+				? true : false;
 	}
 }

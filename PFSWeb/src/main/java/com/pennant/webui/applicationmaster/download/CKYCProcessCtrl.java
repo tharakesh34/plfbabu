@@ -11,7 +11,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -24,15 +25,15 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.service.ckyc.CKYCService;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CKYCProcessCtrl extends GFCBaseCtrl {
 	private static final long serialVersionUID = 223801324705386693L;
-	private static final Logger logger = Logger.getLogger(CKYCProcessCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CKYCProcessCtrl.class);
 
 	protected Window window_Download; // autoWired
 	protected Textbox fileName;
@@ -44,6 +45,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 	protected Radiogroup radiogroupCKYC;
 	protected Row rowUpload;
 	private CKYCService ckycService;
+	private String fileNameLead = null;
 	private File file;
 
 	public CKYCProcessCtrl() {
@@ -76,7 +78,10 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 		fileName.setText("");
 		Media media = event.getMedia();
 
-		if (!MediaUtil.isTxt(media)) {
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
+		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".txt"))) {
 			MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid Text file.");
 			media = null;
 			return;
@@ -90,7 +95,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 
 	private void writeFile(Media media, String fName) throws IOException {
 		logger.debug(Literal.ENTERING);
-		File parent = new File(App.getProperty("uploadloaction"));
+		File parent = new File(App.getProperty("external.interface.cKYC.UploadLoaction"));
 
 		if (!parent.exists()) {
 			parent.mkdirs();
@@ -128,6 +133,9 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 					ckycNo = words[18];
 					if (rowNo != null && ckycNo != null && batchNo != null && ckycNo != null && !ckycNo.isEmpty()) {
 						ckycService.updateCkycNo(ckycNo, batchNo, rowNo);
+						int custId = ckycService.getCustId(ckycNo);
+						ckycService.updateCustomerWithCKycNo(custId, ckycNo);
+
 					}
 
 				}
@@ -153,7 +161,6 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 			btnStartCkycFile.setVisible(true);
 
 		}
-
 	}
 
 	public void setCkycService(CKYCService ckycService) {

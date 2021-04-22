@@ -45,14 +45,15 @@ package com.pennant.backend.dao.eodsnapshot.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.eodsnapshot.SnapShotColumnDAO;
 import com.pennant.backend.model.eodsnapshot.SnapShotColumn;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>SnapShotColumn</code> with set of CRUD operations.
  */
 public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements SnapShotColumnDAO {
-	private static Logger logger = Logger.getLogger(SnapShotColumnDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SnapShotColumnDAOImpl.class);
 
 	public SnapShotColumnDAOImpl() {
 		super();
@@ -95,7 +96,7 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 		snapShotColumn.setColumnName(columnName);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotColumn);
-		RowMapper<SnapShotColumn> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotColumn.class);
+		RowMapper<SnapShotColumn> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotColumn.class);
 
 		try {
 			snapShotColumn = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -213,7 +214,7 @@ public class SnapShotColumnDAOImpl extends BasicDao<SnapShotColumn> implements S
 		snapShotColumn.setActive(true);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(snapShotColumn);
-		RowMapper<SnapShotColumn> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SnapShotColumn.class);
+		RowMapper<SnapShotColumn> rowMapper = BeanPropertyRowMapper.newInstance(SnapShotColumn.class);
 
 		try {
 			columns = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

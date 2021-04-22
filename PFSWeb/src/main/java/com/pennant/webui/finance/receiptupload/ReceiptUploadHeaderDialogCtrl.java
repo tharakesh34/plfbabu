@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -59,13 +60,14 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
@@ -77,7 +79,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 3184249234920071313L;
-	private static final Logger logger = Logger.getLogger(ReceiptUploadHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptUploadHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -299,22 +301,22 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aReceiptUploadheader
+	 * @param ruh
 	 *            ReceiptDialog
 	 */
-	public void doWriteBeanToComponents(ReceiptUploadHeader aReceiptUploadheader) {
+	public void doWriteBeanToComponents(ReceiptUploadHeader ruh) {
 		logger.debug("Entering");
 
 		List<ReceiptUploadDetail> successReceiptUploadList = new ArrayList<>();
 		List<ReceiptUploadDetail> failReceiptUploadList = new ArrayList<>();
 
-		this.txtFileName.setValue(aReceiptUploadheader.getFileName());
-		this.recordStatus.setValue(aReceiptUploadheader.getRecordStatus());
-		for (ReceiptUploadDetail receiptUploadDetail : aReceiptUploadheader.getReceiptUploadList()) {
-			if (receiptUploadDetail.getUploadStatus().equals(PennantConstants.UPLOAD_STATUS_SUCCESS)) {
-				successReceiptUploadList.add(receiptUploadDetail);
+		this.txtFileName.setValue(ruh.getFileName());
+		this.recordStatus.setValue(ruh.getRecordStatus());
+		for (ReceiptUploadDetail rud : ruh.getReceiptUploadList()) {
+			if (ReceiptDetailStatus.SUCCESS.getValue() == rud.getProcessingStatus()) {
+				successReceiptUploadList.add(rud);
 			} else {
-				failReceiptUploadList.add(receiptUploadDetail);
+				failReceiptUploadList.add(rud);
 			}
 		}
 
@@ -336,30 +338,29 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aReceiptUploadHeader
+	 * @param ruh
 	 */
-	public void doWriteComponentsToBean(ReceiptUploadHeader aReceiptUploadHeader) {
-		aReceiptUploadHeader.setTransactionDate(DateUtility.getAppDate());
+	public void doWriteComponentsToBean(ReceiptUploadHeader ruh) {
+		ruh.setTransactionDate(SysParamUtil.getAppDate());
 
 		// count
 		int sucess = 0;
 		int failed = 0;
 
-		if (aReceiptUploadHeader.getReceiptUploadList() != null
-				&& !aReceiptUploadHeader.getReceiptUploadList().isEmpty()) {
-			for (ReceiptUploadDetail receiptUploadDetail : aReceiptUploadHeader.getReceiptUploadList()) {
-				if (StringUtils.equals(PennantConstants.UPLOAD_STATUS_SUCCESS, receiptUploadDetail.getUploadStatus())) {
+		if (ruh.getReceiptUploadList() != null && !ruh.getReceiptUploadList().isEmpty()) {
+			for (ReceiptUploadDetail rud : ruh.getReceiptUploadList()) {
+				if (ReceiptDetailStatus.SUCCESS.getValue() == rud.getProcessingStatus()) {
 					sucess = sucess + 1;
 				}
-				if (StringUtils.equals(PennantConstants.UPLOAD_STATUS_FAIL, receiptUploadDetail.getUploadStatus())) {
+				if (ReceiptDetailStatus.FAILED.getValue() == rud.getProcessingStatus()) {
 					failed = failed + 1;
 				}
 			}
 		}
-		aReceiptUploadHeader.setTotalRecords(sucess + failed);
-		aReceiptUploadHeader.setFailedCount(failed);
-		aReceiptUploadHeader.setSuccessCount(sucess);
-		aReceiptUploadHeader.setRecordStatus(this.recordStatus.getValue());
+		ruh.setTotalRecords(sucess + failed);
+		ruh.setFailedCount(failed);
+		ruh.setSuccessCount(sucess);
+		ruh.setRecordStatus(this.recordStatus.getValue());
 	}
 
 	/**
@@ -430,20 +431,12 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_ReceiptUploadDialog_AddrTypeCode.value") + " : "
-				+ aReceiptUploadHeader.getUploadHeaderId();
+				+ "ReceiptUpload Header" + " : " + aReceiptUploadHeader.getUploadHeaderId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.isBlank(aReceiptUploadHeader.getRecordType())) {
-				aReceiptUploadHeader.setVersion(aReceiptUploadHeader.getVersion() + 1);
-				aReceiptUploadHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			aReceiptUploadHeader.setVersion(aReceiptUploadHeader.getVersion() + 1);
+			aReceiptUploadHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
-				if (isWorkFlowEnabled()) {
-					aReceiptUploadHeader.setNewRecord(true);
-					tranType = PennantConstants.TRAN_WF;
-				} else {
-					tranType = PennantConstants.TRAN_DEL;
-				}
-			}
+			tranType = PennantConstants.TRAN_DEL;
 
 			try {
 				if (doProcess(aReceiptUploadHeader, tranType)) {
@@ -480,7 +473,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {
-				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+				this.btnCtrl.setWFBtnStatus_Edit(!enqModule);
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();

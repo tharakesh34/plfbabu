@@ -2,13 +2,15 @@ package com.pennant.eod;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualReversalService;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
+import com.pennant.app.core.ChangeGraceEndService;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.InstallmentDueService;
@@ -20,15 +22,15 @@ import com.pennant.app.core.NPAService;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
-import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.service.limitservice.LimitRebuild;
-import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class EodService {
+	private static Logger logger = LogManager.getLogger(EodService.class);
+
 	private LatePayMarkingService latePayMarkingService;
 	private LatePayBucketService latePayBuketService;
 	private NPAService npaService;
@@ -44,6 +46,7 @@ public class EodService {
 	private ProjectedAmortizationService projectedAmortizationService;
 	private LatePayDueCreationService latePayDueCreationService;
 	private AccrualReversalService accrualReversalService;
+	private ChangeGraceEndService changeGraceEndService;
 
 	public EodService() {
 		super();
@@ -59,13 +62,16 @@ public class EodService {
 		}
 
 		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
+
 		//customer Date update
 		String newCustStatus = null;
 		if (custEODEvent.isUpdCustomer()) {
 			newCustStatus = customer.getCustSts();
 		}
 
-		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
+		Date nextDate = custEODEvent.getEventProperties().getNextDate();
+		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
+				nextDate);
 
 	}
 
@@ -88,7 +94,9 @@ public class EodService {
 			newCustStatus = customer.getCustSts();
 		}
 
-		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
+		Date nextDate = custEODEvent.getEventProperties().getNextDate();
+		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus,
+				nextDate);
 	}
 
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
@@ -96,98 +104,113 @@ public class EodService {
 	}
 
 	public void doProcess(CustEODEvent custEODEvent) throws Exception {
-
-		/**************** Fetch and Set EOD Event ***********/
-
 		long custId = custEODEvent.getCustomer().getCustID();
-		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
 
-		boolean skipLatePayMarking = false;
+		logger.info("Preparing EOD Events for the Customer ID {} >> started...", custId);
+		loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
+		logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
 
-		if ("Y".equals(SysParamUtil.getValueAsString("EOD_SKIP_LATE_PAY_MARKING"))) {
-			skipLatePayMarking = true;
-		}
+		EventProperties eventProperties = custEODEvent.getEventProperties();
 
-		if (!skipLatePayMarking) {
+		if (!eventProperties.isSkipLatePay()) {
 			//late pay marking
 			if (custEODEvent.isPastDueExist()) {
 				//overdue calculated on EOD
 				//LPP calculated on the SOD
 				//LPI calculated on the SOD
-				custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
+				latePayMarkingService.processLatePayMarking(custEODEvent);
 			}
 
 			//DPD Bucketing
-			custEODEvent = latePayBuketService.processDPDBuketing(custEODEvent);
+			latePayBuketService.processDPDBuketing(custEODEvent);
 
 			//customer status update
-			custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
+			latePayMarkingService.processCustomerStatus(custEODEvent);
 
 			if (custEODEvent.isExecuteNPAAndProvision()) {
-				custEODEvent = npaService.processProvisions(custEODEvent);
+				npaService.processProvisions(custEODEvent);
 			}
 
+		} else {
+			logger.info(
+					"Late Pay Marking, DPD Buketing and Processing of provisions skipped due to {} SMT parameter value is true",
+					SMTParameterConstants.EOD_SKIP_LATE_PAY_MARKING);
 		}
 
 		//LatePay Due creation Service
-		custEODEvent = latePayDueCreationService.processLatePayAccrual(custEODEvent);
+		latePayDueCreationService.processLatePayAccrual(custEODEvent);
 
 		/**************** SOD ***********/
 		//moving customer date to sod
-		Date eodValueDate = DateUtility.addDays(custEODEvent.getEodDate(), 1);
+		Date eodValueDate = eventProperties.getBusinessDate();
 		custEODEvent.setEodValueDate(eodValueDate);
 		custEODEvent.getCustomer().setCustAppDate(eodValueDate);
 
 		//Date rollover
 		if (custEODEvent.isDateRollover()) {
-			custEODEvent = dateRollOverService.process(custEODEvent);
+			dateRollOverService.process(custEODEvent);
 		}
 
 		//Rate review
 		if (custEODEvent.isRateRvwExist()) {
-			custEODEvent = rateReviewService.processRateReview(custEODEvent);
+			logger.info("Processing Rate Review started...");
+			rateReviewService.processRateReview(custEODEvent);
+			logger.info("Processing Rate Review completed.");
 		}
 
 		//Accrual posted on EOD only
-		custEODEvent = accrualService.processAccrual(custEODEvent);
+		logger.info("Processing Accruals started...");
+		accrualService.processAccrual(custEODEvent);
+		logger.info("Preparing Accruals completed.");
 
 		//NPA Accounting
 		if (custEODEvent.isExecuteNPAAndProvision()) {
-			custEODEvent = npaService.processAccounting(custEODEvent);
+			logger.info("Processing NPA Accounting started...");
+			npaService.processAccounting(custEODEvent);
+			logger.info("Processing NPA Accounting completed.");
 		}
 
 		// Penalty Accrual posted on EOD only
-		custEODEvent = latePayDueCreationService.processLatePayAccrual(custEODEvent);
+		latePayDueCreationService.processLatePayAccrual(custEODEvent);
 
 		// ACCRUALS calculation for Amortization
-		String accrualCalForAMZ = SysParamUtil.getValueAsString(AmortizationConstants.MONTHENDACC_CALREQ);
-		if (StringUtils.endsWithIgnoreCase(accrualCalForAMZ, "Y")) {
-
-			if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
-					|| StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
-
-				// Calculate MonthEnd ACCRUALS
-				custEODEvent = projectedAmortizationService.prepareMonthEndAccruals(custEODEvent);
-			}
+		if (eventProperties.isMonthEndAccCallReq()
+				&& (custEODEvent.getEodDate().compareTo(eventProperties.getMonthEndDate()) == 0
+						|| eventProperties.isEomOnEOD())) {
+			// Calculate MonthEnd ACCRUALS
+			logger.info("Processing MonthEndAccruals started...");
+			projectedAmortizationService.prepareMonthEndAccruals(custEODEvent);
+			logger.info("Processing MonthEndAccruals completed.");
 		}
 
 		//Auto disbursements
-		if (ImplementationConstants.ALLOW_ADDDBSF) {
-			if (custEODEvent.isDisbExist()) {
-				autoDisbursementService.processDisbursementPostings(custEODEvent);
-			}
+		if (ImplementationConstants.ALLOW_ADDDBSF && custEODEvent.isDisbExist()) {
+			autoDisbursementService.processDisbursementPostings(custEODEvent);
 		}
 
 		//Accrual reversals
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ACCRUAL_REVERSAL_REQ)) {
+		if (eventProperties.isAccrualReversalReq()) {
+			logger.info("Accruals Process started...");
 			accrualReversalService.processAccrual(custEODEvent);
+			logger.info("Accruals Process completed.");
 		}
 
 		//installment
 		if (custEODEvent.isDueExist()) {
+			logger.info("Instalment due date posting process started...");
 			installmentDueService.processDueDatePostings(custEODEvent);
+			logger.info("Instalment due date posting process completed.");
+
+			logger.info("Advance payment process started...");
 			advancePaymentService.processAdvansePayments(custEODEvent);
+			logger.info("Advance payment process completed.");
 		}
+		// Auto Increment Grace End
+		changeGraceEndService.processChangeGraceEnd(custEODEvent);
+
+		logger.info("Auto grace extension process started...");
+		changeGraceEndService.processChangeGraceEnd(custEODEvent);
+		logger.info("Auto grace extension process completed.");
 
 	}
 
@@ -268,6 +291,11 @@ public class EodService {
 	@Autowired
 	public void setAccrualReversalService(AccrualReversalService accrualReversalService) {
 		this.accrualReversalService = accrualReversalService;
+	}
+
+	@Autowired
+	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
+		this.changeGraceEndService = changeGraceEndService;
 	}
 
 }

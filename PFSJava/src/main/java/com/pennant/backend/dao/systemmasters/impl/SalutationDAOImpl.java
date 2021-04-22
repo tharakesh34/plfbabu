@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.SalutationDAO;
 import com.pennant.backend.model.systemmasters.Salutation;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class SalutationDAOImpl extends BasicDao<Salutation> implements SalutationDAO {
-	private static Logger logger = Logger.getLogger(SalutationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SalutationDAOImpl.class);
 
 	public SalutationDAOImpl() {
 		super();
@@ -83,11 +84,12 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 	 * @return Salutation
 	 */
 	@Override
-	public Salutation getSalutationById(final String id, String type) {
+	public Salutation getSalutationById(final String id, String gender, String type) {
 		logger.debug(Literal.ENTERING);
 
 		Salutation salutation = new Salutation();
 		salutation.setId(id);
+		salutation.setSalutationGenderCode(gender);
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql
@@ -96,11 +98,11 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From BMTSalutations");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where SalutationCode =:SalutationCode");
+		selectSql.append(" Where SalutationCode =:SalutationCode and SalutationGenderCode=:SalutationGenderCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(salutation);
-		RowMapper<Salutation> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Salutation.class);
+		RowMapper<Salutation> typeRowMapper = BeanPropertyRowMapper.newInstance(Salutation.class);
 
 		try {
 			salutation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -114,12 +116,12 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 	}
 
 	@Override
-	public boolean isDuplicateKey(String salutationCode, TableType tableType) {
+	public boolean isDuplicateKey(String salutationCode, String gender, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = "SalutationCode = :salutationCode";
+		String whereClause = "SalutationCode = :salutationCode and SalutationGenderCode= :gender";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -137,6 +139,7 @@ public class SalutationDAOImpl extends BasicDao<Salutation> implements Salutatio
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("salutationCode", salutationCode);
+		paramSource.addValue("gender", gender);
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 

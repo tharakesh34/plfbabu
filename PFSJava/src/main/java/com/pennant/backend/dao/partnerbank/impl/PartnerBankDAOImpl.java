@@ -50,16 +50,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -78,7 +79,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements PartnerBankDAO {
-	private static Logger logger = Logger.getLogger(PartnerBankDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PartnerBankDAOImpl.class);
 
 	public PartnerBankDAOImpl() {
 		super();
@@ -390,8 +391,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		selectSql.append(" Where PartnerBankId =:PartnerBankId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<PartnerBankModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PartnerBankModes.class);
+		RowMapper<PartnerBankModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBankModes.class);
 		List<PartnerBankModes> PartnerBankModeList = new ArrayList<PartnerBankModes>();
 		try {
 			PartnerBankModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -440,8 +440,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		selectSql.append(" Where PartnerBankId =:PartnerBankId");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<PartnerBranchModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PartnerBranchModes.class);
+		RowMapper<PartnerBranchModes> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBranchModes.class);
 		List<PartnerBranchModes> PartnerBranchModeList = new ArrayList<PartnerBranchModes>();
 		try {
 			PartnerBranchModeList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
@@ -591,7 +590,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBank);
-		RowMapper<PartnerBank> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PartnerBank.class);
+		RowMapper<PartnerBank> typeRowMapper = BeanPropertyRowMapper.newInstance(PartnerBank.class);
 
 		try {
 			partnerBank = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -621,6 +620,39 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	@Override
+	public boolean isPartnerBankCodeExistsByEntity(String entity, String partnerbankCode, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COUNT(*) FROM PARTNERBANKS");
+		sql.append(type);
+		sql.append(" WHERE ENTITY = ? AND PARTNERBANKCODE = ?");
+
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entity, partnerbankCode },
+				Integer.class) > 0 ? true : false;
+	}
+
+	@Override
+	public List<PartnerBankModes> getPartnerBankModes(long id, String purpose) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PartnerBankId, Purpose, PaymentMode");
+		sql.append(" From PartnerBankModes");
+		sql.append(" Where PartnerBankId = ? And Purpose = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, id);
+			ps.setString(2, purpose);
+		}, (rs, i) -> {
+			PartnerBankModes pbm = new PartnerBankModes();
+			pbm.setPartnerBankId(rs.getLong("PartnerBankId"));
+			pbm.setPurpose(rs.getString("Purpose"));
+			pbm.setPaymentMode(rs.getString("PaymentMode"));
+			return pbm;
+		});
+
 	}
 
 }

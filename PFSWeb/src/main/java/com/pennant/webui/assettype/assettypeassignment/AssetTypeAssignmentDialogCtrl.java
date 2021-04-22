@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -50,12 +53,11 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
 
 	private static final long serialVersionUID = 4558487274958745612L;
-	private static final Logger logger = Logger.getLogger(AssetTypeAssignmentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AssetTypeAssignmentDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component
-	 * with the same 'id' in the zul-file are getting by our 'extends GFCBaseCtrl'
-	 * GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_AssetTypeAssignmentDialog;
 
@@ -149,8 +151,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param collateralAssignment
 	 * @throws InterruptedException
@@ -233,8 +234,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -267,13 +267,13 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 	/**
 	 * 
-	 * When user clicks on "btnSearch assetType" button This method displays
-	 * ExtendedSearchListBox with Asset Type details
+	 * When user clicks on "btnSearch assetType" button This method displays ExtendedSearchListBox with Asset Type
+	 * details
 	 * 
 	 * @param event
 	 * @throws ScriptException
 	 */
-	public void onFulfill$assetType(Event event) {
+	public void onFulfill$assetType(Event event) throws ScriptException {
 		logger.debug("Entering  " + event.toString());
 
 		if (this.assetType.isReadonly()) {
@@ -356,8 +356,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * @throws NoSuchFieldException
 	 */
 	public void onClick$btnSave(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException, IOException,
-			NoSuchMethodException, NoSuchFieldException, SecurityException {
+			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException,
+			ScriptException, IOException, NoSuchMethodException, NoSuchFieldException, SecurityException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -377,9 +377,9 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 * @throws IllegalArgumentException
 	 * @throws InvocationTargetException
 	 */
-	public void doSave()
-			throws InterruptedException, ParseException, IOException, NoSuchMethodException, NoSuchFieldException,
-			SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public void doSave() throws InterruptedException, ParseException, ScriptException, IOException,
+			NoSuchMethodException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		try {
@@ -493,8 +493,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			for (int i = 0; i < getCollateralHeaderDialogCtrl().getExtendedFieldRenderList().size(); i++) {
 				ExtendedFieldRender fieldRender = getCollateralHeaderDialogCtrl().getExtendedFieldRenderList().get(i);
 
-				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list
-																					// Seqno same
+				if (fieldRender.getSeqNo() == aExetendedFieldRender.getSeqNo()) { // Both Current and Existing list Seqno same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -652,7 +651,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -708,7 +708,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());

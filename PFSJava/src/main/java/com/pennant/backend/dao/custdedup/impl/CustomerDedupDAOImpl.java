@@ -1,24 +1,27 @@
 package com.pennant.backend.dao.custdedup.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements CustomerDedupDAO {
-	private static Logger logger = Logger.getLogger(CustomerDedupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerDedupDAOImpl.class);
 
 	public CustomerDedupDAOImpl() {
 		super();
@@ -87,7 +90,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		RowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerDedup.class);
+		RowMapper<CustomerDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDedup.class);
 
 		logger.debug("Leaving");
 
@@ -99,31 +102,56 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 	 *
 	 */
 	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup, String sqlQuery) {
-		List<CustomerDedup> rowTypes = null;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustId, CustCIF, CustFName, CustLName, CustCRCPR, CustPassportNo, CustShrtName");
+		sql.append(", CustDOB, CustNationality, MobileNumber, CustCtgCode, CustDftBranch, CustSector");
+		sql.append(", CustSubSector, AadharNumber, PanNumber, CustEMail");
+		/* Below columns are not available in Bean */
+		sql.append(", CustTypeCode, SubCategory, CasteId, ReligionId, CasteCode");
+		sql.append(", CasteDesc, ReligionCode, ReligionDesc, lovdescCustCtgType");
+		sql.append(" from  CustomersDedup_View ");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT * FROM CustomersDedup_View ");
 		if (!StringUtils.isBlank(sqlQuery)) {
-			selectSql.append(StringUtils.trimToEmpty(sqlQuery));
-			selectSql.append(" AND");
+			sql.append(StringUtils.trimToEmpty(sqlQuery));
+			sql.append(" and ");
 		} else {
-			selectSql.append(" Where");
+			sql.append(" Where");
 		}
-		selectSql.append(" CustId != :CustId ");
+		sql.append(" CustId != :CustId");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		ParameterizedBeanPropertyRowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDedup.class);
 
 		try {
-			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, (rs, rowNum) -> {
+				CustomerDedup cd = new CustomerDedup();
+
+				cd.setCustId(rs.getLong("CustId"));
+				cd.setCustCIF(rs.getString("CustCIF"));
+				cd.setCustFName(rs.getString("CustFName"));
+				cd.setCustLName(rs.getString("CustLName"));
+				cd.setCustCRCPR(rs.getString("CustCRCPR"));
+				cd.setCustPassportNo(rs.getString("CustPassportNo"));
+				cd.setCustShrtName(rs.getString("CustShrtName"));
+				cd.setCustDOB(rs.getTimestamp("CustDOB"));
+				cd.setCustNationality(rs.getString("CustNationality"));
+				cd.setMobileNumber(rs.getString("MobileNumber"));
+				cd.setCustCtgCode(rs.getString("CustCtgCode"));
+				cd.setCustDftBranch(rs.getString("CustDftBranch"));
+				cd.setCustSector(rs.getString("CustSector"));
+				cd.setCustSubSector(rs.getString("CustSubSector"));
+				cd.setAadharNumber(rs.getString("AadharNumber"));
+				cd.setPanNumber(rs.getString("PanNumber"));
+				cd.setCustEMail(rs.getString("CustEMail"));
+
+				return cd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			dedup = null;
+			logger.warn("Records are not available in CustomersDedup_View");
 		}
-		logger.debug("Leaving");
-		return rowTypes;
+
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -142,8 +170,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 			selectSql.append(" SELECT * FROM CustomerDedupDetail");
 			selectSql.append(" WHERE FinReference = :FinReference ");
 
-			RowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerDedup.class);
+			RowMapper<CustomerDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDedup.class);
 			List<CustomerDedup> list = this.jdbcTemplate.query(selectSql.toString(), map, typeRowMapper);
 
 			if (list != null && !list.isEmpty()) {

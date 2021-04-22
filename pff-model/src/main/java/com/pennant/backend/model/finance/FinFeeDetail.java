@@ -155,9 +155,12 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private BigDecimal waivedGST = BigDecimal.ZERO;
 	private Long taxHeaderId;
 	private TaxHeader taxHeader;
-
+	private boolean isPaidFromUpfront = false;
+	private String vasProductCode;
 	private boolean isPaidFromLoanApproval = false;
 	private boolean paidCalcReq = false;
+	private String prvTaxComponent = "I";
+	private boolean upfrontFee;
 
 	public FinFeeDetail() {
 		super();
@@ -165,6 +168,101 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
+	}
+
+	public FinFeeDetail copyEntity() {
+		FinFeeDetail entity = new FinFeeDetail();
+		entity.setFeeID(this.feeID);
+		entity.setFeeSeq(this.feeSeq);
+		entity.setFinReference(this.finReference);
+		entity.setOriginationFee(this.originationFee);
+		entity.setFinEvent(this.finEvent);
+		entity.setFeeTypeID(this.feeTypeID);
+		entity.setCalculatedAmount(this.calculatedAmount);
+		entity.setActualAmount(this.actualAmount);
+		entity.setActualAmountOriginal(this.actualAmountOriginal);
+		entity.setActualAmountGST(this.actualAmountGST);
+		entity.setWaivedAmount(this.waivedAmount);
+		entity.setPaidAmountOriginal(this.paidAmountOriginal);
+		entity.setPaidAmountGST(this.paidAmountGST);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setNetAmountOriginal(this.netAmountOriginal);
+		entity.setNetAmountGST(this.netAmountGST);
+		entity.setNetAmount(this.netAmount);
+		entity.setTerms(this.terms);
+		entity.setRemainingFeeOriginal(this.remainingFeeOriginal);
+		entity.setRemainingFeeGST(this.remainingFeeGST);
+		entity.setRemainingFee(this.remainingFee);
+		entity.setTaxPercent(this.taxPercent);
+		entity.setFeeCategory(this.feeCategory);
+		entity.setPaymentRef(this.paymentRef);
+		entity.setFeeOrder(this.feeOrder);
+		entity.setFinEventDesc(this.finEventDesc);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setFeeScheduleMethod(this.feeScheduleMethod);
+		entity.setCalculationType(this.calculationType);
+		entity.setRuleCode(this.ruleCode);
+		entity.setFixedAmount(this.fixedAmount);
+		entity.setPercentage(this.percentage);
+		entity.setActPercentage(this.actPercentage);
+		entity.setCalculateOn(this.calculateOn);
+		entity.setAlwDeviation(this.alwDeviation);
+		entity.setMaxWaiverPerc(this.maxWaiverPerc);
+		entity.setAlwModifyFee(this.alwModifyFee);
+		entity.setAlwModifyFeeSchdMthd(this.alwModifyFeeSchdMthd);
+		entity.setVasReference(this.vasReference);
+		entity.setStatus(this.status);
+		entity.setDataModified(this.dataModified);
+		entity.setRcdVisible(this.rcdVisible);
+		entity.setSchdDate(this.schdDate);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setPostDate(this.postDate);
+		entity.setTransactionId(this.transactionId);
+		entity.setCalculatedOn(this.calculatedOn);
+		entity.setRefundable(this.refundable);
+		entity.setAlwPreIncomization(this.alwPreIncomization);
+		entity.setValidateFinFeeDetail(
+				this.validateFinFeeDetail);
+		this.finFeeScheduleDetailList.stream()
+				.forEach(e -> entity.getFinFeeScheduleDetailList().add(e == null ? null : e.copyEntity()));
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setTaxComponent(this.taxComponent);
+		entity.setFeeAmz(this.feeAmz);
+		this.finFeeReceipts.stream().forEach(e -> entity.getFinFeeReceipts().add(e == null ? null : e.copyEntity()));
+		entity.setFeeModified(this.feeModified);
+		entity.setInstructionUID(this.instructionUID);
+		entity.setModuleDefiner(this.moduleDefiner);
+		entity.setActualOldAmount(this.actualOldAmount);
+		entity.setNetTDS(this.netTDS);
+		entity.setPaidTDS(this.paidTDS);
+		entity.setRemTDS(this.remTDS);
+		entity.setTdsReq(this.tdsReq);
+		entity.setReferenceId(this.referenceId);
+		entity.setWaivedGST(this.waivedGST);
+		entity.setTaxHeaderId(this.taxHeaderId);
+		entity.setTaxHeader(this.taxHeader == null ? null : this.taxHeader.copyEntity());
+		entity.setPaidFromUpfront(this.isPaidFromUpfront);
+		entity.setVasProductCode(this.vasProductCode);
+		entity.setPaidFromLoanApproval(this.isPaidFromLoanApproval);
+		entity.setPaidCalcReq(this.paidCalcReq);
+		entity.setPrvTaxComponent(this.prvTaxComponent);
+		entity.setUpfrontFee(this.upfrontFee);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	public FinFeeDetail(String finReference) {
@@ -192,11 +290,13 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("taxHeader");
 		excludeFields.add("moduleDefiner");
 		excludeFields.add("actualOldAmount");
+		excludeFields.add("vasProductCode");
 		excludeFields.add("tdsReq");
 		excludeFields.add("isPaidFromUpfront");
-		excludeFields.add("paidCalcReq");
 		excludeFields.add("isPaidFromLoanApproval");
 		excludeFields.add("paidCalcReq");
+		excludeFields.add("prvTaxComponent");
+		excludeFields.add("upfrontFee");
 
 		return excludeFields;
 	}
@@ -765,12 +865,32 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		this.actualOldAmount = actualOldAmount;
 	}
 
+	public String getVasProductCode() {
+		return vasProductCode;
+	}
+
+	public void setVasProductCode(String vasProductCode) {
+		this.vasProductCode = vasProductCode;
+	}
+
 	public boolean isTdsReq() {
 		return tdsReq;
 	}
 
 	public void setTdsReq(boolean tdsReq) {
 		this.tdsReq = tdsReq;
+	}
+
+	public boolean isPaidFromUpfront() {
+		return isPaidFromUpfront;
+	}
+
+	public void setPaidFromUpfront(boolean isPaidFromUpfront) {
+		this.isPaidFromUpfront = isPaidFromUpfront;
+	}
+
+	public void setValidateFinFeeDetail(FinFeeDetail validateFinFeeDetail) {
+		this.validateFinFeeDetail = validateFinFeeDetail;
 	}
 
 	public boolean isPaidFromLoanApproval() {
@@ -788,4 +908,21 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	public void setPaidCalcReq(boolean paidCalcReq) {
 		this.paidCalcReq = paidCalcReq;
 	}
+
+	public String getPrvTaxComponent() {
+		return prvTaxComponent;
+	}
+
+	public void setPrvTaxComponent(String prvTaxComponent) {
+		this.prvTaxComponent = prvTaxComponent;
+	}
+
+	public boolean isUpfrontFee() {
+		return upfrontFee;
+	}
+
+	public void setUpfrontFee(boolean upfrontFee) {
+		this.upfrontFee = upfrontFee;
+	}
+
 }

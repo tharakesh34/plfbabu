@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -38,7 +38,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -51,6 +52,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -113,6 +115,8 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private transient CustomerDetailsService customerDetailsService;
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
+	@Autowired
+	private JointAccountDetailService jointAccountDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -857,8 +861,24 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						vrf.setPersonalDiscussion(item);
 					}
 				}
+				if (vrf.getReferenceType().equals("Primary")) {
+					result.add(vrf);
+				} else if (vrf.getReferenceType().equals("Co-applicant")) {
+					// getting co-applicants based on each verification
+					JointAccountDetail coApplicant = jointAccountDetailService.getJountAccountDetailByRef(keyReference,
+							vrf.getReference(), "_Temp");
+					// retrieving verifications from verification_pd table
+					PersonalDiscussion pd = personalDiscussionService.getPersonalDiscussion(vrf.getId(), "_view");
+					if (coApplicant != null) {
+						result.add(vrf);
+					} else {
+						if (pd != null) {
+							result.add(vrf);
+						}
+					}
+				}
 			}
-			return verifications;
+			return result;
 		}
 		for (Verification item : verifications) {
 			if (item.getReference().equals(custCif)) {
@@ -900,7 +920,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setVerificationType(VerificationType.PD.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setModule(Module.LOAN.getKey());
-		verification.setCreatedOn(DateUtility.getAppDate());
+		verification.setCreatedOn(SysParamUtil.getAppDate());
 
 		return item;
 	}
@@ -922,6 +942,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
+			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 
 			fivComboBox.clearErrorMessage();
 			agencyComboBox.clearErrorMessage();
@@ -935,6 +956,9 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			if (reInitRemarks != null) {
 				reInitRemarks.clearErrorMessage();
+			}
+			if (remarks != null) {
+				remarks.clearErrorMessage();
 			}
 		}
 	}
@@ -1004,10 +1028,13 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		case "Remarks":
 			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 			verification.setRemarks(remarks.getValue());
-			if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
-				if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-						&& StringUtils.isEmpty(verification.getRemarks())) {
-					throw new WrongValueException(remarks, "Remarks are mandatory when Verification is Not Required");
+			if (ImplementationConstants.VER_INITATE_REMARKS_MANDATORY) {
+				if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
+					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+							&& StringUtils.isEmpty(verification.getRemarks())) {
+						throw new WrongValueException(remarks,
+								"Remarks are mandatory when Verification is Not Required");
+					}
 				}
 			}
 			break;
@@ -1036,7 +1063,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			verification.setDecisionRemarks(textbox.getValue());
 			if (verification.getDecision() == Decision.OVERRIDE.getKey()
 					&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
-				throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
+				throw new WrongValueException(textbox, Labels.getLabel("label_OVERRIDE_Validation"));
 			}
 			break;
 		default:

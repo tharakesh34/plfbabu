@@ -22,7 +22,8 @@ import javax.imageio.ImageIO;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.BeanUtils;
@@ -64,6 +65,7 @@ import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
@@ -88,6 +90,7 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
@@ -126,7 +129,7 @@ import freemarker.template.Template;
  */
 public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(CustomerViewDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerViewDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -168,7 +171,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label custLngg;
 	protected Label custLnggDesc;
 	protected Label custDOBB;
-	protected Label custLocalLngName;
+	protected Label custArabicName;
 	protected Label custNationality;
 	protected Label custNationalitydesc;
 	protected Label custRO1;
@@ -213,6 +216,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label custBaseCcyDescc;
 	protected Label custTypeCodee;
 	protected Label custTypeCodeDescc;
+	protected Label custArabicNamee;
 	protected Label custNationalityy;
 	protected Label custNationalitydescc;
 	protected Label custROO1;
@@ -248,7 +252,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label recordStatus3;
 	protected Label recordType1;
 	protected Groupbox gb_information;
-	protected Space space_CustLocalLngName;
+	protected Space space_CustArabicName;
 	protected Checkbox salaryTransferred;
 	protected Image customerPic3;
 	protected Image leftBar;
@@ -406,8 +410,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listheader listheader_GSTInvoice;
 	protected Listheader listheader_CreditNote;
 	protected Listheader listheader_Cibil;
-	//Get SystemParameter 
-	String pageExt = SysParamUtil.getValueAsString("CUST_DIALOG_EXT");
 
 	/** New Labels For HL MLOD **/
 	protected Label entityType;
@@ -642,10 +644,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custSts.setStyle("color:orange;");
 				custSts.setValue("- - - - - - - - -");
 			}
-			custLocalLngName.setValue(aCustomer.getCustShrtNameLclLng());
+			custArabicName.setValue(aCustomer.getCustShrtNameLclLng());
 			if (StringUtils.isEmpty(aCustomer.getCustShrtNameLclLng())) {
-				custLocalLngName.setStyle("color:orange; font:12px");
-				custLocalLngName.setValue("- - - - - - - - -");
+				custArabicName.setStyle("color:orange; font:12px");
+				custArabicName.setValue("- - - - - - - - -");
 			}
 			custNationality.setValue(aCustomer.getCustNationality() + ", ");
 			custNationalitydesc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
@@ -839,74 +841,73 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				retailDND.setSrc("images/icons/customerenquiry/inactivecheck.png");
 			}
 			employmentType.setValue(aCustomer.getSubCategory());
-			if (pageExt != null) {
-				List<ValueLabel> residentialStsList = PennantStaticListUtil.getResidentialStsList();
-				for (ValueLabel valueLabel : residentialStsList) {
-					if ((valueLabel.getValue().equals(aCustomer.getCustResidentialSts()))) {
-						residentialStatus.setValue(valueLabel.getLabel());
-						break;
-					}
+
+			List<ValueLabel> residentialStsList = PennantStaticListUtil.getResidentialStsList();
+			for (ValueLabel valueLabel : residentialStsList) {
+				if ((valueLabel.getValue().equals(aCustomer.getCustResidentialSts()))) {
+					residentialStatus.setValue(valueLabel.getLabel());
+					break;
 				}
-				if (StringUtils.isEmpty(residentialStatus.getValue())) {
-					residentialStatus.setStyle("color:orange; font:12px");
-					residentialStatus.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getOtherReligion())) {
-					otherReligion.setValue(aCustomer.getOtherReligion());
-				} else {
-					otherReligion.setStyle("color:orange; font:12px");
-					otherReligion.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getOtherCaste())) {
-					otherCaste.setValue(aCustomer.getOtherCaste());
-				} else {
-					otherCaste.setStyle("color:orange; font:12px");
-					otherCaste.setValue("- - - - - - - - -");
-				}
-				List<ValueLabel> natureofBusinessList = PennantStaticListUtil.getNatureofBusinessList();
-				for (ValueLabel valueLabel : natureofBusinessList) {
-					if ((valueLabel.getValue().equals(aCustomer.getNatureOfBusiness()))) {
-						natureOfBusiness.setValue(valueLabel.getLabel());
-						break;
-					}
-				}
-				if (StringUtils.isEmpty(natureOfBusiness.getValue())) {
-					natureOfBusiness.setStyle("color:orange; font:12px");
-					natureOfBusiness.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getQualification())) {
-					qualifiaction.setValue(aCustomer.getQualification());
-				} else {
-					qualifiaction.setStyle("color:orange; font:12px");
-					qualifiaction.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getLovDescCustProfessionName())) {
-					profession.setValue(aCustomer.getLovDescCustProfessionName());
-				} else {
-					profession.setStyle("color:orange; font:12px");
-					profession.setValue("- - - - - - - - -");
-				}
-				if (!StringUtils.isEmpty(aCustomer.getCkycOrRefNo())) {
-					cKYCRef.setValue(aCustomer.getCkycOrRefNo());
-				} else {
-					cKYCRef.setStyle("color:orange; font:12px");
-					cKYCRef.setValue("- - - - - - - - -");
-				}
-				labelNatureOfBusiness.setVisible(true);
-				labelOtherCaste.setVisible(true);
-				labelProfession.setVisible(true);
-				labelQualifiaction.setVisible(true);
-				labelOtherReligion.setVisible(true);
-				labelResidentialStatus.setVisible(true);
-				residentialStatus.setVisible(true);
-				otherReligion.setVisible(true);
-				otherCaste.setVisible(true);
-				natureOfBusiness.setVisible(true);
-				qualifiaction.setVisible(true);
-				profession.setVisible(true);
-				cKYCRef.setVisible(true);
-				labelCKYCRef.setVisible(true);
 			}
+			if (StringUtils.isEmpty(residentialStatus.getValue())) {
+				residentialStatus.setStyle("color:orange; font:12px");
+				residentialStatus.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getOtherReligion())) {
+				otherReligion.setValue(aCustomer.getOtherReligion());
+			} else {
+				otherReligion.setStyle("color:orange; font:12px");
+				otherReligion.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getOtherCaste())) {
+				otherCaste.setValue(aCustomer.getOtherCaste());
+			} else {
+				otherCaste.setStyle("color:orange; font:12px");
+				otherCaste.setValue("- - - - - - - - -");
+			}
+			List<ValueLabel> natureofBusinessList = PennantStaticListUtil.getNatureofBusinessList();
+			for (ValueLabel valueLabel : natureofBusinessList) {
+				if ((valueLabel.getValue().equals(aCustomer.getNatureOfBusiness()))) {
+					natureOfBusiness.setValue(valueLabel.getLabel());
+					break;
+				}
+			}
+			if (StringUtils.isEmpty(natureOfBusiness.getValue())) {
+				natureOfBusiness.setStyle("color:orange; font:12px");
+				natureOfBusiness.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getQualification())) {
+				qualifiaction.setValue(aCustomer.getQualification());
+			} else {
+				qualifiaction.setStyle("color:orange; font:12px");
+				qualifiaction.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getLovDescCustProfessionName())) {
+				profession.setValue(aCustomer.getLovDescCustProfessionName());
+			} else {
+				profession.setStyle("color:orange; font:12px");
+				profession.setValue("- - - - - - - - -");
+			}
+			if (!StringUtils.isEmpty(aCustomer.getCkycOrRefNo())) {
+				cKYCRef.setValue(aCustomer.getCkycOrRefNo());
+			} else {
+				cKYCRef.setStyle("color:orange; font:12px");
+				cKYCRef.setValue("- - - - - - - - -");
+			}
+			labelNatureOfBusiness.setVisible(true);
+			labelOtherCaste.setVisible(true);
+			labelProfession.setVisible(true);
+			labelQualifiaction.setVisible(true);
+			labelOtherReligion.setVisible(true);
+			labelResidentialStatus.setVisible(true);
+			residentialStatus.setVisible(true);
+			otherReligion.setVisible(true);
+			otherCaste.setVisible(true);
+			natureOfBusiness.setVisible(true);
+			qualifiaction.setVisible(true);
+			profession.setVisible(true);
+			cKYCRef.setVisible(true);
+			labelCKYCRef.setVisible(true);
 
 			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
@@ -1014,11 +1015,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				i++;
 			}
 			custShrtName2.setValue(aCustomer.getCustShrtName());
-			custLocalLngName.setValue(aCustomer.getCustShrtName());
+			custArabicNamee.setValue(aCustomer.getCustShrtName());
 
 			if (aCustomer.getCustShrtName() == null) {
-				custLocalLngName.setStyle("color:orange; font:12px");
-				custLocalLngName.setValue("- - - - - - - - -");
+				custArabicNamee.setStyle("color:orange; font:12px");
+				custArabicNamee.setValue("- - - - - - - - -");
 			}
 			custNationalityy.setValue(aCustomer.getCustNationality() + ", ");
 			custNationalitydescc.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustNationalityName()));
@@ -1109,13 +1110,12 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				corpDND.setSrc("images/icons/customerenquiry/inactivecheck.png");
 			}
-			if (pageExt != null) {
-				entityType.setValue(aCustomer.getEntityType());
-				entityType.setVisible(true);
-				if (StringUtils.isEmpty(aCustomer.getEntityType())) {
-					entityType.setStyle("color:orange; font:12px");
-					entityType.setValue("- - - - - - - - -");
-				}
+
+			entityType.setValue(aCustomer.getEntityType());
+			entityType.setVisible(true);
+			if (StringUtils.isEmpty(aCustomer.getEntityType())) {
+				entityType.setStyle("color:orange; font:12px");
+				entityType.setValue("- - - - - - - - -");
 			}
 			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
@@ -1188,7 +1188,9 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				customerPic1.setSrc("images/icons/customerenquiry/female.png");
 			}
 		}
-
+		//Piramal change to hide the employment details section based on system param
+		hbox_empDetails.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
+		listBoxCustomerEmploymentDetail.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
 		doFillDownload(prepareList());
 		logger.debug("Leaving");
 	}
@@ -1288,26 +1290,29 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		final Listitem item = this.listBoxCustomerDocuments.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final CustomerDocument customerDocument = (CustomerDocument) item.getAttribute("data");
-			if (isDeleteRecord(customerDocument.getRecordType())) {
+			final CustomerDocument cd = (CustomerDocument) item.getAttribute("data");
+			if (isDeleteRecord(cd.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
-				if (customerDocument.getCustDocImage() == null) {
-					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
-					} /*
-						 * else if (StringUtils.isNotBlank(customerDocument.getDocUri())) { try { // Fetch document from
-						 * interface String custCif = this.custCIF2.getValue(); DocumentDetails detail =
-						 * externalDocumentManager.getExternalDocument( customerDocument.getCustDocName(),
-						 * customerDocument.getDocUri(), custCif); if (detail != null && detail.getDocImage() != null) {
-						 * customerDocument.setCustDocImage(detail.getDocImage());
-						 * customerDocument.setCustDocName(detail.getDocName()); } } catch (InterfaceException e) {
-						 * MessageUtil.showError(e); } }
-						 */
+				final Map<String, Object> map = new HashMap<>();
+
+				String docName = cd.getCustDocName();
+				String docUri = cd.getDocUri();
+				Long docRefId = cd.getDocRefId();
+				if (StringUtils.isNotBlank(docUri)) {
+					DocumentDetails dd = dMSService.getExternalDocument(this.custCIF.getValue(), docName, docUri);
+					cd.setCustDocImage(dd.getDocImage());
+					cd.setCustDocName(dd.getDocName());
+				} else {
+					if (cd.getCustDocImage() == null) {
+						if (docRefId != null && docRefId != Long.MIN_VALUE) {
+							cd.setCustDocImage(dMSService.getById(docRefId));
+						}
+					}
 				}
-				customerDocument.setLovDescCustCIF(this.custCIF2.getValue());
-				map.put("customerDocument", customerDocument);
+
+				cd.setLovDescCustCIF(this.custCIF2.getValue());
+				map.put("customerDocument", cd);
 				map.put("customerViewDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("isFinanceProcess", isFinanceProcess);
@@ -1599,7 +1604,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			for (CustomerIncome customerIncome : incomes) {
 				String category = StringUtils.trimToEmpty(customerIncome.getCategory());
 				if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					totIncome = totIncome.add(customerIncome.getIncome());
+					totIncome = totIncome.add(customerIncome.getCalculatedAmount());
 					if (incomeMap.containsKey(category)) {
 						incomeMap.get(category).add(customerIncome);
 					} else {
@@ -1608,7 +1613,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						incomeMap.put(category, list);
 					}
 				} else {
-					totExpense = totExpense.add(customerIncome.getIncome());
+					totExpense = totExpense.add(customerIncome.getCalculatedAmount());
 					if (expenseMap.containsKey(category)) {
 						expenseMap.get(category).add(customerIncome);
 					} else {
@@ -1644,19 +1649,21 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						cell = new Listcell("");
 						cell.setParent(item);
 						cell = new Listcell(customerIncome.getIncomeTypeDesc());
-						cell.setStyle("font-size:14px;font-weight: normal;");
+						cell.setStyle("font-size:14px;font-weight: normal; text-align:left;");
 						cell.setParent(item);
-						total = total.add(customerIncome.getIncome());
+						cell = new Listcell(
+								PennantApplicationUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
+						cell.setStyle("font-size: 14px;font-weight: normal; text-align:left;");
+						cell.setParent(item);
 						cell = new Listcell(
 								PennantApplicationUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
-						cell.setStyle("text-align:right; font-size: 14px;");
+						cell.setStyle("font-size: 14px;font-weight: normal; text-align:left;");
 						cell.setParent(item);
-						cell = new Listcell();
-						cb = new Checkbox();
-						cb.setDisabled(true);
-						cb.setChecked(customerIncome.isJointCust());
-						cb.setParent(cell);
+						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
+						cell = new Listcell(PennantApplicationUtil.amountFormate(calculatedAmount, ccyFormatter));
+						cell.setStyle("font-size: 14px;font-weight: normal; text-align:right;");
 						cell.setParent(item);
+						total = total.add(calculatedAmount);
 
 						item.setAttribute("data", customerIncome);
 						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
@@ -1664,30 +1671,38 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					item = new Listitem();
 					cell = new Listcell("Total");
-					cell.setStyle("cursor:default;font-size:14px;font-weight: normal;;");
+					cell.setStyle("cursor:default;font-size:14px;font-weight: normal;text-align:left;");
 					cell.setParent(item);
 					cell = new Listcell(PennantApplicationUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(2);
-					cell.setStyle("font-size:14px;font-weight: normal;; text-align:right;cursor:default");
+					cell.setSpan(4);
+					cell.setStyle("font-size:14px;font-weight: normal;cursor:default; text-align:right;");
 					cell.setParent(item);
 					cell = new Listcell();
-					cell.setSpan(3);
-					cell.setStyle("cursor:default: font-size:14px;font-weight: normal;;");
+					cell.setSpan(4);
+					cell.setStyle("cursor:default");
+					cell.setParent(item);
+					cell = new Listcell();
+					cell.setSpan(4);
+					cell.setStyle("cursor:default; font-size:14px;font-weight: normal;");
 					cell.setParent(item);
 					this.listBoxCustomerIncome.appendChild(item);
 				}
 			}
 			item = new Listitem();
 			cell = new Listcell("Gross Income");
-			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;text-align:left;");
 			cell.setParent(item);
 			cell = new Listcell(PennantApplicationUtil.amountFormate(totIncome, ccyFormatter));
-			cell.setSpan(2);
+			cell.setSpan(4);
 			cell.setStyle("font-size:14px;font-weight: normal;; text-align:right;cursor:default");
 			cell.setParent(item);
 			cell = new Listcell();
-			cell.setSpan(3);
-			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+			cell.setSpan(4);
+			cell.setStyle("cursor:default");
+			cell.setParent(item);
+			cell = new Listcell();
+			cell.setSpan(4);
+			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;");
 			cell.setParent(item);
 			this.listBoxCustomerIncome.appendChild(item);
 		}
@@ -1726,14 +1741,18 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					item = new Listitem();
 					cell = new Listcell("Total");
-					cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+					cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;text-align:left;");
 					cell.setParent(item);
 					cell = new Listcell(PennantApplicationUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(2);
+					cell.setSpan(4);
 					cell.setStyle("font-size:14px;font-weight: normal;;text-align:right;cursor:default");
 					cell.setParent(item);
 					cell = new Listcell();
-					cell.setSpan(2);
+					cell.setSpan(4);
+					cell.setParent(item);
+					cell = new Listcell();
+					cell.setSpan(4);
+					cell.setStyle("cursor:default");
 					cell.setParent(item);
 					cell = new Listcell();
 					cell.setStyle("cursor:default");
@@ -1743,28 +1762,36 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			item = new Listitem();
 			cell = new Listcell("Gross Expense");
-			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;");
+			cell.setStyle("cursor:default; font-size:14px;font-weight: normal;;text-align:left;");
 			cell.setParent(item);
 			cell = new Listcell(PennantApplicationUtil.amountFormate(totExpense, ccyFormatter));
-			cell.setSpan(2);
+			cell.setSpan(4);
 			cell.setStyle("text-align:right;cursor:default;  font-size:14px;font-weight: normal;;");
 			cell.setParent(item);
 			cell = new Listcell();
-			cell.setSpan(3);
+			cell.setSpan(4);
+			cell.setStyle("cursor:default");
+			cell.setParent(item);
+			cell = new Listcell();
+			cell.setSpan(4);
 			cell.setStyle("cursor:default");
 			cell.setParent(item);
 			this.listBoxCustomerIncome.appendChild(item);
 		}
 		item = new Listitem();
 		cell = new Listcell("Net Income");
-		cell.setStyle("font-size:14px;font-weight: normal;;");
+		cell.setStyle("font-size:14px;font-weight: normal;;text-align:left;");
 		cell.setParent(item);
 		cell = new Listcell(PennantApplicationUtil.amountFormate(totIncome.subtract(totExpense), ccyFormatter));
-		cell.setSpan(2);
+		cell.setSpan(4);
 		cell.setStyle("text-align:right; font-size:14px;font-weight: normal;;");
 		cell.setParent(item);
 		cell = new Listcell();
-		cell.setSpan(3);
+		cell.setSpan(4);
+		cell.setStyle("cursor:default");
+		cell.setParent(item);
+		cell = new Listcell();
+		cell.setSpan(4);
 		cell.setStyle("cursor:default");
 		cell.setParent(item);
 		this.listBoxCustomerIncome.appendChild(item);

@@ -34,6 +34,34 @@ public class XcessPayables implements Entity {
 
 	}
 
+	public XcessPayables copyEntity() {
+		XcessPayables entity = new XcessPayables();
+		entity.setIdx(this.idx);
+		entity.setPayableID(this.payableID);
+		entity.setPayableType(this.payableType);
+		entity.setPayableDesc(this.payableDesc);
+		entity.setAmount(this.amount);
+		entity.setReserved(this.reserved);
+		entity.setGstAmount(this.gstAmount);
+		entity.setAvailableAmt(this.availableAmt);
+		entity.setTotPaidNow(this.totPaidNow);
+		entity.setPaidNow(this.paidNow);
+		entity.setBalanceAmt(this.balanceAmt);
+		entity.setPaidGST(this.paidGST);
+		entity.setPaidCGST(this.paidCGST);
+		entity.setPaidSGST(this.paidSGST);
+		entity.setPaidIGST(this.paidIGST);
+		entity.setPaidUGST(this.paidUGST);
+		entity.setPaidCESS(this.paidCESS);
+		entity.setTaxType(this.taxType);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setTdsApplicable(this.tdsApplicable);
+		entity.setTdsAmount(this.tdsAmount);
+		entity.setFinreference(this.finreference);
+		return entity;
+	}
+
 	public long getPayableID() {
 		return payableID;
 	}

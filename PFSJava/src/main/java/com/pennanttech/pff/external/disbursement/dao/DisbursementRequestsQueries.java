@@ -1,12 +1,13 @@
 package com.pennanttech.pff.external.disbursement.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
 public class DisbursementRequestsQueries {
-	private static Logger logger = Logger.getLogger(DisbursementRequestsQueries.class);
+	private static Logger logger = LogManager.getLogger(DisbursementRequestsQueries.class);
 
 	private static String selectQuery = null;
 	private static String insertHeaderQuery = null;
@@ -37,7 +38,7 @@ public class DisbursementRequestsQueries {
 		sql.append(", BENFICIARY_ADDRESS4, BENFICIARY_ADDRESS5, PAYMENT_DETAIL1, PAYMENT_DETAIL2, PAYMENT_DETAIL3");
 		sql.append(", PAYMENT_DETAIL4, PAYMENT_DETAIL5, PAYMENT_DETAIL6, PAYMENT_DETAIL7, STATUS, REMARKS, CHANNEL");
 		sql.append(", PARTNERBANK_ID PARTNER_BANK_ID, PARTNERBANK_CODE PARTNER_BANK_CODE, PARTNERBANK_ACCOUNT");
-		sql.append(", ALWFILEDOWNLOAD ALW_FILE_DOWNLOAD");
+		sql.append(", ALWFILEDOWNLOAD ALW_FILE_DOWNLOAD, CHEQUE_NUMBER");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER WHERE ID=(:HEADER_ID))");
 
@@ -83,7 +84,8 @@ public class DisbursementRequestsQueries {
 		sql.append(", BENFICIRY_CITY, BENFICIARY_ADDRESS1, BENFICIARY_ADDRESS2, BENFICIARY_ADDRESS3");
 		sql.append(", BENFICIARY_ADDRESS4, BENFICIARY_ADDRESS5, PAYMENT_DETAIL1, PAYMENT_DETAIL2, PAYMENT_DETAIL3");
 		sql.append(", PAYMENT_DETAIL4, PAYMENT_DETAIL5, PAYMENT_DETAIL6, PAYMENT_DETAIL7, STATUS, REMARKS");
-		sql.append(", CHANNEL, BATCH_ID, AUTO_DOWNLOAD, HEADER_ID, PARTNERBANK_ID, PARTNERBANK_ACCOUNT)");
+		sql.append(", CHANNEL, BATCH_ID, AUTO_DOWNLOAD, HEADER_ID");
+		sql.append(", PARTNERBANK_ID, PARTNERBANK_CODE, PARTNERBANK_ACCOUNT, CHEQUE_NUMBER)");
 		sql.append(" Values (");
 		sql.append(" :DisbursementId, :CustCIF, :FinReference, :DisbursementAmount, :DisbursementType");
 		sql.append(", :DisbursementDate, :DraweeLocation, :PrintLocation, :CustomerName, :CustomerMobile");
@@ -94,7 +96,8 @@ public class DisbursementRequestsQueries {
 		sql.append(", :BenficiryCity, :BenficiaryAddress1, :BenficiaryAddress2, :BenficiaryAddress3");
 		sql.append(", :BenficiaryAddress4, :BenficiaryAddress5, :PaymentDetail1, :PaymentDetail2, :PaymentDetail3");
 		sql.append(", :PaymentDetail4, :PaymentDetail5, :PaymentDetail6, :PaymentDetail7, :Status, :Remarks");
-		sql.append(", :Channel, :HeaderId, :AutoDownload, :HeaderId, :PartnerBankId, :PartnerbankAccount)");
+		sql.append(", :Channel, :HeaderId, :AutoDownload, :HeaderId");
+		sql.append(", :PartnerBankId, :PartnerBankCode, :PartnerBankAccount, :ChequeNumber)");
 
 		insertQuery = sql.toString();
 		logger.trace(Literal.SQL + insertQuery.toString());

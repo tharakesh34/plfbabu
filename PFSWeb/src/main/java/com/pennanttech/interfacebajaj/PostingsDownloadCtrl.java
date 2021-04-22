@@ -46,7 +46,8 @@ package com.pennanttech.interfacebajaj;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.external.PostingDownloadService;
 public class PostingsDownloadCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PostingsDownloadCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PostingsDownloadCtrl.class);
 
 	protected Window window_PostingsDownloadCtrl;
 	protected Datebox postingDate;

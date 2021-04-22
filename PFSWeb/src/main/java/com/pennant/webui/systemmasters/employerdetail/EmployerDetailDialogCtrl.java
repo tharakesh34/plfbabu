@@ -45,9 +45,11 @@ package com.pennant.webui.systemmasters.employerdetail;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -66,8 +68,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
@@ -83,7 +85,6 @@ import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.PTWebValidator;
-import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -96,7 +97,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(EmployerDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(EmployerDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -229,8 +230,14 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	protected Row row10;
 	protected Label label_BankRefNo;
 	protected Hlayout hlayout_BankRefNo;
+	protected Label label_EmpCategory;
+	protected Hlayout hlayout_empCategory;
+	protected Space space_EmpCategory;
+	protected Combobox empCategory;
 
 	protected Textbox bankRefNo;
+
+	private List<ValueLabel> alocationList = PennantStaticListUtil.getEmpAlocList();
 
 	private boolean enqModule = false;
 	protected Checkbox empIsActive; // autoWired
@@ -509,11 +516,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 
 		if (getEmployerDetail().isNewRecord()) {
 			this.btnCancel.setVisible(false);
-		} else {
-			this.empIndustry.setMandatoryStyle(true);
-			this.empCountry.setMandatoryStyle(true);
-			this.empCity.setMandatoryStyle(false);
-			this.empProvince.setMandatoryStyle(true);
 		}
 
 		logger.debug("Leaving");
@@ -533,68 +535,72 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 			tempReadOnly = true;
 		}
 
-		setComponentAccessType("EmployerDetailDialog_EmpIndustry", tempReadOnly, this.empIndustry,
-				this.space_EmpIndustry, this.label_EmpIndustry, this.hlayout_EmpIndustry, null);
+		setComponentAccessType("EmployerDetailDialog_EmpIndustry", tempReadOnly, this.empIndustry, null,
+				this.label_EmpIndustry, this.hlayout_EmpIndustry, null);
 		setComponentAccessType("EmployerDetailDialog_EmpName", tempReadOnly, this.empName, this.space_EmpName,
 				this.label_EmpName, this.hlayout_EmpName, null);
 		setRowInvisible(this.row0, this.hlayout_EmpIndustry, this.hlayout_EmpName);
-		setComponentAccessType("EmployerDetailDialog_EstablishDate", tempReadOnly, this.establishDate,
-				this.space_EstablishDate, this.label_EstablishDate, this.hlayout_EstablishDate, null);
-		setComponentAccessType("EmployerDetailDialog_EmpAddrHNbr", tempReadOnly, this.empAddrHNbr,
-				this.space_EmpAddrHNbr, this.label_EmpAddrHNbr, this.hlayout_EmpAddrHNbr, null);
+		setComponentAccessType("EmployerDetailDialog_EstablishDate", tempReadOnly, this.establishDate, null,
+				this.label_EstablishDate, this.hlayout_EstablishDate, null);
+		setComponentAccessType("EmployerDetailDialog_EmpAddrHNbr", tempReadOnly, this.empAddrHNbr, null,
+				this.label_EmpAddrHNbr, this.hlayout_EmpAddrHNbr, null);
 		setRowInvisible(this.row1, this.hlayout_EstablishDate, this.hlayout_EmpAddrHNbr);
-		setComponentAccessType("EmployerDetailDialog_EmpFlatNbr", tempReadOnly, this.empFlatNbr, this.space_EmpFlatNbr,
+		setComponentAccessType("EmployerDetailDialog_EmpFlatNbr", tempReadOnly, this.empFlatNbr, null,
 				this.label_EmpFlatNbr, this.hlayout_EmpFlatNbr, null);
-		setComponentAccessType("EmployerDetailDialog_EmpAddrStreet", tempReadOnly, this.empAddrStreet,
-				this.space_EmpAddrStreet, this.label_EmpAddrStreet, this.hlayout_EmpAddrStreet, null);
+		setComponentAccessType("EmployerDetailDialog_EmpAddrStreet", tempReadOnly, this.empAddrStreet, null,
+				this.label_EmpAddrStreet, this.hlayout_EmpAddrStreet, null);
 		setRowInvisible(this.row2, this.hlayout_EmpFlatNbr, this.hlayout_EmpAddrStreet);
-		setComponentAccessType("EmployerDetailDialog_EmpAddrLine1", tempReadOnly, this.empAddrLine1,
-				this.space_EmpAddrLine1, this.label_EmpAddrLine1, this.hlayout_EmpAddrLine1, null);
-		setComponentAccessType("EmployerDetailDialog_EmpAddrLine2", tempReadOnly, this.empAddrLine2,
-				this.space_EmpAddrLine2, this.label_EmpAddrLine2, this.hlayout_EmpAddrLine2, null);
+		setComponentAccessType("EmployerDetailDialog_EmpAddrLine1", tempReadOnly, this.empAddrLine1, null,
+				this.label_EmpAddrLine1, this.hlayout_EmpAddrLine1, null);
+		setComponentAccessType("EmployerDetailDialog_EmpAddrLine2", tempReadOnly, this.empAddrLine2, null,
+				this.label_EmpAddrLine2, this.hlayout_EmpAddrLine2, null);
 		setRowInvisible(this.row3, this.hlayout_EmpAddrLine1, this.hlayout_EmpAddrLine2);
-		setComponentAccessType("EmployerDetailDialog_EmpPOBox", tempReadOnly, this.empPOBox, this.space_EmpPOBox,
-				this.label_EmpPOBox, this.hlayout_EmpPOBox, null);
-		setComponentAccessType("EmployerDetailDialog_EmpCountry", tempReadOnly, this.empCountry, this.space_EmpCountry,
+		setComponentAccessType("EmployerDetailDialog_EmpPOBox", tempReadOnly, this.empPOBox, null, this.label_EmpPOBox,
+				this.hlayout_EmpPOBox, null);
+		setComponentAccessType("EmployerDetailDialog_EmpCountry", tempReadOnly, this.empCountry, null,
 				this.label_EmpCountry, this.hlayout_EmpCountry, null);
 		setRowInvisible(this.row4, this.hlayout_EmpPOBox, this.hlayout_EmpCountry);
-		setComponentAccessType("EmployerDetailDialog_EmpProvince", tempReadOnly, this.empProvince,
-				this.space_EmpProvince, this.label_EmpProvince, this.hlayout_EmpProvince, null);
-		setComponentAccessType("EmployerDetailDialog_EmpCity", tempReadOnly, this.empCity, this.space_EmpCity,
-				this.label_EmpCity, this.hlayout_EmpCity, null);
-		setComponentAccessType("EmployerDetailDialog_EmpCity", tempReadOnly, this.cityName, this.space_EmpCity,
-				this.label_EmpCity, this.hlayout_EmpCity, null);
+		setComponentAccessType("EmployerDetailDialog_EmpProvince", tempReadOnly, this.empProvince, null,
+				this.label_EmpProvince, this.hlayout_EmpProvince, null);
+		setComponentAccessType("EmployerDetailDialog_EmpCity", tempReadOnly, this.empCity, null, this.label_EmpCity,
+				this.hlayout_EmpCity, null);
+		setComponentAccessType("EmployerDetailDialog_EmpCity", tempReadOnly, this.cityName, null, this.label_EmpCity,
+				this.hlayout_EmpCity, null);
 		setRowInvisible(this.row5, this.hlayout_EmpProvince, this.hlayout_EmpCity);
-		setComponentAccessType("EmployerDetailDialog_EmpPhone", tempReadOnly, this.empPhone, this.space_EmpPhone,
-				this.label_EmpPhone, this.hlayout_EmpPhone, null);
-		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFax, this.space_EmpFax,
+		setComponentAccessType("EmployerDetailDialog_EmpPhone", tempReadOnly, this.empPhone, null, this.label_EmpPhone,
+				this.hlayout_EmpPhone, null);
+		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFax, null, this.label_EmpFax,
+				this.hlayout_EmpFax, null);
+		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFaxAreaCode, null,
 				this.label_EmpFax, this.hlayout_EmpFax, null);
-		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFaxAreaCode, this.space_EmpFax,
-				this.label_EmpFax, this.hlayout_EmpFax, null);
-		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFaxCountryCode, this.space_EmpFax,
+		setComponentAccessType("EmployerDetailDialog_EmpFax", tempReadOnly, this.empFaxCountryCode, null,
 				this.label_EmpFax, this.hlayout_EmpFax, null);
 		setRowInvisible(this.row6, this.hlayout_EmpPhone, this.hlayout_EmpFax);
-		setComponentAccessType("EmployerDetailDialog_EmpTelexNo", tempReadOnly, this.empTelexCountryCode,
-				this.space_EmpTelexNo, this.label_EmpTelexNo, this.hlayout_EmpTelexNo, null);
-		setComponentAccessType("EmployerDetailDialog_EmpTelexNo", tempReadOnly, this.empTelexAreaCode,
-				this.space_EmpTelexNo, this.label_EmpTelexNo, this.hlayout_EmpTelexNo, null);
-		setComponentAccessType("EmployerDetailDialog_EmpTelexNo", tempReadOnly, this.empTelexNo, this.space_EmpTelexNo,
+		setComponentAccessType("EmployerDetailDialog_EmpTelexNo", tempReadOnly, this.empTelexCountryCode, null,
 				this.label_EmpTelexNo, this.hlayout_EmpTelexNo, null);
-		setComponentAccessType("EmployerDetailDialog_EmpEmailId", tempReadOnly, this.empEmailId, this.space_EmpEmailId,
+		setComponentAccessType("EmployerDetailDialog_EmpTelexNo", tempReadOnly, this.empTelexAreaCode, null,
+				this.label_EmpTelexNo, this.hlayout_EmpTelexNo, null);
+		setComponentAccessType("EmployerDetailDialog_EmpTelexNo", tempReadOnly, this.empTelexNo, null,
+				this.label_EmpTelexNo, this.hlayout_EmpTelexNo, null);
+		setComponentAccessType("EmployerDetailDialog_EmpEmailId", tempReadOnly, this.empEmailId, null,
 				this.label_EmpEmailId, this.hlayout_EmpEmailId, null);
 		setRowInvisible(this.row7, this.hlayout_EmpTelexNo, this.hlayout_EmpEmailId);
-		setComponentAccessType("EmployerDetailDialog_EmpWebSite", tempReadOnly, this.empWebSite, this.space_EmpWebSite,
+		setComponentAccessType("EmployerDetailDialog_EmpWebSite", tempReadOnly, this.empWebSite, null,
 				this.label_EmpWebSite, this.hlayout_EmpWebSite, null);
-		setComponentAccessType("EmployerDetailDialog_ContactPersonName", tempReadOnly, this.contactPersonName,
-				this.space_ContactPersonName, this.label_ContactPersonName, this.hlayout_ContactPersonName, null);
+		setComponentAccessType("EmployerDetailDialog_ContactPersonName", tempReadOnly, this.contactPersonName, null,
+				this.label_ContactPersonName, this.hlayout_ContactPersonName, null);
 		setRowInvisible(this.row8, this.hlayout_EmpWebSite, this.hlayout_ContactPersonName);
-		setComponentAccessType("EmployerDetailDialog_ContactPersonNo", tempReadOnly, this.contactPersonNo,
-				this.space_ContactPersonNo, this.label_ContactPersonNo, this.hlayout_ContactPersonNo, null);
-		setComponentAccessType("EmployerDetailDialog_EmpAlocationType", tempReadOnly, this.empAlocationType,
-				this.space_EmpAlocationType, this.label_EmpAlocationType, this.hlayout_EmpAlocationType, null);
+		setComponentAccessType("EmployerDetailDialog_ContactPersonNo", tempReadOnly, this.contactPersonNo, null,
+				this.label_ContactPersonNo, this.hlayout_ContactPersonNo, null);
+		setComponentAccessType("EmployerDetailDialog_EmpAlocationType", tempReadOnly, this.empAlocationType, null,
+				this.label_EmpAlocationType, this.hlayout_EmpAlocationType, null);
 		setRowInvisible(this.row9, this.hlayout_ContactPersonNo, this.hlayout_EmpAlocationType);
 		setComponentAccessType("EmployerDetailDialog_BankRefNo", tempReadOnly, this.bankRefNo, null,
 				this.label_BankRefNo, this.hlayout_BankRefNo, null);
+
+		setComponentAccessType("EmployerDetailDialog_EmpCategory", tempReadOnly, this.empCategory,
+				this.space_EmpCategory, this.label_EmpCategory, this.hlayout_empCategory, null);
+
 		setRowInvisible(this.row10, this.hlayout_BankRefNo, null);
 		logger.debug("Leaving");
 	}
@@ -629,7 +635,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.empIndustry.setMaxlength(8);
-		this.empName.setMaxlength(50);
+		this.empName.setMaxlength(150);
 		this.establishDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.empAddrHNbr.setMaxlength(20);
 		this.empFlatNbr.setMaxlength(20);
@@ -653,25 +659,21 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empTelexCountryCode.setMaxlength(3);
 		this.empTelexNo.setMaxlength(8);
 		this.bankRefNo.setMaxlength(20);
-		this.empIndustry.setMandatoryStyle(true);
 		this.empIndustry.setModuleName("Industry");
 		this.empIndustry.setValueColumn("IndustryCode");
 		this.empIndustry.setDescColumn("IndustryDesc");
 		this.empIndustry.setValidateColumns(new String[] { "IndustryCode" });
 
-		this.empCountry.setMandatoryStyle(true);
 		this.empCountry.setModuleName("Country");
 		this.empCountry.setValueColumn("CountryCode");
 		this.empCountry.setDescColumn("CountryDesc");
 		this.empCountry.setValidateColumns(new String[] { "CountryCode" });
 
-		this.empProvince.setMandatoryStyle(true);
 		this.empProvince.setModuleName("Province");
 		this.empProvince.setValueColumn("CPProvince");
 		this.empProvince.setDescColumn("CPProvinceName");
 		this.empProvince.setValidateColumns(new String[] { "CPProvince" });
 
-		this.empCity.setMandatoryStyle(false);
 		this.empCity.setModuleName("City");
 		this.empCity.setValueColumn("PCCity");
 		this.empCity.setDescColumn("PCCityName");
@@ -717,6 +719,13 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		fillComboBox(this.empAlocationType, aEmployerDetail.getEmpAlocationType(),
 				PennantStaticListUtil.getEmpAlocList(), "");
 		this.bankRefNo.setValue(aEmployerDetail.getBankRefNo());
+		if (aEmployerDetail.isNewRecord()) {
+			fillComboBox(this.empCategory, PennantConstants.EMP_CATEGORY_NOTCAT,
+					PennantStaticListUtil.getEmpCategoryList(), "");
+		} else {
+			fillComboBox(this.empCategory, aEmployerDetail.getEmpCategory(), PennantStaticListUtil.getEmpCategoryList(),
+					"");
+		}
 		this.empIsActive.setChecked(aEmployerDetail.isEmpIsActive());
 
 		if (aEmployerDetail.isNewRecord()) {
@@ -757,7 +766,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		//Emp Industry
 		try {
 			aEmployerDetail.setLovDescIndustryDesc(this.empIndustry.getDescription());
-			aEmployerDetail.setEmpIndustry(this.empIndustry.getValidatedValue());
+			aEmployerDetail.setEmpIndustry(StringUtils.trimToNull(this.empIndustry.getValidatedValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -812,14 +821,14 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		//Emp Country
 		try {
 			aEmployerDetail.setLovDescCountryDesc(this.empCountry.getDescription());
-			aEmployerDetail.setEmpCountry(this.empCountry.getValidatedValue());
+			aEmployerDetail.setEmpCountry(StringUtils.trimToNull(this.empCountry.getValidatedValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Emp Province
 		try {
 			aEmployerDetail.setLovDescProvinceName(this.empProvince.getDescription());
-			aEmployerDetail.setEmpProvince(this.empProvince.getValidatedValue());
+			aEmployerDetail.setEmpProvince(StringUtils.trimToNull(this.empProvince.getValidatedValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -899,6 +908,18 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		//Employer Category
+		try {
+			if (!this.empCategory.isDisabled()
+					&& PennantConstants.List_Select.equals(getComboboxValue(this.empCategory))) {
+				throw new WrongValueException(this.empCategory, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_EmployerDetailDialog_EmpCategory.value") }));
+			} else {
+				aEmployerDetail.setEmpCategory(getComboboxValue(this.empCategory));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
 			aEmployerDetail.setEmpIsActive(this.empIsActive.isChecked());
@@ -924,18 +945,18 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	 */
 	private void doSetValidation() {
 		logger.debug("Entering");
-		Date appStartDate = DateUtility.getAppDate();
+		Date appStartDate = SysParamUtil.getAppDate();
 		Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 		//Emp Name
 		if (!this.empName.isReadonly()) {
 			this.empName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpName.value"),
-							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL, true));
 		}
 		//Establish Date
 		if (!this.establishDate.isReadonly()) {
 			this.establishDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_EmployerDetailDialog_EstablishDate.value"), true,
+					new PTDateValidator(Labels.getLabel("label_EmployerDetailDialog_EstablishDate.value"), false,
 							startDate, appStartDate, false));
 		}
 		boolean addressConstraint = false;
@@ -949,95 +970,95 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		if (addressConstraint) {
 			this.empAddrHNbr.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrHNbr.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, true));
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		//Emp Flat Nbr
 		if (addressConstraint) {
 			this.empFlatNbr
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpFlatNbr.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, true));
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		//Emp Addr Street
 		if (addressConstraint) {
 			this.empAddrStreet.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrStreet.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, true));
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		//Emp Addr Line1
 		if (addressConstraint) {
 			this.empAddrLine1.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrLine1.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, true));
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		//Emp Addr Line2
 		if (addressConstraint) {
 			this.empAddrLine2.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpAddrLine2.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, true));
+							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
 		//Emp P O Box
 		if (!this.empPOBox.isReadonly()) {
 			this.empPOBox
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPOBox.value"),
-							PennantRegularExpressions.REGEX_NUMERIC, true));
+							PennantRegularExpressions.REGEX_NUMERIC, false));
 		}
 		//Emp Phone
 		if (!this.empPhone.isReadonly()) {
 			this.empPhone.setConstraint(
-					new PTMobileNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPhone.value"), true));
+					new PTMobileNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpPhone.value"), false));
 		}
 		if (!this.empFaxCountryCode.isReadonly()) {
 			this.empFaxCountryCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_EmployerDetailDialog_faxCountryCode.value"), true, 1));
+					Labels.getLabel("label_EmployerDetailDialog_faxCountryCode.value"), false, 1));
 		}
 		if (!this.empFaxAreaCode.isReadonly()) {
 			this.empFaxAreaCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_EmployerDetailDialog_faxAreaCode.value"), true, 2));
+					Labels.getLabel("label_EmployerDetailDialog_faxAreaCode.value"), false, 2));
 		}
 		//Emp Fax
 		if (!this.empFax.isReadonly()) {
 			this.empFax.setConstraint(
-					new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpFax.value"), true, 3));
+					new PTPhoneNumberValidator(Labels.getLabel("label_EmployerDetailDialog_EmpFax.value"), false, 3));
 		}
 		if (!this.empTelexCountryCode.isReadonly()) {
 			this.empTelexCountryCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_EmployerDetailDialog_telexCountryCode.value"), true, 1));
+					Labels.getLabel("label_EmployerDetailDialog_telexCountryCode.value"), false, 1));
 		}
 		if (!this.empTelexAreaCode.isReadonly()) {
 			this.empTelexAreaCode.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_EmployerDetailDialog_telexAreaCode.value"), true, 2));
+					Labels.getLabel("label_EmployerDetailDialog_telexAreaCode.value"), false, 2));
 		}
 		//Emp Telex No
 		if (!this.empTelexNo.isReadonly()) {
 			this.empTelexNo.setConstraint(new PTPhoneNumberValidator(
-					Labels.getLabel("label_EmployerDetailDialog_EmpTelexNo.value"), true, 3));
+					Labels.getLabel("label_EmployerDetailDialog_EmpTelexNo.value"), false, 3));
 		}
 		//Emp Email Id MAND_FIELD_MAIL
 		if (!this.empEmailId.isReadonly()) {
 			this.empEmailId.setConstraint(
-					new PTEmailValidator(Labels.getLabel("label_EmployerDetailDialog_EmpEmailId.value"), true));
+					new PTEmailValidator(Labels.getLabel("label_EmployerDetailDialog_EmpEmailId.value"), false));
 		}
 		//Emp Web Site
 		if (!this.empWebSite.isReadonly()) {
 			this.empWebSite.setConstraint(
-					new PTWebValidator(Labels.getLabel("label_EmployerDetailDialog_EmpWebSite.value"), true));
+					new PTWebValidator(Labels.getLabel("label_EmployerDetailDialog_EmpWebSite.value"), false));
 		}
 		//Contact Person Name
 		if (!this.contactPersonName.isReadonly()) {
 			this.contactPersonName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_EmployerDetailDialog_ContactPersonName.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
+							PennantRegularExpressions.REGEX_NAME, false));
 		}
 		//Contact Person No
 		if (!this.contactPersonNo.isReadonly()) {
 			this.contactPersonNo.setConstraint(new PTMobileNumberValidator(
-					Labels.getLabel("label_EmployerDetailDialog_ContactPersonNo.value"), true));
+					Labels.getLabel("label_EmployerDetailDialog_ContactPersonNo.value"), false));
 		}
 		//Emp Alocation Type
-		if (!this.empAlocationType.isDisabled()) {
-			this.empAlocationType.setConstraint(new StaticListValidator(PennantStaticListUtil.getEmpAlocList(),
-					Labels.getLabel("label_EmployerDetailDialog_EmpAlocationType.value")));
-		}
+		//		if (!this.empAlocationType.isDisabled()) {
+		//			this.empAlocationType.setConstraint(new StaticListValidator(alocationList,
+		//					Labels.getLabel("label_EmployerDetailDialog_EmpAlocationType.value")));
+		//		}
 
 		// city name
 		if (PennantConstants.CITY_FREETEXT) {
@@ -1083,6 +1104,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empTelexCountryCode.setConstraint("");
 		this.cityName.setConstraint("");
 		this.bankRefNo.setConstraint("");
+		this.empCategory.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1093,13 +1115,13 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	private void doSetLOVValidation() {
 		//Emp Industry
 		this.empIndustry.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_EmployerDetailDialog_EmpCategory.value"), null, true, true));
+				Labels.getLabel("label_EmployerDetailDialog_EmpIndustry.value"), null, false, true));
 		//Emp Country
 		this.empCountry.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_EmployerDetailDialog_EmpCountry.value"), null, true, true));
+				Labels.getLabel("label_EmployerDetailDialog_EmpCountry.value"), null, false, true));
 		//Emp Province
 		this.empProvince.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_EmployerDetailDialog_EmpProvince.value"), null, true, true));
+				Labels.getLabel("label_EmployerDetailDialog_EmpProvince.value"), null, false, true));
 		//Emp City
 		if (!PennantConstants.CITY_FREETEXT) {
 			this.empCity.setConstraint(new PTStringValidator(
@@ -1150,6 +1172,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empTelexAreaCode.setErrorMessage("");
 		this.empTelexCountryCode.setErrorMessage("");
 		this.bankRefNo.setErrorMessage("");
+		this.empCategory.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1241,6 +1264,7 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 		this.empTelexAreaCode.setValue("");
 		this.empTelexCountryCode.setValue("");
 		this.bankRefNo.setValue("");
+		this.empCategory.setValue("");
 		this.empAlocationType.setSelectedIndex(0);
 		this.empIsActive.setChecked(false);
 		logger.debug("Leaving");

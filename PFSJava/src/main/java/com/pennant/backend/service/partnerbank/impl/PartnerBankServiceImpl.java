@@ -45,7 +45,8 @@ package com.pennant.backend.service.partnerbank.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -74,7 +75,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class PartnerBankServiceImpl extends GenericService<PartnerBank> implements PartnerBankService {
-	private static final Logger logger = Logger.getLogger(PartnerBankServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PartnerBankServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 

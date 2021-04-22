@@ -43,14 +43,13 @@
 package com.pennant.backend.dao.finance;
 
 import java.util.List;
+import java.util.Map;
 
-import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
+import com.pennant.backend.model.receiptupload.ReceiptUploadLog;
 import com.pennanttech.pff.core.TableType;
 
 public interface ReceiptUploadHeaderDAO {
-
-	UploadHeader getUploadHeader(long uploadId);
 
 	boolean isFileNameExist(String fileName);
 
@@ -58,18 +57,24 @@ public interface ReceiptUploadHeaderDAO {
 
 	long save(ReceiptUploadHeader receiptUploadHeader, TableType mainTab);
 
-	void update(ReceiptUploadHeader receiptUploadHeader, TableType mainTab);
+	int update(ReceiptUploadHeader receiptUploadHeader, TableType mainTab);
 
 	ReceiptUploadHeader getReceiptHeaderById(long uploadHeaderId, String string);
 
 	void uploadHeaderStatusCnt(long uploadHeaderId, int sucessCount, int failedCount);
 
-	void updateUploadProgress(long id, int receiptDownloaded);
+	long updateUploadProgress(long id, int receiptDownloaded);
 
 	boolean isFileDownlaoded(long id, int receiptDownloaded);
 
 	long generateSeqId();
 
 	List<Long> getHeaderStatusCnt(long uploadHeaderId);
+
+	Map<Long, ReceiptUploadLog> createAttempLog(List<ReceiptUploadHeader> uploadHeaderList);
+
+	void updateAttemptLog(ReceiptUploadLog uploadAttemptLog);
+
+	long setHeaderAttempNo(long id);
 
 }

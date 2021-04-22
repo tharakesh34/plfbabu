@@ -43,12 +43,12 @@
 package com.pennant.webui.commitment.commitmentrate;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -94,7 +94,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CommitmentRateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CommitmentRateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -436,12 +436,12 @@ public class CommitmentRateDialogCtrl extends GFCBaseCtrl<CommitmentRate> {
 
 		this.cmtActualRate.setMaxlength(13);
 		this.cmtActualRate.setFormat(PennantConstants.rateFormate9);
-		this.cmtActualRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.cmtActualRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.cmtActualRate.setScale(9);
 
 		this.cmtCalculatedRate.setMaxlength(13);
 		this.cmtCalculatedRate.setFormat(PennantConstants.rateFormate9);
-		this.cmtCalculatedRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.cmtCalculatedRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.cmtCalculatedRate.setScale(9);
 
 		if (isWorkFlowEnabled()) {

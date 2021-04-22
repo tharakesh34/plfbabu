@@ -5,7 +5,10 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import javax.script.ScriptException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -18,13 +21,14 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
-import com.pennanttech.pennapps.core.script.ScriptEngine;
+import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(VASConfigurationResultCtrl.class);
+	private static final Logger logger = LogManager.getLogger(VASConfigurationResultCtrl.class);
 
 	protected Window window_VASConfigurationResult;
 
@@ -51,9 +55,8 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected VASConfigurationResult
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected VASConfigurationResult object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -97,11 +100,12 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	 * @throws InterruptedException
 	 * @throws ScriptException
 	 */
-	public void onClick$btn_Stimulate(Event event) throws InterruptedException {
+	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
-		Map<String, Object> dataMap = new HashMap<String, Object>();
 
-		try (ScriptEngine scriptEngine = new ScriptEngine()) {
+		Map<String, Object> dataMap = new HashMap<>();
+
+		try {
 			for (int i = 0; i < variables.size(); i++) {
 				JSONObject variable = (JSONObject) variables.get(i);
 				if (!"Result".equals(variable.get("name"))) {
@@ -113,10 +117,12 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 			}
 			// Execute the engine
 			String rule = vasConfigurationDialogCtrl.preValidation.getValue();
-			BigDecimal tempResult = scriptEngine.getResultAsBigDecimal(rule, dataMap);
+
+			Object result = RuleExecutionUtil.executeRule(rule, dataMap, null, RuleReturnType.DECIMAL);
 
 			// make result row visible and set value
 			this.rowResult.setVisible(true);
+			BigDecimal tempResult = new BigDecimal(result.toString());
 			tempResult = tempResult.setScale(2, RoundingMode.UP);
 			this.result.setValue(String.valueOf(tempResult));
 		} catch (Exception e) {
@@ -128,7 +134,8 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

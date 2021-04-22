@@ -3,7 +3,6 @@ package com.pennant.backend.service.finance;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -34,8 +33,6 @@ public interface EligibilityDetailService {
 			String[] errParm, String[] valueParm, String usrLanguage);
 
 	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail);
-
-	void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil);
 
 	void deleteByFinRef(String finReference);
 

@@ -45,7 +45,8 @@ package com.pennant.webui.administration.securitygroup;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Intbox;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 
 	private static final long serialVersionUID = -1495995793043106184L;
-	private static final Logger logger = Logger.getLogger(SecurityGroupSearchCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityGroupSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

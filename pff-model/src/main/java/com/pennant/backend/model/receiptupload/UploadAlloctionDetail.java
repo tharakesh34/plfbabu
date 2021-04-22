@@ -34,6 +34,30 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity implements Ent
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>(1);
 
+	public UploadAlloctionDetail copyEntity() {
+		UploadAlloctionDetail entity = new UploadAlloctionDetail();
+		entity.setUploadDetailId(this.UploadDetailId);
+		entity.setUploadAlloctionDetailId(this.uploadAlloctionDetailId);
+		entity.setRootId(this.rootId);
+		entity.setAllocationType(this.allocationType);
+		entity.setReferenceCode(this.referenceCode);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setWaivedAmount(this.waivedAmount);
+		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	// Getter and Setter
 
 	public String getAllocationType() {

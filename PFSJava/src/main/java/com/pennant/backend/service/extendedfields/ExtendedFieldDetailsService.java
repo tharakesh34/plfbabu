@@ -3,6 +3,7 @@ package com.pennant.backend.service.extendedfields;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.LengthConstants;
@@ -29,6 +31,8 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -39,6 +43,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
+import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -53,10 +58,11 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pff.core.TableType;
 
 public class ExtendedFieldDetailsService {
-	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailsService.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldDetailsService.class);
 
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private ScriptValidationService scriptValidationService;
@@ -64,6 +70,8 @@ public class ExtendedFieldDetailsService {
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
 	private ExtendedFieldDetailsValidation extendedFieldDetailsValidation;
 	private AuditHeaderDAO auditHeaderDAO;
+	@Autowired(required = false)
+	private DedupParmService dedupParmService;
 
 	@Autowired
 	protected SamplingDAO samplingDAO;
@@ -332,7 +340,7 @@ public class ExtendedFieldDetailsService {
 		}
 
 		// Audit Details Preparation
-		HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+		Map<String, Object> auditMapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
 		auditMapValues.put("Reference", extendedFieldRender.getReference());
 		auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 		auditMapValues.put("Version", extendedFieldRender.getVersion());
@@ -390,11 +398,15 @@ public class ExtendedFieldDetailsService {
 			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
 				continue;
 			}
-			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
-					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						tableName + type)) {
+			boolean exists = extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
+					extendedFieldRender.getSeqNo(), tableName + type);
+
+			if (PennantConstants.RCD_STATUS_SUBMITTED.equals(extendedFieldRender.getRecordStatus())
+					&& PennantConstants.RECORD_TYPE_UPD.equals(extendedFieldRender.getRecordType())) {
+				if (!exists) {
 					extendedFieldRender.setNewRecord(true);
+				} else {
+					extendedFieldRender.setNewRecord(false);
 				}
 			}
 			saveRecord = false;
@@ -425,6 +437,11 @@ public class ExtendedFieldDetailsService {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())
+						&& exists) {
+					//If saved record has been updated then it should be updated in the table.
+					updateRecord = true;
+					saveRecord = false;
 				}
 
 			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
@@ -452,7 +469,7 @@ public class ExtendedFieldDetailsService {
 			}
 
 			// Add Common Fields
-			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
 					mapValues.put("Reference", extendedFieldRender.getReference());
@@ -495,6 +512,10 @@ public class ExtendedFieldDetailsService {
 
 			// Setting Extended field is to identify record related to Extended
 			// fields
+			if (deatils.get(i).getBefImage() != null) {
+				ExtendedFieldRender befImage = (ExtendedFieldRender) deatils.get(i).getBefImage();
+				befImage.setTableName(tableName);
+			}
 			extendedFieldRender.setBefImage(extendedFieldRender);
 			deatils.get(i).setExtended(true);
 			deatils.get(i).setModelData(extendedFieldRender);
@@ -561,6 +582,10 @@ public class ExtendedFieldDetailsService {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+					//If saved record has been updated then it should be updated in the table.
+					updateRecord = true;
+					saveRecord = false;
 				}
 
 			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
@@ -688,6 +713,10 @@ public class ExtendedFieldDetailsService {
 						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 					} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+						//If saved record has been updated then it should be updated in the table.
+						updateRecord = true;
+						saveRecord = false;
 					}
 
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
@@ -715,7 +744,7 @@ public class ExtendedFieldDetailsService {
 				}
 
 				// Add Common Fields
-				HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+				Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
 				if (saveRecord || updateRecord) {
 					if (saveRecord) {
 						mapValues.put("Reference", extendedFieldRender.getReference());
@@ -973,7 +1002,7 @@ public class ExtendedFieldDetailsService {
 			}
 
 			// Audit Details Preparation
-			HashMap<String, Object> auditMapValues = (HashMap<String, Object>) fieldRender.getMapValues();
+			Map<String, Object> auditMapValues = (Map<String, Object>) fieldRender.getMapValues();
 			auditMapValues.put("Reference", reference);
 			auditMapValues.put("SeqNo", fieldRender.getSeqNo());
 			auditMapValues.put("Version", fieldRender.getVersion());
@@ -1023,10 +1052,12 @@ public class ExtendedFieldDetailsService {
 				}
 				tableName.append("_ED");
 
-				details.get(i).setExtended(true);
-				detail.setReference(reference);
-				detail.setTableName(tableName.toString());
-				detail.setWorkflowId(0);
+				if (StringUtils.equals(reference, detail.getReference())) {
+					details.get(i).setExtended(true);
+					detail.setReference(reference);
+					detail.setTableName(tableName.toString());
+					detail.setWorkflowId(0);
+				}
 
 				if (tableNames.contains(detail.getTypeCode())) {
 					continue;
@@ -1065,6 +1096,60 @@ public class ExtendedFieldDetailsService {
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<AuditDetail>();
+	}
+
+	public List<AuditDetail> validateCollateralDedup(ExtendedFieldRender aExetendedFieldRender, String queryCode,
+			String querySubCode, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(queryCode,
+				FinanceConstants.DEDUP_COLLATERAL, querySubCode);
+
+		String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup_Temp T1"
+				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + "PROPERTY"
+				+ "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery() + " union all "
+				+ " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
+				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + "PROPERTY"
+				+ "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
+				+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + "PROPERTY"
+				+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
+
+		List<CollateralSetup> collateralSetupList = this.dedupParmService.queryExecution(sqlQuery,
+				aExetendedFieldRender.getMapValues());
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		AuditDetail auditDetail = new AuditDetail();
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = aExetendedFieldRender.getReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_Collateral") + ":" + valueParm[0];
+
+		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+			boolean recordFound = true;
+			if (collateralSetupList.size() == 1) {
+				if (StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
+						.equals(collateralSetupList.get(0).getCollateralRef(), aExetendedFieldRender.getReference())) {
+					recordFound = false;
+				}
+			} else {
+				recordFound = false;
+				for (CollateralSetup collateralSetup : collateralSetupList) {
+					if (!(StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
+							.equals(collateralSetup.getCollateralRef(), aExetendedFieldRender.getReference()))) {
+						recordFound = true;
+					}
+				}
+			}
+			if (recordFound) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "WCOLL01", errParm, null));
+				auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+				auditDetails.add(auditDetail);
+				return auditDetails;
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return Collections.emptyList();
 	}
 
 	public List<AuditDetail> validateSamplingDetails(List<AuditDetail> deatils, Sampling sampling, String method,
@@ -1106,6 +1191,7 @@ public class ExtendedFieldDetailsService {
 
 		ExtendedFieldRender render = (ExtendedFieldRender) auditDetail.getModelData();
 		String reference = render.getReference();
+		int seqNo = render.getSeqNo();
 		ExtendedFieldRender tempRender = null;
 
 		if (render.isWorkflow()) {
@@ -1115,6 +1201,34 @@ public class ExtendedFieldDetailsService {
 
 		ExtendedFieldRender befExtRender = extendedFieldRenderDAO.getExtendedFieldDetails(reference, render.getSeqNo(),
 				tableName, "");
+
+		if (befExtRender != null) {
+			Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, seqNo,
+					tableName.toString(), "");
+			if (extFieldMap != null) {
+				Map<String, Object> modifiedExtMap = new HashMap<>();
+				for (Entry<String, Object> entrySet : extFieldMap.entrySet()) {
+					modifiedExtMap.put(entrySet.getKey().toUpperCase(), entrySet.getValue());
+				}
+
+				// Audit Details Preparation For Before Image
+				modifiedExtMap.put("Reference", extFieldMap.get("Reference"));
+				modifiedExtMap.put("SeqNo", extFieldMap.get("SeqNo"));
+				modifiedExtMap.put("Version", extFieldMap.get("Version"));
+				modifiedExtMap.put("LastMntOn", extFieldMap.get("LastMntOn"));
+				modifiedExtMap.put("LastMntBy", extFieldMap.get("LastMntBy"));
+				modifiedExtMap.put("RecordStatus", extFieldMap.get("RecordStatus"));
+				modifiedExtMap.put("RoleCode", extFieldMap.get("RoleCode"));
+				modifiedExtMap.put("NextRoleCode", extFieldMap.get("NextRoleCode"));
+				modifiedExtMap.put("TaskId", extFieldMap.get("TaskId"));
+				modifiedExtMap.put("NextTaskId", extFieldMap.get("NextTaskId"));
+				modifiedExtMap.put("RecordType", extFieldMap.get("RecordType"));
+				modifiedExtMap.put("WorkflowId", extFieldMap.get("WorkflowId"));
+
+				befExtRender.setMapValues(modifiedExtMap);
+				befExtRender.setAuditMapValues(modifiedExtMap);
+			}
+		}
 		ExtendedFieldRender oldExRender = render.getBefImage();
 
 		if (tempRender == null && befExtRender == null) {
@@ -1152,24 +1266,14 @@ public class ExtendedFieldDetailsService {
 				}
 			} else { // with work flow
 
-				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
-																						// type
-																						// is
-																						// new
-					if (befExtRender != null || tempRender != null) { // if
-																			// records
-																		// already
-																		// exists
-																		// in
-																		// the
-																		// main
-																		// table
+				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if  records type is new 
+					if (befExtRender != null || tempRender != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befExtRender == null || tempRender != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					if (befExtRender == null && tempRender == null) {
+						//FIXME: commented the below line, showing an alert while modifying the approved records
+						//auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
@@ -1366,10 +1470,10 @@ public class ExtendedFieldDetailsService {
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90322", "", valueParm)));
 				return errors;
 			}
-			exrFldData.setFieldValue(Math.round((Integer.valueOf(fieldValue) / Math.pow(10, deatils.getFieldPrec()))));
+			exrFldData.setFieldValue((Long.valueOf(fieldValue) / Math.pow(10, deatils.getFieldPrec())));
 			if (deatils.getFieldMaxValue() > 0 || deatils.getFieldMinValue() > 0) {
-				if (Integer.valueOf(fieldValue) > deatils.getFieldMaxValue()
-						|| Integer.valueOf(fieldValue) < deatils.getFieldMinValue()) {
+				if (Long.valueOf(fieldValue) > deatils.getFieldMaxValue()
+						|| Long.valueOf(fieldValue) < deatils.getFieldMinValue()) {
 					String[] valueParm = new String[3];
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(deatils.getFieldMinValue());
@@ -1699,19 +1803,28 @@ public class ExtendedFieldDetailsService {
 		return sb.toString();
 	}
 
+
 	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> extendedFieldData, String module,
 			String subModule, String event) {
 		logger.debug(Literal.ENTERING);
 
+		String extEvent = null;
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		if (!(VerificationType.TV.getValue().equals(event))) {
+			extEvent = event;
+		}
 		// get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module,
-				subModule, event, "");
+				subModule, extEvent, "");
 		List<ExtendedFieldDetail> extendedFieldDetails = null;
 
 		// based on ExtendedFieldHeader moduleId get the ExtendedFieldDetails
 		// List
-		if (extendedFieldHeader != null) {
+		if (VerificationType.TV.getValue().equals(event) && extendedFieldHeader != null) {
+			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(),
+					ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION, "");
+			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
+		} else if (extendedFieldHeader != null) {
 			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(),
 					"");
 			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);

@@ -45,6 +45,7 @@ package com.pennant.backend.dao.finance;
 import java.util.List;
 
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
+import com.pennant.backend.model.receiptupload.ThreadAllocation;
 
 public interface ReceiptUploadDetailDAO {
 
@@ -65,5 +66,19 @@ public interface ReceiptUploadDetailDAO {
 	List<Long> getListofReceiptUploadDetails(long uploadHeaderId);
 
 	ReceiptUploadDetail getUploadReceiptDetail(long headerID, long detailID);
+
+	List<Long> getReceiptDetails(List<Long> list);
+
+	ReceiptUploadDetail getUploadReceiptDetail(long detailID);
+
+	List<ThreadAllocation> getFinRefWithCount(List<Long> uploadHeaderId);
+
+	List<ReceiptUploadDetail> getUploadReceiptDetailsByThreadId(List<Long> uploadHeaderIdList, Integer threadId);
+
+	int updateThreadAllocationByFinRef(List<ThreadAllocation> batchAllocations, List<Long> uploadHeaderList);
+
+	long updateStatus(List<Long> uploadHeaderList);
+
+	List<String> isDuplicateExists(ReceiptUploadDetail rud);
 
 }

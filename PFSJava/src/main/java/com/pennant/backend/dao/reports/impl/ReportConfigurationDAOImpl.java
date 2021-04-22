@@ -46,14 +46,14 @@ package com.pennant.backend.dao.reports.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -71,7 +71,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration> implements ReportConfigurationDAO {
-	private static Logger logger = Logger.getLogger(ReportConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReportConfigurationDAOImpl.class);
 
 	public ReportConfigurationDAOImpl() {
 		super();
@@ -137,8 +137,7 @@ public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportConfiguration);
-		RowMapper<ReportConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ReportConfiguration.class);
+		RowMapper<ReportConfiguration> typeRowMapper = BeanPropertyRowMapper.newInstance(ReportConfiguration.class);
 
 		try {
 			reportConfiguration = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -203,8 +202,8 @@ public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration>
 		logger.debug("Entering ");
 
 		if (reportConfiguration.getId() == Long.MIN_VALUE) {
-			reportConfiguration.setId(getNextId("SeqReportConfiguration"));
-			logger.debug("get NextID:" + reportConfiguration.getId());
+			reportConfiguration.setId(getNextValue("SeqReportConfiguration"));
+			logger.debug("get NextValue:" + reportConfiguration.getId());
 		}
 		StringBuilder insertSql = new StringBuilder("Insert Into ReportConfiguration");
 		insertSql.append(StringUtils.trimToEmpty(type));
@@ -283,7 +282,7 @@ public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration>
 		selectSql.append(" FROM  ReportsMonthEndConfiguration");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+		RowMapper<ValueLabel> typeRowMapper = BeanPropertyRowMapper.newInstance(ValueLabel.class);
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
@@ -306,7 +305,7 @@ public class ReportConfigurationDAOImpl extends SequenceDao<ReportConfiguration>
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(configuration);
-		RowMapper<ValueLabel> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ValueLabel.class);
+		RowMapper<ValueLabel> typeRowMapper = BeanPropertyRowMapper.newInstance(ValueLabel.class);
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

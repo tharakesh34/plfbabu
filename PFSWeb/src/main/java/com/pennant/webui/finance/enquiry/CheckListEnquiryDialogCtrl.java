@@ -2,7 +2,8 @@ package com.pennant.webui.finance.enquiry;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Listbox;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListReference> {
 	private static final long serialVersionUID = 2338460659547934642L;
-	private static final Logger logger = Logger.getLogger(CheckListEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CheckListEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

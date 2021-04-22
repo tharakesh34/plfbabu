@@ -19,7 +19,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"deviationCategory", "deviProcessed", "remarks", "approved", "deviationCodeName", "deviationCodeDesc",
 		"deviationDesc", "severity", "severityCode", "severityName", "markDeleted", "raisedUser" })
 @XmlRootElement(name = "financeDeviations")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class FinanceDeviations extends AbstractWorkflowEntity implements java.io.Serializable, Entity {
 	private static final long serialVersionUID = 8456523350616062070L;
 
@@ -53,6 +53,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	private boolean deviProcessed = false;
 	@XmlElement
 	private String remarks;
+	private String mitigants;
 	private boolean newRecord = false;
 	private FinanceDeviations befImage;
 	@XmlElement
@@ -376,5 +377,13 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 
 	public void setRaisedUser(String raisedUser) {
 		this.raisedUser = raisedUser;
+	}
+
+	public String getMitigants() {
+		return mitigants;
+	}
+
+	public void setMitigants(String mitigants) {
+		this.mitigants = mitigants;
 	}
 }

@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransactionDetail>
 		implements LimitTransactionDetailsDAO {
-	private static Logger logger = Logger.getLogger(LimitTransactionDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitTransactionDetailsDAOImpl.class);
 
 	public LimitTransactionDetailsDAOImpl() {
 		super();
@@ -47,7 +48,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		source.addValue("ReferenceNumber", ref);
 		source.addValue("HeaderId", headerId);
 
-		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
 		try {
 			logger.debug(Literal.LEAVING);
@@ -81,7 +82,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		source.addValue("HeaderId", headerId);
 		source.addValue("SchSeq", schSeq);
 
-		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
@@ -106,7 +107,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		sql.append("TransactionType = :TransactionType AND HeaderId=:HeaderId");
 		logger.debug("selectSql: " + sql.toString());
 
-		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
 		try {
 			LimitTransactionDetail limitTranDetail = this.jdbcTemplate.queryForObject(sql.toString(), source,
@@ -191,8 +192,8 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	public long saveLimitRuleTransactiondetails(LimitTransactionDetail limitTransactionDetail, String type) {
 		logger.debug("Entering");
 		if (limitTransactionDetail.getId() == Long.MIN_VALUE) {
-			limitTransactionDetail.setId(getNextId("SeqLimitRuleTransactions"));
-			logger.debug("get NextID:" + limitTransactionDetail.getId());
+			limitTransactionDetail.setId(getNextValue("SeqLimitRuleTransactions"));
+			logger.debug("get NextValue:" + limitTransactionDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into LimitRuleTransactionDetails");
@@ -271,7 +272,7 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		source.addValue("TransactionType", transtype);
 		source.addValue("HeaderId", limitId);
 
-		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<LimitTransactionDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);

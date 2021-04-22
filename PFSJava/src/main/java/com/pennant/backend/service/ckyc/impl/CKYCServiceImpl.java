@@ -14,12 +14,16 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.util.FileSystemUtils;
 
 import com.pennant.backend.dao.ckyc.CKYCDAO;
@@ -34,18 +38,23 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.ckyc.CKYCService;
+import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.external.dms.model.ExternalDocument;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.DocumentManagementService;
 
 public class CKYCServiceImpl extends GenericService implements CKYCService {
 
-	private static Logger logger = Logger.getLogger(CKYCServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CKYCServiceImpl.class);
 	private static int emailRemove;
 	private static int addrRemove;
 	private static int phoneRemove;
 	private CKYCDAO ckycDAO;
+	protected DocumentManagementService dmsManagementService;
 
 	public void setCkycDAO(CKYCDAO ckycDAO) {
 		this.ckycDAO = ckycDAO;
@@ -62,11 +71,11 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			String batch = updateBatchNo(batchNo);
 			ckycHeader.setRecordType(10);
 			ckycHeader.setBatchNo(batch);
-			ckycHeader.setFiCode("IN6544");
-			ckycHeader.setRegionCode("IN6544RG");
+			ckycHeader.setFiCode(App.getProperty("external.interface.cKYC.FICode"));
+			ckycHeader.setRegionCode(App.getProperty("external.interface.cKYC.RegionCode"));
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			ckycHeader.setCreateDate(timestamp);
-			ckycHeader.setVersion("V1.1");
+			ckycHeader.setVersion(App.getProperty("external.interface.cKYC.Version"));
 			ckycHeader.setHeaderFiller1("");
 			ckycHeader.setHeaderFiller2("");
 			ckycHeader.setHeaderFiller3("");
@@ -74,8 +83,8 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			List<CKYCDtl20> ckycDtl20s = new ArrayList<>();
 			String fname = null;
 			for (Long custId : id) {
-
-				CKYCDtl20 ckycdtl20 = getDetails20(custId);
+				Customer customer = ckycDAO.getCustomerDetail(custId);
+				CKYCDtl20 ckycdtl20 = getDetails20(customer);
 				logFile.setCustId(ckycdtl20.getCustId());
 				logFile.setCustCif(ckycdtl20.getCustCif());
 				ckycdtl20.setLineNo(lineNo);
@@ -85,11 +94,11 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				if (ckycdtl20.getApplicationType().equalsIgnoreCase("01")) {
 					ckyc30 = getDetails30(custId, ckycdtl20.getCkycNo());
 					ckyc60 = getDetails60(custId, ckycdtl20.getCkycNo());
-					ckyc70 = getDetails70(custId, ckycdtl20.getCkycNo());
+					ckyc70 = getDetails70(customer, ckycdtl20.getCkycNo());
 				} else {
 					if (StringUtils.equalsIgnoreCase(ckycdtl20.getApplicationType(), "03")) {
 						if (StringUtils.equalsIgnoreCase(ckycdtl20.getImgUpdFlag(), "01")) {
-							ckyc70 = getDetails70(custId, ckycdtl20.getCkycNo());
+							ckyc70 = getDetails70(customer, ckycdtl20.getCkycNo());
 						}
 						if (StringUtils.equalsIgnoreCase(ckycdtl20.getIdentityUpdFlag(), "01")) {
 							ckyc30 = getDetails30(custId, ckycdtl20.getCkycNo());
@@ -110,13 +119,6 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 					}
 				}
 
-				/*
-				 * List<CKYCDtl70> ckycDtl70 = new ArrayList<>(); if (ckyc70 != null && !ckyc70.isEmpty()) { for
-				 * (CKYCDtl70 ckycDtls70 : ckyc70) { ckycDtls70.setBranchCode(ckycdtl20.getBranchCode());
-				 * ckycDtl70.add(ckycDtls70);
-				 * 
-				 * } }
-				 */
 				if (ckyc30 != null && ckyc30.size() != 0)
 					ckycdtl20.setNoIdDetail(updateDigit(ckyc30.size()));
 				else
@@ -143,12 +145,12 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 					if (ckyc70 != null && !ckyc70.isEmpty())
 						saveDtl70(ckyc70);
 					logFile.setRowNo(lineNo);
-					StringBuilder ckycHeaderBuilder = new StringBuilder();
 					Format formatter = new SimpleDateFormat("ddMMyyyyhhMMss");
 					String date = formatter.format(ckycHeader.getCreateDate());
 					StringBuilder fileNameBuilder = new StringBuilder();
 					fileNameBuilder.append(ckycHeader.getFiCode() + "_" + ckycHeader.getRegionCode() + "_");
-					fileNameBuilder.append(date + "_" + "IA011778" + "_U" + ckycHeader.getBatchNo());
+					fileNameBuilder.append(date + "_" + App.getProperty("external.interface.cKYC.UserId") + "_U"
+							+ ckycHeader.getBatchNo());
 					if (fname == null) {
 						fname = fileNameBuilder.toString();
 					}
@@ -213,7 +215,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			String date = formatter.format(ckycHeader.getCreateDate());
 			File fileFolder = null;
 			if (fname != null) {
-				File folder = new File(App.getProperty("fileloaction"));
+				File folder = new File(App.getProperty("external.interface.cKYC.FileLoaction"));
 				if (!folder.exists())
 					folder.mkdirs();
 				fileFolder = new File(folder.getPath() + "/" + fname);
@@ -627,24 +629,22 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 
 	}
 
-	@Override
-	public CKYCDtl20 getDetails20(long custId) {
+	public CKYCDtl20 getDetails20(Customer customer) {
 		CKYCDtl20 ckycDtl20 = new CKYCDtl20();
 		emailRemove = 0;
 		phoneRemove = 0;
 		addrRemove = 0;
 
 		// IN Query need to add CKYC Column
-		String ckycNo = ckycDAO.getCkycNo(custId);
-		Customer customer = ckycDAO.getCustomerDetail(custId);
-		List<CustomerAddres> addres = ckycDAO.getCustomerAddresByCustomer(custId, ckycNo);
-		List<CustomerPhoneNumber> phoneNumbers = ckycDAO.getCustomerPhoneNumberByCustomer(custId, ckycNo);
-		List<CustomerEMail> customerEMail = ckycDAO.getCustomerEmailByCustomer(custId, ckycNo);
+		//		String ckycNo = ckycDAO.getCkycNo(customer.getCustID());
+		String ckycNo = customer.getCkycOrRefNo();
+		List<CustomerAddres> addres = ckycDAO.getCustomerAddresById(customer.getCustID(), ckycNo);
+		List<CustomerPhoneNumber> phoneNumbers = ckycDAO.getCustomerPhoneNumberById(customer.getCustID(), ckycNo);
+		List<CustomerEMail> customerEMail = ckycDAO.getCustomerEmailById(customer.getCustID(), ckycNo);
 		ckycDtl20.setCustId(customer.getCustID());
 		ckycDtl20.setCustCif(customer.getCustCIF());
 		ckycDtl20.setRecordType(20);
-		ckycDtl20.setBranchCode("IN6544BR");
-		// ckycDtl20.setBranchCode(customer.getCustDftBranch());
+		ckycDtl20.setBranchCode(App.getProperty("external.interface.cKYC.BranchCode"));
 		if (ckycNo == null) {
 			ckycDtl20.setApplicationType("01");
 			ckycDtl20.setNameUpdFlag("");
@@ -656,7 +656,6 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			ckycDtl20.setRelatedUpdFlag("");
 			ckycDtl20.setControlPersonFlag("");
 			ckycDtl20.setImgUpdFlag("");
-			ckycDtl20.setConstitutionType("01");
 			ckycDtl20.setConstitutionType("01");
 			ckycDtl20.setAccHolderFlag("02");
 			ckycDtl20.setAccHolderType("02");
@@ -671,11 +670,10 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			ckycDtl20.setFatherSalutation("Mr");
 			ckycDtl20.setFatherOrSpouseFirstName(dataSize(customer.getCustMotherMaiden(), 150));
 			ckycDtl20.setCustfatherorSpouseFullName(dataSize(customer.getCustMotherMaiden(), 150));
-			if (StringUtils.equalsIgnoreCase(customer.getCustGenderCode(), "M")
-					|| StringUtils.equalsIgnoreCase(customer.getCustGenderCode(), "F"))
+			if (StringUtils.equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_INDIV, "RETAIL"))
 				ckycDtl20.setCustGenderCode(customer.getCustGenderCode());
 			else
-				ckycDtl20.setCustGenderCode("T");
+				ckycDtl20.setCustGenderCode("");
 			String maritalStatus = ckycDAO.getCode("CKYCMARITALSTATUS", customer.getCustMaritalSts());
 			ckycDtl20.setCustMaritalsts(maritalStatus);
 			ckycDtl20.setCustNationality(dataSize(customer.getCustNationality(), 2));
@@ -726,7 +724,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		} else {
 			ckycDtl20.setCkycNo(ckycNo);
 			ckycDtl20.setApplicationType("03");
-			CKYCLog nameFlag = ckycDAO.applicantNameFlag(custId, ckycNo);
+			CKYCLog nameFlag = ckycDAO.applicantNameFlag(customer.getCustID(), ckycNo);
 			if (nameFlag != null) {
 				ckycDtl20.setNameUpdFlag("01");
 				ckycDtl20.setCustSalutationCode(nameFlag.getCustsalutationcode());
@@ -737,7 +735,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			} else
 				ckycDtl20.setNameUpdFlag("02");
 
-			CKYCLog perFlag = ckycDAO.personalDetailFlag(custId, ckycNo);
+			CKYCLog perFlag = ckycDAO.personalDetailFlag(customer.getCustID(), ckycNo);
 			if (perFlag != null) {
 				ckycDtl20.setPersonalUpdFlag("01");
 				ckycDtl20.setFatherOrSpouse("01");
@@ -757,19 +755,19 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			} else
 				ckycDtl20.setPersonalUpdFlag("02");
 
-			int addrFlag = ckycDAO.addressDetailFlag(custId, ckycNo);
+			int addrFlag = ckycDAO.addressDetailFlag(customer.getCustID(), ckycNo);
 			if (addrFlag == 01) {
 				ckycDtl20.setAddrUpdFlag("01");
 				ckycDtl20 = getAddressDetails(ckycDtl20, addres);
 			} else {
 				ckycDtl20.setAddrUpdFlag("02");
 			}
-			int contactFlag = ckycDAO.contactFlag(custId, ckycNo);
+			int contactFlag = ckycDAO.contactFlag(customer.getCustID(), ckycNo);
 			if (contactFlag == 01) {
 				ckycDtl20.setContactUpdFlag("01");
 				ckycDtl20 = getPhoneNumber(ckycDtl20, phoneNumbers);
 			}
-			int emailFlag = ckycDAO.emailFlag(custId, ckycNo);
+			int emailFlag = ckycDAO.emailFlag(customer.getCustID(), ckycNo);
 			if (emailFlag == 01) {
 				ckycDtl20.setContactUpdFlag("01");
 				ckycDtl20 = getEmailId(ckycDtl20, customerEMail);
@@ -777,7 +775,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			if (contactFlag != 01 && emailFlag != 01) {
 				ckycDtl20.setContactUpdFlag("02");
 			}
-			int imgFlag = ckycDAO.imgDtlFlag(custId, ckycNo);
+			int imgFlag = ckycDAO.imgDtlFlag(customer.getCustID(), ckycNo);
 			if (imgFlag == 1) {
 				ckycDtl20.setImgUpdFlag("01");
 				ckycDtl20.setIdentityUpdFlag("01");
@@ -806,23 +804,23 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		if (!customerAddres.isEmpty()) {
 			for (CustomerAddres custAdd : customerAddres) {
 				if (!addrpmtFlag) {
-					if (StringUtils.equalsIgnoreCase(App.getProperty("Permanent.Resident/Business"),
+					if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.ResiOff"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setPmtAddrType("01");
 						addrpmtFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("Permanent.Residential"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Resi"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setPmtAddrType("02");
 						addrpmtFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("Permanent.Business"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Bus"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setPmtAddrType("03");
 						addrpmtFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("Permanent.RegisteredOffice"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.RegstrdOff"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setPmtAddrType("04");
 						addrpmtFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("Permanent.Unspecified"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Unspecified"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setPmtAddrType("05");
 						addrpmtFlag = true;
@@ -873,23 +871,23 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 
 				else if (!addrLocalFlag) {
 
-					if (StringUtils.equalsIgnoreCase(App.getProperty("Local.Resident/Business"),
+					if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.ResiOff"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setLocalAddrType("01");
 						addrLocalFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.Residential"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.curres.Resi"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setLocalAddrType("02");
 						addrLocalFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.Business"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Bus"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setLocalAddrType("03");
 						addrLocalFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.RegisteredOffice"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.RegstrdOff"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setLocalAddrType("04");
 						addrLocalFlag = true;
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.Unspecified"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Unspecified"),
 							custAdd.getCustAddrType())) {
 						ckycDtl20.setLocalAddrType("05");
 						addrLocalFlag = true;
@@ -943,15 +941,15 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				 * 
 				 * } }
 				 * 
-				 * else { if (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Resident/Business"),
+				 * else { if (StringUtils.equalsIgnoreCase(App.getProperty( "external.interface.cKYC.ResiOff"),
 				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("01"); addrJuriFlag = true; } else if
-				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Residential"),
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "external.interface.cKYC.Resi"),
 				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("02"); addrJuriFlag = true; } else if
-				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Business"), custAdd.getCustAddrType()))
-				 * { ckycDtl20.setJuriAddrType("03"); addrJuriFlag = true; } else if
-				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.RegisteredOffice"),
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "external.interface.cKYC.Bus"),
+				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("03"); addrJuriFlag = true; } else if
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "external.interface.cKYC.RegstrdOff"),
 				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("04"); addrJuriFlag = true; } else if
-				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Unspecified"),
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "external.interface.cKYC.Unspecified"),
 				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("05"); addrJuriFlag = true; }
 				 * ckycDtl20.setJuriAddrLine1(custAdd.getCustAddrLine1());
 				 * ckycDtl20.setJuriAddrLine2(custAdd.getCustAddrLine2());
@@ -983,7 +981,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		boolean faxTypePhone = false;
 		if (!phoneNumber.isEmpty()) {
 			for (CustomerPhoneNumber customerPhoneNumber : phoneNumber) {
-				if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.Resident"),
+				if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Resi"),
 						customerPhoneNumber.getPhoneTypeCode()) && resTypePhone == false) {
 					try {
 
@@ -994,7 +992,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 					} catch (Exception e) {
 						logger.info("Residence Phone Number Not Valid");
 					}
-				} else if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.OFFICE"),
+				} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Off"),
 						customerPhoneNumber.getPhoneTypeCode()) && offTypePhone == false) {
 
 					try {
@@ -1005,7 +1003,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 					} catch (Exception e) {
 						logger.info("Office Phone Number Not Valid");
 					}
-				} else if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.MOBILE"),
+				} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Mobile"),
 						customerPhoneNumber.getPhoneTypeCode()) && mobTypePhone == false) {
 					try {
 						ckycDtl20.setMobPhoneCode(dataSize(customerPhoneNumber.getPhoneAreaCode(), 3));
@@ -1015,7 +1013,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 					} catch (Exception e) {
 						logger.info("Mobile  Number Not Valid");
 					}
-				} else if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.FAX"),
+				} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Fax"),
 						customerPhoneNumber.getPhoneTypeCode()) && faxTypePhone == false) {
 					try {
 						ckycDtl20.setFaxPhoneCode(dataSize(customerPhoneNumber.getPhoneAreaCode(), 4));
@@ -1023,7 +1021,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 						faxTypePhone = true;
 						totalPh++;
 					} catch (Exception e) {
-						logger.info("Fax Phone Number Not Valid");
+						logger.info("Fax Number Not Valid");
 					}
 
 				} else {
@@ -1050,13 +1048,13 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		return ckycDtl;
 	}
 
-	@Override
 	public List<CKYCDtl30> getDetails30(long custId, String ckycNo) {
 		List<CKYCDtl30> ckycDtl30 = new ArrayList<>();
-		List<CustomerDocument> customerDocument = ckycDAO.getCustomerId(custId, ckycNo);
+		List<CustomerDocument> custDocs = ckycDAO.getcustDocsByCustId(custId, ckycNo);
+
 		int lineNo = 1;
-		if (!customerDocument.isEmpty()) {
-			for (CustomerDocument document : customerDocument) {
+		if (!custDocs.isEmpty()) {
+			for (CustomerDocument document : custDocs) {
 				CKYCDtl30 ckycDtl = new CKYCDtl30();
 				ckycDtl.setCustId(document.getCustID());
 				ckycDtl.setRecordType(30);
@@ -1078,7 +1076,6 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		return ckycDtl30;
 	}
 
-	@Override
 	public List<CKYCDtl60> getDetails60(long custId, String ckyNo) {
 		List<CKYCDtl60> ckycDtl60 = new ArrayList<>();
 		int findEmailSize = emailRemove;
@@ -1089,14 +1086,14 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		List<CustomerPhoneNumber> customerPhoneNumbers = null;
 		List<CustomerAddres> customerAddres = null;
 		if (findEmailSize > 0) {
-			customerEMails = ckycDAO.getCustomerEmailByCustomer(custId, ckyNo);
+			customerEMails = ckycDAO.getCustomerEmailById(custId, ckyNo);
 
 		}
 		if (findPhoneSize > 0) {
-			customerPhoneNumbers = ckycDAO.getCustomerPhoneNumberByCustomer(custId, ckyNo);
+			customerPhoneNumbers = ckycDAO.getCustomerPhoneNumberById(custId, ckyNo);
 		}
 		if (findAddrSize > 0) {
-			customerAddres = ckycDAO.getCustomerAddresByCustomer(custId, ckyNo);
+			customerAddres = ckycDAO.getCustomerAddresById(custId, ckyNo);
 		}
 		int recordType = 60;
 		int lineNo = 1;
@@ -1137,26 +1134,26 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			ckyc60.setLineNo(lineNo);
 			int totalPhType = 0;
 			try {
-				String totalPhoneType = App.getProperty("TotalPhoneType");
+				String totalPhoneType = App.getProperty("external.interface.cKYC.PhTypes.count");
 				totalPhType = Integer.parseInt(totalPhoneType);
 			} catch (Exception e) {
 				logger.warn(e);
 			}
 			if (customerAddres != null && !customerAddres.isEmpty()) {
 				for (CustomerAddres custAdd : customerAddres) {
-					if (StringUtils.equalsIgnoreCase(App.getProperty("Local.Resident/Business"),
+					if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.ResiOff"),
 							custAdd.getCustAddrType())) {
 						ckyc60.setAddrType("01");
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.Residential"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Resi"),
 							custAdd.getCustAddrType())) {
 						ckyc60.setAddrType("02");
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.Business"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Bus"),
 							custAdd.getCustAddrType())) {
 						ckyc60.setAddrType("03");
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.RegisteredOffice"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.RegstrdOff"),
 							custAdd.getCustAddrType())) {
 						ckyc60.setAddrType("04");
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("LOCAL.Unspecified"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.Unspecified"),
 							custAdd.getCustAddrType())) {
 						ckyc60.setAddrType("05");
 					}
@@ -1198,7 +1195,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				int i = 0;
 				for (CustomerPhoneNumber phoneNumber : customerPhoneNumbers) {
 
-					if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.Resident"),
+					if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Resi"),
 							phoneNumber.getPhoneTypeCode())) {
 						try {
 
@@ -1208,7 +1205,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 						} catch (Exception e) {
 							logger.info("Residence Phone Number Not Valid");
 						}
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.OFFICE"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Off"),
 							phoneNumber.getPhoneTypeCode())) {
 
 						try {
@@ -1218,7 +1215,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 						} catch (Exception e) {
 							logger.info("Office Phone Number Not Valid");
 						}
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.MOBILE"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Mobile"),
 							phoneNumber.getPhoneTypeCode())) {
 						try {
 
@@ -1228,7 +1225,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 						} catch (Exception e) {
 							logger.info("Mobile  Number Not Valid");
 						}
-					} else if (StringUtils.equalsIgnoreCase(App.getProperty("PhoneType.FAX"),
+					} else if (StringUtils.equalsIgnoreCase(App.getProperty("external.interface.cKYC.PhType.Fax"),
 							phoneNumber.getPhoneTypeCode())) {
 						try {
 							ckyc60.setFaxPhoneCode(phoneNumber.getPhoneAreaCode());
@@ -1277,25 +1274,81 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		return ckycDtl60;
 	}
 
-	@Override
-	public List<CKYCDtl70> getDetails70(long custId, String ckycNo) {
+	public List<CKYCDtl70> getDetails70(Customer customer, String ckycNo) {
 		List<CKYCDtl70> ckycDtl70 = new ArrayList<>();
-		List<CustomerDocument> customerDocument = ckycDAO.getCustomerId(custId, ckycNo);
+		if (App.getProperty("external.interface.ckyc.external.dms").equalsIgnoreCase("TRUE")) {
+			ckycDtl70 = getDocDetailsFromDMS(customer, ckycNo);
+		} else {
+			ckycDtl70 = getDocDetailsFromPLF(customer, ckycNo);
+		}
+
+		return ckycDtl70;
+	}
+
+	private List<CKYCDtl70> getDocDetailsFromPLF(Customer customer, String ckycNo) {
+		List<CKYCDtl70> ckycDtl70 = new ArrayList<>();
+		List<CustomerDocument> customerDocuments = ckycDAO.getcustDocsByCustId(customer.getCustID(), ckycNo);
 		int lineNo = 1;
-		if (customerDocument != null)
-			for (CustomerDocument document : customerDocument) {
+		if (customerDocuments != null)
+			for (CustomerDocument document : customerDocuments) {
 				CKYCDtl70 ckycDtl = new CKYCDtl70();
-				ckycDtl.setCustId(custId);
+				ckycDtl.setCustId(customer.getCustID());
 				ckycDtl.setRecordType(70);
 				ckycDtl.setLineNo(lineNo);
 				ckycDtl.setImgFolderNm(document.getCustDocName());
-				String identityType = ckycDAO.getCode("CKYCIdentityType", document.getLovDescCustDocCategory());
+				String identityType = ckycDAO.getCode("CKYCDocumentMaster", document.getLovDescCustDocCategory());
 				ckycDtl.setImgType(identityType);
 				ckycDtl.setGobalOrLocal("01");
 				ckycDtl.setCustDocImage(document.getCustDocImage());
+				ckycDtl.setBranchCode(customer.getLovDescCustDftBranchName());
 				ckycDtl70.add(ckycDtl);
 				lineNo++;
 			}
+		return ckycDtl70;
+	}
+
+	//For Piramal - To get customer KYC documents from DMS based on leadID.
+	private List<CKYCDtl70> getDocDetailsFromDMS(Customer customer, String ckycNo) {
+		List<CKYCDtl70> ckycDtl70 = new ArrayList<>();
+		Map<String, Object> docTypeMasterMap = new HashMap<>();
+		ExternalDocument extDocument = new ExternalDocument();
+		DocumentDetails documentDetails = new DocumentDetails();
+		String leadId = ckycDAO.getLeadIdByCustId(customer.getCustID());
+		docTypeMasterMap = ckycDAO.getcKYCdocMaster();
+
+		Timestamp ts = ckycDAO.getLastMntOn(String.valueOf(customer.getCustID()), ckycNo);
+		if (ObjectUtils.isNotEmpty(ts)) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:MM");
+			String updatedAfter = sdf.format(ts);
+			extDocument.setRevisedDate(updatedAfter);
+		}
+
+		extDocument.setLeadId(leadId);
+		List<ExternalDocument> listOfExternalDocs = dmsManagementService.getExternalDocument(extDocument);
+
+		int lineNo = 1;
+		for (ExternalDocument externalDocument : listOfExternalDocs) {
+			if (!externalDocument.getCategoryOfDocument().equalsIgnoreCase("CUSTOMER")) {
+				continue;
+			}
+			if (StringUtils.equalsIgnoreCase(externalDocument.getCustCIF(), customer.getCustCIF())
+					&& docTypeMasterMap.containsKey(externalDocument.getDocumentType())) {
+
+				documentDetails = dmsManagementService.getExternalDocument(externalDocument.getImageIndex(), "CKYC");
+				CKYCDtl70 ckycDtl = new CKYCDtl70();
+				ckycDtl.setCustId(customer.getCustID());
+				ckycDtl.setRecordType(70);
+				ckycDtl.setLineNo(lineNo);
+				ckycDtl.setImgFolderNm(externalDocument.getDocName());
+				String identityType = ckycDAO.getCode("CKYCDocumentMaster", externalDocument.getDocumentType());
+				ckycDtl.setImgType(identityType);
+				ckycDtl.setGobalOrLocal("01");
+				ckycDtl.setCustDocImage(documentDetails.getDocImage());
+				ckycDtl.setBranchCode(customer.getLovDescCustDftBranchName());
+				ckycDtl70.add(ckycDtl);
+				lineNo++;
+			}
+		}
 		return ckycDtl70;
 	}
 
@@ -1311,6 +1364,16 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 	@Override
 	public void updateCkycNo(String ckycNo, String batchNo, String rowNo) {
 		ckycDAO.updateCkycNo(ckycNo, batchNo, rowNo);
+	}
+
+	public int getCustId(String ckycNo) {
+		int custId = ckycDAO.getCustId(ckycNo);
+		return custId;
+	}
+
+	@Override
+	public void updateCustomerWithCKycNo(int custId, String ckycNo) {
+		ckycDAO.updateCustomerWithCKycNo(custId, ckycNo);
 	}
 
 	private char flagValue(boolean val) {
@@ -1341,7 +1404,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 
 	String updateBatchNo(long num) {
 		int digits = 0;
-		String noDigits = App.getProperty("batchDigitNo");
+		String noDigits = App.getProperty("external.interface.cKYC.BatchDigitNo");
 		try {
 			digits = Integer.parseInt(noDigits);
 		} catch (Exception e) {

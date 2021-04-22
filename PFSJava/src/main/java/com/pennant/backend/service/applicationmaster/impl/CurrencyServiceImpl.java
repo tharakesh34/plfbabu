@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -64,7 +65,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class CurrencyServiceImpl extends GenericService<Currency> implements CurrencyService {
-	private static Logger logger = Logger.getLogger(CurrencyServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CurrencyServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CurrencyDAO currencyDAO;
@@ -189,7 +190,6 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	 * @return Currency
 	 */
 	public Currency getApprovedCurrencyById(String id) {
-		//return getCurrencyDAO().getCurrencyById(id, "_AView");
 		return getCachedEntity(id);
 	}
 

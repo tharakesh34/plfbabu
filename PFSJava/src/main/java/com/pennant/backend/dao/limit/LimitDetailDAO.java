@@ -48,4 +48,6 @@ public interface LimitDetailDAO {
 
 	public int getLimitHeaderIDByCustId(long custId);
 
+	public BigDecimal getOsPriBal(String finReference);
+
 }

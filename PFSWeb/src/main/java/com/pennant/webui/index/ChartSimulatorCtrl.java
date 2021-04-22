@@ -45,7 +45,8 @@ package com.pennant.webui.index;
 import java.util.Collections;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -63,7 +64,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
  */
 public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 	private static final long serialVersionUID = 5012323906026616623L;
-	private static final Logger logger = Logger.getLogger(ChartSimulatorCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ChartSimulatorCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

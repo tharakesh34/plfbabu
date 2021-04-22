@@ -32,13 +32,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
@@ -58,7 +59,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class CommitmentDAOImpl extends BasicDao<Commitment> implements CommitmentDAO {
-	private static Logger logger = Logger.getLogger(CommitmentDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CommitmentDAOImpl.class);
 
 	public CommitmentDAOImpl() {
 		super();
@@ -136,7 +137,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commitment.class);
+		RowMapper<Commitment> typeRowMapper = BeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
 			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -171,7 +172,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commitment.class);
+		RowMapper<Commitment> typeRowMapper = BeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
 			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -210,7 +211,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		RowMapper<Commitment> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commitment.class);
+		RowMapper<Commitment> typeRowMapper = BeanPropertyRowMapper.newInstance(Commitment.class);
 
 		try {
 			commitment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -254,8 +255,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitment);
-		RowMapper<AvailCommitment> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AvailCommitment.class);
+		RowMapper<AvailCommitment> typeRowMapper = BeanPropertyRowMapper.newInstance(AvailCommitment.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -492,8 +492,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving getCmtAmountCount()");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(commitmentSummary);
-		RowMapper<CommitmentSummary> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CommitmentSummary.class);
+		RowMapper<CommitmentSummary> typeRowMapper = BeanPropertyRowMapper.newInstance(CommitmentSummary.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

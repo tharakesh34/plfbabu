@@ -2,7 +2,8 @@ package com.pennanttech.activity.log;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.NotesDAO;
@@ -11,7 +12,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ActivityLogServiceImpl implements ActivityLogService {
-	private static Logger logger = Logger.getLogger(ActivityLogServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(ActivityLogServiceImpl.class);
 
 	private ActivityLogDAO activityLogDAO;
 	protected NotesDAO notesDAO;

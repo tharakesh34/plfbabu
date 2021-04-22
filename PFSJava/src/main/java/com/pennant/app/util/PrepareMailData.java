@@ -16,7 +16,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.model.MailData;
@@ -36,7 +37,7 @@ import freemarker.template.Template;
 
 public class PrepareMailData implements Serializable {
 	private static final long serialVersionUID = -4293213317229057447L;
-	private static final Logger logger = Logger.getLogger(PrepareMailData.class);
+	private static final Logger logger = LogManager.getLogger(PrepareMailData.class);
 	private static final Charset UTF_8 = Charset.forName("UTF-8");
 
 	private DataSource dataSource;

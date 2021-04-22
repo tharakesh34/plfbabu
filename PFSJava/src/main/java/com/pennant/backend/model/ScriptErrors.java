@@ -2,6 +2,7 @@ package com.pennant.backend.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.graalvm.polyglot.HostAccess;
 
 public class ScriptErrors {
@@ -17,6 +18,7 @@ public class ScriptErrors {
 		errors.add(new ScriptError(code, message, property));
 	}
 
+	@HostAccess.Export
 	public ScriptError remove(int index) {
 		return errors.remove(index);
 	}
@@ -25,6 +27,7 @@ public class ScriptErrors {
 		return errors.get(index);
 	}
 
+	@HostAccess.Export
 	public List<ScriptError> getAll() {
 		return errors;
 	}
@@ -37,6 +40,7 @@ public class ScriptErrors {
 		return errors.isEmpty();
 	}
 
+	@HostAccess.Export
 	public boolean contains(ScriptError error) {
 		return errors.contains(error);
 	}

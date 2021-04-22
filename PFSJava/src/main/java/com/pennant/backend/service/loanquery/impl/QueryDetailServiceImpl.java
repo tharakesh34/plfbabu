@@ -46,7 +46,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -81,7 +82,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>QueryDetail</b>.<br>
  */
 public class QueryDetailServiceImpl extends GenericService<QueryDetail> implements QueryDetailService {
-	private static final Logger logger = Logger.getLogger(QueryDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(QueryDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private QueryDetailDAO queryDetailDAO;
@@ -130,6 +131,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -236,6 +238,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	 *            id of the QueryDetail. (String)
 	 * @return QUERYDETAIL
 	 */
+	@Override
 	public QueryDetail getApprovedQueryDetail(long id) {
 		return getQueryDetailDAO().getQueryDetail(id, "_AView");
 	}

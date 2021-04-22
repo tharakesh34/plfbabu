@@ -42,15 +42,16 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.FinanceStatusCodeDAO;
 import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>FinanceStatusCode</code> with set of CRUD operations.
  */
 public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> implements FinanceStatusCodeDAO {
-	private static Logger logger = Logger.getLogger(FinanceStatusCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinanceStatusCodeDAOImpl.class);
 
 	public FinanceStatusCodeDAOImpl() {
 		super();
@@ -91,8 +92,7 @@ public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeStatusCode);
-		RowMapper<FinanceStatusCode> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceStatusCode.class);
+		RowMapper<FinanceStatusCode> rowMapper = BeanPropertyRowMapper.newInstance(FinanceStatusCode.class);
 
 		try {
 			financeStatusCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -160,7 +160,7 @@ public class FinanceStatusCodeDAOImpl extends SequenceDao<FinanceStatusCode> imp
 
 		// Get the identity sequence number.
 		if (financeStatusCode.getStatusId() <= 0) {
-			financeStatusCode.setStatusId(getNextId("SeqFINANCESTATUSCODES"));
+			financeStatusCode.setStatusId(getNextValue("SeqFINANCESTATUSCODES"));
 		}
 
 		// Execute the SQL, binding the arguments.

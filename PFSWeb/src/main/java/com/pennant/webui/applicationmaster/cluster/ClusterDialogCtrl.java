@@ -48,7 +48,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -81,7 +82,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;;
  */
 public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ClusterDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ClusterDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -335,6 +336,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		if (aCluster.getClusterType() != null) {
 			ClusterHierarchy acClusterHierarchey = new ClusterHierarchy();
 			acClusterHierarchey.setClusterType(aCluster.getClusterType());
+			acClusterHierarchey.setEntity((aCluster.getEntity()));
 			this.clusterType.setObject(acClusterHierarchey);
 			onChangeClusterType();
 		}
@@ -428,18 +430,16 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		while (it.hasNext()) {
 			ClusterHierarchy clusterHierarchey = it.next();
 			if (StringUtils.equals(selectedClusterType, clusterHierarchey.getClusterType())) {
-				if (it.hasNext()) {
-					parentCluster = it.next().getClusterType();
-					if (!isReadOnly("ClusterDialog_Parent")) {
-						this.parent.setReadonly(false);
-					}
-					Filter[] clusterTypeFilter = new Filter[1];
-					clusterTypeFilter[0] = new Filter("clusterType", parentCluster, Filter.OP_EQUAL);
-					this.parent.setFilters(clusterTypeFilter);
-				} else {
-					parentCluster = null;
+				parentCluster = clusterHierarchey.getClusterType();
+				if (!isReadOnly("ClusterDialog_Parent")) {
+					this.parent.setReadonly(false);
 				}
-
+				Filter[] clusterTypeFilter = new Filter[1];
+				clusterTypeFilter[0] = new Filter("clusterType", parentCluster, Filter.OP_EQUAL);
+				this.parent.setFilters(clusterTypeFilter);
+				break;
+			} else {
+				parentCluster = null;
 			}
 		}
 		if (parentCluster == null) {

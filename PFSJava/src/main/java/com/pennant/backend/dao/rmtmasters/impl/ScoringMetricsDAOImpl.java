@@ -46,13 +46,15 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
 import com.pennant.backend.model.rmtmasters.ScoringMetrics;
@@ -66,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 
 public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements ScoringMetricsDAO {
-	private static Logger logger = Logger.getLogger(ScoringMetricsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ScoringMetricsDAOImpl.class);
 
 	public ScoringMetricsDAOImpl() {
 		super();
@@ -99,7 +101,7 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
+		RowMapper<ScoringMetrics> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
 		try {
 			scoringMetrics = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -131,7 +133,7 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 		selectSql.append(" Where ScoreGroupId =:ScoreGroupId AND CategoryType =:CategoryType ");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(scoringMetrics);
-		RowMapper<ScoringMetrics> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ScoringMetrics.class);
+		RowMapper<ScoringMetrics> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringMetrics.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -280,6 +282,33 @@ public class ScoringMetricsDAOImpl extends BasicDao<ScoringMetrics> implements S
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public List<ScoringMetrics> getScoreMatricsListByCustType(String scoreRleCode, String custType) {
+		logger.debug("Entering");
+
+		ScoringMetrics scoringMetrics = new ScoringMetrics();
+		scoringMetrics.setCategoryType(custType);
+
+		StringBuilder selectSql = new StringBuilder("Select m.ScoreGroupId, m.ScoringId, m.CategoryType, ");
+		selectSql.append(" t2.rulecode lovdescscoringcode ,t2.rulecodedesc lovdescscoringcodedesc ,");
+		selectSql.append(" t2.sqlrule lovdescsqlrule, t2.seqorder lovdescscoremetricseq ");
+		selectSql.append(" from plf.rmtscoringmetrics m ");
+		selectSql.append(" inner join plf.rmtscoringgroup g on m.scoregroupid = g.scoregroupid ");
+		selectSql.append(" and m.categorytype='R' ");
+		selectSql.append(" inner JOIN rules t2 ON t2.ruleid = M.scoringid ");
+		selectSql.append(" and g.scoregroupcode= :scoreGrooupCode");
+		selectSql.append(" AND t2.rulemodule= 'SCORES' ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
+		beanParameters.addValue("scoreGrooupCode", scoreRleCode);
+
+		RowMapper<ScoringMetrics> typeRowMapper = BeanPropertyRowMapper.newInstance(ScoringMetrics.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 }

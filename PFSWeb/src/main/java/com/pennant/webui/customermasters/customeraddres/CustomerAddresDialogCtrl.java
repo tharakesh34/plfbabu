@@ -47,8 +47,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -61,10 +63,12 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.PinCode;
@@ -74,6 +78,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -98,7 +103,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	private static final long serialVersionUID = -221443986307588127L;
-	private static final Logger logger = Logger.getLogger(CustomerAddresDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerAddresDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -108,6 +113,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 	protected Longbox custID; // autoWired
 	protected ExtendedCombobox custAddrType; // autoWired
+	protected ExtendedCombobox custCifAlternate;
+	protected Combobox sameasAddressType;
+	protected Label label_CustomerAddresDialog_CustAlternateCIF;
+	protected Label label_CustomerAddresDialog_SameAsAddressType;
 	protected Textbox custAddrHNbr; // autoWired
 	protected Textbox custFlatNbr; // autoWired
 	protected Textbox custAddrStreet; // autoWired
@@ -126,8 +135,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	protected Textbox custSubDist; // autoWired
 	protected Textbox custDistrict; // autoWired
 
-	protected Label CustomerSname; // autoWired	
-	protected Textbox cityName; //autowired
+	protected Label CustomerSname; // autoWired
+	protected Textbox cityName; // autowired
+	protected Space space_custAddrStreet;
 
 	// not autoWired variables
 	private CustomerAddres customerAddres; // overHanded per parameter
@@ -152,8 +162,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	private String userRole = "";
 	private boolean isFinanceProcess = false;
 	private boolean workflow = false;
-
+	private List<String> custCIFs = null;
 	private final List<ValueLabel> CustomerPriorityList = PennantStaticListUtil.getCustomerEmailPriority();
+	private List<CustomerAddres> approvedCustomerAddressList;
 
 	/**
 	 * default constructor.<br>
@@ -176,6 +187,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @param event
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void onCreate$window_CustomerAddresDialog(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -244,10 +256,20 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 		}
 
+		if (arguments.containsKey("fromLoan")) {
+			isFinanceProcess = (Boolean) arguments.get("fromLoan");
+		}
+		if (arguments.containsKey("custCIFs")) {
+			this.custCIFs = (List<String>) arguments.get("custCIFs");
+		}
+
 		if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
 
+		if (arguments.containsKey("fieldVerificationDialogCtrl")) {
+			setNewCustomer(true);
+		}
 		doLoadWorkFlow(this.customerAddres.isWorkflow(), this.customerAddres.getWorkflowId(),
 				this.customerAddres.getNextTaskId());
 		/* set components visible dependent of the users rights */
@@ -272,7 +294,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		doSetFieldProperties();
 		doShowDialog(getCustomerAddres());
 
-		//Calling SelectCtrl For proper selection of Customer
+		// Calling SelectCtrl For proper selection of Customer
 		if (isNewRecord() && !isNewCustomer()) {
 			onLoad();
 		}
@@ -340,6 +362,16 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 		this.custAddrPhone.setMaxlength(50);
 		this.cityName.setMaxlength(50);
+
+		this.custCifAlternate.setTextBoxWidth(121);
+		this.custCifAlternate.setModuleName("Customer");
+		this.custCifAlternate.setValueColumn("CustCIF");
+		this.custCifAlternate.setDescColumn("CustShrtName");
+		this.custCifAlternate.setValidateColumns(new String[] { "CustCIF" });
+
+		if (!ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			this.space_custAddrStreet.setSclass("mandatory");
+		}
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -477,6 +509,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 		if (aCustomerAddres.getPinCodeId() != null) {
 			this.custAddrZIP.setAttribute("pinCodeId", aCustomerAddres.getPinCodeId());
+		} else {
+			this.custAddrZIP.setAttribute("pinCodeId", null);
 		}
 
 		this.custAddrZIP.setValue(aCustomerAddres.getCustAddrZIP(), aCustomerAddres.getLovDescCustAddrZip());
@@ -507,7 +541,43 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 		fillComboBox(this.custAddrPriority, String.valueOf(aCustomerAddres.getCustAddrPriority()), CustomerPriorityList,
 				"");
+
+		ArrayList<Filter> filters = new ArrayList<Filter>();
+
+		if (this.custAddrCountry.getValue() != null && !this.custAddrCountry.getValue().isEmpty()) {
+			Filter filterPin0 = new Filter("PCCountry", this.custAddrCountry.getValue(), Filter.OP_EQUAL);
+			filters.add(filterPin0);
+		}
+
+		if (this.custAddrProvince.getValue() != null && !this.custAddrProvince.getValue().isEmpty()) {
+			Filter filterPin1 = new Filter("PCProvince", this.custAddrProvince.getValue(), Filter.OP_EQUAL);
+			filters.add(filterPin1);
+		}
+
+		if (this.custAddrCity.getValue() != null && !this.custAddrCity.getValue().isEmpty()) {
+			Filter filterPin2 = new Filter("City", this.custAddrCity.getValue(), Filter.OP_EQUAL);
+			filters.add(filterPin2);
+		}
+
+		Filter[] filterPin3 = new Filter[1];
+		if (!StringUtils.isEmpty(this.custCIF.getValue())) {
+			if (isFinanceProcess && custCIFs != null) {
+				filterPin3[0] = new Filter("CustCIF", custCIFs, Filter.OP_IN);
+			} else {
+				filterPin3[0] = new Filter("CustCIF", this.custCIF.getValue(), Filter.OP_NOT_EQUAL);
+			}
+
+			custCifAlternate.setFilters(filterPin3);
+		}
+
+		Filter[] filterPin = new Filter[filters.size()];
+		for (int i = 0; i < filters.size(); i++) {
+			filterPin[i] = filters.get(i);
+		}
+		this.custAddrZIP.setFilters(filterPin);
+
 		this.recordStatus.setValue(aCustomerAddres.getRecordStatus());
+
 		logger.debug("Leaving");
 	}
 
@@ -588,11 +658,15 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		}
 		try {
 			Object obj = this.custAddrZIP.getAttribute("pinCodeId");
+
 			if (obj != null) {
 				if (!StringUtils.isEmpty(obj.toString())) {
 					aCustomerAddres.setPinCodeId(Long.valueOf((obj.toString())));
 				}
+			} else {
+				aCustomerAddres.setPinCodeId(null);
 			}
+
 			aCustomerAddres.setCustAddrZIP(this.custAddrZIP.getValue());
 			aCustomerAddres.setLovDescCustAddrZip(this.custAddrZIP.getDescription());
 		} catch (WrongValueException we) {
@@ -695,13 +769,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 			doCheckEnquiry();
 			if (isNewCustomer()) {
-				this.window_CustomerAddresDialog.setHeight("80%");
-				this.window_CustomerAddresDialog.setWidth("70%");
+				this.window_CustomerAddresDialog.setHeight("60%");
+				this.window_CustomerAddresDialog.setWidth("95%");
 				this.groupboxWf.setVisible(false);
 				this.window_CustomerAddresDialog.doModal();
 			} else {
-				this.window_CustomerAddresDialog.setWidth("80%");
-				this.window_CustomerAddresDialog.setHeight("90%");
+				this.window_CustomerAddresDialog.setWidth("60%");
+				this.window_CustomerAddresDialog.setHeight("95%");
 				setDialog(DialogType.EMBEDDED);
 			}
 
@@ -768,10 +842,13 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				&& StringUtils.isBlank(this.custAddrLine2.getValue())) {
 			addressConstraint = true;
 		}
-		if (!this.custAddrStreet.isReadonly() && addressConstraint) {
-			this.custAddrStreet.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
-							PennantRegularExpressions.REGEX_ADDRESS, true));
+
+		if (!ImplementationConstants.CUSTOM_EXT_LIABILITIES) {
+			if (!this.custAddrStreet.isReadonly() && addressConstraint) {
+				this.custAddrStreet.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value"),
+								PennantRegularExpressions.REGEX_ADDRESS, true));
+			}
 		}
 
 		if (!this.custAddrLine1.isReadonly() && addressConstraint) {
@@ -986,6 +1063,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			if (isNewCustomer()) {
 				this.btnCancel.setVisible(false);
 				this.btnSearchPRCustid.setVisible(false);
+				this.label_CustomerAddresDialog_SameAsAddressType.setVisible(true);
+				this.label_CustomerAddresDialog_CustAlternateCIF.setVisible(true);
+				this.custCifAlternate.setVisible(true);
+				this.sameasAddressType.setVisible(true);
+				this.sameasAddressType.setDisabled(true);
 			} else {
 				this.btnSearchPRCustid.setVisible(true);
 			}
@@ -994,6 +1076,10 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 			this.btnCancel.setVisible(true);
 			this.btnSearchPRCustid.setVisible(false);
 			this.custAddrType.setReadonly(true);
+			this.label_CustomerAddresDialog_SameAsAddressType.setVisible(false);
+			this.label_CustomerAddresDialog_CustAlternateCIF.setVisible(false);
+			this.custCifAlternate.setVisible(false);
+			this.sameasAddressType.setVisible(false);
 		}
 
 		this.custCIF.setReadonly(true);
@@ -1051,7 +1137,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		if (getCustomerDialogCtrl() != null) {
 			isCustomerWorkflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 		}
-		if (isWorkFlowEnabled() || isCustomerWorkflow) {
+		if (isWorkFlowEnabled() || isCustomerWorkflow || isFinanceProcess) {
 			return getUserWorkspace().isReadOnly(componentName);
 		}
 		return false;
@@ -1251,7 +1337,9 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 					}
 				}
 
-				if (aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())) { // Both Current and Existing list addresses same
+				if (aCustomerAddres.getCustAddrType().equals(customerAddres.getCustAddrType())) { // Both Current and
+																										// Existing list
+																									// addresses same
 
 					if (isNewRecord()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1499,6 +1587,57 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 	 * @param event
 	 */
 
+	public void onFulfill$custAddrCountry(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = custAddrCountry.getObject();
+		String pcProvince = null;
+		if (dataObject instanceof String) {
+			this.custAddrProvince.setValue("");
+			this.custAddrProvince.setDescription("");
+			this.custAddrCity.setValue("");
+			this.custAddrCity.setDescription("");
+			this.custAddrZIP.setValue("");
+			this.custAddrZIP.setDescription("");
+		} else if (!(dataObject instanceof String)) {
+			Country country = (Country) dataObject;
+			if (country != null) {
+				this.custAddrProvince.setErrorMessage("");
+				pcProvince = country.getCountryCode();
+				fillProvinceDetails(pcProvince);
+			} else {
+				this.custAddrProvince.setObject("");
+				this.custAddrCity.setObject("");
+				this.custAddrZIP.setObject("");
+				this.custAddrProvince.setValue("");
+				this.custAddrProvince.setDescription("");
+				this.custAddrCity.setValue("");
+				this.custAddrCity.setDescription("");
+				this.custAddrZIP.setValue("");
+				this.custAddrZIP.setDescription("");
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
+	private void fillProvinceDetails(String country) {
+		this.custAddrProvince.setMandatoryStyle(true);
+		this.custAddrProvince.setModuleName("Province");
+		this.custAddrProvince.setValueColumn("CPProvince");
+		this.custAddrProvince.setDescColumn("CPProvinceName");
+		this.custAddrProvince.setValidateColumns(new String[] { "CPProvince" });
+
+		Filter[] filters1 = new Filter[1];
+
+		if (country == null || country.equals("")) {
+			filters1[0] = new Filter("CPCountry", null, Filter.OP_NOT_EQUAL);
+		} else {
+			filters1[0] = new Filter("CPCountry", country, Filter.OP_EQUAL);
+		}
+
+		this.custAddrProvince.setFilters(filters1);
+	}
+
 	public void onFulfill$custAddrProvince(Event event) {
 		logger.debug("Entering");
 
@@ -1580,6 +1719,8 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 				this.custAddrProvince.setValue(city.getPCProvince());
 				this.custAddrProvince.setDescription(city.getLovDescPCProvinceName());
 				cityValue = this.custAddrCity.getValue();
+			} else {
+				fillCitydetails(custAddrProvince.getValue());
 			}
 		}
 
@@ -1765,6 +1906,86 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		return getCustomerAddres().getCustID() + PennantConstants.KEY_SEPERATOR + getCustomerAddres().getCustAddrType();
 	}
 
+	public void onChange$sameasAddressType(Event event) throws Exception {
+		if (!"#".equals(getComboboxValue(this.sameasAddressType))) {
+			for (CustomerAddres address : getApprovedCustomerAddressList()) {
+				if (StringUtils.equals(getComboboxValue(this.sameasAddressType), address.getCustAddrType())) {
+					final CustomerAddres customerAddres = new CustomerAddres();
+					BeanUtils.copyProperties(address, customerAddres);
+					customerAddres
+							.setCustAddrType(this.custAddrType.getValue() == "" ? null : this.custAddrType.getValue());
+					customerAddres.setLovDescCustAddrTypeName(
+							this.custAddrType.getDescription() == "" ? null : this.custAddrType.getDescription());
+					customerAddres.setCustID(Long.MIN_VALUE);
+					customerAddres.setLovDescCustCIF(this.custCIF.getValue());
+					customerAddres.setLovDescCustShrtName(this.custShrtName.getValue());
+					doWriteBeanToComponents(customerAddres);
+					break;
+				}
+			}
+		} else {
+			CustomerAddres customerAddres = new CustomerAddres();
+			customerAddres.setLovDescCustCIF(this.custCIF.getValue());
+			doWriteBeanToComponents(customerAddres);
+		}
+	}
+
+	private void doFillAddressType(Customer customer) {
+		List<ValueLabel> tempList = new ArrayList<ValueLabel>();
+		if (customer != null) {
+			this.sameasAddressType.setDisabled(false);
+			resetData();
+			setApprovedCustomerAddressList(
+					getCustomerAddresService().getApprovedCustomerAddresById(customer.getCustID()));
+			if (CollectionUtils.isNotEmpty(getApprovedCustomerAddressList())) {
+				for (CustomerAddres address : getApprovedCustomerAddressList()) {
+					tempList.add(new ValueLabel(address.getCustAddrType(), address.getCustAddrType()));
+					fillComboBox(this.sameasAddressType, "", tempList, "");
+				}
+			}
+		} else {
+			this.sameasAddressType.setDisabled(true);
+			fillComboBox(this.sameasAddressType, "", tempList, "");
+		}
+	}
+
+	public void onFulfill$custCifAlternate(Event event) {
+		logger.debug(Literal.ENTERING);
+		if (this.custCifAlternate.getObject() != null) {
+			Customer customer = (Customer) this.custCifAlternate.getObject();
+			doFillAddressType(customer);
+		} else {
+			doFillAddressType(null);
+			resetData();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void resetData() {
+		logger.debug(Literal.ENTERING);
+		this.custAddrHNbr.setValue("");
+		this.custFlatNbr.setValue("");
+		this.custAddrStreet.setValue("");
+		this.custAddrLine1.setValue("");
+		this.custAddrLine2.setValue("");
+		this.custPOBox.setValue("");
+		this.custAddrCountry.setValue("");
+		this.custAddrCountry.setDescription("");
+		this.custAddrProvince.setValue("");
+		this.custAddrProvince.setDescription("");
+		this.custAddrCity.setValue("");
+		this.custAddrCity.setDescription("");
+		this.custAddrZIP.setValue("");
+		this.custAddrZIP.setDescription("");
+		this.custAddrPhone.setValue("");
+		this.cityName.setValue("");
+		this.custAddrPriority.setValue(Labels.getLabel("Combo.Select"));
+		this.custCareOfAddr.setValue("");
+		this.custSubDist.setValue("");
+		this.custDistrict.setValue("");
+		logger.debug(Literal.LEAVING);
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1861,4 +2082,11 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 		this.customerViewDialogCtrl = customerViewDialogCtrl;
 	}
 
+	public List<CustomerAddres> getApprovedCustomerAddressList() {
+		return approvedCustomerAddressList;
+	}
+
+	public void setApprovedCustomerAddressList(final List<CustomerAddres> approvedCustomerAddressList) {
+		this.approvedCustomerAddressList = approvedCustomerAddressList;
+	}
 }

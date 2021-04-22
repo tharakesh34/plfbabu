@@ -53,7 +53,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -62,23 +63,23 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class ProvisionPostings implements Tasklet {
-	private Logger logger = Logger.getLogger(ProvisionPostings.class);
+	private Logger logger = LogManager.getLogger(ProvisionPostings.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -99,13 +100,15 @@ public class ProvisionPostings implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		dateValueDate = DateUtility.getAppValueDate();
+		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
+
+		dateValueDate = eventProperties.getAppValueDate();
 
 		logger.debug("START: Provision Postings for Value Date: " + dateValueDate);
 
 		//Process for Provision Posting IF only Bank Allowed for ALLOWED AUTO PROVISION
-		String alwAutoProv = SysParamUtil.getValueAsString("ALW_PROV_EOD");
-		if ("Y".equals(alwAutoProv)) {
+
+		if (eventProperties.isAllowProvEod()) {
 
 			// READ REPAYMENTS DUE TODAY
 			Connection connection = null;
@@ -169,7 +172,7 @@ public class ProvisionPostings implements Tasklet {
 						movement.setLinkedTranId(aeEvent.getLinkedTranId());
 
 						//Update Provision Movement Details
-						getProvisionDAO().updateProvAmt(movement, "");
+						//	getProvisionDAO().updateProvAmt(movement, "");
 						getProvisionMovementDAO().update(movement, "");
 
 						postings++;

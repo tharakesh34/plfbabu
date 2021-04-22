@@ -44,7 +44,8 @@ package com.pennant.webui.administration.securityuser;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 	private static final long serialVersionUID = 3104549665882133520L;
-	private static final Logger logger = Logger.getLogger(SecurityUserListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SecurityUserListCtrl.class);
 
 	protected Window window_SecurityUserList;
 	protected Borderlayout borderLayout_SecurityUserList;

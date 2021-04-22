@@ -20,7 +20,7 @@ public interface InsuranceDetailDAO {
 
 	long saveInsurancePayments(InsurancePaymentInstructions paymentHeader, TableType tableType);
 
-	void updatePaymentStatus(InsurancePaymentInstructions instruction);
+	int updatePaymentStatus(InsurancePaymentInstructions instruction);
 
 	long getSeqNumber();
 
@@ -29,5 +29,9 @@ public interface InsuranceDetailDAO {
 	void updatePaymentLinkedTranId(String vasReference, long linkedTranId);
 
 	void updateLinkTranId(long id, long linkTranId);
+
+	InsurancePaymentInstructions getInsurancePaymentInstructionStatus(long id);
+
+	InsurancePaymentInstructions getInsurancePaymentInstructionById(long id);
 
 }

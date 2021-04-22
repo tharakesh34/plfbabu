@@ -65,7 +65,7 @@
 					</div>
 				</north>
 
-				<center border="none" autoscroll="false">
+				<center border="none" autoscroll="true">
 					<div>
 						<groupbox width="100%" closable="false">
 							<caption label="Rule Details" />

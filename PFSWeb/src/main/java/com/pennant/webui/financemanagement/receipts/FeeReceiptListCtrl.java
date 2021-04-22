@@ -13,7 +13,8 @@ package com.pennant.webui.financemanagement.receipts;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -52,7 +53,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = Logger.getLogger(FeeReceiptListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FeeReceiptListCtrl.class);
 
 	protected Window window_FeeReceiptList;
 	protected Borderlayout borderLayout_FeeReceiptList;
@@ -69,6 +70,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_FeeReceiptFinBranch;
 	protected Listheader listheader_FeeReceiptCusomer;
 	protected Listheader listheader_FeeReceiptCustName;
+	protected Listheader listheader_ReceiptExtReference;
 
 	protected Button btnNew;
 	protected Button btnSearch;
@@ -81,6 +83,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Combobox allocationType;
 	protected Textbox finType;
 	protected Textbox finBranch;
+	protected Uppercasebox externalReference;
 
 	protected Listbox sortOperator_FeeReceiptId;
 	protected Listbox sortOperator_FeeReceiptReference;
@@ -90,6 +93,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_FeeReceiptAllocationType;
 	protected Listbox sortOperator_FeeReceiptFinType;
 	protected Listbox sortOperator_FeeReceiptFinBranch;
+	protected Listbox sortOperator_ExternalReference;
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -145,7 +149,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				",SchdlRepayment,EarlyPayment,EarlySettlement,");
 		registerField("receiptPurpose", listheader_FeeReceiptPurpose, SortOrder.NONE, purpose,
 				sortOperator_FeeReceiptPurpose, Operators.STRING);
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModesByFeePayment(), "");
 		registerField("receiptMode", listheader_FeeReceiptMode, SortOrder.NONE, receiptMode,
 				sortOperator_FeeReceiptReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_FeeReceiptAmount);
@@ -160,6 +164,8 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				sortOperator_FeeReceiptSearchTranRef, Operators.STRING);
 		registerField("promotionCode", listheader_FeeReceipt_PromotionCode, SortOrder.NONE);
 		registerField("receiptDate", listheader_FeeReceipt_ReceiptDate, SortOrder.NONE);
+		registerField("ExtReference", listheader_ReceiptExtReference, SortOrder.NONE, externalReference,
+				sortOperator_ExternalReference, Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 

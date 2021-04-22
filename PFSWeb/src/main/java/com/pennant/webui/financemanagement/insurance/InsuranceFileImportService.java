@@ -11,15 +11,16 @@ import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.media.Media;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -55,7 +56,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class InsuranceFileImportService {
-	private static final Logger logger = Logger.getLogger(InsuranceFileImportService.class);
+	private static final Logger logger = LogManager.getLogger(InsuranceFileImportService.class);
 
 	private DataSource dataSource;
 	private InsuranceDetailService insuranceDetailService;
@@ -788,7 +789,7 @@ public class InsuranceFileImportService {
 			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
 			parameterMap = new MapSqlParameterSource();
 			parameterMap.addValue("ID", batchId);
-			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineLog.class);
+			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
 			return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
 		} catch (Exception e) {
 		} finally {
@@ -855,8 +856,7 @@ public class InsuranceFileImportService {
 		sql.append(",NomineeName ,NomineeRelation From InsuranceDetails_DataEngine Where BatchId = :BatchId");
 
 		logger.debug("selectSql: " + sql.toString());
-		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InsuranceDetails.class);
+		RowMapper<InsuranceDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceDetails.class);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BatchId", batchId);
@@ -884,8 +884,7 @@ public class InsuranceFileImportService {
 		sql.append(" From InsurancePayments_Dataengine Where BatchId = :BatchId");
 
 		logger.debug("selectSql: " + sql.toString());
-		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(InsuranceDetails.class);
+		RowMapper<InsuranceDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(InsuranceDetails.class);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BatchId", batchId);
 		try {
@@ -909,8 +908,7 @@ public class InsuranceFileImportService {
 		sql.append(" PolicyAgeF, PremiumPercentageF, MinAmountF, MaxAmountF, LoanAgeF");
 		sql.append(" From VASPremiumCalcDet_DataEngine Where BatchId = :BatchId");
 		logger.debug("selectSql: " + sql.toString());
-		RowMapper<VASPremiumCalcDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VASPremiumCalcDetails.class);
+		RowMapper<VASPremiumCalcDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(VASPremiumCalcDetails.class);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BatchId", batchId);
 		try {

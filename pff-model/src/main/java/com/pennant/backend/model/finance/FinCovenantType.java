@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinCovenantType.java                                                   * 	  
+ * FileName    		:  EtihadCreditBureauDetail.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * Model class for the <b>FinCovenantType table</b>.<br>
+ * Model class for the <b>EtihadCreditBureauDetail table</b>.<br>
  *
  */
 @XmlType(propOrder = { "covenantType", "alwWaiver", "alwPostpone", "postponeDays", "description" })

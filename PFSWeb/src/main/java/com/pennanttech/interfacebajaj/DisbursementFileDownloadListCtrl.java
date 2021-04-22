@@ -51,7 +51,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -90,7 +91,7 @@ import com.pennanttech.service.AmazonS3Bucket;
  */
 public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(DisbursementFileDownloadListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DisbursementFileDownloadListCtrl.class);
 
 	private Window window_DisbursementFileDownloadList;
 	private Borderlayout borderLayout_DisbursementFileDownloadList;
@@ -170,6 +171,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		//list.add("DISB_EXPORT_OTHER_NEFT_RTGS");
 
 		this.searchObject.addFilterLike("NAME", "DISB_");
+		this.searchObject.addSortDesc("ENDTIME");
 	}
 
 	/**

@@ -49,20 +49,25 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.util.resource.Labels;
@@ -71,6 +76,8 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
@@ -78,6 +85,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
@@ -107,7 +115,10 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ValueLabel;
@@ -116,6 +127,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
@@ -135,6 +147,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -143,11 +156,14 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.CustomerType;
 import com.pennant.backend.model.systemmasters.Caste;
 import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.CustTypePANMapping;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.EmpStsCode;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.model.systemmasters.EmploymentType;
+import com.pennant.backend.model.systemmasters.IncomeType;
+import com.pennant.backend.model.systemmasters.PhoneType;
 import com.pennant.backend.model.systemmasters.Religion;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
@@ -156,6 +172,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.systemmasters.CustTypePANMappingService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -173,15 +190,21 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.customermasters.customer.model.CustomerRatinglistItemRenderer;
+import com.pennant.webui.customermasters.customeremail.CustomerEmailInlineEditCtrl;
 import com.pennant.webui.customermasters.customeremploymentdetail.model.CustomerEmploymentDetailListModelItemRenderer;
+import com.pennant.webui.customermasters.customerphonenumber.CustomerPhoneNumberInLineEditCtrl;
 import com.pennant.webui.customermasters.directordetail.model.DirectorDetailListModelItemRenderer;
+import com.pennant.webui.dedup.dedupparm.FetchBlackListCustomerAdditionalDetails;
 import com.pennant.webui.dedup.dedupparm.FetchCustomerDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
+import com.pennant.webui.dedup.dedupparm.ShowBlackListDetailBox;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
+import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -189,6 +212,8 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.InterfaceConstants;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
@@ -209,7 +234,7 @@ import freemarker.template.TemplateExceptionHandler;
  */
 public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(CustomerDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -228,9 +253,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Textbox custFirstName; // autowired
 	protected Textbox custMiddleName; // autowired
 	protected Textbox custLastName; // autowired
-	protected Combobox residentialStatus; // autowired
-	protected Textbox custLocalLngName; // autowired
-	protected Space space_CustLocalLngName; // autowired
+	protected Textbox custArabicName; // autowired
+	protected Combobox residentialStatus;
+	protected Space space_CustArabicName; // autowired
 	protected Textbox motherMaidenName; // autowired
 	protected ExtendedCombobox custLng; // autowired
 	protected Textbox custSts; // autowired
@@ -269,7 +294,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected ExtendedCombobox custSubSegment; // autowired
 	protected Uppercasebox applicationNo; // autowired
 	protected Checkbox dnd;
+	protected Checkbox vip;
 
+	protected Hbox hbox_CustOtherCaste;
+	protected Hbox hbox_CustOtherReligion;
+	protected Hbox hbox_natureOfBusiness;
+	protected Hbox hbox_entityType;
 	/** Customer Employer Fields **/
 	protected ExtendedCombobox empStatus; // autowired
 	protected ExtendedCombobox empSector; // autowired
@@ -295,7 +325,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label label_CustomerDialog_MonthlyIncome;
 	protected Label label_CustomerDialog_CustCOB;
 	protected Label label_CustomerDialog_Target;
-	protected Label label_LocalLngName;
+	protected Label label_ArabicName;
 	protected Label label_CustSubSegment;
 	protected Label label_CustRelatedParty;
 	protected Label label_CustomerDialog_CustLastName;
@@ -320,6 +350,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Row row_custDSA;
 	protected Row row_custCountry;
 	protected Row row_custSub;
+	protected Row row_residentialsts;
 	protected Groupbox gp_CustEmployeeDetails;
 	protected Hbox hbox_SalariedCustomer;
 	protected Hbox hbox_CustLastName;
@@ -328,6 +359,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Hbox hbox_CustCaste;
 	protected Space space_CustShrtName;
 	protected Space space_cust_LName;
+	protected Row row_qualification;
 
 	protected Tab basicDetails;
 	protected Tab tabkYCDetails;
@@ -465,6 +497,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private String empStatus_Temp = "";
 	private String empName_Temp = "";
 	private String custBaseCcy_Temp = "";
+	//Used for get the credit review details in loan basic details
+	private String empType = "";
 
 	private FinanceDetail financedetail;
 	private Object financeMainDialogCtrl;
@@ -485,7 +519,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private LVerificationCtrl lVerificationCtrl;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	private FieldVerificationDialogCtrl fieldVerificationDialogCtrl;
-	private PDVerificationDialogCtrl PdVerificationDialogCtrl;
+	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 
 	public boolean validateAllDetails = true;
@@ -522,6 +556,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	@Autowired(required = false)
 	private CreditInformation creditInformation;
+	//external implementation of the CIBIL service 
+	private CreditInformation custCreditInformation;
 	protected Button btn_GenerateCibil;
 	private boolean isNewCustCret = false;
 	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
@@ -529,6 +565,58 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private PrimaryAccountService primaryAccountService;
 	private DMSService dMSService;
+
+	protected Textbox otherReligion; // autowired
+	protected Textbox otherCaste;
+	protected Space space_OtherReligion;
+	protected Label label_OtherReligion;
+	protected Space space_OtherCaste;
+	protected Label label_OtherCaste;
+	protected Textbox ckycOrRefNo;
+	protected Combobox natureOfBusiness;
+	protected Space space_natureOfBusiness;
+	protected Label label_natureOfBusiness;
+	protected Combobox entityType;
+	protected Space space_entitytype;
+	protected Label label_entityType;
+	protected Label label_CustomerDialog_CustQualification;
+	protected Label label_CustomerDialog_CustIndustry;
+	//protected Label label_CustomerDialog_ResidentialStatus;
+	//protected Space space_Residential;
+	protected Hbox hbox_SubCategory;
+
+	protected ExtendedCombobox custQualification; // autowired
+	protected ExtendedCombobox custFlags; // autowired
+	//protected Combobox custResidentialStstus; // autowired
+	private String natOfBusiness = "";
+	protected Space space_applicationNo;
+	protected Label label_CustomerDialog_ApplicationNo;
+	protected Label label_CustomerDialog_CKYCOrReferenceNo;
+	protected Label label_CustomerDialog_CustTypeCode;
+	protected Label label_CustomerDialog_CustDftBranch;
+
+	protected Listbox listBoxCustomerIncomeInLineEdit;
+	private IncomeAndExpenseCtrl incomeAndExpenseCtrl;
+
+	//Phonenumbers Listbox inline editing
+	protected Listbox listBoxCustomerPhoneNumbersInlineEdit;
+	private CustomerPhoneNumberInLineEditCtrl customerPhoneNumberInLineEditCtrl;
+	//Emails Listbox inline editing
+	protected Listbox listBoxCustomerEmailsInlineEdit;
+	protected CustomerEmailInlineEditCtrl customerEmailInlineEditCtrl;
+	private transient CustTypePANMappingService custTypePANMappingService;
+	FinanceMain financeMain = null;
+	private String cif[] = null;
+	private String finReference = null;
+	// Setting mandatory based on system parameter.
+	protected Space spaceSubCategory;
+	protected Button btnUploadExternalLiability;
+	protected Button btnDownloadExternalLiability;
+	private MasterDefDAO masterDefDAO;
+	protected CustomerExtLiabilityUploadDialogCtrl customerExtLiabilityUploadDialogCtrl;
+
+	public String dmsApplicationNo;
+	public String leadId;
 
 	/**
 	 * default constructor.<br>
@@ -579,12 +667,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				setCustomerDetails(null);
 			}
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				setFinanceMainDialogCtrl((Object) arguments.get("financeMainDialogCtrl"));
+				setFinanceMainDialogCtrl(arguments.get("financeMainDialogCtrl"));
 				this.window_CustomerDialog.setTitle("");
 				newFinance = true;
 			}
 			if (arguments.containsKey("promotionPickListCtrl")) {
-				setPromotionPickListCtrl((Object) arguments.get("promotionPickListCtrl"));
+				setPromotionPickListCtrl(arguments.get("promotionPickListCtrl"));
 				this.window_CustomerDialog.setTitle("");
 				isPromotionPickProcess = true;
 			}
@@ -615,6 +703,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.jointAccountDetailDialogCtrl = (JointAccountDetailDialogCtrl) arguments
 						.get("jointAccountDetailDialogCtrl");
 			}
+			if (arguments.containsKey("coAppFilter")) {
+				this.cif = (String[]) arguments.get("coAppFilter");
+			}
 			if (arguments.containsKey("financeDetail")) {
 				setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
 				isFinanceProcess = true;
@@ -623,8 +714,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					FinanceMain financeMain = getFinancedetail().getFinScheduleData().getFinanceMain();
 					getFinancedetail().getCustomerDetails().getCustomer().setWorkflowId(financeMain.getWorkflowId());
 				}
+			} else if (arguments.containsKey("finMain")) {
+				financeMain = (FinanceMain) arguments.get("finMain");
 			}
-
+			if (fromLoan) {
+				isFinanceProcess = fromLoan;
+			}
 			// append finance basic details
 			if (arguments.containsKey("finHeaderList")) {
 				appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
@@ -653,6 +748,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.userAction = setListRecordStatus(this.userAction);
 					getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerDialog");
 				}
+			}
+
+			if (arguments.containsKey("finReference")) {
+				finReference = (String) arguments.get("finReference");
 			}
 
 			// READ OVERHANDED params !
@@ -697,25 +796,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						this.tp_CardSales.setHeight(borderLayoutHeight - 195 + "px");
 					}
 					this.tp_gstDetails.setHeight(borderLayoutHeight - 195 + "px");
-					// this.divKeyDetails.setHeight(borderLayoutHeight - 130 +
-					// "px");
-					// this.grid_KYCDetails.setHeight(borderLayoutHeight +
-					// "px");
-
-					this.listBoxCustomerEmploymentDetail.setHeight(semiBorderlayoutHeights - 140 + "px");
-					this.listBoxCustomerDocuments.setHeight(semiBorderlayoutHeights - 60 + "px");
-					this.listBoxCustomerAddress.setHeight(semiBorderlayoutHeights - 90 + "px");
-					this.listBoxCustomerPhoneNumbers.setHeight(semiBorderlayoutHeights - 90 + "px");
-					this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 90 + "px");
 					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 90 + "px");
 				} else {
 					this.divKeyDetails.setHeight(borderLayoutHeight - 240 + "px");
 					this.listBoxCustomerRating.setHeight(semiBorderlayoutHeights - 130 + "px");
 					this.grid_KYCDetails.setHeight(borderLayoutHeight - 220 + "px");
-					this.listBoxCustomerDocuments.setHeight(semiBorderlayoutHeights - 125 + "px");
-					this.listBoxCustomerAddress.setHeight(semiBorderlayoutHeights - 125 + "px");
-					this.listBoxCustomerPhoneNumbers.setHeight(semiBorderlayoutHeights - 125 + "px");
-					this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 125 + "px");
 					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 125 + "px");
 				}
 				this.listBoxCustomerGst.setHeight(borderLayoutHeight - 240 + "px");
@@ -749,13 +834,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.tp_CardSales.setHeight(borderLayoutHeight - 90 + "px");
 				}
 
-				this.listBoxCustomerEmploymentDetail
-						.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");
-				this.listBoxCustomerDocuments.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");
-				this.listBoxCustomerAddress.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
 				this.listBoxCustomerGst.setHeight(borderLayoutHeight - (isRetailCustomer ? 132 : 90) + "px");
-				this.listBoxCustomerPhoneNumbers.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
-				this.listBoxCustomerEmails.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
 
 				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 132 + "px");
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 40 + "px");
@@ -765,6 +844,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerFinExposure.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerExternalLiability.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerCardSalesInformation.setHeight(borderlayoutHeights - 130 + "px");
+			}
+
+			if (arguments.containsKey("applicationNo")) {
+				dmsApplicationNo = (String) arguments.get("applicationNo");
+			}
+
+			if (arguments.containsKey("leadId")) {
+				leadId = (String) arguments.get("leadId");
 			}
 
 			doShowDialog(this.customerDetails);
@@ -808,7 +895,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setMaxlength(50);
 		this.custMiddleName.setMaxlength(50);
 		this.custLastName.setMaxlength(50);
-		this.custLocalLngName.setMaxlength(50);
+		this.custArabicName.setMaxlength(50);
 		this.motherMaidenName.setMaxlength(50);
 		this.custTradeLicenceNum.setMaxlength(50);
 		this.custRelatedParty.setMaxlength(200);
@@ -862,6 +949,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custLng.setValidateColumns(new String[] { "LngCode" });
 
 		this.custSts.setReadonly(true);
+		this.ckycOrRefNo.setReadonly(true);
 
 		this.custSector.setMaxlength(8);
 		this.custSector.setTextBoxWidth(121);
@@ -900,7 +988,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.target.setValidateColumns(new String[] { "TargetCode" });
 
 		this.caste.setMaxlength(8);
-		this.caste.setMandatoryStyle(false);
+		this.caste.setMandatoryStyle(true);
 		this.caste.setModuleName("Caste");
 		this.caste.setValueColumn("CasteCode");
 		this.caste.setDescColumn("CasteDesc");
@@ -932,11 +1020,18 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.empSector.setValidateColumns(new String[] { "EmpType" });
 
 		this.profession.setMaxlength(8);
-		this.profession.setMandatoryStyle(true);
+		this.profession.setMandatoryStyle(false);
 		this.profession.setModuleName("Profession");
 		this.profession.setValueColumn("ProfessionCode");
 		this.profession.setDescColumn("ProfessionDesc");
 		this.profession.setValidateColumns(new String[] { "ProfessionCode" });
+
+		this.custQualification.setMaxlength(8);
+		this.custQualification.setMandatoryStyle(false);
+		this.custQualification.setModuleName("Qualification");
+		this.custQualification.setValueColumn("Code");
+		this.custQualification.setDescColumn("Description");
+		this.custQualification.setValidateColumns(new String[] { "Code" });
 
 		this.monthlyIncome.setFormat(PennantApplicationUtil.getAmountFormate(old_ccyFormatter));
 		this.monthlyIncome.setScale(old_ccyFormatter);
@@ -1026,6 +1121,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSegment.setDescColumn("SubSegmentDesc");
 		this.custSubSegment.setValidateColumns(new String[] { "SubSegmentCode" });
 
+		this.custSegment.setMaxlength(8);
+		this.custSegment.setMandatoryStyle(false);
+		this.custSegment.setModuleName("Segment");
+		this.custSegment.setValueColumn("SegmentCode");
+		this.custSegment.setDescColumn("SegmentDesc");
+		this.custSegment.setValidateColumns(new String[] { "SegmentCode" });
+
 		this.custRO1.setTextBoxWidth(121);
 		if (!isReadOnly("CustomerDialog_custRO1")) {
 			this.custRO1.setMandatoryStyle(true);
@@ -1054,6 +1156,28 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.tp_CardSales.setVisible(false);
 			this.tabCardSaleDetails.setVisible(false);
 		}
+		this.ckycOrRefNo.setMaxlength(14);
+		this.otherCaste.setMaxlength(20);
+		this.otherReligion.setMaxlength(20);
+		this.otherCaste.setReadonly(true);
+		this.otherReligion.setReadonly(true);
+		//Customer Income and expense Inline Edit
+		this.listBoxCustomerIncome.setVisible(false);
+		this.listBoxCustomerIncomeInLineEdit.setVisible(true);
+
+		//PhoneNumbers Inline Edit
+		this.listBoxCustomerPhoneNumbers.setVisible(false);
+		this.listBoxCustomerPhoneNumbersInlineEdit.setVisible(true);
+
+		//Email Inline Edit
+		this.listBoxCustomerEmails.setVisible(false);
+		this.listBoxCustomerEmailsInlineEdit.setVisible(true);
+
+		spaceSubCategory.setVisible(false);
+
+		//setting visible false for new customer
+		this.btnUploadExternalLiability.setVisible(false);
+		this.btnDownloadExternalLiability.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -1099,6 +1223,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.btnNew_CustomerGSTDetails
 				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerGstDetails"));
 		validateCustDocs = getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerDocuments");
+		this.btnUploadExternalLiability
+				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnUploadExternalLiability"));
+		this.btnDownloadExternalLiability
+				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnDownloadExternalLiability"));
 		logger.debug("Leaving");
 	}
 
@@ -1208,10 +1336,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
 		Customer aCustomer = aCustomerDetails.getCustomer();
-		setComboBoxValue(this.custGenderCode, aCustomer.getCustGenderCode(), aCustomer.getLovDescCustGenderCodeName());
-		setComboBoxValue(this.custSalutationCode, aCustomer.getCustSalutationCode(),
-				aCustomer.getLovDescCustSalutationCodeName());
-		setComboBoxValue(this.custMaritalSts, aCustomer.getCustMaritalSts(), aCustomer.getLovDescCustMaritalStsName());
+
+		//Data filling for Gender, Salutation, Marital Status Combobox
+		fillComboBox(this.custGenderCode, aCustomer.getCustGenderCode(), PennantAppUtil.getGenderCodes(), "");
+		fillComboBox(this.custSalutationCode, aCustomer.getCustSalutationCode(),
+				PennantAppUtil.getSalutationCodes(aCustomer.getCustGenderCode()), "");
+		fillComboBox(this.custMaritalSts, aCustomer.getCustMaritalSts(),
+				PennantAppUtil.getMaritalStsTypes(aCustomer.getCustGenderCode()), "");
 
 		this.target.setValue(aCustomer.getCustAddlVar82());
 		this.custCIF.setValue(StringUtils.trimToEmpty(aCustomer.getCustCIF()));
@@ -1226,10 +1357,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			this.grid_ExtendedDetails.setVisible(true);
 
+			StringBuilder subCategoryExcludeFields = new StringBuilder();
+			subCategoryExcludeFields.append(",".concat(PennantConstants.SUBCATEGORY_DOMESTIC).concat(","));
+			subCategoryExcludeFields.append(PennantConstants.SUBCATEGORY_NRI.concat(","));
 			// Sub categories
 			fillComboBox(this.subCategory, aCustomer.getSubCategory(), PennantStaticListUtil.getSubCategoriesList(),
-					"");
+					subCategoryExcludeFields.toString());
 
+			fillComboBox(this.natureOfBusiness, aCustomer.getNatureOfBusiness(),
+					PennantStaticListUtil.getNatureofBusinessList(), "");
+			fillComboBox(this.entityType, aCustomer.getEntityType(), PennantStaticListUtil.getEntityTypeList(), "");
+			setEmpType(aCustomer.getSubCategory());
 			if (!aCustomer.isNewRecord()) {
 				// Caste
 				this.caste.setValue(StringUtils.trimToEmpty(aCustomer.getCasteCode()),
@@ -1244,9 +1382,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} else {
 			this.custShrtName.setValue(StringUtils.trimToEmpty(aCustomer.getCustShrtName()));
 			this.grid_ExtendedDetails.setVisible(false);
+			fillComboBox(this.entityType, aCustomer.getEntityType(), PennantStaticListUtil.getEntityTypeList(), "");
 		}
 
-		this.custLocalLngName.setValue(StringUtils.trimToEmpty(aCustomer.getCustShrtNameLclLng()));
+		this.custArabicName.setValue(StringUtils.trimToEmpty(aCustomer.getCustShrtNameLclLng()));
 		this.motherMaidenName.setValue(StringUtils.trimToEmpty(aCustomer.getCustMotherMaiden()));
 		this.custCtgCode.setValue(aCustomer.getCustCtgCode());
 		this.custDftBranch.setValue(aCustomer.getCustDftBranch());
@@ -1299,6 +1438,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					PennantStaticListUtil.getResidentialStsList(), ",MN,PIO,");
 		}
 		this.dnd.setChecked(aCustomer.isDnd());
+		this.vip.setChecked(aCustomer.isVip());
 
 		doSetSegmentCode(aCustomer.getCustTypeCode());
 		aCustomer.getCustCtgCode();
@@ -1333,6 +1473,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custSubSector.setValue(aCustomer.getCustSubSector());
 			this.custSubSector.setDescription(StringUtils.trimToEmpty(aCustomer.getLovDescCustSubSectorName()));
 		} else {
+			this.custSubSector.setFilters(
+					new Filter[] { new Filter("SectorCode", aCustomer.getCustSector(), Filter.OP_EQUAL) });
 			this.custSubSector.setReadonly(isReadOnly("CustomerDialog_custIndustry"));
 			this.custSubSector.setButtonDisabled(isReadOnly("CustomerDialog_custIndustry"));
 			this.custSubSector.setValue(aCustomer.getCustSubSector());
@@ -1389,6 +1531,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		empName_Temp = this.empName.getValue();
 		custBaseCcy_Temp = this.custBaseCcy.getValue();
+		//new fields
+		//this.custFlags.setValue(aCustomer.getCustFlag(), StringUtils.trimToEmpty(aCustomer.getLovDescCustFlag()));
+		this.profession.setValue(aCustomer.getCustProfession(), aCustomer.getLovDescCustProfessionName());
+		this.custQualification.setValue(aCustomer.getQualification(), aCustomer.getLovDescQualification());
+
+		if (PennantConstants.OTHER.equalsIgnoreCase(aCustomer.getCasteCode())) {
+			this.space_OtherCaste.setSclass(PennantConstants.mandateSclass);
+			this.otherCaste.setValue(aCustomer.getOtherCaste());
+		} else { //Othercaste setreadonly True if caste is not Other
+			this.otherCaste.setReadonly(true);
+		}
+
+		if (PennantConstants.OTHER.equalsIgnoreCase(aCustomer.getReligionCode())) {
+			this.space_OtherReligion.setSclass(PennantConstants.mandateSclass);
+			this.otherReligion.setValue(aCustomer.getOtherReligion());
+		} else { //OtherReligion setreadonly True if Religion is not Other
+			this.otherReligion.setReadonly(true);
+		}
+		this.custSegment.setValue(aCustomer.getCustSegment(), aCustomer.getLovDescCustSegmentName());
+		onChangeEmploymentType();
 
 		// Filling KYC Details
 		doFillCustomerEmploymentDetail(aCustomerDetails.getEmploymentDetailsList());
@@ -1409,6 +1571,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doFillCustomerGstDetails(aCustomerDetails.getCustomerGstList());
 		// Extended Field Details
 		appendExtendedFieldDetails(aCustomerDetails);
+		// Set Income values only for GHF
+		updateIncomeValue();
 
 		if (!StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerDetails.getCustomer().getCustCtgCode())) {
 			doFillCustomerDirectory(aCustomerDetails.getCustomerDirectorList());
@@ -1452,8 +1616,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// extendedFieldCtrl.setReadOnly(isReadOnly("CustomerDialog_custFirstName"));
 			extendedFieldCtrl.setWindow(this.window_CustomerDialog);
 
-			if (isFinanceProcess) {
-				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 195);
+			if (isFinanceProcess || fromLoan) {
+				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 220);
 			} else {
 				extendedFieldCtrl.setTabHeight(borderLayoutHeight - 90);
 			} // for getting rights in ExtendeFieldGenerator these two fields
@@ -1469,6 +1633,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private void updateIncomeValue() {
+		Map<String, Object> map = incomeAndExpenseCtrl.calculateTotal(this.listBoxCustomerIncomeInLineEdit,
+				ccyFormatter);
+
+		extendedFieldCtrl.setValues(map);
 	}
 
 	/**
@@ -1527,7 +1698,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			wve.add(we);
 		}
 		try {
-			aCustomer.setCustShrtNameLclLng(this.custLocalLngName.getValue());
+			aCustomer.setCustShrtNameLclLng(this.custArabicName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1639,6 +1810,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			} else {
 				aCustomer.setCustSalutationCode(getComboboxValue(this.custSalutationCode));
+				aCustomer.setLovDescCustSalutationCodeName(this.custSalutationCode.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1700,6 +1872,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		try {
+			aCustomer.setVip(this.vip.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			if (isRetailCustomer) {
 				aCustomer.setCustCRCPR(PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue()));
 				aCustomer.setCustFName(this.custFirstName.getValue());
@@ -1711,6 +1889,25 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				aCustomer.setCustCRCPR(this.eidNumber.getValue());
 			}
 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (StringUtils.isNotBlank(aCustomer.getCustCRCPR()) && !this.eidNumber.isReadonly()
+					&& StringUtils.isNotBlank(aCustomer.getCustTypeCode())) {
+				CustTypePANMapping custTypePANMapping = new CustTypePANMapping();
+				custTypePANMapping.setCustCategory(aCustomer.getCustCtgCode());
+				custTypePANMapping.setCustType(aCustomer.getCustTypeCode());
+				CustTypePANMapping approvedPANMapping = custTypePANMappingService
+						.getApprovedPANMapping(custTypePANMapping, TableType.MAIN_TAB.getSuffix());
+				if (approvedPANMapping != null) {
+					String panFourthLetter = StringUtils.substring(aCustomer.getCustCRCPR(), 3, 4);
+					if (!StringUtils.equals(approvedPANMapping.getPanLetter(), panFourthLetter)) {
+						throw new WrongValueException(this.eidNumber, aCustomer.getCustCRCPR()
+								+ Labels.getLabel("label_CustTypePANMapping_panValidation.value"));
+					}
+				}
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1825,7 +2022,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 
 			try {
-				aCustomer.setSubCategory(getComboboxValue(this.subCategory));
+				if ("#".equals(getComboboxValue(this.subCategory))) {
+					if (validateAllDetails && this.subCategory.isVisible() && !this.subCategory.isDisabled()
+							&& spaceSubCategory.isVisible()) {
+						throw new WrongValueException(this.subCategory, Labels.getLabel("STATIC_INVALID",
+								new String[] { Labels.getLabel("label_CustomerDialog_SubCategory.value") }));
+					} else {
+						aCustomer.setSubCategory(getComboboxValue(this.subCategory));
+					}
+				} else {
+					aCustomer.setSubCategory(getComboboxValue(this.subCategory));
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -1834,9 +2041,63 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			aCustomer.setReligionId(0);
 			aCustomer.setSubCategory(null);
 		}
+		//new fields added as per the HL Product
+		if (isRetailCustomer) {
+			/*
+			 * try { aCustomer.setCustFlag(StringUtils.trimToNull(this.custFlags.getValue())); } catch
+			 * (WrongValueException we) { wve.add(we); }
+			 */
 
+			/*
+			 * try { if ("#".equals(getComboboxValue(this.custResidentialStstus))) { if (validateAllDetails &&
+			 * this.custResidentialStstus.isVisible() && !this.custResidentialStstus.isDisabled()) { throw new
+			 * WrongValueException(this.custResidentialStstus, Labels.getLabel("STATIC_INVALID", new String[] {
+			 * Labels.getLabel("label_CustomerDialog_ResidentialStstus.value") })); } } else {
+			 * aCustomer.setCustResidentialSts(getComboboxValue(this.custResidentialStstus)); } } catch
+			 * (WrongValueException we) { wve.add(we); }
+			 */
+
+			try {
+				aCustomer.setNatureOfBusiness(getComboboxValue(this.natureOfBusiness));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				aCustomer.setCustProfession(StringUtils.trimToNull(this.profession.getValidatedValue()));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				aCustomer.setQualification(StringUtils.trimToNull(this.custQualification.getValidatedValue()));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				aCustomer.setOtherCaste(this.otherCaste.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				aCustomer.setOtherReligion(this.otherReligion.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		//corporate customer
 		try {
-			aCustomer.setResidentialStatus(getComboboxValue(this.residentialStatus));
+			if (!isRetailCustomer && "#".equals(getComboboxValue(this.entityType))) {
+				if (validateAllDetails && this.entityType.isVisible() && !this.entityType.isDisabled()
+						&& spaceSubCategory.isVisible()) {
+					throw new WrongValueException(this.entityType, Labels.getLabel("STATIC_INVALID",
+							new String[] { Labels.getLabel("label_CustomerDialog_EntityType.value") }));
+				}
+			} else if (!isRetailCustomer) {
+				aCustomer.setEntityType(getComboboxValue(this.entityType));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1973,7 +2234,54 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// Extended Field validations
 		extendedFieldCtrl.setParentTab(custTab);
 		if (aCustomerDetails.getExtendedFieldHeader() != null) {
-			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save(true));
+			aCustomerDetails.setExtendedFieldRender(extendedFieldCtrl.save(true, aCustomerDetails));
+		}
+
+		@SuppressWarnings("rawtypes")
+		Map<String, List> customerPhoneNumbers = customerPhoneNumberInLineEditCtrl
+				.prepareCustomerPhoneNumberData(aCustomerDetails, this.listBoxCustomerPhoneNumbersInlineEdit);
+		if (customerPhoneNumbers.get("errorList") != null) {
+			@SuppressWarnings("unchecked")
+			List<WrongValueException> errorlist = (List<WrongValueException>) customerPhoneNumbers.get("errorList");
+			showErrorDetails(errorlist, custTab, tabkYCDetails);
+		}
+		if (customerPhoneNumbers.get("customerPhoneNumbers") != null) {
+			@SuppressWarnings("unchecked")
+			List<CustomerPhoneNumber> customerPhoneNumberList = customerPhoneNumbers.get("customerPhoneNumbers");
+			setCustomerPhoneNumberDetailList(customerPhoneNumberList);
+		}
+
+		//In line Edit functionality for Customer Emails
+		//HL change for Emails
+		@SuppressWarnings("rawtypes")
+		Map<String, List> customerEmails = customerEmailInlineEditCtrl.prepareCustomerEmailData(aCustomerDetails,
+				this.listBoxCustomerEmailsInlineEdit);
+		if (customerEmails.get("errorList") != null) {
+			@SuppressWarnings("unchecked")
+			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerEmails.get("errorList");
+			showErrorDetails(errorlist, custTab, tabkYCDetails);
+		}
+		if (customerEmails.get("customerEMails") != null) {
+			@SuppressWarnings("unchecked")
+			List<CustomerEMail> customerEMailList = customerEmails.get("customerEMails");
+			setCustomerEmailDetailList(customerEMailList);
+		}
+
+		//In line Edit functionality for Customer Income Expense
+		//HL change for financial
+		@SuppressWarnings("rawtypes")
+		Map<String, List> customerIncomes = incomeAndExpenseCtrl.prepareCustomerIncomeExpenseData(aCustomerDetails,
+				this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+		if (customerIncomes.get("errorList") != null) {
+			@SuppressWarnings("unchecked")
+			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerIncomes
+					.get("errorList");
+			showErrorDetails(errorlist, custTab, tabfinancial);
+		}
+		if (customerIncomes.get("customerIncomes") != null) {
+			@SuppressWarnings("unchecked")
+			List<CustomerIncome> customerIncomeList = customerIncomes.get("customerIncomes");
+			setIncomeList(customerIncomeList);
 		}
 
 		// Set KYC details
@@ -2070,10 +2378,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab parentTab, Tab childTab) {
+	private void showErrorDetails(List<WrongValueException> wve, Tab parentTab, Tab childTab) {
 		logger.debug("Entering");
 		doRemoveValidation();
 		doRemoveLOVValidation();
+
 		if (wve.size() > 0) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
 			if (parentTab != null) {
@@ -2115,6 +2424,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 			doEdit();
+			this.btnUploadExternalLiability
+					.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnUploadExternalLiability"));
+			this.btnDownloadExternalLiability
+					.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_btnDownloadExternalLiability"));
 		}
 		this.custCIF.focus();
 
@@ -2230,12 +2543,35 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_CustReligion.setVisible(true);
 			this.label_CustomerDialog_CustCaste.setVisible(true);
 			this.label_CustomerDialog_subCategory.setVisible(true);
+			this.hbox_SubCategory.setVisible(true);
 			this.hbox_CustReligion.setVisible(true);
 			this.hbox_CustCaste.setVisible(true);
 			this.subCategory.setVisible(true);
 			this.row_custStaff.setVisible(true);
 			this.row_custCountry.setVisible(true);
 			this.hbox_SalariedCustomer.setVisible(true);
+			this.salariedCustomer.setVisible(true);
+			this.label_OtherReligion.setVisible(true);
+			this.label_OtherCaste.setVisible(true);
+			this.hbox_CustOtherCaste.setVisible(true);
+			this.hbox_CustOtherReligion.setVisible(true);
+			//this.row_natueOfBusiness.setVisible(true);
+			this.row_residentialsts.setVisible(true);
+			this.row_qualification.setVisible(true);
+			this.label_CustomerDialog_CustQualification.setVisible(true);
+			//this.label_CustomerDialog_CustFlags.setVisible(true);
+			this.custQualification.setVisible(true);
+			//this.custFlags.setVisible(true);
+			this.custIndustry.setVisible(true);
+			this.natureOfBusiness.setVisible(true);
+			//this.label_natureOfBusiness.setVisible(true);
+			this.label_entityType.setVisible(false);
+			this.hbox_entityType.setVisible(false);
+			this.entityType.setVisible(false);
+			this.space_entitytype.setVisible(false);
+			this.hbox_CustReligion.setVisible(true);
+			this.label_CustomerDialog_Profession.setVisible(true);
+			this.profession.setVisible(true);
 			if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
 				this.row_EmploymentDetails.setVisible(true);
 				this.gp_CustEmployeeDetails.setVisible(false);
@@ -2243,9 +2579,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.row_EmploymentDetails.setVisible(false);
 				this.gp_CustEmployeeDetails.setVisible(true);
 			}
+
 			if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_LASTNAME_MANDATORY)) {
 				this.space_cust_LName.setSclass(PennantConstants.mandateSclass);
 			}
+
 			this.space_CustShrtName.setSclass("");
 			this.label_CustomerDialog_SalaryTransfered.setVisible(true);
 			// this.label_CustomerDialog_EIDNumber.setValue(Labels.getLabel("label_CoreCustomerDialog_PrimaryID.value"));
@@ -2253,24 +2591,39 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_CustCOB.setValue(Labels.getLabel("label_CustomerDialog_CustCOB.value"));
 			this.directorDetails.setVisible(false);
 			this.gb_rating.setVisible(false);
-			this.label_LocalLngName.setVisible(true);
+			this.label_ArabicName.setVisible(true);
+
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)) {
-				this.space_CustLocalLngName.setSclass(PennantConstants.mandateSclass);
+				this.space_CustArabicName.setSclass(PennantConstants.mandateSclass);
 			} else {
-				this.space_CustLocalLngName.setSclass("");
+				this.space_CustArabicName.setSclass("");
 			}
-			this.custLocalLngName.setVisible(true);
+
+			this.space_CustArabicName.setVisible(true);
+			this.custArabicName.setVisible(true);
 			this.tabfinancial.setVisible(ImplementationConstants.ALLOW_CUSTOMER_INCOMES);
 			this.label_CustRelatedParty.setVisible(true);
 			this.hbox_CustRelatedParty.setVisible(true);
 			this.label_CustSegment.setVisible(true);
 			this.custSegment.setVisible(true);
-			// label
+			this.label_CustSubSegment.setVisible(true);
+			this.custSubSegment.setVisible(true);
+			//this.label_CustomerDialog_CustFlags.setVisible(true);
+			//this.custFlags.setVisible(true);
+
+			//label
 			this.row_custStatus.setVisible(true);
 			this.label_CustomerDialog_Target.setVisible(true);
 			this.target.setVisible(true);
 			this.target.setMandatoryStyle(false);
-
+			this.label_CustomerDialog_CustIndustry.setVisible(true);
+			//this.label_CustomerDialog_ResidentialStatus.setVisible(true);
+			//this.space_Residential.setVisible(true);
+			//this.custResidentialStstus.setVisible(true);
+			row_EmploymentDetails.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
+			this.space_applicationNo.setVisible(true);
+			this.label_CustomerDialog_ApplicationNo.setVisible(true);
+			this.applicationNo.setVisible(true);
 		} else {
 			this.row_FirstMiddleName.setVisible(false);
 			this.label_CustomerDialog_CustLastName.setVisible(false);
@@ -2291,6 +2644,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custSubSegment.setVisible(false);
 			this.row_custCountry.setVisible(false);
 			this.hbox_SalariedCustomer.setVisible(false);
+			this.salariedCustomer.setVisible(false);
 			this.space_CustShrtName.setSclass(PennantConstants.mandateSclass);
 			this.label_CustomerDialog_SalaryTransfered.setVisible(false);
 			this.label_CustomerDialog_CustShrtName.setValue(Labels.getLabel("label_CustomerDialog_CustomerName.value"));
@@ -2301,10 +2655,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.gb_rating.setVisible(getUserWorkspace().isAllowed("CustomerDialog_ShowCustomerRatings"));
 			this.gp_CustEmployeeDetails.setVisible(false);
 			this.row_EmploymentDetails.setVisible(false);
-			this.label_LocalLngName.setVisible(false);
-			this.space_CustLocalLngName.setSclass("");
-			this.custLocalLngName.setVisible(false);
-			this.directorDetails.setVisible(ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS);
+			this.label_ArabicName.setVisible(false);
+			this.space_CustArabicName.setVisible(false);
+			this.space_CustArabicName.setSclass("");
+			this.custArabicName.setVisible(false);
+			directorDetails.setVisible(ImplementationConstants.SHOW_CUST_SHARE_HOLDER_DETAILS);
 			this.label_CustRelatedParty.setVisible(false);
 			this.hbox_CustRelatedParty.setVisible(false);
 			this.label_CustSegment.setVisible(false);
@@ -2314,7 +2669,38 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.label_CustomerDialog_Target.setVisible(false);
 			this.target.setVisible(false);
 			this.target.setMandatoryStyle(false);
+			//this.label_CustomerDialog_CustFlags.setVisible(false);
+			//this.custFlags.setVisible(false);
+			this.label_OtherReligion.setVisible(false);
+			this.label_OtherCaste.setVisible(false);
+			this.hbox_CustOtherCaste.setVisible(false);
+			this.hbox_CustOtherReligion.setVisible(false);
+			//this.label_natureOfBusiness.setVisible(false);
+			this.label_entityType.setVisible(true);
+			this.hbox_entityType.setVisible(true);
+			this.entityType.setVisible(true);
+			this.space_entitytype.setVisible(true);
+			this.natureOfBusiness.setVisible(false);
+			//this.custResidentialStstus.setVisible(false);
+			//this.row_natueOfBusiness.setVisible(false);
+			this.label_CustSubSegment.setVisible(false);
+			this.custSubSegment.setVisible(false);
+			this.label_CustomerDialog_CustQualification.setVisible(false);
+			//this.label_CustomerDialog_CustFlags.setVisible(false);
+			this.custQualification.setVisible(false);
+			//this.custFlags.setVisible(false);
+			this.label_CustomerDialog_Profession.setVisible(false);
+			this.profession.setVisible(false);
+			this.custIndustry.setVisible(true);
+			this.label_CustomerDialog_CustIndustry.setVisible(true);
 			// this.custRO1.setMandatoryStyle(false);
+			//this.label_CustomerDialog_ResidentialStatus.setVisible(false);
+			//this.space_Residential.setVisible(false);
+			this.hbox_SubCategory.setVisible(false);
+			this.row_residentialsts.setVisible(false);
+			this.row_qualification.setVisible(false);
+			this.label_CustomerDialog_CKYCOrReferenceNo.setVisible(false);
+			this.ckycOrRefNo.setVisible(false);
 
 			boolean tabVisable = false;
 			String value = null;
@@ -2333,7 +2719,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				.getPrimaryIdAttributes(customerDetails.getCustomer().getCustCtgCode());
 
 		primaryIdLabel = attributes.get("LABEL");
-		primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
+		if (isNewCustCret && ImplementationConstants.COAPP_PANNUMBER_NON_MANDATORY) {
+			primaryIdMandatory = false;
+		} else {
+			primaryIdMandatory = Boolean.valueOf(attributes.get("MANDATORY"));
+		}
 		primaryIdRegex = attributes.get("REGEX");
 		int maxLength = Integer.valueOf(attributes.get("LENGTH"));
 
@@ -2377,8 +2767,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (StringUtils.isEmpty(this.custLastName.getValue())) {
 				this.custLastName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
 			}
-			if (StringUtils.isEmpty(this.custLocalLngName.getValue())) {
-				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLocalLngName"));
+			if (StringUtils.isEmpty(this.custArabicName.getValue())) {
+				this.custArabicName.setReadonly(isReadOnly("CustomerDialog_custArabicName"));
+			}
+			if (StringUtils.isEmpty(this.otherCaste.getValue())) {
+				this.otherCaste.setReadonly(isReadOnly("CustomerDialog_otherCaste"));
+			}
+			if (StringUtils.isEmpty(this.otherReligion.getValue())) {
+				this.otherReligion.setReadonly(isReadOnly("CustomerDialog_otherReligion"));
 			}
 			if (StringUtils.isEmpty(this.motherMaidenName.getValue())) {
 				this.motherMaidenName.setReadonly(isReadOnly("CustomerDialog_custMotherMaiden"));
@@ -2407,6 +2803,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.custNationality.setMandatoryStyle(true);
 				}
 			}
+			if (StringUtils.isEmpty(this.custQualification.getValue())) {
+				this.custQualification.setReadonly(isReadOnly("CustomerDialog_qualification"));
+				if (!this.custQualification.isReadonly()) {
+					this.custQualification.setMandatoryStyle(false);
+				}
+			}
 			if (StringUtils.isEmpty(this.custLng.getValue())) {
 				this.custLng.setReadonly(isReadOnly("CustomerDialog_custLng"));
 				if (!this.custLng.isReadonly()) {
@@ -2431,7 +2833,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (StringUtils.isEmpty(this.custSegment.getValue())) {
 				this.custSegment.setReadonly(true);
 				if (!this.custSegment.isReadonly()) {
-					this.custSegment.setMandatoryStyle(true);
+					this.custSegment.setMandatoryStyle(false);
 				}
 			}
 			if (StringUtils.isEmpty(this.custCOB.getValue())) {
@@ -2495,6 +2897,21 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_ApplicationNo.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
 		}
+		if (!this.otherReligion.isReadonly() && PennantConstants.OTHER.equals(this.religion.getValue())) {
+			this.otherReligion
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_OtherReligion.value"),
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+		}
+		if (!this.otherCaste.isReadonly() && PennantConstants.OTHER.equals(this.caste.getValue())) {
+			this.otherCaste
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_OtherCaste.value"),
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+		}
+		if (!this.ckycOrRefNo.isReadonly()) {
+			this.ckycOrRefNo.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CKYCOrReferenceNo.value"),
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+		}
 
 		// below fields are conditional mandatory
 
@@ -2519,20 +2936,40 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.motherMaidenName.isReadonly()) {
 				this.motherMaidenName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+								PennantRegularExpressions.REGEX_RETAIL_CUST_NAME, isMandValidate));
 			}
 
-			if (!this.custLocalLngName.isReadonly()) {
-				this.custLocalLngName.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLocalLngName.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME,
-								SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)));
+			if (!this.custArabicName.isReadonly()) {
+				this.custArabicName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustArabicName.value"),
+								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
 			}
+			if (!this.caste.isReadonly()) {
+				this.caste.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_Caste.value"),
+						PennantRegularExpressions.REGEX_CUST_NAME,
+						SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_GST_RETAIL_CUSTOMER)));
+			}
+			if (!this.religion.isReadonly()) {
+				this.religion
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_Religion.value"),
+								PennantRegularExpressions.REGEX_ALPHA_SPACE, false));
+			}
+
 		} else {
 			if (!this.custShrtName.isReadonly()) {
-				this.custShrtName
-						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustomerName.value"),
-								PennantRegularExpressions.REGEX_CUST_NAME, true));
+				if (StringUtils.equals(this.customerDetails.getCustomer().getCustCtgCode(),
+						PennantConstants.PFF_CUSTCTG_CORP)
+						|| StringUtils.equals(this.customerDetails.getCustomer().getCustCtgCode(),
+								PennantConstants.PFF_CUSTCTG_SME)) {
+					this.custShrtName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustomerName.value"),
+									PennantRegularExpressions.REGEX_CORP_CUST_NAME, true));
+				} else {
+					this.custShrtName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustomerName.value"),
+									PennantRegularExpressions.REGEX_RETAIL_CUST_NAME, true));
+				}
+
 			}
 		}
 
@@ -2617,6 +3054,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 
 		boolean isMandValidate = validateAllDetails;
+		boolean nonWorking = !(PennantConstants.EMPLOYMENTTYPE_NONWORKING.equals(this.subCategory.getValue()));
 
 		// below fields are always mandatory
 
@@ -2632,13 +3070,21 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custNationality.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_CustomerDialog_CustNationality.value"), null, true, true));
 		}
-		if (!this.custSector.isReadonly()) {
-			this.custSector.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSector.value"), null, true, true));
+		if (!this.custQualification.isReadonly()) {
+		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			this.custQualification.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CustomerDialog_CustQualification.value"), null, isMandValidate, true));
 		}
-		if (!this.custIndustry.isReadonly()) {
+		if (!this.custSector.isReadonly() && nonWorking) {
+		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			this.custSector.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSector.value"), null,
+							isMandValidate, true));
+		}
+		if (!this.custIndustry.isReadonly() && this.custIndustry.isVisible() && nonWorking) {
+		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			this.custIndustry.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CustomerDialog_CustIndustry.value"), null, true, true));
+					Labels.getLabel("label_CustomerDialog_CustIndustry.value"), null, isMandValidate, true));
 		}
 		if (!this.custCOB.isReadonly()) {
 			this.custCOB.setConstraint(
@@ -2662,6 +3108,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (!this.custSts.isReadonly()) {
 			this.custSts.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSts.value"), null, false, true));
+		}
+		if (!this.custSegment.isReadonly() && this.custSegment.isVisible() && nonWorking) {
+			//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			this.custSegment.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustSegment.value"), null,
+							isMandValidate, true));
 		}
 
 		if (isRetailCustomer) {
@@ -2743,6 +3195,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.profession.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_CustomerDialog_Profession.value"), null, isMandValidate, true));
 			}
+			//Employment type Mandatory base on system parameter setting validation
+			if (!this.subCategory.isDisabled() && spaceSubCategory.isVisible()) {
+				this.subCategory.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDialog_SubCategory.value"), null, false));
+			}
+
 		}
 		logger.debug("Leaving");
 	}
@@ -2759,7 +3217,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setConstraint("");
 		this.custMiddleName.setConstraint("");
 		this.custLastName.setConstraint("");
-		this.custLocalLngName.setConstraint("");
+		this.custArabicName.setConstraint("");
 		this.motherMaidenName.setConstraint("");
 		this.custDOB.setConstraint("");
 		this.eidNumber.setConstraint("");
@@ -2775,6 +3233,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custRiskCountry.setConstraint("");
 		this.custSubSector.setConstraint("");
 		this.custSubSegment.setConstraint("");
+		this.otherCaste.setConstraint("");
+		this.otherReligion.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -2795,6 +3255,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSector.setConstraint("");
 		this.custIndustry.setConstraint("");
 		this.custSegment.setConstraint("");
+		this.custSubSegment.setConstraint("");
 		this.custCOB.setConstraint("");
 		this.custMaritalSts.setConstraint("");
 		this.target.setConstraint("");
@@ -2813,6 +3274,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custRiskCountry.setConstraint("");
 		this.custSubSector.setConstraint("");
 		this.custSubSegment.setConstraint("");
+		this.natureOfBusiness.setConstraint("");
+		//this.custResidentialStstus.setConstraint("");
+		this.custQualification.setConstraint("");
+
 		logger.debug("Leaving");
 	}
 
@@ -2831,7 +3296,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custMiddleName.setErrorMessage("");
 		Clients.clearWrongValue(this.custMiddleName);
 		this.custLastName.setErrorMessage("");
-		this.custLocalLngName.setErrorMessage("");
+		this.custArabicName.setErrorMessage("");
 		this.motherMaidenName.setErrorMessage("");
 		this.custDftBranch.setErrorMessage("");
 		this.custGenderCode.setErrorMessage("");
@@ -2870,6 +3335,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.subCategory.setErrorMessage("");
 		this.caste.setErrorMessage("");
 		this.religion.setErrorMessage("");
+		this.natureOfBusiness.setErrorMessage("");
+		this.entityType.setErrorMessage("");
+		//this.custFlags.setErrorMessage("");
+		//this.custResidentialStstus.setErrorMessage("");
+		this.custQualification.setErrorMessage("");
 
 		logger.debug("Leaving");
 	}
@@ -2963,7 +3433,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custFirstName.setReadonly(isReadOnly("CustomerDialog_custFirstName"));
 				this.custMiddleName.setReadonly(isReadOnly("CustomerDialog_custMiddleName"));
 				this.custLastName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
-				this.custLocalLngName.setReadonly(isReadOnly("CustomerDialog_custLastName"));
+				this.custArabicName.setReadonly(isReadOnly("CustomerDialog_custArabicName"));
 				this.motherMaidenName.setReadonly(isReadOnly("CustomerDialog_custMotherMaiden"));
 				this.custDftBranch.setReadonly(isReadOnly("CustomerDialog_custDftBranch"));
 				this.custBaseCcy.setReadonly(isReadOnly("CustomerDialog_custBaseCcy"));
@@ -2997,16 +3467,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custSubSector.setReadonly(isReadOnly("CustomerDialog_custIndustry"));
 				this.custSubSegment.setReadonly(isReadOnly("CustomerDialog_custSubSegment"));
 				this.applicationNo.setReadonly(isReadOnly("CustomerDialog_applicationNo"));
+				this.vip.setDisabled(isReadOnly("CustomerDialog_vip"));
 
 				readOnlyComponent(isReadOnly("CustomerDialog_cast"), this.caste);
 				readOnlyComponent(isReadOnly("CustomerDialog_religion"), this.religion);
 				readOnlyComponent(isReadOnly("CustomerDialog_subCategory"), this.subCategory);
+				this.natureOfBusiness.setDisabled(isReadOnly("CustomerDialog_natureOfBusiness"));
+				this.entityType.setDisabled(isReadOnly("CustomerDialog_entityType"));
+				//this.custResidentialStstus.setDisabled(isReadOnly("CustomerDialog_custResidentialSts"));
+				this.custSegment.setReadonly(isReadOnly("CustomerDialog_custGroupID"));
+				//this.custFlags.setReadonly(isReadOnly("CustomerDialog_custFlags"));
+				this.otherReligion.setReadonly(isReadOnly("CustomerDialog_otherReligion"));
+				this.otherCaste.setReadonly(isReadOnly("CustomerDialog_otherCaste"));
+				this.custQualification.setReadonly(isReadOnly("CustomerDialog_qualification"));
+				this.ckycOrRefNo.setReadonly(isReadOnly("CustomerDialog_ckycOrRefNo"));
 			} else {
 				this.custShrtName.setReadonly(true);
 				this.custFirstName.setReadonly(true);
 				this.custMiddleName.setReadonly(true);
 				this.custLastName.setReadonly(true);
-				this.custLocalLngName.setReadonly(true);
+				this.custArabicName.setReadonly(true);
 				this.motherMaidenName.setReadonly(true);
 				this.custDftBranch.setReadonly(true);
 				this.custBaseCcy.setReadonly(true);
@@ -3028,6 +3508,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.eidNumber.setReadonly(true);
 				this.custSegment.setReadonly(true);// CustomerDialog_custSegment
 				this.custTradeLicenceNum.setReadonly(true);
+				this.ckycOrRefNo.setReadonly(true);
+				this.otherReligion.setReadonly(true);
+				this.otherCaste.setReadonly(true);
+				this.natureOfBusiness.setDisabled(true);
+				this.entityType.setDisabled(true);
+				this.custSubSegment.setReadonly(true);
+				//	this.custFlags.setReadonly(true);
+				//this.custResidentialStstus.setDisabled(true);
+				this.custQualification.setReadonly(true);
+
 			}
 			// Employee Details
 			this.empStatus.setReadonly(isReadOnly("CustomerDialog_empStatus"));
@@ -3045,7 +3535,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.residentialStatus.setDisabled(isReadOnly("CustomerDialog_residentialStatus"));
 
 			if (isRetailCustomer) {
-				readOnlyComponent(isReadOnly("CustomerDialog_btn_GenerateCibil"), this.btn_GenerateCibil);
+				//readOnlyComponent(isReadOnly("CustomerDialog_btn_GenerateCibil"), this.btn_GenerateCibil);
 			}
 
 			if (!isFinanceProcess && isWorkFlowEnabled()) {
@@ -3078,7 +3568,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setReadonly(true);
 		this.custMiddleName.setReadonly(true);
 		this.custLastName.setReadonly(true);
-		this.custLocalLngName.setReadonly(true);
+		this.custArabicName.setReadonly(true);
 		this.motherMaidenName.setReadonly(true);
 		this.custDftBranch.setReadonly(true);
 		this.custBaseCcy.setReadonly(true);
@@ -3114,6 +3604,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSector.setReadonly(true);
 		this.custSubSegment.setReadonly(true);
 		this.applicationNo.setReadonly(true);
+		this.otherCaste.setReadonly(true);
+		this.otherReligion.setReadonly(true);
+		this.ckycOrRefNo.setReadonly(true);
+		//this.custFlags.setReadonly(true);
+		//this.custResidentialStstus.setDisabled(true);
+		this.natureOfBusiness.setDisabled(true);
+		this.entityType.setDisabled(true);
+		this.vip.setDisabled(true);
 
 		// Employee Details
 		this.empStatus.setReadonly(true);
@@ -3138,6 +3636,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.btnNew_ChequeInformation.setVisible(false);
 		this.btnNew_ExternalLiability.setVisible(false);
 		this.btnNew_CardSalesInformation.setVisible(false);
+		this.custQualification.setReadonly(true);
 
 		this.btnNew_CustomerGSTDetails.setVisible(false);
 		this.custMaritalSts.setDisabled(true);
@@ -3147,6 +3646,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		readOnlyComponent(true, this.religion);
 		readOnlyComponent(true, this.subCategory);
 		readOnlyComponent(true, this.btn_GenerateCibil);
+		readOnlyComponent(true, this.btnUploadExternalLiability);
+		readOnlyComponent(true, this.btnDownloadExternalLiability);
 
 		if (!isFinanceProcess) {
 			if (isWorkFlowEnabled()) {
@@ -3162,6 +3663,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
+	@Override
 	public boolean isReadOnly(String componentName) {
 		if (isWorkFlowEnabled() || isNewFinance()) {
 			return getUserWorkspace().isReadOnly(componentName);
@@ -3194,28 +3696,63 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		FinanceMain main = null;
 		if (getFinancedetail() != null && getFinancedetail().getFinScheduleData() != null) {
 			main = getFinancedetail().getFinScheduleData().getFinanceMain();
+		} else {
+			main = financeMain;
 		}
 
-		customerDetails = creditInformation.procesCreditEnquiry(customerDetails, main, false);
+		if (custCreditInformation != null) {
+			customerDetails = custCreditInformation.procesCreditEnquiry(customerDetails, main, false);
+		} else {
+			customerDetails = creditInformation.procesCreditEnquiry(customerDetails, main, false);
+		}
 
 		if (customerDetails.isCibilExecuted()) {
 			// show confirmation
 			// if yes then re-reun with override
 			if (customerDetails.isCibilALreadyRun()) {
-				final String msg = Labels.getLabel("Cibil.Already_Processed") + "\n\n --> "
-						+ Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : "
-						+ customerDetails.getCustomer().getCustCIF();
-				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-					customerDetails = creditInformation.procesCreditEnquiry(customerDetails, main, true);
-					extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
+				if (customerDetails.isReInitiateCibil()) {
+					final String msg = Labels.getLabel("Cibil.Already_Processed") + "\n\n --> "
+							+ Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : "
+							+ customerDetails.getCustomer().getCustCIF();
+					if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+
+						if (custCreditInformation != null) {
+							customerDetails = custCreditInformation.procesCreditEnquiry(customerDetails, main, true);
+						} else {
+							customerDetails = creditInformation.procesCreditEnquiry(customerDetails, main, true);
+						}
+						extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
+					}
+				} else {
+					MessageUtil.showMessage(Labels.getLabel("Cibil_ReInit_Meg.value") + " "
+							+ SysParamUtil.getValueAsInt("CIBIL_REINTI_DAYS") + " days.");
 				}
 			} else {
 				extendedFieldCtrl.setValues(customerDetails.getExtendedFieldRender().getMapValues());
 			}
 		} else {
-			MessageUtil.showError(Labels.getLabel("Cibil_Error"));
+			String actualError = "";
+			if (customerDetails.getActualError() != null) {
+				actualError = customerDetails.getActualError();
+			}
+			MessageUtil.showError(Labels.getLabel("Cibil_Error") + "\n" + actualError);
 		}
 
+	}
+
+	public CreditInformation getCreditInformation() {
+		return creditInformation;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "creditInformation")
+	public void setCreditInformation(CreditInformation creditInformation) {
+		this.creditInformation = creditInformation;
+	}
+
+	@Autowired
+	public void setCustCreditInformation(CreditInformation custCreditInformation) {
+		this.custCreditInformation = custCreditInformation;
 	}
 
 	/**
@@ -3255,7 +3792,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custFirstName.setValue("");
 		this.custMiddleName.setValue("");
 		this.custLastName.setValue("");
-		this.custLocalLngName.setValue("");
+		this.custArabicName.setValue("");
 		this.motherMaidenName.setValue("");
 		this.custRO1.setValue("");
 		this.custRO1.setDescription("");
@@ -3290,6 +3827,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.caste.setValue("");
 		this.caste.setDescription("");
 		this.religion.setDescription("");
+		this.natureOfBusiness.setSelectedIndex(0);
+		//this.custResidentialStstus.setSelectedIndex(0);
+		this.entityType.setSelectedIndex(0);
+		//this.custFlags.setDescription("");
+		//this.custResidentialStstus.setValue("");
+		this.custQualification.setValue("");
+		this.custQualification.setDescription("");
 
 		logger.debug("Leaving");
 	}
@@ -3355,6 +3899,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 		}
+		//validate customer PhoneNumber types
+		if (!validatePhoneTypes(aCustomerDetails.getCustomerPhoneNumList())) {
+			this.tabkYCDetails.setSelected(true);
+			return;
+		}
+		//validate customer Email types
+		if (!validateEmailTypes(aCustomerDetails.getCustomerEMailList())) {
+			this.tabkYCDetails.setSelected(true);
+			return;
+		}
 		if (validateCustDocs && !validateCustomerDocuments(aCustomer, null)) {
 			return;
 		}
@@ -3385,6 +3939,18 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				return;
 			}
 			if (isRetailCustomer && !validateEmployemntDetails(this.tabkYCDetails)) {
+				return;
+			}
+		}
+		//validate customer income and expense types
+		if (!validateIncomeTypes(aCustomerDetails.getCustomerIncomeList())) {
+			this.tabfinancial.setSelected(true);
+			return;
+		}
+		//Black list
+		if (ImplementationConstants.DEDUP_BLACKLIST_COAPP && financeMain != null) {
+			doCheckBlackList(aCustomerDetails);
+			if (aCustomerDetails.isBlackListReq()) {
 				return;
 			}
 		}
@@ -3484,6 +4050,152 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	private void doCheckBlackList(CustomerDetails customerDetails) {
+		logger.debug(Literal.ENTERING);
+
+		String curLoginUser = getUserWorkspace().getLoggedInUser().getUserName();
+		BlackListCustomers balckListData = setBlackListCustomerData(customerDetails, customerDetails.getCustCIF());
+		List<BlackListCustomers> blackList = getDedupParmService().fetchBlackListCustomers(getRole(), "", balckListData,
+				curLoginUser);
+		int userAction = -1;
+		ShowBlackListDetailBox details = null;
+		if (CollectionUtils.isNotEmpty(blackList)) {
+			String BLACKLIST_FIELDS = "";
+			if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
+				BLACKLIST_FIELDS = "custCIF,custDOB,custFName,custCRCPR,"
+						+ "custPassportNo,mobileNumber,custNationality,employer,address,custAadhaar,watchListRule,override,overridenby";
+			}
+
+			Object dataObject = ShowBlackListDetailBox.show(window_CustomerDialog, blackList, BLACKLIST_FIELDS,
+					balckListData, "");
+			details = (ShowBlackListDetailBox) dataObject;
+
+			if (details != null) {
+				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
+				logger.debug("The User Action is " + details.getUserAction());
+				userAction = details.getUserAction();
+			}
+		}
+		/**
+		 * userAction represents Clean or Blacklisted actions if user click on Clean button userAction = 1 if user click
+		 * on Blacklisted button userAction = 0 if no customer found as a blacklist customer then userAction = -1
+		 */
+		if (userAction == 0) {
+			customerDetails.setBlackListReq(true);
+		} else {
+			customerDetails.setBlackListReq(false);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private BlackListCustomers setBlackListCustomerData(CustomerDetails customerDetails, String finReference) {
+		logger.debug("Entering");
+
+		Customer customer = null;
+		String mobileNumber = "";
+		StringBuilder custAddress = new StringBuilder("");
+
+		if (customerDetails.getCustomer() != null) {
+			customer = customerDetails.getCustomer();
+			if (customerDetails.getCustomerPhoneNumList() != null) {
+				for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
+					if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+						mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+								custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+						break;
+					}
+				}
+			}
+		}
+
+		if (customerDetails.getCustomer() != null) {
+			customer = customerDetails.getCustomer();
+			if (customerDetails.getAddressList() != null) {
+				for (CustomerAddres address : customerDetails.getAddressList()) {
+					if (address.getCustAddrPriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						custAddress.append(address.getCustAddrHNbr()).append(", ");
+						custAddress.append(address.getCustAddrStreet()).append(", ");
+
+						if (ImplementationConstants.CUSTOM_BLACKLIST_PARAMS) {
+							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine2())
+									? address.getCustAddrLine2().concat(", ") : "");
+							custAddress.append(StringUtils.isNotEmpty(address.getCustAddrLine1())
+									? address.getCustAddrLine1().concat(", ") : "");
+							custAddress.append(address.getLovDescCustAddrCityName()).append(", ");
+							custAddress.append(address.getLovDescCustAddrProvinceName()).append(", ");
+							custAddress.append(address.getLovDescCustAddrCountryName()).append(", ");
+							custAddress.append(address.getCustAddrZIP());
+						} else {
+							custAddress.append(address.getCustAddrCity()).append(", ");
+							custAddress.append(address.getCustAddrProvince()).append(", ");
+							custAddress.append(address.getCustAddrCountry());
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		// CustData to Black List
+		BlackListCustomers blackListCustomer = null;
+		if (customer != null) {
+			blackListCustomer = new BlackListCustomers();
+			blackListCustomer.setCustCIF(customer.getCustCIF());
+			blackListCustomer.setCustShrtName(customer.getCustShrtName());
+			blackListCustomer.setCustFName(customer.getCustFName());
+			blackListCustomer.setCustLName(customer.getCustLName());
+			blackListCustomer.setCustCRCPR(customer.getCustCRCPR());
+			blackListCustomer.setCustPassportNo(customer.getCustPassportNo());
+			blackListCustomer.setMobileNumber(mobileNumber);
+			blackListCustomer.setCustNationality(customer.getCustNationality());
+			blackListCustomer.setCustDOB(customer.getCustDOB());
+			blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
+			blackListCustomer.setFinReference(finReference);
+
+			blackListCustomer.setLikeCustFName(
+					blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
+			blackListCustomer.setLikeCustLName(
+					blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
+			// setting additional details data
+			blackListCustomer = FetchBlackListCustomerAdditionalDetails.doSetCustDataToBlackList(customer,
+					blackListCustomer);
+		}
+
+		if (blackListCustomer != null) {
+			blackListCustomer.setAddress(custAddress.toString());
+		}
+
+		// setting the customer documents data
+		String aadharCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.AADHAAR.name());
+		String passPortCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.PASSPORT.name());
+		String voterIdCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.VOTER_ID.name());
+		String drivingLicenseCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE,
+				DocType.DRIVING_LICENCE.name());
+		String panCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, DocType.PAN.name());
+		if (customerDetails != null && customerDetails.getCustomerDocumentsList() != null) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (StringUtils.equals(aadharCode, document.getCustDocCategory())) { // Aadhar
+					blackListCustomer.setCustAadhaar(document.getCustDocTitle());
+				} else if (StringUtils.equals(passPortCode, document.getCustDocCategory())) { // Passport
+					blackListCustomer.setCustPassportNo(document.getCustDocTitle());
+				} else if (StringUtils.equals(drivingLicenseCode, document.getCustDocCategory())) {// Driving
+																										// License
+					blackListCustomer.setDl(document.getCustDocTitle());
+				} else if (StringUtils.equals(voterIdCode, document.getCustDocCategory())) {// VoterId
+					blackListCustomer.setVid(document.getCustDocTitle());
+				} else if (StringUtils.equals(panCode, document.getCustDocCategory())) {// PAN
+					blackListCustomer.setCustCRCPR(document.getCustDocTitle());
+				}
+
+			}
+		}
+
+		logger.debug("Leaving");
+		return blackListCustomer;
+
 	}
 
 	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws Exception {
@@ -3587,17 +4299,28 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(aCustomerDetails.getCustomer().getRecordStatus());
-			details.setRecordType(aCustomerDetails.getCustomer().getRecordType());
-			if (isNewCustCret) {
-				details.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+
+			if (!isNewCustCret) {
+				details.setRecordType(aCustomerDetails.getCustomer().getRecordType());
+				details.setNewRecord(aCustomerDetails.getCustomer().isNewRecord());
+			} else {
+				if (StringUtils.isEmpty(aCustomerDetails.getCustomer().getRecordType())
+						&& StringUtils.isEmpty(details.getRecordType())) {
+					if (aCustomerDetails.getCustomer().isNew()) {
+						details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else {
+						details.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
+					details.setNewRecord(aCustomerDetails.getCustomer().isNewRecord());
+				}
 			}
+
 			details.setVersion(aCustomerDetails.getCustomer().getVersion());
 			details.setWorkflowId(aCustomerDetails.getCustomer().getWorkflowId());
 			details.setTaskId(taskId);
 			details.setNextTaskId(nextTaskId);
 			details.setRoleCode(getRole());
 			details.setNextRoleCode(nextRoleCode);
-			details.setNewRecord(aCustomerDetails.getCustomer().isNewRecord());
 			if (PennantConstants.RECORD_TYPE_DEL.equals(aCustomerDetails.getCustomer().getRecordType())) {
 				if (StringUtils.trimToNull(details.getRecordType()) == null) {
 					details.setRecordType(aCustomerDetails.getCustomer().getRecordType());
@@ -3653,7 +4376,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					CustomerDetails tCustomerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 					String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 					tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
-							this.window_CustomerDialog, curLoginUser);
+							this.window_CustomerDialog, curLoginUser, "");
 					if (tCustomerDetails.getCustomer().isDedupFound()
 							&& !tCustomerDetails.getCustomer().isSkipDedup()) {
 						processCompleted = false;
@@ -3711,6 +4434,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			}
 		} else {
+			//checking customer dedupe from loan origination
+			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
+			aCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), aCustomerDetails,
+					this.window_CustomerDialog, curLoginUser, "");
+			if (aCustomerDetails.getCustomer().isDedupFound() && !aCustomerDetails.getCustomer().isSkipDedup()) {
+				return false;
+			}
 			auditHeader = getAuditHeader(aCustomerDetails, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
@@ -3851,7 +4581,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				validateAllDetails = true;
 			}
 			doWriteComponentsToBean(aCustomerDetails, tab);
+
+			// Extended Field details
+			if (aCustomerDetails.getExtendedFieldRender() != null) {
+				int seqNo = 0;
+				ExtendedFieldRender details = aCustomerDetails.getExtendedFieldRender();
+				details.setSeqNo(++seqNo);
+				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			}
+
 			if (validateChildDetails) {
+				//validate customer PhoneNumber types
+				if (!validatePhoneTypes(aCustomerDetails.getCustomerPhoneNumList())) {
+					this.tabkYCDetails.setSelected(true);
+					return false;
+				}
+				//validate customer Email types
+				if (!validateEmailTypes(aCustomerDetails.getCustomerEMailList())) {
+					this.tabkYCDetails.setSelected(true);
+					return false;
+				}
 				if (validateCustDocs && validateAllDetails && !validateCustomerDocuments(aCustomer, tab)) {
 					return false;
 				}
@@ -3898,6 +4647,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!isRetailCustomer || ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
 				aCustomerDetails.setCustEmployeeDetail(null);
 			}
+			//validate customer income and expense types
+			if (!validateIncomeTypes(aCustomerDetails.getCustomerIncomeList())) {
+				this.tabfinancial.setSelected(true);
+				return false;
+			}
+			//checking customer dedupe from loan origination
+			if (validateAllDetails && validateChildDetails) {
+				tab.setSelected(true);
+				CustomerDetails tCustomerDetails = aCustomerDetails;
+				String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
+				String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
+				tCustomerDetails = FetchCustomerDedupDetails.getCustomerDedup(getRole(), tCustomerDetails,
+						this.window_CustomerDialog, curLoginUser, finType);
+				//When  user Clicking on Close Button returns same page.
+				if (tCustomerDetails.getCustomer().isDedupFound() && !tCustomerDetails.getCustomer().isSkipDedup()) {
+					return false;
+				}
+			}
+			FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+			financeMain.setCustEmpType(aCustomer.getSubCategory());
 			aFinanceDetail.setCustomerDetails(aCustomerDetails);
 		}
 		logger.debug("Leaving ");
@@ -3907,7 +4676,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private boolean validateEmailDetails(Tab tab) {
 		logger.debug("Entering");
 		boolean isMandAddExist = false;
-		if (this.customerEmailDetailList.isEmpty()) {
+		if (CollectionUtils.isEmpty(customerEmailDetailList)) {
 			return !isMandAddExist;
 		} else {
 			for (CustomerEMail custEmail : this.customerEmailDetailList) {
@@ -4125,14 +4894,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					doShowValidationMessage(custTab, 5, custDocument.getLovDescCustDocCategory());
 					return false;
 				}
-				if (StringUtils.equals(PennantConstants.CPRCODE, custDocument.getCustDocCategory())) {
+				if (StringUtils.equals(MasterDefUtil.getDocCode(DocType.AADHAAR), custDocument.getCustDocCategory())) {
 					if (isRetailCustomer && !this.custDOB.isDisabled() && this.custDOB.getValue() != null
 							&& custDocument.getCustDocIssuedOn() != null
 							&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
 						doShowValidationMessage(custTab, 1, custDocument.getLovDescCustDocCategory());
 						return false;
 					}
-				} else if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
+				} else if (StringUtils.equals(MasterDefUtil.getDocCode(DocType.PAN),
+						custDocument.getCustDocCategory())) {
 					if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
 							&& custDocument.getCustDocIssuedOn() != null
 							&& custDocument.getCustDocIssuedOn().before(this.custDOB.getValue())) {
@@ -4140,7 +4910,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						return false;
 					}
 				}
-				if (StringUtils.equals(PennantConstants.PANNUMBER, custDocument.getCustDocCategory())) {
+				if (StringUtils.equals(MasterDefUtil.getDocCode(DocType.PAN), custDocument.getCustDocCategory())) {
 					isMandateIDDocExist = true;
 					if (StringUtils.isNotBlank(this.eidNumber.getValue())) {
 						if (!StringUtils.equals(this.eidNumber.getValue(), custDocument.getCustDocTitle())) {
@@ -4399,6 +5169,21 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
+	public void onFulfill$custSegment(Event event) {
+		logger.debug("Entering");
+		if (PennantConstants.SEP.equalsIgnoreCase(custSegment.getValue())) {
+			profession.setMandatoryStyle(true);
+		} else {
+			profession.setMandatoryStyle(false);
+		}
+	}
+
+	/*
+	 * Object dataObject = custSubSegment.getObject(); if (dataObject instanceof String) {
+	 * this.custSubSegment.setValue(""); this.custSubSegment.setDescription(""); } else { SubSegment details =
+	 * (SubSegment) dataObject; if (details != null) { this.custSubSegment.setValue(details.getSubSegmentCode());
+	 * this.custSubSegment.setDescription(details.getSubSegmentDesc()); } } logger.debug("Leaving"); }
+	 */
 	/**
 	 * Based Customer Type Code selection Fill the custSubSector value
 	 * 
@@ -4494,6 +5279,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.caste.setAttribute("CastId", details.getCasteId());
 			}
 		}
+		if (PennantConstants.OTHER.equalsIgnoreCase(this.caste.getValue())) {
+			this.space_OtherCaste.setSclass(PennantConstants.mandateSclass);
+			this.otherCaste.setReadonly(false);
+		} else {
+			this.space_OtherCaste.setSclass("");
+			this.otherCaste.setConstraint("");
+			this.otherCaste.setErrorMessage("");
+			this.otherCaste.setValue("");
+			this.otherCaste.setReadonly(true);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -4512,6 +5307,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (details != null) {
 				this.religion.setAttribute("ReligionId", details.getReligionId());
 			}
+		}
+		if (PennantConstants.OTHER.equalsIgnoreCase(this.religion.getValue())) {
+			this.space_OtherReligion.setSclass(PennantConstants.mandateSclass);
+			this.otherReligion.setReadonly(false);
+		} else {
+			this.space_OtherReligion.setSclass("");
+			this.otherReligion.setConstraint("");
+			this.otherReligion.setErrorMessage("");
+			this.otherReligion.setValue("");
+			this.otherReligion.setReadonly(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -4619,7 +5424,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		String idNumber = "";
 		try {
-			if (PennantConstants.CPRCODE.equalsIgnoreCase(idType)) {
+			if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), idType)) {
 				if (isRetailCustomer) {
 					if (!this.eidNumber.isReadonly()) {
 						this.eidNumber.setConstraint(
@@ -4634,7 +5439,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					this.eidNumber.setConstraint("");
 				}
-			} else if (PennantConstants.PASSPORT.equalsIgnoreCase(idType)) {
+			} else if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.PASSPORT), idType)) {
 				if (getCustomerDetails() != null && getCustomerDetails().getCustomer() != null) {
 					idNumber = getCustomerDetails().getCustomer().getCustPassportNo();
 				}
@@ -5230,6 +6035,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("newRecord", "true");
 		map.put("roleCode", getRole());
 		map.put("totSharePerc", getTotSharePerc());
+		map.put("isFinanceProcess", isFinanceProcess);
+		map.put("fromLoan", fromLoan);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/DirectorDetail/DirectorDetailDialog.zul", null,
 					map);
@@ -5254,6 +6061,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				map.put("customerDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("moduleType", this.moduleType);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("fromLoan", fromLoan);
 				BigDecimal totSharePerc = BigDecimal.ZERO;
 				if (directorDetail.getSharePerc() != null) {
 					totSharePerc = getTotSharePerc().subtract(directorDetail.getSharePerc());
@@ -5289,25 +6098,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	public void onClick$btnNew_CustomerIncome(Event event) throws Exception {
 		logger.debug("Entering");
+
+		reallocateRights("CustomerDialog_custIncomeType");
 		CustomerIncome customerIncome = new CustomerIncome();
 		customerIncome.setNewRecord(true);
 		customerIncome.setWorkflowId(0);
-		customerIncome.setCustId(getCustomerDetails().getCustID());
-		customerIncome.setCustCif(getCustomerDetails().getCustomer().getCustCIF());
-		customerIncome.setCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerIncome", customerIncome);
-		map.put("customerDialogCtrl", this);
-		map.put("newRecord", "true");
-		map.put("isFinanceProcess", isFinanceProcess);
-		map.put("ccyFormatter", ccyFormatter);
-		map.put("roleCode", getRole());
-		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerIncome/CustomerIncomeDialog.zul", null,
-					map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
+		customerIncome.setRecordType(PennantConstants.RCD_ADD);
+		incomeAndExpenseCtrl.doFillIncomeAndExpense(customerIncome, this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
+				true);
 		logger.debug("Leaving");
 	}
 
@@ -5393,6 +6191,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("isFinanceProcess", isFinanceProcess);
 		map.put("roleCode", getRole());
 		map.put("isRetailCustomer", isRetailCustomer);
+		map.put("finReference", finReference);
+		map.put("dmsApplicationNo", dmsApplicationNo);
+		map.put("leadId", leadId);
 
 		if (isNewCustCret) {
 			map.put("isNewCustCret", isNewCustCret);
@@ -5415,34 +6216,38 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		final Listitem item = this.listBoxCustomerDocuments.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final CustomerDocument customerDocument = (CustomerDocument) item.getAttribute("data");
-			if (isDeleteRecord(customerDocument.getRecordType())) {
+			final CustomerDocument cd = (CustomerDocument) item.getAttribute("data");
+			if (isDeleteRecord(cd.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
-				if (customerDocument.getCustDocImage() == null) {
-					if (customerDocument.getDocRefId() != null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
-						customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
-					} /*
-						 * else if (StringUtils.isNotBlank(customerDocument.getDocUri())) { try { // Fetch document from
-						 * interface String custCif = this.custCIF.getValue(); // here document name is required to
-						 * identify the // file type DocumentDetails detail =
-						 * externalDocumentManager.getExternalDocument( customerDocument.getCustDocName(),
-						 * customerDocument.getDocUri(), custCif); if (detail != null && detail.getDocImage() != null) {
-						 * customerDocument.setCustDocImage(detail.getDocImage());
-						 * customerDocument.setCustDocName(detail.getDocName()); } } catch (InterfaceException e) {
-						 * MessageUtil.showError(e); } }
-						 */
+				final Map<String, Object> map = new HashMap<String, Object>();
+				String docName = cd.getCustDocName();
+				String docUri = cd.getDocUri();
+				Long docRefId = cd.getDocRefId();
+				if (StringUtils.isNotBlank(docUri)) {
+					DocumentDetails dd = dMSService.getExternalDocument(this.custCIF.getValue(), docName, docUri);
+					cd.setCustDocImage(dd.getDocImage());
+					cd.setCustDocName(dd.getDocName());
+				} else {
+					if (cd.getCustDocImage() == null) {
+						if (docRefId != null && docRefId != Long.MIN_VALUE) {
+							cd.setCustDocImage(dMSService.getById(docRefId));
+						}
+					}
 				}
-				customerDocument.setLovDescCustCIF(this.custCIF.getValue());
-				customerDocument.setLovDescCustShrtName(this.custShrtName.getValue());
-				map.put("customerDocument", customerDocument);
+
+				cd.setLovDescCustCIF(this.custCIF.getValue());
+				cd.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerDocument", cd);
 				map.put("customerDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("moduleType", this.moduleType);
 				map.put("enqiryModule", this.isEnqProcess);
 				map.put("isRetailCustomer", isRetailCustomer);
+				map.put("finReference", finReference);
+				map.put("dmsApplicationNo", dmsApplicationNo);
+				map.put("leadId", leadId);
 				if (getFinanceMainDialogCtrl() != null) {
 					map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 				}
@@ -5522,6 +6327,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onClick$btnNew_CustomerAddress(Event event) throws Exception {
 		logger.debug("Entering");
 		CustomerAddres customerAddres = new CustomerAddres();
+		List<String> custCIFs = new ArrayList<String>();
 		customerAddres.setNewRecord(true);
 		customerAddres.setWorkflowId(0);
 		customerAddres.setCustID(getCustomerDetails().getCustID());
@@ -5536,12 +6342,26 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerAddres.setCustAddrCountry(defaultCountry.getCountryCode());
 		customerAddres.setLovDescCustAddrCountryName(defaultCountry.getCountryDesc());
 
+		if (financeMainDialogCtrl != null && financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
+			com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl financeJointAccountDetailDialogCtrl = ((FinanceMainBaseCtrl) financeMainDialogCtrl)
+					.getJointAccountDetailDialogCtrl();
+			if (financeJointAccountDetailDialogCtrl != null) {
+				List<Customer> jointAccountCustomers = financeJointAccountDetailDialogCtrl.getJointAccountCustomers();
+				custCIFs = doPrepareJointAccountCustIdList(jointAccountCustomers);
+			}
+			custCIFs.add(this.custCIF.getValue());
+		} else if (fromLoan && jointAccountDetailDialogCtrl != null) {
+			Collections.addAll(custCIFs, cif);
+		}
+
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerAddres", customerAddres);
 		map.put("customerDialogCtrl", this);
 		map.put("newRecord", "true");
 		map.put("isFinanceProcess", isFinanceProcess);
 		map.put("roleCode", getRole());
+		map.put("custCIFs", custCIFs);
+		map.put("fromLoan", fromLoan);
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null,
 					map);
@@ -5549,6 +6369,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	private List<String> doPrepareJointAccountCustIdList(List<Customer> jointAccountCustomers) {
+		List<String> custId = new ArrayList<String>();
+		if (CollectionUtils.isNotEmpty(jointAccountCustomers)) {
+			for (Customer customer : jointAccountCustomers) {
+				custId.add(customer.getCustCIF());
+			}
+		}
+		return custId;
 	}
 
 	public void onCustomerAddressItemDoubleClicked(Event event) throws Exception {
@@ -5619,7 +6449,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ** New Button & Double Click Events for CustomerPhoneNumbers List **//
 	// ********************************************************************//
 	public void onClick$btnNew_CustomerPhoneNumber(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setNewRecord(true);
 		customerPhoneNumber.setWorkflowId(0);
@@ -5630,19 +6461,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (StringUtils.isNotBlank(priority)) {
 			customerPhoneNumber.setPhoneTypePriority(Integer.parseInt(priority));
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerPhoneNumber", customerPhoneNumber);
-		map.put("customerDialogCtrl", this);
-		map.put("newRecord", "true");
-		map.put("isFinanceProcess", isFinanceProcess);
-		map.put("roleCode", getRole());
-		try {
-			Executions.createComponents(
-					"/WEB-INF/pages/CustomerMasters/CustomerPhoneNumber/CustomerPhoneNumberDialog.zul", null, map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug("Leaving" + event.toString());
+
+		reallocateRights("CustomerDialog_custPhoneNumber");
+		customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
+		customerPhoneNumberInLineEditCtrl.doFillPhoneNumbers(customerPhoneNumber,
+				this.listBoxCustomerPhoneNumbersInlineEdit, isFinanceProcess);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCustomerPhoneNumberItemDoubleClicked(Event event) throws Exception {
@@ -5679,24 +6504,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerPhoneNumberDetails(List<CustomerPhoneNumber> customerPhoneNumDetails) {
 		logger.debug("Entering");
 		this.listBoxCustomerPhoneNumbers.getItems().clear();
-		if (customerPhoneNumDetails != null) {
-			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumDetails) {
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(StringUtils.trimToEmpty(customerPhoneNumber.getPhoneTypeCode()));
-				lc.setParent(item);
-				lc = new Listcell(customerPhoneNumber.getPhoneNumber());
-				lc.setParent(item);
-				lc = new Listcell(customerPhoneNumber.getRecordStatus());
-				lc.setParent(item);
-				lc = new Listcell(PennantJavaUtil.getLabel(customerPhoneNumber.getRecordType()));
-				lc.setParent(item);
-				item.setAttribute("data", customerPhoneNumber);
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPhoneNumberItemDoubleClicked");
-				this.listBoxCustomerPhoneNumbers.appendChild(item);
-			}
-			setCustomerPhoneNumberDetailList(customerPhoneNumDetails);
-		}
+		customerPhoneNumberInLineEditCtrl.doRenderPhoneNumberList(customerPhoneNumDetails,
+				listBoxCustomerPhoneNumbersInlineEdit, this.custCIF.getValue(), isFinanceProcess);
 		logger.debug("Leaving");
 	}
 
@@ -5715,18 +6524,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		if (StringUtils.isNotBlank(priority)) {
 			customerEMail.setCustEMailPriority(Integer.parseInt(priority));
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("customerEMail", customerEMail);
-		map.put("customerDialogCtrl", this);
-		map.put("newRecord", "true");
-		map.put("isFinanceProcess", isFinanceProcess);
-		map.put("roleCode", getRole());
-		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/CustomerEMail/CustomerEMailDialog.zul", null,
-					map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
+
+		reallocateRights("CustomerDialog_custEmail");
+		customerEMail.setRecordType(PennantConstants.RCD_ADD);
+		customerEmailInlineEditCtrl.doFillEmails(customerEMail, this.listBoxCustomerEmailsInlineEdit, isFinanceProcess);
+
 		logger.debug("Leaving");
 	}
 
@@ -5763,28 +6565,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerEmailDetails(List<CustomerEMail> customerEmailDetails) {
 		logger.debug("Entering");
 		this.listBoxCustomerEmails.getItems().clear();
-		if (customerEmailDetails != null) {
-			for (CustomerEMail customerEMail : customerEmailDetails) {
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(customerEMail.getLovDescCustCIF());
-				lc.setParent(item);
-				lc = new Listcell(customerEMail.getLovDescCustEMailTypeCode());
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.formateInt(customerEMail.getCustEMailPriority()));
-				lc.setParent(item);
-				lc = new Listcell(customerEMail.getCustEMail());
-				lc.setParent(item);
-				lc = new Listcell(customerEMail.getRecordStatus());
-				lc.setParent(item);
-				lc = new Listcell(PennantJavaUtil.getLabel(customerEMail.getRecordType()));
-				lc.setParent(item);
-				item.setAttribute("data", customerEMail);
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEmailAddressItemDoubleClicked");
-				this.listBoxCustomerEmails.appendChild(item);
-			}
-			setCustomerEmailDetailList(customerEmailDetails);
-		}
+
+		customerEmailInlineEditCtrl.doRenderEmailsList(customerEmailDetails, listBoxCustomerEmailsInlineEdit,
+				this.custCIF.getValue(), isFinanceProcess);
+
 		logger.debug("Leaving");
 	}
 
@@ -5795,11 +6579,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onClick$btnNew_BankInformation(Event event) throws Exception {
 		logger.debug("Entering");
 		CustomerBankInfo custBankInfo = new CustomerBankInfo();
+		Customer customer = getCustomerDetails().getCustomer();
 		custBankInfo.setNewRecord(true);
 		custBankInfo.setWorkflowId(0);
 		custBankInfo.setCustID(getCustomerDetails().getCustID());
-		custBankInfo.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
-		custBankInfo.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+		custBankInfo.setLovDescCustCIF(customer.getCustCIF());
+		custBankInfo.setLovDescCustShrtName(customer.getCustShrtName());
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("customerBankInfo", custBankInfo);
 		map.put("customerDialogCtrl", this);
@@ -5808,6 +6593,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("roleCode", getRole());
 		map.put("CustomerBankInfoList", CustomerBankInfoList);
 		map.put("retailCustomer", StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_INDIV));
+		map.put("fromLoan", fromLoan);
+		map.put("empType", customer.getSubCategory());
+		if (financeMain != null) {
+			map.put("finAmount", financeMain.getFinAmount());
+			map.put("tenor", financeMain.getNumberOfTerms());
+			map.put("finReference", financeMain.getFinReference());
+		} else {
+			map.put("finReference", finReference);
+		}
 		try {
 			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerBankInfoDialog.zul", null,
 					map);
@@ -5828,6 +6622,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				Customer customer = getCustomerDetails().getCustomer();
 				custBankInfo.setLovDescCustCIF(this.custCIF.getValue());
 				custBankInfo.setLovDescCustShrtName(this.custShrtName.getValue());
 				map.put("customerBankInfo", custBankInfo);
@@ -5838,6 +6633,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				map.put("CustomerBankInfoList", CustomerBankInfoList);
 				map.put("retailCustomer",
 						StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_INDIV));
+				map.put("fromLoan", fromLoan);
+				map.put("empType", customer.getSubCategory());
+				if (financeMain != null) {
+					map.put("finAmount", financeMain.getFinAmount());
+					map.put("tenor", financeMain.getNumberOfTerms());
+					map.put("finReference", financeMain.getFinReference());
+				} else {
+					map.put("finReference", finReference);
+				}
 				// call the zul-file with the parameters packed in a map
 				try {
 					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerBankInfoDialog.zul",
@@ -6240,7 +7044,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						PennantAppUtil.amountFormate(totAmt.subtract(finEnquiry.getFinRepaymentAmount()), format));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(finEnquiry.getFinStatus());
+				lc = new Listcell(finEnquiry.getLoanStsDesc());
 				lc.setParent(item);
 				this.listBoxCustomerFinExposure.appendChild(item);
 
@@ -6301,230 +7105,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerIncome(List<CustomerIncome> incomes) {
 		logger.debug("Entering");
 		setIncomeList(incomes);
-		createIncomeGroupList(incomes);
+		incomeAndExpenseCtrl.doRenderIncomeList(incomes, this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+
 		logger.debug("Leaving");
 	}
-
-	private void createIncomeGroupList(List<CustomerIncome> incomes) {
-		if (incomes != null && !incomes.isEmpty()) {
-			BigDecimal totIncome = BigDecimal.ZERO;
-			BigDecimal totExpense = BigDecimal.ZERO;
-			Map<String, List<CustomerIncome>> incomeMap = new HashMap<String, List<CustomerIncome>>();
-			Map<String, List<CustomerIncome>> expenseMap = new HashMap<String, List<CustomerIncome>>();
-			marginDeviation = false;
-			for (CustomerIncome customerIncome : incomes) {
-				String category = StringUtils.trimToEmpty(customerIncome.getCategory());
-
-				if (customerIncome.isMarginDeviation()) {
-					marginDeviation = customerIncome.isMarginDeviation();
-				}
-				if (customerIncome.getIncomeExpense().equals(PennantConstants.INCOME)) {
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerIncome.getRecordType())) {
-						totIncome = totIncome.add(customerIncome.getCalculatedAmount());
-					}
-					if (incomeMap.containsKey(category)) {
-						incomeMap.get(category).add(customerIncome);
-					} else {
-						ArrayList<CustomerIncome> list = new ArrayList<CustomerIncome>();
-						list.add(customerIncome);
-						incomeMap.put(category, list);
-					}
-				} else {
-					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, customerIncome.getRecordType())) {
-						totExpense = totExpense.add(customerIncome.getCalculatedAmount());
-					}
-					if (expenseMap.containsKey(category)) {
-						expenseMap.get(category).add(customerIncome);
-					} else {
-						ArrayList<CustomerIncome> list = new ArrayList<CustomerIncome>();
-						list.add(customerIncome);
-						expenseMap.put(category, list);
-					}
-				}
-			}
-			renderIncomeExpense(incomeMap, totIncome, expenseMap, totExpense, ccyFormatter);
-		}
-	}
-
-	private void renderIncomeExpense(Map<String, List<CustomerIncome>> incomeMap, BigDecimal totIncome,
-			Map<String, List<CustomerIncome>> expenseMap, BigDecimal totExpense, int ccyFormatter) {
-		this.listBoxCustomerIncome.getItems().clear();
-		Listitem item;
-		Listcell cell;
-		Listgroup group;
-		Checkbox cb;
-		if (incomeMap != null) {
-			for (String category : incomeMap.keySet()) {
-				List<CustomerIncome> list = incomeMap.get(category);
-				if (list != null && list.size() > 0) {
-					group = new Listgroup();
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
-					cell.setParent(group);
-					this.listBoxCustomerIncome.appendChild(group);
-					BigDecimal total = BigDecimal.ZERO;
-					for (CustomerIncome customerIncome : list) {
-						item = new Listitem();
-						cell = new Listcell("");
-						cell.setParent(item);
-						cell = new Listcell(customerIncome.getIncomeTypeDesc());
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
-						cell = new Listcell(PennantAppUtil.amountFormate(calculatedAmount, ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						total = total.add(calculatedAmount);
-						/*
-						 * cell = new Listcell(); cb = new Checkbox(); cb.setDisabled(true); cb.setParent(cell);
-						 * cell.setParent(item);
-						 */
-						cell = new Listcell(customerIncome.getRecordType());
-						cell.setParent(item);
-						/*
-						 * cell = new Listcell(PennantJavaUtil.getLabel(customerIncome. getRecordType()));
-						 * cell.setParent(item);
-						 */
-						item.setAttribute("data", customerIncome);
-						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
-						this.listBoxCustomerIncome.appendChild(item);
-					}
-					item = new Listitem();
-					cell = new Listcell("Total");
-					cell.setStyle("font-weight:bold;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(4);
-					cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					this.listBoxCustomerIncome.appendChild(item);
-				}
-			}
-			item = new Listitem();
-			cell = new Listcell("Gross Income");
-			cell.setStyle("font-weight:bold;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totIncome, ccyFormatter));
-			cell.setSpan(4);
-			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			this.listBoxCustomerIncome.appendChild(item);
-		}
-		if (expenseMap != null) {
-			for (String category : expenseMap.keySet()) {
-				List<CustomerIncome> list = expenseMap.get(category);
-				if (list != null) {
-					group = new Listgroup();
-					cell = new Listcell(list.get(0).getIncomeExpense() + "-" + list.get(0).getCategoryDesc());
-					cell.setParent(group);
-					this.listBoxCustomerIncome.appendChild(group);
-					BigDecimal total = BigDecimal.ZERO;
-					for (CustomerIncome customerIncome : list) {
-						item = new Listitem();
-						cell = new Listcell("");
-						cell.setParent(item);
-						cell = new Listcell(customerIncome.getIncomeTypeDesc());
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getMargin(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						cell = new Listcell(PennantAppUtil.amountFormate(customerIncome.getIncome(), ccyFormatter));
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-						BigDecimal calculatedAmount = customerIncome.getCalculatedAmount();
-						cell = new Listcell(PennantAppUtil.amountFormate(calculatedAmount, ccyFormatter));
-						total = total.add(calculatedAmount);
-						cell.setStyle("text-align:right;");
-						cell.setParent(item);
-
-						/*
-						 * cell = new Listcell(); cb = new Checkbox(); cb.setDisabled(true);
-						 * cb.setChecked(customerIncome.isJointCust()); cb.setParent(cell); cell.setParent(item);
-						 */
-						cell = new Listcell(customerIncome.getRecordStatus());
-						cell.setParent(item);
-						/*
-						 * cell = new Listcell(PennantJavaUtil.getLabel(customerIncome. getRecordType()));
-						 * cell.setParent(item);
-						 */
-						item.setAttribute("data", customerIncome);
-						ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerIncomeItemDoubleClicked");
-						this.listBoxCustomerIncome.appendChild(item);
-					}
-					item = new Listitem();
-					cell = new Listcell("Total");
-					cell.setStyle("font-weight:bold;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell(PennantAppUtil.amountFormate(total, ccyFormatter));
-					cell.setSpan(4);
-					cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setSpan(4);
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					cell = new Listcell();
-					cell.setStyle("cursor:default");
-					cell.setParent(item);
-					this.listBoxCustomerIncome.appendChild(item);
-				}
-			}
-			item = new Listitem();
-			cell = new Listcell("Gross Expense");
-			cell.setStyle("font-weight:bold;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell(PennantAppUtil.amountFormate(totExpense, ccyFormatter));
-			cell.setSpan(4);
-			cell.setStyle("font-weight:bold; text-align:right;cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			cell = new Listcell();
-			cell.setSpan(4);
-			cell.setStyle("cursor:default");
-			cell.setParent(item);
-			this.listBoxCustomerIncome.appendChild(item);
-		}
-		item = new Listitem();
-		cell = new Listcell("Net Income");
-		cell.setStyle("font-weight:bold;");
-		cell.setParent(item);
-		cell = new Listcell(PennantAppUtil.amountFormate(totIncome.subtract(totExpense), ccyFormatter));
-		cell.setSpan(4);
-		cell.setStyle("font-weight:bold; text-align:right;");
-		cell.setParent(item);
-		cell = new Listcell();
-		cell.setSpan(4);
-		cell.setStyle("cursor:default");
-		cell.setParent(item);
-		this.listBoxCustomerIncome.appendChild(item);
-	}
-
 	// WorkFlow Components
 
 	/**
@@ -6616,8 +7200,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		String result = null;
 		String response = null;
 		Map<String, Object> mapValues = getCustomerDetails().getExtendedFieldRender().getMapValues();
-		if (mapValues != null && mapValues.get("JsonResponse") != null) {
+		if (mapValues != null && mapValues.containsKey("JsonResponse") && mapValues.get("JsonResponse") != null) {
 			response = (String) mapValues.get("JsonResponse");
+		} else {
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(InterfaceConstants.MODULE_CUSTOMER);
+			tableName.append("_");
+			tableName.append(getCustomerDetails().getCustomer().getCustCtgCode());
+			tableName.append("_ED");
+			response = customerDetailsService.getExternalCibilResponse(getCustomerDetails().getCustomer().getCustCIF(),
+					tableName.toString());
 		}
 		JSONObject json = null;
 
@@ -7160,7 +7752,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
-		this.PdVerificationDialogCtrl = PdVerificationDialogCtrl;
+		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
 
 	}
 
@@ -7192,8 +7784,423 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.primaryAccountService = primaryAccountService;
 	}
 
+	public String getNatOfBusiness() {
+		return natOfBusiness;
+	}
+
+	public void setNatOfBusiness(String natOfBusiness) {
+		this.natOfBusiness = natOfBusiness;
+	}
+
+	public String getEmpType() {
+		return empType;
+	}
+
+	public void setEmpType(String empType) {
+		this.empType = empType;
+	}
+
+	public void onChange$natureOfBusiness(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		String natureOfBusiness = getComboboxValue(this.natureOfBusiness);
+		setNatOfBusiness(natureOfBusiness);
+	}
+
+	public void onChange$entityType(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		String natureOfBusiness = getComboboxValue(this.entityType);
+		setNatOfBusiness(natureOfBusiness);
+	}
+
+	public void onFulfillIncomeAmount(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Object[] object = (Object[]) event.getData();
+		Listcell calculatedAmtCell = (Listcell) object[0];
+		Listcell marginCell = (Listcell) object[1];
+		// getting the margin from marginCell
+		Decimalbox margin = (Decimalbox) marginCell.getChildren().get(0).getLastChild();
+		// getting the income from marginCell
+		CurrencyBox incomeBox = (CurrencyBox) event.getOrigin().getTarget();
+
+		BigDecimal calculatedAmt = incomeAndExpenseCtrl.getCalculatedAmount(margin.getValue(),
+				incomeBox.getActualValue());
+
+		calculatedAmtCell.setLabel(String.valueOf(calculatedAmt));
+		updateIncomeValue();
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChangeMargin(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Object[] object = (Object[]) event.getData();
+		Listcell calculatedAmtCell = (Listcell) object[0];
+		Listcell incomeCell = (Listcell) object[1];
+
+		Decimalbox margin = (Decimalbox) event.getOrigin().getTarget();
+		CurrencyBox income = (CurrencyBox) incomeCell.getChildren().get(0);
+
+		BigDecimal calculatedAmt = incomeAndExpenseCtrl.getCalculatedAmount(margin.getValue(), income.getActualValue());
+
+		calculatedAmtCell.setLabel(String.valueOf(calculatedAmt));
+		updateIncomeValue();
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfillCustIncomeType(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+
+		Object[] object = (Object[]) event.getData();
+		Listcell calculatedAmtCell = (Listcell) object[0];
+		Listcell marginCell = (Listcell) object[1];
+		Decimalbox margin = (Decimalbox) marginCell.getChildren().get(0).getLastChild();
+		ExtendedCombobox extendedCombobox = (ExtendedCombobox) event.getOrigin().getTarget();
+		if (extendedCombobox.getObject() != null) {
+			IncomeType incomeType = (IncomeType) extendedCombobox.getObject();
+			calculatedAmtCell.setLabel(incomeType.getIncomeExpense());
+			//setting the margin value from income type
+			margin.setValue(PennantApplicationUtil.formateAmount(incomeType.getMargin(), ccyFormatter));
+			Events.postEvent("onChange", margin, null);
+			extendedCombobox.setErrorMessage("");
+		} else {
+			calculatedAmtCell.setLabel("");
+		}
+		updateIncomeValue();
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClickFinancialButtonDelete(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Listitem item = (Listitem) event.getData();
+		incomeAndExpenseCtrl.doDelete(this.listBoxCustomerIncomeInLineEdit, item, ccyFormatter, isFinanceProcess);
+		updateIncomeValue();
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$subCategory(Event event) {
+
+		/*
+		 * String employmentType = getComboboxValue(this.subCategory); setEmpType(employmentType); if
+		 * (financeMainDialogCtrl != null && financeMainDialogCtrl instanceof FinanceMainBaseCtrl) { FinanceMainBaseCtrl
+		 * financeMainBaseCtrl = (FinanceMainBaseCtrl) financeMainDialogCtrl;
+		 * financeMainBaseCtrl.appendCreditReviewDetailSummaryTab(true); }
+		 * 
+		 */
+		onChangeEmploymentType();
+	}
+
+	private void onChangeEmploymentType() {
+		if (PennantConstants.EMPLOYMENTTYPE_NONWORKING.equals(subCategory.getValue())) {
+			this.natureOfBusiness.setValue(Labels.getLabel("Combo.Select"));
+			this.custIndustry.setValue("");
+			this.custIndustry.setMandatoryStyle(false);
+			this.custSegment.setValue("");
+			this.custSegment.setMandatoryStyle(false);
+			this.custSubSegment.setValue("");
+			this.custSector.setValue("");
+			this.custSector.setMandatoryStyle(false);
+			this.custSubSector.setValue("");
+			this.custIsStaff.setValue("");
+			this.custStaffID.setValue("");
+		} else {
+			fillComboBox(this.natureOfBusiness, customerDetails.getCustomer().getNatureOfBusiness(),
+					PennantStaticListUtil.getNatureofBusinessList(), "");
+			this.custIndustry.setValue(customerDetails.getCustomer().getCustIndustry());
+			this.custIndustry.setDescription(customerDetails.getCustomer().getLovDescCustIndustryName());
+			this.custIndustry.setMandatoryStyle(true);
+			this.custSegment.setValue(customerDetails.getCustomer().getCustSegment());
+			this.custSegment.setDescription(customerDetails.getCustomer().getLovDescCustSegmentName());
+			this.custSegment.setMandatoryStyle(false);
+			this.custSubSegment.setValue(customerDetails.getCustomer().getCustSubSegment());
+			this.custSector.setValue(customerDetails.getCustomer().getCustSector());
+			this.custSector
+					.setDescription(StringUtils.trimToEmpty(customerDetails.getCustomer().getLovDescCustSectorName()));
+			this.custSector.setMandatoryStyle(true);
+			if (!StringUtils.isEmpty(this.custSector.getValue())) {
+				this.custSubSector.setValue(customerDetails.getCustomer().getCustSubSector());
+				this.custSubSector.setDescription((customerDetails.getCustomer().getLovDescCustSubSectorName()));
+			}
+			this.custIsStaff.setValue(customerDetails.getCustomer().isCustIsStaff());
+			this.custStaffID.setValue(customerDetails.getCustomer().getCustStaffID());
+		}
+	}
+
+	public HashMap<String, Object> getExtendedFieldDetails() {
+		HashMap<String, Object> extFieldDetails = new HashMap<>();
+
+		if (extendedFieldCtrl != null) {
+			Window window = extendedFieldCtrl.getWindow();
+
+			Textbox employerName = null;
+			String empName = "";
+			try {
+				if (window != null && window.getFellow("ad_EMPLOYERNAME") instanceof Textbox) {
+					employerName = (Textbox) window.getFellow("ad_EMPLOYERNAME");
+					if (employerName != null) {
+						empName = employerName.getValue();
+					}
+				}
+			} catch (Exception e) {
+				logger.debug(Literal.EXCEPTION, e);
+			}
+			extFieldDetails.put("empName", empName);
+		}
+		return extFieldDetails;
+	}
+
+	public void onClickPhoneNumberButtonDelete(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Listitem item = (Listitem) event.getData();
+		customerPhoneNumberInLineEditCtrl.doDelete(this.listBoxCustomerPhoneNumbersInlineEdit, item, isFinanceProcess);
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void setIncomeAndExpenseCtrl(IncomeAndExpenseCtrl incomeAndExpenseCtrl) {
+		this.incomeAndExpenseCtrl = incomeAndExpenseCtrl;
+	}
+
+	/**
+	 * This method will valiate the duplicate income and expense types
+	 * 
+	 * @param customerIncomes
+	 */
+	private boolean validateIncomeTypes(List<CustomerIncome> customerIncomes) {
+		final Set<String> incometypes = new HashSet<String>();
+		if (CollectionUtils.isNotEmpty(customerIncomes)) {
+			for (CustomerIncome customerIncome : customerIncomes) {
+				//skipping the delete or cancel records
+				if (!PennantConstants.RECORD_TYPE_CAN.equals(customerIncome.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_DEL.equals(customerIncome.getRecordType())) {
+					String incomeExpense = StringUtils.trimToEmpty(customerIncome.getIncomeExpense());
+					String category = StringUtils.trimToEmpty(customerIncome.getCategory());
+					String incomeType = StringUtils.trimToEmpty(customerIncome.getIncomeType());
+					String key = new StringBuffer(incomeExpense).append(category).append(incomeType).toString();
+					if (!incometypes.add(key)) {
+						String errormsg = Labels.getLabel("label_IncomeTypeDialog_IncomeExpense.value") + ": "
+								+ incomeExpense + ", " + Labels.getLabel("label_IncomeTypeDialog_Category.value") + ": "
+								+ category + ", " + Labels.getLabel("label_IncomeTypeDialog_IncomeTypeCode.value")
+								+ ": " + incomeType + " " + Labels.getLabel("label_IncomeType_Error");
+						MessageUtil.showError(errormsg);
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * This method will validate the duplicate PhoneNumber types
+	 * 
+	 * @param customerPhoneNumbers
+	 */
+	private boolean validatePhoneTypes(List<CustomerPhoneNumber> customerPhoneNumbers) {
+		final Set<String> phoneTypes = new HashSet<String>();
+		int count = 0;
+		if (CollectionUtils.isNotEmpty(customerPhoneNumbers)) {
+			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
+				//skipping the delete or cancel records
+				if (!PennantConstants.RECORD_TYPE_CAN.equals(customerPhoneNumber.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_DEL.equals(customerPhoneNumber.getRecordType())) {
+					String phoneType = StringUtils.trimToEmpty(customerPhoneNumber.getLovDescPhoneTypeCodeName());
+					String key = new StringBuffer(phoneType).toString();
+					//validating phone types
+					if (!phoneTypes.add(key)) {
+						String errormsg = Labels.getLabel("label_CustomerPhoneNumberDialog_PhoneTypeCode.value") + ": "
+								+ phoneType + " " + Labels.getLabel("label_IncomeType_Error");
+						MessageUtil.showError(errormsg);
+						return false;
+					}
+					//allowing only one veryHigh priority
+					if (customerPhoneNumber.getPhoneTypePriority() == Integer
+							.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						count += 1;
+					}
+					if (count > 1) {
+						String errormsg = Labels.getLabel("label_CustomerPhoneNumberDialog_CustPhonePriority.value")
+								+ ": " + Labels.getLabel("label_EmailPriority_VeryHigh") + " "
+								+ Labels.getLabel("label_IncomeType_Error") + ": "
+								+ Labels.getLabel("label_Type_MOBILE");
+						MessageUtil.showError(errormsg);
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	public void onFulfillCustPhoneType(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Object[] object = (Object[]) event.getData();
+		Listcell phoneNumberCell = (Listcell) object[0];
+		Textbox phoneNumber = (Textbox) phoneNumberCell.getChildren().get(0).getLastChild();
+		ExtendedCombobox extendedCombobox = (ExtendedCombobox) event.getOrigin().getTarget();
+		if (extendedCombobox.getObject() != null) {
+			PhoneType phoneType = (PhoneType) extendedCombobox.getObject();
+			extendedCombobox.setAttribute("regex", phoneType.getPhoneTypeRegex());
+			int setFieldLength = customerPhoneNumberInLineEditCtrl.dosetFieldLength(phoneType.getPhoneTypeRegex());
+			phoneNumber.setMaxlength(setFieldLength);
+			phoneNumber.setValue("");
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * This method will validate the duplicate Email types
+	 * 
+	 * @param customerEMails
+	 */
+	private boolean validateEmailTypes(List<CustomerEMail> customerEMails) {
+		final Set<String> emailTypes = new HashSet<String>();
+		int count = 0;
+		if (CollectionUtils.isNotEmpty(customerEMails)) {
+			for (CustomerEMail customerEMail : customerEMails) {
+				//skipping the delete or cancel records
+				if (!PennantConstants.RECORD_TYPE_CAN.equals(customerEMail.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_DEL.equals(customerEMail.getRecordType())) {
+					String emailType = StringUtils.trimToEmpty(customerEMail.getLovDescCustEMailTypeCode());
+					String key = new StringBuffer(emailType).toString();
+					//validating Email types
+					if (!emailTypes.add(key)) {
+						String errormsg = Labels.getLabel("listheader_CustEMailTypeCode.label") + ": " + emailType + " "
+								+ Labels.getLabel("label_IncomeType_Error");
+						MessageUtil.showError(errormsg);
+						return false;
+					}
+					//allowing only one veryHigh priority
+					if (customerEMail.getCustEMailPriority() == Integer
+							.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						count += 1;
+					}
+					if (count > 1) {
+						String errormsg = Labels.getLabel("listheader_CustEMailPriority.label") + ": "
+								+ Labels.getLabel("label_EmailPriority_VeryHigh") + " "
+								+ Labels.getLabel("label_IncomeType_Error") + ": "
+								+ Labels.getLabel("label_Type_EMAIL");
+						MessageUtil.showError(errormsg);
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	public void onClickEmailButtonDelete(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Listitem item = (Listitem) event.getData();
+		customerEmailInlineEditCtrl.doDelete(this.listBoxCustomerEmailsInlineEdit, item, isFinanceProcess);
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * when the "Upload" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 * @throws ParseException
+	 * @throws CustomerNotFoundException
+	 */
+	public void onClick$btnUploadExternalLiability(Event event) throws InterruptedException, ParseException {
+		logger.debug(Literal.ENTERING + event.toString());
+		try {
+			HashMap<String, Object> aruments = new HashMap<>();
+			aruments.put("moduleCode", moduleCode);
+			aruments.put("enqiryModule", enqiryModule);
+			aruments.put("custId", getCustomerDetails().getCustID());
+			aruments.put("customerDialogCtrl", this);
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerExtLiabilityUploadDialog.zul",
+					null, aruments);
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	/**
+	 * when the "Upload" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 * @throws ParseException
+	 * @throws CustomerNotFoundException
+	 */
+	public void onClick$btnDownloadExternalLiability(Event event) throws InterruptedException, ParseException {
+		logger.debug(Literal.ENTERING + event.toString());
+		try {
+			customerExtLiabilityUploadDialogCtrl.downloadExternalLiability(getCustomerExtLiabilityDetailList());
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	//PSD#157199 Customer Dialog rights are deallocating when creating new co-applicant in loan
+	//New method created to allocate rights again.
+	private void reallocateRights(String rightName) {
+
+		if (isFinanceProcess && StringUtils.isNotBlank(rightName)
+				&& !getUserWorkspace().getGrantedAuthoritySet().contains(rightName)
+				&& StringUtils.isNotBlank(getRole())) {
+			getUserWorkspace().allocateRoleAuthorities(getRole(), "CustomerDialog");
+		}
+	}
+
+	public void setCustomerPhoneNumberInLineEditCtrl(
+			CustomerPhoneNumberInLineEditCtrl customerPhoneNumberInLineEditCtrl) {
+		this.customerPhoneNumberInLineEditCtrl = customerPhoneNumberInLineEditCtrl;
+	}
+
+	public void setCustomerEmailInlineEditCtrl(CustomerEmailInlineEditCtrl customerEmailInlineEdit) {
+		this.customerEmailInlineEditCtrl = customerEmailInlineEdit;
+	}
+
+	public CustTypePANMappingService getCustTypePANMappingService() {
+		return custTypePANMappingService;
+	}
+
+	public void setCustTypePANMappingService(CustTypePANMappingService custTypePANMappingService) {
+		this.custTypePANMappingService = custTypePANMappingService;
+	}
+
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
+	}
+
+	public ExtendedFieldRender getExtendedDetails() throws ParseException {
+		return extendedFieldCtrl.save(true);
+	}
+
+	public ExtendedFieldCtrl getExtendedFieldCtrl() {
+		return extendedFieldCtrl;
+	}
+
+	public void setExtendedFieldCtrl(ExtendedFieldCtrl extendedFieldCtrl) {
+		this.extendedFieldCtrl = extendedFieldCtrl;
+	}
+
+	public String getSubCategory() {
+		if (this.subCategory.isVisible()) {
+			return getComboboxValue(this.subCategory);
+		}
+		return "";
+	}
+
+	public MasterDefDAO getMasterDefDAO() {
+		return masterDefDAO;
+	}
+
+	public void setMasterDefDAO(MasterDefDAO masterDefDAO) {
+		this.masterDefDAO = masterDefDAO;
+	}
+
+	public CustomerExtLiabilityUploadDialogCtrl getCustomerExtLiabilityUploadDialogCtrl() {
+		return customerExtLiabilityUploadDialogCtrl;
+	}
+
+	public void setCustomerExtLiabilityUploadDialogCtrl(
+			CustomerExtLiabilityUploadDialogCtrl customerExtLiabilityUploadDialogCtrl) {
+		this.customerExtLiabilityUploadDialogCtrl = customerExtLiabilityUploadDialogCtrl;
 	}
 
 }

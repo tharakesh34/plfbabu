@@ -1,12 +1,12 @@
 package com.pennant.webui.applicationmaster.assignment;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -40,7 +40,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(AssignmentRateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AssignmentRateDialogCtrl.class);
 
 	protected Window window_AssignmentRateDialog;
 	protected Textbox assignmentId;
@@ -312,15 +312,15 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 		this.effectiveDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.mclrRate.setMaxlength(13);
 		this.mclrRate.setFormat(PennantConstants.rateFormate9);
-		this.mclrRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.mclrRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.mclrRate.setScale(9);
 		this.bankSpreadRate.setMaxlength(13);
 		this.bankSpreadRate.setFormat(PennantConstants.rateFormate9);
-		this.bankSpreadRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.bankSpreadRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.bankSpreadRate.setScale(9);
 		this.opexRate.setMaxlength(13);
 		this.opexRate.setFormat(PennantConstants.rateFormate9);
-		this.opexRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.opexRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.opexRate.setScale(9);
 		this.resetFrequency.setMaxlength(50);
 		logger.debug(Literal.LEAVING);

@@ -50,7 +50,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
@@ -66,6 +67,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -77,7 +79,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
@@ -113,7 +114,7 @@ import com.rits.cloning.Cloner;
 
 public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
-	private static final Logger logger = Logger.getLogger(CovenantsListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantsListCtrl.class);
 
 	protected Window covenantListWindow;
 	protected Button btnNew_NewFinCovenantType;
@@ -146,6 +147,8 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private transient FinCovenantMaintanceService finCovenantMaintanceService;
 	private String module;
+	protected boolean disbEnquiry = false;
+	protected Combobox enquiryCombobox;
 
 	//File Upload functionality in Covenants
 	protected Textbox fileName;
@@ -249,6 +252,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (isWorkFlowEnabled()) {
 					this.userAction = setListRecordStatus(this.userAction);
 					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, this.pageRightName);
+					this.btnNotes.setVisible(true);
 				} else {
 					this.south.setHeight("0px");
 				}
@@ -269,6 +273,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
+			if (arguments.containsKey("disbEnquiry")) {
+				disbEnquiry = (boolean) arguments.get("disbEnquiry");
+			}
+
+			enquiryCombobox = (Combobox) arguments.get("enuiryCombobox");
+
 			doEdit();
 
 			doCheckRights();
@@ -342,6 +352,9 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
+			if (finMaintainInstruction != null && StringUtils.isNotBlank(finMaintainInstruction.getRecordType())) {
+				this.btnNotes.setVisible(true);
+			}
 
 			this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 		} else {
@@ -382,6 +395,11 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (parent != null) {
 					this.covenantListWindow.setHeight(borderLayoutHeight - 75 + "px");
 					parent.appendChild(this.covenantListWindow);
+				} else if (disbEnquiry) {
+					north.setVisible(true);
+					this.btnSave.setVisible(false);
+					appendFinBasicDetails();
+					setDialog(DialogType.MODAL);
 				} else {
 					setDialog(DialogType.EMBEDDED);
 				}
@@ -398,6 +416,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
+	 * @param commodityHeader
 	 * 
 	 */
 	public void doWriteBeanToComponents() {
@@ -656,6 +675,15 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
+	}
+
+	public void onClick$btnNotes(Event event) throws Exception {
+		doShowNotes(this.financedetail.getFinScheduleData().getFinanceMain());
+	}
+
+	@Override
+	public String getReference() {
+		return this.financedetail.getFinScheduleData().getFinanceMain().getFinReference();
 	}
 
 	private void doSave() {
@@ -1001,7 +1029,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
-		doClose(this.btnSave.isVisible());
+		if (disbEnquiry && enquiryCombobox != null) {
+			this.enquiryCombobox.setSelectedIndex(0);
+			this.covenantListWindow.onClose();
+		} else {
+			doClose(this.btnSave.isVisible());
+		}
 	}
 
 	public void onClick$btnImport(Event event) throws InterruptedException {

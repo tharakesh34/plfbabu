@@ -48,7 +48,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -82,7 +83,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceReferenceDetail>
 		implements FinanceReferenceDetailService {
-	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceReferenceDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceWorkFlowDAO financeWorkFlowDAO;
@@ -191,6 +192,8 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TCDView"));
 			financeReference.setBlackListDedupeList(
 					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TBDView"));
+			financeReference.setPoliceDedupeList(
+					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TPCView"));
 			financeReference.setReturnChequeList(
 					getFinanceReferenceDetailDAO().getFinanceReferenceDetail(finType, finEvent, "", "_TRCView"));
 			financeReference.setLimitCodeDetailList(
@@ -716,7 +719,7 @@ public class FinanceReferenceDetailServiceImpl extends GenericService<FinanceRef
 	}
 
 	@Override
-	public String getAllowedRolesByCode(String finType, int finRefType, String collValCode) {
-		return financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, collValCode);
+	public String getAllowedRolesByCode(String finType, int finRefType, String collValCode, String finEvent) {
+		return financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, collValCode, finEvent);
 	}
 }

@@ -211,7 +211,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	 */
 	public long save(WorkFlowDetails workFlowDetails) {
 		logger.debug("Entering + save()");
-		long workFlowId = getNextId("SeqWorkFlowDetails");
+		long workFlowId = getNextValue("SeqWorkFlowDetails");
 		workFlowDetails.setId(workFlowId);
 		String insertSql = "insert into WorkFlowDetails (WorkFlowId, WorkFlowType, "
 				+ " WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles,"
@@ -238,8 +238,6 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 
 	// Adding new private methods :
 	private WorkFlowDetails loadWorkFlowDetails(long id) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" WorkflowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles");
 		sql.append(", FirstTaskOwner, WorkFlowActive, Version, LastMntBy, LastMntOn, JsonDesign");
@@ -249,33 +247,28 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<WorkFlowDetails>() {
-						@Override
-						public WorkFlowDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-							WorkFlowDetails wfd = new WorkFlowDetails();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				WorkFlowDetails wfd = new WorkFlowDetails();
 
-							wfd.setWorkflowId(rs.getLong("WorkflowId"));
-							wfd.setWorkFlowType(rs.getString("WorkFlowType"));
-							wfd.setWorkFlowSubType(rs.getString("WorkFlowSubType"));
-							wfd.setWorkFlowDesc(rs.getString("WorkFlowDesc"));
-							wfd.setWorkFlowXml(rs.getString("WorkFlowXml"));
-							wfd.setWorkFlowRoles(rs.getString("WorkFlowRoles"));
-							wfd.setFirstTaskOwner(rs.getString("FirstTaskOwner"));
-							wfd.setWorkFlowActive(rs.getBoolean("WorkFlowActive"));
-							wfd.setVersion(rs.getInt("Version"));
-							wfd.setLastMntBy(rs.getLong("LastMntBy"));
-							wfd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							wfd.setJsonDesign(rs.getString("JsonDesign"));
+				wfd.setWorkflowId(rs.getLong("WorkflowId"));
+				wfd.setWorkFlowType(rs.getString("WorkFlowType"));
+				wfd.setWorkFlowSubType(rs.getString("WorkFlowSubType"));
+				wfd.setWorkFlowDesc(rs.getString("WorkFlowDesc"));
+				wfd.setWorkFlowXml(rs.getString("WorkFlowXml"));
+				wfd.setWorkFlowRoles(rs.getString("WorkFlowRoles"));
+				wfd.setFirstTaskOwner(rs.getString("FirstTaskOwner"));
+				wfd.setWorkFlowActive(rs.getBoolean("WorkFlowActive"));
+				wfd.setVersion(rs.getInt("Version"));
+				wfd.setLastMntBy(rs.getLong("LastMntBy"));
+				wfd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				wfd.setJsonDesign(rs.getString("JsonDesign"));
 
-							return wfd;
-						}
-					});
+				return wfd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("WorkFlow Details not found in WorkFlowDetails table for the specified WorkFlowId >> {}", id);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -297,7 +290,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		logger.debug("selectListSql: " + selectListSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		try {
-			rowCount = this.jdbcTemplate.queryForLong(selectListSql, beanParameters);
+			rowCount = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Long.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			workFlowDetails = null;
@@ -316,7 +309,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		logger.debug("selectListSql: " + selectListSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		try {
-			version = this.jdbcTemplate.queryForInt(selectListSql, beanParameters);
+			version = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			workFlowDetails = null;
@@ -340,7 +333,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		boolean result = false;
 		try {
-			int rowCount = this.jdbcTemplate.queryForInt(selectListSql, beanParameters);
+			int rowCount = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Integer.class);
 			if (rowCount > 0) {
 				result = true;
 			}

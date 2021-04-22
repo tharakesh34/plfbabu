@@ -92,12 +92,14 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	private String lovDescCustShrtName;
 	private String lovDescCustRecordType;
 	private String lovDescCustCIF;
+	private String lovDescEmpCategory;
 
 	private String sourceId;
 
 	private CustomerEmploymentDetail befImage;
 	private LoggedInUser userDetails;
 	private String companyName;
+	private String lovDescEmpIndustry;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -116,6 +118,7 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("returnStatus");
 		excludeFields.add("sourceId");
+		excludeFields.add("lovDescEmpIndustry");
 		return excludeFields;
 	}
 
@@ -310,6 +313,22 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
+	}
+
+	public String getLovDescEmpIndustry() {
+		return lovDescEmpIndustry;
+	}
+
+	public void setLovDescEmpIndustry(String lovDescEmpIndustry) {
+		this.lovDescEmpIndustry = lovDescEmpIndustry;
+	}
+
+	public String getLovDescEmpCategory() {
+		return lovDescEmpCategory;
+	}
+
+	public void setLovDescEmpCategory(String lovDescEmpCategory) {
+		this.lovDescEmpCategory = lovDescEmpCategory;
 	}
 
 }

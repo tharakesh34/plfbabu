@@ -59,6 +59,9 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal priSP = BigDecimal.ZERO;
 	private BigDecimal rpPft = BigDecimal.ZERO;
 	private BigDecimal rpPftPr = BigDecimal.ZERO;
+	private BigDecimal priPr = BigDecimal.ZERO;
+	private BigDecimal priSPr = BigDecimal.ZERO;
+
 	private BigDecimal rpTds = BigDecimal.ZERO;
 	private BigDecimal pftDuePaid = BigDecimal.ZERO;
 	private BigDecimal priDuePaid = BigDecimal.ZERO;
@@ -79,9 +82,12 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal instcpz = BigDecimal.ZERO;
 	private BigDecimal insttot = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
+	private BigDecimal rebate = BigDecimal.ZERO;
 	private BigDecimal insRefund = BigDecimal.ZERO;
 	private BigDecimal InsPay = BigDecimal.ZERO;
 	private BigDecimal schFeePay = BigDecimal.ZERO;
+	private BigDecimal suplRentPay = BigDecimal.ZERO;
+	private BigDecimal incrCostPay = BigDecimal.ZERO;
 	private BigDecimal woPayAmt = BigDecimal.ZERO;
 	private int ODDays = 0;
 	private int daysFromFullyPaid = 0;
@@ -102,6 +108,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal accrueTsfd = BigDecimal.ZERO;
 	private BigDecimal prvAccrueTsfd = BigDecimal.ZERO;
+	private BigDecimal penaltyAccr = BigDecimal.ZERO;
 
 	private BigDecimal totalWriteoff = BigDecimal.ZERO;
 	private BigDecimal excessBal = BigDecimal.ZERO;
@@ -139,7 +146,7 @@ public class AEAmountCodes implements Serializable {
 	// For Disbursement Instructions used in SUBHEAD
 	private String partnerBankAcType;
 	private String partnerBankAc;
-	//For GL code
+	// For GL code
 	private String productCode;
 	private String dealerCode;
 
@@ -193,7 +200,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal disbSvnAmount = BigDecimal.ZERO;
 	private BigDecimal subVentionAmount = BigDecimal.ZERO;
 
-	//Assignments
+	// Assignments
 	private BigDecimal assignmentPerc = BigDecimal.ZERO;
 	private BigDecimal assignPriAmount = BigDecimal.ZERO;
 	private BigDecimal assignPftAmount = BigDecimal.ZERO;
@@ -205,11 +212,12 @@ public class AEAmountCodes implements Serializable {
 
 	private BigDecimal ppAmount = BigDecimal.ZERO;
 
-	//Additional Fields Added in AmountCodes
+	// Additional Fields Added in AmountCodes
 	private String businessvertical = "";
 	private boolean alwflexi = false;
 	private String finbranch = "";
 	private String entitycode = "";
+	private String receiptChannel = "";
 
 	// Advance EMI/Interest changes
 	private boolean intAdv = false;
@@ -229,38 +237,223 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal instPriChg = BigDecimal.ZERO;
 	private BigDecimal pastCpzChg = BigDecimal.ZERO;
 
-	//OEM Subvention amount code
+	// OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
+	private BigDecimal advInst = BigDecimal.ZERO;
+	private BigDecimal prvMthAcr = BigDecimal.ZERO;
+
+	private BigDecimal vasInstAmt = BigDecimal.ZERO;
+	private BigDecimal manualTds = BigDecimal.ZERO;
+
+	private boolean isWriteOff = false;
+	private BigDecimal prvMntAmz = BigDecimal.ZERO;
+
+	//Od Details 
+	private BigDecimal odPri = BigDecimal.ZERO;
+	private BigDecimal odPft = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 		super();
 	}
 
 	public Map<String, Object> getDeclaredFieldValues() {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
+
 		getDeclaredFieldValues(map);
 
 		return map;
 	}
 
 	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> map) {
-
-		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
-			try {
-				//"ae_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				map.put("ae_" + this.getClass().getDeclaredFields()[i].getName(),
-						this.getClass().getDeclaredFields()[i].get(this));
-			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				// Nothing TO DO
-			}
-		}
+		map.put("ae_finType", this.finType);
+		map.put("ae_accrue", this.accrue);
+		map.put("ae_dAccrue", this.dAccrue);
+		map.put("ae_accrueBal", this.accrueBal);
+		map.put("ae_accrueS", this.accrueS);
+		map.put("ae_dAccrueS", this.dAccrueS);
+		map.put("ae_amz", this.amz);
+		map.put("ae_dAmz", this.dAmz);
+		map.put("ae_dAmzPr", this.dAmzPr);
+		map.put("ae_amzBal", this.amzBal);
+		map.put("ae_uAmz", this.uAmz);
+		map.put("ae_uLpi", this.uLpi);
+		map.put("ae_amzNRM", this.amzNRM);
+		map.put("ae_dAmzNRM", this.dAmzNRM);
+		map.put("ae_amzPD", this.amzPD);
+		map.put("ae_dAmzPD", this.dAmzPD);
+		map.put("ae_amzS", this.amzS);
+		map.put("ae_dAmzS", this.dAmzS);
+		map.put("ae_disburse", this.disburse);
+		map.put("ae_downpay", this.downpay);
+		map.put("ae_advanceEMI", this.advanceEMI);
+		map.put("ae_pft", this.pft);
+		map.put("ae_pftAB", this.pftAB);
+		map.put("ae_pftAP", this.pftAP);
+		map.put("ae_cpzChg", this.cpzChg);
+		map.put("ae_cpzTot", this.cpzTot);
+		map.put("ae_cpzPrv", this.cpzPrv);
+		map.put("ae_cpzCur", this.cpzCur);
+		map.put("ae_cpzNxt", this.cpzNxt);
+		map.put("ae_pftChg", this.pftChg);
+		map.put("ae_pftS", this.pftS);
+		map.put("ae_pftSB", this.pftSB);
+		map.put("ae_pftSP", this.pftSP);
+		map.put("ae_pri", this.pri);
+		map.put("ae_priAB", this.priAB);
+		map.put("ae_priAP", this.priAP);
+		map.put("ae_priS", this.priS);
+		map.put("ae_priSB", this.priSB);
+		map.put("ae_priSP", this.priSP);
+		map.put("ae_rpPft", this.rpPft);
+		map.put("ae_rpPftPr", this.rpPftPr);
+		map.put("ae_priPr", this.priPr);
+		map.put("ae_priSPr", this.priSPr);
+		map.put("ae_rpTds", this.rpTds);
+		map.put("ae_pftDuePaid", this.pftDuePaid);
+		map.put("ae_priDuePaid", this.priDuePaid);
+		map.put("ae_accruedPaid", this.accruedPaid);
+		map.put("ae_unAccruedPaid", this.unAccruedPaid);
+		map.put("ae_futurePriPaid", this.futurePriPaid);
+		map.put("ae_lastSchPftPaid", this.lastSchPftPaid);
+		map.put("ae_lastSchPftWaived", this.lastSchPftWaived);
+		map.put("ae_rpPri", this.rpPri);
+		map.put("ae_rpTot", this.rpTot);
+		map.put("ae_rpTotPr", this.rpTotPr);
+		map.put("ae_instpft", this.instpft);
+		map.put("ae_instpftPr", this.instpftPr);
+		map.put("ae_instTds", this.instTds);
+		map.put("ae_instpri", this.instpri);
+		map.put("ae_instpriPr", this.instpriPr);
+		map.put("ae_instcpz", this.instcpz);
+		map.put("ae_insttot", this.insttot);
+		map.put("ae_refund", this.refund);
+		map.put("ae_rebate", this.rebate);
+		map.put("ae_insRefund", this.insRefund);
+		map.put("ae_InsPay", this.InsPay);
+		map.put("ae_schFeePay", this.schFeePay);
+		map.put("ae_suplRentPay", this.suplRentPay);
+		map.put("ae_incrCostPay", this.incrCostPay);
+		map.put("ae_woPayAmt", this.woPayAmt);
+		map.put("ae_ODDays", this.ODDays);
+		map.put("ae_daysFromFullyPaid", this.daysFromFullyPaid);
+		map.put("ae_ODInst", this.ODInst);
+		map.put("ae_paidInst", this.paidInst);
+		map.put("ae_provAmt", this.provAmt);
+		map.put("ae_provDue", this.provDue);
+		map.put("ae_suspNow", this.suspNow);
+		map.put("ae_suspRls", this.suspRls);
+		map.put("ae_penalty", this.penalty);
+		map.put("ae_waiver", this.waiver);
+		map.put("ae_provAsst", this.provAsst);
+		map.put("ae_penaltyPaid", this.penaltyPaid);
+		map.put("ae_penaltyRcv", this.penaltyRcv);
+		map.put("ae_penaltyDue", this.penaltyDue);
+		map.put("ae_penaltyWaived", this.penaltyWaived);
+		map.put("ae_accrueTsfd", this.accrueTsfd);
+		map.put("ae_prvAccrueTsfd", this.prvAccrueTsfd);
+		map.put("ae_penaltyAccr", this.penaltyAccr);
+		map.put("ae_totalWriteoff", this.totalWriteoff);
+		map.put("ae_excessBal", this.excessBal);
+		map.put("ae_toExcessAmt", this.toExcessAmt);
+		map.put("ae_toEmiAdvance", this.toEmiAdvance);
+		map.put("ae_downpayB", this.downpayB);
+		map.put("ae_downpayS", this.downpayS);
+		map.put("ae_FeeChargeAmt", this.FeeChargeAmt);
+		map.put("ae_InsuranceAmt", this.InsuranceAmt);
+		map.put("ae_addFeeToFinance", this.addFeeToFinance);
+		map.put("ae_paidFee", this.paidFee);
+		map.put("ae_bpi", this.bpi);
+		map.put("ae_bpiTds", this.bpiTds);
+		map.put("ae_bpiToAdvInt", this.bpiToAdvInt);
+		map.put("ae_deductFeeDisb", this.deductFeeDisb);
+		map.put("ae_deductInsDisb", this.deductInsDisb);
+		map.put("ae_disbInstAmt", this.disbInstAmt);
+		map.put("ae_priWaived", this.priWaived);
+		map.put("ae_pftWaived", this.pftWaived);
+		map.put("ae_feeWaived", this.feeWaived);
+		map.put("ae_insWaived", this.insWaived);
+		map.put("ae_pftDueWaived", this.pftDueWaived);
+		map.put("ae_priDueWaived", this.priDueWaived);
+		map.put("ae_accrueWaived", this.accrueWaived);
+		map.put("ae_unAccrueWaived", this.unAccrueWaived);
+		map.put("ae_futurePriWaived", this.futurePriWaived);
+		map.put("ae_dueTds", this.dueTds);
+		map.put("ae_lastSchTds", this.lastSchTds);
+		map.put("ae_accruedTds", this.accruedTds);
+		map.put("ae_unAccruedTds", this.unAccruedTds);
+		map.put("ae_partnerBankAcType", this.partnerBankAcType);
+		map.put("ae_partnerBankAc", this.partnerBankAc);
+		map.put("ae_productCode", this.productCode);
+		map.put("ae_dealerCode", this.dealerCode);
+		map.put("ae_lpi", this.lpi);
+		map.put("ae_lpiDue", this.lpiDue);
+		map.put("ae_lpiPaid", this.lpiPaid);
+		map.put("ae_lpiWaived", this.lpiWaived);
+		map.put("ae_dLPIAmz", this.dLPIAmz);
+		map.put("ae_dGSTLPIAmz", this.dGSTLPIAmz);
+		map.put("ae_dLPPAmz", this.dLPPAmz);
+		map.put("ae_dGSTLPPAmz", this.dGSTLPPAmz);
+		map.put("ae_priWriteOff", this.priWriteOff);
+		map.put("ae_pftWriteOff", this.pftWriteOff);
+		map.put("ae_cmtAmt", this.cmtAmt);
+		map.put("ae_chgAmt", this.chgAmt);
+		map.put("ae_cmtAvl", this.cmtAvl);
+		map.put("ae_cmtUAmt", this.cmtUAmt);
+		map.put("ae_cmtUOth", this.cmtUOth);
+		map.put("ae_receiptMode", this.receiptMode);
+		map.put("ae_deductVasDisb", this.deductVasDisb);
+		map.put("ae_addVasToFinance", this.addVasToFinance);
+		map.put("ae_vasFeeWaived", this.vasFeeWaived);
+		map.put("ae_paidVasFee", this.paidVasFee);
+		map.put("ae_refundVasFee", this.refundVasFee);
+		map.put("ae_imdAmount", this.imdAmount);
+		map.put("ae_transfer", this.transfer);
+		map.put("ae_postingType", this.postingType);
+		map.put("ae_userBranch", this.userBranch);
+		map.put("ae_repledge", this.repledge);
+		map.put("ae_repledgeAmt", this.repledgeAmt);
+		map.put("ae_paymentType", this.paymentType);
+		map.put("ae_quickDisb", this.quickDisb);
+		map.put("ae_cashAcExecuted", this.cashAcExecuted);
+		map.put("ae_dSvnAmz", this.dSvnAmz);
+		map.put("ae_disbSvnAmount", this.disbSvnAmount);
+		map.put("ae_subVentionAmount", this.subVentionAmount);
+		map.put("ae_assignmentPerc", this.assignmentPerc);
+		map.put("ae_assignPriAmount", this.assignPriAmount);
+		map.put("ae_assignPftAmount", this.assignPftAmount);
+		map.put("ae_assignODAmount", this.assignODAmount);
+		map.put("ae_assignExcessAmt", this.assignExcessAmt);
+		map.put("ae_assignEMIAdvAmt", this.assignEMIAdvAmt);
+		map.put("ae_assignPartPayment", this.assignPartPayment);
+		map.put("ae_assignPaidPriAmt", this.assignPaidPriAmt);
+		map.put("ae_ppAmount", this.ppAmount);
+		map.put("ae_businessvertical", this.businessvertical);
+		map.put("ae_alwflexi", this.alwflexi);
+		map.put("ae_finbranch", this.finbranch);
+		map.put("ae_entitycode", this.entitycode);
+		map.put("ae_intAdv", this.intAdv);
+		map.put("ae_intAdjusted", this.intAdjusted);
+		map.put("ae_intTdsAdjusted", this.intTdsAdjusted);
+		map.put("ae_emiAdjusted", this.emiAdjusted);
+		map.put("ae_emiTdsAdjusted", this.emiTdsAdjusted);
+		map.put("ae_intDue", this.intDue);
+		map.put("ae_priAdjusted", this.priAdjusted);
+		map.put("ae_emiDue", this.emiDue);
+		map.put("ae_dGapAmz", this.dGapAmz);
+		map.put("ae_svAmount", this.svAmount);
+		map.put("ae_cbAmount", this.cbAmount);
+		map.put("ae_dbdAmount", this.dbdAmount);
+		map.put("ae_instChg", this.instChg);
+		map.put("ae_instIntChg", this.instIntChg);
+		map.put("ae_instPriChg", this.instPriChg);
+		map.put("ae_pastCpzChg", this.pastCpzChg);
+		map.put("ae_oemSbvAmount", this.oemSbvAmount);
+		map.put("ae_advInst", this.advInst);
+		map.put("ae_odPft", this.odPft);
+		map.put("ae_odPri", this.odPri);
 
 		return map;
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public String getFinType() {
 		return finType;
@@ -702,6 +895,14 @@ public class AEAmountCodes implements Serializable {
 		this.refund = refund;
 	}
 
+	public BigDecimal getRebate() {
+		return rebate;
+	}
+
+	public void setRebate(BigDecimal rebate) {
+		this.rebate = rebate;
+	}
+
 	public BigDecimal getInsRefund() {
 		return insRefund;
 	}
@@ -724,6 +925,22 @@ public class AEAmountCodes implements Serializable {
 
 	public void setSchFeePay(BigDecimal schFeePay) {
 		this.schFeePay = schFeePay;
+	}
+
+	public BigDecimal getSuplRentPay() {
+		return suplRentPay;
+	}
+
+	public void setSuplRentPay(BigDecimal suplRentPay) {
+		this.suplRentPay = suplRentPay;
+	}
+
+	public BigDecimal getIncrCostPay() {
+		return incrCostPay;
+	}
+
+	public void setIncrCostPay(BigDecimal incrCostPay) {
+		this.incrCostPay = incrCostPay;
 	}
 
 	public BigDecimal getWoPayAmt() {
@@ -860,6 +1077,14 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPrvAccrueTsfd(BigDecimal prvAccrueTsfd) {
 		this.prvAccrueTsfd = prvAccrueTsfd;
+	}
+
+	public BigDecimal getPenaltyAccr() {
+		return penaltyAccr;
+	}
+
+	public void setPenaltyAccr(BigDecimal penaltyAccr) {
+		this.penaltyAccr = penaltyAccr;
 	}
 
 	public BigDecimal getTotalWriteoff() {
@@ -1646,6 +1871,22 @@ public class AEAmountCodes implements Serializable {
 		this.rpPftPr = rpPftPr;
 	}
 
+	public BigDecimal getPriPr() {
+		return priPr;
+	}
+
+	public void setPriPr(BigDecimal priPr) {
+		this.priPr = priPr;
+	}
+
+	public BigDecimal getPriSPr() {
+		return priSPr;
+	}
+
+	public void setPriSPr(BigDecimal priSPr) {
+		this.priSPr = priSPr;
+	}
+
 	public BigDecimal getRpTotPr() {
 		return rpTotPr;
 	}
@@ -1676,5 +1917,77 @@ public class AEAmountCodes implements Serializable {
 
 	public void setInstpriPr(BigDecimal instpriPr) {
 		this.instpriPr = instpriPr;
+	}
+
+	public BigDecimal getVasInstAmt() {
+		return vasInstAmt;
+	}
+
+	public void setVasInstAmt(BigDecimal vasInstAmt) {
+		this.vasInstAmt = vasInstAmt;
+	}
+
+	public BigDecimal getAdvInst() {
+		return advInst;
+	}
+
+	public void setAdvInst(BigDecimal advInst) {
+		this.advInst = advInst;
+	}
+
+	public BigDecimal getPrvMthAcr() {
+		return prvMthAcr;
+	}
+
+	public void setPrvMthAcr(BigDecimal prvMthAcr) {
+		this.prvMthAcr = prvMthAcr;
+	}
+
+	public BigDecimal getManualTds() {
+		return manualTds;
+	}
+
+	public void setManualTds(BigDecimal manualTds) {
+		this.manualTds = manualTds;
+	}
+
+	public boolean isWriteOff() {
+		return isWriteOff;
+	}
+
+	public void setWriteOff(boolean isWriteOff) {
+		this.isWriteOff = isWriteOff;
+	}
+
+	public BigDecimal getPrvMntAmz() {
+		return prvMntAmz;
+	}
+
+	public void setPrvMntAmz(BigDecimal prvMntAmz) {
+		this.prvMntAmz = prvMntAmz;
+	}
+
+	public BigDecimal getOdPri() {
+		return odPri;
+	}
+
+	public void setOdPri(BigDecimal odPri) {
+		this.odPri = odPri;
+	}
+
+	public BigDecimal getOdPft() {
+		return odPft;
+	}
+
+	public void setOdPft(BigDecimal odPft) {
+		this.odPft = odPft;
+	}
+
+	public String getReceiptChannel() {
+		return receiptChannel;
+	}
+
+	public void setReceiptChannel(String receiptChannel) {
+		this.receiptChannel = receiptChannel;
 	}
 }

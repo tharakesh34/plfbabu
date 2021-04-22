@@ -42,14 +42,15 @@
 */
 package com.pennant.backend.dao.masters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.masters.LocalityDAO;
 import com.pennant.backend.model.masters.Locality;
@@ -64,7 +65,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>Locality</code> with set of CRUD operations.
  */
 public class LocalityDAOImpl extends SequenceDao<Locality> implements LocalityDAO {
-	private static Logger logger = Logger.getLogger(LocalityDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LocalityDAOImpl.class);
 
 	public LocalityDAOImpl() {
 		super();
@@ -94,7 +95,7 @@ public class LocalityDAOImpl extends SequenceDao<Locality> implements LocalityDA
 		locality.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(locality);
-		RowMapper<Locality> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Locality.class);
+		RowMapper<Locality> rowMapper = BeanPropertyRowMapper.newInstance(Locality.class);
 
 		try {
 			locality = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -124,7 +125,7 @@ public class LocalityDAOImpl extends SequenceDao<Locality> implements LocalityDA
 
 		// Get the identity sequence number.
 		if (locality.getId() <= 0) {
-			locality.setId(getNextId("SeqLocality"));
+			locality.setId(getNextValue("SeqLocality"));
 		}
 
 		// Execute the SQL, binding the arguments.

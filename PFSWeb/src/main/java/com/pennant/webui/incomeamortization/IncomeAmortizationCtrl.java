@@ -8,7 +8,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -44,7 +45,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(IncomeAmortizationCtrl.class);
+	private static final Logger logger = LogManager.getLogger(IncomeAmortizationCtrl.class);
 
 	protected Window window_IncomeAmortization;
 	protected Borderlayout borderLayout_IncomeAmortization;
@@ -183,7 +184,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 		logger.debug(Literal.ENTERING);
 
 		// Application Deployment Date and AMZ Month End
-		Date startDate = SysParamUtil.getValueAsDate("APP_DEPLOYMENT_DATE");
+		Date startDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 		Date monthEndDate = DateUtility.getDate(amzMonthEnd, PennantConstants.DBDateFormat);
 
 		if (startDate != null && monthEndDate != null) {
@@ -379,8 +380,8 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	private void prepareMonthEndList() {
 
 		// Application Deployment Date
-		Date startDate = SysParamUtil.getValueAsDate("APP_DEPLOYMENT_DATE");
-		Date appDate = DateUtility.getAppDate();
+		Date startDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
+		Date appDate = SysParamUtil.getAppDate();
 
 		// Allow previous up to one year
 		Date prvYrDate = DateUtility.addYears(appDate, -1);

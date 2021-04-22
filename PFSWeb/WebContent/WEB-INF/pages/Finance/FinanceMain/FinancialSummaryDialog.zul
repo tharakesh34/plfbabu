@@ -3,6 +3,8 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client" xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 
 	<window id="window_financialSummaryDialog" style="border:none;" apply="${financialSummaryDialogCtrl}" width="100%"
@@ -328,65 +330,88 @@
 					</groupbox>
 					<groupbox id="gb_synopsisAndPdDetails" visible="false" style="padding:30px 25px 0px 15px;">
 						<caption id="synopsisAndPdDetails" label="Case Synopsis/PD Details"></caption>
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:none">
-							<rows>
-								<row>
-									<label id="label_discussionElement" value="${c:l('label_FinancialSummaryDailog_DiscussionElement.value')}"
-										style="font-weight:bold;border-bottom: 50px solid" />
-								</row>
-								<row></row>
-								<row></row>
-								<row>
-									<label id="label_customerBackground" value="${c:l('label_FinancialSummaryDailog_CustomerBackground.value')}"
-										style="font-weight:bold;" />
-								</row>
-								<row>
-									<textbox id="customerBackground" maxlength="500" width="1280px" multiline="true" rows="5" />
-								</row>
-								<row></row>
-								<row></row>
-								<row>
-									<label id="label_detailedBusinessProfile" value="${c:l('label_FinancialSummaryDailog_DetailedBusinessProfile.value')}"
-										style="font-weight:bold;" />
-								</row>
-								<row>
-									<textbox id="detailedBusinessProfile" maxlength="500" width="1280px" multiline="true" rows="5" />
-								</row>
-								<row></row>
-								<row></row>
-								<row>
-									<label id="label_detailedofGroupCompanies" value="${c:l('label_FinancialSummaryDailog_DetailedofGroupCompanies.value')}"
-										style="font-weight:bold;" />
-								</row>
-								<row>
-									<textbox id="detailsofGroupCompaniesIfAny" maxlength="500" width="1280px" multiline="true" rows="5" />
-								</row>
-								<row></row>
-								<row></row>
-								<row>
-									<label id="label_pdDetails" value="${c:l('label_FinancialSummaryDailog_PdDetails.value')}" />
-								</row>
-								<row>
-									<textbox id="pdDetails" maxlength="500" width="1280px" multiline="true" rows="5" />
-								</row>
-								<row></row>
-								<row></row>
-								<row>
-									<label id="label_majorProduct" value="${c:l('label_FinancialSummaryDailog_MajorProduct.value')}" />
-								</row>
-								<row>
-									<textbox id="majorProduct" maxlength="1000" width="1280px" multiline="true" rows="5" />
-								</row>
-								<row></row>
-								<row></row>
-								<row>
-									<label id="label_otherRemarks" value="${c:l('label_FinancialSummaryDailog_OtherRemarks.value')}" />
-								</row>
-								<row>
-									<textbox id="otherRemarks" maxlength="500" width="1280px" multiline="true" rows="5" />
-								</row>
-							</rows>
-						</grid>
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_CustomerBackground.value')}"></caption>
+							<hbox>
+								<ptCKeditor id="customerBackground" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
+
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_DetailedBusinessProfile.value')}">
+							</caption>
+							<hbox>
+								<ptCKeditor id="detailedBusinessProfile" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
+
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_DetailedofGroupCompanies.value')}">
+							</caption>
+							<hbox>
+								<ptCKeditor id="detailsofGroupCompaniesIfAny" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
+
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_PdDetails.value')}"></caption>
+							<hbox>
+								<ptCKeditor id="pdDetails" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
+
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_MajorProduct.value')}"></caption>
+							<hbox>
+								<ptCKeditor id="majorProduct" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
+
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_Commentoncollateraldetails.value')}">
+							</caption>
+							<hbox>
+								<ptCKeditor id="cmtOnCollateralDtls" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
+
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_EndUse.value')}"></caption>
+							<hbox>
+								<ptCKeditor id="endUse" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
+
+						<groupbox>
+							<caption label="${c:l('label_FinancialSummaryDailog_OtherRemarks.value')}"></caption>
+							<hbox>
+								<ptCKeditor id="otherRemarks" width="100%" height="300px"
+									customConfigurationsPath="/ptjs/customizedConfig.js"
+									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
+							</hbox>
+							<space />
+						</groupbox>
 					</groupbox>
 					<groupbox id="gb_deviations" visible="false" style="padding:30px 25px 0px 15px;">
 						<caption id="deviations" label="Deviations"></caption>
@@ -641,4 +666,5 @@
 			</center>
 		</borderlayout>
 	</window>
+</zk>
 </zk>

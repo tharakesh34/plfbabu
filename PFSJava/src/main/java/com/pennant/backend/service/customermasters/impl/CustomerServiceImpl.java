@@ -50,8 +50,10 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -81,6 +83,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
@@ -90,7 +93,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CustomerServiceImpl extends GenericService<Customer> implements CustomerService {
 
-	private static final Logger logger = Logger.getLogger(CustomerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerDAO customerDAO;
@@ -616,11 +619,15 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 				valueParm[0] = "firstName";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
 			}
-			if (StringUtils.isBlank(customer.getCustLName())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "lastName";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
+
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_LASTNAME_MANDATORY)) {
+				if (StringUtils.isBlank(customer.getCustLName())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "lastName";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
+				}
 			}
+
 			if (StringUtils.isBlank(customer.getCustSalutationCode())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "salutation";
@@ -715,21 +722,23 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 			}
 		}
 
-		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(DateUtility.getAppDate()) >= 0
+		Date appDate = SysParamUtil.getAppDate();
+		if (customer.getCustDOB() != null && (customer.getCustDOB().compareTo(appDate) >= 0
 				|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
 			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtility.format(appDate, PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
 		List<CustomerEmploymentDetail> customerEmploymentDetailList = customerEmploymentDetailDAO
 				.getCustomerEmploymentDetailsByID(customer.getCustID(), "");
-		if (customerEmploymentDetailList != null) {
+		if (CollectionUtils.isNotEmpty(customerEmploymentDetailList)) {
 			for (CustomerEmploymentDetail custEmpDetails : customerEmploymentDetailList) {
-				if (custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())) {
+				if (custEmpDetails.getCustEmpFrom() != null
+						&& custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "employment startDate:"
 							+ DateUtility.format(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);

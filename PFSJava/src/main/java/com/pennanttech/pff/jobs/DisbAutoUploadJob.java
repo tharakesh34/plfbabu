@@ -1,6 +1,7 @@
 package com.pennanttech.pff.jobs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -14,7 +15,7 @@ import com.pennanttech.pff.disbursement.service.DisbAutoUploadService;
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class DisbAutoUploadJob implements Job {
-	private static final Logger logger = Logger.getLogger(DisbAutoUploadJob.class);
+	private static final Logger logger = LogManager.getLogger(DisbAutoUploadJob.class);
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {

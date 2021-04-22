@@ -4,20 +4,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -25,17 +32,23 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	private static final long serialVersionUID = -5898229156972529248L;
-	private static final Logger logger = Logger.getLogger(SelectLoanClosureEnquiryListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectLoanClosureEnquiryListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWiredd by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_SelectLoanClosureEnquiryList;
+	protected Label windowTitle;
 	protected ExtendedCombobox finReference;
 	protected Button btnProceed;
 	private LoanClosureEnquiryDialogCtrl loanClosureEnquiryDialogCtrl;
 	private String finRefValue;
+	protected Tabbox tabbox;
+	private boolean isModelWindow = false;
+	private transient String moduleType;
+	private boolean isMatured = false;
+	protected Label title;
 
 	/**
 	 * default constructor.<br>
@@ -62,9 +75,19 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		// Set the page level components.
 		setPageComponents(window_SelectLoanClosureEnquiryList);
+
+		if (arguments.containsKey("isModelWindow")) {
+			isModelWindow = (boolean) arguments.get("isModelWindow");
+		}
+
+		if (arguments.containsKey("finReference")) {
+			finRefValue = (String) arguments.get("finReference");
+		}
+
 		try {
 			doCheckRights();
 			doSetFieldProperties();
+			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 		} catch (Exception e) {
 			closeDialog();
 			logger.debug(Literal.EXCEPTION, e);
@@ -87,18 +110,30 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
+		this.moduleType = getArgument("module");
+		if (StringUtils.equals(moduleType, "Matured")) {
+			isMatured = true;
+		}
 		this.finReference.setMandatoryStyle(true);
 		this.finReference.setModuleName("FinanceDetail");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
-		Filter[] filter = new Filter[3];
-		filter[0] = new Filter("FinStartDate", DateUtility.getAppDate(), Filter.OP_LESS_OR_EQUAL);
-		filter[1] = new Filter("MaturityDate", DateUtility.getAppDate(), Filter.OP_GREATER_OR_EQUAL);
-		filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
-		this.finReference.setFilters(filter);
-
+		if (isMatured) {
+			windowTitle.setValue(App.getLabel("window_SelectMaturedLoanClosureEnquiryList.title"));
+			Filter[] filter = new Filter[3];
+			filter[0] = new Filter("FinStartDate", SysParamUtil.getAppDate(), Filter.OP_LESS_OR_EQUAL);
+			filter[1] = new Filter("MaturityDate", SysParamUtil.getAppDate(), Filter.OP_LESS_THAN);
+			filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			this.finReference.setFilters(filter);
+		} else {
+			Filter[] filter = new Filter[3];
+			filter[0] = new Filter("FinStartDate", SysParamUtil.getAppDate(), Filter.OP_LESS_OR_EQUAL);
+			filter[1] = new Filter("MaturityDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_OR_EQUAL);
+			filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+			this.finReference.setFilters(filter);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -114,6 +149,22 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving ");
 	}
 
+	public void onClick$btnClose(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		//Close the current window
+		this.window_SelectLoanClosureEnquiryList.onClose();
+		if (!isModelWindow) {
+			// Close the current menu item
+			final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+			final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
+					.getFellow("tabBoxIndexCenter");
+			tabbox.getSelectedTab().close();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -127,6 +178,9 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		Map<String, Object> aruments = new HashMap<String, Object>();
 		aruments.put("finReference", this.finRefValue);
 		aruments.put("enquiryModule", true);
+		aruments.put("isWIF", false);
+		aruments.put("isModelWindow", isModelWindow);
+		aruments.put("isMatured", isMatured);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {

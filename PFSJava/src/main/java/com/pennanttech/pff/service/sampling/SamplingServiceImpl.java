@@ -1,7 +1,6 @@
 package com.pennanttech.pff.service.sampling;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +14,8 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -62,7 +62,7 @@ import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 
 public class SamplingServiceImpl extends GenericService<Sampling> implements SamplingService {
-	private static final Logger logger = Logger.getLogger(SamplingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(SamplingServiceImpl.class);
 
 	@Autowired
 	protected SamplingDAO samplingDAO;
@@ -81,8 +81,6 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	private CustomerExtLiabilityValidation extLiabilityValidation;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentDetailValidation documentValidation;
@@ -282,8 +280,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			return auditHeader;
 		}
 		Sampling sampling = new Sampling();
-		BeanUtils.copyProperties((Sampling) auditHeader.getAuditDetail().getModelData(), sampling);
-
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), sampling);
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(sampling.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(samplingDAO.getSampling(sampling.getId(), ""));
 		}
@@ -629,12 +626,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 			BigDecimal principle = new BigDecimal(100000);
 
 			BigDecimal r = rate.divide(new BigDecimal(100).multiply(new BigDecimal(frqequency)), 10,
-					RoundingMode.HALF_DOWN);
+					BigDecimal.ROUND_HALF_DOWN);
 			BigDecimal nTimesOfr = (r.add(BigDecimal.ONE)).pow(noOfTerms);
 			BigDecimal numerator = principle.multiply(nTimesOfr).multiply(r);
 			BigDecimal denominator = nTimesOfr.subtract(BigDecimal.ONE);
 
-			BigDecimal emi = numerator.divide(denominator, 10, RoundingMode.HALF_DOWN);
+			BigDecimal emi = numerator.divide(denominator, 10, BigDecimal.ROUND_HALF_DOWN);
 			emi = emi.multiply(new BigDecimal(100));
 			sampling.setEmi(emi);
 		}
@@ -667,8 +664,8 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	private Object excuteRule(String foirRule, String finCcy, HashMap<String, Object> fieldsandvalues) {
-		logger.info(String.format("Rule>> %s", foirRule));
-		return ruleExecutionUtil.executeRule(foirRule, fieldsandvalues, finCcy, RuleReturnType.DECIMAL);
+		logger.info("Rule >> {}", foirRule);
+		return RuleExecutionUtil.executeRule(foirRule, fieldsandvalues, finCcy, RuleReturnType.DECIMAL);
 	}
 
 	@Override
@@ -757,13 +754,11 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 						field.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 								: String.valueOf(extFieldMap.get("TaskId")));
 						extFieldMap.remove("TaskId");
-						field.setNextTaskId(
-								StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
-										: String.valueOf(extFieldMap.get("NextTaskId")));
+						field.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
+								? "" : String.valueOf(extFieldMap.get("NextTaskId")));
 						extFieldMap.remove("NextTaskId");
-						field.setRecordType(
-								StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
-										: String.valueOf(extFieldMap.get("RecordType")));
+						field.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
+								? "" : String.valueOf(extFieldMap.get("RecordType")));
 						extFieldMap.remove("RecordType");
 						field.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 						extFieldMap.remove("WorkflowId");
@@ -1068,11 +1063,11 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the
-	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
-	 * based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader (auditHeader)
+	 * @param AuditHeader
+	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -1129,10 +1124,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch
-	 * conditions Fetch the error details from samplingDAO.getErrorDetail with Error
-	 * ID and language as parameters. if any error/Warnings then assign the to
-	 * auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from samplingDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign the
+	 * to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -1393,9 +1387,12 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 
 	/**
 	 * 
-	 * @param type       Collateral Type
-	 * @param reference  Collateral reference
-	 * @param samplingId Collateral sequence
+	 * @param type
+	 *            Collateral Type
+	 * @param reference
+	 *            Collateral reference
+	 * @param samplingId
+	 *            Collateral sequence
 	 * @return Return Extended collateral fields.
 	 */
 	@Override
@@ -1609,8 +1606,9 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 				newOriginalTemp.remove("reference");
 				newOriginalTemp.put("lastmnton", new Timestamp(System.currentTimeMillis()));
 				newOriginalTemp.put("lastmntby", sampling.getLastMntBy());
-				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "", table);
-				extendedFieldRenderDAO.update(referece, (Integer) seqNo, newOriginalTemp, "_temp", table);
+				extendedFieldRenderDAO.update(referece, seqNo, newOriginalTemp, "", table);
+				extendedFieldRenderDAO.update(referece, seqNo, newOriginalTemp, "_temp", table);
+
 			} catch (Exception e) {
 				logger.warn(e);
 			} finally {

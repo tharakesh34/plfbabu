@@ -46,34 +46,33 @@ package com.pennant.backend.dao.financemanagement;
 import java.util.List;
 
 import com.pennant.backend.model.financemanagement.Provision;
-import com.pennant.backend.model.financemanagement.ProvisionMovement;
+import com.pennant.backend.model.financemanagement.ProvisionAmount;
 import com.pennanttech.pff.core.TableType;
 
 public interface ProvisionDAO {
 
-	Provision getProvision();
+	Provision getProvisionById(long id, TableType type, boolean isMovement);
 
-	Provision getNewProvision();
+	Provision getProvisionById(String finReference, TableType type, boolean isMovement);
 
-	Provision getProvisionById(String id, String type);
+	int update(Provision provision, TableType type);
 
-	void update(Provision provision, String type);
+	void delete(Provision provision, TableType type);
 
-	void delete(Provision provision, String type);
+	long save(Provision provision, TableType type);
 
-	String save(Provision provision, String type);
-
-	void updateProvAmt(ProvisionMovement provisionMovement, String type);
-
-	List<Provision> getProcessedProvisions();
-
-	String saveProcessedProvisions(Provision provision);
-
-	Provision getCurNPABucket(String id);
-
-	void updateProvisonAmounts(Provision provision);
-
-	Provision getDMProvisionById(String id, String type);
+	int saveAmounts(List<ProvisionAmount> provisionAmounts, TableType mainTab, boolean isMovement);
 
 	boolean isProvisionExists(String finReference, TableType type);
+
+	Provision getProvision();
+
+	void deleteAmounts(long provisionId, TableType mainTab);
+
+	List<ProvisionAmount> getProvisionAmounts(long id, TableType type);
+
+	int updateAmounts(List<ProvisionAmount> provisionAmounts, TableType type);
+
+	long saveMovements(Provision provision, TableType tableType);
+
 }

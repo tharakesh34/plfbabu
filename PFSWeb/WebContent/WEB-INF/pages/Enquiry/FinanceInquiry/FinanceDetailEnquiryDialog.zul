@@ -340,6 +340,23 @@
 													<uppercasebox id="applicationNo" width="170px" visible="true" />
 												</hbox>
 											</row>
+											 <row>
+													<label
+														id="label_FinanceMainDialog_AllowLoanSplit"
+														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
+													<hbox>
+														<space
+															spacing="2px" />
+														<checkbox
+															id="alwLoanSplit" disabled="true" />
+													</hbox>
+													<label id="label_FinanceMainDialog_ParentLoanReference"
+														value="${c:l('label_FinanceMainDialog_ParentLoanReference.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<extendedcombobox id="parentLoanReference" />
+													</hbox>
+											   </row>
 											<row id="row_EligibilityMethod" visible="true">
 												<label id="label_FinanceMainDialog_EligibilityMethod" value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
 												<extendedcombobox id="eligibilityMethod" width="200px" />
@@ -399,6 +416,91 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<groupbox id="gb_offerDetails">
+										<caption label="${c:l('gb_offerDetails')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label id="label_FinanceMainDialog_OfferProduct" value="${c:l('label_FinanceMainDialog_OfferProduct.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="offerProduct" width="180px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_OfferAmount" value="${c:l('label_FinanceMainDialog_OfferAmount.value')}" />
+													<hbox id="hbox_OfferAmount">
+														<currencyBox id="offerAmount" width="180px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_FinanceMainDialog_CustSegmentation" value="${c:l('label_FinanceMainDialog_CustSegmentation.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="custSegmentation" width="180px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_BaseProduct" value="${c:l('label_FinanceMainDialog_BaseProduct.value')}" />
+													<hbox id="hbox_BaseProduct">
+														<space spacing="2px" />
+														<textbox id="baseProduct" width="180px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_FinanceMainDialog_ProcessType" value="${c:l('label_FinanceMainDialog_ProcessType.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="processType" width="180px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_BureauTimeSeries" value="${c:l('label_FinanceMainDialog_BureauTimeSeries.value')}" />
+													<hbox id="hbox_BureauTimeSeries">
+														<space spacing="2px" />
+														<textbox id="bureauTimeSeries" width="180px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_FinanceMainDialog_CampaignName" value="${c:l('label_FinanceMainDialog_CampaignName.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="campaignName" width="180px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_ExistingLanRefNo" value="${c:l('label_FinanceMainDialog_ExistingLanRefNo.value')}" />
+													<hbox id="hbox_ExistingLanRefNo">
+														<space spacing="2px" />
+														<textbox id="existingLanRefNo" width="180px" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_FinanceMainDialog_RSA" value="${c:l('label_FinanceMainDialog_RSA.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<checkbox id="rsa" width="180px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_Verification" value="${c:l('label_FinanceMainDialog_Verification.value')}"
+														visible="false" />
+													<hbox id="hbox_Verification">
+														<space spacing="2px" id="space_Verification" visible="false" />
+														<combobox id="verification" visible="false" />
+													</hbox>
+												</row>
+												<row>
+													<label id="label_FinanceMainDialog_LeadSource" value="${c:l('label_FinanceMainDialog_LeadSource.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<textbox id="leadSource" width="180px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_POSource" value="${c:l('label_FinanceMainDialog_POSource.value')}" />
+													<hbox id="hbox_poSource">
+														<space spacing="2px" />
+														<textbox id="poSource" width="180px" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
 								<groupbox id="gb_gracePeriodDetails">
 									<caption label="${c:l('finGracePeriodDetails')}" />
 									<grid id="grid_GrcDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
@@ -497,6 +599,25 @@
 												<hbox>
 													<space spacing="2px" />
 													<datebox id="nextGrcCpzDate_two" readonly="true" buttonVisible="false" width="100px" />
+												</hbox>
+											</row>
+											<row id="row_underConstruction">
+												<label id="label_UnderConstruction" value="${c:l('label_FinanceMainDialog_UnderConstruction.value')}" />
+												<hbox id="hbox_UnderConstruction">
+													<space id="space_UnderConstruction" spacing="2px" />
+													<checkbox id="underConstruction" disabled="true" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_AutoIncrGrcEndDate" value="${c:l('label_FinanceMainDialog_AutoIncrGrcEndDate.value')}" />
+												<hbox id="hbox_AutoIncrGrcEndDate">
+													<space id="space_AutoIncrGrcEndDate" spacing="2px" />
+													<checkbox id="autoIncrGrcEndDate" disabled="true" />
+												</hbox>
+												<label id="label_GrcPeriodAftrFullDisb" value="${c:l('label_FinanceMainDialog_GrcPeriodAftrFullDisb.value')}" />
+												<hbox id="hbox_GrcPeriodAftrFullDisb">
+													<space id="space_GrcPeriodAftrFullDisb" spacing="2px" />
+													<checkbox id="grcPeriodAftrFullDisb" disabled="true" />
 												</hbox>
 											</row>
 										</rows>
@@ -943,6 +1064,69 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<!-- Subvention Details Start -->
+									<groupbox id="gb_SubventionDetails" visible="false">
+										<caption label="${c:l('interestSubventionDetails')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+											<columns>
+												<column width="220px" />
+												<column />
+												<column width="220px" />
+												<column />
+											</columns>
+											<rows>
+												<row id="row0">
+													<label value="${c:l('label_SubventionDetailDialog_SubventionAllowed.value')}" />
+													<hbox>
+														<space id="space_SubventionAllowed" spacing="2px" />
+														<checkbox id="subventionAllowed" />
+													</hbox>
+													<label value="${c:l('label_SubventionDetailDialog_Method.value')}" />
+													<combobox id="subventionMethod" width="120px" />
+												</row>
+												<row id="row1">
+													<label value="${c:l('label_SubventionDetailDialog_Type.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<combobox id="subventionType" width="120px" />
+													</hbox>
+													<label value="${c:l('label_SubventionDetailDialog_Rate.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<decimalbox id="subventionRate" width="120px" maxlength="15" />
+													</hbox>
+												</row>
+												<row id="row2">
+													<label value="${c:l('label_SubventionDetailDialog_PeriodRate.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="subventionperiodRateByCust" width="120px" maxlength="15" />
+													</hbox>
+													<label value="${c:l('label_SubventionDetailDialog_DiscountRate.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<decimalbox id="subventionDiscountRate" width="120px" maxlength="15" />
+													</hbox>
+												</row>
+												<row id="row3">
+													<label value="${c:l('label_SubventionDetailDialog_Tenure.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<intbox id="subventionTenure" width="120px" maxlength="4" />
+														<space spacing="2px" />
+														<intbox id="subventionTenure_two" readonly="true" width="50px" maxlength="4" tabindex="-1" />
+													</hbox>
+													<label value="${c:l('label_SubventionDetailDialog_EndDate.value')}" />
+													<hbox>
+														<datebox id="subventionEndDate" width="120px" />
+														<space spacing="2px" />
+														<datebox id="subventionEndDate_two" readonly="true" buttonVisible="false" width="120px" tabindex="-1" />
+													</hbox>
+												</row>
+											</rows>
+										</grid>
+									</groupbox>
+									<!-- Subvention Details End -->
 								<groupbox id="gb_OverDuePenalty">
 									<caption label="${c:l('label_FinanceMainDialog_ODPenalty')}" />
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
@@ -1206,6 +1390,8 @@
 												<decimalbox id="disb_totalBilling" tabindex="-1" disabled="true" sclass="decimalToString" />
 											</row>
 											<row>
+												<label id="label_DisbursementDetailDialog_ConsultFee" value="${c:l('label_DisbursementDetailDialog_ConsultFee.value')}" />
+												<decimalbox id="disb_consultFee" tabindex="-1" disabled="true" sclass="decimalToString" />
 												<label id="label_DisbursementDetailDialog_TotalCost" value="${c:l('label_DisbursementDetailDialog_TotalCost.value')}" />
 												<decimalbox id="disb_totalCost" tabindex="-1" disabled="true" sclass="decimalToString" />
 											</row>

@@ -3,7 +3,8 @@ package com.pennanttech.controller;
 import java.sql.Timestamp;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
@@ -15,9 +16,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class RemarksController {
+public class RemarksController extends ExtendedTestClass {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private NotesService notesService;
 

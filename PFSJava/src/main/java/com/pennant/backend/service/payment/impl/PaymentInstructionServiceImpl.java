@@ -46,7 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruction>
 		implements PaymentInstructionService {
-	private static final Logger logger = Logger.getLogger(PaymentInstructionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PaymentInstructionServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentInstructionDAO paymentInstructionDAO;
@@ -197,13 +198,16 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 		advancePayments.setPrintingLoc(paymentInstruction.getPrintingLoc());
 		advancePayments.setBankName(paymentInstruction.getBankName());
 		advancePayments.setBranchDesc(paymentInstruction.getBranchDesc());
+		advancePayments.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
 		advancePayments.setBeneficiaryAccNo(paymentInstruction.getAccountNo());
+		advancePayments.setBeneficiaryName(paymentInstruction.getAcctHolderName());
 		advancePayments.setPhoneCountryCode(paymentInstruction.getPhoneCountryCode());
 		advancePayments.setPhoneNumber(paymentInstruction.getPhoneNumber());
 		advancePayments.setStatus(paymentInstruction.getStatus());
 		advancePayments.setRemarks(paymentInstruction.getRemarks());
 		advancePayments.setPaymentType(paymentInstruction.getPaymentType());
 		advancePayments.setInputDate(paymentInstruction.getPostDate());
+		advancePayments.setiFSC(paymentInstruction.getBankBranchIFSC());
 		advancePaymentList.add(advancePayments);
 
 		financeDetail.setAdvancePaymentsList(advancePaymentList);
@@ -412,6 +416,11 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
+	}
+
+	@Override
+	public boolean isInstructionInProgress(String finReference) {
+		return getPaymentInstructionDAO().isInstructionInProgress(finReference);
 	}
 
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {

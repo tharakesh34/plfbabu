@@ -28,7 +28,6 @@
 					<value>com.pennant.validation.UpdateLoanBasicDetailsGroup</value>
 					<value>com.pennant.validation.UpdateLoanPenaltyDetailGroup</value>
 					<value>com.pennant.validation.ScheduleMethodGroup</value>
-					<value>com.pennant.validation.UpfrontFeesGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -371,6 +370,39 @@
 				</element>
 			</constraint>
 		</field>
+
+	<field name="externalReference">
+		<constraint annotation="org.hibernate.validator.constraints.Length">
+			<message>externalReference should have maximum 20 characters
+			</message>
+			<groups>
+				<value>com.pennant.validation.UpfrontFeesGroup</value>
+			</groups>
+			<element name="max">20</element>
+		</constraint>
+	</field>
+	
+	<field name="custCIF">
+		<constraint annotation="org.hibernate.validator.constraints.Length">
+			<message>cif should have maximum 12 characters</message>
+			<groups>
+				<value>com.pennant.validation.UpfrontFeesGroup</value>
+			</groups>
+			<element name="max">12</element>
+		</constraint>
+	</field>
+	<field name="finType">
+		<constraint annotation="org.hibernate.validator.constraints.Length">
+			<message>FinType should have maximum 8 characters</message>
+			<groups>
+				<value>com.pennant.validation.UpfrontFeesGroup</value>
+			</groups>
+			<element name="max">8</element>
+		</constraint>
+	</field>
+	
+	
+		
 		<field name="finODPenaltyRate">
 			<valid></valid>
 		</field>

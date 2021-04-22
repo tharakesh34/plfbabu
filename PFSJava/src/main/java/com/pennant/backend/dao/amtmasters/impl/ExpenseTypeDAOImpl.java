@@ -49,15 +49,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.amtmasters.ExpenseTypeDAO;
 import com.pennant.backend.model.amtmasters.ExpenseType;
@@ -73,7 +74,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements ExpenseTypeDAO {
-	private static Logger logger = Logger.getLogger(ExpenseTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExpenseTypeDAOImpl.class);
 
 	public ExpenseTypeDAOImpl() {
 		super();
@@ -104,7 +105,7 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseType);
-		RowMapper<ExpenseType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ExpenseType.class);
+		RowMapper<ExpenseType> typeRowMapper = BeanPropertyRowMapper.newInstance(ExpenseType.class);
 
 		try {
 			expenseType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -169,8 +170,8 @@ public class ExpenseTypeDAOImpl extends SequenceDao<ExpenseType> implements Expe
 	public long save(ExpenseType expenseType, String type) {
 		logger.debug("Entering");
 		if (expenseType.getId() == Long.MIN_VALUE) {
-			expenseType.setId(getNextId("SeqAMTExpenseType"));
-			logger.debug("get NextID:" + expenseType.getId());
+			expenseType.setId(getNextValue("SeqExpenseType"));
+			logger.debug("get NextValue:" + expenseType.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder();

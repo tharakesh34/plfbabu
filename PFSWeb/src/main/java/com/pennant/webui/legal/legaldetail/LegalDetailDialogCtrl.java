@@ -56,7 +56,8 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -114,7 +115,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.AgreementEngine;
@@ -149,7 +149,7 @@ import freemarker.template.TemplateException;
  */
 public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LegalDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LegalDetailDialogCtrl.class);
 
 	protected Window window_LegalDetailDialog;
 	protected Label window_LegalDetailDialog_title;
@@ -2409,7 +2409,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		String url = "/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul";
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+		if (ImplementationConstants.COVENANT_MODULE_NEW) {
 			url = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
 		}
 
@@ -2718,7 +2718,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		legalDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
 		legalDetail = legalDetailService.formatLegalDetails(legalDetail);
 		String fileName = template.concat(PennantConstants.DOC_TYPE_PDF_EXT);
-		AgreementEngine engine = new AgreementEngine("");
+		AgreementEngine engine = new AgreementEngine();
 		engine.setTemplate(templateName);
 		engine.loadTemplate();
 		engine.mergeFields(legalDetail);

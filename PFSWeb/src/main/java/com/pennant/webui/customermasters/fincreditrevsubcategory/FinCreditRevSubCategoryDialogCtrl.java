@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
@@ -106,7 +107,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevSubCategory> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FinCreditRevSubCategoryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinCreditRevSubCategoryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

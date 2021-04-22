@@ -1,5 +1,6 @@
 package com.pennanttech.controller;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -10,8 +11,14 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.zkoss.json.JSONObject;
+import org.zkoss.json.parser.JSONParser;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -27,6 +34,7 @@ import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bre.BREResponse;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -42,6 +50,10 @@ import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.RuleResult;
+import com.pennant.backend.model.systemmasters.ApplicantData;
+import com.pennant.backend.model.systemmasters.BRERequestDetail;
+import com.pennant.backend.model.systemmasters.FieldDataMap;
+import com.pennant.backend.model.systemmasters.Perfois;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
@@ -54,6 +66,7 @@ import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.service.systemmasters.EmployerDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -77,9 +90,9 @@ import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class MiscellaneousServiceController {
+public class MiscellaneousServiceController extends ExtendedTestClass {
 
-	private final Logger logger = Logger.getLogger(getClass());
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private FinanceMainService financeMainService;
 	private TransactionCodeService transactionCodeService;
@@ -88,7 +101,6 @@ public class MiscellaneousServiceController {
 	private DashboardConfigurationService dashboardConfigurationService;
 	private SecurityUserService securityUserService;
 	private RuleService ruleService;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleDAO ruleDAO;
 	private FinanceDetailService financeDetailService;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
@@ -98,6 +110,7 @@ public class MiscellaneousServiceController {
 	private FinanceDataValidation financeDataValidation;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private EmployerDetailService employerDetailService;
 
 	public MiscellaneousServiceController() {
 		super();
@@ -111,7 +124,7 @@ public class MiscellaneousServiceController {
 
 		if (CollectionUtils.isEmpty(eligibilityRuleCodeData)) {
 			String[] param = new String[1];
-			param[0] = "eligibilityRuleCodes ";
+			param[0] = "eligibilityRuleCodes";
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
 
 			return errorsList;
@@ -155,6 +168,68 @@ public class MiscellaneousServiceController {
 			}
 		}
 
+		return errorsList;
+	}
+
+	private List<ErrorDetail> doCheckEligibilityValidations(EligibilityDetail eligibilityDetail) {
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		List<EligibilityRuleCodeData> eligibilityRuleCodeData = eligibilityDetail.getEligibilityRuleCodeDatas();
+		List<String> ruleCodeList = new ArrayList<>();
+
+		Map<String, Map<String, Object>> datamap = new HashMap<>();
+
+		Map<String, Object> map = null;
+		if (CollectionUtils.isEmpty(eligibilityRuleCodeData)) {
+			String[] param = new String[1];
+			param[0] = "eligibilityRuleCodes";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		for (EligibilityRuleCodeData ruleCodeData : eligibilityRuleCodeData) {
+			map = new HashMap<>();
+			if (StringUtils.isEmpty(ruleCodeData.getElgRuleCode())) {
+				String[] param = new String[1];
+				param[0] = "elgRuleCode ";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+				return errorsList;
+			} else {
+				ruleCodeList.add(ruleCodeData.getElgRuleCode());
+			}
+			if (CollectionUtils.isEmpty(ruleCodeData.getFieldDatas())) {
+				String[] param = new String[1];
+				param[0] = "fieldDatas ";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+				return errorsList;
+			}
+
+			for (FieldData fieldData : ruleCodeData.getFieldDatas()) {
+				if (StringUtils.isEmpty(fieldData.getFieldName())) {
+					String[] param = new String[1];
+					param[0] = "fieldName ";
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+
+					return errorsList;
+				}
+
+				if (fieldData.getFieldValue() == null || StringUtils.isBlank(fieldData.getFieldValue().toString())) {
+					String[] param = new String[1];
+					param[0] = "fieldValue ";
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+					return errorsList;
+				} else {
+					map.put(fieldData.getFieldName(), fieldData.getFieldValue());
+
+					datamap.put(ruleCodeData.getElgRuleCode(), map);
+				}
+			}
+			//ruleCodeData.setMap(map);
+			ruleCodeData.setDataMap(datamap);
+			ruleCodeData.setRuleCodes(ruleCodeList);
+		}
 		return errorsList;
 	}
 
@@ -210,7 +285,7 @@ public class MiscellaneousServiceController {
 				// Execute Eligibility
 				for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityDetailsList) {
 					FinanceEligibilityDetail detail = executeRule(financeEligibilityDetail, eligibilityDetail.getMap(),
-							"INR");
+							"INR", false);
 					eligibilityDetail.setFieldData("RULE_" + detail.getLovDescElgRuleCode(), detail.getRuleResult());
 					responseList.add(detail);
 				}
@@ -230,8 +305,128 @@ public class MiscellaneousServiceController {
 		return response;
 	}
 
+	public EligibilityDetailResponse checkEligibility(EligibilityDetail eligibilityDetail) {
+		logger.debug(Literal.ENTERING);
+
+		EligibilityDetailResponse response = null;
+		List<ErrorDetail> eligibilityErrors = doCheckEligibilityValidations(eligibilityDetail);
+
+		if (CollectionUtils.isEmpty(eligibilityErrors)) {
+			for (EligibilityRuleCodeData eligibilityRuleCodeData : eligibilityDetail.getEligibilityRuleCodeDatas()) {
+				response = new EligibilityDetailResponse();
+				List<Rule> rules = ruleService.getEligibilityRules(eligibilityRuleCodeData.getRuleCodes());
+
+				if (CollectionUtils.isEmpty(rules)) {
+					List<ErrorDetail> errorsList = new ArrayList<>();
+					String[] param = new String[1];
+					param[0] = "rulecode";
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", param)));
+
+					for (ErrorDetail errorDetail : errorsList) {
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+								errorDetail.getParameters()));
+					}
+				} else {
+					List<FinanceEligibilityDetail> eligibilityDetailsList = new ArrayList<>();
+					List<FinanceEligibilityDetail> eligibilityDetailsList1 = new ArrayList<>();
+
+					// Validation;
+					// Convert Rules to FinanceEligibilityDetail;
+					String strCodes = "FOIRAMT,BTOUTSTD,EBOEU,IIRMAX,LCRMAXEL,LIVSTCK,LOANAMT,LTVAMOUN,LTVLCR,"
+							+ RuleConstants.ELGRULE_DSRCAL + "," + RuleConstants.ELGRULE_FOIR + ","
+							+ RuleConstants.ELGRULE_LTV;
+
+					for (Rule rule : rules) {
+						FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
+						financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());
+						financeEligibilityDetail.setElgRuleValue(rule.getSQLRule());
+						financeEligibilityDetail.setRuleResultType(rule.getReturnType());
+						financeEligibilityDetail.setSplRuleVal(rule.getSPLRule());
+
+						if (StringUtils.contains(strCodes, financeEligibilityDetail.getLovDescElgRuleCode())) {
+							eligibilityDetailsList.add(financeEligibilityDetail);
+						} else {
+							eligibilityDetailsList1.add(financeEligibilityDetail);
+						}
+					}
+
+					// Validation;
+
+					eligibilityDetailsList.addAll(eligibilityDetailsList1);
+					List<FinanceEligibilityDetail> responseList = new ArrayList<>();
+
+					// Execute Eligibility
+					for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityDetailsList) {
+						boolean splRule = false;
+						Map<String, Object> dataMap = new HashMap<>();
+						Map<String, Map<String, Object>> fieldMap = eligibilityRuleCodeData.getDataMap();
+
+						if (fieldMap.containsKey(financeEligibilityDetail.getLovDescElgRuleCode())) {
+							dataMap = fieldMap.get(financeEligibilityDetail.getLovDescElgRuleCode());
+						}
+
+						if (dataMap.containsKey("empCategory")) {
+							boolean isNonTargetEmp = isNonTargetEmployee((String) dataMap.get("empname"),
+									(String) dataMap.get("empCategory"));
+
+							FinanceEligibilityDetail detail = new FinanceEligibilityDetail();
+							if (!isNonTargetEmp) {
+								detail.setRuleResult("1");
+								detail.setLovDescElgRuleCode(financeEligibilityDetail.getLovDescElgRuleCode());
+								responseList.add(detail);
+							} else {
+								detail.setRuleResult("0");
+								detail.setLovDescElgRuleCode(financeEligibilityDetail.getLovDescElgRuleCode());
+								responseList.add(detail);
+							}
+
+						} else {
+
+							if (!StringUtils.isEmpty(financeEligibilityDetail.getSplRuleVal())) {
+								splRule = true;
+							}
+
+							FinanceEligibilityDetail detail = executeRule(financeEligibilityDetail, dataMap, "INR",
+									splRule);
+
+							if (splRule && !StringUtils.equals("0", detail.getRuleResult())) {
+								String result = detail.getRuleResult();
+
+								JSONParser parser = new JSONParser();
+								JSONObject json = (JSONObject) parser.parse(result.toString());
+								detail.setJson(json);
+							}
+							//If Any Rule fails return the control along with executed Rule Result.
+							if (StringUtils.equals("0", detail.getRuleResult())) {
+								responseList.add(detail);
+								response.setEligibilityDetails(responseList);
+								return response;
+							}
+							eligibilityRuleCodeData.setFieldData("RULE_" + detail.getLovDescElgRuleCode(),
+									detail.getRuleResult());
+							responseList.add(detail);
+						}
+					}
+
+					response.setEligibilityDetails(responseList);
+					response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				}
+			}
+		} else {
+			response = new EligibilityDetailResponse();
+			for (ErrorDetail errorDetail : eligibilityErrors) {
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+
+	}
+
 	private FinanceEligibilityDetail executeRule(FinanceEligibilityDetail finElgDetail, Map<String, Object> map,
-			String finCcy) {
+			String finCcy, boolean isSplRule) {
 
 		RuleReturnType ruleReturnType = null;
 
@@ -245,12 +440,14 @@ public class MiscellaneousServiceController {
 			ruleReturnType = RuleReturnType.INTEGER;
 		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.OBJECT.value())) {
 			ruleReturnType = RuleReturnType.OBJECT;
+		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.CALCSTRING.value())) {
+			ruleReturnType = RuleReturnType.STRING;
 		}
 
 		if ((null == ruleReturnType) || (StringUtils.isBlank(ruleReturnType.value()))) {
 			logger.info("Improper 'ruleReturnType' value");
 		} else {
-			Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
+			Object object = RuleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
 
 			String resultValue = null;
 			switch (ruleReturnType) {
@@ -262,6 +459,11 @@ public class MiscellaneousServiceController {
 				}
 
 				if (object != null) {
+					finElgDetail.setRuleResult(object.toString());
+				}
+				break;
+			case STRING:
+				if (object instanceof String) {
 					finElgDetail.setRuleResult(object.toString());
 				}
 				break;
@@ -636,7 +838,7 @@ public class MiscellaneousServiceController {
 						finElgDetail.setLovDescElgRuleCode(rule.getRuleCode());
 						finElgDetail.setLovDescElgRuleCodeDesc(rule.getRuleCodeDesc());
 						try {
-							finElgDetail = executeRule(finElgDetail, declaredMap, finMian.getFinCcy());
+							finElgDetail = executeRule(finElgDetail, declaredMap, finMian.getFinCcy(), false);
 						} catch (Exception e) {
 							APIErrorHandlerService.logUnhandledException(e);
 							returnStatus = APIErrorHandlerService.getFailedStatus();
@@ -723,7 +925,7 @@ public class MiscellaneousServiceController {
 						finElgDetail.setLovDescElgRuleCodeDesc(rule.getRuleCodeDesc());
 						declaredMap = getMapValue(loanTypeMiscRequest);
 						try {
-							finElgDetail = executeRule(finElgDetail, declaredMap, finMian.getFinCcy());
+							finElgDetail = executeRule(finElgDetail, declaredMap, finMian.getFinCcy(), false);
 
 						} catch (Exception e) {
 							APIErrorHandlerService.logUnhandledException(e);
@@ -904,6 +1106,344 @@ public class MiscellaneousServiceController {
 		}
 	}
 
+	public BREResponse getProductOffer(BRERequestDetail bRERequestDetail) {
+
+		BREResponse response = new BREResponse();
+
+		List<ErrorDetail> eligibilityErrors = doCheckEligibilityValidationsForProductOffers(bRERequestDetail);
+
+		Map<String, Object> finalMap = new HashMap<>();
+
+		if (CollectionUtils.isEmpty(eligibilityErrors)) {
+			boolean splRule = false;
+
+			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), RuleConstants.MODULE_BRERULE, "");
+
+			FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
+			financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());
+			financeEligibilityDetail.setElgRuleValue(rule.getSQLRule());
+			financeEligibilityDetail.setRuleResultType(rule.getReturnType());
+			financeEligibilityDetail.setSplRuleVal(rule.getSPLRule());
+
+			if (!StringUtils.isEmpty(financeEligibilityDetail.getSplRuleVal())) {
+				splRule = true;
+			}
+
+			//FIXME:shinde.b Need to check for Irrespective of the Rule Execution.
+			Map<String, Object> varData = bRERequestDetail.getMap();
+			varData.put("splRule", "Y");
+
+			FinanceEligibilityDetail detail = executeRule(financeEligibilityDetail, varData, "INR", splRule);
+
+			if (splRule && !StringUtils.equals("0", detail.getRuleResult())) {
+				String result = detail.getRuleResult();
+
+				JSONParser parser = new JSONParser();
+				JSONObject json = (JSONObject) parser.parse(result.toString());
+
+				finalMap.putAll(bRERequestDetail.getMap());
+				finalMap.putAll(convertStringToMap(json.toString()));
+
+				response.setDataMap(finalMap);
+
+				response.setResult(json);
+
+				if (bRERequestDetail.getMap().containsKey("riskScore")) {
+
+					String val = (String) bRERequestDetail.getMap().get("riskScore");
+					response.setRiskScore(new BigDecimal(val));
+				}
+
+				if (bRERequestDetail.getMap().containsKey("segmentRule")) {
+					response.setScoringGroup((String) bRERequestDetail.getMap().get("segmentRule"));
+				}
+
+			}
+			//If Any Rule fails return the control along with executed Rule Result.
+			if (StringUtils.equals("0", detail.getRuleResult())) {
+				return response;
+			}
+			bRERequestDetail.setFieldData("RULE_" + detail.getLovDescElgRuleCode(), detail.getRuleResult());
+
+		} else {
+			response = new BREResponse();
+			for (ErrorDetail errorDetail : eligibilityErrors) {
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+			}
+		}
+
+		return response;
+	}
+
+	public Map<String, Object> convertStringToMap(String payload) {
+		logger.debug(Literal.ENTERING);
+		ObjectMapper obj = new ObjectMapper();
+		Map<String, Object> map = null;
+		try {
+			map = obj.readValue(payload, Map.class);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
+
+	private List<ErrorDetail> doCheckEligibilityValidationsForBRE(BRERequestDetail eligibilityDetail) {
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		Map<String, Object> map = new HashMap<>();
+		if (StringUtils.isEmpty(eligibilityDetail.getRuleCode())) {
+			String[] param = new String[1];
+			param[0] = "eligibilityRuleCodes";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isEmpty(eligibilityDetail.getScoreRuleCode())) {
+			String[] param = new String[1];
+			param[0] = "eligibilityRuleCodes";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		if (CollectionUtils.isEmpty(eligibilityDetail.getFieldDatas())) {
+			String[] param = new String[1];
+			param[0] = "fieldDatas ";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		for (FieldDataMap fieldData : eligibilityDetail.getFieldDatas()) {
+			if (StringUtils.isEmpty(fieldData.getFieldName())) {
+				String[] param = new String[1];
+				param[0] = "fieldName ";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+
+				return errorsList;
+			}
+
+			if (fieldData.getFieldValue() == null || StringUtils.isBlank(fieldData.getFieldValue().toString())) {
+				String[] param = new String[1];
+				param[0] = "fieldValue ";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+				return errorsList;
+			} else {
+				map.put(fieldData.getFieldName(), fieldData.getFieldValue());
+
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(eligibilityDetail.getPerfoisData())) {
+			int count = 1;
+			for (Perfois perfois : eligibilityDetail.getPerfoisData()) {
+				String emi = "emi_";
+				String salary = "sal_month_";
+				String totalAmountofEMIbounces = "emiBounce_";
+				String grossReceipts = "grossReceipts_";
+				map.put(emi + count, perfois.getEmi());
+				map.put(salary + count, perfois.getSalary());
+				map.put(totalAmountofEMIbounces + count, perfois.getTotalAmountofEMIbounces());
+				map.put(grossReceipts + count, perfois.getGrossReceipts());
+				count++;
+			}
+
+			map.put("monthCount_p", eligibilityDetail.getPerfoisData().size());
+		} else {
+			map.put("monthCount_p", 0);
+		}
+
+		eligibilityDetail.setMap(map);
+
+		return errorsList;
+	}
+
+	private List<ErrorDetail> doCheckEligibilityValidationsForProductOffers(BRERequestDetail eligibilityDetail) {
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		Map<String, Object> map = new HashMap<>();
+		if (StringUtils.isEmpty(eligibilityDetail.getRuleCode())) {
+			String[] param = new String[1];
+			param[0] = "eligibilityRuleCodes";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		for (FieldDataMap fieldData : eligibilityDetail.getFieldDatas()) {
+			map.put(fieldData.getFieldName(), fieldData.getFieldValue());
+		}
+
+		eligibilityDetail.setMap(map);
+
+		return errorsList;
+	}
+
+	private List<ErrorDetail> doCheckEligibilityValidationsForCheckEligibility(BRERequestDetail eligibilityDetail) {
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		Map<String, Object> map = new HashMap<>();
+		if (StringUtils.isEmpty(eligibilityDetail.getRuleCode())) {
+			String[] param = new String[1];
+			param[0] = "eligibilityRuleCodes";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		map.put("roi", eligibilityDetail.getRoi());
+		map.put("foir", eligibilityDetail.getFoir());
+		map.put("tenure", eligibilityDetail.getTenure());
+		map.put("propertyValue", eligibilityDetail.getPropertyValue());
+		map.put("approvedLtv", eligibilityDetail.getApprovedLtv());
+
+		if (eligibilityDetail.getApplicantData() != null) {
+			map.put("income_1", eligibilityDetail.getApplicantData().getFinalIncome());
+			map.put("obligation_1", eligibilityDetail.getApplicantData().getFinalObligation());
+		}
+
+		if (CollectionUtils.isNotEmpty(eligibilityDetail.getCoApplicantData())) {
+			int count = 2;
+			for (ApplicantData perfois : eligibilityDetail.getCoApplicantData()) {
+				String income = "income_";
+				String obligation = "obligation_";
+				map.put(income + count, perfois.getFinalIncome());
+				map.put(obligation + count, perfois.getFinalObligation());
+				count++;
+			}
+			map.put("CoApplicantCount", eligibilityDetail.getCoApplicantData().size());
+		} else {
+			map.put("CoApplicantCount", 0);
+		}
+
+		eligibilityDetail.setMap(map);
+
+		return errorsList;
+	}
+
+	public BREResponse getDatamap(BRERequestDetail bRERequestDetail) {
+
+		BREResponse response = new BREResponse();
+
+		List<ErrorDetail> eligibilityErrors = doCheckEligibilityValidationsForBRE(bRERequestDetail);
+
+		Map<String, Object> finalMap = new HashMap<>();
+
+		if (CollectionUtils.isEmpty(eligibilityErrors)) {
+			boolean splRule = false;
+
+			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), RuleConstants.MODULE_BRERULE, "");
+
+			FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
+			financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());
+			financeEligibilityDetail.setElgRuleValue(rule.getSQLRule());
+			financeEligibilityDetail.setRuleResultType(rule.getReturnType());
+			financeEligibilityDetail.setSplRuleVal(rule.getSPLRule());
+
+			if (!StringUtils.isEmpty(financeEligibilityDetail.getSplRuleVal())) {
+				splRule = true;
+			}
+
+			//FIXME:Shinde.b Need to check for Irrespective of the Rule Execution.
+			Map<String, Object> varData = bRERequestDetail.getMap();
+			varData.put("splRule", "Y");
+
+			FinanceEligibilityDetail detail = executeRule(financeEligibilityDetail, varData, "INR", splRule);
+
+			if (splRule && !StringUtils.equals("0", detail.getRuleResult())) {
+				String result = detail.getRuleResult();
+
+				JSONParser parser = new JSONParser();
+				JSONObject json = (JSONObject) parser.parse(result.toString());
+
+				finalMap.putAll(bRERequestDetail.getMap());
+				finalMap.putAll(convertStringToMap(json.toString()));
+				response.setDataMap(finalMap);
+				response.setResult(json);
+
+			}
+			//If Any Rule fails return the control along with executed Rule Result.
+			if (StringUtils.equals("0", detail.getRuleResult())) {
+				return response;
+			}
+			bRERequestDetail.setFieldData("RULE_" + detail.getLovDescElgRuleCode(), detail.getRuleResult());
+
+		} else {
+			response = new BREResponse();
+			for (ErrorDetail errorDetail : eligibilityErrors) {
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+			}
+		}
+
+		return response;
+	}
+
+	public BREResponse calculateEligibility(BRERequestDetail bRERequestDetail) {
+		BREResponse response = new BREResponse();
+
+		List<ErrorDetail> eligibilityErrors = doCheckEligibilityValidationsForCheckEligibility(bRERequestDetail);
+
+		Map<String, Object> finalMap = new HashMap<>();
+
+		if (CollectionUtils.isEmpty(eligibilityErrors)) {
+			boolean splRule = false;
+
+			Rule rule = ruleDAO.getRuleById(bRERequestDetail.getRuleCode(), RuleConstants.MODULE_BRERULE, "");
+
+			FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
+			financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());
+			financeEligibilityDetail.setElgRuleValue(rule.getSQLRule());
+			financeEligibilityDetail.setRuleResultType(rule.getReturnType());
+			financeEligibilityDetail.setSplRuleVal(rule.getSPLRule());
+
+			if (!StringUtils.isEmpty(financeEligibilityDetail.getSplRuleVal())) {
+				splRule = true;
+			}
+
+			//FIXME:Shinde.b Need to check for Irrespective of the Rule Execution.
+			Map<String, Object> varData = bRERequestDetail.getMap();
+			varData.put("splRule", "Y");
+
+			FinanceEligibilityDetail detail = executeRule(financeEligibilityDetail, varData, "INR", splRule);
+
+			if (splRule && !StringUtils.equals("0", detail.getRuleResult())) {
+				String result = detail.getRuleResult();
+
+				JSONParser parser = new JSONParser();
+				JSONObject json = (JSONObject) parser.parse(result.toString());
+
+				finalMap.putAll(bRERequestDetail.getMap());
+				finalMap.putAll(convertStringToMap(json.toString()));
+				response.setDataMap(finalMap);
+				response.setResult(json);
+
+			}
+			//If Any Rule fails return the control along with executed Rule Result.
+			if (StringUtils.equals("0", detail.getRuleResult())) {
+				return response;
+			}
+			bRERequestDetail.setFieldData("RULE_" + detail.getLovDescElgRuleCode(), detail.getRuleResult());
+
+		} else {
+			response = new BREResponse();
+			for (ErrorDetail errorDetail : eligibilityErrors) {
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+			}
+		}
+
+		return response;
+	}
+
+	public boolean isNonTargetEmployee(String name, String category) {
+		logger.debug(Literal.ENTERING);
+		return employerDetailService.isNonTargetEmployee(name, category, "");
+	}
+
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
@@ -930,14 +1470,6 @@ public class MiscellaneousServiceController {
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public void setRuleDAO(RuleDAO ruleDAO) {

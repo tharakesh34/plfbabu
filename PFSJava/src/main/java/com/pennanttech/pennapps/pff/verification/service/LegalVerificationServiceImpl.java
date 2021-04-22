@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -29,6 +31,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.pff.service.hook.PostExteranalServiceHook;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
@@ -41,7 +44,7 @@ import com.rits.cloning.Cloner;
 
 public class LegalVerificationServiceImpl extends GenericService<LegalVerification>
 		implements LegalVerificationService {
-	private static final Logger logger = Logger.getLogger(LegalVerificationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(LegalVerificationServiceImpl.class);
 
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
@@ -54,6 +57,10 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentDetailValidation documentValidation;
+
+	@Autowired(required = false)
+	@Qualifier("verificationPostExteranalServiceHook")
+	private PostExteranalServiceHook postExteranalServiceHook;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -123,6 +130,11 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
+		}
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -212,7 +224,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		LegalVerification lv = new LegalVerification();
-		BeanUtils.copyProperties((LegalVerification) auditHeader.getAuditDetail().getModelData(), lv);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), lv);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(lv.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(
@@ -283,6 +295,11 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], lv.getBefImage(), lv));
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
+
+		//calling post hoot
+		if (postExteranalServiceHook != null) {
+			postExteranalServiceHook.doProcess(aAuditHeader, "doApprove");
+		}
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -650,12 +667,12 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 					documentDetails.setReferenceId(String.valueOf(lv.getVerificationId()));
 				}
-				saveDocument(DMSModule.FINANCE, DMSModule.VERIFICATION, documentDetails);
+				saveDocument(DMSModule.FINANCE, DMSModule.LV, documentDetails);
 				documentDetailsDAO.save(documentDetails, type);
 			}
 
 			if (updateRecord) {
-				saveDocument(DMSModule.FINANCE, DMSModule.VERIFICATION, documentDetails);
+				saveDocument(DMSModule.FINANCE, DMSModule.LV, documentDetails);
 				documentDetailsDAO.update(documentDetails, type);
 			}
 
@@ -895,6 +912,10 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			return false;
 		}
 		return true;
+	}
+
+	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
+		this.postExteranalServiceHook = postExteranalServiceHook;
 	}
 
 }

@@ -6,21 +6,33 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class DisbursementRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
-
 	private long id;
 	private Long batchId;
+	@XmlElement
 	private Long disbursementId;
+	@XmlElement
 	private String custCIF;
+	@XmlElement
 	private String finReference;
+	@XmlElement
 	private BigDecimal disbursementAmount;
 	private String disbursementType;
+	@XmlElement
 	private Date disbursementDate;
+	@XmlElement
 	private String draweeLocation;
+	@XmlElement
 	private String printLocation;
 	private String customerName;
 	private String customerMobile;
@@ -32,15 +44,21 @@ public class DisbursementRequest implements Serializable {
 	private String customerAddress3;
 	private String customerAddress4;
 	private String customerAddress5;
+	@XmlElement
 	private String benficiaryBank;
 	private String benficiaryBranch;
 	private String benficiaryBranchState;
 	private String benficiaryBranchCity;
+	@XmlElement
 	private String micrCode;
+	@XmlElement
 	private String ifscCode;
+	@XmlElement
 	private String benficiaryAccount;
+	@XmlElement
 	private String benficiaryName;
 	private String benficiaryMobile;
+	@XmlElement
 	private String benficiryEmail;
 	private String benficiryState;
 	private String benficiryCity;
@@ -57,21 +75,28 @@ public class DisbursementRequest implements Serializable {
 	private String paymentDetail6;
 	private String paymentDetail7;
 	private Long respBatchId;
+	@XmlElement
 	private String transactionref;
+	@XmlElement
 	private String chequeNumber;
 	private String ddChequeCharge;
+	@XmlElement
 	private String paymentDate;
+	@XmlElement
 	private String status;
 	private String remarks;
+	@XmlElement
 	private String rejectReason;
+	@XmlElement
 	private String channel;
 	private boolean autoDownload;
 	private Date realizationDate;
 	private long headerId;
 	private boolean alwFileDownload;
-
+	@XmlElement
 	private String finType;
 	private long partnerBankId;
+	@XmlElement
 	private String partnerBankCode;
 	private long userId;
 	private Date createdOn;
@@ -95,7 +120,29 @@ public class DisbursementRequest implements Serializable {
 	private boolean insurances;
 	private String bankCode;
 	private LoggedInUser loggedInUser;
-	private String partnerbankAccount;
+	private String partnerBankAccount;
+	@XmlElement
+	private String entityCode;
+	@XmlElement
+	private String paymentType;
+	@XmlElement
+	private String disbCCy;
+	@XmlElement
+	private WSReturnStatus returnStatus = null;
+	private Date fromDate;
+	private Date toDate;
+	@XmlElement
+	private long disbReqId;
+	@XmlElement
+	private long disbInstId;
+	@XmlElement
+	private Date clearingDate;
+	@XmlElement
+	private String disbType;
+
+	private String requestSource = "OFF_LINE";
+
+	private Long paymentId;
 
 	public DisbursementRequest() {
 		super();
@@ -749,12 +796,107 @@ public class DisbursementRequest implements Serializable {
 		this.loggedInUser = loggedInUser;
 	}
 
-	public String getPartnerbankAccount() {
-		return partnerbankAccount;
+	public String getPartnerBankAccount() {
+		return partnerBankAccount;
 	}
 
-	public void setPartnerbankAccount(String partnerbankAccount) {
-		this.partnerbankAccount = partnerbankAccount;
+	public void setPartnerBankAccount(String partnerBankAccount) {
+		this.partnerBankAccount = partnerBankAccount;
 	}
 
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getDisbCCy() {
+		return disbCCy;
+	}
+
+	public void setDisbCCy(String disbCCy) {
+		this.disbCCy = disbCCy;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(String requestSource) {
+		this.requestSource = requestSource;
+	}
+
+	public Long getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(Long paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	public long getDisbReqId() {
+		return disbReqId;
+	}
+
+	public void setDisbReqId(long disbReqId) {
+		this.disbReqId = disbReqId;
+	}
+
+	public long getDisbInstId() {
+		return disbInstId;
+	}
+
+	public void setDisbInstId(long disbInstId) {
+		this.disbInstId = disbInstId;
+	}
+
+	public Date getClearingDate() {
+		return clearingDate;
+	}
+
+	public void setClearingDate(Date clearingDate) {
+		this.clearingDate = clearingDate;
+	}
+
+	public String getDisbType() {
+		return disbType;
+	}
+
+	public void setDisbType(String disbType) {
+		this.disbType = disbType;
+	}
 }

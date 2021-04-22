@@ -44,9 +44,13 @@
 package com.pennant.backend.dao.systemmasters;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 /**
  * DAO methods declaration for the <b>InterestCertificate model</b> class.<br>
@@ -56,7 +60,7 @@ public interface InterestCertificateDAO {
 
 	InterestCertificate getInterestCertificateDetails(String finReference) throws ParseException;
 
-	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, String startDate, String endDate)
+	InterestCertificate getSumOfPrinicipalAndProfitAmount(String finReference, Date startDate, Date endDate)
 			throws ParseException;
 
 	String getCollateralRef(String finReference);
@@ -67,9 +71,21 @@ public interface InterestCertificateDAO {
 
 	String getCollateralTypeValue(String table, String columnField, String reference);
 
-	List<String> getCoApplicantNames(String finReference);
+	List<Customer> getCoApplicantNames(String finReference);
 
-	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, String startDate, String endDate)
+	InterestCertificate getSumOfPrinicipalAndProfitAmountPaid(String finReference, Date startDate, Date endDate)
 			throws ParseException;
+
+	Map<String, Object> getSumOfPriPftEmiAmount(String finReference, Date finStartDate, Date finEndDate);
+
+	Map<String, Object> getTotalGrcRepayProfit(String finReference, Date finStartDate, Date finEndDate);
+
+	InterestCertificate getSchedPrinicipalAndProfit(String finReference, Date finStartDate, Date finEndDate)
+			throws ParseException;
+	
+	FinanceScheduleDetail getScheduleDetailsByFinReference(String finReference, Date finStartDate,
+			Date finEndDate);
+
+	InterestCertificate getRepayDetails(String finReference, Date startDate, Date endDate);
 
 }

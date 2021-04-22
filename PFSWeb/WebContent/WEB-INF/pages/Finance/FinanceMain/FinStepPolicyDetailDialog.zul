@@ -51,10 +51,10 @@
 						</columns>
 						<rows>
 							<row>
-								<label id="label_FinStepPolicyDialog_FinAmount" value="${c:l('label_FinStepPolicyDialog_FinAmount.value')}" />
+								<label id="label_FinStepPolicyDialog_FinTenor" value="${c:l('label_FinStepPolicyDialog_FinTenor.value')}" />
 								<hbox>
-									<space id="space_FinStepPolicyDialog_FinAmount" spacing="2px" />
-									<decimalbox id="stepFinAmount" width="150px" />
+									<space id="space_FinStepPolicyDialog_FinTenor" spacing="2px" />
+									<intbox id="stepFinTenor"/>
 								</hbox>
 								<label id="label_FinStepPolicyDialog_StepNumber" value="${c:l('label_FinStepPolicyDialog_StepNumber.value')}" />
 								<hbox>
@@ -74,23 +74,26 @@
 									<decimalbox id="tenorSplitPerc" />
 								</hbox>
 							</row>
-							<row>
-								<label id="label_FinStepPolicyDialog_RateMargin" value="${c:l('label_FinStepPolicyDialog_RateMargin.value')}" />
-								<hbox>
+							<row id="row_rateMargin">
+								<label id="label_FinStepPolicyDialog_RateMargin" value="${c:l('label_FinStepPolicyDialog_RateMargin.value')}" visible="false"/>
+								<hbox visible="false">
 									<space id="space_FinStepPolicyDialog_RateMargin" spacing="2px" />
 									<decimalbox id="rateMargin" width="150px" />
 								</hbox>
 								<label id="label_FinStepPolicyDialog_EMIStepPerc" value="${c:l('label_FinStepPolicyDialog_EMIStepPerc.value')}" />
 								<hbox>
-									<space id="space_FinStepPolicyDialog_EMIStepPerc" spacing="2px" sclass="mandatory" />
+									<space id="space_FinStepPolicyDialog_EMIStepPerc" spacing="2px" />
 									<decimalbox id="eMIStepPerc" />
 								</hbox>
 							</row>
-							<row visible="false">
+							<row id="row_steppedEMI">
 								<label id="label_FinStepPolicyDialog_SteppedEMI" value="${c:l('label_FinStepPolicyDialog_SteppedEMI.value')}" />
 								<hbox>
-									<space id="space_FinStepPolicyDialog_SteppedEMI" spacing="2px" />
-									<decimalbox id="steppedEMI" disabled="true" width="150px" />
+									<currencyBox id="steppedEMI" width="150px" />
+								</hbox>
+								<label id="label_FinStepPolicyDialog_AutoCal" value="${c:l('label_FinStepPolicyDialog_AutoCal.value')}" visible="false"/>
+								<hbox id="hbox_autoCal" visible="false">
+									<checkbox id="autoCal" />
 								</hbox>
 							</row>
 						</rows>

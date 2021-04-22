@@ -43,7 +43,8 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>FinChangeCustomer</code> with set of CRUD operations.
  */
 public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> implements FinChangeCustomerDAO {
-	private static Logger logger = Logger.getLogger(FinChangeCustomerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinChangeCustomerDAOImpl.class);
 
 	public FinChangeCustomerDAOImpl() {
 		super();
@@ -223,13 +224,11 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 
 	@Override
 	public boolean isFinReferenceProcess(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("SELECT COUNT(FinReference) FROM FinChangeCustomer");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = :FinReference ");
 
-		logger.debug("selectSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
@@ -240,8 +239,6 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
-
-		logger.debug(Literal.LEAVING);
 
 		return count > 0 ? true : false;
 	}

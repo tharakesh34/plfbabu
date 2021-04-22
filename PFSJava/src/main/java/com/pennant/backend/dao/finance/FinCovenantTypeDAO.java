@@ -86,4 +86,6 @@ public interface FinCovenantTypeDAO {
 	SecurityRole isMandRoleExists(String mandRole, String[] allowedRoles);
 
 	List<DocumentType> getPddOtcList();
+
+	SecurityRole isMandRoleExists(String mandRole);
 }

@@ -27,6 +27,7 @@ public class NotificationConstants {
 	public static final String MAIL_MODULE_FIN = "FIN";
 	public static final String MAIL_MODULE_CAF = "CAF";
 	public static final String MAIL_MODULE_CREDIT = "CRD";
+	public static final String MAIL_MODULE_TREASURY = "TSR";
 	public static final String MAIL_MODULE_PROVISION = "PRV";
 	public static final String MAIL_MODULE_MANUALSUSPENSE = "MSP";
 	public static final String MAIL_MODULE_POAUTHORIZATION = "POA";
@@ -48,4 +49,5 @@ public class NotificationConstants {
 	public static final String TLS = "TLS";
 	public static final String AUTO = "AUTO";
 
+	public static final String UTF_EIGHT_CHARSET = "UTF-8";
 }

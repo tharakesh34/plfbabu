@@ -373,4 +373,22 @@ public class StaticListUtil {
 
 	}
 
+	public static final HashMap<String, String> getSegment() {
+		HashMap<String, String> segment = new HashMap<String, String>();
+		segment.put("ID", "Identification Segment");
+		segment.put("PN", "Name Segment");
+		segment.put("PT", "Telephone Segment");
+		segment.put("PA", "Address Segment");
+		//segment.put("ES", "End Segment");
+		segment.put("PI", "Account Number Segment");
+		segment.put("DR", "Dispute Remarks Segment");
+		segment.put("IQ", "Enquiry Segment");
+		segment.put("TL", "Account Segment");
+		segment.put("SC", "Score Segment");
+		segment.put("EM", "Employment Segment");
+		segment.put("EC", "Email Contact Segment");
+		segment.put("TL", "Account Segment");
+		return segment;
+	}
+
 }

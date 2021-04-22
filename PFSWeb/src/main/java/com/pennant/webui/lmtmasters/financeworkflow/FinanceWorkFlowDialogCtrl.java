@@ -50,7 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -84,18 +85,15 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/SolutionFactory/FinanceWorkFlow/financeWorkFlowDialog.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceWorkFlow/financeWorkFlowDialog.zul file.
  */
 public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	private static final long serialVersionUID = -4959034105708570551L;
-	private static final Logger logger = Logger.getLogger(FinanceWorkFlowDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceWorkFlowDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component
-	 * with the same 'id' in the ZUL-file are getting autoWired by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinanceWorkFlowDialog; // autoWired
 	protected ExtendedCombobox finType; // autoWired
@@ -138,9 +136,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected FinanceWorkFlow object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected FinanceWorkFlow object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -182,7 +179,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				}
 			}
 
-			// Event Name
+			// Event Name 
 			if (arguments.containsKey("eventAction")) {
 				eventAction = (String) arguments.get("eventAction");
 			}
@@ -240,7 +237,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		// Empty sent any required attributes
+		//Empty sent any required attributes
 		this.finType.setMaxlength(8);
 		this.finType.setMandatoryStyle(true);
 		doSetFinTypeProperties();
@@ -276,6 +273,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				this.finType.setValueColumn("PromotionCode");
 				this.finType.setDescColumn("PromotionDesc");
 				this.finType.setValidateColumns(new String[] { "PromotionCode" });
+
+				Filter[] filters = new Filter[1];
+				filters[0] = new Filter("ReferenceId", 0, Filter.OP_EQUAL);
+				this.finType.setFilters(filters);
 				this.row_finEvent.setVisible(true);
 			} else if (this.moduleName.getSelectedItem().getValue().toString()
 					.equals(PennantConstants.WORFLOW_MODULE_COLLATERAL)) {
@@ -315,8 +316,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -393,7 +393,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -416,7 +417,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceWorkFlow FinanceWorkFlow
+	 * @param aFinanceWorkFlow
+	 *            FinanceWorkFlow
 	 */
 	public void doWriteBeanToComponents(FinanceWorkFlow aFinanceWorkFlow) {
 		logger.debug("Entering");
@@ -427,7 +429,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 					+ "," + PennantConstants.WORFLOW_MODULE_COLLATERAL + "," + PennantConstants.WORFLOW_MODULE_VAS + ","
 					+ PennantConstants.WORFLOW_MODULE_COMMITMENT + ",";
 		} else {
-			// Remove Facility If Facility module Exists
+			//Remove Facility If Facility module Exists
 			exclFields = "," + PennantConstants.WORFLOW_MODULE_PROMOTION + ","
 					+ PennantConstants.WORFLOW_MODULE_COLLATERAL + "," + PennantConstants.WORFLOW_MODULE_VAS + ","
 					+ PennantConstants.WORFLOW_MODULE_COMMITMENT + ",";
@@ -607,8 +609,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceWorkFlow
 	 * @throws Exception
@@ -914,9 +915,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aFinanceWorkFlow (FinanceWorkFlow)
+	 * @param aFinanceWorkFlow
+	 *            (FinanceWorkFlow)
 	 * 
-	 * @param tranType         (String)
+	 * @param tranType
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1007,9 +1010,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader (AuditHeader)
+	 * @param auditHeader
+	 *            (AuditHeader)
 	 * 
-	 * @param method      (String)
+	 * @param method
+	 *            (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1146,8 +1151,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Get Audit Header Details
 	 * 
-	 * @param aSubSegment (SubSegment)
-	 * @param tranType    (String)
+	 * @param aSubSegment
+	 *            (SubSegment)
+	 * @param tranType
+	 *            (String)
 	 * @return auditHeader
 	 */
 	private AuditHeader getAuditHeader(FinanceWorkFlow aFinanceWorkFlow, String tranType) {
@@ -1159,7 +1166,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1175,7 +1183,8 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event (Event)
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

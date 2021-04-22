@@ -9,7 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,7 +25,7 @@ import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
 import com.pennant.batchupload.model.FaultDetails;
 
 public class BatchProcessorUtil {
-	private static final Logger logger = Logger.getLogger(BatchProcessorUtil.class);
+	private static final Logger logger = LogManager.getLogger(BatchProcessorUtil.class);
 
 	/**
 	 * return all keys of a sheet

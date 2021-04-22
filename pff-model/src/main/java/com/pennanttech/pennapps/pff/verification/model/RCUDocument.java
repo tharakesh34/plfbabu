@@ -4,27 +4,40 @@ package com.pennanttech.pennapps.pff.verification.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlAccessorType(XmlAccessType.NONE)
 public class RCUDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long verificationId;
+	@XmlElement
 	private int seqNo;
 	private Long documentId;
+	@XmlElement
 	private int documentType;
+	@XmlElement(name = "documentName")
 	private String documentSubId;
 	private Long documentRefId;
 	private String documentUri;
 	private Long reinitid;
+	@XmlElement
 	private int verificationType;
+	@XmlElement(name = "rcuStatus")
 	private int status;
+	@XmlElement
 	private int pagesEyeballed;
+	@XmlElement
 	private int pagesSampled;
 	private String initRemarks;
+	@XmlElement(name = "remarks")
 	private String agentRemarks;
 	private String decisionRemarks;
 	private boolean reInitiated;
@@ -35,6 +48,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	private String code;
 	private String description;
 	private boolean rcuReq;
+	@XmlElement
 	private String docType;
 	private int docTypeId;
 	private String docName;
@@ -49,6 +63,8 @@ public class RCUDocument extends AbstractWorkflowEntity {
 	// Bank account number with numeric field type in RCU initiation
 	private String accNumber;
 	private String bankName;
+
+	private String sourceId;
 
 	public RCUDocument() {
 		super();
@@ -78,6 +94,7 @@ public class RCUDocument extends AbstractWorkflowEntity {
 		excludeFields.add("bankName");
 		excludeFields.add("extendedFieldRender");
 		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("sourceId");
 		return excludeFields;
 	}
 
@@ -355,5 +372,13 @@ public class RCUDocument extends AbstractWorkflowEntity {
 
 	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
 		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
 	}
 }

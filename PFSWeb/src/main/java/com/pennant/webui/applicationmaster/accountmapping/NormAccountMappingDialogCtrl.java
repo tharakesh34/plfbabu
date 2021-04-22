@@ -4,7 +4,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -32,7 +33,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	private static final long serialVersionUID = -6945930303723518608L;
-	private static final Logger logger = Logger.getLogger(NormAccountMappingDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(NormAccountMappingDialogCtrl.class);
 
 	protected Window window_NormAccountMappingDialog;
 	protected Uppercasebox account;

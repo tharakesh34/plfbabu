@@ -50,20 +50,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -81,7 +83,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>ExtendedFieldDetail model</b> class.<br>
  */
 public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> implements ExtendedFieldDetailDAO {
-	private static Logger logger = Logger.getLogger(ExtendedFieldDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtendedFieldDetailDAOImpl.class);
 
 	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
@@ -154,6 +156,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		sql.append(", Filters, FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, Editable");
 		sql.append(", Visible, AllowInRule, ValFromScript, Scriptlet, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", DefValue, AgrField"); //HL
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescModuleName, LovDescSubModuleName");
@@ -201,6 +204,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	/**
 	 * Method for Deletion of Extended Detail List of ExtendedDetail
 	 */
+	@Override
 	public void deleteByExtendedFields(final long id, String type) {
 		logger.debug(Literal.ENTERING);
 		ExtendedFieldDetail extendedFieldDetail = new ExtendedFieldDetail();
@@ -357,7 +361,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters,");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, visible,");
 		selectSql.append(
-				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, ValFromScript, Scriptlet, ");
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, ValFromScript, Scriptlet, DefValue, ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescModuleName,lovDescSubModuleName , ");
 		}
@@ -369,8 +373,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
-		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldDetail.class);
+		RowMapper<ExtendedFieldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -386,7 +389,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters,");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, ");
 		selectSql.append(
-				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule, Visible, ValFromScript, Scriptlet, ");
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule, Visible, ValFromScript, Scriptlet, DefValue, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From ExtendedFieldDetail");
@@ -395,8 +398,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
-		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldDetail.class);
+		RowMapper<ExtendedFieldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -941,6 +943,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	 * @throws DataAccessException
 	 * 
 	 */
+	@Override
 	public void deleteAdditional(final String id, String tableName, String type) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder deleteSql = new StringBuilder("Delete From " + tableName);
@@ -952,6 +955,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
 	public void deleteAdditional(String primaryKeyColumn, final Serializable id, String type, String tableName) {
 		logger.debug(Literal.ENTERING);
 		StringBuilder deleteSql = new StringBuilder("Delete From " + tableName);
@@ -982,8 +986,6 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 	@Override
 	public List<ExtendedFieldDetail> getExtendedFieldDetailById(long id, int extendedType, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ModuleId = ? and ExtendedType = ?");
 		sql.append(" order by FieldSeqOrder ASC");
@@ -992,22 +994,18 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		List<ExtendedFieldDetail> efd = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+			ps.setLong(index++, extendedType);
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, id);
-					ps.setLong(index++, extendedType);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		}, rowMapper);
+		return sortExtendFields(efd);
+	}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+	private List<ExtendedFieldDetail> sortExtendFields(List<ExtendedFieldDetail> efd) {
+		return efd.stream().sorted((fld1, fld2) -> Integer.compare(fld1.getFieldSeqOrder(), fld2.getFieldSeqOrder()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -1029,8 +1027,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);
-		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldDetail.class);
+		RowMapper<ExtendedFieldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1179,6 +1176,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			efd.setNextTaskId(rs.getString("NextTaskId"));
 			efd.setRecordType(rs.getString("RecordType"));
 			efd.setWorkflowId(rs.getLong("WorkflowId"));
+			efd.setDefValue(rs.getString("DefValue"));
+			efd.setAgrField(rs.getString("AgrField"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				efd.setLovDescModuleName(rs.getString("LovDescModuleName"));
@@ -1188,4 +1187,54 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			return efd;
 		}
 	}
+
+	@Override
+	public Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName,
+			String event, String field, String type) {
+
+		StringBuilder sql = null;
+
+		Map<String, Object> values = null;
+		MapSqlParameterSource source = null;
+		sql = new StringBuilder();
+		sql.append(" select ".concat(field));
+		sql.append(" from ");
+		sql.append(moduleName);
+		sql.append("_");
+		sql.append(subModuleName);
+		sql.append("_ed");
+		sql.append(type);
+		sql.append(" where reference = :reference");
+
+		source = new MapSqlParameterSource();
+		source.addValue("reference", reference);
+		try {
+			values = jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return values;
+	}
+
+	@Override
+	public List<ExtendedFieldDetail> getCollateralExtDetails(String moduleName, String subModuleName) {
+
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" fieldtype,agrfield,fieldName,fieldList FROM extendedFieldDetail ed");
+		sql.append(" inner join  extendedfieldheader eh on eh.moduleid = ed.moduleid");
+		sql.append(" where eh.modulename= :moduleName and eh.submodulename = :subModuleName and  agrfield is not null");
+
+		logger.debug(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("moduleName", moduleName);
+		source.addValue("subModuleName", subModuleName);
+
+		RowMapper<ExtendedFieldDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldDetail.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+
 }

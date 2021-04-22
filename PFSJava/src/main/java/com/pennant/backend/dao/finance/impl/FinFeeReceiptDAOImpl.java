@@ -44,23 +44,19 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.model.finance.FinFeeReceipt;
@@ -75,7 +71,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements FinFeeReceiptDAO {
-	private static Logger logger = Logger.getLogger(FinFeeReceiptDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeReceiptDAOImpl.class);
 
 	public FinFeeReceiptDAOImpl() {
 		super();
@@ -97,7 +93,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
 		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
@@ -110,7 +106,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeReceipt);
-		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+		RowMapper<FinFeeReceipt> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
 
 		try {
 			finFeeReceipt = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -153,11 +149,9 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 	@Override
 	public List<FinFeeReceipt> getFinFeeReceiptByFinRef(final List<Long> feeIds, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FeeID, ReceiptID, PaidAmount, Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeId, ReceiptType");
@@ -176,58 +170,49 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		sql.deleteCharAt(sql.length() - 1);
 		sql.append(")");
-		sql.append("  AND PaidAmount > 0");
+		sql.append(" and PaidAmount > ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					for (Long feeId : feeIds) {
-						ps.setLong(index++, feeId);
-					}
-				}
-			}, new RowMapper<FinFeeReceipt>() {
-				@Override
-				public FinFeeReceipt mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinFeeReceipt gstD = new FinFeeReceipt();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (Long feeId : feeIds) {
+				ps.setLong(index++, feeId);
+			}
+			ps.setInt(index, 0);
 
-					gstD.setId(rs.getLong("Id"));
-					gstD.setFeeID(rs.getLong("FeeID"));
-					gstD.setReceiptID(rs.getLong("ReceiptID"));
-					gstD.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					gstD.setVersion(rs.getInt("Version"));
-					gstD.setLastMntBy(rs.getLong("LastMntBy"));
-					gstD.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					gstD.setRecordStatus(rs.getString("RecordStatus"));
-					gstD.setRoleCode(rs.getString("RoleCode"));
-					gstD.setNextRoleCode(rs.getString("NextRoleCode"));
-					gstD.setTaskId(rs.getString("TaskId"));
-					gstD.setNextTaskId(rs.getString("NextTaskId"));
-					gstD.setRecordType(rs.getString("RecordType"));
-					gstD.setWorkflowId(rs.getLong("WorkflowId"));
+		}, (rs, rowNum) -> {
+			FinFeeReceipt gstD = new FinFeeReceipt();
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						gstD.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-						gstD.setFeeTypeCode(rs.getString("FeeTypeCode"));
-						gstD.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-						gstD.setFeeTypeId(rs.getLong("FeeTypeId"));
-						gstD.setReceiptType(rs.getString("ReceiptType"));
-						gstD.setTransactionRef(rs.getString("TransactionRef"));
-						gstD.setFavourNumber(rs.getString("FavourNumber"));
-						gstD.setVasReference(rs.getString("VasReference"));
-					}
+			gstD.setId(rs.getLong("Id"));
+			gstD.setFeeID(rs.getLong("FeeID"));
+			gstD.setReceiptID(rs.getLong("ReceiptID"));
+			gstD.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			gstD.setVersion(rs.getInt("Version"));
+			gstD.setLastMntBy(rs.getLong("LastMntBy"));
+			gstD.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			gstD.setRecordStatus(rs.getString("RecordStatus"));
+			gstD.setRoleCode(rs.getString("RoleCode"));
+			gstD.setNextRoleCode(rs.getString("NextRoleCode"));
+			gstD.setTaskId(rs.getString("TaskId"));
+			gstD.setNextTaskId(rs.getString("NextTaskId"));
+			gstD.setRecordType(rs.getString("RecordType"));
+			gstD.setWorkflowId(rs.getLong("WorkflowId"));
+			gstD.setPaidTds(rs.getBigDecimal("PaidTds"));
 
-					return gstD;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				gstD.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+				gstD.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				gstD.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				gstD.setFeeTypeId(rs.getLong("FeeTypeId"));
+				gstD.setReceiptType(rs.getString("ReceiptType"));
+				gstD.setTransactionRef(rs.getString("TransactionRef"));
+				gstD.setFavourNumber(rs.getString("FavourNumber"));
+				gstD.setVasReference(rs.getString("VasReference"));
+			}
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return gstD;
+		});
 	}
 
 	/**
@@ -289,10 +274,10 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (Id, FeeID, ReceiptID, PaidAmount, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, PaidTds)");
 		insertSql.append(" Values( :Id, :FeeID, :ReceiptID, :PaidAmount,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :PaidTds)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeReceipt);
@@ -329,7 +314,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 				"  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(
 				"  RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append("  RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append("  RecordType = :RecordType, WorkflowId = :WorkflowId, PaidTds = :PaidTds");
 		updateSql.append("  Where Id = :Id ");
 
 		if (!type.endsWith("_Temp")) {
@@ -358,7 +343,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 		StringBuilder selectSql = new StringBuilder(" SELECT ID, FeeID, ReceiptID, PaidAmount,");
 		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					",ReceiptAmount, FeeTypeCode, FeeTypeDesc, FeeTypeID, ReceiptType, transactionRef, favourNumber, vasReference,FeeTypeId ");
@@ -370,7 +355,7 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		logger.debug("selectSql: " + selectSql.toString());
 
 		logger.debug("Leaving");
-		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+		RowMapper<FinFeeReceipt> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
 
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
 
@@ -426,18 +411,23 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	@Override
 	public List<FinFeeReceipt> getFinFeeReceiptByReceiptId(long receiptID, String type) {
 		logger.debug(Literal.ENTERING);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT ID, FeeID, ReceiptID, PaidAmount,  Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" From FinFeeReceipts");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE  ReceiptID = :ReceiptID");
-		logger.debug(Literal.SQL + selectSql.toString());
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT ID, FeeID, ReceiptID, PaidAmount,  Version, LastMntBy, LastMntOn, RecordStatus,");
+		sql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PaidTds");
+		sql.append(" From FinFeeReceipts");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" WHERE  ReceiptID = :ReceiptID");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptID", receiptID);
-		RowMapper<FinFeeReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+
+		RowMapper<FinFeeReceipt> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeReceipt.class);
+
 		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override

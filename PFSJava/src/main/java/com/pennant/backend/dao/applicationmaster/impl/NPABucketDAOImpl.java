@@ -44,15 +44,16 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPABucketDAO;
 import com.pennant.backend.model.applicationmaster.NPABucket;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>NPABucket</code> with set of CRUD operations.
  */
 public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucketDAO {
-	private static Logger logger = Logger.getLogger(NPABucketDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NPABucketDAOImpl.class);
 
 	public NPABucketDAOImpl() {
 		super();
@@ -94,7 +95,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		nPABucket.setBucketID(bucketID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucket);
-		RowMapper<NPABucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NPABucket.class);
+		RowMapper<NPABucket> rowMapper = BeanPropertyRowMapper.newInstance(NPABucket.class);
 
 		try {
 			nPABucket = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -161,7 +162,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 
 		// Get the identity sequence number.
 		if (nPABucket.getBucketID() <= 0) {
-			nPABucket.setBucketID(getNextId("SeqNPABUCKETS"));
+			nPABucket.setBucketID(getNextValue("SeqNPABUCKETS"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -246,7 +247,7 @@ public class NPABucketDAOImpl extends SequenceDao<NPABucket> implements NPABucke
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<NPABucket> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(NPABucket.class);
+		RowMapper<NPABucket> rowMapper = BeanPropertyRowMapper.newInstance(NPABucket.class);
 
 		List<NPABucket> list = jdbcTemplate.query(sql.toString(), rowMapper);
 

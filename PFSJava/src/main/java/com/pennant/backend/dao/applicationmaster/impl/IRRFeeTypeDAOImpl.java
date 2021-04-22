@@ -49,15 +49,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
 import com.pennant.backend.model.applicationmaster.IRRFeeType;
@@ -71,7 +72,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>IRRFeeType</code> with set of CRUD operations.
  */
 public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTypeDAO {
-	private static Logger logger = Logger.getLogger(IRRFeeTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(IRRFeeTypeDAOImpl.class);
 
 	public IRRFeeTypeDAOImpl() {
 		super();
@@ -97,7 +98,7 @@ public class IRRFeeTypeDAOImpl extends BasicDao<IRRFeeType> implements IRRFeeTyp
 		iRRFeeType.setIRRID(iRRID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRFeeType);
-		RowMapper<IRRFeeType> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRFeeType.class);
+		RowMapper<IRRFeeType> rowMapper = BeanPropertyRowMapper.newInstance(IRRFeeType.class);
 
 		try {
 			iRRFeeType = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

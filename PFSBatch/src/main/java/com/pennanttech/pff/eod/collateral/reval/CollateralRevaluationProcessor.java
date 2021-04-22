@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
@@ -74,8 +74,7 @@ public class CollateralRevaluationProcessor extends BasicDao<CollateralRevaluati
 
 		source.addValue("reference", collateralDetails.getCollateralRef());
 
-		RowMapper<CollateralRevaluation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralRevaluation.class);
+		RowMapper<CollateralRevaluation> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralRevaluation.class);
 		try {
 			collData = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

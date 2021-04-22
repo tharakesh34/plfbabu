@@ -1,7 +1,9 @@
 package com.pennanttech.webui.verification;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,19 +11,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -55,12 +58,14 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.AddressType;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -85,7 +90,6 @@ import com.pennanttech.pennapps.pff.verification.service.FieldInvestigationServi
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-@Component(value = "fieldVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final long serialVersionUID = 8661799804403963415L;
@@ -125,9 +129,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	@Autowired
 	private transient CustomerAddresService customerAddresService;
 	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
-	@Autowired
 	private RuleService ruleService;
+	@Autowired
+	private JointAccountDetailService jointAccountDetailService;
 
 	private boolean fromVerification;
 	private FIInitiationListCtrl fiInitiationListCtrl;
@@ -432,11 +436,15 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			// Address Type
 			listCell = new Listcell();
+			A addrLink = new A();
 			listCell.setId("ReferenceFor".concat(String.valueOf(i)));
-			listCell.appendChild(new Label(vrf.getReferenceFor()));
+			addrLink.setLabel(vrf.getReferenceFor());
+			addrLink.addForward("onClick", self, "onClickAddressType", vrf);
+			addrLink.setStyle("text-decoration:underline;");
+			listCell.appendChild(addrLink);
 			listCell.setParent(item);
 
-			// FIV
+			// FIVA
 			listCell = new Listcell();
 			listCell.setId("RequestType".concat(String.valueOf(i)));
 			Combobox requestType = new Combobox();
@@ -478,7 +486,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				agency.setAttribute("oldAgencyId", vrf.getAgency());
 				agency.setAttribute("agencyName", vrf.getAgencyName());
 			}
-			fillAgencies(agency);
+			fillAgencies(agency, vrf.getCity());
 			listCell.appendChild(agency);
 			listCell.setParent(item);
 
@@ -551,7 +559,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.setId("ReInitAgency".concat(String.valueOf(i)));
 				ExtendedCombobox reInitAgency = new ExtendedCombobox();
 				reInitAgency.setReadonly(true);
-				fillAgencies(reInitAgency);
+				fillAgencies(reInitAgency, vrf.getCity());
 				listCell.appendChild(reInitAgency);
 				listCell.setParent(item);
 
@@ -646,22 +654,23 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void fillDecision(Verification vrf, Combobox decision) {
 		List<ValueLabel> decisionList = new ArrayList<>();
-		if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-				|| vrf.getStatus() == FIStatus.POSITIVE.getKey()) {
+		int requestType = vrf.getRequestType();
+		int status = vrf.getStatus();
+
+		if (requestType == RequestType.NOT_REQUIRED.getKey() || status == FIStatus.POSITIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 			decisionList.add(new ValueLabel(String.valueOf(Decision.SELECT.getKey()), Decision.SELECT.getValue()));
 			if (vrf.getDecision() == Decision.SELECT.getKey()) {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == FIStatus.NEGATIVE.getKey()
-				|| vrf.getStatus() == FIStatus.REFERTOCREDIT.getKey()) {
+		} else if (status == FIStatus.NEGATIVE.getKey() || status == FIStatus.REFER_TO_CREDIT.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			if (vrf.getDecision() == Decision.APPROVE.getKey()) {
 				vrf.setDecision(Decision.SELECT.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getRequestType() == RequestType.WAIVE.getKey()) {
+		} else if (requestType == RequestType.WAIVE.getKey()) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.OVERRIDE.getKey()), Decision.OVERRIDE.getValue()));
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
 		} else {
@@ -686,13 +695,18 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return decisionList;
 	}
 
-	private void fillAgencies(ExtendedCombobox agency) {
+	private void fillAgencies(ExtendedCombobox agency, String city) {
 		logger.debug(Literal.ENTERING);
 		agency.setModuleName("VerificationAgencies");
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
 		Filter[] agencyFilter = new Filter[1];
 		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_AGENCY_FILTER_BY_CITY && StringUtils.isNotBlank(city)) {
+			agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
+			//Applying city filter based on customer Address city code
+			agencyFilter[1] = new Filter("DealerCity", city, Filter.OP_EQUAL);
+		}
 		agency.setFilters(agencyFilter);
 		logger.debug(Literal.LEAVING);
 	}
@@ -910,8 +924,25 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						vrf.setFieldInvestigation(item);
 					}
 				}
+				if (vrf.getReferenceType().equals("Primary")) {
+					result.add(vrf);
+				} else if (vrf.getReferenceType().equals("Co-applicant")) {
+					// getting co-applicants based on each verification
+					JointAccountDetail coApplicant = jointAccountDetailService.getJountAccountDetailByRef(keyReference,
+							vrf.getReference(), "_Temp");
+					// retrieving verifications from verification_fi table
+					FieldInvestigation fi = fieldInvestigationService.getFieldInvestigation(vrf.getId(), "_view");
+
+					if (coApplicant != null) {
+						result.add(vrf);
+					} else {
+						if (fi != null) {
+							result.add(vrf);
+						}
+					}
+				}
 			}
-			return verifications;
+			return result;
 		}
 		for (Verification item : verifications) {
 			if (item.getReference().equals(custCif)) {
@@ -953,6 +984,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setVerificationType(VerificationType.FI.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setModule(Module.LOAN.getKey());
+		//to set Agency Filter based on customer address city
+		item.setCity(address.getCustAddrCity());
 		verification.setCreatedOn(SysParamUtil.getAppDate());
 
 		return item;
@@ -975,6 +1008,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Combobox decision = (Combobox) getComponent(listitem, "Decision");
 			ExtendedCombobox reInitagencyComboBox = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 			Textbox reInitRemarks = (Textbox) getComponent(listitem, "ReInitRemarks");
+			Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 
 			fivComboBox.clearErrorMessage();
 			agencyComboBox.clearErrorMessage();
@@ -988,6 +1022,9 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			if (reInitRemarks != null) {
 				reInitRemarks.clearErrorMessage();
+			}
+			if (remarks != null) {
+				remarks.clearErrorMessage();
 			}
 		}
 	}
@@ -1058,10 +1095,12 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				if (!userAction.getSelectedItem().getValue().toString().contains("Resubmit")) {
 					Textbox remarks = (Textbox) getComponent(listitem, "Remarks");
 					verification.setRemarks(remarks.getValue());
-					if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
-							&& StringUtils.isEmpty(verification.getRemarks())) {
-						throw new WrongValueException(remarks,
-								"Remarks are mandatory when Verification is Not Required");
+					if (ImplementationConstants.VER_INITATE_REMARKS_MANDATORY) {
+						if (verification.getRequestType() == RequestType.NOT_REQUIRED.getKey()
+								&& StringUtils.isEmpty(verification.getRemarks())) {
+							throw new WrongValueException(remarks,
+									"Remarks are mandatory when Verification is Not Required");
+						}
 					}
 				}
 			}
@@ -1091,7 +1130,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			verification.setDecisionRemarks(textbox.getValue());
 			if (verification.getDecision() == Decision.OVERRIDE.getKey()
 					&& StringUtils.isEmpty(verification.getDecisionRemarks())) {
-				throw new WrongValueException(textbox, "Remarks are mandatory when Decision is Override");
+				throw new WrongValueException(textbox, Labels.getLabel("label_OVERRIDE_Validation"));
 			}
 			break;
 		default:
@@ -1241,7 +1280,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> list = new ArrayList<>();
 		doClearMessage();
 
-		if (ImplementationConstants.INITATE_VERIFICATION_DURING_SAVE) {
+		if (ImplementationConstants.VER_INITATE_DURING_SAVE) {
 			doSetValidation();
 		} else if (!recSave) {
 			doSetValidation();
@@ -1273,12 +1312,43 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private boolean validateReinitiation(List<Verification> verifications) {
+		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.VER_FI_VALIDITY_DAYS);
+		Date appDate = SysParamUtil.getAppDate();
+
 		for (Verification verification : verifications) {
 			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
 					&& verification.getReinitid() == null) {
 				MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
 				return false;
+			}
+
+			if (days > 0) {
+				int diff = DateUtil.getDaysBetween(appDate, verification.getVerificationDate());
+				//FI Verification validity check
+				if (verification.getDecision() == Decision.APPROVE.getKey() && diff > days && !recSave) {
+					StringBuilder error = new StringBuilder("For ");
+					error.append(Labels.getLabel("listheader_FIVerification_ApplicantType.label")).append(": ")
+							.append(verification.getReferenceType()).append(", ");
+					error.append(Labels.getLabel("listheader_FIVerification_CIF.label")).append(": ")
+							.append(verification.getCif()).append(", ");
+					error.append(Labels.getLabel("listheader_FIVerification_Name.label")).append(": ")
+							.append(verification.getCustomerName()).append(", ");
+					error.append(Labels.getLabel("listheader_FIVerification_AddressType.label")).append(": ")
+							.append(verification.getReferenceFor()).append(", ");
+					error.append(Labels.getLabel("label_FI_Verification_Exp"));
+					if (MessageUtil.confirm(error.toString()) == MessageUtil.NO) {
+						return false;
+					}
+				}
+
+				if (verification.getDecision() == Decision.APPROVE.getKey() && !recSave
+						&& ImplementationConstants.ALW_VERIFICATION_SYNC) {
+					FieldInvestigation fieldInvestigation = fieldInvestigationService
+							.getFieldInvestigation(verification.getId(), "_View");
+					verification.setFieldInvestigation(fieldInvestigation);
+				}
+
 			}
 		}
 		return true;
@@ -1316,7 +1386,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		dataMap.putAll(PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails));
 		dataMap.putAll(customer.getDeclaredFieldValues());
 		dataMap.putAll(financeMain.getDeclaredFieldValues());
-		isverified = (boolean) ruleExecutionUtil.executeRule(rule.getSQLRule(), dataMap, financeMain.getFinCcy(),
+		isverified = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), dataMap, financeMain.getFinCcy(),
 				RuleReturnType.BOOLEAN);
 		return isverified;
 	}
@@ -1358,9 +1428,43 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.FI, PennantConstants.TRAN_WF, initType);
 			refreshList();
+			String msg = Labels.getLabel("FI_INITIATION",
+					new String[] { financeDetail.getFinScheduleData().getFinReference() });
+			Clients.showNotification(msg, "info", null, null, -1);
 			closeDialog();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * To Render customer address details
+	 */
+	public void onClickAddressType(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		Verification details = (Verification) event.getData();
+		if (details != null) {
+			CustomerAddres addrDetails = customerAddresService.getCustomerAddresById(details.getCustId(),
+					details.getReferenceFor());
+			if (addrDetails != null) {
+				addrDetails.setLovDescCustCIF(details.getCif());
+				addrDetails.setLovDescCustShrtName(details.getCustomerName());
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("customerAddres", addrDetails);
+				map.put("roleCode", getRole());
+				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+				map.put("fieldVerificationDialogCtrl", this);
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents(
+							"/WEB-INF/pages/CustomerMasters/CustomerAddres/CustomerAddresDialog.zul", null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			} else {
+				MessageUtil.showMessage(Labels.getLabel("label_FieldInvestigationList_AddressType_Error.value"));
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -1395,14 +1499,6 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 	public RuleService getRuleService() {

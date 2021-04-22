@@ -45,14 +45,15 @@ package com.pennant.backend.dao.administration.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityUserAccessDAO;
 import com.pennant.backend.model.administration.SecurityUserAccess;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> implements SecurityUserAccessDAO {
 
-	private static Logger logger = Logger.getLogger(SecurityUserAccessDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserAccessDAOImpl.class);
 
 	public SecurityUserAccessDAOImpl() {
 		super();
@@ -128,7 +129,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		StringBuilder sql = new StringBuilder("select branchcode, entity, clusterId from rmtbranches");
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
+		RowMapper<Branch> typeRowMapper = BeanPropertyRowMapper.newInstance(Branch.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), typeRowMapper);
@@ -171,7 +172,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 		parameterSource.addValue("entity", entity);
 		parameterSource.addValue("id", clusterId);
 
-		RowMapper<Cluster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Cluster.class);
+		RowMapper<Cluster> typeRowMapper = BeanPropertyRowMapper.newInstance(Cluster.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
@@ -275,8 +276,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("ClusterId", clusterId);
-		RowMapper<SecurityUserAccess> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityUserAccess.class);
+		RowMapper<SecurityUserAccess> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserAccess.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -287,19 +287,22 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 	}
 
 	@Override
-	public void deleteDivisionBranchesByBranchCodeAndUserId(String branchCode) {
+	public void deleteDivisionBranches(String branchCode, long userId, String userDivision) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 
 		sql.append("delete from SecurityUserDivBranch ");
 		sql.append("where UserBranch = :UserBranch ");
+		sql.append("and UsrID = :UsrID and UserDivision = :UserDivision ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
 		parameterSource.addValue("UserBranch", branchCode);
+		parameterSource.addValue("UsrID", userId);
+		parameterSource.addValue("UserDivision", userDivision);
 
 		this.jdbcTemplate.update(sql.toString(), parameterSource);
 		logger.debug(Literal.LEAVING);

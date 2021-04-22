@@ -30,6 +30,15 @@ public enum RCUDocVerificationType {
 		return value;
 	}
 
+	public static RCUDocVerificationType getType(Integer key) {
+		for (RCUDocVerificationType status : values()) {
+			if (status.getKey().equals(key)) {
+				return status;
+			}
+		}
+		return null;
+	}
+
 	public static List<ValueLabel> getList() {
 		List<ValueLabel> list = new ArrayList<>();
 		for (RCUDocVerificationType status : values()) {

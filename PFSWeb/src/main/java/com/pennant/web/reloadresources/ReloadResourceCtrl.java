@@ -2,7 +2,8 @@ package com.pennant.web.reloadresources;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -28,7 +29,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ReloadResourceCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReloadResourceCtrl.class);
 
 	protected Window window_ReloadConfig;
 	protected Borderlayout borderLayout_ReloadConfig;

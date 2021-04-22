@@ -85,6 +85,12 @@
 		</step>
 		<step id="snapShotPreparation">
 			<tasklet ref="snapShotPreparationTaskLet" />
+			<next on="*" to="dmsRetrieveProcess" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="dmsRetrieveProcess">
+			<tasklet ref="dmsRetrieveProcessTaskLet" />
 			<next on="*" to="gstDownload" />
 			<fail on="FAILED" />
 		</step>
@@ -137,9 +143,21 @@
 				<chunk reader="autoKnockOffProcessItemReader" processor="autoKnockOffProcessor" writer="autoKnockOffProcessItemWriter"
 					commit-interval="10" />
 			</tasklet>
+			<next on="*" to="customerDataPreperation" />
+			<fail on="FAILED" />
+		</step>
+		<step id="customerDataPreperation">
+			<tasklet ref="customerDataPreperationTaskLet" />
+			<next on="*" to="masterDataPreparation" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="masterDataPreparation">
+			<tasklet ref="masterDataPreparationTaskLet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>
+
 		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
 			<next on="EndOfMonth" to="retailcibil" />
 			<end on="NotEndOfMonth" exit-code="COMPLETED" />
@@ -163,8 +181,9 @@
 	</step>
 
 	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
-		<constructor-arg value="PLF_EOD_THREAD_"/>
-		<property name="ConcurrencyLimit" value="100"></property>
+		<constructor-arg value="PLF_EOD_THREAD_" />
+		<property name="ConcurrencyLimit" value="100" />
 	</bean>
+
 	<bean id="partitioningMaster" class="com.pennant.backend.endofday.tasklet.PartitioningMaster" />
 </beans>

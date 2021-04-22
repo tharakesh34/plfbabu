@@ -8,17 +8,23 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
+import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.activity.ActivityLogDetails;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.deviation.DeviationList;
 import com.pennanttech.ws.model.eligibility.AgreementDetails;
+import com.pennanttech.ws.model.finance.FinanceDedupDetails;
+import com.pennanttech.ws.model.finance.FinanceDedupResponse;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -103,11 +109,22 @@ public interface CreateFinanceRestService {
 	@Path("/finance/getDeviations/{finReference}")
 	DeviationList getDeviations(@PathParam("finReference") String finReference) throws ServiceException;
 
-	@POST
 	@Path("/finance/getLoanDeviations")
 	DeviationList getLoanDeviations(FinanceDeviations financeDeviations) throws ServiceException;
 
-	@POST
 	@Path("/finance/UpdateLoanDeviation")
 	WSReturnStatus updateLoanDeviation(FinanceDeviations financeDeviations) throws ServiceException;
+
+	@POST
+	@Path("/finance/updatePerfiosStatus")
+	WSReturnStatus updatePerfiosStatus(PerfiosTransaction perfiosTransaction) throws ServiceException;
+
+	@POST
+	@Path("/finance/getDetailsByOfferID")
+	FinCustomerDetails getDetailsByOfferID(@RequestBody String offerID) throws ServiceException;
+
+	@POST
+	@Path("/finance/financeDedup")
+	FinanceDedupResponse loanDedup(FinanceDedupDetails financeDedupDetails) throws ServiceException;
+
 }

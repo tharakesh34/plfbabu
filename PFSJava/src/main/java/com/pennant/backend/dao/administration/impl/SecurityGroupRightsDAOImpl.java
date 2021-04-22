@@ -47,13 +47,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.model.administration.SecurityGroup;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> implements SecurityGroupRightsDAO {
-	private static Logger logger = Logger.getLogger(SecurityGroupRightsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityGroupRightsDAOImpl.class);
 
 	public SecurityGroupRightsDAOImpl() {
 		super();
@@ -95,8 +96,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityGroup);
-		RowMapper<SecurityGroupRights> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityGroupRights.class);
+		RowMapper<SecurityGroupRights> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityGroupRights.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -119,8 +119,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		RowMapper<SecurityGroupRights> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityGroupRights.class);
+		RowMapper<SecurityGroupRights> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityGroupRights.class);
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), namedParamters, typeRowMapper);
 	}
@@ -239,7 +238,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 		secGroups.setGrpID(grpID);
 		String selectSql = "";
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secGroups);
-		RowMapper<SecurityRight> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
+		RowMapper<SecurityRight> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRight.class);
 
 		if (isAssigned) {
 			selectSql = "select * from secRights_View where rightid in (select rightid from SecGroupRights_view where grpID = :grpID)";
@@ -276,8 +275,7 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secGroupRights);
-		RowMapper<SecurityGroupRights> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SecurityGroupRights.class);
+		RowMapper<SecurityGroupRights> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityGroupRights.class);
 
 		try {
 			secGroupRights = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -291,6 +289,6 @@ public class SecurityGroupRightsDAOImpl extends SequenceDao<SecurityGroup> imple
 
 	@Override
 	public long getNextValue() {
-		return getNextId("SeqSecGroupRights");
+		return getNextValue("SeqSecGroupRights");
 	}
 }

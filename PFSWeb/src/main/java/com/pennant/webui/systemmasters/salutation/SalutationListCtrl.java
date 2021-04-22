@@ -44,7 +44,8 @@ package com.pennant.webui.systemmasters.salutation;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 	private static final long serialVersionUID = 1690558052025431845L;
-	private static final Logger logger = Logger.getLogger(SalutationListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SalutationListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -137,7 +138,7 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 				sortOperator_saluationDesc, Operators.STRING);
 		registerField("salutationIsActive", listheader_SalutationIsActive, SortOrder.NONE, salutationIsActive,
 				sortOperator_salutationIsActive, Operators.BOOLEAN);
-
+		registerField("salutationGenderCode");
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -201,8 +202,13 @@ public class SalutationListCtrl extends GFCBaseListCtrl<Salutation> {
 		}
 
 		// Get the selected entity.
-		String id = ((String) selectedItem.getAttribute("id"));
-		Salutation salutation = salutationService.getSalutationById(id);
+		Salutation salutation = ((Salutation) selectedItem.getAttribute("id"));
+		if (salutation == null) {
+			return;
+		}
+
+		salutation = salutationService.getSalutationById(salutation.getSalutationCode(),
+				salutation.getSalutationGenderCode());
 
 		if (salutation == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

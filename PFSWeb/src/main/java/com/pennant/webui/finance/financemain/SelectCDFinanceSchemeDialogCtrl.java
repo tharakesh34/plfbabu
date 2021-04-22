@@ -51,7 +51,8 @@ import java.util.Map;
 import javax.xml.stream.FactoryConfigurationError;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -114,6 +115,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.constants.InterfaceConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -134,7 +136,7 @@ import com.pennanttech.pff.external.CustomerInterfaceService;
  */
 public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(SelectCDFinanceSchemeDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectCDFinanceSchemeDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -583,9 +585,10 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 
 		if (this.newCust.isChecked() && isNewCustomer) {
 			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
+			String type = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 			List<CustomerDedup> customerDedupList = FetchCustomerDedupDetails.fetchCustomerDedupDetails(getRole(),
-					customerDedup, curLoginUser);
+					customerDedup, curLoginUser, type);
 			customerDetails.setCustomerDedupList(customerDedupList);
 			financeDetail.setCustomerDedupList(customerDedupList);
 		}
@@ -977,7 +980,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 							throw new InterfaceException("9999", "Customer Not found.");
 						}
 					} else {
-						throw new InterfaceException("----", "Customer Not found.");
+						throw new InterfaceException(InterfaceConstants.CUST_NOT_FOUND, "Customer Not found.");
 					}
 				}
 
@@ -986,7 +989,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 			}
 
 		} catch (InterfaceException pfe) {
-			if (StringUtils.equals(pfe.getErrorCode(), "----")) {
+			if (StringUtils.equals(pfe.getErrorCode(), InterfaceConstants.CUST_NOT_FOUND)) {
 				if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 					int conf = MessageUtil.confirm(Labels.getLabel("Cust_NotFound_NewCustomer"));
 
@@ -1047,7 +1050,7 @@ public class SelectCDFinanceSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> 
 		}
 
 		if (customerDetails.getCustomer().getCustBaseCcy() == null) {
-			customer.setCustBaseCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
+			customer.setCustBaseCcy(SysParamUtil.getAppCurrency());
 		}
 
 		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_LNG");

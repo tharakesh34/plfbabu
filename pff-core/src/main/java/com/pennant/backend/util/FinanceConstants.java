@@ -45,7 +45,22 @@ public class FinanceConstants {
 	public static final String MODULE_NAME = "Finance";
 
 	// Finance Product Codes
+	public static final String PRODUCT_MUDARABA = "MUDARABA";
+	public static final String PRODUCT_SALAM = "SALAM";
+	public static final String PRODUCT_ISTISNA = "ISTISNA";
+	public static final String PRODUCT_MUSHARAKA = "MUSHARKA";
+	public static final String PRODUCT_IJARAH = "IJARAH";
+	public static final String PRODUCT_MURABAHA = "MURABAHA";
+	public static final String PRODUCT_SUKUK = "SUKUK";
+	public static final String PRODUCT_TAWARRUQ = "TAWARRUQ";
+	public static final String PRODUCT_WAKALA = "WAKALA";
+	public static final String PRODUCT_ISTNORM = "ISTNORM";
+	public static final String PRODUCT_SUKUKNRM = "SUKUKNRM";
+	public static final String PRODUCT_MUSAWAMA = "MUSAWAMA";
 	public static final String PRODUCT_CONVENTIONAL = "CONV";
+	public static final String PRODUCT_QARDHASSAN = "QHASSAN";
+	public static final String PRODUCT_STRUCTMUR = "STRMUR";
+	public static final String PRODUCT_FWIJARAH = "FWIJARAH";
 	public static final String PRODUCT_ODFACILITY = "ODFCLITY";
 	public static final String PRODUCT_DISCOUNT = "DISCOUNT";
 	public static final String PRODUCT_GOLD = "GOLD";
@@ -57,6 +72,7 @@ public class FinanceConstants {
 	public static final String FIN_DIVISION_CORPORATE = "CL";
 	public static final String FIN_DIVISION_COMMERCIAL = "COM";
 	public static final String FIN_DIVISION_FACILITY = "FACILITY";
+	public static final String FIN_DIVISION_TREASURY = "TREASURY";
 
 	// Process Editor Condition Constants
 	public static final int PROCEDT_CHECKLIST = 1;
@@ -68,6 +84,7 @@ public class FinanceConstants {
 	public static final int PROCEDT_CORPSCORE = 7;
 	public static final int PROCEDT_FINDEDUP = 8;
 	public static final int PROCEDT_BLACKLIST = 9;
+	public static final int PROCEDT_POLICEDEDUP = 10;
 	public static final int PROCEDT_CUSTDEDUP = 11;
 	public static final int PROCEDT_LIMIT = 12;
 	public static final int PROCEDT_TATNOTIFICATION = 13;
@@ -83,6 +100,7 @@ public class FinanceConstants {
 	public static final String DEDUP_CUSTOMER = "Customer";
 	public static final String DEDUP_FINANCE = "Finance";
 	public static final String DEDUP_BLACKLIST = "BlackList";
+	public static final String DEDUP_POLICE = "Police";
 	public static final String DEDUP_RETCHQ = "Cheque";
 	public static final String DEDUP_LIMITS = "Limits";
 	public static final String DEDUP_COLLATERAL = "Collateral";
@@ -91,7 +109,8 @@ public class FinanceConstants {
 	public static final String ODCALON_SPRI = "SPRI";
 	public static final String ODCALON_SPFT = "SPFT";
 	public static final String ODCALON_STOT = "STOT";
-	public static final String ODCALON_PIPD = "PIPD";
+	public static final String ODCALON_PIPD_FRQ = "PIPDF";
+	public static final String ODCALON_PIPD_EOM = "PIPDM";
 
 	// Schedule Apportionment Types
 	public static final String PAY_APPORTIONMENT_SPRI = "SPRI";
@@ -119,6 +138,7 @@ public class FinanceConstants {
 
 	// Repayments Method Types
 	public static final String REPAYMTH_AUTO = "CASA";
+	public static final String REPAYMTH_AUTODDA = "DDA";
 	public static final String REPAYMTH_MANUAL = "MANUAL";
 	public static final String REPAYMTH_PDC = "PDC";
 	public static final String REPAYMTH_UDC = "UDC";
@@ -132,6 +152,10 @@ public class FinanceConstants {
 	public static final String FINSTSRSN_MANUAL = "M";
 	public static final String FINSTSRSN_OTHER = "O";
 
+	// Finance Premium Types
+	public static final String PREMIUMTYPE_PREMIUM = "P";
+	public static final String PREMIUMTYPE_DISCOUNT = "D";
+
 	// Finance Queue Priority
 	public static final String QUEUEPRIORITY_HIGH = "3";
 	public static final String QUEUEPRIORITY_MEDIUM = "2";
@@ -142,6 +166,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_ORG = "Origination";
 	public static final String FINSER_EVENT_PREAPPROVAL = "PreApproval";
 	public static final String FINSER_EVENT_RATECHG = "AddRateChange";
+	public static final String FINSER_EVENT_ADVRATECHG = "AdvPftRateChange";
 	public static final String FINSER_EVENT_CHGRPY = "ChangeRepay";
 	public static final String FINSER_EVENT_ADDDISB = "AddDisbursement";
 	public static final String FINSER_EVENT_ADDFLEXIDISB = "AddFlexiDisbursement";
@@ -156,6 +181,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_CHGFRQ = "ChangeFrequency";
 	public static final String FINSER_EVENT_RESCHD = "ReSchedule";
 	public static final String FINSER_EVENT_CHGGRCEND = "ChangeGestation";
+	public static final String FINSER_EVENT_FAIRVALREVAL = "FairValueRevaluation";
 	public static final String FINSER_EVENT_INSCHANGE = "InsuranceChange";
 	public static final String FINSER_EVENT_RECEIPT = "Receipt";
 	public static final String FINSER_EVENT_COVENANT = "Covenants";
@@ -170,6 +196,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_PROVISION = "Provision";
 	public static final String FINSER_EVENT_SUSPHEAD = "Suspense";
 	public static final String FINSER_EVENT_CANCELFIN = "CancelFinance";
+	public static final String FINSER_EVENT_ROLLOVER = "Rollover";
 	public static final String FINSER_EVENT_DUEALERTS = "DueAlerts";
 	public static final String FINSER_EVENT_BASICMAINTAIN = "MaintainBasicDetail";
 	public static final String FINSER_EVENT_RPYBASICMAINTAIN = "MaintainRepayDetail";
@@ -179,13 +206,17 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_TIMELYCLOSURE = "TimelyClosure";
 	public static final String FINSER_EVENT_INSCLAIM = "InsuranceClaim";
 	public static final String FINSER_EVENT_EARLYSTLENQ = "EarlySettlementEnq";
+	public static final String FINSER_EVENT_TFPREMIUMEXCL = "TakafulPremiumExclude";
+	public static final String FINSER_EVENT_COMPOUND = "FairValueRevaluation";
 	public static final String FINSER_EVENT_FINFLAGS = "FinanceFlag";
 	public static final String FINSER_EVENT_REINSTATE = "ReInstate";
+	public static final String FINSER_EVENT_SUPLRENTINCRCOST = "SuplRentIncrCost";
 	public static final String FINSER_EVENT_REAGING = "ReAging";
 	public static final String FINSER_EVENT_CANCELDISB = "CancelDisbursement";
 	public static final String FINSER_EVENT_OVERDRAFTSCHD = "OverdraftSchedule";
 	public static final String FINSER_EVENT_PLANNEDEMI = "PlannedEMI";
 	public static final String FINSER_EVENT_HOLDEMI = "HoldEMI";
+	public static final String BULK_RATE_CHG = "BulkRateChange";
 	public static final String FINSER_EVENT_FEEPAYMENT = "FeePayment";
 	public static final String FINSER_EVENT_CHGSCHDMETHOD = "ChangeSchdlMethod";
 	public static final String FINSER_EVENT_GOLDLOANCANCEL = "GoldLoanCancel";
@@ -195,12 +226,14 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_HOLDDISB = "HoldDisbursement";
 	public static final String FINSER_EVENT_STARTPERIODHDAY = "StartPeriodHoliday";
 	public static final String FINSER_EVENT_LOANDOWNSIZING = "LoanDownsizing";
+	public static final String PART_CANCELLATION = "PartCancellation";
 	// This value is Hard coded in View "CovenantsMaintenance_View"
 	public static final String FINSER_EVENT_COVENANTS = "Covenants";
 	// This value is Hard coded in View "CovenantsMaintenance_View"
 	public static final String FINSER_EVENT_FINOPTION = "FinOptions";
 	public static final String FINSER_EVENT_RECADV = "RecAdvise";
 	public static final String FINSER_EVENT_PAYADV = "PayAdvise";
+	public static final String FINSER_EVENT_RESTRUCTURE = "Restructure";
 
 	// Finance Collateral Details
 	public static final String COLLATERAL_FIXEDDEPOSIT = "FD";
@@ -237,11 +270,23 @@ public class FinanceConstants {
 	public static final String COLLATERAL_MARK = "MARK";
 	public static final String COLLATERAL_DEMARK = "DEMARK";
 
+	// Finance Maintenance Handling Instruction Codes
+	public static final String INSTCODE_EARLYSTLMNT = "ES";
+	public static final String INSTCODE_PARSTLMNT = "PS";
+	public static final String INSTCODE_AMENDINSTLMNT = "AI";
+	public static final String INSTCODE_RESCHDPAY = "RP";
+	public static final String INSTCODE_POSTPONEMNT = "PP";
+	public static final String INSTCODE_TENUREREDUCTN = "TR";
+
 	// Finance Cancellation process
 	public static final boolean ACCOUNTING_TOTALREVERSAL = false;
 
 	// Customer Max Eligibility DSR Value
 	public static final int CUST_MAX_DSR = 9999;
+
+	// Expense Type for Finance
+	public static final String EXPENSE_FOR_EDUCATION = "E";
+	public static final String EXPENSE_FOR_ADVANCEBILLING = "A";
 
 	// Closing Status Details for the Finance
 	public static final String CLOSE_STATUS_MATURED = "M";
@@ -253,6 +298,9 @@ public class FinanceConstants {
 	public static final String LIMITRULE_CUSTOMER = "Customer";
 	public static final String LIMITRULE_FINTYPE = "FinanceType";
 
+	// Review Category Codes
+	// FIXME: PV: 31MAY17 Duplicate and different version present in calculation
+	// constants
 	/*
 	 * public static final String RVW_UNPAID_INST = "RVWUPI"; public static final String RVW_ALL = "RVWALL";
 	 */
@@ -327,6 +375,7 @@ public class FinanceConstants {
 	public static final String POSTING_AGAINST_COLLATERAL = "CLT"; // Misc.
 																	// Postings
 	public static final String POSTING_AGAINST_LIMIT = "LMT"; // Misc. Postings
+	public static final String POSTING_AGAINST_ENTITY = "E"; // Misc. Postings
 
 	public static final String FEES_AGAINST_LOAN = "FC";
 	public static final String FEES_AGAINST_BOUNCE = "BC";
@@ -340,14 +389,35 @@ public class FinanceConstants {
 	public static final String FEE_TAXCOMPONENT_INCLUSIVE = "I"; // Inclusive
 	public static final String FEE_TAXCOMPONENT_EXCLUSIVE = "E"; // Exclusive
 
+	// Type Of Facility
+	public static final String TERM_LOAN = "TL";
+	public static final String CONST_FIN_LOAN = "CFL";
+	public static final String LEASE_RENTAL_DISCOUNT = "LRD";
+	public static final String OTHERS = "OTH";
+
 	// GDR Availablity Check Rule
 	public static final String FEETYPE_GDR = "GDR";
 
 	public static final String FINSER_EVENT_CHANGETDS = "ChangeTDS";
 
+	// Interest Subvention Method
+	public static final String INTEREST_SUBVENTION_METHOD_UPFRONT = "U";
+	public static final String INTEREST_SUBVENTION_METHOD_MONTHLY = "M";
+	public static final String INTEREST_SUBVENTION_METHOD_DEDUCT = "D";
+
 	// Interest Subvention Type
 	public static final String INTEREST_SUBVENTION_TYPE_PARTIAL = "P";
 	public static final String INTEREST_SUBVENTION_TYPE_FULL = "F";
+
+	// EventVsRecalType Recalculation from,to dates, InterestDaysBasis,
+	// Recalculation types.
+	public static final String IMD_NEXTDUEDATE = "NI";
+	public static final String IMD_NEXTDUEDATE_DISABLED = "NID";
+	public static final String IMD_NEXTDUEDATE_LOCKPERIOD = "ND";
+	public static final String NEXT_TO_NEXTDUEDATE = "NN";
+
+	public static final String MATURITY_DATE = "M";
+	public static final String MATURITY_AND_DISABLED = "MD";
 
 	// FLP Calculated Types
 	public static final String FLPCALCULATED_TYPE_ON_ISSUANCEDATE = "I";
@@ -364,6 +434,8 @@ public class FinanceConstants {
 	public static final String PROCEDT_VERIFICATION_RCU_APPR = "RCUAPPR";
 	public static final String PROCEDT_VERIFICATION_PD_INIT = "PDINIT";
 	public static final String PROCEDT_VERIFICATION_PD_APPR = "PDAPPR";
+	public static final String PROCEDT_VERIFICATION_LVETTING_INIT = "LVETTINIT";
+	public static final String PROCEDT_VERIFICATION_LVETTING_APPR = "LVETTAPPR";
 
 	/**
 	 * Sampling constants
@@ -382,7 +454,12 @@ public class FinanceConstants {
 
 	// Fee Waivers
 	public static final String FINSER_EVENT_FEEWAIVERS = "FeeWaivers";
+	public static final String LEAD = "LEAD";
 
+	public static final String FIN_OPTIONS_PUT = "Put";
+	public static final String FIN_OPTIONS_CALL = "Call";
+	public static final String FIN_OPTIONS_PUTCALL = "Put-Call";
+	public static final String FIN_OPTIONS_INTEREST_REVIEW = "Interest Review";
 	public static final String FIN_ASSET_REVIEW = "Asset Review";
 	public static final String FIN_OPTION_OTHERS = "Others";
 
@@ -432,4 +509,26 @@ public class FinanceConstants {
 	public static final String GST_SCHD_CAL_ON_PRI = "P";
 	public static final String GST_SCHD_CAL_ON_EMI = "E";
 
+	//PMAY Validation
+	public static final String PMAY_VALIDATION = "PMAYVALD";
+
+	public static final String PAYABLE_ADVISE = "PayableAdvises";
+
+	public static final String PMAY = "PMAY";
+
+	public static final String HOME_PUCHASE = "HP";
+	public static final String UNDER_CONSTRUCTION = "UC";
+	public static final String SELF_CONSTRUCTION = "SC";
+	public static final String PLOTPUCHASE = "PP+SC";
+	public static final String RENOVATION_EXT = "R/E";
+
+	public static final String HOMELOAN = "HL";
+	public static final String HOMELOAN_BT = "HLBT";
+	public static final String LAP = "LAP";
+	public static final String LAP_TP = "LAPTP";
+	public static final String HOMELOAN_TP = "HLTP";
+	public static final String PERSONAL_LOAN = "PL";
+	public static final String VRPL_VRBL = "PLBL";
+
+	public static final String FLAG_RESTRUCTURE = "R";
 }

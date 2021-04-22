@@ -57,6 +57,7 @@ import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.eod.EODUtil;
 
 public class AfterAMZProcess implements Tasklet {
 	private Logger logger = LogManager.getLogger(AfterAMZProcess.class);
@@ -65,7 +66,8 @@ public class AfterAMZProcess implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		Date appDate = SysParamUtil.getAppDate();
+		Date appDate = EODUtil.getDate("APP_DATE", context);
+
 		logger.debug("START: After Amortization on  {}", appDate);
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
@@ -81,7 +83,7 @@ public class AfterAMZProcess implements Tasklet {
 		SysParamUtil.updateParamDetails(AmortizationConstants.AMZ_MONTHEND,
 				DateUtil.format(amzMonth, DateFormat.FULL_DATE.getPattern()));
 
-		logger.debug("COMPLETE : After Amortization on : " + appDate);
+		logger.debug("COMPLETE : After Amortization on {}", appDate);
 		return RepeatStatus.FINISHED;
 	}
 

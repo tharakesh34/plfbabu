@@ -66,6 +66,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 6420966711989511378L;
 
 	private Long custID = Long.MIN_VALUE;
+	@XmlElement
 	private String lovDescCustShrtName;
 	@XmlElement(name = "docFormat")
 	private String custDocType;
@@ -87,6 +88,8 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String custDocIssuedCountry;
 	@XmlElement
 	private String docPurpose;
+	@XmlElement
+	private String remarks;
 	@XmlElement(name = "docRefId")
 	private String docUri;
 	private String lovDescCustDocIssuedCountry;
@@ -101,6 +104,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private CustomerDocument befImage;
 	private LoggedInUser userDetails;
 	private String lovDescCustRecordType;
+	@XmlElement
 	private String lovDescCustCIF;
 	private String lovDescCustDocVerifiedBy;
 	private boolean lovDescdocExpDateIsMand = false;
@@ -116,6 +120,13 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private String year;
 	private String sourceId;
 	private String docType;
+	private String offerId;
+	private String applicationNo;
+	private String finReference;
+	private boolean lovDescNewImage = false;
+	//Specific to Verification API LV
+	@XmlElement
+	private int docTypeId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -153,6 +164,10 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("custCtgCode");
 		excludeFields.add("year");
 		excludeFields.add("docType");
+		excludeFields.add("offerId");
+		excludeFields.add("applicationNo");
+		excludeFields.add("finReference");
+		excludeFields.add("docTypeId");
 		return excludeFields;
 	}
 
@@ -477,4 +492,53 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	public void setYear(String year) {
 		this.year = year;
 	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public String getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(String offerId) {
+		this.offerId = offerId;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public boolean isLovDescNewImage() {
+		return lovDescNewImage;
+	}
+
+	public void setLovDescNewImage(boolean lovDescNewImage) {
+		this.lovDescNewImage = lovDescNewImage;
+	}
+
+	public int getDocTypeId() {
+		return docTypeId;
+	}
+
+	public void setDocTypeId(int docTypeId) {
+		this.docTypeId = docTypeId;
+	}
+
 }

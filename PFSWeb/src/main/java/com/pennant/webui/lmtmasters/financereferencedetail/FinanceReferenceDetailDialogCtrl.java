@@ -48,7 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -106,7 +107,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferenceDetail> {
 	private static final long serialVersionUID = 4224402842313630803L;
-	private static final Logger logger = Logger.getLogger(FinanceReferenceDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceReferenceDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -157,6 +158,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	protected Button btnNew_CustomerDedupeLink;
 	protected Listbox listBoxBlackListRules;
 	protected Button btnNew_CustBlackListLink;
+	protected Listbox listBoxPoliceRules;
+	protected Button btnNew_CustPoliceLink;
 	protected Listbox listBoxLimitService;
 	protected Button btnNew_LimitServiceLink;
 	protected Listbox listBoxTatNotification;
@@ -189,9 +192,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	 * oldVar_CorpScoringGroup; private transient List<FinanceReferenceDetail> oldVar_AdvanceAccount; private transient
 	 * List<FinanceReferenceDetail> oldVar_MailTemplate; private transient List<FinanceReferenceDetail>
 	 * oldVar_FinanceDedupe; private transient List<FinanceReferenceDetail> oldVar_CustomerDedupe; private transient
-	 * List<FinanceReferenceDetail> oldVar_BlackListDedupe; private transient List<FinanceReferenceDetail> private
-	 * transient List<FinanceReferenceDetail> oldVar_ReturnChq; private transient List<FinanceReferenceDetail>
-	 * oldVar_LimitCodeDetail; private transient List<FinanceReferenceDetail> oldVar_TatNotification;
+	 * List<FinanceReferenceDetail> oldVar_BlackListDedupe; private transient List<FinanceReferenceDetail>
+	 * oldVar_PoliceDedupe; private transient List<FinanceReferenceDetail> oldVar_ReturnChq; private transient
+	 * List<FinanceReferenceDetail> oldVar_LimitCodeDetail; private transient List<FinanceReferenceDetail>
+	 * oldVar_TatNotification;
 	 */
 
 	private String roles;
@@ -308,6 +312,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			this.listBoxDedupRules.setHeight(listboxHeight + "px");
 			this.listBoxCustDedupRules.setHeight(listboxHeight + "px");
 			this.listBoxBlackListRules.setHeight(listboxHeight + "px");
+			this.listBoxPoliceRules.setHeight(listboxHeight + "px");
 			this.listBoxReturnCheques.setHeight(listboxHeight + "px");
 			this.delationDeviation.setHeight((listboxHeight + 80) + "px");
 			this.listBoxLimitService.setHeight((listboxHeight + 80) + "px");
@@ -500,6 +505,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		dofillListbox(aFinanceReference.getCustomerDedupeList(), this.listBoxCustDedupRules);
 
 		dofillListbox(aFinanceReference.getBlackListDedupeList(), this.listBoxBlackListRules);
+
+		dofillListbox(aFinanceReference.getPoliceDedupeList(), this.listBoxPoliceRules);
 
 		dofillListbox(aFinanceReference.getReturnChequeList(), this.listBoxReturnCheques);
 
@@ -739,6 +746,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		this.btnNew_FinanceDedupeLink.setDisabled(false);
 		this.btnNew_CustomerDedupeLink.setDisabled(false);
 		this.btnNew_CustBlackListLink.setDisabled(false);
+		this.btnNew_CustPoliceLink.setDisabled(false);
 		this.btnNew_ReturnChequeLink.setDisabled(false);
 
 		enableOrDisablelistitems(this.listBoxFinanceCheckList, false);
@@ -751,6 +759,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		enableOrDisablelistitems(this.listBoxDedupRules, false);
 		enableOrDisablelistitems(this.listBoxCustDedupRules, false);
 		enableOrDisablelistitems(this.listBoxBlackListRules, false);
+		enableOrDisablelistitems(this.listBoxPoliceRules, false);
 		enableOrDisablelistitems(this.listBoxReturnCheques, false);
 		enableOrDisablelistitems(this.listboxFinanceTabs, false);
 
@@ -1089,6 +1098,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		items.addAll(this.listBoxDedupRules.getItems());
 		items.addAll(this.listBoxCustDedupRules.getItems());
 		items.addAll(this.listBoxBlackListRules.getItems());
+		items.addAll(this.listBoxPoliceRules.getItems());
 		items.addAll(this.listBoxReturnCheques.getItems());
 		items.addAll(this.listBoxLimitService.getItems());
 		items.addAll(this.listBoxTatNotification.getItems());
@@ -1117,7 +1127,12 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			}
 			// save it to database
 			aFinanceReferenceDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			aFinanceReferenceDetail.setRecordType("");
+			aFinanceReferenceDetail.setRecordType(PennantConstants.RCD_ADD);
+
+			if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(aFinanceReferenceDetail.getFinEvent())) {
+				aFinanceReferenceDetail.setRecordType("");
+			}
+
 			if (StringUtils.isNotEmpty(tranType)) {
 				doProcess(aFinanceReferenceDetail, tranType);
 			}
@@ -1493,6 +1508,11 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_BLACKLIST);
 	}
 
+	public void onClick$btnNew_CustPoliceLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_POLICEDEDUP;
+		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_POLICEDEDUP);
+	}
+
 	public void onClick$btnNew_ReturnChequeLink(Event event) throws InterruptedException {
 		selectedTab = FinanceConstants.PROCEDT_RETURNCHQ;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_RETURNCHQ);
@@ -1524,6 +1544,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		map.put("financeReferenceDetail", itemdata);
 		map.put("financeReferenceDetailDialogCtrl", this);
 		map.put("moduleName", moduleName);
+		map.put("eventAction", eventAction);
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/FinanceReferenceDetail/FinanceReferenceDetailDialogLink.zul", null,

@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -62,8 +64,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -75,6 +79,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.CollateralConstants;
@@ -87,6 +92,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
@@ -113,7 +119,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerification> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(TechnicalVerificationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(TechnicalVerificationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -152,12 +158,14 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 	protected North north;
 	protected South south;
-
+	protected Space space_AgentCode;
+	protected Space space_AgentName;
 	protected Tabbox tabBoxIndexCenter;
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected String selectMethodName = "onSelectTab";
-
+	protected ExtendedCombobox loanType;
+	protected ExtendedCombobox custBranch;
 	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
 	private transient TechnicalVerificationListCtrl technicalVerificationListCtrl;
@@ -184,6 +192,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	protected Div docDiv;
 	protected Iframe onePagerDocumentView;
 	private byte[] imagebyte;
+	private static ScriptValidationService scriptValidationService;
 
 	String prprtyAddr1 = "";
 	String prprtyAddr2 = "";
@@ -275,8 +284,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.TVSRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.TVSRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
 
 		this.agentCode.setMaxlength(8);
@@ -291,7 +305,11 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
+		this.space_AgentCode.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
+		this.space_AgentName.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
 
+		loanType.setReadonly(true);
+		custBranch.setReadonly(true);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -455,7 +473,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		this.collateralReference.setValue(tv.getCollateralRef());
 		this.contactNumber1.setValue(tv.getContactNumber1());
 		this.contactNumber2.setValue(tv.getContactNumber2());
-
+		this.loanType.setValue(tv.getLoanType(), tv.getLovDescLoanTypeName());
+		this.custBranch.setValue(tv.getSourcingBranch(), tv.getLovDescSourcingBranch());
 		// Summary Details
 		this.verificationDate.setValue(tv.getVerifiedDate());
 		if (!fromLoanOrg && !isFromCollateralSetUp) {
@@ -725,6 +744,31 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 				mapValue.put("VERIFICATEGORY", VerificationCategory.getType(tv.getVerificationCategory()));
 				mapValue.put("PRODUCT", tv.getProductCategory());
+
+				if (extMapValues.containsKey("SUPERBUILTUPARE")) {
+					mapValue.put("SUPERBUILTUPARE", extMapValues.get("SUPERBUILTUPARE"));
+				}
+				if (extMapValues.containsKey("BUILTUPAREA")) {
+					mapValue.put("BUILTUPAREA", extMapValues.get("BUILTUPAREA"));
+				}
+				if (extMapValues.containsKey("AREAVALUEDSQFT")) {
+					mapValue.put("AREAVALUEDSQFT", extMapValues.get("AREAVALUEDSQFT"));
+				}
+				if (extMapValues.containsKey("RATEPSF")) {
+					mapValue.put("RATEPSF", extMapValues.get("RATEPSF"));
+				}
+				if (extMapValues.containsKey("CARPETAREA")) {
+					mapValue.put("CARPETAREA", extMapValues.get("CARPETAREA"));
+				}
+
+				if (extMapValues.containsKey("PROJECTNAME")
+						&& StringUtils.isNotEmpty(extMapValues.get("PROJECTNAME").toString())) {
+					mapValue.put("PROJECTNAME", "APF");
+				}
+
+				this.valuationAmount.setValue(PennantApplicationUtil.formateAmount(
+						new BigDecimal(extMapValues.get("UNITPRICE").toString()), PennantConstants.defaultCCYDecPos));
+
 				extendedFieldRender.setMapValues(mapValue);
 			}
 
@@ -783,14 +827,6 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			if (tv.getBefImage() != null) {
 				tv.getBefImage().setOnePagerExtHeader(extendedFieldHeader);
 				tv.getBefImage().setOnePagerExtRender(extendedFieldRender);
-			}
-
-			if (extendedFieldRender.getMapValues() == null) {
-				Map<String, Object> mapValues = new HashMap<>();
-				mapValues.put("PRPRADDRLINE1", prprtyAddr1);
-				mapValues.put("PRPRADDRLINE2", prprtyAddr2);
-				mapValues.put("PRPRADDRLINE3", prprtyAddr3);
-				extendedFieldRender.setMapValues(mapValues);
 			}
 
 			onePagerExtendedFieldCtrl.setCcyFormat(2);
@@ -864,7 +900,38 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		BigDecimal valAmt = BigDecimal.ZERO;
 		// Extended Field validations
 		if (tv.getExtendedFieldHeader() != null) {
-			tv.setExtendedFieldRender(extendedFieldCtrl.save(true));
+			//to validate the TV post script, we need to pass collateral ED fields to resolve the script binding error's
+			ExtendedFieldHeader extendedFieldHeader = extendedFieldCtrl.getExtendedFieldHeader(
+					CollateralConstants.MODULE_NAME, tv.getCollateralType(),
+					ExtendedFieldConstants.EXTENDEDTYPE_EXTENDEDFIELD);
+			Map<String, Object> map = prepareMap(extendedFieldHeader.getExtendedFieldDetails());
+			//along with collateral we need to pass TV field map for validation
+			if (extendedFieldCtrl.getGenerator() != null) {
+				Map<String, Object> tvMap = extendedFieldCtrl.getGenerator()
+						.doSave(tv.getExtendedFieldHeader().getExtendedFieldDetails(), enqiryModule);
+				if (MapUtils.isNotEmpty(tvMap)) {
+					map.putAll(tvMap);
+				}
+			}
+			//Post Script validations for TV 
+			if (!enqiryModule) {
+				if (StringUtils.trimToNull(extendedFieldHeader.getPostValidation()) != null) {
+					ScriptErrors postValidationErrors = scriptValidationService
+							.getPostValidationErrors(extendedFieldHeader.getPostValidation(), map);
+					//showing the error details on screen
+					extendedFieldCtrl.setExtendedFieldHeader(tv.getExtendedFieldHeader());
+					extendedFieldCtrl.showErrorDetails(postValidationErrors);
+				}
+			}
+
+			//After post script validations we need to save only TV ED fields
+			if (extendedFieldCtrl.getGenerator() != null) {
+				map.clear();
+				map = extendedFieldCtrl.getGenerator().doSave(tv.getExtendedFieldHeader().getExtendedFieldDetails(),
+						enqiryModule);
+				tv.getExtendedFieldRender().setMapValues(map);
+			}
+
 			if (tv.getVerificationCategory() != VerificationCategory.ONEPAGER.getKey()) {
 				if (tv.getExtendedFieldRender().getMapValues().containsKey(TOTALVALUATION)) {
 					valAmt = (BigDecimal) tv.getExtendedFieldRender().getMapValues().get(TOTALVALUATION);
@@ -899,7 +966,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 				calDate.set(Calendar.SECOND, calTimeNow.get(Calendar.SECOND));
 				tv.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
 			} else {
-				tv.setVerifiedDate(new Timestamp(calDate.getTimeInMillis()));
+				tv.setVerifiedDate(SysParamUtil.getAppDate());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -974,6 +1041,15 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		showErrorDetails(wve, this.onePagerReportTab);
 		showErrorDetails(wve, this.extendedDetailsTab);
 		logger.debug(Literal.LEAVING);
+
+	}
+
+	private Map<String, Object> prepareMap(List<ExtendedFieldDetail> extendedFieldDetails) {
+		Map<String, Object> map = new HashMap<>();
+		for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
+			map.put(extendedFieldDetail.getFieldName(), extendedFieldDetail.getDefValue());
+		}
+		return map;
 	}
 
 	public void onChange$recommendations(Event event) {
@@ -985,11 +1061,23 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	}
 
 	private void visibleComponent(Integer type) {
+		String reasonType = null;
 		if (type == TVStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
+			reasonType = StatuReasons.TVPOSTVRTY.getKey();
 		} else if (type == TVStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
+			reasonType = StatuReasons.TVNTVRTY.getKey();
+		} else if (type == TVStatus.REFERTOCREDIT.getKey()) {
+			reasonType = StatuReasons.TVRFRRTY.getKey();
 		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
+
 	}
 
 	/**
@@ -1128,18 +1216,18 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_TechnicalVerificationDialog_VerificationDate.value"),
 							true, DateUtil.getDatePart(technicalVerification.getCreatedOn()),
-							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));//Calendar.getInstance().getTime()
+							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));
 		}
 
 		if (!this.agentCode.isReadonly()) {
-			this.agentCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
+			this.agentCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_TechnicalVerificationDialog_AgentCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, true));
+							PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 
 		if (!this.reason.isReadonly()) {
@@ -1152,6 +1240,12 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			this.summaryRemarks.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_Remarks.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_CHAR, false));
+		}
+
+		if (!this.valuationAmount.isReadonly()) {
+			this.valuationAmount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_TechnicalVerificationDialog_ValuationAmount.value"),
+							PennantConstants.defaultCCYDecPos, true, false));
 		}
 
 		if (onePagerReportTab.isVisible() && this.btnUploadDoc.isVisible()) {
@@ -1356,6 +1450,9 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		try {
 			if (doProcess(tv, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(tv.getRoleCode(), tv.getNextRoleCode(),
+						tv.getKeyReference(), " Loan ", tv.getRecordStatus(), getNextTaskId());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 
@@ -1693,4 +1790,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	public void setDocumentDetailDialogCtrl(DocumentDetailDialogCtrl documentDetailDialogCtrl) {
 		this.documentDetailDialogCtrl = documentDetailDialogCtrl;
 	}
+
+	public static ScriptValidationService getScriptValidationService() {
+		return scriptValidationService;
+	}
+
+	public static void setScriptValidationService(ScriptValidationService scriptValidationService) {
+		TechnicalVerificationDialogCtrl.scriptValidationService = scriptValidationService;
+	}
+
 }

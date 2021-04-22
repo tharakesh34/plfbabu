@@ -8,49 +8,72 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.service.FileImport;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Type;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -58,15 +81,11 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.external.PresentmentImportProcess;
+import com.pennanttech.pff.external.presentment.PresentmentCustomeExtractor;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
-	private static final Logger logger = Logger.getLogger(PresentmentDetailExtract.class);
+	private static final Logger logger = LogManager.getLogger(PresentmentDetailExtract.class);
 
 	// Constant values used in the interface
 	private static final long CON_RESPONSE_BOUNCE = 99;
@@ -87,6 +106,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private DataSource dataSource;
 
 	private PresentmentImportProcess presentmentImportProcess;
+	private ValidateRecord presentmentRespValidation;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
 
 	StringBuilder remarks = null;
 	PresentmentDetail detail = null;
@@ -105,7 +127,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	@Override
 	public void run() {
-		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE)
+				|| !ImplementationConstants.DEFAULT_PRESENTMENT_UPLOAD) {
 			try {
 				importDataByInstrumentType();
 			} catch (Exception e) {
@@ -128,10 +151,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		Sheet sheet = null;
 		FileInputStream fis = null;
 
+		Date sysDate = DateUtility.getSysDate();
 		try {
 			// rcdLegth = 79;
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setTotalRecords(getTotalRecords());
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(DateUtility.getSysDate());
+			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStartTime(sysDate);
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFileName(getFile().getName());
 
@@ -172,26 +196,12 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						break;
 					}
 
-					map = new MapSqlParameterSource();
-					map.addValue("BranchCode", getCellValue(row, pos_BranchCode));
-					map.addValue("AgreementNo", getCellValue(row, pos_AgreementNo));
-					map.addValue("InstalmentNo", "0");
-					map.addValue("BFLReferenceNo", getCellValue(row, pos_BFLReferenceNo));
-					map.addValue("Batchid", getCellValue(row, pos_Batchid));
-					map.addValue("AmountCleared", getCellValue(row, pos_AmountCleared));
-					map.addValue("ClearingDate", getDateValue(row, pos_ClearingDate), Types.DATE);
-					map.addValue("Status", getCellValue(row, pos_Status));
+					PresentmentCustomeExtractor presentmentCustomeExtractor = getCustomExtract();
 
-					map.addValue("Name", getCellValue(row, pos_Name));
-					map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
-					map.addValue("AccountType", getCellValue(row, pos_AccountType));
-					map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue), Types.DATE);
-					map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
-
-					//TODO:check set the value
-					if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
-						map.addValue("Failure reason",
-								StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
+					if (presentmentCustomeExtractor != null) {
+						map = presentmentCustomeExtractor.readData(row);
+					} else {
+						map = defaultReadData(row);
 					}
 				} catch (Exception e) {
 					logger.error("Exception {}", e);
@@ -200,16 +210,16 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				validateFields(map);
 
 				String presentmentRef = map.getValue("Batchid").toString();
-				String status = isPresentmentReferenceExists(presentmentRef);
+				String status = presentmentDetailService.getPresementStatus(presentmentRef);
 				if (status == null) {
 					throw new Exception(Labels.getLabel("label_Presentmentdetails_Notavailable") + presentmentRef);
 				} else if (RepayConstants.PEXC_SUCCESS.equals(status) || RepayConstants.PEXC_BOUNCE.equals(status)) {
 					throw new Exception(" The presentment with the presentment reference :" + presentmentRef
 							+ " already processed.");
 				} else {
-					PresentmentDetail presentmentDetail = isPresentmentDetail(presentmentRef);
+					PresentmentDetail presentmentDetail = presentmentDetailService.getPresentmentDetail(presentmentRef);
 					if (presentmentDetail != null
-							&& DateUtility.compare(DateUtility.getAppDate(), presentmentDetail.getSchDate()) < 0) {
+							&& DateUtility.compare(SysParamUtil.getAppDate(), presentmentDetail.getSchDate()) < 0) {
 						throw new AppException(
 								" The presentment not proceed with schedule date greater than application bussiness date.");
 					}
@@ -223,7 +233,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 			if (lineNumber <= 0) {
 				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(" Uploaded File is empty please verify once");
-				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
+				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(sysDate);
 				PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
 			}
 		} catch (Exception e) {
@@ -234,7 +244,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				errorMasg = StringUtils.replace(errorMasg, "java.lang.Exception:", "");
 			}
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(errorMasg);
-			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(DateUtility.getSysDate());
+			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setEndTime(sysDate);
 			PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
 		} finally {
 			try {
@@ -259,8 +269,46 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private PresentmentCustomeExtractor getCustomExtract() {
+		PresentmentCustomeExtractor presentmentCustomeExtractor = null;
+		try {
+			presentmentCustomeExtractor = (PresentmentCustomeExtractor) SpringBeanUtil
+					.getBean("presentmentCustomeExtractor");
+
+		} catch (Exception e) {
+			presentmentCustomeExtractor = null;
+		}
+		return presentmentCustomeExtractor;
+	}
+
+	private MapSqlParameterSource defaultReadData(Row row) {
+		MapSqlParameterSource map;
+		map = new MapSqlParameterSource();
+		map.addValue("BranchCode", getCellValue(row, pos_BranchCode));
+		map.addValue("AgreementNo", getCellValue(row, pos_AgreementNo));
+		map.addValue("InstalmentNo", "0");
+		map.addValue("BFLReferenceNo", getCellValue(row, pos_BFLReferenceNo));
+		map.addValue("Batchid", getCellValue(row, pos_Batchid));
+		map.addValue("AmountCleared", getCellValue(row, pos_AmountCleared));
+		map.addValue("ClearingDate", getDateValue(row, pos_ClearingDate), Types.DATE);
+		map.addValue("Status", getCellValue(row, pos_Status));
+
+		map.addValue("Name", getCellValue(row, pos_Name));
+		map.addValue("UMRNNo", getCellValue(row, pos_UMRNNo));
+		map.addValue("AccountType", getCellValue(row, pos_AccountType));
+		map.addValue("PaymentDue", getDateValue(row, pos_PaymentDue), Types.DATE);
+		map.addValue("ReasonCode", getStringCellValue(row, pos_ReasonCode));
+
+		// TODO:check set the value
+		if (row.getPhysicalNumberOfCells() > pos_FailureReasons) {
+			map.addValue("Failure reason",
+					StringUtils.trimToNull(row.getCell(pos_FailureReasons).getStringCellValue()));
+		}
+		return map;
+	}
+
 	// After file import, processing the data from staging table
-	private void processingPrsentments() {
+	public void processingPrsentments() {
 		logger.debug(Literal.ENTERING);
 
 		recordCount = 0;
@@ -276,7 +324,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-				batchId = saveFileHeader(getFile().getName());
+
+				if (App.TYPE == Type.WEB) {
+					batchId = saveFileHeader(getFile().getName());
+				}
 
 				while (rs.next()) {
 					recordCount++;
@@ -293,9 +344,19 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						String reasonCode = rs.getString("REASONCODE");
 						reasonCode = StringUtils.trimToEmpty(reasonCode);
 						boolean processReceipt = processInactiveLoan(presentmentRef);
+						if (RepayConstants.PEXC_PAID.equals(status)) {
+							status = "S";
+						}
+
+						Long linkedTranId = null;
+						PresentmentDetail presentmentDetails = null;
+						if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+							presentmentDetails = presentmentDetailService.getPresentmentDetail(presentmentRef);
+							linkedTranId = postStageAccounting(presentmentRef, presentmentDetails);
+						}
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
-							updatePresentmentDetails(presentmentRef, status);
+							presentmentDetailService.updatePresentmentDetail(presentmentRef, status, linkedTranId);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
 							PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
@@ -303,9 +364,15 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 								presentmentDetailService.processSuccessPresentments(presentmentDetail.getReceiptID());
 							}
 							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
-							saveBatchLog(batchId, status, presentmentRef, null);
+							if (App.TYPE == Type.WEB) {
+								saveBatchLog(batchId, status, presentmentRef, null);
+							}
+
 						} else {
 							try {
+								if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+									reverseStageAccounting(linkedTranId, presentmentDetails.getReceiptID());
+								}
 								detail = presentmentCancellation(presentmentRef, reasonCode);
 								if (StringUtils.trimToNull(detail.getErrorDesc()) == null) {
 									successCount++;
@@ -314,8 +381,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getBounceID(), detail.getManualAdviseId(), detail.getErrorDesc());
 									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_BOUNCE,
 											detail.getStatus());
-									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
-											detail.getErrorDesc());
+									if (App.TYPE == Type.WEB) {
+										saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
+												detail.getErrorDesc());
+									}
+
 									updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_BOUNCE);
 								} else {
 									failedCount++;
@@ -323,8 +393,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getErrorDesc());
 									updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
 											detail.getStatus());
-									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
-											detail.getErrorDesc());
+									if (App.TYPE == Type.WEB) {
+										saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
+												detail.getErrorDesc());
+									}
 								}
 							} catch (Exception e) {
 								logger.error(Literal.EXCEPTION, e);
@@ -333,7 +405,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 										e.getMessage());
 								updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
 										detail.getStatus());
-								saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, e.getMessage());
+								if (App.TYPE == Type.WEB) {
+									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, e.getMessage());
+								}
 							}
 						}
 					} catch (Exception e) {
@@ -364,42 +438,22 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
 				}
-				updateFileHeader(batchId, recordCount, successCount, failedCount, remarks.toString());
+				if (App.TYPE == Type.WEB) {
+					String strRemarks = remarks.toString();
+					if (StringUtils.trimToNull(strRemarks) != null) {
+						strRemarks = (strRemarks.length() >= 2000) ? remarks.substring(0, 1988) : strRemarks;
+					}
+					updateFileHeader(batchId, recordCount, successCount, failedCount, strRemarks);
+				}
 				return 0;
 			}
 		});
 		logger.debug(Literal.LEAVING);
 	}
 
-	// Getting the status of the presentment
-	private String isPresentmentReferenceExists(String presentmentRef) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(" SELECT STATUS FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
-		sql.append(" AND (STATUS = :APPSTATUS OR STATUS = :FAISTATUS )");
-		source.addValue("PRESENTMENTREF", presentmentRef);
-		source.addValue("APPSTATUS", RepayConstants.PAYMENT_APPROVE);
-		source.addValue("FAISTATUS", RepayConstants.PAYMENT_FAILURE);
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception {}", e);
-			return null;
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-	}
-
 	// Inserting data into staging table
-	private void insertData(MapSqlParameterSource map) {
+	public void insertData(MapSqlParameterSource map) {
+
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -422,9 +476,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		}
 
 		// bflreferenceno
-		Object bflreferenceno = map.getValue("BFLReferenceNo");
-		if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
-			throw new Exception("Dealer Code  length should be less than 4.");
+		if (ImplementationConstants.PRESENTMENT_EXTRACT_DEALER_MAN) {
+			Object bflreferenceno = map.getValue("BFLReferenceNo");
+			if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
+				throw new Exception("Dealer Code  length should be less than 4.");
+			}
 		}
 
 		// batchReference
@@ -441,41 +497,25 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			throw new Exception("Status should be mandatory.");
 		} else if (status.toString().length() != 1) {
 			throw new Exception("Status length should be 1.");
+		} else {
+			int statusLength = status.toString().length();
+			int minLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
+			int maxLength = ImplementationConstants.PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
+			if (statusLength != minLength && statusLength != maxLength) {
+				throw new Exception("Status length should be minimum" + minLength + "and maximum" + maxLength);
+			}
 		}
 
 		// ReasonCode
 		Object reasonCode = map.getValue("ReasonCode");
-		if (status != null && !StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString())) {
+		if (status != null && !(StringUtils.equals(RepayConstants.PAYMENT_PAID, status.toString())
+				|| StringUtils.equals(RepayConstants.PAYMENT_SUCCESS, status.toString()))) {
 			if (reasonCode == null) {
 				throw new Exception("Failure Code should be mandatory.");
 			} else if (StringUtils.isBlank(reasonCode.toString())) {
 				throw new Exception("Failure Code should not be empty.");
 			}
 		}
-	}
-
-	private PresentmentDetail isPresentmentDetail(String batchId) {
-		logger.debug(Literal.ENTERING);
-
-		PresentmentDetail presentmentDetail = new PresentmentDetail();
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(
-				" SELECT SCHDATE,STATUS,PRESENTMENTAMT,presentmentref,FINREFERENCE,EMINO, PRESENTMENTID, ID,MANDATEID,bounceid ");
-		sql.append(" FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
-
-		source.addValue("PRESENTMENTREF", batchId);
-
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
-		try {
-			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			presentmentDetail = null;
-		}
-		return presentmentDetail;
 	}
 
 	private void importDataByInstrumentType() throws Exception {
@@ -495,6 +535,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			dataEngine = new DataEngineImport(dataSource, getUserDetails().getUserId(), App.DATABASE.name(), true,
 					SysParamUtil.getAppDate(), status);
 			dataEngine.setMedia(getMedia());
+			dataEngine.setValidateRecord(presentmentRespValidation);
 			try {
 				if (configName.equals("PRESENTMENT_RESPONSE_PDC")) {
 					dataEngine.setProcessRecord((ProcessRecord) SpringBeanUtil.getBean("customPresentmentExtact"));
@@ -592,6 +633,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 								skipUpdate = true;
 								errorMessage = "Presentment response already marked as bounce for the reference "
 										.concat(presentmentRef);
+							} else if (DateUtility.compare(DateUtility.getAppDate(),
+									presentmentDetail.getSchDate()) < 0) {
+								skipUpdate = true;
+								errorMessage = "Presentment schedule date is greater than application business date "
+										.concat(presentmentRef);
 							}
 						}
 
@@ -603,17 +649,39 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 							continue;
 						}
 
-						processInactiveLoan(presentmentRef);
+						boolean processReceipt = false;
+						if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD) {
+							processReceipt = processInactiveLoan(presentmentRef);
+						} else {
+							processReceipt = processPresentmentReceipt(presentmentRef);
+						}
+
+						Long linkedTranId = null;
+						PresentmentDetail presentmentDetails = null;
+						if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+							presentmentDetails = presentmentDetailService.getPresentmentDetail(presentmentRef);
+							linkedTranId = postStageAccounting(presentmentRef, presentmentDetails);
+						}
+
 						if (RepayConstants.PEXC_SUCCESS.equals(status)) {
 							successCount++;
-							updatePresentmentDetails(presentmentRef, status);
+							presentmentDetailService.updatePresentmentDetail(presentmentRef, status, linkedTranId);
 							updatePresentmentHeader(presentmentRef, status, status);
 							presentmentDetailService.updateFinanceDetails(presentmentRef);
+							PresentmentDetail pd = isPresentmentResponseIsExist(presentmentRef);
+							if (!processReceipt) {
+								presentmentDetailService.processSuccessPresentments(pd.getReceiptID());
+							}
 							updateChequeStatus(presentmentRef, PennantConstants.CHEQUESTATUS_REALISED);
 							saveBatchLog(batchId, status, presentmentRef, null);
+							// Send customer notification for successful presentment
 							sendMailNotification(presentmentDetailService.getPresentmentDetail(presentmentRef), "");
 						} else {
 							try {
+								if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+									reverseStageAccounting(linkedTranId, presentmentDetails.getReceiptID());
+								}
+
 								detail = presentmentCancellation(presentmentRef, reasonCode);
 								if (StringUtils.trimToNull(detail.getErrorDesc()) == null) {
 									successCount++;
@@ -683,13 +751,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				} else {
 					status.setRemarks(oldRemarks);
 				}
+				updateFileHeader(batchId, recordCount, successCount, failedCount, status.getRemarks());
 				return 0;
 			}
 		});
 		logger.debug(Literal.LEAVING);
 	}
 
-	// Presentment cancellation process
 	private PresentmentDetail presentmentCancellation(String presentmentRef, String reasonCode) throws Exception {
 		return this.presentmentDetailService.presentmentCancellation(presentmentRef, reasonCode);
 	}
@@ -700,17 +768,27 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		if (!isLoanActive) {
 			PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
 			if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0) {
-				presentmentDetailService.executeReceipts(presentmentDetail, false);
+				presentmentDetailService.executeReceipts(presentmentDetail, false, true);
 				processReceipt = true;
 			}
 		}
 
 		return processReceipt;
+	}
 
+	public boolean processPresentmentReceipt(String presentmentRef) throws Exception {
+		boolean processReceipt = false;
+		PresentmentDetail presentmentDetail = isPresentmentResponseIsExist(presentmentRef);
+		if (presentmentDetail != null && presentmentDetail.getReceiptID() == 0
+				&& presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+			presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
+			presentmentDetailService.executeReceipts(presentmentDetail, false, false);
+		}
+		return processReceipt;
 	}
 
 	// Truncating the data from staging tables
-	private void clearTables() {
+	public void clearTables() {
 		logger.debug(Literal.ENTERING);
 
 		jdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_FILEIMPORT", new MapSqlParameterSource());
@@ -719,51 +797,21 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	// Update the presentment status
-	private void updatePresentmentDetails(String presentmentRef, String status) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(
-				"Update Presentmentdetails set Status = :Status, ErrorDesc = :ErrorDesc Where PresentmentRef = :PresentmentRef ");
-
-		source.addValue("Status", status);
-		source.addValue("ErrorDesc", null);
-		source.addValue("PresentmentRef", presentmentRef);
-		try {
-			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	// Update the presentment status
 	private void updatePresentmentDetails(String presentmentRef, String status, String errorCode, String errorDesc) {
-		logger.debug(Literal.ENTERING);
 		presentmentDetailService.updatePresentmentDetails(presentmentRef, status, errorCode, errorDesc);
-		logger.debug(Literal.LEAVING);
 	}
 
 	// Update the presentment status and bounceid
 	private void updatePresentmentDetails(String presentmentRef, String status, long bounceId, long manualAdviseId,
 			String errorDesc) {
-		logger.debug(Literal.ENTERING);
 		presentmentDetailService.updatePresentmentDetails(presentmentRef, status, bounceId, manualAdviseId, errorDesc);
-		logger.debug(Literal.LEAVING);
 	}
 
 	// Update the PresentHeader Success and failure records
 	private void updatePresentmentHeader(String presentmentRef, String status, String preStatus) {
 		logger.debug(Literal.ENTERING);
 
-		long presentmentId = getPresentmentId(presentmentRef);
+		long presentmentId = presentmentDetailService.getPresentmentId(presentmentRef);
 		updatePresentmentHeader(presentmentId, status, preStatus);
 
 		PresentmentHeader header = getPresentmentHeader(presentmentId);
@@ -808,97 +856,55 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	// Getting presentmentid using presentment reference
-	private long getPresentmentId(String presentmentRef) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(" SELECT PRESENTMENTID FROM PRESENTMENTDETAILS  WHERE PRESENTMENTREF = :PRESENTMENTREF ");
-		source.addValue("PRESENTMENTREF", presentmentRef);
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-	}
-
-	// Getting presentmentid using presentment reference
 	private PresentmentHeader getPresentmentHeader(long id) {
-		logger.debug(Literal.ENTERING);
+		StringBuffer sql = new StringBuffer("SELECT ID, TOTALRECORDS, PROCESSEDRECORDS");
+		sql.append(", SUCCESSRECORDS, FAILEDRECORDS FROM PRESENTMENTHEADER WHERE ID = ?");
 
-		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(
-				" SELECT ID, TOTALRECORDS, PROCESSEDRECORDS, SUCCESSRECORDS, FAILEDRECORDS FROM PRESENTMENTHEADER WHERE ID = :ID");
-		source.addValue("ID", id);
-
-		RowMapper<PresentmentHeader> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentHeader.class);
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { id },
+					(rs, roNum) -> {
+						PresentmentHeader ph = new PresentmentHeader();
+						ph.setId(rs.getLong("ID"));
+						ph.setTotalRecords(rs.getInt("TOTALRECORDS"));
+						ph.setProcessedRecords(rs.getInt("PROCESSEDRECORDS"));
+						ph.setSuccessRecords(rs.getInt("SUCCESSRECORDS"));
+						ph.setFailedRecords(rs.getInt("FAILEDRECORDS"));
+						return ph;
+					});
 		} catch (Exception e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
+			logger.warn("Record not found in PRESENTMENTHEADER table for the specified Id >> {}", id);
 		}
+		return null;
 	}
 
 	// Updating presentment header status
 	private void updatePresentmentHeaderStatus(PresentmentHeader header) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuffer sql = new StringBuffer();
-		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		sql.append("UPDATE PRESENTMENTHEADER SET STATUS = :STATUS WHERE ID = :ID");
-		source.addValue("ID", header.getId());
-		source.addValue("STATUS", RepayConstants.PEXC_RECEIVED);
-		try {
-			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
-			throw e;
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
+		sql.append("UPDATE PRESENTMENTHEADER SET STATUS = ? WHERE ID = ?");
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setInt(index++, RepayConstants.PEXC_RECEIVED);
+			ps.setLong(index++, header.getId());
+		});
 	}
 
 	private long saveFileHeader(String fileName) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		sql.append(" INSERT INTO BatchFileHeader");
 		sql.append(" (ID, FileName, StartTime, ProcessName)");
-		sql.append(" VALUES( :ID, :FileName, :StartTime, :ProcessName)");
+		sql.append(" VALUES(?,?,?,?)");
 
 		long batchId = presentmentDetailService.getSeqNumber("SeqBatchFileHeader");
 
-		source.addValue("ID", batchId);
-		source.addValue("FileName", fileName);
-		source.addValue("StartTime", DateUtility.getSysDate());
-		source.addValue("ProcessName", "PRESENTMENT_IMPORT");
-
-		try {
-			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, batchId);
+			ps.setString(index++, fileName);
+			ps.setDate(index++, JdbcUtil.getDate(DateUtility.getSysDate()));
+			ps.setString(index++, "PRESENTMENT_IMPORT");
+		});
 		return batchId;
 	}
 
@@ -952,7 +958,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
 			parameterMap = new MapSqlParameterSource();
 			parameterMap.addValue("ID", batchId);
-			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineLog.class);
+			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
 			return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
 		} catch (Exception e) {
 		} finally {
@@ -1000,34 +1006,22 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	private void updateFileHeader(long batchId, int recordCount, int successCount, int failedCount, String remarks) {
-		logger.debug(Literal.ENTERING);
+		StringBuffer sql = new StringBuffer("UPDATE BatchFileHeader");
+		sql.append(" Set EndTime = ?, TotalRecords = ?, SucessRecords = ?, FailedRecords = ?, Remarks = ?");
+		sql.append(" Where ID = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuffer query = new StringBuffer();
-		query.append(" UPDATE BatchFileHeader SET EndTime = :EndTime, TotalRecords = :TotalRecords,");
-		query.append(
-				" SucessRecords = :SucessRecords, FailedRecords = :FailedRecords, Remarks = :Remarks Where ID = :ID");
-
-		source.addValue("EndTime", DateUtility.getSysDate());
-		source.addValue("TotalRecords", recordCount);
-		source.addValue("SucessRecords", successCount);
-		source.addValue("FailedRecords", failedCount);
-		if (StringUtils.trimToNull(remarks) != null) {
-			remarks = (remarks.length() >= 2000) ? remarks.substring(0, 1988) : remarks;
-		}
-		source.addValue("Remarks", remarks);
-		source.addValue("ID", batchId);
-
-		try {
-			this.jdbcTemplate.update(query.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
+		this.jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+			ps.setInt(index++, recordCount);
+			ps.setInt(index++, successCount);
+			ps.setInt(index++, failedCount);
+			ps.setString(index++, remarks);
+			ps.setLong(index++, batchId);
+		});
 	}
 
-	public void responseProcess() {
+	private void responseProcess() {
 		logger.debug(Literal.ENTERING);
 
 		recordCount = 0;
@@ -1124,7 +1118,12 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
 				}
-				updateFileHeader(batchId, recordCount, successCount, failedCount, remarks.toString());
+
+				String strRemarks = remarks.toString();
+				if (StringUtils.trimToNull(strRemarks) != null) {
+					strRemarks = (strRemarks.length() >= 2000) ? remarks.substring(0, 1988) : strRemarks;
+				}
+				updateFileHeader(batchId, recordCount, successCount, failedCount, strRemarks);
 
 				return 0;
 			}
@@ -1235,30 +1234,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	private boolean isManualAdviceExitsInManualMovements(long manualAdviseId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select adviseID from MANUALADVISEMOVEMENTS_Temp ");
+		sql.append(" WHERE adviseID= ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		boolean adviceCondition = false;
-		long adviceId = 0;
-
-		selectSql.append("select adviseid from MANUALADVISEMOVEMENTS_Temp ");
-		selectSql.append(" WHERE adviseid= :adviseid");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("adviseid", manualAdviseId);
-
-		try {
-			adviceId = jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Long.class);
-		} catch (EmptyResultDataAccessException er) {
-			adviceId = 0;
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		if (adviceId > 0) {
-			adviceCondition = true;
-		} else {
-			adviceCondition = false;
-		}
-		return adviceCondition;
+		logger.trace(Literal.SQL, sql);
+		return jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { manualAdviseId },
+				Long.class) > 0 ? true : false;
 	}
 
 	private void createPayableAdvice(ManualAdvise manualAdvise) {
@@ -1335,46 +1317,42 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	}
 
 	private int getFeeTypeIdBasedOnFeeType(String feeTypeCode) {
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
-		selectSql.append(" SELECT Feetypeid FROM FeeTypes ");
-		selectSql.append(" WHERE Feetypecode= :Feetypecode");
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("Feetypecode", feeTypeCode);
-
-		return jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Integer.class);
+		sql.append(" SELECT Feetypeid FROM FeeTypes ");
+		sql.append(" WHERE Feetypecode = ?");
+		logger.debug(Literal.SQL, sql.toString());
+		return jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { feeTypeCode },
+				Integer.class);
 	}
 
 	private ManualAdvise getManualAdviceDetails(String presentmentRef) {
+		StringBuilder sql = new StringBuilder();
 
-		logger.debug(Literal.ENTERING);
-
-		ManualAdvise manualAdvice = new ManualAdvise();
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(" SELECT T2.ADVISEID,T2.finReference, T2.adviseAmount ");
-		selectSql.append(" FROM PRESENTMENTDETAILS T1 inner join ");
-		selectSql.append(" MANUALADVISE T2 on T2.ADVISEID=T1.MANUALADVISEID");
-		selectSql.append(" WHERE T1.PRESENTMENTREF= :PRESENTMENTREF");
-
-		paramMap.addValue("PRESENTMENTREF", presentmentRef);
-
-		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		sql.append(" SELECT T2.ADVISEID,T2.finReference, T2.adviseAmount ");
+		sql.append(" FROM PRESENTMENTDETAILS T1 inner join ");
+		sql.append(" MANUALADVISE T2 on T2.ADVISEID=T1.MANUALADVISEID");
+		sql.append(" WHERE T1.PRESENTMENTREF= ?");
+		logger.trace(Literal.SQL, sql);
 		try {
-			manualAdvice = this.jdbcTemplate.queryForObject(selectSql.toString(), paramMap, typeRowMapper);
+			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { presentmentRef },
+					(rs, roNum) -> {
+						ManualAdvise ma = new ManualAdvise();
+						ma.setAdviseID(rs.getLong("ADVISEID"));
+						ma.setFinReference(rs.getString("finReference"));
+						ma.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
+						return ma;
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			manualAdvice = null;
+			logger.warn("Record not found in PRESENTMENTDETAILS table for the specified PRESENTMENTREF >> {}",
+					presentmentRef);
 		}
-		return manualAdvice;
+		return null;
 	}
 
 	private void updateSuccessResponse(Presentment presement_Response) {
 		successCount++;
-		updatePresentmentDetails(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS);
+		presentmentDetailService.updatePresentmentDetail(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS);
 		updatePresentmentHeader(presement_Response.getBatchId(), RepayConstants.PEXC_SUCCESS,
 				RepayConstants.PEXC_SUCCESS);
 		presentmentDetailService.updateFinanceDetails(presement_Response.getBatchId());
@@ -1523,8 +1501,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		source.addValue("PRESENTMENTREF", batchId);
 
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 		try {
 			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -1538,7 +1515,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	 * Updating the cheque status if the mode is PDC
 	 */
 	private void updateChequeStatus(String presentmentRef, String status) {
-
 		String paymentMode = presentmentDetailService.getPaymenyMode(presentmentRef);
 		PresentmentDetail detail = presentmentDetailService.getPresentmentDetailsByMode(presentmentRef, paymentMode);
 		// Updating the cheque status as releases if the payment mode is PDC
@@ -1579,14 +1555,14 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 		sql.append(
 				" SELECT PD.ID, PD.PRESENTMENTID, PD.FINREFERENCE, PD.SCHDATE, PD.MANDATEID,PD.ADVANCEAMT, PD.EXCESSID,PD.RECEIPTID, PD.PRESENTMENTAMT, PD.EXCLUDEREASON, PD.BOUNCEID , PB.ACCOUNTNO, PB.ACTYPE");
+		sql.append(" ,PH.PRESENTMENTTYPE");
 		sql.append(" FROM PRESENTMENTDETAILS PD INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID ");
 		sql.append(
 				" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID WHERE  PD.PRESENTMENTREF = :PRESENTMENTREF");
 
 		source.addValue("PRESENTMENTREF", batchId);
 
-		RowMapper<PresentmentDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+		RowMapper<PresentmentDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 		try {
 			presentmentDetail = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -1659,6 +1635,81 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private AEEvent doPresentmentStageAccounting(String presentmentRef, PresentmentDetail presentmentDetail) {
+		logger.debug(Literal.ENTERING);
+
+		String finReference = presentmentDetail.getFinReference();
+		Date schDate = presentmentDetail.getSchDate();
+		FinanceMain fm = presentmentDetailService.getDefualtPostingDetails(finReference, schDate);
+
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setFinReference(fm.getFinReference());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setFinType(fm.getFinType());
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCcy(fm.getFinCcy());
+		aeEvent.setPostingUserBranch(fm.getFinType());
+		aeEvent.setValueDate(presentmentDetail.getSchDate());
+		aeEvent.setPostDate(SysParamUtil.getAppDate());
+		aeEvent.setEntityCode(fm.getEntityCode());
+		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_PRSNTRSP);
+		aeEvent.setPostRefId(presentmentDetail.getPresentmentId());
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		amountCodes = aeEvent.getAeAmountCodes();
+		amountCodes.setFinType(fm.getFinType());
+		amountCodes.setPartnerBankAc(fm.getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(fm.getPartnerBankAcType());
+
+		BigDecimal presentmentAmt = presentmentDetail.getPresentmentAmt();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+		dataMap.put("ae_presentmentAmt", presentmentAmt);
+		aeEvent.setDataMap(dataMap);
+
+		// Prepare Accounting Set of entries with valid account & Post amounts
+		// =======================================
+		try {
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
+					AccountEventConstants.ACCEVENT_PRSNTRSP, FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.setDataMap(dataMap);
+			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			aeEvent.setErrorMessage(ErrorUtil.getErrorDetail(new ErrorDetail("Accounting Engine",
+					PennantConstants.ERR_UNDEF, "E", "Accounting Engine Failed to Create Postings:" + e.getMessage(),
+					new String[] {}, new String[] {})).getMessage());
+			return aeEvent;
+		}
+
+		if (!aeEvent.isPostingSucess()) {
+			throw new InterfaceException("9998", "Presentment response accounting postings failed.");
+		}
+
+		return aeEvent;
+	}
+
+	private Long postStageAccounting(String presentmentRef, PresentmentDetail presentmentDetail) {
+		logger.info("Posting stage accounting for the presentment reference {}", presentmentRef);
+		AEEvent event = doPresentmentStageAccounting(presentmentRef, presentmentDetail);
+		return event.getLinkedTranId();
+	}
+
+	private void reverseStageAccounting(long linkedTranId, long receiptID) {
+		logger.info("Stage accounting reversal for the linkedTranID {}", linkedTranId);
+		List<Long> linkedTranIDList = new ArrayList<>();
+		linkedTranIDList.add(linkedTranId);
+
+		Long tranId = financeRepaymentsDAO.getLinkedTranIdByReceipt(receiptID, "");
+		if (tranId != null) {
+			linkedTranIDList.add(tranId);
+		}
+
+		for (Long postingID : linkedTranIDList) {
+			postingsPreparationUtil.postReversalsByLinkedTranID(postingID);
+		}
+	}
+
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
@@ -1697,6 +1748,18 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
 		this.presentmentImportProcess = presentmentImportProcess;
+	}
+
+	public void setPresentmentRespValidation(ValidateRecord presentmentRespValidation) {
+		this.presentmentRespValidation = presentmentRespValidation;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
 }

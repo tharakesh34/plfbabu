@@ -1,7 +1,11 @@
 package com.pennanttech.service.impl;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +16,13 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.BeneficiaryController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pffws.BeneficiaryRestService;
 import com.pennanttech.pffws.BeneficiarySoapService;
 import com.pennanttech.util.APIConstants;
@@ -24,8 +30,9 @@ import com.pennanttech.ws.model.beneficiary.BeneficiaryDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, BeneficiaryRestService {
-	private final Logger logger = Logger.getLogger(getClass());
+public class BeneficiaryWebServiceImpl extends ExtendedTestClass
+		implements BeneficiarySoapService, BeneficiaryRestService {
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private BeneficiaryController beneficiaryController;
 	private ValidationUtility validationUtility;
@@ -54,7 +61,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 			response = new Beneficiary();
 			response.setReturnStatus(returnStatus);
 		}
-		//for Logging Purpose
+		// for Logging Purpose
 		String[] logFields = new String[1];
 		logFields[0] = String.valueOf(beneficiary.getBeneficiaryId());
 		APIErrorHandlerService.logKeyFields(logFields);
@@ -98,7 +105,7 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 		logFields[0] = beneficiary.getCustCIF();
 		APIErrorHandlerService.logKeyFields(logFields);
 		APIErrorHandlerService.logReference(String.valueOf(beneficiary.getBeneficiaryId()));
-		//beanValidation
+		// beanValidation
 		validationUtility.validate(beneficiary, UpdateValidationGroup.class);
 		Beneficiary beneficiaryDetails = beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
 		WSReturnStatus returnStatus = null;
@@ -226,14 +233,14 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 				beneficiary.setBankCode(bankBranch.getBankCode());
 			}
 		}
-		//validate Phone number
+		// validate Phone number
 		String mobileNumber = beneficiary.getPhoneNumber();
 		if (StringUtils.isNotBlank(mobileNumber)) {
 			if (!(mobileNumber.matches("\\d{10}"))) {
 				return getErrorDetails("90278", null);
 			}
 		}
-		//validate AccNumber length
+		// validate AccNumber length
 		/*
 		 * if(StringUtils.isNotBlank(beneficiary.getBankCode())){ int accNoLength =
 		 * bankDetailService.getAccNoLengthByCode(beneficiary.getBankCode());
@@ -241,6 +248,24 @@ public class BeneficiaryWebServiceImpl implements BeneficiarySoapService, Benefi
 		 * "AccountNumber"; valueParm[1] = String.valueOf(accNoLength)+" characters"; return getErrorDetails("30570",
 		 * valueParm); } }
 		 */
+
+		if (StringUtils.isBlank(beneficiary.getAccHolderName())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = beneficiary.getAccHolderName();
+			return getErrorDetails("90502", valueParm);
+		}
+
+		Pattern pattern = Pattern
+				.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
+
+		Matcher matcher = pattern.matcher(beneficiary.getAccHolderName());
+
+		if (!matcher.matches()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = beneficiary.getAccHolderName();
+			return getErrorDetails("90237", valueParm);
+		}
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}

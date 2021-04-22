@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.Interface.model.IAccounts;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.AccountHoldStatus;
+import com.pennant.coreinterface.model.CoreBankAccountDetail;
+import com.pennant.coreinterface.model.account.InterfaceAccount;
+import com.pennant.coreinterface.model.collateral.CollateralMark;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface AccountInterfaceService {
@@ -19,7 +23,11 @@ public interface AccountInterfaceService {
 
 	BigDecimal getAccountAvailableBal(String accountId);
 
+	Map<String, IAccounts> getAccountsAvailableBalMap(List<String> accountsList);
+
 	List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws InterfaceException;
+
+	List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList) throws InterfaceException;
 
 	int removeAccountHolds() throws Exception;
 
@@ -27,4 +35,10 @@ public interface AccountInterfaceService {
 			throws InterfaceException;
 
 	Map<String, String> getAccountCurrencyMap(Map<String, String> accountCcyMap) throws InterfaceException;
+
+	InterfaceAccount createAccount(Customer customer) throws InterfaceException;
+
+	CollateralMark collateralMarking(CollateralMark coltralMarkReq) throws InterfaceException;
+
+	CollateralMark collateralDeMarking(CollateralMark coltralMarkReq) throws InterfaceException;
 }

@@ -77,6 +77,16 @@
 												</hbox>
 											</row>
 											<row>
+												<label id="label_loanType" value="${c:l('label_TechnicalVerificationDialog_LoanType.value')}" />
+												<hbox>
+													<extendedcombobox id="loanType" />
+												</hbox>
+												<label id="label_branch" value="${c:l('label_TechnicalVerificationDialog_Branch.value')}" />
+												<hbox>
+													<extendedcombobox id="custBranch" />
+												</hbox>
+											</row>
+											<row>
 												<label id="label_CustName" value="${c:l('label_TechnicalVerificationDialog_CustName.value')}" />
 												<hbox>
 													<space id="space_CustName" spacing="2px" />
@@ -146,7 +156,7 @@
 												</hbox>
 												<label id="label_AgentCode" value="${c:l('label_TechnicalVerificationDialog_AgentCode.value')}" />
 												<hbox>
-													<space id="space_AgentCode" spacing="2px" />
+													<space id="space_AgentCode" spacing="2px" sclass="mandatory" />
 													<uppercasebox id="agentCode" width="155px" />
 												</hbox>
 											</row>

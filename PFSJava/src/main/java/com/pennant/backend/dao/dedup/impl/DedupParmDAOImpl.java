@@ -42,23 +42,20 @@
  */
 package com.pennant.backend.dao.dedup.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -76,7 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupParmDAO {
-	private static Logger logger = Logger.getLogger(DedupParmDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DedupParmDAOImpl.class);
 
 	public DedupParmDAOImpl() {
 		super();
@@ -111,12 +108,14 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<DedupParm> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupParm.class);
+		RowMapper<DedupParm> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupParm.class);
 
 		try {
 			dedupParm = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(
+					"DedupParams not found in DedupParams{} for the specified QueryCode >> {} and QuerySubCode >> {} and QueryModule >> {}",
+					type, id, querySubCode, queryModule);
 			dedupParm = null;
 		}
 		logger.debug("Leaving");
@@ -151,7 +150,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<DedupParm> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DedupParm.class);
+		RowMapper<DedupParm> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupParm.class);
 
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -226,8 +225,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		logger.debug("Entering");
 
 		if (dedupParm.getQueryId() == Long.MIN_VALUE) {
-			dedupParm.setQueryId(getNextId("SeqDedupParams"));
-			logger.debug("get NextID:" + dedupParm.getQueryId());
+			dedupParm.setQueryId(getNextValue("SeqDedupParams"));
+			logger.debug("get NextValue:" + dedupParm.getQueryId());
 		}
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into DedupParams");
@@ -306,8 +305,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		ParameterizedBeanPropertyRowMapper<CustomerDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDedup.class);
+		BeanPropertyRowMapper<CustomerDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDedup.class);
 
 		try {
 			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -334,8 +332,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		ParameterizedBeanPropertyRowMapper<FinanceDedup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinanceDedup.class);
+		BeanPropertyRowMapper<FinanceDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceDedup.class);
 
 		try {
 			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -352,8 +349,6 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 */
 	@Override
 	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AlertType, LovDescNamelov, OverRide, LovDescRefDesc");
 		sql.append(" from LMTFinRefDetail");
@@ -362,34 +357,21 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, "%" + financeRefDetail.getMandInputInStage() + "%");
-					ps.setString(index++, financeRefDetail.getFinType());
-					ps.setInt(index++, 1);
-				}
-			}, new RowMapper<FinanceReferenceDetail>() {
-				@Override
-				public FinanceReferenceDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceReferenceDetail br = new FinanceReferenceDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, "%" + financeRefDetail.getMandInputInStage() + "%");
+			ps.setString(index++, financeRefDetail.getFinType());
+			ps.setInt(index++, 1);
+		}, (rs, rowNum) -> {
+			FinanceReferenceDetail br = new FinanceReferenceDetail();
 
-					br.setAlertType(rs.getString("AlertType"));
-					br.setLovDescNamelov(rs.getString("LovDescNamelov"));
-					br.setOverRide(rs.getBoolean("OverRide"));
-					br.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
+			br.setAlertType(rs.getString("AlertType"));
+			br.setLovDescNamelov(rs.getString("LovDescNamelov"));
+			br.setOverRide(rs.getBoolean("OverRide"));
+			br.setLovDescRefDesc(rs.getString("LovDescRefDesc"));
 
-					return br;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return br;
+		});
 	}
 
 	@Override
@@ -404,7 +386,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		logger.debug("selectSql: " + selectSql.toString());
 
 		try {
-			fieldNames = this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, null);
+			fieldNames = this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			fieldNames = new ArrayList<String>();
@@ -421,7 +403,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		// mapSqlParameterSource.addValues(fielValueMap);
 
 		for (String key : fielValueMap.keySet()) {
-			mapSqlParameterSource.addValue(key, fielValueMap.get(key));
+			mapSqlParameterSource.addValue(key.toUpperCase(), fielValueMap.get(key));
 		}
 
 		List<CollateralSetup> collateralSetups = null;
@@ -429,7 +411,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 		try {
 			collateralSetups = this.jdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource,
-					ParameterizedBeanPropertyRowMapper.newInstance(CollateralSetup.class));
+					BeanPropertyRowMapper.newInstance(CollateralSetup.class));
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 		}

@@ -44,7 +44,8 @@ package com.pennant.webui.rmtmasters.accounttype;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AccountTypeListCtrl extends GFCBaseListCtrl<AccountType> {
 	private static final long serialVersionUID = -1631313247095254648L;
-	private static final Logger logger = Logger.getLogger(AccountTypeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AccountTypeListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

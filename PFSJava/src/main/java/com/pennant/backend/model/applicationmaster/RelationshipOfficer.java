@@ -47,6 +47,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -54,23 +58,34 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>RelationshipOfficer table</b>.<br>
  *
  */
+@XmlType(propOrder = { "rOfficerCode", "rOfficerIsActive", "returnStatus" })
 public class RelationshipOfficer extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -6954546690866975110L;
-
+	@XmlElement
 	private String rOfficerCode;
+	@XmlElement
 	private String rOfficerDesc;
+	@XmlElement
 	private String rOfficerDeptCode;
 	private String lovDescROfficerDeptCodeName;
+	@XmlElement
 	private boolean rOfficerIsActive;
+	@XmlElement
 	private String grade;
+	@XmlElement
 	private String mobileNO;
+	@XmlElement
 	private Date dateOfJoin;
+	@XmlElement
 	private String genDesignation;
 	private String gendesgdesc;
 	private boolean newRecord;
 	private String lovValue;
 	private RelationshipOfficer befImage;
 	private LoggedInUser userDetails;
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	private String sourceId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -88,12 +103,30 @@ public class RelationshipOfficer extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("gendesgdesc");
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
 		return excludeFields;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
 
 	public String getId() {
 		return rOfficerCode;

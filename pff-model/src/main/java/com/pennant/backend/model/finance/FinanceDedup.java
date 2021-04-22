@@ -7,15 +7,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  * Model class for the <b>Customer table</b>.<br>
  *
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDedup implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long custId = Long.MIN_VALUE;
+	@XmlElement
 	private String finReference;
 	private String dupReference;
+	@XmlElement
 	private String custCIF;
 	private String custFName;
 	private String custMName;
@@ -36,6 +43,7 @@ public class FinanceDedup implements Serializable {
 	private String engineNumber;
 	private BigDecimal financeAmount;
 	private BigDecimal profitAmount;
+	@XmlElement
 	private String financeType;
 	private Date startDate;
 	private String stage = "";

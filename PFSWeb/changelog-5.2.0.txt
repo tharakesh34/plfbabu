@@ -1,0 +1,736 @@
+PLF-Release-5.0.9.12 2019-12-03
+-----------------------------------------------------------------------------------------------------------------------
+
+Enhancements:
+-------------
+1. 360 rights to display fields and buttons on right basis.change customer
+2. Customer swap functionality
+3. Default Presentment uplad functinality moved from code to data-engine scripts.
+
+Bug Fixes:
+-----------
+1. In receipts in case of fee waivers the penalty amount is showing negative.
+2. On approve of the early settlement system not allowing to approve, due to invalid validation.
+3. On canceling of receipts limit amounts not getting update.
+
+
+PLF-Release-5.0.9.11 2019-12-02
+-----------------------------------------------------------------------------------------------------------------------
+
+Enhancements:
+-------------
+   Spread Sheet Enhancement
+
+
+PLF-Release-5.0.9.10 2019-11-30
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-----------
+1.	SOA corrections in customer 360
+2.	API issue while adding Documents along with Create Customer
+
+Enhancements:
+-------------------
+1.	New API Check List (GS)
+2.	New API for to fetch receivable covenants (GS)
+3.	Verification's functionality enhancement (HL)
+4.	New API Eligibility check (GS)
+5.	Capture reason code for early settlement (Credit Saison)
+6.	Min and Max CRIF scorer of primary and co-applicants made available in eligibility rule configuration (GS)
+
+
+PLF-Release-5.0.9.9 2019-11-29
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-----------
+1.Records not visible in collateral assignment list screen after saving.
+2.PSD#143335 - Non consideration of fee waiver.
+3.PSD# 138317 - TDS Adjustment showing as ZERO in SOA. 
+4.Issues corrected in update Loan API 
+5.documents not reflecting on the screen.
+6.Fin Type not getting set in query details screen.
+7.Corrected the message in upload advice screen. 
+8.In Spreed Sheet we taken Actual Rate of Interest instead of base rate.
+9.Put-call Report && Covenant Register corrections.
+10.Removed collateral detail report.
+11.Error in notifications.
+
+Enhancements:
+-------------------
+1.Include assets also in corporate financial upload.
+2.New field “BANK_BRANCH_NAME” added in mandate request and response tables.
+3.New field “PARTNER_BANK_ACCOUNT” added in disbursement request table
+4.New API “customer details” for SRM (HL)
+5.New fields added in Customer Bank Info screen and API to capture “Sanction Limit” and “Average Bank Balance” in month wise.
+6.Insurance Premium calculation interface changes (CLIX)
+7.Hunter service related changes (CLIX)
+
+PLF-Release-5.0.9.8 2019-11-28
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-----------
+1. In Loan basic detail Enquiry - field for RM and Credit Manager is missing.
+2. Put / Call email not coming regularly till the Put / call date
+3. Put/Call Email format not correct
+
+
+PLF-Release-5.0.9.7 2019-11-27
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-----------
+1. UpdateLoan API issue i.e, getting error while updating documents from API
+2. RelationshipOfficer ROfficerCode length increased 8 to 10
+3. Excess Amount Enquiry Report Added.
+4. Disbursement spelling corrected
+5. Download multiples records select single record in Mandate download 
+6. Add disbursement accounting issue in case of Advance interest
+7. For boolean extended fields parse exception while data came from sql server database.
+8. Error message change settlement upload response
+
+
+PLF-Release-5.0.9.6 2019-11-26
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-----------
+1.	System should to allow enter "Code" in Relationship Manager Creation master
+2.	Total disbursements in Loan enquiry showing incorrect amount for loan no.
+3.	No Review happening at end of moratorium period where moratorium period is a multiple of the MCLR Frequency
+4.	BPI Functionality not working for "Constant Principal" Schedule method
+5.	PSD# 144512(Reason should be mandatory if Verification for applicants is selected as Not Mandatory)
+6.	Payable Advice && Excess Amount Reversal Corrections for Receipts && Bounce charges label for Realize and Cancel Scenario
+
+
+PLF-Release-5.0.9.5 2019-11-26
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-----------
+1. EOD Issue Fixes at the time EMI in advance
+2. PSD 133744 Loan Type - Loan Type  - Required selection as ALL - bulk processing ->  disburesemt process -> disbursemnet.
+
+Enhancements:
+-------------------
+1. API Service getStatement changes (SOAREPORT,PROVINSTCERTREPORT,INSTCERTREPORT,REPYSCHDREPORT) is added
+
+PLF-Release-5.0.9.4 2019-11-26
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-----------
+1. PSD#-144308-Issue Fixed.
+2. System should to allow enter "Code" in Relationship Manager Creation master
+3. Total disbursements in Loan enquiry showing incorrect amount for loan no.
+4. No Review happening at end of moratorium period where moratorium period is a multiple of the MCLR Frequency
+5. BPI Functionality not working for "Constant Principal" Schedule method
+6. PSD# 144209-Applicant details are showing in co Applicant grid
+7. Finance Reports and Excess Amount Reports deleted
+
+
+PLF-Release-5.0.9.3 2019-11-25
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-------------------
+1.	API service updateDirectorDetail issue is fixed
+2.	Enable the right for Code  in Relationship Manager Creation master
+3.	FIELDS ADDED IN CUSTOMERS BANKING INFORMATION TAB ACCTBAHAVIOUR FUNCTIONALITY.
+4.	Create new menu verification rules in rules factory and created rule execution FIinitiation tab for auto initiation purpose in  loan queue and added extended combo box loan type searching for  field investigation .  
+5.	New (Channel) Header added in API.
+6.	PSD# 143925-Overdue amount is not updated in Loan enquiry even after the cheque payment is cancelled.
+7.	PSD# 143950-Overdue Amount is displayed as Zero after the Cheque Bounce
+8.	PSD# 143985-Penalty charges are applied for the cheque Bounce process With technical reason
+
+Enhancements:
+-------------------
+1.	Rowmapper changes
+
+
+PLF-Release-5.0.9.2 2019-11-22
+-----------------------------------------------------------------------------------------------------------------------
+
+Bug Fixes:
+-------------------
+1. In Mandates Screen while Clicking on PennyDrop Button custid Was Not set(IIFL)
+2. In loan Approval status inquiry audit transactions displaying in sequence order by auditDate(Core)
+3. New images added for Customer 360 module.(Core)
+4. For newly created users some menu's are displaying by default with out any rights assigned.(Core)
+5. For newly created users some menu's are displaying by default with out any rights assigned.(Core)
+6. API services addCreditReviewDetails and addCustomerBankingInformation changes(validation, calculation issue) is added (Core)
+7. PSD# 143421 PSD (Bounce charges label name not displaying under receivable details) (GS)
+
+Enhancements:
+-------------------
+1. New API for Share Holder, developed (IIFL)
+
+pff 4.12.3.1 2018-12-17
+----------------
+-story #1123 Corporate CIBIL Report
+-story #1122 Retail CIBIL Enhancement
+-story #1124 Service Instruction UID changes for Receipts
+
+pff 4.12.2.6 2018-12-15
+----------------
+- PSD#130868 Reject details on enquiry.
+-story #1118 Workflow with Legal Tech Value Change - Legal Tech Value moved from Collateral to Loan Extended Fields
+Note: The extended fields LTV_1[-5] and UPDATED_LTV_1[-5] should be available at loan level.
+-Story # 1119 Repayment Mode Change while Swapping the Mandate
+
+pff 4.12.2.5  2018-12-14
+----------------
+
+-story #1106 Implemented Add Remarks API.
+-PPM #18474 While trying to create a collateral with non banking customer, getting customer not available validation then, click on ok button getting 900 error 
+-PPM # 18759  In OD Loan types IRR Codes field not populated validation even it is mandatory field and also after saved the record IRR Codes not populated has fixed
+-story #987 Sprint 1 changes (FG).
+-bugs #1077 The deviations should be assigned to approval authorities based on the order specified in the deviation and delegation matrix of process editor. [PSD #130673]
+Note: The deviated values should be in ascending order for a deviation from lower approval authority to higher approval authority. The fix will work only for the new configuration. The existing configuration require re-define or data patch
+-PPM # 18849 In collateral enter invalid customer(not existed) customer while click on proceed button getting unhandled exception. 
+
+pff 4.12.2.4   2018-12-13 
+----------------
+-Story # 1058, Insurance Module.
+-PPM #18849 In collateral enter invalid customer(not existed) customer while click on proceed button getting unhandled exception.
+
+pff 4.12.2.3  2018-12-7
+----------------
+-Story # 1058, Insurance Module
+-story #1104  It contains Ledger download Services in the EOD Process.
+-story #1092 Receipt Upload Enhancements
+-story #1103 IRR Calculations for Inflows
+-PSD #12837 Statement of Account changes
+
+
+pff 4.12.2.2 2018-12-6
+----------------
+-story #1100 OD Loan changes for API both create loan and management.
+-story #1101 Added the loan dedup validation in Create finance with non stp time.
+
+pff 4.12.2.1 2018-12-3 
+----------------
+-story #1041 New Product : MCA
+-story #1039 E receipt changes.
+-story #1096 FinServiceInstruction added field INSTRUCTIONUID
+-PSD #128381,128376  of  all Loan References, under customer information only irrespective of Active.
+
+
+
+pff 4.12.1.6 2018-11-27
+----------------
+-story #983 Email and SMS Changes 
+-PPM #18603 label name missing for one of the flag in mandate tab. 
+-PPM # 18607 While click on print button in the Cheque Maintenance and Cheque Detail Enquiry menu's getting unhandled exception.
+-story #390 API Enhancements
+-Story #1076 : Added the New Filed "margin"  in Create Customer API.
+-bugs #1077 The deviations should be assigned to approval authorities based on the order specified in the deviation and delegation matrix of process editor. The deviated values should be in ascending order for a deviation from lower approval authority to higher approval authority.
+-PPM # 18605 Throwing a unhanded exception while giving the same collateral reference twice in the collateral assignment.
+-PPM # 18606 Throwing a validation as "Assignment Reference:  already exists.
+
+pff 4.12.1.5  2018-11-24
+----------------
+-story #1054 Provided support for “Revert Queue” service task in Loan Origination. This will move the record from where the record received in forward direction (Based on Task Log).
+-story #1053 Provided support for “Update Attribute” service task in Loan Origination. This allows updating the attributes within the process and using those attributes at a later stage for conditional flows. E.g., “ltvCompleted=YES” Later the attribute can be accessed as “vo.attributes["ltvCompleted"] == 'YES'”.
+-story #1051 Process Designer: Added support of additional parameters for work-flow service tasks.
+-bugs #1056 The execution of service tasks in Loan Origination and Servicing corrected to consider the conditional service task execution.
+-bugs #1057 Collateral extended details, created from loan, are not editable at an intermediate stage of the workflow. The issue is with loading the workflow again.
+-story #1038 Email id to be made mandatory for all customers.
+-story #1037 For BT cases PDD Received Date should be due+1 immediately.
+-PPM #18569 In Cheque Detail enquiry menu some of the fields are enable mode.
+-PPM #18570  Add View button instead of upload button and enable mode.
+-Story #1073:Added the Legal Required Field in Create Loan API for Non Stp Process .
+
+pff 4.12.1.4 2018-11-22
+----------------
+-Story #1049:Create Loan with Collateral from API.
+-Bug #1050:Issue While Create OD Loan thorough API .
+-Bug #1050:Issue While Create Collateral API in Percentage Values given as Decimal.
+-PPM #18571  Enter data in total amount field,while click on filter button getting unhandled exception.
+
+pff 4.12.1.3 2018-11-22
+----------------
+-story #1042 Process Designer: Provided additional attribute, Constraint, for user action sequence flows.
+-story #1043 Additional constraint for user action sequence flow to display the user actions and validate the same on submission.
+-story #1044 Provision to draw conditional workflows based on ‘higherDeviationApprover’ in Loan Origination.
+-story #1041 New Product : MCA 
+-story #1039 E receipt changes
+
+pff 4.12.1.2  2018-11-21
+----------------
+-story #1040 Banking Information changes on customers.
+-Story #982 SMS and Email Changes. 
+-story #1018 New Inquiries addition.
+-story #1020 DSA Master Changes(Agency Master)  ,3.Communication trigger at the time of code creation.
+-PSD#130055 : State wise accounting for GST 
+-PPM#18578 Payment Instructions Unable to Run (Restart )EOD.(Eod is Failed.).
+-story #1027 Limit Modules Corrections.
+
+pff 4.12.1.1  2018-11-20
+----------------
+-story #1031 Daily Trial Balance Changes.
+-story #1030 Decision not mandatory for deviations when the user has rights.
+
+pff 4.12.1.0  2018-11-19
+----------------
+-PPM # 18052 Unable to get validation messages after performing save, submitting , resubmit , reject , approve operations in mandates.
+-bugs #1029 Amount Validation Issue in Add disbursement API.
+-story #1028 Added the 3 fields in Finance Summary Aggregate for OD Loan Category.
+-PSD #130223 :  Getting error while updating the Early Settlement Receipt.
+
+pff 4.11.4.5  2018-11-16 
+----------------
+story #1025 Workflow Process Attributes changes.
+story #1018 New Inquiries addition.
+story #1027 Limit Modules Corrections.
+
+pff 4.11.4.4    2018-11-16
+-story #1019 Customer search modification in CoApp & Guarantors
+-story #974 Collateral Shortfall validation on particular Stage 
+-story #976 Recommendations based on APPDATE or SYSDATE 
+-story #1020 DSA Master Changes(Agency Master) only point 1,2 has done.
+-story #1024 Generic Collection Data Download
+
+pff 4.11.4.3  2018-11-15
+----------------
+- story #910 Enhance to receive on disbursement details.
+- story #1016  Added the 3 fields in Create Loan API.
+
+pff 4.11.4.2   2018-11-13
+----------------
+-story #1011 Balance Certificate
+-story #1014 Credit Review Amount coloring
+-story #1012 Upfront Fee Validation
+-bugs #1015 Corporate financial file upload
+-bugs #1013 Issue While Create Loan API with the DSA 
+-PSD #130013 :  ON PFTCAP Schedule method with the BPI case, schedule on First EMI should 
+-story #910 Enhance to receive on disbursement details.
+-story #1016  Added the 3 fields in Create Loan API.
+
+pff 4.11.4.1  2018-11-13
+----------------
+-bugs #1010 Re-factoring of SELECT ALL option.
+-story #1007  Added the new API for Approved Mandate.
+-bug #1006  Issue While Create Customer through API.
+
+
+pff 4.11.3.6  2018-11-12
+----------------
+-story #973  Added the Extended Details in GET Customer and Get Loan API..
+-story #975 Flag Maintenance of Document is Original or not has done.
+-story #974 Collateral Shortfall validation on particular Stage.
+
+pff 4.11.3.5 2018-11-09
+----------------
+-PSD #129660  Two due dates in same month issue 
+-bugs #969 Issue in Create Collateral API Service
+-PPM #18475   Bounce & Overdue Charges
+-PPM #18476 Payable to display in credit form
+-story #962 while doing  loan maintainence NextGraceCaptilizedDate is coming as  null
+
+pff 4.11.3.4 2018-11-05
+----------------
+-PPM # 18471 Getting unhandled exception while creting a new hostgl mapping is fixed
+-PPM # 18058 Not getting selected country provinces getting all provinces in branches and GST Details and Branches.
+-PPM # 18475  Bounce & Overdue Charges
+-PPM #  18476  Payable to display in credit form
+
+pff 4.11.3.3 2018-11-01
+----------------
+-story #946 Re-factoring: Extract the logic of getting next task, queue, logic from LOS/LMS to framework.
+-story #945 Parallel work-flow support in Legal Details.
+-story #948 Loan Branch State, finBranchProvinceCode, to be made available as parameter for setting the conditions in the workflow
+-story #953 Support “Revert” user action in Loan Origination that will move the record from where the record received in forward direction (Based on Task 
+
+pff 4.11.3.2 2018-10-30
+----------------
+-story #852 Merge Update Query Module API from Veritus.
+-PPM #18261 Presentment Batch Creation in search field need Space between "BankCode" and Header name also Bank Code.
+-PPM # 18470 For return chequesdedup getting wrong header name in loan process editor
+-PPM # 18473 FROM STATE details in GST Invoice report is incorrect
+
+pff 4.11.3.1 2018-10-26
+----------------
+-PPM #18108 is Negative List of Customers module is fixed 
+-PPM #18128 of header name is fixed
+-PPM #18299 retrun cheque depup field issue is  fixed 
+-PPM #18168 Payable/Receivable Advices menu name and Header name Miss match. 
+-PPM #18153 In EOD Configuration menu Double click on existing record then open record 
+-PPM #18090 In Host GL Mapping menu instead of Host GL displaying SAP GL name  in the application.
+-PPM #18145 In Application level click on Customer CIF search button then display CIF data.
+-PPM #18364 In Simulate pdf extraction.Form type is not appearing in the text box after  selecting
+-PPM # 18345 While Create a new record Ecs Return Code field  taken max length is "8" 
+-PPM # 18180 In "Downpayment Rules" menu name click on new button open window Header
+-PPM # 18135 In Users and User Operations menu Login Id Search field default Capital 
+-PPM # 18095 In Negative List of Customers menu PAN NUMBER Field accept small letters
+-PPM # 18088 In Error Codes Once Submitted Error Severity,Error Message Fields are Editable
+-PPM # 18313 In Receipt Bounce Marking open saved record then remove Bounce Reason Code 
+-story #848 Externalize extended field's application list
+-bugs #849 Same Linked transaction id for different instructions
+
+pff 4.11.3.0 2018-10-24
+----------------
+-bugs #840 Reset password should prompt the user to change his/her password on next login rather than expiring the user account
+-story #800 Improve the performance of auto download of agreements
+-PPM #18413  While creating a connector getting validation at Name after hanging the name and submit the connector and resubmit the record and again change the name not getting any validations.
+-PPM #18426 Getting wrong format document in loan
+-PPM #18427 Getting unhandled exception while generating GST invoice report with loan reference
+-PPM #18429 Form type is not appearing in the text box after selecting
+-PPM #18431 Getting all modulenames as system masters rather than their prospective module names in print document.
+-PPM #18432 Getting primary customer as guarantors details
+-PPM #18434 Getting  Error in Configuring the report. Please Contact administrator. exception while clicking on print button in reason categories master.
+-PPM #18435 Sourcing officer print ed document heading name is not same as menu name
+-PPM #18436 Getting lookupvalues printed document heading as LOV Field Details
+-PPM #18443 Getting same fields for both existing and prospect in corporate finance data input.
+-PPM #18446 Getting only system dates for audited date rather than Application dates
+-PPM #18447 Unable to open the record in corporate financial data input
+-PPM #18448 Getting unhandled exception while maintaining Reason codescodes master.
+-PPM #18453 Not getting downpay rule in promotions
+-PPM #18454 Not getting promotion description in promotion process editor
+
+pff 4.11.2.5, 2018-10-16
+----------------
+-PSD#128207 In Overdue Charge Enquiry screen, System showing Penalty as Paid and Status as Collected for Bounce Receipt 
+-PPM#18397 Grace Interest Frequency Periods are wrongly populated in Change Frequency and Reschedule menu's.
+-PPM#18411   While Approve the record in Extended Fields Getting Validation.
+-PPM#18382 : In GST Invoice report, Transaction amount field shown is including GST amount.
+
+pff 4.11.2.4, 2018-10-15
+----------------
+-story #838 Extended Field Configuration Maintenance.	
+-story #836 Recalculation from after few dates on Schedule Servicing.		
+
+pff 4.11.2.3, 2018-10-12
+ --------------
+-Story #831 Added Custom deviations,Eligibility Summary, All fees details in Agreements
+-PPM #18401 Getting document type issue and getting query closed screen.
+-PSD # 129231    Extended fields saving issue for setting values from PHONE and BASERATE field Types.
+-bugs #834  LPP Wrong calculation
+-bugs #835  Audit Detail Error List getting null
+
+pff 4.11.2, 2018-10-09
+ --------------
+-bugs #821 GST State wise Account Number building Issue.
+-bugs #824 issue in change frequency.
+-bugs #826 SOA Report : Interest Rate Details are displayed.
+-PSD# 129154 : LPFT Calculation, even it is not applicable at Loan Level
+-Story #827 Allow to specify paths when all the active deviations approved or any of the active deviations rejected in Loan Workflow.
+-Parallel Flow with Resubmits – Parallel to Sequential & Sequential to Parallel.
+-PPM #18389 --> While taken Retail Customer. Application Number not populated in   Customer View.(enquiry)
+-PPM #18388 --> Eligibility method field is not populate in the Loan Basic Details (LoanEnquiry).
+-PPM #18399 Issues on Query management 
+
+pff 4.11.1, 2018-10-3
+ --------------
+-PPM bug Id 18355 	Application Number is not Populated in the Customer View menu 	
+-PPM bug Id 18356  	In Customers Application No field Validation is [a-z,A-Z,0-9]. But By default taken capital letters only instead of small letters. 	
+-bugs #805 Fixed Stored Cross Site Scripting Vulnerability in Notes Dialog	
+-bugs  #806: Collateral Details Merge Fields Display in Document
+-PPM bug Id (18382) : In GST Invoice report, Transaction amount field shown is including GST amount.
+-story #807 Mail Notifications for DSA Field in Loan origination.bugs #814 Issue in IMD received date.
+-PSD  #128753-Schedule details-900 error in graph reports.
+-PSD  #128766-Co applicant exposure value is populating wrong value.
+-story #817 No Future Disbursements from Loan, Restriction added.
+-bugs #818 Multiple Bounces, calculation of GST showing wrong.
+-bugs #820 Payment mode PDC display added in the SOA.
+-bugs #819 Schedule Rate becomes ZERO on Servicing.
+
+pff 4.10.4.7, 2018-09-24
+ --------------
+-bugs #796 Issue while bulk upload, mode is cheque or DD cheque or DD number is Not updated. 
+-Story #426 System Notifications.
+-Story  # 800 Improve the performance of auto download of agreements.
+
+pff 4.10.4.6, 2018-09-20
+ --------------
+-bugs #782 While Delete the Existing record in insurance menu getting "41006 Cannot be deleted" message.
+-bugs #781 Fill all mandatory fields,While Click on save button getting unhandled exception in Cost of Fund Rates menu.
+-bugs #779 Click on Print button in (FI,LI, RCU ,TV, Direct Selling Agent, Direct Market Agent.Getting "Error in Configuring "message.
+-bugs #777 Getting unhandled exception while clicking on print button In Industries menu Disable notifications.
+-bugs #776 Getting Module name as sysem Masters rather than System Masters while clicking on  print button.
+-bugs #775 Populating SME as financial in category after saving a customer type. Disable notifications.
+-bugs #772 Getting unhandled exception while clicking on cancel upfront fee menu.
+-bugs  #759 Getting unhandled exception while adding income details  in Sampling is fixed.
+-bugs #768  When no promotion code is selected while creating a loan, system is not allowing to proceed .
+-bugs #761 GST on Manual Advise.
+-story #758 Application No.
+
+pff 4.10.4.5, 2018-09-19
+ --------------
+-bugs #754 Update Customer Document API Issue.
+-story #752 Remove the dependency of pff-interface-bajaj from core
+    
+pff 4.10.4.4, 2018-09-17
+ --------------
+-bugs #746 Issue in Schedule payment API Service
+-bugs#745 sequence not generating in reason module  
+ 
+pff 4.10.4.3, 2018-09-17
+ --------------
+ -PSD# 128700: DRE Upload File Name 
+ -story #744 Cancel Disbursement Accounting.
+
+pff 4.10.4.2, 2018-09-11
+ --------------
+-bug #743   Auto Generate flag is not selected but Document Type Field is in Enable Mode in Agreement Master.
+-bugs #742 Related to Customer document modification and customer .
+-PSD# 128396 : Posting Reversal Not Displaying for DRE upload Receipt cancellation 
+-story #646 : GST Fees Calculation in Loan Creation for API.
+-story #127, Create a new Collateral setup along with Loan in Collateral Assignments.
+-story #732: Adding the Sequence Number for the Interface Mapping Master
+
+pff 4.10.4.1, 2018-09-10
+ --------------
+-story  #737: Hunter Service Task Changes in Core
+-story  #732: Adding the Sequence Number for the Interface Mapping Master
+-story  #726 Add support to get the values from Map in the Data Collection.
+-story  #707 : Agreement Related Changes to update logic for BPIAmount, NetDisbursement's, Deduction's 
+-story #655 Consider Co-Applicant income in sampling with respect to "Include Income Expenditure" flag.
+-story #699, Allow additional filters for application list in extended fields.
+-PSD# 128635  DOB/Date of Incorporation field in Customer screen is changed according to the PrimaryDocument issued date.
+-story #721 : Equitas DMS Changes for Document Type (External Reference)
+-story#707 : Agreement Related Changes replacing totalLoanAmt to FirstDisbursementAmt
+-story #707 : Agreement Related Changes adding ReceiptFeeAmount
+-story #127, Create a new Collateral setup along with Loan in Collateral Assignments.
+
+pff 4.10.3.3, 2018-09-06
+ --------------
+-story#712:External Reference Changes for Document Types Master and DB Script Changes 
+-story #648 Allow Hybrid Rate for a Loan
+-story #655 Consider Co-Applicant income in sampling with respect to "Include Income Expenditure" flag.
+
+pff 4.10.3.2, 2018-09-04
+ --------------
+-bug #711  Auto Generate flag is not selected but Document Type Field is in Enable Mode in Agreement Master.
+-Stroy#689    Legal details changes and issues
+-Tuleap Bug #696 : Cash Management Bug Fixes
+-PPM #18342 While Creating new Record in Bounce Reasons master, click on save button Unhandled exception coming.
+
+pff 4.10.3.1, 2018-08-31
+ --------------
+-story#689 Legal details change 
+-Bug #696 : Cash Management Bug Fixes.
+- story #703 Work-flow engine enhancement to support sequential flows within the parallel flow. [Note: Ensure the exiting parallel work-flows should use parallel gateways.]
+-story#709 : SOA Report Interest Rate details displayed based on interest Rate Type('Fixed' and 'Floating').
+-story #524 School Funding.
+
+pff 4.10.3, 2018-08-29
+ --------------
+-Bug #696 : Cash Management Bug Fixes
+-story #661 : GST Invoice Preparaton for LMS.
+-story #646 : GST Fees Calculation in Loan Creation for API.
+-PPM #18340 After deleting a checklist detail in a checklist maximum count is not updating automatically.
+-tasks #525 Add new Field Eligibility Method in Loan Type
+-tasks #611 Display Credit Review Tabs based on the Allowed Eligibility Methods at Loan Type.
+-story #666 Added New Interface Mapping Master.
+-PSD#128565:basic details maintenance-customer ID's- open and close.
+-PSD#128540 :basic details maintenance-sourcing type field - mandatory yet disabled.
+-PSD#128514 :employee name and employer name.
+
+ pff 4.10.2.4, 2018-08-28
+ --------------
+-story #660 Upgrade pennapps-core (from 0.8 to 0.8.1 to use Branch and Department Names in LoggedInUser)
+-story #662 BPI Accounting Treatment.
+
+ pff 4.10.2.3, 2018-08-27
+ --------------
+-story #617 LTV and LCR Eligibilty fields in sampling screen.
+-Spell Corrections related to TKTNo:127910 and code Refactoring. 
+-bugs #629 Multiple records are being displayed in Notification Logs Screen.
+-bugs #630 if change the document (upload another document) then submit the loan after auto download previously document is downloaded then move to another user.
+-bugs #631 Configure multiple Agreements(documents ex : 2 doc) but after submit the loan only one document download in the screen. But in the Documents tab show.
+-bugs #632 Document Recevied date and Application date not matched.
+-bugs #633 After Delete the document ,while "submit" the loan '850: The record has been modified by another user". error message coming. (ex ref 1000HFL0003630).
+-bugs #634 In Loan go to Documents tab Document name status show's including loan Reference also.
+-story #635 User Stories 	Mail Notifications in Receipts.
+-story #648 Allow Hybrid Rate for a Loan.
+-bugs #637  Unhandled Exception while submission when cancel document which is in Agreements.
+-bugs #638  Document Not behaving as expected after changing document view is Changing.
+-bugs #639  Expected document is missing (Document was Changed but Agreement file is override).
+-story #626  Deposit Bank Removed in CHEQUE/DD payment types for Cash Management
+-story #627  Deposit Cheques Accounting.
+-story #646  GST Fees Calculation in Loan Creation for API.
+-story #628 If GST Invoice Number not generated showing message in GST Invoice Report.
+-story #656  IMD receipt Api.
+	
+pff 4.10.2.2, 2018-08-16
+----------------------
+- story #581 Deposit Cheques Accounting.
+- Bug #592 Wrong Income Type master selection.
+- story #524 School Funding.
+
+pff 4.10.2, 2018-08-13
+----------------------
+- story #515 E-mail Gateway Integration.
+- story #564 Merge mail.properties to pff.properties file.
+- story #541 SMS Gateway Integration.
+- story #550 Control on Re-sending the Notifications
+- story #566 Fixed SMS message does not contain HTML tags
+- story #563 Fixed the order of actors as per the process flow in work-flow engine.
+- story #574 Added Interest Certificate and Provisional Certificate
+
+pff 4.7.14, 2018-03-18
+----------------------
+- upgrade pennapps-core from 0.7.5 to 0.7.6.1 to use framework jdbc module
+
+pff 4.7.14, 2018-03-18
+----------------------
+- Application datasources and transaction-managers are maintain in separate config files.
+- Refer the pennapps-dataources.xml and pennapps-tx.xml instead of re-configure the beans.  
+
+pff 4.7.14, 2018-03-13
+---------------------
+- Upgraded pennapps-web version from 0.6 to 0.6.1, to resolve the "Server is temporarily out of service" issue.
+
+pff 4.7.14, 2018-03-12
+---------------------
+- Rename the datasource bean names and corresponding property names from datasource to  dataSource for consistency
+
+pff 4.7.14, 2018-03-05
+----------------------
+- Upgraded pennapps-core version from 0.7.4.2 to 0.7.5, to use security.
+- Upgraded pennapps-web version from 0.5 to 0.6, to use security.
+
+pff 4.7.14, 2018-03-05
+----------------------
+- Upgraded pennapps-web version from 0.4.3 to 0.5, to use framework UserWorksapce.
+- Refer the framework zul files from pennapps-web.jar directly.
+- Refactor the class LdapContext and its dependents to promote to framework 
+
+pff 4.7.14, 2018-02-22
+----------------------
+- Moved GlobalVariable.java from com.pennant.backend.model to com.pennanttech.pennapps.core.model package
+
+pff 4.7.14, 2018-02-22
+----------------------
+- Upgraded pennapps-core version from 0.7.3 to 0.7.4
+
+pff 4.7.14, 2018-02-21
+----------------------
+- Refactoring removed the additional layer JdbcSearchSupport on SearchProcessor
+- Refactoring removed PagedBindingListWrapper and PagedGridWrapper 
+
+pff 4.7.14, 2018-02-15
+----------------------
+- Refactoring jdbc search
+
+pff 4.7.14, 2018-02-14
+----------------------
+- Moved AbstractEntity.java and AbstractWorkflowEntity.java from com.pennanttech.pff.core.model to com.pennanttech.pennapps.core.model package
+- Upgraded pennapps-core version from 0.7.2 to 0.7.3
+- Upgraded pennapps-web version from 0.4.1 to 0.4.2
+
+pff 4.7.14, 2018-02-14
+----------------------
+- Integrate the License validation functionality.
+
+pff 4.7.11, 2018-02-13
+---------------------
+- Moved LoggedInUser.java from com.pennant.backend.model to com.pennanttech.pennapps.core.model package
+- Moved ErrorDetail.java from com.pennant.backend.model to com.pennanttech.pennapps.core.model package
+
+pff 4.1.0, 2018-01-26
+---------------------
+- Refactoring Rename bean ErrorDetails from ErrorDetails to ErrorDetail.
+- Refactoring Remove the prefix Error from the ErrorDetail properties.
+- Refactoring Alter columns in tables and view's including audit.
+
+pff 4.1.0, 2018-01-09
+---------------------
+Cache enabled for ErrorDetails and SystemParameter service classes.
+
+pff 4.1.0, 2018-01-06
+---------------------
+- Refactoring renamed the application Datasoure and the corresponding TransactionManager(pfsDatasource and pfsTransactionManager) bean Id's to datasource and transactionManager
+- Refactoring removed the ErrorDetail class and used the ErrorDetails on behalf of ErrorDetail.   
+
+pff 4.1.0, 2017-12-22
+---------------------
+- Merged Reason Category Master code from Base/MLOD to Base/Trunk
+- Merged Reason Code Master code from Base/MLOD to Base/Trunk
+- Merged Reason Type Master code from Base/MLOD to Base/Trunk
+
+pff 4.1.0, 2017-12-21
+---------------------
+1.	DMS Integration.
+2.	CIBIL Integration.
+3.	New Tab for CIBIL Integration.
+4.	Mandate registration request.
+5.	Mandate registration response.
+6.	Update loan changes.
+7.	Mandate Partner Bank Intergartion with SFTP
+8.	Disbursment Partner Bank Intergartion with SFTP
+9.  PDF Extraction
+
+
+pff 4.1.0, 2017-12-12
+---------------------
+- Refactoring moved MessageUtil class from the package com.pennant.webui.util to com.pennanttech.pennapps.web.util
+- Refactoring getLoginUsrID method in LoggedInUser class changed to getUserId
+
+pff 4.1.0, 2017-12-07
+---------------------
+- Remove the i3-labels.properties from WebContent/WEB-INF.
+- Upgrade the atlantic theme to correct combobox layout issue.
+
+pff 4.1.0, 2017-12-04
+---------------------
+- DataSourceFactory class moved to framework.
+- Delete the dependency tomcat-dbcp from pom.xml 
+
+pff 4.1.0, 2017-11-27
+---------------------
+- Fixed change password issue due to refactiong in the main menu controller.
+- Upgraded pennapps-core version from 0.4 to 0.5
+- Upgraded pennapps-web version from 0.1.1 to 0.2
+- Changed environment variables to avoid conflicts when two apps of pennApps suite deployed to a single server. 
+	- APP_ROOT_PATH to PFF_HOME; APP_ENCRYPTION_PASSWORD to PFF_PASSWORD
+- Externalized database configuration to property file, pff.properties.
+- Moved i3-labels.properties and regex.properties to Java layer to allow accessing properties across modules. The below convenience methods added to access the resources.
+	- App.getProperty(String key)
+	- App.getLabel(String key)
+	- App.getRegex(String key)
+- Loading scheduled jobs and resources on application start up moved to framework.
+	- log4j configuration: for Web (log4j.xml) & API (log4j-api.xml) based on application type specified in web.xml.
+	- Application properties: pff.properties.
+	- Resource files: i3-labels.properties, regex.properties (along with custom files placed in configuration location with the same names)
+	- Scheduler jobs: Required jobs should implemented by extending AbstractJobScheduler and configure with the bean id jobScheduler.
+	- Images in /WebContent/images folder: the required images to be placed in <PFF_HOME>/images folder with the same name and size.
+
+pff 4.1.0, 2017-11-24
+---------------------
+- Removed multiline(Html text) labels from the i3-labels properties and the same move to corresponding controller(or) zul.
+
+pff 4.1.0, 2017-11-24
+---------------------
+- upgraded pennapps-core version from 0.2.0.3 to 0.4
+- changed service task execution(Added Re-runnable property)
+- Added Service task status details logging
+
+pff 4.1.0, 2017-11-22
+---------------------
+- Removed deprecated method UserWorkspace.getInstance().
+- Filter the menu items and display along with parents.
+- Existing functionality to open a menu item with code removed.
+
+pff 4.0.0, 2017-10-17
+---------------------
+- updated JDBC Search Processor for postgres changes
+- Added 3 new fields to System Master-> Document Type for pdf extraction and code modified accordingly to support document-parser module.
+- Enhanced JDBC Search Processor to support named parameters for better performance and avoiding SQL Injection.
+- Enhanced support for PostgreSQL.
+- Removed unnecessary classes and empty packages.
+- Enhanced menu builder and tree menu builder for menu generation.
+- Allow grouping of extended fields.
+- Allow extended fields in both customer & loan APIs.
+- Added support for PostgreSQL.
+- Added extended fields for customers and loans along with the APIs.
+- Removed the rights for menu groups and displaying the menu groups only when any of the child menu items are visible within the hierarchy.
+- Changed the display of menu to easily distinguish the children with different styles (colors).
+- Removed deprecated method SecurityRightDAO.getRoleRights().
+- Upgraded charts with JavaScript charts along with re-factoring.
+- Introduced dependency management to consolidate and centralize the management of dependency versions.
+- Changed artifact group identifier to "com.pennanttech.pennapps.pff" and added new properties for the same along with version.
+- Upgraded spring batch to 3.0.8.RELEASE.

@@ -30,9 +30,9 @@ public interface CustomerQueuingDAO {
 
 	List<Customer> getCustForProcess(int threadId);
 
-	int startEODForCID(long custID);
+	int startEODForCID(long custID, Date appDate);
 
-	void updateStatus(long custID, int progress);
+	void updateStatus(long custID, int progress, Date appDate);
 
 	int insertCustomerQueueing(long groupId, boolean eodProcess);
 

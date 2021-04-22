@@ -42,13 +42,14 @@
 */
 package com.pennanttech.ws.auth.dao.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.ws.auth.dao.UserAuthDAO;
@@ -59,7 +60,7 @@ import com.pennanttech.ws.auth.model.UserAuthentication;
  * 
  */
 public class UserAuthDAOImpl extends BasicDao<UserAuthentication> implements UserAuthDAO {
-	private static Logger logger = Logger.getLogger(UserAuthDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UserAuthDAOImpl.class);
 
 	public UserAuthDAOImpl() {
 		super();
@@ -86,8 +87,7 @@ public class UserAuthDAOImpl extends BasicDao<UserAuthentication> implements Use
 		selectSql.append(" Where TokenId =:TokenId");
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(webServiceUserSecurity);
-		RowMapper<UserAuthentication> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(UserAuthentication.class);
+		RowMapper<UserAuthentication> typeRowMapper = BeanPropertyRowMapper.newInstance(UserAuthentication.class);
 
 		try {
 			webServiceUserSecurity = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,

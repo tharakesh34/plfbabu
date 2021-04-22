@@ -45,15 +45,16 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ReasonCode</code> with set of CRUD operations.
  */
 public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements ReasonCodeDAO {
-	private static Logger logger = Logger.getLogger(ReasonCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReasonCodeDAOImpl.class);
 
 	public ReasonCodeDAOImpl() {
 		super();
@@ -99,7 +100,7 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		reasonCode.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonCode);
-		RowMapper<ReasonCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCode.class);
+		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
 
 		try {
 			reasonCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -167,7 +168,7 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 
 		// Get the identity sequence number.
 		if (reasonCode.getId() <= 0) {
-			reasonCode.setId(getNextId("SeqReasons"));
+			reasonCode.setId(getNextValue("SeqReasons"));
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -291,7 +292,7 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 
 		MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
 		sqlParameterSource.addValue("reasonTypeCode", reasonTypeCode);
-		RowMapper<ReasonCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCode.class);
+		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), sqlParameterSource, rowMapper);
@@ -303,4 +304,39 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 		return null;
 	}
 
+	@Override
+	public ReasonCode getReasonCode(long id, String reasonTypeCode, String type) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, reasonTypeID, reasonCategoryID, code, description, active,");
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(",reasonTypeDesc,reasonCategoryDesc,reasonCategoryCode,reasonTypeCode");
+		}
+		sql.append(" From Reasons");
+		sql.append(type);
+		sql.append(" Where id = :id AND reasonTypeCode = :reasonTypeCode");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		ReasonCode reasonCode = new ReasonCode();
+		reasonCode.setId(id);
+		reasonCode.setReasonTypeCode(reasonTypeCode);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonCode);
+		RowMapper<ReasonCode> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCode.class);
+		try {
+			reasonCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			reasonCode = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return reasonCode;
+	}
 }

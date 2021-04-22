@@ -42,15 +42,16 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.IRRCodeDAO;
 import com.pennant.backend.model.applicationmaster.IRRCode;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>IRRCode</code> with set of CRUD operations.
  */
 public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
-	private static Logger logger = Logger.getLogger(IRRCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(IRRCodeDAOImpl.class);
 
 	public IRRCodeDAOImpl() {
 		super();
@@ -91,7 +92,7 @@ public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 		iRRCode.setIRRID(iRRID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(iRRCode);
-		RowMapper<IRRCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(IRRCode.class);
+		RowMapper<IRRCode> rowMapper = BeanPropertyRowMapper.newInstance(IRRCode.class);
 
 		try {
 			iRRCode = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -157,7 +158,7 @@ public class IRRCodeDAOImpl extends SequenceDao<IRRCode> implements IRRCodeDAO {
 
 		// Get the identity sequence number.
 		if (iRRCode.getId() <= 0) {
-			iRRCode.setId(getNextId("SeqIRRCodes"));
+			iRRCode.setId(getNextValue("SeqIRRCodes"));
 		}
 
 		// Execute the SQL, binding the arguments.

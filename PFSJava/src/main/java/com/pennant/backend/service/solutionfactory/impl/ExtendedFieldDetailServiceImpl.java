@@ -45,9 +45,11 @@ package com.pennant.backend.service.solutionfactory.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -73,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedFieldDetail>
 		implements ExtendedFieldDetailService {
-	private static final Logger logger = Logger.getLogger(ExtendedFieldDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
@@ -895,6 +897,13 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	@Override
 	public boolean isFieldAssignedToRule(String fieldName) {
 		return getRuleDAO().isFieldAssignedToRule(fieldName);
+	}
+
+	@Override
+	public Map<String, Object> getValueByFieldName(String reference, String moduleName, String subModuleName,
+			String event, String field, String type) {
+
+		return extendedFieldDetailDAO.getValueByFieldName(reference, moduleName, subModuleName, event, field, type);
 	}
 
 	//### 08-05-2018 StartDevelopment Iteam 81

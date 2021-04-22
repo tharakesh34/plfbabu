@@ -1,14 +1,15 @@
 package com.pennattech.pff.mmfl.cd.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
 
 public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements ManufacturerDAO {
-	private static Logger logger = Logger.getLogger(ManufacturerDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ManufacturerDAOImpl.class);
 
 	public ManufacturerDAOImpl() {
 		super();
@@ -44,7 +45,7 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 		manufacturer.setManufacturerId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manufacturer);
-		RowMapper<Manufacturer> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Manufacturer.class);
+		RowMapper<Manufacturer> rowMapper = BeanPropertyRowMapper.newInstance(Manufacturer.class);
 
 		try {
 			manufacturer = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

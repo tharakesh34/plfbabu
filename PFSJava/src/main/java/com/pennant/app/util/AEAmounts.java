@@ -38,19 +38,22 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.core.AccrualService;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class AEAmounts implements Serializable {
+	private static Logger logger = LogManager.getLogger(AEAmounts.class);
 	private static final long serialVersionUID = 4594615740716296558L;
-	private static Logger logger = Logger.getLogger(AEAmounts.class);
 	private static AccrualService accrualService;
 	private static AdvancePaymentService advancePaymentService;
 
@@ -68,74 +71,82 @@ public class AEAmounts implements Serializable {
 		return procCalAEAmounts(financeMain, pftDetail, schdDetails, eventCode, valueDate, schdDate);
 	}
 
-	public static AEEvent procCalAEAmounts(FinanceMain fm, FinanceProfitDetail pftDetail,
-			List<FinanceScheduleDetail> schdDetails, String finEvent, Date valueDate, Date dateSchdDate) {
-		logger.debug("Entering");
+	public static AEEvent procCalAEAmounts(FinanceMain fm, FinanceProfitDetail pfd,
+			List<FinanceScheduleDetail> schedules, String finEvent, Date valueDate, Date dateSchdDate) {
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = new AEAmountCodes();
+		EventProperties eventProperties = fm.getEventProperties();
 
-		aeEvent.setFinReference(pftDetail.getFinReference());
+		aeEvent.setFinReference(pfd.getFinReference());
 		aeEvent.setAccountingEvent(finEvent);
-		aeEvent.setPostDate(SysParamUtil.getAppDate());
+
+		if (eventProperties.isParameterLoaded()) {
+			aeEvent.setPostDate(eventProperties.getAppDate());
+		} else {
+			aeEvent.setPostDate(SysParamUtil.getAppDate());
+		}
+
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(dateSchdDate);
-		aeEvent.setBranch(pftDetail.getFinBranch());
-		aeEvent.setCcy(pftDetail.getFinCcy());
-		aeEvent.setFinType(pftDetail.getFinType());
-		aeEvent.setCustID(pftDetail.getCustId());
+		aeEvent.setBranch(pfd.getFinBranch());
+		aeEvent.setCcy(pfd.getFinCcy());
+		aeEvent.setFinType(pfd.getFinType());
+		aeEvent.setCustID(pfd.getCustId());
 
 		// Finance Fields
 		amountCodes.setFinType(aeEvent.getFinType());
 
 		// profit
-		amountCodes.setPft(pftDetail.getTotalPftSchd());
-		amountCodes.setPftAP(pftDetail.getTotalPftPaid());
-		amountCodes.setPftAB(pftDetail.getTotalPftBal());
-		amountCodes.setCpzTot(pftDetail.getTotalPftCpz());
+		amountCodes.setPft(pfd.getTotalPftSchd());
+		amountCodes.setPftAP(pfd.getTotalPftPaid());
+		amountCodes.setPftAB(pfd.getTotalPftBal());
+		amountCodes.setCpzTot(pfd.getTotalPftCpz());
 
 		//principal
-		amountCodes.setPri(pftDetail.getTotalpriSchd());
-		amountCodes.setPriAP(pftDetail.getTotalPriPaid());
-		amountCodes.setPriAB(pftDetail.getTotalPriBal());
+		amountCodes.setPri(pfd.getTotalpriSchd());
+		amountCodes.setPriAP(pfd.getTotalPriPaid());
+		amountCodes.setPriAB(pfd.getTotalPriBal());
 
 		// Till date Calculation
 		// profit
-		amountCodes.setPftS(pftDetail.getTdSchdPft());
-		amountCodes.setPftSP(pftDetail.getTdSchdPftPaid());
-		amountCodes.setPftSB(pftDetail.getTdSchdPftBal());
+		amountCodes.setPftS(pfd.getTdSchdPft());
+		amountCodes.setPftSP(pfd.getTdSchdPftPaid());
+		amountCodes.setPftSB(pfd.getTdSchdPftBal());
 
 		// principal
-		amountCodes.setPriS(pftDetail.getTdSchdPri());
-		amountCodes.setPriSP(pftDetail.getTdSchdPriPaid());
-		amountCodes.setPriSB(pftDetail.getTdSchdPriBal());
+		amountCodes.setPriS(pfd.getTdSchdPri());
+		amountCodes.setPriSP(pfd.getTdSchdPriPaid());
+		amountCodes.setPriSB(pfd.getTdSchdPriBal());
 
 		//Accural
-		amountCodes.setAccrue(pftDetail.getPftAccrued());
-		amountCodes.setdAccrue(amountCodes.getAccrue().subtract(pftDetail.getAcrTillLBD()));
-		amountCodes.setAccrueS(pftDetail.getPftAccrueSusp());
-		amountCodes.setAmz(pftDetail.getPftAmz());
-		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
-		amountCodes.setdAmz(amountCodes.getAmz().subtract(pftDetail.getAmzTillLBD()));
-		amountCodes.setdGapAmz(pftDetail.getGapIntAmz().subtract(pftDetail.getGapIntAmzLbd()));
+		amountCodes.setAccrue(pfd.getPftAccrued());
+		amountCodes.setdAccrue(amountCodes.getAccrue().subtract(pfd.getAcrTillLBD()));
+		amountCodes.setAccrueS(pfd.getPftAccrueSusp());
+		amountCodes.setAmz(pfd.getPftAmz());
+		amountCodes.setAmzS(pfd.getPftAmzSusp());
+		amountCodes.setdAmz(amountCodes.getAmz().subtract(pfd.getAmzTillLBD()));
+		amountCodes.setdGapAmz(pfd.getGapIntAmz().subtract(pfd.getGapIntAmzLbd()));
+		amountCodes.setPrvMthAcr(pfd.getPrvMthAcr());
+		amountCodes.setPrvMntAmz(pfd.getPrvMthAmz());
 
 		// LPI Amortization calculation
-		if (pftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
-			amountCodes.setdLPIAmz(pftDetail.getLpiAmount().subtract(pftDetail.getLpiTillLBD()));
+		if (pfd.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
+			amountCodes.setdLPIAmz(pfd.getLpiAmount().subtract(pfd.getLpiTillLBD()));
 
 			// Calculate GST Amount on LPI Amount 
-			if (pftDetail.getGstLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
-				amountCodes.setdGSTLPIAmz(pftDetail.getGstLpiAmount().subtract(pftDetail.getGstLpiTillLBD()));
+			if (pfd.getGstLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
+				amountCodes.setdGSTLPIAmz(pfd.getGstLpiAmount().subtract(pfd.getGstLpiTillLBD()));
 			}
 		}
 
 		// LPP Amortization calculation
-		if (pftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
-			amountCodes.setdLPPAmz(pftDetail.getLppAmount().subtract(pftDetail.getLppTillLBD()));
+		if (pfd.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
+			amountCodes.setdLPPAmz(pfd.getLppAmount().subtract(pfd.getLppTillLBD()));
 
 			// Calculate GST Amount on LPP Amount 
-			if (pftDetail.getGstLppAmount().compareTo(BigDecimal.ZERO) > 0) {
-				amountCodes.setdGSTLPPAmz(pftDetail.getGstLppAmount().subtract(pftDetail.getGstLppTillLBD()));
+			if (pfd.getGstLppAmount().compareTo(BigDecimal.ZERO) > 0) {
+				amountCodes.setdGSTLPPAmz(pfd.getGstLppAmount().subtract(pfd.getGstLppTillLBD()));
 			}
 		}
 
@@ -144,16 +155,16 @@ public class AEAmounts implements Serializable {
 		BigDecimal accruedIncome = BigDecimal.ZERO;
 		BigDecimal unRealizedIncome = BigDecimal.ZERO;
 
-		for (int i = 0; i < schdDetails.size(); i++) {
+		for (FinanceScheduleDetail schd : schedules) {
 
-			if (schdDetails.get(i).getSchDate().compareTo(valueDate) > 0) {
+			if (schd.getSchDate().compareTo(valueDate) > 0) {
 				break;
 			}
-			accruedIncome = accruedIncome.add(schdDetails.get(i).getProfitCalc());
+			accruedIncome = accruedIncome.add(schd.getProfitCalc());
 		}
 
-		if (accruedIncome.compareTo(pftDetail.getAmzTillLBD()) > 0) {
-			unRealizedIncome = accruedIncome.subtract(pftDetail.getAmzTillLBD());
+		if (accruedIncome.compareTo(pfd.getAmzTillLBD()) > 0) {
+			unRealizedIncome = accruedIncome.subtract(pfd.getAmzTillLBD());
 		}
 
 		amountCodes.setuAmz(unRealizedIncome);
@@ -161,25 +172,32 @@ public class AEAmounts implements Serializable {
 		//-----------------------------------------------------------------------
 
 		//OD Details
-		amountCodes.setODDays(pftDetail.getCurODDays());
-		amountCodes.setODInst(pftDetail.getNOODInst());
-		amountCodes.setPenaltyDue(pftDetail.getPenaltyDue());
-		amountCodes.setPenaltyPaid(pftDetail.getPenaltyPaid());
-		amountCodes.setPenaltyWaived(pftDetail.getPenaltyWaived());
+		amountCodes.setODDays(pfd.getCurODDays());
+		amountCodes.setODInst(pfd.getNOODInst());
+		amountCodes.setPenaltyDue(pfd.getPenaltyDue());
+		amountCodes.setPenaltyPaid(pfd.getPenaltyPaid());
+		amountCodes.setPenaltyWaived(pfd.getPenaltyWaived());
+		amountCodes.setOdPri(pfd.getODPrincipal());
+		amountCodes.setOdPft(pfd.getODProfit());
+
+		if (pfd.isWriteoffLoan()) {
+			amountCodes.setWriteOff(true);
+		}
+
 		//others
-		amountCodes.setPaidInst(pftDetail.getNOPaidInst());
+		amountCodes.setPaidInst(pfd.getNOPaidInst());
 		//amountCodes.setDisburse(pftDetail.getDisburse());
 		//amountCodes.setDownpay(pftDetail.getDownpay());
-		amountCodes.setDownpay(pftDetail.getDownPayment());
-		amountCodes.setAdvanceEMI(pftDetail.getAdvanceEMI());
-		amountCodes.setDaysFromFullyPaid(getNoDays(pftDetail.getFullPaidDate(), valueDate));
-		amountCodes.setAccrue(pftDetail.getPftAccrued());
-		amountCodes.setAccrueS(pftDetail.getPftAccrueSusp());
-		amountCodes.setAmz(pftDetail.getPftAmz());
-		amountCodes.setAmzNRM(pftDetail.getPftAmzNormal());
-		amountCodes.setAmzPD(pftDetail.getPftAmzPD());
+		amountCodes.setDownpay(pfd.getDownPayment());
+		amountCodes.setAdvanceEMI(pfd.getAdvanceEMI());
+		amountCodes.setDaysFromFullyPaid(getNoDays(pfd.getFullPaidDate(), valueDate));
+		amountCodes.setAccrue(pfd.getPftAccrued());
+		amountCodes.setAccrueS(pfd.getPftAccrueSusp());
+		amountCodes.setAmz(pfd.getPftAmz());
+		amountCodes.setAmzNRM(pfd.getPftAmzNormal());
+		amountCodes.setAmzPD(pfd.getPftAmzPD());
 
-		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
+		amountCodes.setAmzS(pfd.getPftAmzSusp());
 		aeEvent.setAeAmountCodes(amountCodes);
 
 		if (amountCodes.getdAmz().compareTo(BigDecimal.ZERO) < 0) {
@@ -190,10 +208,19 @@ public class AEAmounts implements Serializable {
 			amountCodes.setuAmz(BigDecimal.ZERO);
 		}
 
-		amountCodes.setSvAmount(pftDetail.getSvAmount());
-		amountCodes.setCbAmount(pftDetail.getCbAmount());
+		amountCodes.setSvAmount(pfd.getSvAmount());
+		amountCodes.setCbAmount(pfd.getCbAmount());
 
-		advancePaymentService.setIntAdvFlag(fm, amountCodes);
+		advancePaymentService.setIntAdvFlag(fm, amountCodes, false);
+
+		// NPA and Provision
+		amountCodes.setAmzS(pfd.getPftAmzSusp());
+		amountCodes.setAccrueS(pfd.getPftAccrueSusp());
+
+		if (pfd.getCurODDays() > 0 && pfd.getPftAmzSusp().compareTo(BigDecimal.ZERO) > 0) {
+			amountCodes.setAmz(BigDecimal.ZERO);
+			amountCodes.setAccrue(BigDecimal.ZERO);
+		}
 
 		logger.debug("Leaving");
 		return aeEvent;
@@ -201,11 +228,7 @@ public class AEAmounts implements Serializable {
 	}
 
 	private static int getNoDays(Date date1, Date date2) {
-		return DateUtility.getDaysBetween(date1, date2);
-	}
-
-	public AccrualService getAccrualService() {
-		return accrualService;
+		return DateUtil.getDaysBetween(date1, date2);
 	}
 
 	public void setAccrualService(AccrualService accrualService) {

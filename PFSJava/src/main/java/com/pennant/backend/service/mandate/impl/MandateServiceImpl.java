@@ -52,7 +52,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -99,7 +100,7 @@ import com.pennanttech.pff.external.MandateProcesses;
  * 
  */
 public class MandateServiceImpl extends GenericService<Mandate> implements MandateService {
-	private static final Logger logger = Logger.getLogger(MandateServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(MandateServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private MandateDAO mandateDAO;
@@ -272,6 +273,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			mandate.setTaskId("");
 			mandate.setNextTaskId("");
 			mandate.setWorkflowId(0);
+
 			boolean isApproved = false;
 			if (StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_APPROVED)) {
 				isApproved = true;
@@ -281,6 +283,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				mandate.setStatus(MandateConstants.STATUS_APPROVED);
 			} else if (!StringUtils.trimToEmpty(mandate.getStatus()).equals(MandateConstants.STATUS_HOLD)) {
 				mandate.setStatus(MandateConstants.STATUS_NEW);
+			}
+
+			if (isApproved) {
+				mandate.setStatus(MandateConstants.STATUS_APPROVED);
 			}
 
 			if (isApproved) {
@@ -427,9 +433,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	public List<ErrorDetail> doValidations(Mandate mandate) {
-		List<ErrorDetail> details = null;
+		List<ErrorDetail> details = new ArrayList<>();
 		if (StringUtils.isNotBlank(mandate.getBarCodeNumber())) {
-			details = new ArrayList<>();
 			Pattern pattern = Pattern
 					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_BARCODE_NUMBER));
 			Matcher matcher = pattern.matcher(mandate.getBarCodeNumber());
@@ -438,6 +443,30 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				String[] valueParm = new String[1];
 				valueParm[0] = mandate.getBarCodeNumber();
 				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("barCodeNumber", "90404", valueParm, valueParm)));
+			}
+		}
+		if (StringUtils.isNotBlank(mandate.getAccHolderName())) {
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
+
+			Matcher matcher = pattern.matcher(mandate.getAccHolderName());
+
+			if (!matcher.matches()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "AccHolderName";
+				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
+			}
+		}
+		if (!StringUtils.isBlank(mandate.getJointAccHolderName())) {
+			Pattern pattern = Pattern.compile(
+					PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME));
+
+			Matcher matcher = pattern.matcher(mandate.getJointAccHolderName());
+
+			if (!matcher.matches()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "JointAccHolderName";
+				details.add(ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
 			}
 		}
 		return details;
@@ -742,10 +771,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	private void getDocument(Mandate mandate) {
 		DocumentDetails dd = new DocumentDetails();
-		dd.setFinReference(mandate.getFinReference());
+		dd.setFinReference(mandate.getOrgReference());
 		dd.setDocName(mandate.getDocumentName());
 		dd.setCustId(mandate.getCustID());
-		if (mandate.getDocumentRef() != 0 && !mandate.isNewRecord()) {
+		if (mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0 && !mandate.isNewRecord()) {
 			byte[] olddocumentManager = getDocumentImage(mandate.getDocumentRef());
 			if (olddocumentManager != null) {
 				byte[] arr1 = olddocumentManager;
@@ -904,7 +933,9 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 	@Override
 	public void getDocumentImage(Mandate mandate) {
-		mandate.setDocImage(getDocumentImage(mandate.getDocumentRef()));
+		if (mandate.getDocumentRef() != null) {
+			mandate.setDocImage(getDocumentImage(mandate.getDocumentRef()));
+		}
 	}
 
 	@Override
@@ -925,4 +956,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
+	@Override
+	public int getMandateByMandateRef(String mandateRef) {
+		return mandateDAO.getMandateByMandateRef(mandateRef);
+	}
 }

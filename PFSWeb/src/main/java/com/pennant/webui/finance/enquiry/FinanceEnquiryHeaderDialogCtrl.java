@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -75,25 +76,35 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
+import com.pennant.backend.model.finance.CreditReviewData;
+import com.pennant.backend.model.finance.CreditReviewDetails;
+import com.pennant.backend.model.finance.DDAProcessData;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinMainReportData;
+import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStatusDetail;
@@ -106,6 +117,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -121,8 +134,10 @@ import com.pennant.backend.service.finance.DPDEnquiryService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.FinOCRHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
+import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.NotificationLogDetailsService;
 import com.pennant.backend.service.finance.ScoringDetailService;
@@ -131,6 +146,7 @@ import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
+import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -155,7 +171,7 @@ import net.sf.jasperreports.engine.JRException;
  */
 public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = -6646226859133636932L;
-	private static final Logger logger = Logger.getLogger(FinanceEnquiryHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceEnquiryHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -221,6 +237,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceSummary financeSummary;
 	private DPDEnquiryService dpdEnquiryService;
 	protected boolean customer360;
+	private VASRecordingDAO vASRecordingDAO;
 
 	int listRows;
 	private String assetCode = "";
@@ -236,9 +253,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	@Autowired
 	private CovenantsService covenantsService;
-
 	@Autowired
 	private FinExcessAmountDAO finExcessAmountDAO;
+	@Autowired
+	private FinOCRHeaderService finOCRHeaderService;
+	@Autowired
+	private FinanceMainDAO financeMainDAO;
+	@Autowired
+	private JointAccountDetailService jointAccountDetailService;
+	@Autowired
+	private CreditApplicationReviewService creditApplicationReviewService;
 
 	/**
 	 * default constructor.<br>
@@ -329,12 +353,16 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finStatus_header.setValue("Matured");
 		}
 
+		if (StringUtils.contains(enquiry.getRecordStatus(), "Reject") && !enquiry.isFinIsActive()) {
+			this.finStatus_header.setValue(Labels.getLabel("label_Rejected"));
+		}
+
 		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Normal");
 		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Cancelled");
-		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(closingStatus)) {
+		} else if (enquiry.isWriteoffLoan()) {
 			this.finStatus_Reason.setValue("Written-Off");
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Settled");
@@ -386,10 +414,17 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					calculateFeeChargeDetails(feeDetails, summary);
 				}
 			}
-
 			// Collateral Details
-			financeDetail.setCollateralAssignmentList(getCollateralSetupService().getCollateralAssignmentByFinRef(
-					this.finReference, FinanceConstants.MODULE_NAME, fromApproved ? "_AView" : "_View"));
+			List<CollateralAssignment> collateralAssignmentByFinRef;
+			collateralAssignmentByFinRef = getCollateralSetupService().getCollateralAssignmentByFinRef(
+					this.finReference, FinanceConstants.MODULE_NAME, fromApproved ? "_AView" : "_View");
+			//If Collateral is created from loan and it is not approved
+			if (financeDetail.getCollateralAssignmentList() != null) {
+				collateralAssignmentByFinRef.addAll(getCollateralSetupService()
+						.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, "_CTView"));
+
+			}
+			financeDetail.setCollateralAssignmentList(collateralAssignmentByFinRef);
 			financeDetail.setFinAssetTypesList(
 					getFinanceDetailService().getFinAssetTypesByFinRef(this.finReference, "_TView"));
 			financeDetail.setFinScheduleData(finScheduleData);
@@ -399,7 +434,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
 				map.put("financeSummary", financeSummary);
 
+				// finance Contract Asset Details
+				List<ContractorAssetDetail> assetDetails = null;
+				if (FinanceConstants.PRODUCT_ISTISNA
+						.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())) {
+					assetDetails = getFinanceDetailService().getContractorAssetDetailList(finReference);
+				}
 				finScheduleData.getFinanceMain().setLovDescProductCodeName(enquiry.getLovDescProductCodeName());
+				map.put("assetDetailList", assetDetails);
 				map.put("finScheduleData", finScheduleData);
 				map.put("financeDetail", financeDetail);
 				map.put("contributorHeader", contributorHeader);
@@ -436,6 +478,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finAgreements", finAgreements);
 			map.put("finDocuments", finDocuments);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DocumentEnquiryDialog.zul";
+			this.btnPrint.setVisible(false);
 
 		} else if ("PSTENQ".equals(this.enquiryType)) {
 
@@ -555,6 +598,21 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("inprocessLoanEnqList", inprocessLoanEnqList);
 			path = "/WEB-INF/pages/Finance/FinanceMain/DeviationDetailDialog.zul";
 
+		} else if ("DDAENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DDAEnquiry"));
+
+			JdbcSearchObject<DDAProcessData> jdbcSearchObject = new JdbcSearchObject<DDAProcessData>();
+			jdbcSearchObject.addTabelName("DDAReferenceLog");
+			jdbcSearchObject.addFilterEqual("FinRefence", this.finReference);
+			jdbcSearchObject.setSearchClass(DDAProcessData.class);
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<DDAProcessData> list = pagedListService.getBySearchObject(jdbcSearchObject);
+
+			map.put("approvalEnquiry", "");
+			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
+			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
+			map.put("list", list);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DDAEnquiryDialog.zul";
 		} else if ("FINMANDENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinMandateEnquiry"));
 
@@ -599,7 +657,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantEnquiryDialog.zul";
 
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+			if (ImplementationConstants.COVENANT_MODULE_NEW) {
 				List<Covenant> covenants;
 				covenants = covenantsService.getCovenants(this.finReference, "Loan", TableType.VIEW);
 
@@ -675,7 +733,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_VerificationEnquiry.value"));
 			FinanceDetail financeDetail = new FinanceDetail();
+			FinanceMain financeMain = new FinanceMain();
+			financeMain.setFinCcy(enquiry.getFinCcy());
+			financeMain.setFinReference(this.finReference);
 			financeDetail.getFinScheduleData().setFinReference(this.finReference);
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
 				financeDetail.setCustomerDetails(
 						customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_AView"));
@@ -729,6 +791,87 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("excessDetails", excessDetails);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExcessEnquiryDialog.zul";
+		} else if ("OCRENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OCREnquiry.value"));
+			FinanceDetail financeDetail = new FinanceDetail();
+			FinanceMain financeMain = financeMainDAO.getFinanceMain(finReference,
+					new String[] { "FinType", "FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue",
+							"FinOcrRequired" },
+					"");
+			FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View");
+			if (finOcrHeader != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
+				FinOCRHeader parentFinOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(financeMain.getParentRef(),
+						"_View");
+				if (parentFinOcrHeader != null) {
+					finOcrHeader.setOcrDetailList(parentFinOcrHeader.getOcrDetailList());
+				}
+			}
+			// Finance OCR Details
+			financeDetail.setFinOCRHeader(finOcrHeader);
+			financeDetail.setFinScheduleData(finScheduleData);
+			map.put("financeDetail", financeDetail);
+			map.put("enqiryModule", true);
+			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
+			path = "/WEB-INF/pages/Finance/FinanceMain/FinOCRDialog.zul";
+		} else if ("CREENQ".equals(this.enquiryType)) {
+
+			FinanceDetail financeDetail = new FinanceDetail();
+			FinanceMain financeMain = financeMainDAO.getFinanceMain(this.finReference,
+					new String[] { "FinIsActive, FinReference, FinCategory, LovEligibilityMethod" }, "_View");
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
+				financeDetail.setCustomerDetails(
+						customerDetailsService.getCustomerDetailsById(enquiry.getCustID(), true, "_View"));
+			}
+			CreditReviewData creditReviewData = null;
+
+			CreditReviewDetails creditReviewDetail = getCreditReviewConfiguration(financeDetail, financeMain);
+
+			if (creditReviewDetail == null) {
+				MessageUtil.showMessage(Labels.getLabel("label_Configuraion_NotAvailable.value"));
+			} else {
+				creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(
+						financeMain.getFinReference(), creditReviewDetail.getTemplateName(),
+						creditReviewDetail.getTemplateVersion());
+				if (creditReviewData == null) {
+					MessageUtil.showMessage(Labels.getLabel("label_Data_NotAvailable.value"));
+					return;
+				}
+
+				List<JointAccountDetail> jointAccountDetailList = new ArrayList<JointAccountDetail>();
+				if (fromApproved) {
+					jointAccountDetailList = this.jointAccountDetailService
+							.getJoinAccountDetail(financeMain.getFinReference(), "_AView");
+				} else {
+					jointAccountDetailList = this.jointAccountDetailService
+							.getJoinAccountDetail(financeMain.getFinReference(), "_View");
+				}
+
+				creditReviewDetail.setExtLiabilitiesjointAccDetails(jointAccountDetailList);
+				map.put("financeDetail", financeDetail);
+				map.put("creditReviewData", creditReviewData);
+				map.put("creditReviewDetails", creditReviewDetail);
+				map.put("enqiryModule", true);
+				map.put("isReadOnly", true);
+
+				path = "/WEB-INF/pages/Finance/FinanceMain/FinanceSpreadSheet.zul";
+			}
+		} else if ("RSTENQ".equals(this.enquiryType)) {
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RestructureEnquiry.value"));
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail = getFinanceDetailService().getServicingFinance(finReference, null,
+					FinanceConstants.FINSER_EVENT_RESTRUCTURE, SessionUserDetails.getLogiedInUser().getUsername());
+
+			if (financeDetail.getFinScheduleData().getRestructureDetail() == null) {
+				closeDialog();
+				MessageUtil.showMessage("Restructure Details are not available");
+				return;
+			}
+
+			map.put("finReference", this.finReference);
+			map.put("enquirymode", true);
+			map.put("financeDetail", financeDetail);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/RestructureEnquiryDialog.zul";
 		}
 
 		if (StringUtils.isNotEmpty(path)) {
@@ -747,6 +890,25 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		logger.debug("Leaving");
+	}
+
+	private CreditReviewDetails getCreditReviewConfiguration(FinanceDetail financeDetail, FinanceMain financeMain) {
+		CreditReviewDetails creditReviewDetail = new CreditReviewDetails();
+		String parameters = SysParamUtil.getValueAsString(SMTParameterConstants.CREDIT_ELG_PARAMS);
+		if (StringUtils.isNotBlank(parameters)) {
+			if (StringUtils.containsIgnoreCase(parameters, "FinType")) {
+				creditReviewDetail.setProduct(financeMain.getFinCategory());
+			}
+			if (StringUtils.containsIgnoreCase(parameters, "EligibilityMethod")) {
+				creditReviewDetail.setEligibilityMethod(financeMain.getLovEligibilityMethod());
+			}
+			if (StringUtils.containsIgnoreCase(parameters, "EmploymentType")) {
+				creditReviewDetail.setEmploymentType(financeDetail.getCustomerDetails().getCustomer().getSubCategory());
+			}
+		}
+
+		creditReviewDetail = this.creditApplicationReviewService.getCreditReviewDetailsByLoanType(creditReviewDetail);
+		return creditReviewDetail;
 	}
 
 	public String getModule() {
@@ -802,6 +964,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					continue;
 				}
 				if ("FINMANDENQ".equals(value) && !mandate) {
+					continue;
+				}
+				//skipping the OCR Enquiry menu if not applicable
+				if ("OCRENQ".equals(value) && !getFinanceEnquiry().isFinOcrRequired()) {
 					continue;
 				}
 				if (!("ASSENQ".equalsIgnoreCase(value)
@@ -1009,8 +1175,18 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				finRender = new FinScheduleListItemRenderer();
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
+
+				List<FinFeeDetail> ffdl = finScheduleData.getFinFeeDetailList();
+				for (FinFeeDetail finFeeDetail : ffdl) {
+					if (finFeeDetail.getFinEvent().equals(AccountEventConstants.ACCEVENT_VAS_FEE)) {
+						String productCode = vASRecordingDAO.getProductCodeByReference(finFeeDetail.getFinReference(),
+								finFeeDetail.getVasReference());
+						finFeeDetail.setFeeTypeDesc(productCode);
+					}
+				}
+
 				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData, rpyDetailsMap,
-						penaltyDetailsMap, true, false);
+						penaltyDetailsMap, true, false, false);
 				list.add(subList);
 				String reportName = "FINENQ_ScheduleDetail";
 				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
@@ -1230,5 +1406,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
 	}
 }

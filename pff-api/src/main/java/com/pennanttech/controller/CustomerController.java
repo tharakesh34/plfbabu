@@ -11,10 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 
@@ -83,10 +87,9 @@ import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.pennanttech.pennapps.core.script.ScriptEngine;
 
 public class CustomerController extends GenericService<Object> {
-	private final Logger logger = Logger.getLogger(CustomerController.class);
+	private final Logger logger = LogManager.getLogger(CustomerController.class);
 
 	private CustomerService customerService;
 	private CustomerDetailsService customerDetailsService;
@@ -103,6 +106,12 @@ public class CustomerController extends GenericService<Object> {
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
+
+	// create a script engine manager
+	ScriptEngineManager factory = new ScriptEngineManager();
+
+	// create a JavaScript engine
+	ScriptEngine engine = factory.getEngineByName("JavaScript");
 
 	/**
 	 * 
@@ -128,6 +137,14 @@ public class CustomerController extends GenericService<Object> {
 			AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDetailsService.doApprove(auditHeader);
+			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+				for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
+					response = new CustomerDetails();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CustomerDetails();
@@ -460,366 +477,357 @@ public class CustomerController extends GenericService<Object> {
 
 				}
 			}
-			String docCategory = null;
-			if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(),
-					PennantConstants.PFF_CUSTCTG_INDIV)) {
-				docCategory = (String) SysParamUtil.getValue("CUST_PRIMARY_ID_RETL_DOC_TYPE");
-			} else {
-				docCategory = (String) SysParamUtil.getValue("CUST_PRIMARY_ID_CORP_DOC_TYPE");
-			}
-			// customer document details
-			List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
-			if (customerDocumentsList != null) {
-				for (CustomerDocument curCustDocument : customerDocumentsList) {
-					if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-						curCustDocument.setNewRecord(true);
-						curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						curCustDocument.setVersion(1);
-						// curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
-						curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		}
+		String docCategory = null;
+		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+			docCategory = (String) SysParamUtil.getValue("CUST_PRIMARY_ID_RETL_DOC_TYPE");
+		} else {
+			docCategory = (String) SysParamUtil.getValue("CUST_PRIMARY_ID_CORP_DOC_TYPE");
+		}
+		// customer document details
+		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
+		if (customerDocumentsList != null) {
+			for (CustomerDocument curCustDocument : customerDocumentsList) {
+				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+					curCustDocument.setNewRecord(true);
+					curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					curCustDocument.setVersion(1);
+					// curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
+					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-						if (curCustDocument.getDocRefId() == null) {
-							curCustDocument.setDocRefId(Long.MIN_VALUE);
-						}
-
-						if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
-							customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
-						}
-						/*
-						 * if(StringUtils.equals(curCustDocument.getCustDocCategory( ), "15") &&
-						 * StringUtils.equals(customerDetails.getCustomer(). getCustCtgCode(),PennantConstants.
-						 * PFF_CUSTCTG_CORP)){ customerDetails.getCustomer().setCustCRCPR(
-						 * curCustDocument.getCustDocTitle()); }
-						 */
-					} else {
-						List<CustomerDocument> prvCustomerDocumentsList = prvCustomerDetails.getCustomerDocumentsList();
-						if (prvCustomerDocumentsList != null) {
-							for (CustomerDocument prvCustomerDocuments : prvCustomerDocumentsList) {
-								if (StringUtils.equals(curCustDocument.getCustDocCategory(),
-										prvCustomerDocuments.getCustDocCategory())) {
-									curCustDocument.setNewRecord(false);
-									curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-									curCustDocument.setVersion(prvCustomerDocuments.getVersion() + 1);
-									curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-									if (StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
-										customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
-									}
-									if (prvCustomerDocuments.getDocRefId() == null) {
-										prvCustomerDocuments.setDocRefId(Long.MIN_VALUE);
-									}
-									// copy properties
-									BeanUtils.copyProperties(curCustDocument, prvCustomerDocuments);
-
-								}
-							}
-						}
+					if (curCustDocument.getDocRefId() == null) {
+						curCustDocument.setDocRefId(Long.MIN_VALUE);
 					}
-				}
-			}
 
-			// customer Banking information
-			List<CustomerBankInfo> customerBankInfoList = customerDetails.getCustomerBankInfoList();
-			if (customerBankInfoList != null) {
-				for (CustomerBankInfo curCustBankInfo : customerBankInfoList) {
-					if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-						curCustBankInfo.setNewRecord(true);
-						curCustBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						curCustBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						curCustBankInfo.setVersion(1);
-						if (CollectionUtils.isNotEmpty(curCustBankInfo.getBankInfoDetails())) {
-							for (BankInfoDetail bankInfoDetail : curCustBankInfo.getBankInfoDetails()) {
-								bankInfoDetail.setNewRecord(true);
-								bankInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-								bankInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-								bankInfoDetail.setVersion(1);
-							}
-						}
-					} else {
-						List<CustomerBankInfo> prvCustomerBankInfoList = prvCustomerDetails.getCustomerBankInfoList();
-						if (prvCustomerBankInfoList != null) {
-							for (CustomerBankInfo prvCustomerBankInfo : prvCustomerBankInfoList) {
-								if (curCustBankInfo.getBankId() == prvCustomerBankInfo.getBankId()) {
-									curCustBankInfo.setNewRecord(false);
-									curCustBankInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-									curCustBankInfo.setVersion(prvCustomerBankInfo.getVersion() + 1);
-									curCustBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-									// copy properties
-									BeanUtils.copyProperties(curCustBankInfo, prvCustomerBankInfo);
-								}
-							}
-						}
+					if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
+						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
-				}
-			}
-
-			// customer Gst information
-			List<CustomerGST> CustomerGSTInfoList = customerDetails.getCustomerGstList();
-			if (CustomerGSTInfoList != null) {
-				for (CustomerGST cuCustomerGSTInfo : CustomerGSTInfoList) {
-					if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-						cuCustomerGSTInfo.setNewRecord(true);
-						cuCustomerGSTInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						cuCustomerGSTInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						cuCustomerGSTInfo.setVersion(1);
-						if (CollectionUtils.isNotEmpty(cuCustomerGSTInfo.getCustomerGSTDetailslist())) {
-							for (CustomerGSTDetails customerGSTDetails : cuCustomerGSTInfo
-									.getCustomerGSTDetailslist()) {
-								customerGSTDetails.setNewRecord(true);
-								customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-								customerGSTDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-								customerGSTDetails.setVersion(1);
-							}
-						}
-					} else {
-						List<CustomerGST> prvCustomerGSTInfoList = prvCustomerDetails.getCustomerGstList();
-						List<CustomerGSTDetails> cuCustomerGSTDetailsList = cuCustomerGSTInfo
-								.getCustomerGSTDetailslist();
-						if (prvCustomerGSTInfoList != null) {
-							for (CustomerGST prvCustomerGSTInfo : prvCustomerGSTInfoList) {
-								if (cuCustomerGSTInfo.getId() == prvCustomerGSTInfo.getId()) {
-									cuCustomerGSTInfo.setNewRecord(false);
-									cuCustomerGSTInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-									cuCustomerGSTInfo.setVersion(prvCustomerGSTInfo.getVersion() + 1);
-									cuCustomerGSTInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-									// copy properties
-									List<CustomerGSTDetails> customerGSTDetailsList = cuCustomerGSTInfo
-											.getCustomerGSTDetailslist();
-									for (CustomerGSTDetails customerGSTDetails : customerGSTDetailsList) {
-										for (CustomerGSTDetails cuCustomerGSTDetails : cuCustomerGSTDetailsList) {
-											if (customerGSTDetails.getId() == cuCustomerGSTDetails.getId()) {
-												cuCustomerGSTDetails.setNewRecord(false);
-												cuCustomerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-												cuCustomerGSTDetails.setVersion(prvCustomerGSTInfo.getVersion() + 1);
-												cuCustomerGSTDetails
-														.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-											}
-										}
-
-									}
-									BeanUtils.copyProperties(cuCustomerGSTInfo, prvCustomerGSTInfo);
+					/*
+					 * if(StringUtils.equals(curCustDocument.getCustDocCategory( ), "15") &&
+					 * StringUtils.equals(customerDetails.getCustomer(). getCustCtgCode(),PennantConstants.
+					 * PFF_CUSTCTG_CORP)){ customerDetails.getCustomer().setCustCRCPR(
+					 * curCustDocument.getCustDocTitle()); }
+					 */
+				} else {
+					List<CustomerDocument> prvCustomerDocumentsList = prvCustomerDetails.getCustomerDocumentsList();
+					if (prvCustomerDocumentsList != null) {
+						for (CustomerDocument prvCustomerDocuments : prvCustomerDocumentsList) {
+							if (StringUtils.equals(curCustDocument.getCustDocCategory(),
+									prvCustomerDocuments.getCustDocCategory())) {
+								curCustDocument.setNewRecord(false);
+								curCustDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								curCustDocument.setVersion(prvCustomerDocuments.getVersion() + 1);
+								curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								if (StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
+									customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 								}
-							}
-						}
-					}
-				}
-			}
-
-			// customer Account behavior
-			List<CustomerChequeInfo> customerChequeInfoList = customerDetails.getCustomerChequeInfoList();
-			if (customerChequeInfoList != null) {
-				for (CustomerChequeInfo curCustChequeInfo : customerChequeInfoList) {
-					if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-						curCustChequeInfo.setNewRecord(true);
-						curCustChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						curCustChequeInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						curCustChequeInfo.setVersion(1);
-					} else {
-						List<CustomerChequeInfo> prvCustomerChequeInfoList = prvCustomerDetails
-								.getCustomerChequeInfoList();
-						if (prvCustomerChequeInfoList != null) {
-							for (CustomerChequeInfo prvCustomerChequeInfo : prvCustomerChequeInfoList) {
-								if (curCustChequeInfo.getChequeSeq() == prvCustomerChequeInfo.getChequeSeq()) {
-									curCustChequeInfo.setNewRecord(false);
-									curCustChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-									curCustChequeInfo.setVersion(prvCustomerChequeInfo.getVersion() + 1);
-									curCustChequeInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-									// copy properties
-									BeanUtils.copyProperties(curCustChequeInfo, prvCustomerChequeInfo);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// customerExtLiability
-			List<CustomerExtLiability> customerExtLiabilityList = customerDetails.getCustomerExtLiabilityList();
-			if (customerExtLiabilityList != null) {
-				for (CustomerExtLiability curCustomerExtLiability : customerExtLiabilityList) {
-					if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-						curCustomerExtLiability.setNewRecord(true);
-						curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						curCustomerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						curCustomerExtLiability.setVersion(1);
-						if (CollectionUtils.isNotEmpty(curCustomerExtLiability.getExtLiabilitiesPayments())) {
-							for (ExtLiabilityPaymentdetails detail : curCustomerExtLiability
-									.getExtLiabilitiesPayments()) {
-								detail.setNewRecord(true);
-								detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-								detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-								detail.setVersion(1);
-							}
-						}
-					} else {
-						List<CustomerExtLiability> prvCustomerExtLiabilityList = prvCustomerDetails
-								.getCustomerExtLiabilityList();
-						if (prvCustomerExtLiabilityList != null) {
-							for (CustomerExtLiability prvCustomerExtLiability : prvCustomerExtLiabilityList) {
-								if (curCustomerExtLiability.getSeqNo() == prvCustomerExtLiability.getSeqNo()) {
-									curCustomerExtLiability.setNewRecord(false);
-									curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-									curCustomerExtLiability.setVersion(prvCustomerExtLiability.getVersion() + 1);
-									curCustomerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-									curCustomerExtLiability.setBefImage(prvCustomerExtLiability);
-									if (CollectionUtils
-											.isNotEmpty(curCustomerExtLiability.getExtLiabilitiesPayments())) {
-										for (ExtLiabilityPaymentdetails detail : curCustomerExtLiability
-												.getExtLiabilitiesPayments()) {
-											detail.setNewRecord(false);
-											detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-											detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-											// detail.setVersion(prvCustomerExtLiability.getVersion()
-											// + 1);
-										}
-									}
-									// copy properties
-									BeanUtils.copyProperties(curCustomerExtLiability, prvCustomerExtLiability);
-								}
-							}
-						}
-					}
-					custTotExpense = custTotExpense.add(curCustomerExtLiability.getInstalmentAmount());
-				}
-
-			}
-			// Cust card details
-			List<CustCardSales> customerCardSalesInfo = customerDetails.getCustCardSales();
-			if (customerCardSalesInfo != null) {
-				for (CustCardSales curCustCardSalesInfo : customerCardSalesInfo) {
-					if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-						curCustCardSalesInfo.setNewRecord(true);
-						curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						curCustCardSalesInfo.setVersion(1);
-						if (CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())) {
-							for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo
-									.getCustCardMonthSales()) {
-								cardsalesInfoDetail.setNewRecord(true);
-								cardsalesInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-								cardsalesInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-								cardsalesInfoDetail.setVersion(1);
-							}
-						}
-					} else {
-						List<CustCardSales> prvCustomerCardSalesInfoList = prvCustomerDetails.getCustCardSales();
-						if (prvCustomerCardSalesInfoList != null) {
-							for (CustCardSales prvCustomerBankInfo : prvCustomerCardSalesInfoList) {
-								if (curCustCardSalesInfo.getMerchantId().equals(prvCustomerBankInfo.getMerchantId())) {
-									curCustCardSalesInfo.setNewRecord(false);
-									curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-									curCustCardSalesInfo.setVersion(prvCustomerBankInfo.getVersion() + 1);
-									curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-									if (CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())) {
-										for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo
-												.getCustCardMonthSales()) {
-											if (curCustCardSalesInfo.getId() == prvCustomerBankInfo.getId()) {
-												cardsalesInfoDetail.setNewRecord(false);
-												cardsalesInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-												cardsalesInfoDetail
-														.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-												cardsalesInfoDetail.setVersion(1);
-											}
-										}
-									}
-
+								if (prvCustomerDocuments.getDocRefId() == null) {
+									prvCustomerDocuments.setDocRefId(Long.MIN_VALUE);
 								}
 								// copy properties
-								BeanUtils.copyProperties(curCustCardSalesInfo, prvCustomerBankInfo);
-							}
+								BeanUtils.copyProperties(curCustDocument, prvCustomerDocuments);
 
+							}
 						}
 					}
 				}
 			}
+		}
 
-			// process Extended field details
-			// Get the ExtendedFieldHeader for given module and subModule
-			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-					ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
-			customerDetails.setExtendedFieldHeader(extendedFieldHeader);
-			Map<String, Object> prvExtFieldMap = new HashMap<>();
-
-			List<ExtendedField> extendedFields = customerDetails.getExtendedDetails();
-			if (extendedFieldHeader != null) {
-				int seqNo = 0;
-				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
-				exdFieldRender.setReference(customerDetails.getCustomer().getCustCIF());
-				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				exdFieldRender.setLastMntBy(userDetails.getUserId());
-				exdFieldRender.setSeqNo(++seqNo);
-				exdFieldRender.setTypeCode(customerDetails.getExtendedFieldHeader().getSubModuleName());
+		// customer Banking information
+		List<CustomerBankInfo> customerBankInfoList = customerDetails.getCustomerBankInfoList();
+		if (customerBankInfoList != null) {
+			for (CustomerBankInfo curCustBankInfo : customerBankInfoList) {
 				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-					exdFieldRender.setNewRecord(true);
-					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					exdFieldRender.setVersion(1);
+					curCustBankInfo.setNewRecord(true);
+					curCustBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					curCustBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustBankInfo.setVersion(1);
+					if (CollectionUtils.isNotEmpty(curCustBankInfo.getBankInfoDetails())) {
+						for (BankInfoDetail bankInfoDetail : curCustBankInfo.getBankInfoDetails()) {
+							bankInfoDetail.setNewRecord(true);
+							bankInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							bankInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							bankInfoDetail.setVersion(1);
+						}
+					}
 				} else {
-
-					List<ExtendedFieldData> prvExtendedFields = new ArrayList<>(1);
-					ExtendedFieldHeader curExtendedFieldHeader = extendedFieldHeaderDAO
-							.getExtendedFieldHeaderByModuleName(ExtendedFieldConstants.MODULE_CUSTOMER,
-									customerDetails.getCustCtgCode(), "");
-					if (curExtendedFieldHeader != null) {
-						ExtendedFieldRender extendedFieldRender = extendedFieldDetailsService.getExtendedFieldRender(
-								ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(),
-								customerDetails.getCustomer().getCustCIF());
-						if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
-							prvExtFieldMap = extendedFieldRender.getMapValues();
-							for (Map.Entry<String, Object> entry : prvExtFieldMap.entrySet()) {
-								ExtendedFieldData data = new ExtendedFieldData();
-								data.setFieldName(entry.getKey());
-								data.setFieldValue(entry.getValue());
-								prvExtendedFields.add(data);
+					List<CustomerBankInfo> prvCustomerBankInfoList = prvCustomerDetails.getCustomerBankInfoList();
+					if (prvCustomerBankInfoList != null) {
+						for (CustomerBankInfo prvCustomerBankInfo : prvCustomerBankInfoList) {
+							if (curCustBankInfo.getBankId() == prvCustomerBankInfo.getBankId()) {
+								curCustBankInfo.setNewRecord(false);
+								curCustBankInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								curCustBankInfo.setVersion(prvCustomerBankInfo.getVersion() + 1);
+								curCustBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								// copy properties
+								BeanUtils.copyProperties(curCustBankInfo, prvCustomerBankInfo);
 							}
 						}
-						exdFieldRender.setNewRecord(false);
-						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						exdFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
 					}
-
-					exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				}
-				if (extendedFields != null) {
-					for (ExtendedField extendedField : extendedFields) {
-						Map<String, Object> mapValues = new HashMap<String, Object>();
-						if (extendedField.getExtendedFieldDataList() != null) {
-							for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
-								mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
-								exdFieldRender.setMapValues(mapValues);
-							}
-						} else {
-							Map<String, Object> map = new HashMap<String, Object>();
-							exdFieldRender.setMapValues(map);
+			}
+		}
+
+		// customer Gst information
+		List<CustomerGST> CustomerGSTInfoList = customerDetails.getCustomerGstList();
+		if (CustomerGSTInfoList != null) {
+			for (CustomerGST cuCustomerGSTInfo : CustomerGSTInfoList) {
+				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+					cuCustomerGSTInfo.setNewRecord(true);
+					cuCustomerGSTInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					cuCustomerGSTInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					cuCustomerGSTInfo.setVersion(1);
+					if (CollectionUtils.isNotEmpty(cuCustomerGSTInfo.getCustomerGSTDetailslist())) {
+						for (CustomerGSTDetails customerGSTDetails : cuCustomerGSTInfo.getCustomerGSTDetailslist()) {
+							customerGSTDetails.setNewRecord(true);
+							customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							customerGSTDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							customerGSTDetails.setVersion(1);
 						}
 					}
-					if (extendedFields.isEmpty()) {
-						Map<String, Object> mapValues = new HashMap<String, Object>();
-						exdFieldRender.setMapValues(mapValues);
+				} else {
+					List<CustomerGST> prvCustomerGSTInfoList = prvCustomerDetails.getCustomerGstList();
+					List<CustomerGSTDetails> cuCustomerGSTDetailsList = cuCustomerGSTInfo.getCustomerGSTDetailslist();
+					if (prvCustomerGSTInfoList != null) {
+						for (CustomerGST prvCustomerGSTInfo : prvCustomerGSTInfoList) {
+							if (cuCustomerGSTInfo.getId() == prvCustomerGSTInfo.getId()) {
+								cuCustomerGSTInfo.setNewRecord(false);
+								cuCustomerGSTInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								cuCustomerGSTInfo.setVersion(prvCustomerGSTInfo.getVersion() + 1);
+								cuCustomerGSTInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								// copy properties
+								List<CustomerGSTDetails> customerGSTDetailsList = cuCustomerGSTInfo
+										.getCustomerGSTDetailslist();
+								for (CustomerGSTDetails customerGSTDetails : customerGSTDetailsList) {
+									for (CustomerGSTDetails cuCustomerGSTDetails : cuCustomerGSTDetailsList) {
+										if (customerGSTDetails.getId() == cuCustomerGSTDetails.getId()) {
+											cuCustomerGSTDetails.setNewRecord(false);
+											cuCustomerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+											cuCustomerGSTDetails.setVersion(prvCustomerGSTInfo.getVersion() + 1);
+											cuCustomerGSTDetails
+													.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										}
+									}
+
+								}
+								BeanUtils.copyProperties(cuCustomerGSTInfo, prvCustomerGSTInfo);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// customer Account behavior
+		List<CustomerChequeInfo> customerChequeInfoList = customerDetails.getCustomerChequeInfoList();
+		if (customerChequeInfoList != null) {
+			for (CustomerChequeInfo curCustChequeInfo : customerChequeInfoList) {
+				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+					curCustChequeInfo.setNewRecord(true);
+					curCustChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					curCustChequeInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustChequeInfo.setVersion(1);
+				} else {
+					List<CustomerChequeInfo> prvCustomerChequeInfoList = prvCustomerDetails.getCustomerChequeInfoList();
+					if (prvCustomerChequeInfoList != null) {
+						for (CustomerChequeInfo prvCustomerChequeInfo : prvCustomerChequeInfoList) {
+							if (curCustChequeInfo.getChequeSeq() == prvCustomerChequeInfo.getChequeSeq()) {
+								curCustChequeInfo.setNewRecord(false);
+								curCustChequeInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								curCustChequeInfo.setVersion(prvCustomerChequeInfo.getVersion() + 1);
+								curCustChequeInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								// copy properties
+								BeanUtils.copyProperties(curCustChequeInfo, prvCustomerChequeInfo);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// customerExtLiability
+		List<CustomerExtLiability> customerExtLiabilityList = customerDetails.getCustomerExtLiabilityList();
+		if (customerExtLiabilityList != null) {
+			for (CustomerExtLiability curCustomerExtLiability : customerExtLiabilityList) {
+				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+					curCustomerExtLiability.setNewRecord(true);
+					curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					curCustomerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustomerExtLiability.setVersion(1);
+					if (CollectionUtils.isNotEmpty(curCustomerExtLiability.getExtLiabilitiesPayments())) {
+						for (ExtLiabilityPaymentdetails detail : curCustomerExtLiability.getExtLiabilitiesPayments()) {
+							detail.setNewRecord(true);
+							detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							detail.setVersion(1);
+						}
 					}
 				} else {
+					List<CustomerExtLiability> prvCustomerExtLiabilityList = prvCustomerDetails
+							.getCustomerExtLiabilityList();
+					if (prvCustomerExtLiabilityList != null) {
+						for (CustomerExtLiability prvCustomerExtLiability : prvCustomerExtLiabilityList) {
+							if (curCustomerExtLiability.getSeqNo() == prvCustomerExtLiability.getSeqNo()) {
+								curCustomerExtLiability.setNewRecord(false);
+								curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								curCustomerExtLiability.setVersion(prvCustomerExtLiability.getVersion() + 1);
+								curCustomerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								curCustomerExtLiability.setBefImage(prvCustomerExtLiability);
+								if (CollectionUtils.isNotEmpty(curCustomerExtLiability.getExtLiabilitiesPayments())) {
+									for (ExtLiabilityPaymentdetails detail : curCustomerExtLiability
+											.getExtLiabilitiesPayments()) {
+										detail.setNewRecord(false);
+										detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+										detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										// detail.setVersion(prvCustomerExtLiability.getVersion()
+										// + 1);
+									}
+								}
+								// copy properties
+								BeanUtils.copyProperties(curCustomerExtLiability, prvCustomerExtLiability);
+							}
+						}
+					}
+				}
+				custTotExpense = custTotExpense.add(curCustomerExtLiability.getInstalmentAmount());
+			}
+
+		}
+		// Cust card details
+		List<CustCardSales> customerCardSalesInfo = customerDetails.getCustCardSales();
+		if (customerCardSalesInfo != null) {
+			for (CustCardSales curCustCardSalesInfo : customerCardSalesInfo) {
+				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+					curCustCardSalesInfo.setNewRecord(true);
+					curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustCardSalesInfo.setVersion(1);
+					if (CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())) {
+						for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo.getCustCardMonthSales()) {
+							cardsalesInfoDetail.setNewRecord(true);
+							cardsalesInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							cardsalesInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							cardsalesInfoDetail.setVersion(1);
+						}
+					}
+				} else {
+					List<CustCardSales> prvCustomerCardSalesInfoList = prvCustomerDetails.getCustCardSales();
+					if (prvCustomerCardSalesInfoList != null) {
+						for (CustCardSales prvCustomerBankInfo : prvCustomerCardSalesInfoList) {
+							if (curCustCardSalesInfo.getMerchantId().equals(prvCustomerBankInfo.getMerchantId())) {
+								curCustCardSalesInfo.setNewRecord(false);
+								curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								curCustCardSalesInfo.setVersion(prvCustomerBankInfo.getVersion() + 1);
+								curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								if (CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())) {
+									for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo
+											.getCustCardMonthSales()) {
+										if (curCustCardSalesInfo.getId() == prvCustomerBankInfo.getId()) {
+											cardsalesInfoDetail.setNewRecord(false);
+											cardsalesInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+											cardsalesInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+											cardsalesInfoDetail.setVersion(1);
+										}
+									}
+								}
+
+							}
+							// copy properties
+							BeanUtils.copyProperties(curCustCardSalesInfo, prvCustomerBankInfo);
+						}
+
+					}
+				}
+			}
+		}
+
+		// process Extended field details
+		// Get the ExtendedFieldHeader for given module and subModule
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
+		customerDetails.setExtendedFieldHeader(extendedFieldHeader);
+		Map<String, Object> prvExtFieldMap = new HashMap<>();
+
+		List<ExtendedField> extendedFields = customerDetails.getExtendedDetails();
+		if (extendedFieldHeader != null) {
+			int seqNo = 0;
+			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+			exdFieldRender.setReference(customerDetails.getCustomer().getCustCIF());
+			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			exdFieldRender.setLastMntBy(userDetails.getUserId());
+			exdFieldRender.setSeqNo(++seqNo);
+			exdFieldRender.setTypeCode(customerDetails.getExtendedFieldHeader().getSubModuleName());
+			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+			} else {
+
+				List<ExtendedFieldData> prvExtendedFields = new ArrayList<>(1);
+				ExtendedFieldHeader curExtendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+						ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
+				if (curExtendedFieldHeader != null) {
+					ExtendedFieldRender extendedFieldRender = extendedFieldDetailsService.getExtendedFieldRender(
+							ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(),
+							customerDetails.getCustomer().getCustCIF());
+					if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
+						prvExtFieldMap = extendedFieldRender.getMapValues();
+						for (Map.Entry<String, Object> entry : prvExtFieldMap.entrySet()) {
+							ExtendedFieldData data = new ExtendedFieldData();
+							data.setFieldName(entry.getKey());
+							data.setFieldValue(entry.getValue());
+							prvExtendedFields.add(data);
+						}
+					}
+					exdFieldRender.setNewRecord(false);
+					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					exdFieldRender.setVersion(extendedFieldRender.getVersion() + 1);
+				}
+
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			}
+			if (extendedFields != null) {
+				for (ExtendedField extendedField : extendedFields) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					if (extendedField.getExtendedFieldDataList() != null) {
+						for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+							mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+							exdFieldRender.setMapValues(mapValues);
+						}
+					} else {
+						Map<String, Object> map = new HashMap<String, Object>();
+						exdFieldRender.setMapValues(map);
+					}
+				}
+				if (extendedFields.isEmpty()) {
 					Map<String, Object> mapValues = new HashMap<String, Object>();
 					exdFieldRender.setMapValues(mapValues);
 				}
-
-				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
-					customerDetails.setExtendedFieldRender(exdFieldRender);
-				} else if (StringUtils.equals(processType, PROCESS_TYPE_UPDATE)) {
-					Map<String, Object> curextFieldMap = exdFieldRender.getMapValues();
-					prvExtFieldMap.putAll(curextFieldMap);
-					exdFieldRender.setMapValues(prvExtFieldMap);
-					customerDetails.setExtendedFieldRender(exdFieldRender);
-				}
+			} else {
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
 			}
-			// customer director details
-			setDirectorDetails(customerDetails, processType, prvCustomerDetails);
 
-			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)
-					&& !CollectionUtils.isEmpty(customerDetails.getCustomerDirectorList())) {
-
+			if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+				customerDetails.setExtendedFieldRender(exdFieldRender);
+			} else if (StringUtils.equals(processType, PROCESS_TYPE_UPDATE)) {
+				Map<String, Object> curextFieldMap = exdFieldRender.getMapValues();
+				prvExtFieldMap.putAll(curextFieldMap);
+				exdFieldRender.setMapValues(prvExtFieldMap);
+				customerDetails.setExtendedFieldRender(exdFieldRender);
 			}
-			curCustomer.setCustTotalIncome(custTotIncomeExp);
-			curCustomer.setCustTotalExpense(custTotExpense);
 		}
+		// customer director details
+		setDirectorDetails(customerDetails, processType, prvCustomerDetails);
+
+		if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)
+				&& !CollectionUtils.isEmpty(customerDetails.getCustomerDirectorList())) {
+
+		}
+		curCustomer.setCustTotalIncome(custTotIncomeExp);
+		curCustomer.setCustTotalExpense(custTotExpense);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1752,7 +1760,6 @@ public class CustomerController extends GenericService<Object> {
 		Map<String, BigDecimal> curYearValuesMap = new HashMap<String, BigDecimal>();
 		Map<String, FinCreditReviewSummary> summaryMap = new HashMap<String, FinCreditReviewSummary>();
 		Map<String, BigDecimal> prvYearValuesMap = new HashMap<String, BigDecimal>();
-		Map<String, Object> dataMap = new HashMap<String, Object>();
 		for (FinCreditReviewDetails finCreditReviewDetails : finCreditReviewDetailsData.getFinCreditReviewDetails()) {
 			try {
 				finCreditReviewDetails.setUserDetails(userDetails);
@@ -1812,7 +1819,7 @@ public class CustomerController extends GenericService<Object> {
 						// available previous years
 						if (isCurrentDataMapAvil) {
 							prv1YearValuesMap.put(creditReviewSummaryList.get(k).getSubCategoryCode(), BigDecimal.ZERO);
-							dataMap.put("Y" + (audityear - 2) + creditReviewSummaryList.get(k).getSubCategoryCode(),
+							engine.put("Y" + (audityear - 2) + creditReviewSummaryList.get(k).getSubCategoryCode(),
 									BigDecimal.ZERO);
 						} else {
 							// if data available to set data for it
@@ -1826,7 +1833,7 @@ public class CustomerController extends GenericService<Object> {
 															SysParamUtil
 																	.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT),
 															RoundingMode.HALF_DOWN));
-							dataMap.put("Y" + (audityear - 2) + creditReviewSummaryList.get(k).getSubCategoryCode(),
+							engine.put("Y" + (audityear - 2) + creditReviewSummaryList.get(k).getSubCategoryCode(),
 									PennantApplicationUtil.formateAmount(creditReviewSummaryList.get(k).getItemValue(),
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 						}
@@ -1835,14 +1842,14 @@ public class CustomerController extends GenericService<Object> {
 					if (extValuesMap != null && extValuesMap.size() > 0) {
 						for (Entry<String, BigDecimal> entry : extValuesMap.entrySet()) {
 							if (entry.getKey().startsWith("EXT_")) {
-								dataMap.put(entry.getKey(), extValuesMap.get(entry.getKey()));
+								engine.put(entry.getKey(), extValuesMap.get(entry.getKey()));
 								prv1YearValuesMap.put(entry.getKey(), extValuesMap.get(entry.getKey()));
 							}
 						}
 					}
 				}
 				if (prv1YearValuesMap != null && prv1YearValuesMap.size() > 1) {
-					setData(prv1YearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, dataMap);
+					setData(prv1YearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 				}
 
 				boolean isPrevYearSummayNull = false;
@@ -1861,7 +1868,7 @@ public class CustomerController extends GenericService<Object> {
 										.setScale(SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT),
 												RoundingMode.HALF_DOWN));
 						// summaryMap.put(this.creditReviewSummaryList.get(k).getSubCategoryCode(),this.creditReviewSummaryList.get(k));
-						dataMap.put("Y" + (audityear - 1) + creditReviewSummaryList.get(k).getSubCategoryCode(),
+						engine.put("Y" + (audityear - 1) + creditReviewSummaryList.get(k).getSubCategoryCode(),
 								PennantApplicationUtil.formateAmount(creditReviewSummaryList.get(k).getItemValue(),
 										SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 					}
@@ -1869,7 +1876,7 @@ public class CustomerController extends GenericService<Object> {
 					if (extValuesMap != null && extValuesMap.size() > 0) {
 						for (Entry<String, BigDecimal> entry : extValuesMap.entrySet()) {
 							if (entry.getKey().startsWith("EXT_")) {
-								dataMap.put(entry.getKey(), extValuesMap.get(entry.getKey()));
+								engine.put(entry.getKey(), extValuesMap.get(entry.getKey()));
 								prvYearValuesMap.put(entry.getKey(), extValuesMap.get(entry.getKey()));
 							}
 						}
@@ -1877,7 +1884,7 @@ public class CustomerController extends GenericService<Object> {
 				}
 
 				if (prvYearValuesMap.size() > 28) {
-					setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, dataMap);
+					setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 				}
 				curYearValuesMap.putAll(extValuesMap);
 				// below flag is previous years data not available.It is true
@@ -1897,19 +1904,18 @@ public class CustomerController extends GenericService<Object> {
 										SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 						summaryMap.put(creditReviewSummaryList.get(k).getSubCategoryCode(),
 								creditReviewSummaryList.get(k));
-						dataMap.put("Y" + audityear + creditReviewSummaryList.get(k).getSubCategoryCode(),
+						engine.put("Y" + audityear + creditReviewSummaryList.get(k).getSubCategoryCode(),
 								PennantApplicationUtil.formateAmount(creditReviewSummaryList.get(k).getItemValue(),
 										SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 						if (isPrevYearSummayNull) {
 							prvYearValuesMap.put(creditReviewSummaryList.get(k).getSubCategoryCode(),
 									PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
-							dataMap.put("Y" + (audityear - 1) + creditReviewSummaryList.get(k).getSubCategoryCode(),
+							engine.put("Y" + (audityear - 1) + creditReviewSummaryList.get(k).getSubCategoryCode(),
 									PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 							if (prvYearValuesMap != null && prvYearValuesMap.size() > 0) {
-								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory,
-										dataMap);
+								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 							}
 						}
 					}
@@ -1918,28 +1924,27 @@ public class CustomerController extends GenericService<Object> {
 						curYearValuesMap.put(listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),
 								PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 										SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
-						dataMap.put("Y" + audityear + listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),
+						engine.put("Y" + audityear + listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),
 								PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 										SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 						if (isPrevYearSummayNull) {
 							prvYearValuesMap.put(listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),
 									PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
-							dataMap.put(
+							engine.put(
 									"Y" + (audityear - 1) + listOfFinCreditRevSubCategory.get(k).getSubCategoryCode(),
 									PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 							if (prvYearValuesMap != null && prvYearValuesMap.size() > 0
 									&& !finCreditReviewDetails.isNew()) {
-								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory,
-										dataMap);
+								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 							}
 						}
 					}
 				}
 				// If current year data is available and not new than set
 				if (curYearValuesMap != null && !finCreditReviewDetails.isNew()) {
-					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, dataMap);
+					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 				}
 
 				for (FinCreditReviewSummary finCreditReviewSummary : finCreditReviewDetails
@@ -1949,15 +1954,15 @@ public class CustomerController extends GenericService<Object> {
 							: finCreditReviewSummary.getItemValue());
 					curYearValuesMap.put("auditYear",
 							new BigDecimal(Integer.parseInt(finCreditReviewDetails.getAuditYear())));
-					dataMap.put("Y" + finCreditReviewDetails.getAuditYear() + subCategory,
+					engine.put("Y" + finCreditReviewDetails.getAuditYear() + subCategory,
 							finCreditReviewSummary.getItemValue() == null ? BigDecimal.ZERO
 									: finCreditReviewSummary.getItemValue());
-					dataMap.put(
+					engine.put(
 							"Y" + finCreditReviewDetails.getAuditYear() + FacilityConstants.CREDITREVIEW_REMARKS
 									+ subCategory,
 							finCreditReviewSummary.getItemValue() == null ? BigDecimal.ZERO
 									: finCreditReviewSummary.getItemValue());
-					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, dataMap);
+					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
 				}
 
 				for (int i = 0; i < listFinCreditRevCategory.size(); i++) {
@@ -2020,13 +2025,12 @@ public class CustomerController extends GenericService<Object> {
 	 * @throws Exception
 	 */
 	public void setData(Map<String, BigDecimal> dataMap, FinCreditReviewDetails finCreditReviewDetails,
-			List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory, Map<String, Object> scriptDataMap)
-			throws Exception {
+			List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		scriptDataMap.put("EXCHANGE", finCreditReviewDetails.getConversionRate());
-		scriptDataMap.put("NoOfShares", finCreditReviewDetails.getNoOfShares());
-		scriptDataMap.put("MARKETPRICE", finCreditReviewDetails.getMarketPrice());
+		engine.put("EXCHANGE", finCreditReviewDetails.getConversionRate());
+		engine.put("NoOfShares", finCreditReviewDetails.getNoOfShares());
+		engine.put("MARKETPRICE", finCreditReviewDetails.getMarketPrice());
 
 		String year = "";
 
@@ -2034,83 +2038,76 @@ public class CustomerController extends GenericService<Object> {
 			year = String.valueOf(dataMap.get("auditYear"));
 		}
 		if (finCreditReviewDetails.getAuditYear().equals(year)) {
-			scriptDataMap.put("Y" + finCreditReviewDetails.getAuditType() + "DIVCOUNT", BigDecimal.ONE);
+			engine.put("Y" + finCreditReviewDetails.getAuditType() + "DIVCOUNT", BigDecimal.ONE);
 		} else {
-			scriptDataMap.put("Y" + year + "DIVCOUNT", new BigDecimal(2));
+			engine.put("Y" + year + "DIVCOUNT", new BigDecimal(2));
 		}
 
-		try (ScriptEngine scriptEngine = new ScriptEngine()) {
-			for (FinCreditRevSubCategory crsc : listOfFinCreditRevSubCategory) {
-				if (crsc.getSubCategoryItemType().equals(FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)
-						&& StringUtils.isNotEmpty(crsc.getItemsToCal())) {
-					BigDecimal value = BigDecimal.ZERO;
-					try {
+		// total calculation
+		for (int i = 0; i < listOfFinCreditRevSubCategory.size(); i++) {
+			FinCreditRevSubCategory finCreditRevSubCategory = listOfFinCreditRevSubCategory.get(i);
 
-						if ("NaN".equals(
-								scriptEngine.getResultAsString(replaceYear(crsc.getItemsToCal(), year), scriptDataMap))
-								|| (scriptEngine
-										.getResultAsString(replaceYear(crsc.getItemsToCal(), year), scriptDataMap)
-										.contains("Infinity"))) {
-							value = BigDecimal.ZERO;
-						} else {
-							value = scriptEngine
-									.getResultAsBigDecimal(replaceYear(crsc.getItemsToCal(), year), scriptDataMap)
-									.setScale(48, RoundingMode.HALF_DOWN);
-						}
-					} catch (Exception e) {
-						logger.error("Exception: ", e);
-						value = BigDecimal.ZERO;
-					}
-
-					dataMap.put(crsc.getSubCategoryCode(), value == null ? BigDecimal.ZERO : value);
-					scriptDataMap.put("Y" + year + crsc.getSubCategoryCode(), value == null ? BigDecimal.ZERO : value);
-				}
-			}
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION);
-		}
-
-		try (ScriptEngine scriptEngine = new ScriptEngine()) {
-			for (FinCreditRevSubCategory crsc : listOfFinCreditRevSubCategory) {
-				if (StringUtils.isEmpty(crsc.getItemRule())) {
-					continue;
-				}
-
+			if (finCreditRevSubCategory.getSubCategoryItemType().equals(FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)
+					&& StringUtils.isNotEmpty(finCreditRevSubCategory.getItemsToCal())) {
 				BigDecimal value = BigDecimal.ZERO;
 				try {
-					if ("NaN".equals(
-							scriptEngine.getResultAsString(replaceYear(crsc.getItemRule(), year), scriptDataMap))
-							|| (scriptEngine.getResultAsString(replaceYear(crsc.getItemRule(), year), scriptDataMap)
+
+					if ("NaN".equals(engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString())
+							|| (engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString()
 									.contains("Infinity"))) {
 						value = BigDecimal.ZERO;
 					} else {
-						if (crsc.getRemarks().equals(FacilityConstants.CREDITREVIEW_REMARKS)) {
-							value = scriptEngine
-									.getResultAsBigDecimal(replaceYear(crsc.getItemRule(), year), scriptDataMap)
-									.setScale(48, RoundingMode.HALF_DOWN);
+						value = new BigDecimal(
+								engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString())
+										.setScale(48, RoundingMode.HALF_DOWN);
+					}
+				} catch (Exception e) {
+					logger.error("Exception: ", e);
+					value = BigDecimal.ZERO;
+				}
+
+				dataMap.put(finCreditRevSubCategory.getSubCategoryCode(), value == null ? BigDecimal.ZERO : value);
+				engine.put("Y" + year + finCreditRevSubCategory.getSubCategoryCode(),
+						value == null ? BigDecimal.ZERO : value);
+			}
+		}
+
+		// ratio calculation
+		for (int i = 0; i < listOfFinCreditRevSubCategory.size(); i++) {
+			FinCreditRevSubCategory finCreditRevSubCategory = listOfFinCreditRevSubCategory.get(i);
+			if (StringUtils.isNotEmpty(finCreditRevSubCategory.getItemRule())) {
+				BigDecimal value = BigDecimal.ZERO;
+				try {
+					if ("NaN".equals(engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
+							|| (engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString()
+									.contains("Infinity"))) {
+						value = BigDecimal.ZERO;
+					} else {
+						if (finCreditRevSubCategory.getRemarks().equals(FacilityConstants.CREDITREVIEW_REMARKS)) {
+							value = new BigDecimal(
+									engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
+											.setScale(48, RoundingMode.HALF_DOWN);
 						} else {
-							value = scriptEngine
-									.getResultAsBigDecimal(replaceYear(crsc.getItemRule(), year), scriptDataMap)
-									.setScale(48, RoundingMode.HALF_DOWN);
+							value = new BigDecimal(
+									engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
+											.setScale(48, RoundingMode.HALF_DOWN);
 						}
 					}
 				} catch (Exception e) {
 					value = BigDecimal.ZERO;
 					logger.error("Exception: ", e);
 				}
-
-				if (crsc.getCategoryId() == 4 || crsc.getCategoryId() == 7) {
-					dataMap.put(crsc.getSubCategoryCode(), value);
-					scriptDataMap.put("Y" + year + crsc.getSubCategoryCode(), value == null ? BigDecimal.ZERO : value);
-				} else {
-					dataMap.put(FacilityConstants.CREDITREVIEW_REMARKS + crsc.getSubCategoryCode(),
+				if (finCreditRevSubCategory.getCategoryId() == 4 || finCreditRevSubCategory.getCategoryId() == 7) {
+					dataMap.put(finCreditRevSubCategory.getSubCategoryCode(), value);
+					engine.put("Y" + year + finCreditRevSubCategory.getSubCategoryCode(),
 							value == null ? BigDecimal.ZERO : value);
-					dataMap.put(FacilityConstants.CREDITREVIEW_REMARKS + crsc.getSubCategoryCode(),
+				} else {
+					dataMap.put(FacilityConstants.CREDITREVIEW_REMARKS + finCreditRevSubCategory.getSubCategoryCode(),
+							value == null ? BigDecimal.ZERO : value);
+					dataMap.put(FacilityConstants.CREDITREVIEW_REMARKS + finCreditRevSubCategory.getSubCategoryCode(),
 							value == null ? BigDecimal.ZERO : value);
 				}
 			}
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION);
 		}
 	}
 

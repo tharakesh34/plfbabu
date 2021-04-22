@@ -1,18 +1,19 @@
 package com.pennant.eod.dao.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.eod.beans.PaymentRecoveryHeader;
 import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class PaymentRecoveryHeaderDAOImpl extends BasicDao<PaymentRecoveryHeader> implements PaymentRecoveryHeaderDAO {
-	private static Logger logger = Logger.getLogger(PaymentRecoveryHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentRecoveryHeaderDAOImpl.class);
 
 	@Override
 	public void save(PaymentRecoveryHeader header) {
@@ -49,8 +50,7 @@ public class PaymentRecoveryHeaderDAOImpl extends BasicDao<PaymentRecoveryHeader
 		selectSql.append(" From PaymentRecoveryHeader  where BatchRefNumber=:BatchRefNumber");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
-		RowMapper<PaymentRecoveryHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PaymentRecoveryHeader.class);
+		RowMapper<PaymentRecoveryHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(PaymentRecoveryHeader.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

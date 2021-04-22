@@ -6,7 +6,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -23,7 +24,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerGstServiceImpl extends GenericService<CustomerGST> implements CustomerGstService {
-	private static Logger logger = Logger.getLogger(CustomerAddresServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerAddresServiceImpl.class);
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerGstDetailDAO customerGstDetailDAO;
 

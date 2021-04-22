@@ -1,6 +1,8 @@
 
 package com.pennant.backend.dao.ckyc.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.ckyc.CKYCDAO;
 import com.pennant.backend.model.cky.CKYCDtl20;
@@ -27,11 +31,14 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
-	private static Logger logger = Logger.getLogger(CKYCDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CKYCDAOImpl.class);
 
 	public CKYCDAOImpl() {
 		super();
@@ -72,7 +79,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ckycdtl20);
-		RowMapper<CKYCDtl20> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl20.class);
+		RowMapper<CKYCDtl20> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl20.class);
 
 		try {
 			ckycdtl20 = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -97,7 +104,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		logger.debug("selectSql:" + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dtl30);
-		RowMapper<CKYCDtl30> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl30.class);
+		RowMapper<CKYCDtl30> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl30.class);
 		List<CKYCDtl30> ckycDtl30 = new ArrayList<>();
 		try {
 			ckycDtl30 = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -125,7 +132,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dtls60);
-		RowMapper<CKYCDtl60> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl60.class);
+		RowMapper<CKYCDtl60> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl60.class);
 		List<CKYCDtl60> ckycDtl60 = new ArrayList<>();
 		try {
 			ckycDtl60 = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -149,7 +156,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		selectSql.append(" branchcode, custDocImage, filler1, filler2, filler3, filler4");
 		selectSql.append("  from Ckycdtl70 where custId =:custId");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dtls70);
-		RowMapper<CKYCDtl70> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CKYCDtl70.class);
+		RowMapper<CKYCDtl70> typeRowMapper = BeanPropertyRowMapper.newInstance(CKYCDtl70.class);
 		List<CKYCDtl70> ckycDtl70 = new ArrayList<>();
 		try {
 			ckycDtl70 = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -350,6 +357,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	public Customer getCustomerDetail(long id) {
 		Customer customer = new Customer();
 		customer.setId(id);
+
 		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF,custDftBranch,");
 		selectSql.append(
 				" custFName, custMName, CustLName, custshrtname,custSalutationCode, CUSTMOTHERMAIDEN, custFNameLclLng, custMNameLclLng,");
@@ -360,7 +368,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -373,7 +381,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	}
 
 	@Override
-	public List<CustomerAddres> getCustomerAddresByCustomer(long custId, String ckycNo) {
+	public List<CustomerAddres> getCustomerAddresById(long custId, String ckycNo) {
 
 		logger.debug("Entering");
 		CustomerAddres customerAddres = new CustomerAddres();
@@ -389,8 +397,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-			RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerAddres.class);
+			RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 			List<CustomerAddres> customerAddresses = null;
 			try {
 				customerAddresses = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -427,8 +434,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 				logger.trace("selectAddr:" + selectAddr.toString());
 				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-				RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper
-						.newInstance(CustomerAddres.class);
+				RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 				try {
 					customerAddresses = this.jdbcTemplate.query(selectAddr.toString(), beanParameters, typeRowMapper);
 				} catch (Exception e) {
@@ -444,7 +450,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	}
 
 	@Override
-	public List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(long custId, String ckycNo) {
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberById(long custId, String ckycNo) {
 		logger.debug("Entering");
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
 		customerPhoneNumber.setPhoneCustID(custId);
@@ -457,8 +463,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-			RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerPhoneNumber.class);
+			RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 			List<CustomerPhoneNumber> customerPhoneNumbers = null;
 
 			try {
@@ -494,8 +499,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectPh:" + selectPh.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-			RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerPhoneNumber.class);
+			RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 			try {
 				customerPhoneNumbers = this.jdbcTemplate.query(selectPh.toString(), beanParameters, typeRowMapper);
 			} catch (Exception e) {
@@ -508,7 +512,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	}
 
 	@Override
-	public List<CustomerEMail> getCustomerEmailByCustomer(long custId, String ckycNo) {
+	public List<CustomerEMail> getCustomerEmailById(long custId, String ckycNo) {
 		logger.debug("Entering");
 		CustomerEMail customerEMail = new CustomerEMail();
 		customerEMail.setId(custId);
@@ -520,8 +524,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-			RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerEMail.class);
+			RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 			List<CustomerEMail> customerEmail = null;
 			try {
 				customerEmail = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -556,8 +559,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectEmail:" + selectEmail.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-			RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerEMail.class);
+			RowMapper<CustomerEMail> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerEMail.class);
 			List<CustomerEMail> customerEmail = null;
 			try {
 				customerEmail = this.jdbcTemplate.query(selectEmail.toString(), beanParameters, typeRowMapper);
@@ -571,7 +573,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	}
 
 	@Override
-	public List<CustomerDocument> getCustomerId(long custId, String ckycNo) {
+	public List<CustomerDocument> getcustDocsByCustId(long custId, String ckycNo) {
 		logger.debug("Entering");
 		CustomerDocument customerDoc = new CustomerDocument();
 		customerDoc.setId(custId);
@@ -582,12 +584,11 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 			selectSql.append(
 					"  D.CustDocTitle , D.CustDocName, D.CustDocExpDate, D.CustDocIsVerified, I.DOCIMAGE AS CUSTDOCIMAGE");
 			selectSql.append(" FROM  CustomerDocuments_Aview D, DOCUMENTMANAGER I");
-			selectSql.append(" Where CustID = :custID AND D.DOCREFID=I.ID");
+			selectSql.append(" Where D.CustID = :custID AND D.DOCREFID=I.ID");
 
 			logger.trace("selectSql:" + selectSql.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDoc);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerDocument.class);
+			RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 			List<CustomerDocument> customerDocument = null;
 			try {
 				customerDocument = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -622,8 +623,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 			logger.trace("selectDoc:" + selectDoc.toString());
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDoc);
-			RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(CustomerDocument.class);
+			RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 			List<CustomerDocument> customerDocument = null;
 
 			try {
@@ -638,6 +638,40 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		}
 	}
 
+	public Timestamp getLastMntOn(String custId, String ckycNo) {
+		StringBuilder selectSql = new StringBuilder();
+		Map<String, Object> mapParam = new HashMap<>();
+		mapParam.put("custId", custId);
+		mapParam.put("ckycNo", ckycNo);
+		selectSql.append(" SELECT docLastMntOn");
+		selectSql.append(" FROM  ckycLog");
+		selectSql.append(" Where CustID = :custId and ckycNo =:ckycNo");
+		Timestamp docLastMntOn = null;
+		try {
+			docLastMntOn = this.jdbcTemplate.queryForObject(selectSql.toString(), mapParam, Timestamp.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+		}
+		return docLastMntOn;
+	}
+
+	@Override
+	public String getLeadIdByCustId(long custId) {
+		String leadId = null;
+		StringBuilder selectSql = new StringBuilder();
+		Map<String, Object> mapParam = new HashMap<>();
+		mapParam.put("custId", custId);
+		selectSql.append(" SELECT offerId from Financemain_view");
+		selectSql.append(" Where CustID =:custId");
+		try {
+			leadId = this.jdbcTemplate.queryForObject(selectSql.toString(), mapParam, String.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+		}
+
+		return leadId;
+	}
+
 	@Override
 	public int saveFile(CKYCLog file) {
 		logger.debug("Enterning");
@@ -646,10 +680,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("custId", file.getCustId());
 
-		StringBuilder selectAddr = new StringBuilder("SELECT LastMntOn");
-		selectAddr.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM customeraddresses  Where CustID  =:custId ) ");
-		selectAddr.append(" As custAddr where rownum=1");
+		StringBuilder selectAddr = getSelectQuery("customeraddresses");
 		logger.debug("selectAddr: " + selectAddr.toString());
 		Timestamp addrLastMnt = null;
 		try {
@@ -660,11 +691,8 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		if (addrLastMnt != null) {
 			file.setAddrLastMntOn(addrLastMnt);
 		}
-		StringBuilder selectPhone = new StringBuilder("SELECT LastMntOn");
-		selectPhone.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM customerphonenumbers  Where phoneCustID  =:custId ) ");
-		selectPhone.append(" As phone where rownum=1");
 
+		StringBuilder selectPhone = getSelectQuery("customerphonenumbers");
 		logger.debug("selectPhone: " + selectPhone.toString());
 		Timestamp phoneLastMnt = null;
 		try {
@@ -675,10 +703,8 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		if (phoneLastMnt != null) {
 			file.setPhoneLastMntOn(phoneLastMnt);
 		}
-		StringBuilder selectEmail = new StringBuilder("SELECT LastMntOn");
-		selectEmail.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM customeremails  Where custId  =:custId ) ");
-		selectEmail.append(" As email where rownum=1");
+
+		StringBuilder selectEmail = getSelectQuery("customeremails");
 		logger.debug("selectEmail: " + selectEmail.toString());
 		Timestamp emailLastMnt = null;
 		try {
@@ -690,10 +716,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 			file.setEmailLastMntOn(emailLastMnt);
 		}
 
-		StringBuilder selectdoc = new StringBuilder("SELECT LastMntOn");
-		selectdoc.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM Customerdocuments  Where custId  =:custId ) ");
-		selectdoc.append(" As doc where rownum=1");
+		StringBuilder selectdoc = getSelectQuery("Customerdocuments");
 		logger.debug("selectdoc: " + selectdoc.toString());
 		Timestamp docLastMnt = null;
 		try {
@@ -742,7 +765,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		selectCkyc.append("  FROM ckycLog  Where custId  =:custId and  ckycNo =:ckycNo ");
 		logger.debug("selectCkyc: " + selectCkyc.toString());
 		SqlParameterSource beanParametersFlag = new BeanPropertySqlParameterSource(ckycNameDetails);
-		RowMapper<CKYCLog> typeRowMapperFlag = ParameterizedBeanPropertyRowMapper.newInstance(CKYCLog.class);
+		RowMapper<CKYCLog> typeRowMapperFlag = BeanPropertyRowMapper.newInstance(CKYCLog.class);
 		try {
 			ckycNameDetails = this.jdbcTemplate.queryForObject(selectCkyc.toString(), beanParametersFlag,
 					typeRowMapperFlag);
@@ -759,7 +782,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		logger.debug("selectCust: " + selectCust.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectCust.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
@@ -797,7 +820,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		selectPerDtls.append(" FROM ckycLog  Where custId  =:custId and  ckycNo =:ckycNo ");
 		logger.debug("selectFlag: " + selectPerDtls.toString());
 		SqlParameterSource beanParametersFlag = new BeanPropertySqlParameterSource(ckycPersonalDtls);
-		RowMapper<CKYCLog> typeRowMapperFlag = ParameterizedBeanPropertyRowMapper.newInstance(CKYCLog.class);
+		RowMapper<CKYCLog> typeRowMapperFlag = BeanPropertyRowMapper.newInstance(CKYCLog.class);
 		try {
 			ckycPersonalDtls = this.jdbcTemplate.queryForObject(selectPerDtls.toString(), beanParametersFlag,
 					typeRowMapperFlag);
@@ -815,7 +838,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		CKYCLog ckycFile = null;
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		try {
 			customer = this.jdbcTemplate.queryForObject(selectCust.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
@@ -872,11 +895,8 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + e);
 		}
-		StringBuilder selectAddr = new StringBuilder();
-		selectAddr.append(" SELECT lastmnton");
-		selectAddr.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM CustomerAddresses  Where custId  =:custId ) ");
-		selectAddr.append(" As addr where rownum=1");
+
+		StringBuilder selectAddr = getSelectQuery("customeraddresses");
 		Timestamp custAddrLastMnt = null;
 		try {
 			custAddrLastMnt = this.jdbcTemplate.queryForObject(selectAddr.toString(), mapParam, Timestamp.class);
@@ -907,11 +927,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + e);
 		}
-		StringBuilder selectPhone = new StringBuilder();
-		selectPhone.append(" SELECT lastmnton");
-		selectPhone.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM CustomerPhoneNumbers  Where PhoneCustID  =:custId ) ");
-		selectPhone.append(" As phone where rownum=1");
+		StringBuilder selectPhone = getSelectQuery("customerphonenumbers");
 		Timestamp custPhLastMnt = null;
 		try {
 			custPhLastMnt = this.jdbcTemplate.queryForObject(selectPhone.toString(), mapParam, Timestamp.class);
@@ -943,11 +959,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + e);
 		}
-		StringBuilder selectEmail = new StringBuilder();
-		selectEmail.append(" SELECT lastmnton");
-		selectEmail.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM CustomerEmails  Where custID  =:custId ) ");
-		selectEmail.append(" As email where rownum=1");
+		StringBuilder selectEmail = getSelectQuery("customeremails");
 		Timestamp custEmailLastMnt = null;
 		try {
 			custEmailLastMnt = this.jdbcTemplate.queryForObject(selectEmail.toString(), mapParam, Timestamp.class);
@@ -977,11 +989,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + e);
 		}
-		StringBuilder selectImg = new StringBuilder();
-		selectImg.append(" SELECT lastmnton");
-		selectImg.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM customerdocuments  Where custId  =:custId ) ");
-		selectImg.append(" As doc where rownum=1");
+		StringBuilder selectImg = getSelectQuery("CustomerDocuments");
 		Timestamp custDocLastMnt = null;
 		logger.debug("selectImg" + selectImg.toString());
 		try {
@@ -1075,10 +1083,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("custId", file.getCustId());
 
-		StringBuilder selectAddr = new StringBuilder("SELECT LastMntOn");
-		selectAddr.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM customeraddresses  Where CustID  =:custId ) ");
-		selectAddr.append(" As custAddr where rownum=1");
+		StringBuilder selectAddr = getSelectQuery("customeraddresses");
 		logger.debug("selectAddr: " + selectAddr.toString());
 		Timestamp addrLastMnt = null;
 		try {
@@ -1115,11 +1120,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("custId", file.getCustId());
 
-		StringBuilder selectPhone = new StringBuilder();
-		selectPhone.append(" SELECT lastmnton");
-		selectPhone.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM CustomerPhoneNumbers  Where PhoneCustID  =:custId ) ");
-		selectPhone.append(" As phone where rownum=1");
+		StringBuilder selectPhone = getSelectQuery("customerphonenumbers");
 		logger.debug("selectPhone: " + selectPhone.toString());
 		Timestamp phoneLastMnt = null;
 		try {
@@ -1156,11 +1157,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("custId", file.getCustId());
-		StringBuilder selectEmail = new StringBuilder();
-		selectEmail.append(" SELECT lastmntOn");
-		selectEmail.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM CustomerEMails  Where custID  =:custId ) ");
-		selectEmail.append(" As email where rownum=1");
+		StringBuilder selectEmail = getSelectQuery("customeremails");
 		logger.trace("selectEmail:" + selectEmail.toString());
 		Timestamp emailLastMnt = null;
 		try {
@@ -1192,10 +1189,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		int count = 0;
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("custId", file.getCustId());
-		StringBuilder selectdoc = new StringBuilder("SELECT LastMntOn");
-		selectdoc.append(
-				" FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) As RowNum   FROM Customerdocuments  Where custId  =:custId ) ");
-		selectdoc.append(" As doc where rownum=1");
+		StringBuilder selectdoc = getSelectQuery("Customerdocuments");
 		logger.debug("selectdoc: " + selectdoc.toString());
 		Timestamp docLastMnt = null;
 		try {
@@ -1218,6 +1212,33 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 			logger.debug("Leaving");
 		}
 		return count;
+	}
+
+	/**
+	 * @return constructed select Query string
+	 */
+	private StringBuilder getSelectQuery(String tableName) {
+		StringBuilder selectQuery = new StringBuilder();
+
+		if (App.DATABASE == Database.POSTGRES || App.DATABASE == Database.SQL_SERVER) {
+			selectQuery.append("SELECT LastMntOn FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc)");
+			selectQuery.append(" As RowNum FROM ");
+			selectQuery.append(tableName);
+			if (StringUtils.equalsIgnoreCase(tableName, "customerphonenumbers"))
+				selectQuery.append(" Where PhoneCustID =:custId ) As custAddr where rownum=1");
+			else
+				selectQuery.append(" Where CustID =:custId ) As custAddr where rownum=1");
+
+		} else if (App.DATABASE == Database.ORACLE) {
+			selectQuery.append("SELECT LastMntOn FROM (SELECT lastmntOn,ROW_NUMBER() OVER(ORDER BY lastmntOn desc) ");
+			selectQuery.append("rn  FROM ");
+			selectQuery.append(tableName);
+			if (StringUtils.equalsIgnoreCase(tableName, "customerphonenumbers"))
+				selectQuery.append(" where PhoneCustID =:custId ) where  rownum=1");
+			else
+				selectQuery.append(" where CustID =:custId ) where  rownum=1");
+		}
+		return selectQuery;
 	}
 
 	@Override
@@ -1248,13 +1269,46 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	}
 
 	@Override
+	public int getCustId(String ckycNo) {
+
+		int custId = 0;
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("ckycNo", ckycNo);
+
+		StringBuilder selectSql = new StringBuilder("select");
+		selectSql.append(" custId from CKYCLOG where ckycNo =:ckycNo");
+		try {
+			custId = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, Integer.class);
+		} catch (InterfaceException e) {
+			// TODO: handle exception
+		}
+
+		return custId;
+	}
+
+	@Override
+	public void updateCustomerWithCKycNo(int custId, String ckycNo) {
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("ckycNo", ckycNo);
+		paramSource.addValue("custId", custId);
+
+		StringBuilder selectSql = new StringBuilder("update customers");
+		selectSql.append("set ckycRefNo =:ckycNo where custId =:custId");
+		this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, String.class);
+
+	}
+
+	@Override
 	public List<Customer> getId() {
 		Customer customer = new Customer();
 		StringBuilder selectSql = new StringBuilder("Select custId ");
-		selectSql.append(" from customers WHERE CUSTFNAME IS NOT NULL and (CUSTFNAME = '') IS NOT True");
+		selectSql.append(
+				"select custId from customers where custCtgCode = 'RETAIL' custcKYCNo is not null and (custcKYCNo = '')");
 		logger.debug("selectSql:" + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
 		List<Customer> customers = new ArrayList<>();
 		try {
 			customers = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -1280,8 +1334,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		logger.debug("selectPoA: " + selectPoA.toString());
 		List<CustomerDocument> pofAddr = null;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerDocument);
-		RowMapper<CustomerDocument> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerDocument.class);
+		RowMapper<CustomerDocument> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDocument.class);
 		try {
 			pofAddr = this.jdbcTemplate.query(selectPoA.toString(), beanParameters, typeRowMapper);
 		} catch (Exception e) {
@@ -1291,4 +1344,31 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 		return pofAddr;
 	}
 
+	@Override
+	public Map<String, Object> getcKYCdocMaster() {
+		Map<String, Object> map = new HashMap<>();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select key_type, key_code from master_def ");
+		sql.append(" Where master_type = :DetailId");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("DetailId", "CKYCDocumentMaster");
+
+		try {
+			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
+
+				@Override
+				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+					map.put(rs.getString("key_type"), rs.getBigDecimal("key_code"));
+					// return map;
+					return map;
+				}
+			});
+		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return map;
+	}
 }

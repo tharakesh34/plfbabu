@@ -44,7 +44,8 @@ package com.pennant.backend.model.finance;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -55,7 +56,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
  */
 public class DdaPresentment implements java.io.Serializable {
 	private static final long serialVersionUID = -3026443763391506067L;
-	private static final Logger logger = Logger.getLogger(DdaPresentment.class);
+	private static final Logger logger = LogManager.getLogger(DdaPresentment.class);
 
 	private String ddaReference;
 	private Date ddaDate;

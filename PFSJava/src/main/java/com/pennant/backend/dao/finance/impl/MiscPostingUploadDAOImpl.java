@@ -3,14 +3,15 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.MiscPostingUploadDAO;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> implements MiscPostingUploadDAO {
-	private static Logger logger = Logger.getLogger(MiscPostingUploadDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(MiscPostingUploadDAOImpl.class);
 
 	public MiscPostingUploadDAOImpl() {
 		super();
@@ -55,8 +56,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(miscPostingUpload);
-		RowMapper<MiscPostingUpload> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(MiscPostingUpload.class);
+		RowMapper<MiscPostingUpload> typeRowMapper = BeanPropertyRowMapper.newInstance(MiscPostingUpload.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
@@ -80,8 +80,8 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 		logger.debug(Literal.ENTERING);
 
 		if (miscPostingUpload.getMiscPostingId() < 0) {
-			miscPostingUpload.setMiscPostingId(getNextId("SeqJVpostings"));
-			logger.debug("get NextID:" + miscPostingUpload.getMiscPostingId());
+			miscPostingUpload.setMiscPostingId(getNextValue("SeqJVpostings"));
+			logger.debug("get NextValue:" + miscPostingUpload.getMiscPostingId());
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into MiscPostingUploads");
@@ -215,7 +215,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	@Override
 	public long getMiscPostingBranchSeq() {
 		logger.debug(Literal.ENTERING);
-		long seq = getNextId("SeqJVpostings");
+		long seq = getNextValue("SeqJVpostings");
 		logger.trace("get NextID:" + seq);
 		return seq;
 	}
@@ -242,8 +242,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(miscPostingUpload);
-		RowMapper<MiscPostingUpload> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(MiscPostingUpload.class);
+		RowMapper<MiscPostingUpload> typeRowMapper = BeanPropertyRowMapper.newInstance(MiscPostingUpload.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

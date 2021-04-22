@@ -69,7 +69,7 @@ public interface ProjectedAmortizationDAO {
 
 	List<ProjectedAccrual> getFutureProjectedAccrualsByFinRef(String finRef, Date curMonthEnd);
 
-	void saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList);
+	int saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList);
 
 	void deleteFutureProjAccrualsByFinRef(String finReference, Date curMonthStart);
 

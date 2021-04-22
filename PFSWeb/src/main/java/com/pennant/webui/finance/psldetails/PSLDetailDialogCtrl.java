@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -101,7 +102,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PSLDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PSLDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -921,6 +922,13 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		}
 		// Land Area
 		try {
+
+			if (this.row_LandHolding.isVisible() && this.landArea.isVisible()
+					&& "Y".equals(landHolding.getSelectedItem().getValue())) {
+				this.landArea.setConstraint(
+						new StaticListValidator(landAreaList, Labels.getLabel("label_PSLDetailDialog_LandArea.value")));
+			}
+
 			String strLandArea = null;
 			if (this.landArea.getSelectedItem() != null) {
 				strLandArea = this.landArea.getSelectedItem().getValue().toString();
@@ -936,6 +944,13 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		}
 		// Sector
 		try {
+
+			if (this.row_Sector.isVisible() && ("SVS".equals(this.sector.getSelectedItem().getValue())
+					|| "MNF".equals(this.sector.getSelectedItem().getValue())) && this.amount.isVisible()) {
+				this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_PSLDetailDialog_Amount.value"),
+						2, true, false, 0));
+			}
+
 			String strSector = null;
 			if (this.sector.getSelectedItem() != null) {
 				strSector = this.sector.getSelectedItem().getValue().toString();

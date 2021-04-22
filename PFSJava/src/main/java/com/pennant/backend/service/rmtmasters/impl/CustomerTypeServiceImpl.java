@@ -42,7 +42,8 @@
 */
 package com.pennant.backend.service.rmtmasters.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -63,7 +64,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class CustomerTypeServiceImpl extends GenericService<CustomerType> implements CustomerTypeService {
-	private static Logger logger = Logger.getLogger(CustomerTypeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerTypeDAO customerTypeDAO;

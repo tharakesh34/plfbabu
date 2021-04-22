@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -81,7 +82,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 
 	private static final long serialVersionUID = 4521079241535245640L;
 
-	private static final Logger logger = Logger.getLogger(FinTypeAccountingListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinTypeAccountingListCtrl.class);
 
 	protected Window window_FinTypeAccountingList;
 
@@ -308,7 +309,12 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
 		}
 
-		setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
+		if (StringUtils.equals(getComboboxValue(financeTypeDialogCtrl.cbfinProductType),
+				FinanceConstants.PRODUCT_ISTISNA)) {
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, true);
+		} else {
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
+		}
 
 		logger.debug("leaving");
 	}

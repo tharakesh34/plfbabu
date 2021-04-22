@@ -30,7 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.CalculationUtil;
@@ -55,7 +56,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> implements GuarantorDetailService {
-	private static final Logger logger = Logger.getLogger(GuarantorDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(GuarantorDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
@@ -788,7 +789,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 		if (primaryList != null && !primaryList.isEmpty()) {
 			for (FinanceExposure exposer : primaryList) {
 				if (exposer != null) {
-					String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
+					String toCcy = SysParamUtil.getAppCurrency();
 					String fromCcy = exposer.getFinCCY();
 					currentExpoSure = currentExpoSure
 							.add(CalculationUtil.getConvertedAmount(fromCcy, toCcy, exposer.getCurrentExpoSure()));

@@ -17,7 +17,8 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
-		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri" })
+		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri",
+		"docReceivedDate", "docOriginal", "docReceived", "remarks" })
 @XmlRootElement(name = "DocumentDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
@@ -57,14 +58,18 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private boolean custDocIsVerified;
 	private long custDocVerifiedBy;
 	private boolean custDocIsAcrive;
+	@XmlElement
 	private String lovDescCustCIF;
 
 	private String lovDescDocCategoryName;
 	private DocumentDetails befImage;
 	private LoggedInUser userDetails;
 	private boolean newRecord = false;
+	@XmlElement
 	private Date docReceivedDate;
+	@XmlElement
 	private boolean docReceived;
+	@XmlElement
 	private boolean docOriginal;
 	private String docBarcode;
 	private String password;
@@ -72,6 +77,9 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private Long pdfMappingRef;
 	private String pdfPassWord;
 	private boolean docIsPdfExtRequired = false;
+	@XmlElement
+	private String remarks;
+
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	// New proeprty added for holding the DocumentManager table's ID
@@ -90,6 +98,18 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private int retryCount;
 	private String errorDesc;
 	private Long custId;
+	// Fields used in Godrej DMS
+	private String applicationNo;
+	private String leadId;
+	private boolean lovDescNewImage = false;
+	//Specific To Verification API 
+	@XmlElement
+	private String lovDescCustShrtName;
+	@XmlElement
+	private String refId;
+	//Specific To  LV verification  API
+	@XmlElement
+	private int docTypeId;
 
 	public DocumentDetails() {
 		super();
@@ -103,6 +123,67 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		this.docName = docName;
 		this.docImage = docImage;
 		this.newRecord = true;
+	}
+
+	public DocumentDetails copyEntity() {
+		DocumentDetails entity = new DocumentDetails();
+		entity.setDocId(this.docId);
+		entity.setDocModule(this.docModule);
+		entity.setReferenceId(this.referenceId);
+		entity.setFinEvent(this.finEvent);
+		entity.setDocCategory(this.docCategory);
+		entity.setDoctype(this.doctype);
+		entity.setDocName(this.docName);
+		entity.setDocImage(this.docImage);
+		entity.setCategoryCode(this.categoryCode);
+		entity.setCustDocTitle(this.custDocTitle);
+		entity.setCustDocSysName(this.custDocSysName);
+		entity.setCustDocRcvdOn(this.custDocRcvdOn);
+		entity.setCustDocExpDate(this.custDocExpDate);
+		entity.setCustDocIssuedOn(this.custDocIssuedOn);
+		entity.setCustDocIssuedCountry(this.custDocIssuedCountry);
+		entity.setDocPurpose(this.docPurpose);
+		entity.setDocUri(this.docUri);
+		entity.setLovDescCustDocIssuedCountry(this.lovDescCustDocIssuedCountry);
+		entity.setCustDocIsVerified(this.custDocIsVerified);
+		entity.setCustDocVerifiedBy(this.custDocVerifiedBy);
+		entity.setCustDocIsAcrive(this.custDocIsAcrive);
+		entity.setLovDescCustCIF(this.lovDescCustCIF);
+		entity.setLovDescDocCategoryName(this.lovDescDocCategoryName);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setNewRecord(this.newRecord);
+		entity.setDocReceivedDate(this.docReceivedDate);
+		entity.setDocReceived(this.docReceived);
+		entity.setDocOriginal(this.docOriginal);
+		entity.setDocBarcode(this.docBarcode);
+		entity.setPassword(this.password);
+		entity.setDocIsPasswordProtected(this.docIsPasswordProtected);
+		entity.setPdfMappingRef(this.pdfMappingRef);
+		entity.setPdfPassWord(this.pdfPassWord);
+		entity.setDocIsPdfExtRequired(this.docIsPdfExtRequired);
+		entity.setRemarks(this.remarks);
+		entity.setReturnStatus(this.returnStatus == null ? null : this.returnStatus.copyEntity());
+		entity.setDocRefId(this.docRefId);
+		entity.setDoumentType(this.doumentType);
+		entity.setInstructionUID(this.instructionUID);
+		entity.setCustomerCif(this.customerCif);
+		entity.setFinReference(this.finReference);
+		entity.setState(this.state);
+		entity.setStatus(this.status);
+		entity.setDocDesc(this.docDesc);
+		entity.setDocExt(this.docExt);
+		entity.setCreatedOn(this.createdOn);
+		entity.setRetryCount(this.retryCount);
+		entity.setErrorDesc(this.errorDesc);
+		entity.setCustId(this.custId);
+		entity.setApplicationNo(this.applicationNo);
+		entity.setLeadId(this.leadId);
+		entity.setLovDescNewImage(this.lovDescNewImage);
+		entity.setLovDescCustShrtName(this.lovDescCustShrtName);
+		entity.setRefId(this.refId);
+		entity.setDocTypeId(this.docTypeId);
+		return entity;
 	}
 
 	public Set<String> getExcludeFields() {
@@ -137,6 +218,12 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("retryCount");
 		excludeFields.add("errorDesc");
 		excludeFields.add("custId");
+
+		excludeFields.add("applicationNo");
+		excludeFields.add("leadId");
+		excludeFields.add("lovDescCustShrtName");
+		excludeFields.add("refId");
+		excludeFields.add("docTypeId");
 
 		return excludeFields;
 	}
@@ -552,6 +639,62 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
+
+	public String getLeadId() {
+		return leadId;
+	}
+
+	public void setLeadId(String leadId) {
+		this.leadId = leadId;
+	}
+
+	public boolean isLovDescNewImage() {
+		return lovDescNewImage;
+	}
+
+	public void setLovDescNewImage(boolean lovDescNewImage) {
+		this.lovDescNewImage = lovDescNewImage;
+	}
+
+	public String getLovDescCustShrtName() {
+		return lovDescCustShrtName;
+	}
+
+	public void setLovDescCustShrtName(String lovDescCustShrtName) {
+		this.lovDescCustShrtName = lovDescCustShrtName;
+	}
+
+	public String getRefId() {
+		return refId;
+	}
+
+	public void setRefId(String refId) {
+		this.refId = refId;
+	}
+
+	public int getDocTypeId() {
+		return docTypeId;
+	}
+
+	public void setDocTypeId(int docTypeId) {
+		this.docTypeId = docTypeId;
 	}
 
 }

@@ -18,12 +18,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -75,7 +74,7 @@ import freemarker.template.TemplateExceptionHandler;
 import net.sf.jasperreports.engine.JRException;
 
 public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
-	private static final Logger logger = Logger.getLogger(ProcessSystemNotifications.class);
+	private static final Logger logger = LogManager.getLogger(ProcessSystemNotifications.class);
 	Map<String, Configuration> TEMPLATES = new HashMap<String, Configuration>();
 	@Autowired
 	private EmailEngine emailEngine;
@@ -102,20 +101,24 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			List<SystemNotificationExecutionDetails> notifications = getSystemNotificationExecDetails();
 
 			for (SystemNotificationExecutionDetails detail : notifications) {
-				if (detail.getTemplateCode() != null) {
-					if ("EMAIL".equals(detail.getNotificationType())) {
-						prepareEmail(detail);
-					} else if ("SMS".equals(detail.getNotificationType())) {
-						prepareSMSMsg(detail);
+				try {
+					if (detail.getTemplateCode() != null) {
+						if ("EMAIL".equals(detail.getNotificationType())) {
+							prepareEmail(detail);
+						} else if ("SMS".equals(detail.getNotificationType())) {
+							prepareSMSMsg(detail);
+						}
+					} else {
+						if ("EMAIL".equals(detail.getNotificationType())) {
+							prepareEmailMessage(detail);
+						} else if ("SMS".equals(detail.getNotificationType())) {
+							prepareSMSMessage(detail);
+						}
 					}
-				} else {
-					if ("EMAIL".equals(detail.getNotificationType())) {
-						prepareEmailMessage(detail);
-					} else if ("SMS".equals(detail.getNotificationType())) {
-						prepareSMSMessage(detail);
-					}
+					updateProcessFlag(detail);
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
 				}
-				updateProcessFlag(detail);
 			}
 
 		} catch (Exception e) {
@@ -438,14 +441,17 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		Notification notification = new Notification();
 		notification.getMobileNumbers().add(detail.getMobileNumber());
 		notification.setNotificationId(detail.getNotificationId());
+		notification.setMobileNumber(detail.getMobileNumber());
 		try {
 			parseSMS(detail, notification);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
+		notification.setKeyReference(detail.getKeyReference());
 		notification.setModule(NotificationConstants.SYSTEM_NOTIFICATION);
 		notification.setSubModule(detail.getNotificationCode());
+		notification.setNotificationData(settingNotificationData(detail));
 
 		smsEngine.sendSms(notification);
 
@@ -460,7 +466,10 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		Template template = configuration.getTemplate("smsTemplate");
 
 		try {
-			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, detail.getNotificationData());
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new InputSource(new StringReader(new String(detail.getNotificationData(), "UTF-8"))));
+
+			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, document);
 			notification.setMessage(result);
 		} catch (IOException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -544,24 +553,40 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	}
 
 	private List<SystemNotificationExecutionDetails> getSystemNotificationExecDetails() {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" snl.Id, Executionid, NotificationId, Email, Mobilenumber, NotificationData, Attributes");
+		sql.append(", NotificationType, ContentLocation, ContentFileName, Subject, Code Notificationcode");
+		sql.append(", sn.AttachmentFileNames, TemplateCode, KeyReference");
+		sql.append(" From sys_notification_exec_log snl");
+		sql.append(" Inner Join sys_notifications sn on sn.id = snl.notificationid");
+		sql.append(" Where snl.processingflag = ?");
 
-		SystemNotificationExecutionDetails systemNotifications = new SystemNotificationExecutionDetails();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setBoolean(index++, false);
+		}, (rs, roeNum) -> {
+			SystemNotificationExecutionDetails sysNoti = new SystemNotificationExecutionDetails();
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select snl.id, Executionid, Notificationid, Email, Mobilenumber, Notificationdata, Attributes,");
-		sql.append(" Notificationtype, Contentlocation, Contentfilename, Subject, code as Notificationcode, ");
-		sql.append(" sn.AttachmentFileNames, ");
-		sql.append(" TemplateCode, keyReference from sys_notification_exec_log snl");
-		sql.append(" inner join sys_notifications sn on sn.id = snl.notificationid");
-		sql.append(" where snl.processingflag = :ProcessingFlag ");
-		systemNotifications.setProcessingFlag(false);
+			sysNoti.setId(rs.getLong("Id"));
+			sysNoti.setExecutionId(rs.getLong("Executionid"));
+			sysNoti.setNotificationId(rs.getLong("NotificationId"));
+			sysNoti.setEmail(rs.getString("Email"));
+			sysNoti.setMobileNumber(rs.getString("Mobilenumber"));
+			sysNoti.setNotificationData(rs.getBytes("NotificationData"));
+			sysNoti.setAttributes(rs.getString("Attributes"));
+			sysNoti.setNotificationType(rs.getString("NotificationType"));
+			sysNoti.setContentLocation(rs.getString("ContentLocation"));
+			sysNoti.setContentFileName(rs.getString("ContentFileName"));
+			sysNoti.setSubject(rs.getString("Subject"));
+			sysNoti.setNotificationCode(rs.getString("Notificationcode"));
+			sysNoti.setAttachmentFileNames(rs.getString("AttachmentFileNames"));
+			sysNoti.setTemplateCode(rs.getString("TemplateCode"));
+			sysNoti.setKeyReference(rs.getString("KeyReference"));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(systemNotifications);
-		RowMapper<SystemNotificationExecutionDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SystemNotificationExecutionDetails.class);
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+			sysNoti.setProcessingFlag(false);
+
+			return sysNoti;
+		});
 	}
 
 	public SOAReportGenerationService getSoaReportGenerationService() {

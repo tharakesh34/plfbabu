@@ -49,7 +49,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -104,7 +105,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	private static final long serialVersionUID = -4832204841676720745L;
-	private static final Logger logger = Logger.getLogger(BranchDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BranchDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -490,6 +491,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		if (aBranch.getPinCodeId() != null) {
 			this.pinCode.setAttribute("pinCodeId", aBranch.getPinCodeId());
+		} else {
+			this.pinCode.setAttribute("pinCodeId", null);
 		}
 
 		this.pinCode.setValue(aBranch.getPinCode(), aBranch.getPinAreaDesc());
@@ -510,7 +513,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.cluster.setValue(aBranch.getClusterCode());
 		this.cluster.setDescription(aBranch.getClusterName());
 
-		if (aBranch.getClusterId() != null) {
+		if (aBranch.getClusterId() != null && aBranch.getClusterId() > 0) {
 			Cluster acluster = new Cluster();
 			acluster.setId(aBranch.getClusterId());
 			this.cluster.setObject(acluster);
@@ -554,8 +557,28 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			Filter[] filterCity = new Filter[1];
 			filterCity[0] = new Filter("PCProvince", sBranchProvince, Filter.OP_EQUAL);
 			this.branchCity.setFilters(filterCity);
-			Filter[] filterPin = new Filter[1];
-			filterPin[0] = new Filter("City", sBranchCity, Filter.OP_EQUAL);
+
+			ArrayList<Filter> filters = new ArrayList<Filter>();
+
+			if (sBranchCountry != null && !sBranchCountry.isEmpty()) {
+				Filter filterPin0 = new Filter("PCCountry", sBranchCountry, Filter.OP_EQUAL);
+				filters.add(filterPin0);
+			}
+
+			if (sBranchProvince != null && !sBranchProvince.isEmpty()) {
+				Filter filterPin1 = new Filter("PCProvince", sBranchProvince, Filter.OP_EQUAL);
+				filters.add(filterPin1);
+			}
+
+			if (sBranchCity != null && !sBranchCity.isEmpty()) {
+				Filter filterPin2 = new Filter("City", sBranchCity, Filter.OP_EQUAL);
+				filters.add(filterPin2);
+			}
+
+			Filter[] filterPin = new Filter[filters.size()];
+			for (int i = 0; i < filters.size(); i++) {
+				filterPin[i] = filters.get(i);
+			}
 			this.pinCode.setFilters(filterPin);
 		}
 		logger.debug("Leaving");
@@ -735,6 +758,12 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			aBranch.setPinCode(this.pinCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+
+		if (aBranch.getClusterId() != null) {
+			if (aBranch.getClusterId() == 0) {
+				aBranch.setClusterId(null);
+			}
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
@@ -953,7 +982,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		}
 		if (!this.bankRefNo.isReadonly()) {
 			this.bankRefNo.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_BankRefNo.value"),
-					"REGEXP_BRANCH_BANKREFERENCE", false));
+					PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 		if (this.miniBranch.isChecked()) {
 			this.parentBranch.setConstraint(
@@ -1090,6 +1119,12 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		final Branch aBranch = new Branch();
 		BeanUtils.copyProperties(getBranch(), aBranch);
 		String tranType = PennantConstants.TRAN_WF;
+
+		if (aBranch.getClusterId() != null) {
+			if (aBranch.getClusterId() == 0) {
+				aBranch.setClusterId(null);
+			}
+		}
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "

@@ -44,28 +44,51 @@ package com.pennanttech.model.presentment;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import com.pennant.backend.model.WSReturnStatus;
+
+@XmlType(propOrder = { "utilityCode", "userName", "umrnNo", "destAccHolder", "IFSC", "micr", "accountNo",
+		"txnReference", "chequeAmount", "presentationDate", "mandateType", "status", "presentment", "returnStatus" })
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement(name = "presentment")
 public class Presentment {
-
+	@XmlElement(name = "transactionRef")
 	private long txnReference;
 	private long entityCode;
 	private long cycleType = 1;
 	private String instrumentMode;
+	@XmlElement(name = "dateOfTxn")
 	private Date presentationDate;
 	private String bankCode;
 	private String productCode;
 	private long customerId;
+	@XmlElement(name = "finReference")
 	private String agreementNo;
+	@XmlElement(name = "amount")
 	private BigDecimal chequeAmount;
 	private long emiNo;
 	private long txnTypeCode = 1;
 	private long sourceCode = 2;
+	@XmlElement
 	private String brCode;
+	@XmlElement(name = "mandateRef")
 	private String umrnNo;
 	private String bankName;
+	@XmlElement(name = "micr")
 	private String micrCode;
+	@XmlElement(name = "accountNumber")
 	private String accountNo;
+	@XmlElement(name = "custName")
 	private String destAccHolder;
+	@XmlElement
 	private long accType;
 	private String bankAddress;
 	private String resubFlag = "Y";
@@ -73,6 +96,7 @@ public class Presentment {
 	private Date dataGenDate;
 	private long specialHitFile;
 	private String userID;
+	@XmlElement(name = "uniqueReference")
 	private String batchId;
 	private long jobId;
 	private long pickupBatchId = 1;
@@ -80,6 +104,7 @@ public class Presentment {
 	private String accountField2;
 	private String accountField3;
 	private String processedFlag;
+	@XmlElement(name = "instDate")
 	private Date cycleDate;
 	private String dataGenStatus = "C";
 	private long bankReportCnt;
@@ -90,13 +115,14 @@ public class Presentment {
 	private Date startDate;
 	private Date endDate;
 	private Long returnCode;
+	@XmlElement(name = "rejectReason")
 	private String returnReason;
 	private String lateResponseFlag;
 	private Date processedDate;
 	private long responseID;
 	private String partnerBankName;
 	private long partnerBankId;
-
+	@XmlElement(name = "ifsc")
 	private String IFSC;
 	private String chequeSerialNo;
 	private Date chequeDate;
@@ -105,8 +131,26 @@ public class Presentment {
 	private String entityDesc;
 	private String entCode;
 	private String utilityCode;
+	@XmlElement
+	private Date setilmentDate;
 
-	//getter and setter
+	@XmlElement
+	private String status;
+
+	@XmlElement
+	private WSReturnStatus returnStatus;
+
+	public Presentment() {
+		super();
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("status");
+		excludeFields.add("returnStatus");
+		excludeFields.add("userName");
+		return excludeFields;
+	}
 
 	public String getChequeSerialNo() {
 		return chequeSerialNo;
@@ -562,6 +606,30 @@ public class Presentment {
 
 	public void setUtilityCode(String utilityCode) {
 		this.utilityCode = utilityCode;
+	}
+
+	public Date getSetilmentDate() {
+		return setilmentDate;
+	}
+
+	public void setSetilmentDate(Date setilmentDate) {
+		this.setilmentDate = setilmentDate;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
 	}
 
 }

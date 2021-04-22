@@ -45,13 +45,14 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.AccountNotFoundException;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -59,9 +60,13 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -83,26 +88,31 @@ import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>ManualAdvise</b>.<br>
  */
 public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implements ManualAdviseService {
-	private static final Logger logger = Logger.getLogger(ManualAdviseServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ManualAdviseServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-
 	private FeeTypeService feeTypeService;
 	private FinanceDetailService financeDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
+
+	private DocumentDetailsDAO documentDetailsDAO;
+	private DocumentManagerDAO documentManagerDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -154,6 +164,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		logger.info(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
@@ -173,6 +184,15 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			auditHeader.setAuditReference(String.valueOf(manualAdvise.getAdviseID()));
 		} else {
 			getManualAdviseDAO().update(manualAdvise, tableType);
+		}
+
+		//Document Details
+		List<DocumentDetails> documentsList = manualAdvise.getDocumentDetails();
+		if (CollectionUtils.isNotEmpty(documentsList)) {
+			List<AuditDetail> details = manualAdvise.getAuditDetailMap().get("DocumentDetails");
+			details = processingDocumentDetailsList(details, manualAdvise, tableType.getSuffix());
+			auditDetails.addAll(details);
+			auditHeader.setAuditDetails(auditDetails);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -220,7 +240,18 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public ManualAdvise getManualAdviseById(long adviseID) {
 		ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(adviseID, "_View");
-		getAdviceFeeType(manualAdvise);
+		if (manualAdvise != null) {
+			// Document Details
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
+					String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
+					FinanceConstants.FINSER_EVENT_RECEIPT, "_View");
+			if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
+				manualAdvise.getDocumentDetails().addAll(documentList);
+			} else {
+				manualAdvise.setDocumentDetails(documentList);
+			}
+
+		}
 		return manualAdvise;
 	}
 
@@ -233,7 +264,19 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	 * @return ManualAdvise
 	 */
 	public ManualAdvise getApprovedManualAdvise(long adviseID) {
-		return getManualAdviseDAO().getManualAdviseById(adviseID, "_AView");
+		ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(adviseID, "_AView");
+		if (manualAdvise != null) {
+			// Document Details
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
+					String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
+					FinanceConstants.FINSER_EVENT_RECEIPT, "_AView");
+			if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
+				manualAdvise.getDocumentDetails().addAll(documentList);
+			} else {
+				manualAdvise.setDocumentDetails(documentList);
+			}
+		}
+		return manualAdvise;
 	}
 
 	@Override
@@ -250,9 +293,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise) {
 		FeeType javaFeeType = this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
-		com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
-		BeanUtils.copyProperties(javaFeeType, modelFeeType);
-		manualAdvise.setFeeType(modelFeeType);
+		if (javaFeeType != null) {
+			com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
+			BeanUtils.copyProperties(javaFeeType, modelFeeType);
+			manualAdvise.setFeeType(modelFeeType);
+		}
 		return manualAdvise;
 	}
 
@@ -274,6 +319,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
@@ -306,6 +353,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		if (manualAdvise.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getManualAdviseDAO().delete(manualAdvise, TableType.MAIN_TAB);
+			auditDetails.addAll(listDeletion(manualAdvise, TableType.MAIN_TAB.getSuffix(), tranType));
 		} else {
 			manualAdvise.setRoleCode("");
 			manualAdvise.setNextRoleCode("");
@@ -322,12 +370,27 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				manualAdvise.setRecordType("");
 				getManualAdviseDAO().update(manualAdvise, TableType.MAIN_TAB);
 			}
+
+			//Document Details
+			List<DocumentDetails> documentsList = manualAdvise.getDocumentDetails();
+			if (CollectionUtils.isNotEmpty(documentsList)) {
+				List<AuditDetail> details = manualAdvise.getAuditDetailMap().get("DocumentDetails");
+				details = processingDocumentDetailsList(details, manualAdvise, TableType.MAIN_TAB.getSuffix());
+				auditDetails.addAll(details);
+			}
+		}
+
+		if (!manualAdvise.isNewRecord()) {
+			//deleting data from _temp tables while Approve
+			auditHeader.setAuditDetails(
+					listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
+		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(manualAdvise);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -350,7 +413,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
@@ -360,26 +423,20 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditDetails.addAll(listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
-
+		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -388,16 +445,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return auditHeader;
 	}
 
-	/**
-	 * Method for Execute posting Details on Core Banking Side
-	 * 
-	 * @param auditHeader
-	 * @param appDate
-	 * @return
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 */
 	private ManualAdvise executeDueAccountingProcess(ManualAdvise advise, String postBranch) {
 		logger.debug(Literal.ENTERING);
 
@@ -419,9 +466,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		// Resetting Advise Data
 		advise.setLinkedTranId(linkedTranId);
 
-		// GST Invoice data resetting based on Accounting Process
-		String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-		if (!StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
+		boolean isGSTInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
+		if (!isGSTInvOnDue) {
 			return advise;
 		}
 
@@ -435,24 +481,35 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		BigDecimal gstAmount = BigDecimal.ZERO;
 		for (Taxes taxes : taxDetails) {
 			gstAmount = gstAmount.add(taxes.getPaidTax());
-			if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_CGST)) {
+			String taxType = taxes.getTaxType();
+
+			switch (taxType) {
+			case RuleConstants.CODE_CGST:
 				detail.setCGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_SGST)) {
+				break;
+			case RuleConstants.CODE_SGST:
 				detail.setSGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_IGST)) {
+				break;
+			case RuleConstants.CODE_IGST:
 				detail.setIGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_UGST)) {
+				break;
+			case RuleConstants.CODE_UGST:
 				detail.setUGST(taxes.getPaidTax());
-			} else if (StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_CESS)) {
+				break;
+			case RuleConstants.CODE_CESS:
 				detail.setCESS(taxes.getPaidTax());
+				break;
+			default:
+				break;
 			}
+
 		}
 		detail.setAmount(advMovement.getPaidAmount());
 		detail.setTotalGST(gstAmount);
 
 		Long invoiceID = null;
-		if (gstAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
-			List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
+		if (gstAmount.compareTo(BigDecimal.ZERO) > 0 && isGSTInvOnDue) {
+			List<ManualAdviseMovements> advMovements = new ArrayList<>();
 			advMovements.add(advMovement);
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
@@ -537,7 +594,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setValueDate(advise.getValueDate());
-		aeEvent.setPostDate(advise.getPostDate());
+		aeEvent.setPostDate(SysParamUtil.getAppDate());
 		aeEvent.setEntityCode(financeMain.getEntityCode());
 
 		aeEvent.setBranch(financeMain.getFinBranch());
@@ -727,6 +784,274 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public long getNewAdviseID() {
 		return manualAdviseDAO.getNewAdviseID();
+	}
+
+	/**
+	 * Common Method for Retrieving AuditDetails List
+	 * 
+	 * @param auditHeader
+	 * @param method
+	 * @return
+	 */
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
+		String auditTranType = "";
+
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (manualAdvise.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+		//Document Details
+		if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
+			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(manualAdvise, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
+		}
+
+		manualAdvise.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(manualAdvise);
+		auditHeader.setAuditDetails(auditDetails);
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param manualAdvise
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	public List<AuditDetail> setDocumentDetailsAuditData(ManualAdvise manualAdvise, String auditTranType,
+			String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		DocumentDetails document = new DocumentDetails();
+		String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
+		for (int i = 0; i < manualAdvise.getDocumentDetails().size(); i++) {
+			DocumentDetails documentDetails = manualAdvise.getDocumentDetails().get(i);
+
+			if (StringUtils.isEmpty(StringUtils.trimToEmpty(documentDetails.getRecordType()))) {
+				continue;
+			}
+
+			documentDetails.setWorkflowId(manualAdvise.getWorkflowId());
+			boolean isRcdType = false;
+
+			if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (manualAdvise.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && (isRcdType)) {
+				documentDetails.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| documentDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			documentDetails.setRecordStatus(manualAdvise.getRecordStatus());
+			documentDetails.setUserDetails(manualAdvise.getUserDetails());
+			documentDetails.setLastMntOn(manualAdvise.getLastMntOn());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetails.getBefImage(),
+					documentDetails));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+
+	/**
+	 * Method For Preparing List of AuditDetails for Document Details
+	 * 
+	 * @param auditDetails
+	 * @param manualAdvise
+	 * @param type
+	 * @return
+	 */
+	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, ManualAdvise manualAdvise,
+			String type) {
+		logger.debug(Literal.ENTERING);
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			DocumentDetails documentDetails = (DocumentDetails) auditDetails.get(i).getModelData();
+			documentDetails.setReferenceId(String.valueOf(manualAdvise.getId()));
+			if (StringUtils.isBlank(documentDetails.getRecordType())) {
+				continue;
+			}
+			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode()))) {
+				saveRecord = false;
+				updateRecord = false;
+				deleteRecord = false;
+				approveRec = false;
+				String rcdType = "";
+				String recordStatus = "";
+				boolean isTempRecord = false;
+				if (StringUtils.isEmpty(type) || type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+					approveRec = true;
+					documentDetails.setRoleCode("");
+					documentDetails.setNextRoleCode("");
+					documentDetails.setTaskId("");
+					documentDetails.setNextTaskId("");
+				}
+				documentDetails.setLastMntBy(manualAdvise.getLastMntBy());
+				documentDetails.setWorkflowId(0);
+
+				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
+					approveRec = true;
+				}
+
+				if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(documentDetails.getRecordType())) {
+					deleteRecord = true;
+					isTempRecord = true;
+				} else if (documentDetails.isNewRecord()) {
+					saveRecord = true;
+					if (PennantConstants.RCD_ADD.equalsIgnoreCase(documentDetails.getRecordType())) {
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(documentDetails.getRecordType())) {
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(documentDetails.getRecordType())) {
+						documentDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
+
+				} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(documentDetails.getRecordType())) {
+					if (approveRec) {
+						saveRecord = true;
+					} else {
+						updateRecord = true;
+					}
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(documentDetails.getRecordType())) {
+					updateRecord = true;
+				} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(documentDetails.getRecordType())) {
+					if (approveRec) {
+						deleteRecord = true;
+					} else if (documentDetails.isNew()) {
+						saveRecord = true;
+					} else {
+						updateRecord = true;
+					}
+				}
+
+				if (approveRec) {
+					rcdType = documentDetails.getRecordType();
+					recordStatus = documentDetails.getRecordStatus();
+					documentDetails.setRecordType("");
+					documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				}
+				if (saveRecord) {
+					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
+						documentDetails.setReferenceId(String.valueOf(manualAdvise.getId()));
+					}
+					documentDetails.setFinEvent(FinanceConstants.FINSER_EVENT_RECEIPT);
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+						DocumentManager documentManager = new DocumentManager();
+						documentManager.setDocImage(documentDetails.getDocImage());
+						documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
+					}
+					if (documentDetails.getDocId() < 0) {
+						documentDetails.setDocId(Long.MIN_VALUE);
+					}
+					documentDetailsDAO.save(documentDetails, type);
+				}
+
+				if (updateRecord) {
+					// When a document is updated, insert another file into the DocumentManager table's.
+					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+						DocumentManager documentManager = new DocumentManager();
+						documentManager.setDocImage(documentDetails.getDocImage());
+						documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
+					}
+					documentDetailsDAO.update(documentDetails, type);
+				}
+
+				if (deleteRecord && ((StringUtils.isEmpty(type) && !isTempRecord) || (StringUtils.isNotEmpty(type)))) {
+					if (!type.equals(PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+						documentDetailsDAO.delete(documentDetails, type);
+					}
+				}
+
+				if (approveRec) {
+					documentDetails.setFinEvent("");
+					documentDetails.setRecordType(rcdType);
+					documentDetails.setRecordStatus(recordStatus);
+				}
+				auditDetails.get(i).setModelData(documentDetails);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+
+	// Method for Deleting all records related to receipt in _Temp/Main tables depend on method type
+	public List<AuditDetail> listDeletion(ManualAdvise manualAdvise, String tableType, String auditTranType) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+
+		// Document Details. 
+		List<AuditDetail> documentDetails = manualAdvise.getAuditDetailMap().get("DocumentDetails");
+		if (documentDetails != null && documentDetails.size() > 0) {
+			DocumentDetails document = new DocumentDetails();
+			DocumentDetails documentDetail = null;
+			List<DocumentDetails> docList = new ArrayList<DocumentDetails>();
+			String[] fields = PennantJavaUtil.getFieldDetails(document, document.getExcludeFields());
+			for (int i = 0; i < documentDetails.size(); i++) {
+				documentDetail = (DocumentDetails) documentDetails.get(i).getModelData();
+				documentDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				docList.add(documentDetail);
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], documentDetail.getBefImage(),
+						documentDetail));
+			}
+			documentDetailsDAO.deleteList(docList, tableType);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditList;
+	}
+
+	public DocumentDetailsDAO getDocumentDetailsDAO() {
+		return documentDetailsDAO;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public DocumentManagerDAO getDocumentManagerDAO() {
+		return documentManagerDAO;
+	}
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
 	}
 
 }

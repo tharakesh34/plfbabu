@@ -85,7 +85,7 @@ public class SalutationListModelItemRenderer implements ListitemRenderer<Salutat
 		lc = new Listcell(PennantJavaUtil.getLabel(salutation.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("id", salutation.getId());
+		item.setAttribute("id", salutation);
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onSalutationItemDoubleClicked");
 	}

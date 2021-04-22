@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.NationalityCodeDAO;
 import com.pennant.backend.model.systemmasters.NationalityCode;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements NationalityCodeDAO {
-	private static Logger logger = Logger.getLogger(NationalityCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NationalityCodeDAOImpl.class);
 
 	public NationalityCodeDAOImpl() {
 		super();
@@ -99,8 +100,7 @@ public class NationalityCodeDAOImpl extends BasicDao<NationalityCode> implements
 
 		logger.debug("selectSql: " + selectSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(nationalityCodes);
-		RowMapper<NationalityCode> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NationalityCode.class);
+		RowMapper<NationalityCode> typeRowMapper = BeanPropertyRowMapper.newInstance(NationalityCode.class);
 
 		try {
 			nationalityCodes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -30,8 +31,8 @@ import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.ws.model.customer.DocumentList;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class DocumentController {
-	private Logger logger = Logger.getLogger(DocumentController.class);
+public class DocumentController extends ExtendedTestClass {
+	private Logger logger = LogManager.getLogger(DocumentController.class);
 
 	private DocumentService documentService;
 	private DocumentDetailsDAO documentDetailsDAO;

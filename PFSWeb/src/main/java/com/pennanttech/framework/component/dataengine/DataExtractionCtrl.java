@@ -3,7 +3,8 @@ package com.pennanttech.framework.component.dataengine;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Hbox;
@@ -30,7 +31,7 @@ import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
 public class DataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
 	private static final long serialVersionUID = 1297405999029019920L;
-	private static final Logger logger = Logger.getLogger(DataExtractionCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DataExtractionCtrl.class);
 
 	protected Window window_DataImportCtrl;
 

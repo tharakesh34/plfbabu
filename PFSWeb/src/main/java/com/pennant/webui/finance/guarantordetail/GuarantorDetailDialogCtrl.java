@@ -44,7 +44,6 @@
 package com.pennant.webui.finance.guarantordetail;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +51,8 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
@@ -122,7 +122,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(GuarantorDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(GuarantorDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -308,8 +308,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (arguments.containsKey("guarantorDetail")) {
 				this.guarantorDetail = (GuarantorDetail) arguments.get("guarantorDetail");
 				GuarantorDetail befImage = new GuarantorDetail();
-				BeanUtils.copyProperties(this.guarantorDetail, befImage);
-				this.guarantorDetail.setBefImage(befImage);
+				if (this.guarantorDetail.getBefImage() == null) {
+					BeanUtils.copyProperties(this.guarantorDetail, befImage);
+					this.guarantorDetail.setBefImage(befImage);
+				}
 				setGuarantorDetail(this.guarantorDetail);
 			} else {
 				setGuarantorDetail(null);
@@ -913,7 +915,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		this.guarantorCIFName.setMaxlength(100);
 		this.guranteePercentage.setMaxlength(5);
 		this.guranteePercentage.setFormat(PennantConstants.rateFormate2);
-		this.guranteePercentage.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.guranteePercentage.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.guranteePercentage.setScale(2);
 		this.mobileNo.setMaxlength(13);
 		this.emailId.setMaxlength(200);
@@ -1025,7 +1027,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Leaving");
 	}
 
-	String toCcy = SysParamUtil.getValueAsString("APP_DFT_CURR");
+	String toCcy = SysParamUtil.getAppCurrency();
 	int DFT_CURR_EDIT_FIELD = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 
 	// ================Primary Exposure Details
@@ -1727,7 +1729,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (!this.guarantorCIFName.isReadonly()) {
 				this.guarantorCIFName
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_GuarantorDetailDialog_Name.value"),
-								PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+								PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, true));
 			}
 			// Mobile No
 			/*
@@ -1738,7 +1740,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			if (!this.mobileNo.isReadonly()) {
 				this.mobileNo.setConstraint(
 						new PTMobileNumberValidator(Labels.getLabel("label_GuarantorDetailDialog_MobileNo.value"), true,
-								PennantRegularExpressions.TELEPHONE_FAX_REGEX));
+								PennantRegularExpressions.REGEX_MOBILE));
 			}
 			// Email Id
 			if (!this.emailId.isReadonly()) {

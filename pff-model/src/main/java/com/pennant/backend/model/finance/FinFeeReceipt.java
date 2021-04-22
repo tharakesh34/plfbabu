@@ -68,6 +68,7 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal availableAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal remainingFee = BigDecimal.ZERO;
+	private BigDecimal paidTds = BigDecimal.ZERO;
 
 	private boolean newRecord = false;
 	private boolean exist = true;
@@ -99,8 +100,44 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("remainingFee");
 		excludeFields.add("exist");
 		excludeFields.add("vasReference");
-
+		excludeFields.add("paidTds");
 		return excludeFields;
+	}
+
+	public FinFeeReceipt copyEntity() {
+		FinFeeReceipt entity = new FinFeeReceipt();
+		entity.setId(this.id);
+		entity.setFeeID(this.feeID);
+		entity.setReceiptID(this.receiptID);
+		entity.setFeeTypeId(this.feeTypeId);
+		entity.setReceiptReference(this.receiptReference);
+		entity.setTransactionRef(this.transactionRef);
+		entity.setFavourNumber(this.favourNumber);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setReceiptType(this.receiptType);
+		entity.setReceiptAmount(this.receiptAmount);
+		entity.setAvailableAmount(this.availableAmount);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setRemainingFee(this.remainingFee);
+		entity.setPaidTds(this.paidTds);
+		entity.setNewRecord(this.newRecord);
+		entity.setExist(this.exist);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setVasReference(this.vasReference);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	// ******************************************************//
@@ -260,4 +297,13 @@ public class FinFeeReceipt extends AbstractWorkflowEntity implements Entity {
 	public void setFeeTypeDesc(String feeTypeDesc) {
 		this.feeTypeDesc = feeTypeDesc;
 	}
+
+	public BigDecimal getPaidTds() {
+		return paidTds;
+	}
+
+	public void setPaidTds(BigDecimal paidTds) {
+		this.paidTds = paidTds;
+	}
+
 }

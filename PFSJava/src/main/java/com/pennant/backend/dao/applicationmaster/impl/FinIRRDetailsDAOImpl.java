@@ -49,7 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.TableType;
  * Data access layer implementation for <code>IRRFinanceType</code> with set of CRUD operations.
  */
 public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements FinIRRDetailsDAO {
-	private static Logger logger = Logger.getLogger(FinIRRDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinIRRDetailsDAOImpl.class);
 
 	@Override
 	public List<FinIRRDetails> getFinIRRList(String finReference, String type) {

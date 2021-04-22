@@ -6,7 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -24,7 +25,7 @@ import com.pennanttech.pff.external.DataMartProcess;
 import com.pennanttech.pff.external.datamart.DataMartExtarct;
 
 public class DataMart implements Tasklet {
-	private Logger logger = Logger.getLogger(DataMart.class);
+	private Logger logger = LogManager.getLogger(DataMart.class);
 
 	private Date valueDate;
 	private Date appDate;

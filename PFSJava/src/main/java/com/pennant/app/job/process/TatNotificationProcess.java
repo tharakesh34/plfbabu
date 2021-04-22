@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -36,7 +37,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class TatNotificationProcess extends QuartzJobBean implements StatefulJob, Serializable {
 	private static final long serialVersionUID = -336577018042634131L;
-	private static final Logger logger = Logger.getLogger(TatNotificationProcess.class);
+	private static final Logger logger = LogManager.getLogger(TatNotificationProcess.class);
 
 	public TatNotificationProcess() {
 		super();

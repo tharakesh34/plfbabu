@@ -9,7 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.APIHeader;
@@ -38,8 +39,8 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class VASController {
-	private static final Logger logger = Logger.getLogger(VASController.class);
+public class VASController extends ExtendedTestClass {
+	private static final Logger logger = LogManager.getLogger(VASController.class);
 	private VASRecordingService vASRecordingService;
 	private VASConfigurationService vASConfigurationService;
 	private FinanceMainDAO financeMainDAO;
@@ -110,7 +111,7 @@ public class VASController {
 			} else {
 				vasRecording.setExtendedFieldRender(null);
 			}
-			//FIXME 
+			// FIXME
 
 			/*
 			 * if(StringUtils.isNotEmpty(vasConfiguration.getPostValidation())){ Map<String, Object>
@@ -120,11 +121,11 @@ public class VASController {
 			 * error.getValue(); } }
 			 */
 
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(vasRecording, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = vASRecordingService.doApprove(auditHeader);
 			response = new VASRecording();
@@ -136,7 +137,7 @@ public class VASController {
 			} else {
 				response.setVasReference(vasRecording.getVasReference());
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				//for logging
+				// for logging
 				if (StringUtils.isNotBlank(response.getCif())) {
 					APIErrorHandlerService.logReference(response.getCif());
 				} else if (StringUtils.isNotBlank(response.getFinReference())) {
@@ -167,7 +168,7 @@ public class VASController {
 
 		WSReturnStatus response = new WSReturnStatus();
 		try {
-			//set the default values for mandate 
+			// set the default values for mandate
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			vasDetails.setUserDetails(userDetails);
 			vasDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -177,11 +178,11 @@ public class VASController {
 			vasDetails.setVasStatus("C");
 			vasDetails.setExtendedFieldRender(null);
 
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(vasDetails, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			// call doApprove service method

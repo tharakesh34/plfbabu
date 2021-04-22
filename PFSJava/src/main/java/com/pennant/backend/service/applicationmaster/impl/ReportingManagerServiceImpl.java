@@ -1,6 +1,7 @@
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.core.TableType;
 
 public class ReportingManagerServiceImpl extends GenericService<ReportingManager> implements ReportingManagerService {
 
-	private static final Logger logger = Logger.getLogger(ReportingManagerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ReportingManagerServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ReportingManagerDAO reportingManagerDAO;

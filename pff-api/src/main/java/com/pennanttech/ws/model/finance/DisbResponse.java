@@ -26,6 +26,8 @@ public class DisbResponse implements Serializable {
 	private String accountNo;
 	@XmlElement
 	private String status;
+	@XmlElement
+	private String type;
 
 	public DisbResponse() {
 		super();
@@ -77,5 +79,13 @@ public class DisbResponse implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

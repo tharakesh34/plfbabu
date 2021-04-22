@@ -1,6 +1,8 @@
 package com.pennanttech.pff.process.collection;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -8,12 +10,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -105,8 +107,9 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
-			parameterSource.addValue("AppDate1", DateUtil.format(SysParamUtil.getAppDate(), "yyyy-MM-dd"));
-			parameterSource.addValue("AppDate", SysParamUtil.getAppDate());
+			Date appDate = SysParamUtil.getAppDate();
+			parameterSource.addValue("AppDate1", DateUtil.format(appDate, "yyyy-MM-dd"));
+			parameterSource.addValue("AppDate", appDate);
 			count = jdbcTemplate.update(sql.toString(), parameterSource);
 			logger.debug(Literal.LEAVING);
 		} catch (Exception e) {
@@ -260,7 +263,7 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<CollectionCustomerDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<CollectionCustomerDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(CollectionCustomerDetail.class);
 
 		try {
@@ -290,7 +293,7 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAddres);
-		RowMapper<CustomerAddres> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
+		RowMapper<CustomerAddres> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
 		List<CustomerAddres> customerAddresses = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		logger.debug(Literal.LEAVING);
@@ -298,47 +301,59 @@ public class CollectionDataDownloadProcessImpl implements CollectionDataDownload
 	}
 
 	private List<CustomerPhoneNumber> getCustomerPhoneNumberByCustomer(final long id) {
-		logger.debug(Literal.ENTERING);
-		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
-		customerPhoneNumber.setPhoneCustID(id);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("select PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber");
-		sql.append(", PhoneTypePriority FROM CustomerPhoneNumbers");
-		sql.append(" Where PhoneCustID =:PhoneCustID order by PhoneTypePriority desc");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber");
+		sql.append(", PhoneTypePriority");
+		sql.append(" From CustomerPhoneNumbers");
+		sql.append(" Where PhoneCustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerPhoneNumber);
-		RowMapper<CustomerPhoneNumber> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerPhoneNumber.class);
 
-		List<CustomerPhoneNumber> customerPhoneNumbers = this.jdbcTemplate.query(sql.toString(), beanParameters,
-				typeRowMapper);
-		logger.debug(Literal.LEAVING);
-		return customerPhoneNumbers;
+		List<CustomerPhoneNumber> phList = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
+			ps.setLong(1, id);
+		}, (rs, rowNum) -> {
+			CustomerPhoneNumber custPhnNumbr = new CustomerPhoneNumber();
+
+			custPhnNumbr.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+			custPhnNumbr.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+			custPhnNumbr.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
+			custPhnNumbr.setPhoneNumber(rs.getString("PhoneNumber"));
+
+			return custPhnNumbr;
+		});
+
+		return phList.stream()
+				.sorted((ph1, ph2) -> Integer.compare(ph2.getPhoneTypePriority(), ph1.getPhoneTypePriority()))
+				.collect(Collectors.toList());
 	}
 
 	/**
 	 * Method to return the customer email based on given customer id
 	 */
 	private List<CustomerEMail> getCustomerEmailByCustomer(final long id) {
-		logger.debug(Literal.ENTERING);
-		CustomerEMail customerEMail = new CustomerEMail();
-		customerEMail.setId(id);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select CustID, CustEMail, CustEMailPriority, CustEMailTypeCode");
 		sql.append(" FROM  CustomerEMails");
-		sql.append(" Where CustID = :custID order by CustEMailPriority desc");
+		sql.append(" Where CustID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
-		List<CustomerEMail> customerEMails = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		List<CustomerEMail> customerEMails = this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
+			ps.setLong(1, id);
+		}, (rs, rowNum) -> {
+			CustomerEMail custEMail = new CustomerEMail();
+			custEMail.setCustID(rs.getLong("CustID"));
+			custEMail.setCustEMail(rs.getString("CustEMail"));
+			custEMail.setCustEMailPriority(rs.getInt("CustEMailPriority"));
+			custEMail.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
 
-		logger.debug(Literal.LEAVING);
-		return customerEMails;
+			return custEMail;
+		});
+
+		return customerEMails.stream()
+				.sorted((em1, em2) -> em2.getCustEMailTypeCode().compareTo(em1.getCustEMailTypeCode()))
+				.collect(Collectors.toList());
+
 	}
 
 	public void setDataSource(DataSource dataSource) {

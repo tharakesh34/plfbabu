@@ -53,6 +53,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -92,6 +93,9 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 
 	private boolean apiRequest = false; //Refund Uploads
 	private String finSource;
+	private BigDecimal adviseAmount = BigDecimal.ZERO;
+	private BigDecimal prvGST = BigDecimal.ZERO;
+	private ManualAdvise manualAdvise;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -120,6 +124,9 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("taxApplicable");
 		excludeFields.add("finSource");
 		excludeFields.add("taxHeader");
+		excludeFields.add("adviseAmount");
+		excludeFields.add("prvGST");
+		excludeFields.add("manualAdvise");
 		return excludeFields;
 	}
 
@@ -294,4 +301,29 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	public void setTaxHeader(TaxHeader taxHeader) {
 		this.taxHeader = taxHeader;
 	}
+
+	public BigDecimal getAdviseAmount() {
+		return adviseAmount;
+	}
+
+	public void setAdviseAmount(BigDecimal adviseAmount) {
+		this.adviseAmount = adviseAmount;
+	}
+
+	public BigDecimal getPrvGST() {
+		return prvGST;
+	}
+
+	public void setPrvGST(BigDecimal prvGST) {
+		this.prvGST = prvGST;
+	}
+
+	public ManualAdvise getManualAdvise() {
+		return manualAdvise;
+	}
+
+	public void setManualAdvise(ManualAdvise manualAdvise) {
+		this.manualAdvise = manualAdvise;
+	}
+
 }

@@ -169,7 +169,7 @@
 								</hlayout>
 								<label id="label_PartnerBankDialog_DataEngineConfigName" value="${c:l('label_PartnerBankDialog_DataEngineConfigName.value')}" />
 								<hlayout>
-									<space spacing="2px" />
+									<space spacing="2px" sclass="mandatory" />
 									<combobox id="dataEngineConfigName" width="100" />
 								</hlayout>
 							</row>
@@ -205,6 +205,12 @@
 									<space spacing="2px" />
 									<checkbox id="active" checked="false" />
 								</hlayout>
+								<label id="label_PartnerBankDialog_PartnerBankId"
+									value="${c:l('label_PartnerBankDialog_PartnerBankId.value')}" />
+									<hlayout>
+								<space spacing="2px" />
+									<intbox id="partnerBankId" width="100"/>
+									</hlayout>
 							</row>
 							<row>
 								<label id="label_Entity" value="${c:l('label_PartnerBankDialog_Entity.value')}" />

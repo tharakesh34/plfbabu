@@ -82,6 +82,9 @@
 									<label id="label_ReceiptSearch_ReceiptReceiptId" value="${c:l('label_ReceiptSearch_ReceiptReceiptId.value')}" />
 									<listbox id="sortOperator_ReceiptReceiptId" width="43px" mold="select" rows="1" />
 									<longbox id="receiptId" width="163px" maxlength="19" />
+									<label id="label_externalReference" value="${c:l('label_ReceiptSearch_externalRef.value')}" />
+									<listbox id="sortOperator_ExternalReference" width="43px" mold="select" rows="1" />
+									<uppercasebox id="externalReference" width="180px" maxlength="20" />
 								</row>
 								<row>
 									<label id="label_ReceiptSearch_ReceiptFinBranch" value="${c:l('label_ReceiptSearch_ReceiptFinBranch.value')}" />
@@ -147,6 +150,8 @@
 									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptStatus" label="${c:l('listheader_ReceiptModeStatus.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_ReceiptExtReference" label="${c:l('listheader_ReceiptExternalReference.label')}" sort="auto"
+									hflex="min" />	
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>

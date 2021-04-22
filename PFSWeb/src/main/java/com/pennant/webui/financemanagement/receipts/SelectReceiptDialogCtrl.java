@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -65,6 +66,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.financemanagement.paymentMode.ReceiptListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -74,7 +76,7 @@ import com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess;
 public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	private static final long serialVersionUID = 8556168885363682933L;
-	private static final Logger logger = Logger.getLogger(SelectReceiptDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(SelectReceiptDialogCtrl.class);
 
 	protected Window window_SelectReceiptDialog;
 	protected ExtendedCombobox fundingAccount;
@@ -112,8 +114,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	@Autowired
 	private RuleService ruleService;
-	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
 	@Autowired
 	private MultiReceiptThreadProcess threadprocess;
 
@@ -390,7 +390,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_BounceCode.isVisible()) {
-				finReceiptHeader.setBounceReason(this.bounceCode.getValidatedValue());
+				finReceiptHeader.setBounceReason(Integer.valueOf(this.bounceCode.getValidatedValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -443,8 +443,13 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (row_DepositDate.isVisible()) {
-			this.depositDate.setConstraint(new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(),
-					SysParamUtil.getAppDate(), true));
+			if (row_ReceiptStatus.isVisible()) {
+				this.depositDate.setConstraint(
+						new PTDateValidator(label, true, finReceiptHeader.getDepositDate(), appDate, true));
+			} else {
+				this.depositDate.setConstraint(
+						new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(), appDate, true));
+			}
 		}
 
 		if (this.row_ReceiptStatus.isVisible()) {
@@ -510,6 +515,31 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					executeMap = receiptDetail.getDeclaredFieldValues();
 				}
 				if (FinanceConstants.DEPOSIT_MAKER.equals(module)) {
+					if (DateUtil.compare(this.depositDate.getValue(), appDate) > 0) {
+						MessageUtil.showError("Deposit date cannot be greater than " + appDate);
+						return;
+					}
+					Date valueDate = receiptHeader.getValueDate();
+					if (DateUtil.compare(appDate, valueDate) > 0) {
+						if (DateUtil.compare(this.depositDate.getValue(), valueDate) < 0) {
+							MessageUtil.showError("Deposit date cannot be less than " + valueDate + " for receiptId "
+									+ receiptHeader.getReceiptID());
+							return;
+						}
+					}
+					receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
+				}
+
+				if (FinanceConstants.REALIZATION_MAKER.equals(module)) {
+					if (DateUtil.compare(this.depositDate.getValue(), appDate) > 1) {
+						MessageUtil.showError("Realization date cannot be greater than " + appDate);
+						return;
+					}
+					if (DateUtil.compare(this.depositDate.getValue(), receiptHeader.getDepositDate()) < 0) {
+						MessageUtil.showError("Realization date cannot be less than " + receiptHeader.getDepositDate()
+								+ " for receiptId " + receiptHeader.getReceiptID());
+						return;
+					}
 					receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
 				}
 				if (FinanceConstants.REALIZATION_MAKER.equals(roleCode)) {
@@ -548,7 +578,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					BigDecimal bounceAmt = BigDecimal.ZERO;
 					if (rule != null) {
 						executeMap.put("br_finType", receiptHeader.getFinType());
-						bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
+						bounceAmt = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), executeMap,
 								receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 
 						ManualAdvise bounce = new ManualAdvise();
@@ -909,13 +939,4 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
 }

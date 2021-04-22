@@ -4,20 +4,20 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>6.0.0-SNAPSHOT</version>
+	<version>6.0.0</version>
 	<packaging>pom</packaging>
+
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>5.9.0</pff.version>
-		<pff.version>6.0.0-SNAPSHOT</pff.version>
+		<pff.version>6.0.0</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>14</jdk.version>
-		<spring.version>4.0.5.RELEASE</spring.version>
-		<spring.security.version>3.2.5.RELEASE</spring.security.version>
-		<spring.batch.version>3.0.8.RELEASE</spring.batch.version>
+		<jdk.version>1.8</jdk.version>
+		<spring.version>5.2.1.RELEASE</spring.version>
+		<spring.security.version>3.2.10.RELEASE</spring.security.version>
+		<spring.batch.version>4.2.0.RELEASE</spring.batch.version>
 		<spring.ws.version>2.1.0.RELEASE</spring.ws.version>
-		<spring.web.version>3.0.5</spring.web.version>
+		<spring.web.version>5.2.1.RELEASE</spring.web.version>
 		<zk.version>8.6.2</zk.version>
 		<atlantic.version>8.0.1</atlantic.version>
 		<jasperreports.version>6.6.0</jasperreports.version>
@@ -49,6 +49,7 @@
 		<module>../pff-interface-${client.code}</module>
 		<module>../pff-extension</module>
 		<module>../pff-extension-${client.code}</module>
+		<module>../PLFInterface</module>
 		<module>../PFSJava</module>
 		<module>../PFSBatch</module>
 		<module>../PFSWeb</module>
@@ -57,23 +58,23 @@
 	</modules>
 
 	<dependencyManagement>
-			<dependencies>
+		<dependencies>
 			<!-- pennApps Framework -->
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>1.7.6.1</version>
+				<version>1.8.0-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
 				<groupId>com.pennanttech.pennapps.pff</groupId>
 				<artifactId>account-updater</artifactId>
-				<version>1.0.2</version>
+				<version>1.0.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>0.7.4.1</version>
+				<version>0.7.6</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -83,12 +84,12 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>document-generator</artifactId>
-				<version>2.3.4</version>
+				<version>3.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.framework.components</groupId>
 				<artifactId>data-engine</artifactId>
-				<version>3.5.4</version>
+				<version>3.5.4.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -98,7 +99,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-spreadsheets</artifactId>
-				<version>1.0.1</version>
+				<version>1.0.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.document</groupId>
@@ -121,6 +122,7 @@
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-1.2-api</artifactId>
 				<version>${log4j.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -153,7 +155,7 @@
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
-				<version>1.4.0</version>
+				<version>1.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -231,6 +233,12 @@
 				<artifactId>spring-security-ldap</artifactId>
 				<version>${spring.security.version}</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+			<dependency>
+				<groupId>org.apache.pdfbox</groupId>
+				<artifactId>pdfbox</artifactId>
+				<version>2.0.23</version>
+			</dependency>
 			<dependency>
 				<groupId>org.jasypt</groupId>
 				<artifactId>jasypt-spring3</artifactId>
@@ -268,6 +276,12 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>document-generator</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.framework.components</groupId>
@@ -280,6 +294,12 @@
 		<dependency>
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>pennapps-spreadsheets</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.pennanttech.pennapps.pff</groupId>
@@ -348,6 +368,12 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.29</version>
+		</dependency>
 
 		<!-- Logging Framework -->
 		<dependency>
@@ -382,7 +408,11 @@
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.2.0</version>
+			<version>1.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
 		</dependency>
 
 		<!-- Testing Framework -->
@@ -396,15 +426,38 @@
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.10.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.10.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.10.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.1</version>
 				<configuration>
-					<release>${jdk.version}</release>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<!-- <fork>true</fork> -->
+					<meminitial>128m</meminitial>
+					<maxmem>1024m</maxmem>
+					<compilerArguments>
+						<verbose />
+						<bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar</bootclasspath>
+					</compilerArguments>
 				</configuration>
 			</plugin>
 		</plugins>

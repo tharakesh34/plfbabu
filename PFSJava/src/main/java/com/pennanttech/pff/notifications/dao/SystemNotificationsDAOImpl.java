@@ -3,12 +3,13 @@ package com.pennanttech.pff.notifications.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Notifications.SystemNotifications;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SystemNotificationsDAOImpl extends SequenceDao<SystemNotifications> implements SystemNotificationsDAO {
 
-	private static Logger logger = Logger.getLogger(SystemNotificationsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SystemNotificationsDAOImpl.class);
 
 	public SystemNotificationsDAOImpl() {
 		super();
@@ -34,8 +35,7 @@ public class SystemNotificationsDAOImpl extends SequenceDao<SystemNotifications>
 		sql.append("Select * from Sys_Notifications where active = :active");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(systemNotifications);
-		RowMapper<SystemNotifications> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SystemNotifications.class);
+		RowMapper<SystemNotifications> typeRowMapper = BeanPropertyRowMapper.newInstance(SystemNotifications.class);
 		logger.debug(Literal.LEAVING);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);

@@ -2,7 +2,6 @@ package com.pennant.webui.reports;
 
 import java.lang.reflect.Method;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Filedownload;
@@ -28,23 +29,27 @@ import com.aspose.words.SaveFormat;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.document.generator.TemplateEngine;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<InterestCertificate> {
 	private static final long serialVersionUID = 9031340167587772517L;
-	private static final Logger logger = Logger.getLogger(InterestCertificateGenerationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InterestCertificateGenerationDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -110,7 +115,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		}
 		// For customer360 Report should be displayed as modal 
 		if (arguments.containsKey("customer360")) {
-			isCustomer360 = (boolean) arguments.containsKey("customer360");
+			isCustomer360 = arguments.containsKey("customer360");
 		}
 
 		doSetFieldProperties();
@@ -134,6 +139,13 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType" });
+		String loanTypes = SysParamUtil.getValueAsString(SMTParameterConstants.PROVCERT_LOANTYPES);
+
+		if (StringUtils.isNotEmpty(loanTypes)) {
+			Filter[] loanTypeFilter = new Filter[1];
+			loanTypeFilter[0] = new Filter("FinType", loanTypes.split(","), Filter.OP_IN);
+			finType.setFilters(loanTypeFilter);
+		}
 
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
@@ -141,28 +153,34 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		this.finReference.setModuleName("FinanceMain");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		this.finReference.setWhereClause("FinisActive = 1");
 
-		String startYear = SMTParameterConstants.BAJAJFINANCE_STARTDATE;
-		String year = startYear.substring(startYear.length() - 4);
-
-		int years = DateUtility.getYearsBetween(new SimpleDateFormat("dd/MM/yyyy").parse(startYear),
-				DateUtility.getAppDate());
-
-		int month = DateUtility.getMonth(DateUtility.getAppDate());
-
-		// As of financeYear Start from april
-		if (month >= 4) {
-			years = years + 1;
+		if (StringUtils.equalsAnyIgnoreCase("interest", getArgument("module"))) {
+			StringBuilder whereClause = new StringBuilder();
+			whereClause.append("FinisActive = 1 OR ClosingStatus=" + "'" + FinanceConstants.CLOSE_STATUS_MATURED + "'");
+			whereClause.append(" OR ClosingStatus=" + "'" + FinanceConstants.CLOSE_STATUS_WRITEOFF + "'");
+			whereClause.append(" OR ClosingStatus=" + "'" + FinanceConstants.CLOSE_STATUS_EARLYSETTLE + "'");
+			this.finReference.setWhereClause(whereClause.toString());
+		} else {
+			this.finReference.setWhereClause("FinisActive = 1");
 		}
 
-		financeYearList = new ArrayList<ValueLabel>(years);
-		for (int i = 0; i <= years - 1; i++) {
-			financeYearList.add(
-					new ValueLabel(String.valueOf(Integer.valueOf(year) + i), String.valueOf(Integer.valueOf(year) + i)
-							+ "-" + String.valueOf(Integer.valueOf(year.substring(year.length() - 2)) + i + 1)));
-		}
+		financeYearList = new ArrayList<ValueLabel>();
 
+		if (StringUtils.equalsAnyIgnoreCase("provisional", getArgument("module"))) {
+			String year = String.valueOf(DateUtility.getYear(SysParamUtil.getAppDate()));
+			int month = DateUtility.getMonth(SysParamUtil.getAppDate());
+			int years = -1;
+			// As of financeYear Start from April
+			if (month >= 4) {
+				years = 0;
+			}
+
+			financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(year) + years),
+					String.valueOf(Integer.valueOf(year) + years) + "-"
+							+ String.valueOf(Integer.valueOf(year.substring(year.length() - 2)) + years + 1)));
+		} else if (StringUtils.equalsAnyIgnoreCase("interest", getArgument("module"))) {
+			this.financeYear.setDisabled(true);
+		}
 		fillComboBox(this.financeYear, "", financeYearList, "");
 
 		logger.debug("Leaving");
@@ -196,30 +214,100 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	}
 
 	public void onFulfill$finReference(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		Clients.clearWrongValue(this.finReference);
 		this.finReference.setConstraint("");
 		this.finReference.setErrorMessage("");
 		Object dataObject = this.finReference.getObject();
-		if (dataObject instanceof String) {
+		if (dataObject instanceof String || dataObject == null) {
 			this.finReference.setValue("");
 			this.finReference.setObject("");
+			this.financeYear.setConstraint("");
+			this.financeYear.setErrorMessage("");
+			if (StringUtils.equalsAnyIgnoreCase("interest", getArgument("module"))) {
+				this.financeYear.setDisabled(true);
+				financeYearList = new ArrayList<ValueLabel>();
+				fillComboBox(this.financeYear, "", financeYearList, "");
+			}
 		} else {
 			FinanceMain details = (FinanceMain) dataObject;
 			if (details != null) {
 				this.finReference.setValue(details.getFinReference());
+				if (StringUtils.equalsAnyIgnoreCase("interest", getArgument("module"))) {
+					this.financeYear.setDisabled(false);
+					doFillFinanceYear();
+				}
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doFillFinanceYear() {
+		Date appDate = SysParamUtil.getAppDate();
+		FinanceMain financeMain = interestCertificateService.getFinanceMain(this.finReference.getValue(),
+				new String[] { "FinStartDate", "ClosedDate" }, "");
+		if (financeMain != null) {
+			Date finStartDate = financeMain.getFinStartDate();
+			int finStartDateMonth = DateUtility.getMonth(finStartDate);
+			String finStartDateYear = String.valueOf(DateUtility.getYear(finStartDate));
+
+			int appDateMonth = DateUtility.getMonth(appDate);
+			int appDateDay = DateUtility.getDay(appDate);
+			int finStartDateDay = DateUtility.getDay(finStartDate);
+			int years = DateUtility.getYearsBetween(finStartDate, appDate);
+			String appDateYear = String.valueOf(DateUtility.getYear(appDate));
+
+			if (finStartDateMonth < 4 && years > 0) {
+				finStartDateYear = String.valueOf(Integer.valueOf(finStartDateYear) - 1);
+				years = years + 1;
+			}
+
+			if (appDateMonth > finStartDateMonth) {
+				years = years - 1;
+			} else if ((appDateDay == finStartDateDay || appDateDay >= finStartDateDay) && years > 0) {
+				years = years - 1;
+			} else if (appDateMonth < 4) {
+				years = years - 1;
+			}
+
+			financeYearList = new ArrayList<ValueLabel>();
+			if (years < 0 && finStartDateMonth < 4) {
+				//if finstartDate and appDate both are equal then we are not allowing to count years
+				// if AppDate is greater than or equal to 4 adding years with 1
+				if (DateUtility.compare(appDate, finStartDate) > 0 && appDateMonth >= 4) {
+					years = years + 1;
+				}
+				for (int i = 0; i <= years; i++) {
+					String newValue = String.valueOf(Integer.valueOf(finStartDateYear) + i - 1);
+					String newLabel = String.valueOf(Integer.valueOf(finStartDateYear) - 1) + "-" + String
+							.valueOf(Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i);
+					financeYearList.add(new ValueLabel(newValue, newLabel));
+				}
+			} else if (!(finStartDateYear.equals(appDateYear) && !(finStartDateMonth < 4))) {
+				//if FinstartDateYear & appDateYear both are equal & finstartDateMonth less than 4 we are not adding into list...
+				if (years >= 1 && DateUtility.getYearsBetween(finStartDate, appDate) >= 1 && appDateMonth < 4
+						&& appDateDay != finStartDateDay) {
+					//if years greater than or equal to 1 and appdate less than 4 and appdateday not equal to finstartday than subtract years - 1
+					//i.e@03-01-2020 to 15-01-2022 i.e@2019-20,2020-21
+					years = years - 1;
+				}
+				for (int i = 0; i <= years; i++) {
+					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
+							String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-"
+									+ String.valueOf(
+											Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2))
+													+ i + 1)));
+				}
+			}
+			fillComboBox(this.financeYear, "", financeYearList, "");
+		}
 	}
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
-
 		if (!this.finReference.isReadonly()) {
 			this.finReference.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_SelectFinReferenceDialog_FinReference.value"), null, true, true));
@@ -237,27 +325,33 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_InterestCertificateGeneration);
-		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * when the "help" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws CustomerNotFoundException
-	 * @throws CustomerLimitProcessException
-	 */
 	public void onClick$btnPrint(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
 		printAgreement(event);
-		logger.debug("Leaving" + event.toString());
+	}
+
+	private String getAddress(String seperator, String... values) {
+		StringBuilder builder = new StringBuilder();
+
+		for (String value : values) {
+			if (StringUtils.isEmpty(value)) {
+				continue;
+			}
+
+			if (builder.length() > 0) {
+				builder.append(seperator);
+			}
+
+			builder.append(builder);
+		}
+
+		return builder.toString();
 	}
 
 	private void printAgreement(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -298,27 +392,31 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			throw new WrongValuesException(wvea);
 		}
 
-		String startDate = "1/4/" + getComboboxValue(this.financeYear);
-		String endDate = "31/3/" + String.valueOf(Integer.valueOf(getComboboxValue(this.financeYear)) + 1);
+		int year = Integer.parseInt(getComboboxValue(this.financeYear));
+
+		Date startDate = DateUtil.getDate(year, 3, 1);
+		Date endDate = DateUtil.getDate(year + 1, 2, 31);
+
 		boolean isProvCert = false;
 		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
 			isProvCert = true;
 		}
 
-		InterestCertificate interestCertificate = getInterestCertificateService()
+		InterestCertificate intCert = getInterestCertificateService()
 				.getInterestCertificateDetails(this.finReference.getValue(), startDate, endDate, isProvCert);
-		if (interestCertificate == null) {
+		if (intCert == null) {
 			MessageUtil.showError("Details Not Found");
 			return;
 		}
-		Date appldate = DateUtility.getAppDate();
-		String appDate = DateUtility.formatToLongDate(appldate);
-		interestCertificate.setAppDate(appDate);
-		interestCertificate.setFinStartDate(startDate);
-		interestCertificate.setFinEndDate(endDate);
-		interestCertificate.setFinPostDate(DateUtility.getAppDate());
 
-		Method[] methods = interestCertificate.getClass().getDeclaredMethods();
+		Date appldate = SysParamUtil.getAppDate();
+		String appDate = DateUtility.formatToLongDate(appldate);
+		intCert.setAppDate(appDate);
+		intCert.setFinStartDate("01-04-" + getComboboxValue(this.financeYear));
+		intCert.setFinEndDate("31-03-" + String.valueOf(Integer.valueOf(getComboboxValue(this.financeYear)) + 1));
+		intCert.setFinPostDate(appldate);
+
+		Method[] methods = intCert.getClass().getDeclaredMethods();
 
 		for (Method property : methods) {
 			if (property.getName().startsWith("get")) {
@@ -326,7 +424,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				Object value;
 
 				try {
-					value = property.invoke(interestCertificate);
+					value = property.invoke(intCert);
 				} catch (Exception e) {
 					continue;
 				}
@@ -334,36 +432,26 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				if (value == null) {
 					try {
 						String stringParameter = "";
-						interestCertificate.getClass().getMethod("set" + field, new Class[] { String.class })
-								.invoke(interestCertificate, stringParameter);
+						intCert.getClass().getMethod("set" + field, new Class[] { String.class }).invoke(intCert,
+								stringParameter);
 					} catch (Exception e) {
 						logger.error("Exception: ", e);
 					}
 				}
 			}
 		}
-		String combinedString = null;
-		String custflatnbr = null;
-		if (interestCertificate.getCustFlatNbr().equals("")) {
-			custflatnbr = " ";
-		} else {
-			custflatnbr = " " + interestCertificate.getCustFlatNbr() + "\n";
-		}
+
+		String address = getAddress("\n", intCert.getCustAddrHnbr(), intCert.getCustFlatNbr(),
+				intCert.getCustAddrStreet(), intCert.getCustAddrCity(), intCert.getCustAddrState(),
+				intCert.getCustAddrZIP(), intCert.getCountryDesc());
+
 		if ("provisional".equalsIgnoreCase(getArgument("module"))) {
-			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
-					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
-					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
-					+ interestCertificate.getCountryDesc() + "\n" + interestCertificate.getCustEmail() + "\n"
-					+ interestCertificate.getCustPhoneNumber();
-			interestCertificate.setCustAddrHnbr(combinedString);
+			address = getAddress("\n", address, intCert.getCustEmail(), intCert.getCustPhoneNumber());
+			intCert.setCustAddress(address);
 		}
 
 		if ("interest".equalsIgnoreCase(getArgument("module"))) {
-			combinedString = interestCertificate.getCustAddrHnbr() + custflatnbr
-					+ interestCertificate.getCustAddrStreet() + "\n" + interestCertificate.getCustAddrCity() + "\n"
-					+ interestCertificate.getCustAddrState() + " " + interestCertificate.getCustAddrZIP() + "\n"
-					+ interestCertificate.getCountryDesc();
-			interestCertificate.setCustAddrHnbr(combinedString);
+			intCert.setCustAddress(address);
 		}
 
 		String agreement = null;
@@ -383,7 +471,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			MessageUtil.showError("Path Not Found");
 			return;
 		}
-		String refNo = interestCertificate.getFinReference();
+		String refNo = intCert.getFinReference();
 		String reportName = refNo + "_" + agreement.substring(0, agreement.length() - 4) + "pdf";
 		try {
 			engine.setTemplate(agreement);
@@ -392,7 +480,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			return;
 		}
 		engine.loadTemplate();
-		engine.mergeFields(interestCertificate);
+		engine.mergeFields(intCert);
 
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		engine.getDocument().save(stream, SaveFormat.PDF);

@@ -1,5 +1,6 @@
 package com.pennanttech.pennapps.dms.service;
 
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 
@@ -20,4 +21,12 @@ public interface DMSService {
 	void processDocuments();
 
 	public void storeDocInFileSystem(DMSQueue dmsQueue);
+
+	DMSQueue getOfferIdByFin(DMSQueue dmsQueue);
+
+	public DMSQueue getImageByUri(String docUri);
+
+	public void updateDMSQueue(DMSQueue dmsQueue);
+
+	public DocumentDetails getExternalDocument(String custCIF, String docName, String docUri);
 }

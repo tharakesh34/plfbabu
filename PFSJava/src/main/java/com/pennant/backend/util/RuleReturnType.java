@@ -1,7 +1,7 @@
 package com.pennant.backend.util;
 
 public enum RuleReturnType {
-	STRING("S"), DECIMAL("D"), INTEGER("I"), BOOLEAN("B"), OBJECT("O"), CALCSTRING("C");
+	STRING("S"), DECIMAL("D"), RATE("R"), INTEGER("I"), BOOLEAN("B"), OBJECT("O"), CALCSTRING("C");
 
 	private String value;
 

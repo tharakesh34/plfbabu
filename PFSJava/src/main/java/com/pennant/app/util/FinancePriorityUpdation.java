@@ -2,7 +2,8 @@ package com.pennant.app.util;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -13,7 +14,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 public class FinancePriorityUpdation extends QuartzJobBean implements StatefulJob, Serializable {
 
 	private static final long serialVersionUID = 4480912264156310688L;
-	private static final Logger logger = Logger.getLogger(FinancePriorityUpdation.class);
+	private static final Logger logger = LogManager.getLogger(FinancePriorityUpdation.class);
 	private FinanceDetailService financeDetailService;
 	static String status = "";
 

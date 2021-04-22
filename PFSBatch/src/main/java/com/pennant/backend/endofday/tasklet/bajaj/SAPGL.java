@@ -6,7 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.external.sapgl.SAPGLExtract;
 
 public class SAPGL implements Tasklet {
-	private Logger logger = Logger.getLogger(SAPGL.class);
+	private Logger logger = LogManager.getLogger(SAPGL.class);
 
 	private Date valueDate;
 	private Date appDate;
@@ -57,7 +58,7 @@ public class SAPGL implements Tasklet {
 
 			DataEngineStatus status = SAPGLExtract.SAP_GL_STATUS;
 			status.setStatus("I");
-			new Thread(new SAPGLProcessThread(Long.valueOf(1000))).start();
+			new Thread(new SAPGLProcessThread(new Long(1000))).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 
@@ -94,7 +95,7 @@ public class SAPGL implements Tasklet {
 		public void run() {
 			try {
 				logger.debug("SAP-GL Process initiated...");
-				// new SAPGLExtract(dataSource, userId, valueDate, appDate).extractReport();
+				//new SAPGLExtract(dataSource, userId, valueDate, appDate).extractReport();
 				TimeUnit.SECONDS.sleep(1);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

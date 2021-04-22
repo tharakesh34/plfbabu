@@ -43,13 +43,13 @@
 package com.pennant.webui.others.jvposting;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -105,7 +105,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(JVPostingEntryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(JVPostingEntryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -788,7 +788,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		this.exchangeRate.setMaxlength(13);
 		this.exchangeRate.setFormat(PennantConstants.rateFormate9);
-		this.exchangeRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.exchangeRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.exchangeRate.setScale(9);
 
 		this.batch.setMaxlength(50);
@@ -1403,18 +1403,18 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			int retValue = auditHeader.getProcessStatus();
 			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 				for (JVPostingEntry entry : jvPostingEntryList) {
-					if (entry.isNew()) {
-						if (StringUtils.equals(entry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)) {
-							entry.setAccount(entry.getDebitAccount());
-							entry.setAcType(entry.getDebitAcType());
-							entry.setAccountName(entry.getDebitAcname());
-						} else {
-							entry.setAccount(entry.getAccount());
-							entry.setAcType(entry.getAcType());
-							entry.setAccountName(entry.getAccountName());
-						}
+					if (StringUtils.equals(entry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)) {
+						entry.setAccount(entry.getDebitAccount());
+						entry.setAcType(entry.getDebitAcType());
+						entry.setAccountName(entry.getDebitAcname());
+					} else {
+						entry.setAccount(entry.getAccount());
+						entry.setAcType(entry.getAcType());
+						entry.setAccountName(entry.getAccountName());
 					}
+
 				}
+
 				getJVPostingDialogCtrl().doFillJVPostingEntryDetails(this.jvPostingEntryList);
 				// send the data back to main screen
 				getJVPostingDialogCtrl().setProceed(false);

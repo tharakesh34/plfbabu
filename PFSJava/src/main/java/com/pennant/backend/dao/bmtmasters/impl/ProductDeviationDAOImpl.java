@@ -46,14 +46,15 @@ package com.pennant.backend.dao.bmtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.ProductDeviationDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  * 
  */
 public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> implements ProductDeviationDAO {
-	private static Logger logger = Logger.getLogger(ProductDeviationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProductDeviationDAOImpl.class);
 
 	public ProductDeviationDAOImpl() {
 		super();
@@ -134,8 +135,7 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
-		RowMapper<ProductDeviation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProductDeviation.class);
+		RowMapper<ProductDeviation> typeRowMapper = BeanPropertyRowMapper.newInstance(ProductDeviation.class);
 
 		try {
 			productDeviation = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -304,8 +304,7 @@ public class ProductDeviationDAOImpl extends SequenceDao<ProductDeviation> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(productDeviation);
-		RowMapper<ProductDeviation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProductDeviation.class);
+		RowMapper<ProductDeviation> typeRowMapper = BeanPropertyRowMapper.newInstance(ProductDeviation.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

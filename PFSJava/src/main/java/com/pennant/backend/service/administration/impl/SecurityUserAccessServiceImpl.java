@@ -50,7 +50,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.dao.administration.SecurityUserAccessDAO;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAccess>
 		implements SecurityUserAccessService {
-	private static Logger logger = Logger.getLogger(SecurityUserServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserServiceImpl.class);
 
 	private SecurityUserAccessDAO securityUserAccessDAO;
 
@@ -245,7 +246,7 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 
 	}
 
-	private List<Cluster> getClusters(String entity, String clusterType, long clusterId) {
+	private List<Cluster> getClusters(String entity, String clusterType, Long clusterId) {
 		return securityUserAccessDAO.getClusters(entity, clusterType, clusterId);
 	}
 

@@ -52,9 +52,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -89,6 +92,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -165,7 +169,7 @@ import com.pennanttech.pff.notifications.service.NotificationService;
  */
 public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(InsuranceRebookingDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(InsuranceRebookingDialogCtrl.class);
 
 	protected Window window_InsuranceRebooking;
 	protected Label windowTitle;
@@ -398,7 +402,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws ParseException
 	 * @throws ScriptException
 	 */
-	public void onClick$btnCancel(Event event) throws ParseException, InterruptedException {
+	public void onClick$btnCancel(Event event) throws ParseException, InterruptedException, ScriptException {
 		doCancel();
 	}
 
@@ -594,7 +598,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @throws ScriptException
 	 * 
 	 */
-	private void doCancel() throws ParseException, InterruptedException {
+	private void doCancel() throws ParseException, InterruptedException, ScriptException {
 		logger.debug(Literal.ENTERING);
 
 		doWriteBeanToComponents(this.vASRecording.getBefImage());
@@ -1088,7 +1092,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 */
 	public void doWriteBeanToComponents(VASRecording aVASRecording)
-			throws ParseException, InterruptedException {
+			throws ParseException, InterruptedException, ScriptException {
 		logger.debug(Literal.ENTERING);
 		if (rebookingProcess) {
 			this.gb_RebookingDetail.setVisible(true);
@@ -1265,7 +1269,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @throws ScriptException
 	 */
-	private void appendExtendedFieldDetails(VASRecording aVASRecording) {
+	private void appendExtendedFieldDetails(VASRecording aVASRecording) throws ScriptException {
 		logger.debug(Literal.ENTERING);
 
 		// Extended Field Details auto population / Rendering into Screen
@@ -2035,7 +2039,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.dsaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 		this.dmaId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
 		this.fulfilOfficerId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
-		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false, 8);
+		this.referralId.setProperties("RelationshipOfficer", "ROfficerCode", "ROfficerDesc", false,
+				LengthConstants.LEN_REFERRALID);
 		this.productCode.setTextBoxWidth(145);
 		this.dsaId.setTextBoxWidth(145);
 		this.dmaId.setTextBoxWidth(145);
@@ -2251,7 +2256,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
 		aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
-		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
+		engineExecution.getAccEngineExecResults(aeEvent);
+		List<ReturnDataSet> returnSetEntries = aeEvent.getReturnDataSet();
 		getVASRecording().setReturnDataSetList(returnSetEntries);
 		accountingSetEntries.addAll(returnSetEntries);
 

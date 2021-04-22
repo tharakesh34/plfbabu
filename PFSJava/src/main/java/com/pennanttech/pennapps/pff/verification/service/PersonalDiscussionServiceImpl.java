@@ -21,7 +21,8 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,7 +62,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscussionService>
 		implements PersonalDiscussionService {
-	private static final Logger logger = Logger.getLogger(PersonalDiscussionServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PersonalDiscussionServiceImpl.class);
 
 	@Autowired
 	private AuditHeaderDAO auditHeaderDAO;
@@ -97,6 +98,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -330,6 +332,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	 *            id of the PersonalDiscussion. (String)
 	 * @return verification_pd
 	 */
+	@Override
 	public PersonalDiscussion getApprovedPersonalDiscussion(long id) {
 		return personalDiscussionDAO.getPersonalDiscussion(id, "");
 	}
@@ -364,7 +367,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 		}
 
 		PersonalDiscussion pd = new PersonalDiscussion();
-		BeanUtils.copyProperties((PersonalDiscussion) auditHeader.getAuditDetail().getModelData(), pd);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), pd);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(pd.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(personalDiscussionDAO.getPersonalDiscussion(pd.getId(), ""));
@@ -822,6 +825,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 		}
 	}
 
+	@Override
 	public boolean isAddressChange(CustomerAddres oldAddress, CustomerAddres newAddress) {
 
 		if (oldAddress == null || newAddress == null) {

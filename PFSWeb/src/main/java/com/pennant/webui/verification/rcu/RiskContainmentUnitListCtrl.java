@@ -2,7 +2,8 @@ package com.pennant.webui.verification.rcu;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -18,6 +19,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.verification.rcu.model.RiskContainmentUnitListModelItemRender;
@@ -39,7 +41,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(RiskContainmentUnitListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RiskContainmentUnitListCtrl.class);
 
 	protected Window window_RiskContainmentUnitList;
 	protected Borderlayout borderLayout_RiskContainmentUnitList;
@@ -151,6 +153,12 @@ public class RiskContainmentUnitListCtrl extends GFCBaseListCtrl<RiskContainment
 			long agencyId = Long.parseLong(agency.getAttribute("agency").toString());
 			this.searchObject.addFilter(new Filter("agency", agencyId, Filter.OP_EQUAL));
 		}
+
+		if (ImplementationConstants.BRANCHWISE_RCU_INITIATION) {
+			this.searchObject.addFilter(new Filter("Branchcode",
+					"%" + getUserWorkspace().getLoggedInUser().getBranchCode() + "%", Filter.OP_LIKE));
+		}
+
 	}
 
 	public void onFulfill$agency(Event event) {

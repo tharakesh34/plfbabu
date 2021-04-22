@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -25,7 +26,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PaymentInstructionDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PaymentInstructionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -106,7 +106,9 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private FinanceMain financeMain;
 
 	private int ccyFormatter;
-	private int accNoLength;
+	private int maxAccNoLength;
+	private int minAccNoLength;
+	private BankDetail bankDetail;
 
 	/**
 	 * default constructor.<br>
@@ -348,14 +350,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("180px");
 
-		if (StringUtils.isNotBlank(this.paymentInstruction.getBankBranchCode())) {
-			accNoLength = bankDetailService.getAccNoLengthByCode(this.paymentInstruction.getBankBranchCode());
+		if (StringUtils.isNotBlank(this.paymentInstruction.getBranchBankCode())) {
+			bankDetail = bankDetailService.getAccNoLengthByCode(this.paymentInstruction.getBranchBankCode());
+			this.maxAccNoLength = this.bankDetail.getAccNoLength();
+			this.minAccNoLength = this.bankDetail.getMinAccNoLength();
 		}
-		if (accNoLength != 0) {
-			this.acctNumber.setMaxlength(accNoLength);
-		} else {
-			this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-		}
+		this.acctNumber.setMaxlength(maxAccNoLength);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -369,8 +369,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.postDate.setValue(paymentInstruction.getPostDate());
 		}
 
-		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(),
-				PennantStaticListUtil.getPaymentTypesWithIST(), "");
+		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
+				"");
 		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());
@@ -633,12 +633,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			if (!this.acctHolderName.isReadonly()) {
 				this.acctHolderName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountHolderName.value"),
-								PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+								PennantRegularExpressions.REGEX_ACCOUNT_HOLDER_NAME, true));
 			}
 			if (!this.acctNumber.isReadonly()) {
 				this.acctNumber.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountNumber.value"),
-								PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountNumber.value"), null,
+								true, minAccNoLength, maxAccNoLength));
 			}
 		}
 
@@ -741,13 +741,11 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				this.branch.setValue(details.getBranchDesc());
 				this.bankBranchID.setValue(details.getIFSC());
 				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					bankDetail = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					this.maxAccNoLength = this.bankDetail.getAccNoLength();
+					this.minAccNoLength = this.bankDetail.getMinAccNoLength();
 				}
-				if (accNoLength != 0) {
-					this.acctNumber.setMaxlength(accNoLength);
-				} else {
-					this.acctNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				this.acctNumber.setMaxlength(maxAccNoLength);
 
 			}
 		}

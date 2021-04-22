@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.customermasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerAdditionalDetailDAO;
 import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  */
 public class CustomerAdditionalDetailDAOImpl extends BasicDao<CustomerAdditionalDetail>
 		implements CustomerAdditionalDetailDAO {
-	private static Logger logger = Logger.getLogger(CustomerAdditionalDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerAdditionalDetailDAOImpl.class);
 
 	public CustomerAdditionalDetailDAOImpl() {
 		super();
@@ -98,7 +99,7 @@ public class CustomerAdditionalDetailDAOImpl extends BasicDao<CustomerAdditional
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerAdditionalDetail);
-		RowMapper<CustomerAdditionalDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<CustomerAdditionalDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(CustomerAdditionalDetail.class);
 
 		try {

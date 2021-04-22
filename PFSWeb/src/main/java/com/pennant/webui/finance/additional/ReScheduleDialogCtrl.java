@@ -43,13 +43,13 @@
 package com.pennant.webui.finance.additional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -99,7 +99,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 454600127282110738L;
-	private static final Logger logger = Logger.getLogger(ReScheduleDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReScheduleDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -239,10 +239,10 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.rate.setBaseProperties("BaseRateCode", "BRType", "BRTypeDesc");
 		this.rate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 		this.rate.setEffectiveRateVisible(true);
-		this.numberOfTerms.setMaxlength(3);
+		this.numberOfTerms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.repayPftRate.setMaxlength(13);
 		this.repayPftRate.setFormat(PennantConstants.rateFormate9);
-		this.repayPftRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.repayPftRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.repayPftRate.setScale(9);
 		this.grcPeriodEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.nextGrcRepayDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -363,6 +363,11 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		//ROI should be kept restricted. Disable the ROI field from re-schedulement screen.
 		//this.rate.setReadonly(true);
 		//this.repayPftRate.setReadonly(true);
+
+		if (StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)) {
+			this.row_Rate.setVisible(false);
+			this.row_PftIntact.setVisible(false);
+		}
 
 		this.repayFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
 		this.repayFrq.setValue(aFinanceMain.getRepayFrq());
@@ -613,6 +618,21 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 											new String[] {
 													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
 													DateUtility.formatToLongDate(fromDate) }));
+						} else if (!financeMain.isNewRecord() && !StringUtils.trimToEmpty(financeMain.getRecordType())
+								.equals(PennantConstants.RECORD_TYPE_NEW)) {
+
+							if (StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
+									.equals(FinanceConstants.PRODUCT_IJARAH)
+									|| StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
+											.equals(FinanceConstants.PRODUCT_FWIJARAH)) {
+								Date curBussDate = DateUtility.getAppDate();
+								if (this.grcPeriodEndDate.getValue().compareTo(curBussDate) <= 0) {
+									throw new WrongValueException(this.grcPeriodEndDate,
+											Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {
+													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
+													Labels.getLabel("label_ReScheduleDialog_CurBussDate.value") }));
+								}
+							}
 						}
 					}
 				}

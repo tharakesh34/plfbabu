@@ -4,32 +4,33 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.systemmasters.BuilderCompany;
+import com.pennant.backend.model.administration.SecurityUser;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new BuilderCompany();
-	private static String tableName = "BuilderCompany";
-	private static String whereClause = "Where id = ? and FieldCode = ?";
-	private static String varibaleName = "ca";
+	private static Object object = new SecurityUser();
+	private static String tableName = "secusers";
+	private static String whereClause = "";
+	private static String varibaleName = "su";
 	private static boolean list = false;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("id, name, segmentation, custId, groupId, apfType,peDevId,entityType");
-		sql.append(", emailId, cityType, address1, address2");
-		sql.append(", address3, city, code, devavailablity, magnitude, absavailablity, totalProj");
-		sql.append(", approved, remarks, panDetails, benfName, accountNo, bankBranchId");
-		sql.append(", limitOnAmt, limitOnUnits, currentExpUni, currentExpAmt, dateOfInCop");
-		sql.append(", noOfProj, assHLPlayers, onGoingProj, expInBusiness, recommendation");
-		sql.append(", magintudeInLacs, noOfProjCons, pinCodeId");
+		sql.append(" UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
+		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcExpDt");
+		sql.append(", UsrAcLocked, UsrLanguage, UsrDftAppId, UsrBranchCode, UsrDeptCode, UsrToken");
+		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrDesg, AuthType,UsrDftAppCode");
+		sql.append(", PwdExpDt, UserType,businessVertical, ldapDomainName");
 
-		sql.append(", segmentationName, groupIdName, fieldCode, cityName,codeName");
-		sql.append(", BranDesc, entyDesc, bankName, ifsc,areaName, LovDescCIFName, custCIF, active");
+		//if (StringUtils.trimToEmpty(type).contains("View")) {
+		sql.append(", lovDescUsrDftAppCodeName, lovDescUsrDeptCodeName"); //lovDescUsrDftAppCode
+		sql.append(
+				", lovDescUsrBranchCodeName, LovDescUsrLanguage, lovDescUsrDesg, businessVerticalCode,businessVerticalDesc");
 
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId");
-		sql.append(", NextTaskId, RecordType, WorkflowId");
+		//	}
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
 
 		return sql.toString();
 	}

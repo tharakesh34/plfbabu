@@ -109,4 +109,9 @@ public interface RuleDAO {
 
 	String getRuleCodeDesc(long ruleId, String module, String ruleCode);
 
+	int getRuleCodeCount(String ruleCode, String ruleEvent, String ruleModule);
+
+	Rule getActiveRuleByID(String id, String module, String event, String type, boolean active);
+
+	void updateRuleByID(Rule rule, String type);
 }

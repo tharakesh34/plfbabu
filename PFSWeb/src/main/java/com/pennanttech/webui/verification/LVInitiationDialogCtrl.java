@@ -53,19 +53,24 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -75,20 +80,25 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -114,7 +124,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private static final long serialVersionUID = -3093280086658721485L;
-	private static final Logger logger = Logger.getLogger(LVInitiationDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LVInitiationDialogCtrl.class);
 
 	protected Window window_LVInitiationDialog;
 
@@ -130,11 +140,13 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Row agencyRow;
 	protected Row loanRow;
 	protected Row customerRow;
+	protected Row verificationRow;
 
 	//Waiver components
 	protected ExtendedCombobox reason;
 	protected Row reasonRow;
-
+	protected Combobox verificationCategory;
+	protected Button btnSearchCollateralRef;
 	// not auto wired vars
 	private Verification verification;
 	private transient LVerificationCtrl lVerificationCtrl;
@@ -163,6 +175,9 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private transient LegalVerificationService legalVerificationService;
 	@Autowired
 	private transient CollateralSetupFetchingService collateralSetupFetchingService;
+	@Autowired
+	private transient CollateralSetupService collateralSetupService;
+	private String collateralAddrCol = ImplementationConstants.VER_TV_COLL_ED_ADDR_COLUMN;
 
 	/**
 	 * default constructor.<br>
@@ -378,6 +393,30 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	/**
+	 * This method will set the agency filters by using collateral city
+	 * 
+	 * @param collateralRef
+	 */
+	private void setAgencyFiltersByCollateralCity(String collateralRef) {
+		if (StringUtils.isNotBlank(collateralRef) && ImplementationConstants.VER_AGENCY_FILTER_BY_CITY) {
+			List<String> collateralCities = new ArrayList<String>(1);
+			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralRef, "", true);
+			if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
+				for (ExtendedFieldRender fieldRender : collateralSetup.getExtendedFieldRenderList()) {
+					Map<String, Object> mapValues = fieldRender.getMapValues();
+					if (mapValues != null && mapValues.containsKey(collateralAddrCol)) {
+						collateralCities.add((String) mapValues.get(collateralAddrCol));
+					}
+				}
+				Filter[] filter = new Filter[2];
+				filter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
+				filter[1] = new Filter("DealerCity", collateralCities, Filter.OP_IN);
+				agency.setFilters(filter);
+			}
+		}
+	}
+
+	/**
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
@@ -455,10 +494,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			} else if (initiation) {
 				this.collateral.setValue(aVerification.getReferenceFor());
 				this.collateral.setDescription(aVerification.getReferenceType());
+				setAgencyFiltersByCollateralCity(aVerification.getReferenceFor());
 			}
 		}
 		this.collateral.setAttribute("collateralType", aVerification.getReferenceType());
-
+		fillComboBox(this.verificationCategory, String.valueOf(verification.getVerificationCategory()),
+				PennantStaticListUtil.getLegalVerificationCategories(), "");
 		setCollateralTypeList(getFinanceDetail().getCollateralAssignmentList(), getFinanceDetail().getCollaterals());
 
 		if (initiation) {
@@ -647,7 +688,16 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			if (getComboboxValue(this.verificationCategory).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.verificationCategory, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_LVInitiationDialog_VerificationCategory.value") }));
+			}
+			aVerification.setVerificationCategory(Integer.parseInt(getComboboxValue(this.verificationCategory)));
 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		if (initiation) {
 			//agency
 			try {
@@ -713,6 +763,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				this.verification.getLvDocuments().add(docIdBox.getValue());
 			}
 		}
+		//Removed mandatory validation for collateral document
 		/*
 		 * if (this.verification.getLvDocuments().isEmpty()) { throw new WrongValueException(listBoxCollateralDocuments,
 		 * Labels.getLabel("ATLEAST_ONE", new String[] { "Collateral Document" })); }
@@ -762,6 +813,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 				btnCancel.setVisible(false);
 				if (isLVExists) {
 					this.btnSave.setVisible(false);
+					this.verificationCategory.setDisabled(true);
 				}
 			}
 		}
@@ -810,6 +862,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			this.remarks.setReadonly(true);
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
+			this.verificationCategory.setDisabled(true);
 		}
 	}
 
@@ -837,6 +890,11 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 						Labels.getLabel("label_LVInitiationDialog_Reason.value"), null, true, true));
 			}
 		}
+		if (!this.verificationCategory.isDisabled()) {
+			this.verificationCategory.setConstraint(
+					new PTListValidator(Labels.getLabel("label_LVInitiationDialog_VerificationCategory.value"),
+							PennantStaticListUtil.getLegalVerificationCategories(), true));
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -851,6 +909,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.collateral.setConstraint("");
 		this.agency.setConstraint("");
 		this.reason.setConstraint("");
+		this.verificationCategory.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -865,6 +924,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.collateral.setErrorMessage("");
 		this.agency.setErrorMessage("");
 		this.reason.setErrorMessage("");
+		this.verificationCategory.setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1012,7 +1072,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			verification.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 			if (verification.getCreatedOn() == null) {
-				verification.setCreatedOn(DateUtility.getAppDate());
+				verification.setCreatedOn(SysParamUtil.getAppDate());
 			}
 			if (doProcess(verification, tranType)) {
 
@@ -1272,10 +1332,12 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (dataObject instanceof String) {
 			collateral.setValue(dataObject.toString());
 			collateral.setDescription("");
+			setAgencyFiltersByCollateralCity(dataObject.toString());
 		} else {
 			CollateralSetup collateralSetup = (CollateralSetup) dataObject;
 			if (collateralSetup != null) {
 				collateral.setAttribute("collateralType", collateralSetup.getCollateralType());
+				setAgencyFiltersByCollateralCity(collateralSetup.getCollateralRef());
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -1324,6 +1386,30 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.verification);
+	}
+
+	/**
+	 * When user clicks on button "Collateral Reference" button
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchCollateralRef(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		if (StringUtils.isEmpty(collateral.getValue())) {
+			throw new WrongValueException(this.collateral, Labels.getLabel("FIELD_IS_MAND",
+					new String[] { Labels.getLabel("label_LVInitiationDialog_Collateral.value") }));
+		}
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(this.collateral.getValue(), "",
+				true);
+		if (collateralSetup != null) {
+			map.put("collateralSetup", collateralSetup);
+			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
+			Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralSetupDialog.zul", null,
+					map);
+		}
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	// ******************************************************//
@@ -1384,6 +1470,14 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
 		this.collateralSetupFetchingService = collateralSetupFetchingService;
+	}
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}
 
 }

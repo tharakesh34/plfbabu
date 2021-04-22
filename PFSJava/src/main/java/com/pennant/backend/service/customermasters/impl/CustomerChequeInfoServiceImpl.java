@@ -3,7 +3,8 @@ package com.pennant.backend.service.customermasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -14,7 +15,7 @@ import com.pennant.backend.service.customermasters.CustomerChequeInfoService;
 import com.pennant.backend.util.PennantConstants;
 
 public class CustomerChequeInfoServiceImpl implements CustomerChequeInfoService {
-	private static Logger logger = Logger.getLogger(CustomerChequeInfoServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerChequeInfoServiceImpl.class);
 
 	private CustomerChequeInfoDAO customerChequeInfoDAO;
 	private AuditHeaderDAO auditHeaderDAO;

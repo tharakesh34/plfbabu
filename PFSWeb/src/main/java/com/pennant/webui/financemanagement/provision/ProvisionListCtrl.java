@@ -45,7 +45,8 @@ package com.pennant.webui.financemanagement.provision;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -97,13 +98,14 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Provision/Provision/ProvisionList.zul file.
  */
 public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	private static final long serialVersionUID = 4481377123949925578L;
-	private static final Logger logger = Logger.getLogger(ProvisionListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ProvisionListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -392,12 +394,13 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 				aProvision.setWorkflowId(getWorkFlowId());
 			}
-			final Provision provision = getProvisionService().getProvisionById(aProvision.getId(), isEnquiry);
+			final Provision provision = getProvisionService().getProvisionById(aProvision.getFinReference(),
+					TableType.AVIEW);
 
 			if (provision == null) {
 				String[] errParm = new String[1];
 				String[] valueParm = new String[1];
-				valueParm[0] = aProvision.getId();
+				valueParm[0] = aProvision.getFinReference();
 				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
@@ -449,7 +452,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	public void onClick$button_ProvisionList_NewProvision(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		// create a new Provision object, We GET it from the backend.
-		final Provision aProvision = getProvisionService().getNewProvision();
+		final Provision aProvision = getProvisionService().getProvision();
 		showDetailView(aProvision);
 		logger.debug("Leaving" + event.toString());
 	}

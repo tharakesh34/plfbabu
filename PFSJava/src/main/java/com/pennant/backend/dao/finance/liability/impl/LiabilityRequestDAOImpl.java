@@ -47,13 +47,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.liability.LiabilityRequestDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> implements LiabilityRequestDAO {
-	private static Logger logger = Logger.getLogger(LiabilityRequestDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LiabilityRequestDAOImpl.class);
 
 	public LiabilityRequestDAOImpl() {
 		super();
@@ -139,8 +140,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
-		RowMapper<LiabilityRequest> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LiabilityRequest.class);
+		RowMapper<LiabilityRequest> typeRowMapper = BeanPropertyRowMapper.newInstance(LiabilityRequest.class);
 
 		try {
 			liabilityRequest = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -181,8 +181,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(liabilityRequest);
-		RowMapper<LiabilityRequest> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LiabilityRequest.class);
+		RowMapper<LiabilityRequest> typeRowMapper = BeanPropertyRowMapper.newInstance(LiabilityRequest.class);
 
 		try {
 			liabilityRequest = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

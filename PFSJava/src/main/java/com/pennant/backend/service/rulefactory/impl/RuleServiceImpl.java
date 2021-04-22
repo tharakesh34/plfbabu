@@ -47,7 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -55,10 +56,12 @@ import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.CheckListDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinFeeConfigDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitStructureDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
+import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
@@ -85,13 +88,14 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class RuleServiceImpl extends GenericService<Rule> implements RuleService {
 
-	private static Logger logger = Logger.getLogger(RuleServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(RuleServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private RuleDAO ruleDAO;
 	private LimitGroupService limitGroupService;
 	private LimitStructureDAO limitStructureDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
+	private FinTypeInsuranceDAO finTypeInsuranceDAO;
 	private TransactionEntryDAO transactionEntryDAO;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
 	private CheckListDAO checkListDAO;
@@ -101,6 +105,7 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	private PromotionDAO promotionDAO;
 	private BounceReasonDAO bounceReasonDAO;
 	private LimitGroupLinesDAO limitGroupLinesDAO;
+	private FinFeeConfigDAO finFeeConfigDAO;
 
 	public RuleServiceImpl() {
 		super();
@@ -200,6 +205,16 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	@Override
 	public Rule getRuleById(String id, String module, String event) {
 		return getRuleDAO().getRuleByID(id, module, event, "_View");
+	}
+
+	@Override
+	public Rule getActiveRuleByID(final String id, final String module, final String event, boolean active) {
+		return getRuleDAO().getActiveRuleByID(id, module, event, "_View", active);
+	}
+
+	@Override
+	public Rule getRuleById(String code, String module, String event, String type) {
+		return getRuleDAO().getRuleByID(code, module, event, type);
 	}
 
 	/**
@@ -319,10 +334,27 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				rule.setRecordType("");
 				getRuleDAO().save(rule, "");
 			} else {
-				tranType = PennantConstants.TRAN_UPD;
-				rule.setRecordType("");
-				getRuleDAO().update(rule, "");
-				AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
+				if (rule.getRuleModule().equals(RuleConstants.MODULE_FEEPERC)) {
+
+					Rule ruleDts = new Rule();
+					BeanUtils.copyProperties(rule.getBefImage(), ruleDts);
+					ruleDts.setRecordType("");
+					ruleDts.setActive(false);
+					getRuleDAO().updateRuleByID(ruleDts, "");
+
+					rule.setId(Long.MIN_VALUE);
+					rule.setRecordType("");
+					long ruleId = getRuleDAO().save(rule, "");
+
+					rule.setId(ruleId);
+					auditHeader.setModelData(rule);
+					auditHeader.setAuditTranType(PennantConstants.TRAN_UPD);
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
+					rule.setRecordType("");
+					getRuleDAO().update(rule, "");
+					AccountingConfigCache.clearRuleCache(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent());
+				}
 
 			}
 		}
@@ -410,12 +442,23 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 		Rule rule = (Rule) auditDetail.getModelData();
 		Rule tempRule = null;
+		Rule befRule = null;
 
-		if (rule.isWorkflow()) {
-			tempRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "_Temp");
+		if (rule.getRuleModule().equals(RuleConstants.MODULE_FEEPERC)) {
+			if (rule.isWorkflow()) {
+				tempRule = getRuleDAO().getActiveRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(),
+						"_temp", rule.isActive());
+			}
+			befRule = getRuleDAO().getActiveRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "",
+					rule.isActive());
+		} else {
+			if (rule.isWorkflow()) {
+				tempRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(),
+						"_Temp");
+			}
+
+			befRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "");
 		}
-
-		Rule befRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "");
 		Rule oldRule = rule.getBefImage();
 
 		String[] valueParm = new String[3];
@@ -489,6 +532,9 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 			case RuleConstants.MODULE_FEES:
 				count = finTypeFeesDAO.getFinTypeFeesByRuleCode(rule.getRuleCode(), "_View");
 				break;
+			case RuleConstants.MODULE_INSRULE:
+				count = finTypeInsuranceDAO.getFinTypeInsuranceByRuleCode(rule.getRuleCode(), "_View");
+				break;
 			case RuleConstants.MODULE_SUBHEAD:
 				count = transactionEntryDAO.getTransactionEntryByRuleCode(rule.getRuleCode(), "_View");
 				break;
@@ -517,6 +563,9 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 				break;
 			case RuleConstants.MODULE_LMTLINE:
 				count = limitGroupLinesDAO.getLimitLinesByRuleCode(rule.getRuleCode(), "_View");
+				break;
+			case RuleConstants.MODULE_FEEPERC:
+				count = finFeeConfigDAO.getFinFeeConfigCountByRuleCode(rule.getRuleCode(), "");
 				break;
 			}
 			if (count != 0) {
@@ -624,6 +673,14 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
 
+	public FinTypeInsuranceDAO getFinTypeInsuranceDAO() {
+		return finTypeInsuranceDAO;
+	}
+
+	public void setFinTypeInsuranceDAO(FinTypeInsuranceDAO finTypeInsuranceDAO) {
+		this.finTypeInsuranceDAO = finTypeInsuranceDAO;
+	}
+
 	public TransactionEntryDAO getTransactionEntryDAO() {
 		return transactionEntryDAO;
 	}
@@ -699,4 +756,13 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	public void setLimitStructureDAO(LimitStructureDAO limitStructureDAO) {
 		this.limitStructureDAO = limitStructureDAO;
 	}
+
+	public FinFeeConfigDAO getFinFeeConfigDAO() {
+		return finFeeConfigDAO;
+	}
+
+	public void setFinFeeConfigDAO(FinFeeConfigDAO finFeeConfigDAO) {
+		this.finFeeConfigDAO = finFeeConfigDAO;
+	}
+
 }

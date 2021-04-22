@@ -46,14 +46,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.model.applicationmaster.SplRate;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
-	private static Logger logger = Logger.getLogger(SplRateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SplRateDAOImpl.class);
 
 	public SplRateDAOImpl() {
 		super();
@@ -101,7 +102,7 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
-		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
+		RowMapper<SplRate> typeRowMapper = BeanPropertyRowMapper.newInstance(SplRate.class);
 
 		try {
 			splRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -267,7 +268,7 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
-		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
+		RowMapper<SplRate> typeRowMapper = BeanPropertyRowMapper.newInstance(SplRate.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -288,7 +289,7 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
-		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
+		RowMapper<SplRate> typeRowMapper = BeanPropertyRowMapper.newInstance(SplRate.class);
 
 		List<SplRate> splRates = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
@@ -310,7 +311,7 @@ public class SplRateDAOImpl extends BasicDao<SplRate> implements SplRateDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(splRate);
-		RowMapper<SplRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SplRate.class);
+		RowMapper<SplRate> typeRowMapper = BeanPropertyRowMapper.newInstance(SplRate.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

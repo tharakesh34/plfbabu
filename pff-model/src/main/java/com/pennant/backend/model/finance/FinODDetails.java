@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "finODSchdDate", "finCurODAmt", "totPenaltyAmt", "totPenaltyPaid", "lPIAmt", "lPIPaid",
 		"oDChargeType" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinODDetails implements java.io.Serializable {
+public class FinODDetails implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -115,6 +116,8 @@ public class FinODDetails implements java.io.Serializable {
 	private BigDecimal lpCurCpzBal = BigDecimal.ZERO;
 	private boolean lockODRecalCal;
 
+	private BigDecimal paidNow = BigDecimal.ZERO;
+	private BigDecimal waivedNow = BigDecimal.ZERO;
 	//OD Penalty Capitalization
 
 	/*
@@ -125,7 +128,55 @@ public class FinODDetails implements java.io.Serializable {
 	private String rcdAction = "";
 
 	public FinODDetails() {
+		super();
+	}
 
+	public FinODDetails copyEntity() {
+		FinODDetails entity = new FinODDetails();
+		entity.setFinReference(this.finReference);
+		entity.setFinODSchdDate(this.finODSchdDate);
+		entity.setFinODFor(this.finODFor);
+		entity.setFinBranch(this.finBranch);
+		entity.setFinType(this.finType);
+		entity.setCustID(this.custID);
+		entity.setFinODTillDate(this.finODTillDate);
+		entity.setFinCurODAmt(this.finCurODAmt);
+		entity.setFinCurODPri(this.finCurODPri);
+		entity.setFinCurODPft(this.finCurODPft);
+		entity.setFinMaxODAmt(this.finMaxODAmt);
+		entity.setFinMaxODPri(this.finMaxODPri);
+		entity.setFinMaxODPft(this.finMaxODPft);
+		entity.setGraceDays(this.graceDays);
+		entity.setIncGraceDays(this.incGraceDays);
+		entity.setFinCurODDays(this.finCurODDays);
+		entity.setTotWaived(this.totWaived);
+		entity.setTotPenaltyAmt(this.totPenaltyAmt);
+		entity.setTotPenaltyPaid(this.totPenaltyPaid);
+		entity.setTotPenaltyBal(this.totPenaltyBal);
+		entity.setLPIAmt(this.lPIAmt);
+		entity.setLPIPaid(this.lPIPaid);
+		entity.setLPIBal(this.lPIBal);
+		entity.setLPIWaived(this.lPIWaived);
+		entity.setFinLMdfDate(this.finLMdfDate);
+		entity.setApplyODPenalty(this.applyODPenalty);
+		entity.setODIncGrcDays(this.oDIncGrcDays);
+		entity.setODChargeType(this.oDChargeType);
+		entity.setODGraceDays(this.oDGraceDays);
+		entity.setODChargeCalOn(this.oDChargeCalOn);
+		entity.setODChargeAmtOrPerc(this.oDChargeAmtOrPerc);
+		entity.setODAllowWaiver(this.oDAllowWaiver);
+		entity.setODMaxWaiverPerc(this.oDMaxWaiverPerc);
+		entity.setoDMinCapAmount(this.oDMinCapAmount);
+		entity.setPayableAmount(this.payableAmount);
+		entity.setODRuleCode(this.oDRuleCode);
+		entity.setLpCpz(this.lpCpz);
+		entity.setLpCpzAmount(this.lpCpzAmount);
+		entity.setLpCurCpzBal(this.lpCurCpzBal);
+		entity.setLockODRecalCal(this.lockODRecalCal);
+		entity.setPaidNow(this.paidNow);
+		entity.setWaivedNow(this.waivedNow);
+		entity.setRcdAction(this.rcdAction);
+		return entity;
 	}
 
 	// ******************************************************//
@@ -467,6 +518,22 @@ public class FinODDetails implements java.io.Serializable {
 
 	public void setLockODRecalCal(boolean lockODRecalCal) {
 		this.lockODRecalCal = lockODRecalCal;
+	}
+
+	public BigDecimal getPaidNow() {
+		return paidNow;
+	}
+
+	public void setPaidNow(BigDecimal paidNow) {
+		this.paidNow = paidNow;
+	}
+
+	public BigDecimal getWaivedNow() {
+		return waivedNow;
+	}
+
+	public void setWaivedNow(BigDecimal waivedNow) {
+		this.waivedNow = waivedNow;
 	}
 
 }

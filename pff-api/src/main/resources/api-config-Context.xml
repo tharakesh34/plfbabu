@@ -51,6 +51,7 @@
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="changePassword*">PROPAGATION_REQUIRED</prop>
+				<prop key="createSession*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -108,12 +109,13 @@
 	</bean>
 
 	<!-- CreateFinance/Loan controller -->
-	<bean id="createFinanceControllerTarget" class="com.pennanttech.controller.CreateFinanceController" autowire="byName"
-		scope="prototype">
+	<bean id="createFinanceControllerTarget" class="com.pennanttech.controller.CreateFinanceController"
+		autowire="byName" scope="prototype">
 	</bean>
 
 	<!-- Mandate controller -->
-	<bean id="mandateController" class="com.pennanttech.controller.MandateController" autowire="byName" scope="prototype">
+	<bean id="mandateController" class="com.pennanttech.controller.MandateController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Limit service controller -->
@@ -122,11 +124,13 @@
 	</bean>
 
 	<!-- Beneficiary controller -->
-	<bean id="beneficiaryController" class="com.pennanttech.controller.BeneficiaryController" autowire="byName" scope="prototype">
+	<bean id="beneficiaryController" class="com.pennanttech.controller.BeneficiaryController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Collateral controller -->
-	<bean id="collateralController" class="com.pennanttech.controller.CollateralController" autowire="byName" scope="prototype">
+	<bean id="collateralController" class="com.pennanttech.controller.CollateralController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Login controller -->
@@ -139,7 +143,8 @@
 	</bean>
 
 	<!-- SecRoles controller -->
-	<bean id="SecRolesController" class="com.pennanttech.controller.SecRolesController" autowire="byName" scope="prototype">
+	<bean id="SecRolesController" class="com.pennanttech.controller.SecRolesController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<!-- Statement controller -->
@@ -149,29 +154,60 @@
 	<!-- VAS controller -->
 	<bean id="vasController" class="com.pennanttech.controller.VASController" autowire="byName" scope="prototype">
 	</bean>
-	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController" autowire="byName" scope="prototype">
+	<bean id="feePostingController" class="com.pennanttech.controller.FeePostingController" autowire="byName"
+		scope="prototype">
 	</bean>
-	<bean id="queryModuleController" class="com.pennanttech.controller.QueryModuleController" autowire="byName" scope="prototype">
+	<bean id="queryModuleController" class="com.pennanttech.controller.QueryModuleController" autowire="byName"
+		scope="prototype">
 	</bean>
 
 	<bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl" parent="secBasicDao" />
 
 	<!-- Remarks Controller -->
-	<bean id="remarksController" class="com.pennanttech.controller.RemarksController" autowire="byName" scope="prototype"></bean>
+	<bean id="remarksController" class="com.pennanttech.controller.RemarksController" autowire="byName"
+		scope="prototype"></bean>
 
 	<!-- Miscellaneous Controller -->
-	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController" autowire="byName"
-		scope="prototype">
+	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController"
+		autowire="byName" scope="prototype">
 	</bean>
 
 	<!-- Document Controller -->
-	<bean id="documentController" class="com.pennanttech.controller.DocumentController" autowire="byName" scope="prototype" />
+	<bean id="documentController" class="com.pennanttech.controller.DocumentController" autowire="byName"
+		scope="prototype" />
 
 	<bean id="refundUploadController" class="com.pennanttech.controller.RefundUploadController" autowire="byName"
 		scope="prototype">
 	</bean>
 
 	<!-- Dealer Controller -->
-	<bean id="dealerController" class="com.pennanttech.controller.DealerController" autowire="byName" scope="prototype">
+	<bean id="dealerController" class="com.pennanttech.controller.DealerController" autowire="byName"
+		scope="prototype">
+	</bean>
+	<!-- Disbursement Controller -->
+	<bean id="disbursementController" class="com.pennanttech.pff.api.controller.DisbursementController"
+		autowire="byName" scope="prototype">
+	</bean>
+	<bean id="presentmentServiceController" class="com.pennanttech.controller.PresentmentServiceController"
+		autowire="byName" scope="prototype">
+		<property name="presentmentDetailService" ref="presentmentDetailService" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+	</bean>
+
+	<bean id="vehicleDealerService" class="com.pennant.backend.service.amtmasters.impl.VehicleDealerServiceImpl" />
+
+	<!-- RelationshipOfficer Controller -->
+	<bean id="relationShipOfficersController" class="com.pennanttech.controller.RelationShipOfficersController"
+		autowire="byName" scope="prototype">
+	</bean>
+
+	<bean id="relationshipOfficerService" class="com.pennant.backend.service.applicationmaster.impl.RelationshipOfficerServiceImpl" />
+
+	<!-- Verification Controller -->
+	<bean id="verificationController" class="com.pennanttech.controller.VerificationController" autowire="byName"
+		scope="prototype">
 	</bean>
 </beans>

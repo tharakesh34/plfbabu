@@ -43,17 +43,21 @@
 package com.pennant.backend.service.payorderissue.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -64,8 +68,10 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -75,6 +81,7 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -91,6 +98,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
@@ -100,7 +108,7 @@ import com.pennanttech.pff.external.BankAccountValidationService;
  * 
  */
 public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader> implements PayOrderIssueService {
-	private static final Logger logger = Logger.getLogger(PayOrderIssueServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PayOrderIssueServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
@@ -129,6 +137,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private PennyDropDAO pennyDropDAO;
 	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
+	private JountAccountDetailDAO jountAccountDetailDAO;
+	@Autowired
+	private FinFeeDetailDAO finFeeDetailDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -319,11 +330,20 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		issueHeader.setApprovedFinanceDisbursements(mainList);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
-			issueHeader
-					.setvASRecordings(vasRecordingDAO.getVASRecordingsStatusByReference(finMian.getFinReference(), ""));
-		}
+		// Fee details
+		List<FinFeeDetail> finFeeDetailList = finFeeDetailDAO.getFinFeeDetailByFinRef(finMian.getFinReference(), false,
+				"", AccountEventConstants.ACCEVENT_VAS_FEE);
+		issueHeader.setFinFeeDetailList(finFeeDetailList);
 
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+			finMian.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finMian.getFinReference(), "_View"));
+			issueHeader.setvASRecordings(vasRecordingDAO.getVASRecordingsByLinkRef(finMian.getFinReference(), ""));
+		}
+		//Getting the JoinAccount Details
+		if (getJountAccountDetailDAO() != null) {
+			issueHeader.setJointAccountDetails(
+					getJountAccountDetailDAO().getJountAccountDetailByFinRef(id, TableType.MAIN_TAB.getSuffix()));
+		}
 		logger.debug("Leaving");
 		return issueHeader;
 	}
@@ -724,8 +744,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 					int count = pennyDropDAO.getPennyDropCount(finAdvancePay.getBeneficiaryAccNo(),
 							finAdvancePay.getiFSC());
 					if (count == 0) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+						/*
+						 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
+						 * ErrorDetail(PennantConstants.KEY_FIELD, "41020", errParm, valueParm), usrLanguage));
+						 */
 					}
 				}
 			}
@@ -846,8 +868,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				finAdvpay.setRecordType("");
 				// other
 				if (rcdType.equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
-				} else {
+					if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ
+							&& DisbursementConstants.STATUS_PAID.equals(finAdvpay.getStatus())) {
+						finAdvpay.setStatus(DisbursementConstants.STATUS_PAID_BUT_CANCELLED);
+					} else {
+						finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
+					}
+				} else if (!DisbursementConstants.STATUS_REVERSED.equals(finAdvpay.getStatus())) {
 					finAdvpay.setStatus(DisbursementConstants.STATUS_APPROVED);
 				}
 				finAdvpay.setpOIssued(true);
@@ -855,6 +882,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			if (finAdvpay.isHoldDisbursement()) {
 				finAdvpay.setStatus(DisbursementConstants.STATUS_HOLD);
 			}
+
+			// Reverse the disbursement instruction postings for PAID BUT CANCEL Case.
+			if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ
+					&& DisbursementConstants.STATUS_PAID_BUT_CANCELLED.equals(finAdvpay.getStatus())) {
+				postingsPreparationUtil.postReversalsByLinkedTranID(finAdvpay.getLinkedTranId());
+			}
+
 			if (save) {
 				count = count + 1;
 
@@ -865,6 +899,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 					}
 				}
 				finAdvancePaymentsDAO.save(finAdvpay, type);
+				if (finAdvpay.getDocImage() != null) {
+					saveDocumentDetails(finAdvpay);
+				}
 				if (StringUtils.isEmpty(type)) {
 					finAdvpay.setPaymentProcReq(true);
 				}
@@ -885,6 +922,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 						finAdvpay.setLinkedTranId(data.get(finAdvpay.getPaymentSeq()));
 					}
 					finAdvancePaymentsDAO.update(finAdvpay, type);
+					if (finAdvpay.getDocImage() != null) {
+						saveDocumentDetails(finAdvpay);
+					}
 
 					count = count + 1;
 					if (StringUtils.isEmpty(type)) {
@@ -898,6 +938,33 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		logger.debug(" Leaving ");
 		return auditDetails;
+	}
+
+	private void saveDocumentDetails(FinAdvancePayments finPayment) {
+
+		DocumentDetails details = new DocumentDetails();
+		details.setDocModule(DisbursementConstants.DISB_MODULE);
+		details.setDoctype(finPayment.getDocType());
+		details.setDocCategory(DisbursementConstants.DISB_DOC_TYPE);
+		details.setDocName(finPayment.getDocumentName());
+		details.setLastMntBy(finPayment.getLastMntBy());
+		details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		details.setFinEvent(FinanceConstants.FINSER_EVENT_BASICMAINTAIN);
+		details.setDocImage(finPayment.getDocImage());
+		details.setReferenceId(String.valueOf(finPayment.getPaymentId()));
+		details.setFinReference(finPayment.getFinReference());
+
+		saveDocument(DMSModule.FINANCE, DMSModule.DISBINST, details);
+		DocumentDetails oldDocumentDetails = documentDetailsDAO.getDocumentDetails(details.getReferenceId(),
+				details.getDocCategory(), details.getDocModule(), TableType.MAIN_TAB.getSuffix());
+
+		if (oldDocumentDetails != null && oldDocumentDetails.getDocId() != Long.MIN_VALUE) {
+			details.setDocId(oldDocumentDetails.getDocId());
+			documentDetailsDAO.update(details, TableType.MAIN_TAB.getSuffix());
+		} else {
+			documentDetailsDAO.save(details, TableType.MAIN_TAB.getSuffix());
+		}
 	}
 
 	public AuditDetail getAuditDetails(FinAdvancePayments finAdvancePayments, int auditSeq, String transType) {
@@ -927,7 +994,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, aFinAdvancePayments.getRecordType())
 				|| StringUtils.equals(DisbursementConstants.STATUS_CANCEL, aFinAdvancePayments.getStatus())
-				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())) {
+				|| StringUtils.equals(DisbursementConstants.STATUS_REJECTED, aFinAdvancePayments.getStatus())
+				|| StringUtils.equals(DisbursementConstants.STATUS_REVERSED, aFinAdvancePayments.getStatus())) {
 			return true;
 		}
 		return false;
@@ -1009,6 +1077,14 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
+	}
+
+	public JountAccountDetailDAO getJountAccountDetailDAO() {
+		return jountAccountDetailDAO;
+	}
+
+	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
+		this.jountAccountDetailDAO = jountAccountDetailDAO;
 	}
 
 }

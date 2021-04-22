@@ -1,22 +1,20 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -32,7 +30,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements FinCovenantTypeDAO {
-	private static Logger logger = Logger.getLogger(FinCovenantTypeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinCovenantTypeDAOImpl.class);
 
 	public FinCovenantTypeDAOImpl() {
 		super();
@@ -78,8 +76,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCovenantType.class);
+		RowMapper<FinCovenantType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCovenantType.class);
 
 		try {
 			finCovenantType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -93,8 +90,6 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	@Override
 	public List<FinCovenantType> getFinCovenantTypeByFinRef(final String id, String type, boolean isEnquiry) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, CovenantType, Description, MandRole, AlwWaiver, AlwPostpone, PostponeDays");
 		sql.append(", ReceivableDate, AlwOtc, InternalUse");
@@ -115,62 +110,49 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, id);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, id);
+		}, (rs, rowNum) -> {
+			FinCovenantType fct = new FinCovenantType();
+
+			fct.setFinReference(rs.getString("FinReference"));
+			fct.setCovenantType(rs.getString("CovenantType"));
+			fct.setDescription(rs.getString("Description"));
+			fct.setMandRole(rs.getString("MandRole"));
+			fct.setAlwWaiver(rs.getBoolean("AlwWaiver"));
+			fct.setAlwPostpone(rs.getBoolean("AlwPostpone"));
+			fct.setPostponeDays(rs.getInt("PostponeDays"));
+			fct.setReceivableDate(rs.getTimestamp("ReceivableDate"));
+			fct.setAlwOtc(rs.getBoolean("AlwOtc"));
+			fct.setInternalUse(rs.getBoolean("InternalUse"));
+
+			if (isEnquiry) {
+				fct.setCovenantTypeDesc(rs.getString("CovenantTypeDesc"));
+				fct.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+			} else {
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					fct.setCovenantTypeDesc(rs.getString("CovenantTypeDesc"));
+					fct.setMandRoleDesc(rs.getString("MandRoleDesc"));
+					fct.setPddFlag(rs.getBoolean("PddFlag"));
+					fct.setOtcFlag(rs.getBoolean("OtcFlag"));
+					fct.setCategoryCode(rs.getString("CategoryCode"));
 				}
-			}, new RowMapper<FinCovenantType>() {
-				@Override
-				public FinCovenantType mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinCovenantType fct = new FinCovenantType();
+			}
+			fct.setVersion(rs.getInt("Version"));
+			fct.setLastMntBy(rs.getLong("LastMntBy"));
+			fct.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fct.setRecordStatus(rs.getString("RecordStatus"));
+			fct.setRoleCode(rs.getString("RoleCode"));
+			fct.setNextRoleCode(rs.getString("NextRoleCode"));
+			fct.setTaskId(rs.getString("TaskId"));
+			fct.setNextTaskId(rs.getString("NextTaskId"));
+			fct.setRecordType(rs.getString("RecordType"));
+			fct.setWorkflowId(rs.getLong("WorkflowId"));
 
-					fct.setFinReference(rs.getString("FinReference"));
-					fct.setCovenantType(rs.getString("CovenantType"));
-					fct.setDescription(rs.getString("Description"));
-					fct.setMandRole(rs.getString("MandRole"));
-					fct.setAlwWaiver(rs.getBoolean("AlwWaiver"));
-					fct.setAlwPostpone(rs.getBoolean("AlwPostpone"));
-					fct.setPostponeDays(rs.getInt("PostponeDays"));
-					fct.setReceivableDate(rs.getTimestamp("ReceivableDate"));
-					fct.setAlwOtc(rs.getBoolean("AlwOtc"));
-					fct.setInternalUse(rs.getBoolean("InternalUse"));
-
-					if (isEnquiry) {
-						fct.setCovenantTypeDesc(rs.getString("CovenantTypeDesc"));
-						fct.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
-					} else {
-
-						if (StringUtils.trimToEmpty(type).contains("View")) {
-							fct.setCovenantTypeDesc(rs.getString("CovenantTypeDesc"));
-							fct.setMandRoleDesc(rs.getString("MandRoleDesc"));
-							fct.setPddFlag(rs.getBoolean("PddFlag"));
-							fct.setOtcFlag(rs.getBoolean("OtcFlag"));
-							fct.setCategoryCode(rs.getString("CategoryCode"));
-						}
-					}
-					fct.setVersion(rs.getInt("Version"));
-					fct.setLastMntBy(rs.getLong("LastMntBy"));
-					fct.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					fct.setRecordStatus(rs.getString("RecordStatus"));
-					fct.setRoleCode(rs.getString("RoleCode"));
-					fct.setNextRoleCode(rs.getString("NextRoleCode"));
-					fct.setTaskId(rs.getString("TaskId"));
-					fct.setNextTaskId(rs.getString("NextTaskId"));
-					fct.setRecordType(rs.getString("RecordType"));
-					fct.setWorkflowId(rs.getLong("WorkflowId"));
-
-					return fct;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return fct;
+		});
 	}
 
 	@Override
@@ -439,7 +421,6 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	@Override
 	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
-		logger.debug(Literal.ENTERING);
 		FinCovenantType finCovenantType = new FinCovenantType();
 		finCovenantType.setId(id);
 
@@ -466,11 +447,9 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		sql.append(" AND finreference not in (select referenceid  from documentdetails where finreference=referenceid");
 		sql.append(" and covenanttype=doccategory) ");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
-		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinCovenantType.class);
-		logger.debug(Literal.LEAVING);
+		RowMapper<FinCovenantType> typeRowMapper = BeanPropertyRowMapper.newInstance(FinCovenantType.class);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -507,7 +486,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("DocTypeCode", covenantType);
 
-		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		RowMapper<DocumentType> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentType.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
@@ -533,7 +512,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		paramSource.addValue("RoleCd", Arrays.asList(allowedRoles));
 		paramSource.addValue("mandRole", mandRole);
 
-		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
@@ -554,7 +533,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		sql.append(" Where Pdd=1 OR Otc = 1");
 
 		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<DocumentType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DocumentType.class);
+		RowMapper<DocumentType> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentType.class);
 
 		try {
 			return this.jdbcTemplate.query(sql.toString(), typeRowMapper);
@@ -565,6 +544,31 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		logger.debug(Literal.LEAVING);
 		return null;
 
+	}
+
+	@Override
+	public SecurityRole isMandRoleExists(String mandRole) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  RoleCd, RoleDesc  from  SecRoles");
+		sql.append(" Where RoleCd = :mandRole");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("mandRole", mandRole);
+
+		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

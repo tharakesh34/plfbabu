@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -75,7 +76,7 @@ import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
  */
 public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> implements CustomerIncomeService {
 
-	private static Logger logger = Logger.getLogger(CustomerIncomeServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerIncomeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerIncomeDAO customerIncomeDAO;

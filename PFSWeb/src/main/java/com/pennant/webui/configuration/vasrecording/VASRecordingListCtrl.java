@@ -46,7 +46,8 @@ package com.pennant.webui.configuration.vasrecording;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -70,7 +71,9 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.configuration.VASRecordingService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -95,7 +98,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(VASRecordingListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(VASRecordingListCtrl.class);
 
 	protected Window window_VASRecordingList;
 	protected Borderlayout borderLayout_VASRecordingList;
@@ -172,7 +175,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	private transient VASRecordingService vASRecordingService;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 	private transient WorkFlowDetails workFlowDetails = null;
-
+	private transient FinanceDetailService financeDetailService;
 	private String module = null;
 
 	/**
@@ -196,7 +199,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 			StringBuilder sql = new StringBuilder();
 			sql.append(
-					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)) AND ( ProductCtg != '");
+					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL AND RecordType !='')) AND ( ProductCtg != '");
 			sql.append(VASConsatnts.VAS_CATEGORY_VASI).append("')");
 			this.searchObject.addWhereClause(sql.toString());
 		} else if (VASConsatnts.STATUS_NORMAL.equals(module)) {
@@ -241,7 +244,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		registerField("feePaymentMode", listheader_FeePaymentMode, SortOrder.NONE, feePaymentMode,
 				sortOperator_FeePaymentMode, Operators.SIMPLE_NUMARIC);
 		registerField("nextRoleCode");
-		registerField("VasStatus");
+		registerField("VasStatus", listheader_VasStatus, SortOrder.NONE);
 		// Render the page and display the data.
 		doRenderPage();
 
@@ -344,6 +347,16 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			return;
 		}
 
+		//Checking instruction status to cancel the VAS
+		if (VASConsatnts.STATUS_CANCEL.equals(module)) {
+			String vasInsstatus = getVASRecordingService().getVasInsStatus(aVASRecording.getPaymentInsId());
+			if (StringUtils.equals(vasInsstatus, DisbursementConstants.STATUS_AWAITCON)
+					|| StringUtils.equals(vasInsstatus, DisbursementConstants.STATUS_REVERSED)) {
+				MessageUtil.showMessage(
+						Labels.getLabel("common_NoMaintainance") + ". Instruction Status is " + vasInsstatus);
+				return;
+			}
+		}
 		// Role Code State Checking
 		String nextroleCode = aVASRecording.getNextRoleCode();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
@@ -425,6 +438,12 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		arg.put("vASRecording", vASRecording);
 		arg.put("vASRecordingListCtrl", this);
 		arg.put("module", module);
+		//passing financeDetail object for pre and post script validations
+		/*
+		 * if (vASRecording.getPrimaryLinkRef() != null && getFinanceDetailService() != null) { FinanceDetail
+		 * financeDetail = getFinanceDetailService() .getFinanceDetailsForPmay(vASRecording.getPrimaryLinkRef());
+		 * arg.put("financeDetail", financeDetail); }
+		 */
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, arg);
@@ -469,5 +488,13 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 }

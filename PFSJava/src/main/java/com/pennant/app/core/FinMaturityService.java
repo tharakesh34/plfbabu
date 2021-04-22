@@ -51,15 +51,17 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -67,13 +69,16 @@ import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.cache.util.FinanceConfigCache;
-import com.pennanttech.pff.core.TableType;
+import com.pennant.pff.eod.cache.RuleConfigCache;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class FinMaturityService extends ServiceHelper {
 
 	private static final long serialVersionUID = 1442146139821584760L;
-	private Logger logger = Logger.getLogger(FinMaturityService.class);
+	private Logger logger = LogManager.getLogger(FinMaturityService.class);
 
 	private DataSource dataSource;
 
@@ -87,57 +92,68 @@ public class FinMaturityService extends ServiceHelper {
 	 * 
 	 */
 	public void processInActiveFinancesAMZ() throws Exception {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
-		ResultSet resultSet = null;
+		ResultSet rs = null;
 		Connection connection = null;
-		PreparedStatement sqlStatement = null;
+		PreparedStatement ps = null;
 
 		FinEODEvent finEODEvent = null;
 		ProjectedAccrual projAccrual = null;
 		ProjectedAccrual prvProjAccrual = null;
-		List<ProjectedAccrual> projAccrualList = new ArrayList<ProjectedAccrual>(1);
-		List<FinanceScheduleDetail> schdDetails = new ArrayList<FinanceScheduleDetail>(1);
+		List<ProjectedAccrual> projAccrualList = new ArrayList<>(1);
+		List<FinanceScheduleDetail> schdDetails = new ArrayList<>(1);
 
 		try {
+			EventProperties eventProperties = EODUtil.EVENT_PROPS;
+			Date appDate = null;
 
-			java.util.Date appDate = SysParamUtil.getAppDate();
-			Date curMonthEnd = DateUtility.getMonthEnd(appDate);
-			Date curMonthStart = DateUtility.getMonthStart(appDate);
-			Date prvMonthEndDate = DateUtility.addDays(curMonthStart, -1);
+			if (eventProperties.isParameterLoaded()) {
+				appDate = eventProperties.getAppDate();
+			} else {
+				appDate = SysParamUtil.getAppDate();
+			}
 
-			String selectSql = prepareSelectQuery();
+			Date curMonthEnd = DateUtil.getMonthEnd(appDate);
+			Date curMonthStart = DateUtil.getMonthStart(appDate);
+			Date prvMonthEndDate = DateUtil.addDays(curMonthStart, -1);
+
+			String sql = prepareSelectQuery();
 			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(selectSql, ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			sqlStatement.setDate(1, DateUtility.getSqlDate(curMonthStart));
-			sqlStatement.setDate(2, DateUtility.getSqlDate(curMonthEnd));
-			resultSet = sqlStatement.executeQuery();
+			ps = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ps.setDate(1, DateUtil.getSqlDate(curMonthStart));
+			ps.setDate(2, DateUtil.getSqlDate(curMonthEnd));
+			rs = ps.executeQuery();
 
 			int totalRecords = 0;
 
-			//Get the Rules 
-			String amzMethodRule = this.ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE,
-					AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE);
+			String amzMethodRule = null;
+			String methodRule = AmortizationConstants.AMZ_METHOD_RULE;
 
-			if (resultSet.next()) {
-				resultSet.last();
-				totalRecords = resultSet.getRow();
-				StepUtil.PROCESS_INACTIVE_FINANCES.setTotalRecords(totalRecords);
-				resultSet.beforeFirst();
+			//Get the Rules 
+			if (EODUtil.isEod()) {
+				amzMethodRule = RuleConfigCache.getCacheRuleCode(methodRule, methodRule, methodRule);
+			} else {
+				amzMethodRule = this.ruleDAO.getAmountRule(methodRule, methodRule, methodRule);
 			}
 
-			while (resultSet.next()) {
-				StepUtil.PROCESS_INACTIVE_FINANCES.setProcessedRecords(resultSet.getRow());
+			if (rs.next()) {
+				rs.last();
+				totalRecords = rs.getRow();
+				StepUtil.PROCESS_INACTIVE_FINANCES.setTotalRecords(totalRecords);
+				rs.beforeFirst();
+			}
 
-				String finReference = resultSet.getString("FinReference");
-				String amzMethod = resultSet.getString("AMZMethod");
-				String finType = resultSet.getString("FinType");
+			while (rs.next()) {
+				StepUtil.PROCESS_INACTIVE_FINANCES.setProcessedRecords(rs.getRow());
+
+				String finReference = rs.getString("FinReference");
+				String amzMethod = rs.getString("AMZMethod");
+				String finType = rs.getString("FinType");
 
 				// NO Schedule Details Available (OD Loans)
-				schdDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finReference,
-						TableType.MAIN_TAB.getSuffix(), false);
-				if (schdDetails == null || schdDetails.isEmpty()) {
+				schdDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
+				if (CollectionUtils.isEmpty(schdDetails)) {
 					continue;
 				}
 
@@ -166,17 +182,16 @@ public class FinMaturityService extends ServiceHelper {
 				this.projectedAmortizationDAO.saveBatchProjAccruals(projAccrualList);
 			}
 
-			resultSet.close();
-			sqlStatement.close();
-
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		} finally {
+			rs.close();
+			ps.close();
 			DataSourceUtils.releaseConnection(connection, dataSource);
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -184,14 +199,13 @@ public class FinMaturityService extends ServiceHelper {
 	 * @return
 	 */
 	private String prepareSelectQuery() {
-
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Select T1.FinReference, T1.CustID, T1.FinType, T1.MaturityDate, T1.ClosedDate, T2.AMZMethod From FinanceMain T1 ");
-		sql.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference ");
-		sql.append(" WHERE T1.FinIsActive = 0 AND T1.ClosedDate >= ? AND T1.ClosedDate <= ? ");
+		sql.append(" Select T1.FinReference, T1.CustID, T1.FinType, T1.MaturityDate, T1.ClosedDate, T2.AMZMethod");
+		sql.append(" From FinanceMain T1 ");
+		sql.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference");
+		sql.append(" WHERE T1.FinIsActive = 0 AND T1.ClosedDate >= ? AND T1.ClosedDate <= ?");
 
-		logger.debug("selectSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		return sql.toString();
 	}
 
@@ -216,8 +230,6 @@ public class FinMaturityService extends ServiceHelper {
 
 		return finEODEvent;
 	}
-
-	// setters / getters
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;

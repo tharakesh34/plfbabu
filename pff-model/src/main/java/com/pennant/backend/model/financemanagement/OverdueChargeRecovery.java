@@ -121,6 +121,62 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public OverdueChargeRecovery copyEntity() {
+		OverdueChargeRecovery entity = new OverdueChargeRecovery();
+		entity.setFinReference(this.finReference);
+		entity.setFinODSchdDate(this.finODSchdDate);
+		entity.setFinODFor(this.finODFor);
+		entity.setMovementDate(this.movementDate);
+		entity.setSeqNo(this.seqNo);
+		entity.setODDays(this.oDDays);
+		entity.setFinCurODAmt(this.finCurODAmt);
+		entity.setFinCurODPri(this.finCurODPri);
+		entity.setFinCurODPft(this.finCurODPft);
+		entity.setPenaltyType(this.penaltyType);
+		entity.setPenaltyCalOn(this.penaltyCalOn);
+		entity.setPenaltyAmtPerc(this.penaltyAmtPerc);
+		entity.setPenalty(this.penalty);
+		entity.setLpCpz(this.lpCpz);
+		entity.setLpCpzAmount(this.lpCpzAmount);
+		entity.setLpCurCpzBal(this.lpCurCpzBal);
+		entity.setMaxWaiver(this.maxWaiver);
+		entity.setWaivedAmt(this.waivedAmt);
+		entity.setPenaltyPaid(this.penaltyPaid);
+		entity.setPenaltyBal(this.penaltyBal);
+		entity.setRcdCanDel(this.rcdCanDel);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setFinCcy(this.finCcy);
+		entity.setLovDescCustCIF(this.lovDescCustCIF);
+		entity.setLovDescCustShrtName(this.lovDescCustShrtName);
+		entity.setLovDescFinStartDate(this.lovDescFinStartDate);
+		entity.setLovDescMaturityDate(this.lovDescMaturityDate);
+		entity.setLovDescFinAmount(this.lovDescFinAmount);
+		entity.setLovDescCurFinAmt(this.lovDescCurFinAmt);
+		entity.setLovDescCurSchPriDue(this.lovDescCurSchPriDue);
+		entity.setLovDescCurSchPftDue(this.lovDescCurSchPftDue);
+		entity.setLovDescTotOvrDueChrg(this.lovDescTotOvrDueChrg);
+		entity.setLovDescTotOvrDueChrgWaived(this.lovDescTotOvrDueChrgWaived);
+		entity.setLovDescTotOvrDueChrgPaid(this.lovDescTotOvrDueChrgPaid);
+		entity.setLovDescTotOvrDueChrgBal(this.lovDescTotOvrDueChrgBal);
+		entity.setPendingODC(this.pendingODC);
+		entity.setTotWaived(this.totWaived);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

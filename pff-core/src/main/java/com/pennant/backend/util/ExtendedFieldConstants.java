@@ -73,6 +73,7 @@ public class ExtendedFieldConstants {
 	public static final String MODULE_LOAN = "LOAN";
 	public static final String MODULE_VERIFICATION = "VERIFICATION";
 	public static final String MODULE_ORGANIZATION = "ORG";
+	public static final String MODULE_MAINTENANCE = "BDM";
 
 	// Extended Types
 	public static final int EXTENDEDTYPE_EXTENDEDFIELD = 0;
@@ -84,6 +85,7 @@ public class ExtendedFieldConstants {
 	public static final String VERIFICATION_FI = "FI";
 	public static final String VERIFICATION_PD = "PD";
 	public static final String VERIFICATION_TV = "TV";
+	public static final String VERIFICATION_VETTING = "VETTING";
 
 	// Organization Types
 	public static final String ORGANIZATION_SCHOOL = "SCHOOL";

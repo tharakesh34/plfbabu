@@ -49,7 +49,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,7 +71,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>FinanceMain model</b> class.<br>
  */
 public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements GSTInvoiceTxnDAO {
-	private static Logger logger = Logger.getLogger(GSTInvoiceTxnDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GSTInvoiceTxnDAOImpl.class);
 
 	public GSTInvoiceTxnDAOImpl() {
 		super();
@@ -78,11 +79,9 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 	@Override
 	public long save(GSTInvoiceTxn gsti) {
-		logger.debug(Literal.ENTERING);
 
 		if (gsti.getInvoiceId() <= 0) {
 			gsti.setInvoiceId(getNextValue("Seq_Gst_Invoice_Txn"));
-			logger.debug("get NextID:" + gsti.getInvoiceId());
 		}
 
 		StringBuilder sql = new StringBuilder("Insert into");
@@ -99,40 +98,36 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+			jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+				int index = 1;
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-
-					ps.setLong(index++, JdbcUtil.setLong(gsti.getInvoiceId()));
-					ps.setLong(index++, JdbcUtil.setLong(gsti.getTransactionID()));
-					ps.setString(index++, gsti.getInvoiceNo());
-					ps.setDate(index++, JdbcUtil.getDate(gsti.getInvoiceDate()));
-					ps.setBigDecimal(index++, gsti.getInvoice_Amt());
-					ps.setString(index++, gsti.getCompanyCode());
-					ps.setString(index++, gsti.getCompanyName());
-					ps.setString(index++, gsti.getCompany_GSTIN());
-					ps.setString(index++, gsti.getCompany_Address1());
-					ps.setString(index++, gsti.getCompany_Address2());
-					ps.setString(index++, gsti.getCompany_Address3());
-					ps.setString(index++, gsti.getCompany_PINCode());
-					ps.setString(index++, gsti.getCompany_State_Code());
-					ps.setString(index++, gsti.getCompany_State_Name());
-					ps.setString(index++, gsti.getHsnNumber());
-					ps.setString(index++, gsti.getNatureService());
-					ps.setString(index++, gsti.getPanNumber());
-					ps.setString(index++, gsti.getLoanAccountNo());
-					ps.setString(index++, gsti.getCustomerID());
-					ps.setString(index++, gsti.getCustomerName());
-					ps.setString(index++, gsti.getCustomerGSTIN());
-					ps.setString(index++, gsti.getCustomerStateCode());
-					ps.setString(index++, gsti.getCustomerStateName());
-					ps.setString(index++, gsti.getCustomerAddress());
-					ps.setString(index++, gsti.getInvoice_Status());
-					ps.setString(index++, gsti.getInvoiceType());
-					ps.setLong(index++, JdbcUtil.setLong(gsti.getDueInvoiceId()));
-				}
+				ps.setLong(index++, JdbcUtil.setLong(gsti.getInvoiceId()));
+				ps.setLong(index++, JdbcUtil.setLong(gsti.getTransactionID()));
+				ps.setString(index++, gsti.getInvoiceNo());
+				ps.setDate(index++, JdbcUtil.getDate(gsti.getInvoiceDate()));
+				ps.setBigDecimal(index++, gsti.getInvoice_Amt());
+				ps.setString(index++, gsti.getCompanyCode());
+				ps.setString(index++, gsti.getCompanyName());
+				ps.setString(index++, gsti.getCompany_GSTIN());
+				ps.setString(index++, gsti.getCompany_Address1());
+				ps.setString(index++, gsti.getCompany_Address2());
+				ps.setString(index++, gsti.getCompany_Address3());
+				ps.setString(index++, gsti.getCompany_PINCode());
+				ps.setString(index++, gsti.getCompany_State_Code());
+				ps.setString(index++, gsti.getCompany_State_Name());
+				ps.setString(index++, gsti.getHsnNumber());
+				ps.setString(index++, gsti.getNatureService());
+				ps.setString(index++, gsti.getPanNumber());
+				ps.setString(index++, gsti.getLoanAccountNo());
+				ps.setString(index++, gsti.getCustomerID());
+				ps.setString(index++, gsti.getCustomerName());
+				ps.setString(index++, gsti.getCustomerGSTIN());
+				ps.setString(index++, gsti.getCustomerStateCode());
+				ps.setString(index++, gsti.getCustomerStateName());
+				ps.setString(index++, gsti.getCustomerAddress());
+				ps.setString(index++, gsti.getInvoice_Status());
+				ps.setString(index++, gsti.getInvoiceType());
+				ps.setLong(index, JdbcUtil.setLong(gsti.getDueInvoiceId()));
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -146,7 +141,6 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 			if (gstid.getId() <= 0) {
 				gstid.setId(getNextValue("Seq_Gst_Invoice_Txn_Details"));
-				logger.debug("get NextID:" + gstid.getId());
 			}
 
 			gstid.setInvoiceId(gsti.getInvoiceId());
@@ -162,35 +156,29 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 			logger.trace(Literal.SQL + sql.toString());
 			try {
 
-				jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+				jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+					int index = 1;
 
-					@Override
-					public void setValues(PreparedStatement ps) throws SQLException {
-						int index = 1;
-
-						ps.setLong(index++, JdbcUtil.setLong(gstid.getId()));
-						ps.setLong(index++, JdbcUtil.setLong(gstid.getInvoiceId()));
-						ps.setString(index++, gstid.getFeeCode());
-						ps.setBigDecimal(index++, gstid.getFeeAmount());
-						ps.setBigDecimal(index++, gstid.getCGST_RATE());
-						ps.setBigDecimal(index++, gstid.getCGST_AMT());
-						ps.setBigDecimal(index++, gstid.getSGST_RATE());
-						ps.setBigDecimal(index++, gstid.getSGST_AMT());
-						ps.setBigDecimal(index++, gstid.getIGST_RATE());
-						ps.setBigDecimal(index++, gstid.getIGST_AMT());
-						ps.setBigDecimal(index++, gstid.getUGST_RATE());
-						ps.setBigDecimal(index++, gstid.getUGST_AMT());
-						ps.setBigDecimal(index++, gstid.getCESS_RATE());
-						ps.setBigDecimal(index++, gstid.getCESS_AMT());
-					}
+					ps.setLong(index++, JdbcUtil.setLong(gstid.getId()));
+					ps.setLong(index++, JdbcUtil.setLong(gstid.getInvoiceId()));
+					ps.setString(index++, gstid.getFeeCode());
+					ps.setBigDecimal(index++, gstid.getFeeAmount());
+					ps.setBigDecimal(index++, gstid.getCGST_RATE());
+					ps.setBigDecimal(index++, gstid.getCGST_AMT());
+					ps.setBigDecimal(index++, gstid.getSGST_RATE());
+					ps.setBigDecimal(index++, gstid.getSGST_AMT());
+					ps.setBigDecimal(index++, gstid.getIGST_RATE());
+					ps.setBigDecimal(index++, gstid.getIGST_AMT());
+					ps.setBigDecimal(index++, gstid.getUGST_RATE());
+					ps.setBigDecimal(index++, gstid.getUGST_AMT());
+					ps.setBigDecimal(index++, gstid.getCESS_RATE());
+					ps.setBigDecimal(index, gstid.getCESS_AMT());
 				});
 
 			} catch (DuplicateKeyException e) {
 				throw new ConcurrencyException(e);
 			}
 		}
-
-		logger.debug(Literal.LEAVING);
 
 		return gsti.getInvoiceId();
 	}
@@ -558,8 +546,6 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 	@Override
 	public Long getInvoiceIdByTranId(Long tranId) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" InvoiceId");
 		sql.append(" from gst_invoice_txn");
@@ -568,18 +554,15 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tranId }, new RowMapper<Long>() {
-				@Override
-				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tranId },
+					(ResultSet rs, int rowNum) -> {
 
-					return (JdbcUtil.getLong(rs.getLong("InvoiceId")));
-				}
-			});
+						return (JdbcUtil.getLong(rs.getLong("InvoiceId")));
+					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Records not found in gst_invoice_txn for the specified tranId {}", tranId);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

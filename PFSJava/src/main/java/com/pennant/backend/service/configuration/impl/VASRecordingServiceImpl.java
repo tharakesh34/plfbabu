@@ -58,7 +58,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -158,7 +159,7 @@ import com.rits.cloning.Cloner;
  * 
  */
 public class VASRecordingServiceImpl extends GenericService<VASRecording> implements VASRecordingService {
-	private static final Logger logger = Logger.getLogger(VASRecordingServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(VASRecordingServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private VASRecordingDAO vASRecordingDAO;
@@ -516,9 +517,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					// set to Vas recording bean as Return dataset
 
 					List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
-
-					list = getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(),
-							AccountEventConstants.ACCEVENT_VAS_FEE);
+					String[] finEvent = { AccountEventConstants.ACCEVENT_VAS_FEE,
+							AccountEventConstants.ACCEVENT_INSPAY };
+					list = getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), finEvent);
 
 					for (ReturnDataSet returnDataSet : list) {
 						String tranCode = returnDataSet.getTranCode();
@@ -537,8 +538,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					vasRecording.setReturnDataSetList(list);
 				}
 			} else {
-				vasRecording.setReturnDataSetList(getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(),
-						AccountEventConstants.ACCEVENT_VAS_FEE));
+				String[] finEvent = { AccountEventConstants.ACCEVENT_VAS_FEE, AccountEventConstants.ACCEVENT_INSPAY };
+				vasRecording.setReturnDataSetList(
+						getPostingsDAO().getPostingsByVasref(vasRecording.getVasReference(), finEvent));
 			}
 		}
 		logger.debug("Leaving");
@@ -694,6 +696,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @throws IllegalAccessException
 	 */
 
+	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException {
 		logger.debug("Entering");
 
@@ -828,6 +831,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -1818,6 +1822,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 		} else if (StringUtils.equals(VASConsatnts.STATUS_CANCEL, vASRecording.getVasStatus())) {
 			postingsPreparationUtil.postReveralsByFinreference(vASRecording.getVasReference());
+			Long paymentId = vASRecordingDAO.getPaymentInsId(vASRecording.getVasReference(), "");
+			if (paymentId != null && paymentId > 0) {
+				vASRecordingDAO.updateVasInsStatus(paymentId);
+			}
 		}
 
 		logger.debug("Leaving");
@@ -2806,6 +2814,23 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return vasRecording;
 	}
 
+	@Override
+	public List<VASRecording> getLoanReportVasRecordingByRef(String reference) {
+		logger.debug(Literal.ENTERING);
+		List<VASRecording> loanReportVasRecordingByRef = vASRecordingDAO.getLoanReportVasRecordingByRef(reference);
+		for (VASRecording vasRecording : loanReportVasRecordingByRef) {
+
+			if (loanReportVasRecordingByRef != null) {
+				// VasconfigurationDetails
+				vasRecording.setVasConfiguration(getvASConfigurationService()
+						.getApprovedVASConfigurationByCode(vasRecording.getProductCode(), true));
+
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return loanReportVasRecordingByRef;
+	}
+
 	public VASRecordingDAO getvASRecordingDAO() {
 		return vASRecordingDAO;
 	}
@@ -2952,6 +2977,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	@Override
+	public String getVasInsStatus(long paymentInsId) {
+		return vASRecordingDAO.getVasInsStatus(paymentInsId);
 	}
 
 }

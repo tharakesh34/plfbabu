@@ -48,4 +48,10 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="PSD#164364.1" author="sudheer.t">
+		<modifyDataType tableName="adtrmtfinancetypes" columnName="finminterm" newDataType="int"/>
+		<modifyDataType tableName="adtrmtfinancetypes" columnName="finmaxterm" newDataType="int"/>
+		<modifyDataType tableName="adtrmtfinancetypes" columnName="findftterms" newDataType="int"/>
+	</changeSet>
+	
 </databaseChangeLog>

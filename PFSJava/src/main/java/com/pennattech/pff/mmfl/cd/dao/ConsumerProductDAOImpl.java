@@ -1,14 +1,15 @@
 package com.pennattech.pff.mmfl.cd.dao;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -19,7 +20,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
 
 public class ConsumerProductDAOImpl extends SequenceDao<ConsumerProduct> implements ConsumerProductDAO {
-	private static Logger logger = Logger.getLogger(ConsumerProductDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ConsumerProductDAOImpl.class);
 
 	public ConsumerProductDAOImpl() {
 		super();
@@ -44,7 +45,7 @@ public class ConsumerProductDAOImpl extends SequenceDao<ConsumerProduct> impleme
 		consumerProduct.setProductId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(consumerProduct);
-		RowMapper<ConsumerProduct> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ConsumerProduct.class);
+		RowMapper<ConsumerProduct> rowMapper = BeanPropertyRowMapper.newInstance(ConsumerProduct.class);
 
 		try {
 			consumerProduct = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

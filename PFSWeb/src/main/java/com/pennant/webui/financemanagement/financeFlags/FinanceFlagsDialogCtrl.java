@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
@@ -106,7 +107,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(FinanceFlagsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceFlagsDialogCtrl.class);
 
 	protected Window window_FinanceFlagsDialog; // autoWired
 	protected Borderlayout borderlayoutFinanceFlags; // autoWired
@@ -559,7 +560,9 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
+					processCompleted = true;
+				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
 					List<String> finTypeList = getFinanceFlagsService().getScheduleEffectModuleList(true);

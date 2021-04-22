@@ -44,7 +44,8 @@ package com.pennant.backend.service.eod.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.BeanUtils;
 
@@ -69,7 +70,7 @@ import com.pennanttech.pff.jobs.EODReminderJob;
  * Service implementation for methods that depends on <b>EODConfig</b>.<br>
  */
 public class EODConfigServiceImpl extends GenericService<EODConfig> implements EODConfigService {
-	private static final Logger logger = Logger.getLogger(EODConfigServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(EODConfigServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private EODConfigDAO eODConfigDAO;
@@ -274,13 +275,20 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 		auditHeader.getAuditDetail().setModelData(eODConfig);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		if (ImplementationConstants.AUTO_EOD_REQUIRED && eODConfig.isAutoEodRequired()) {
+		if (ImplementationConstants.AUTO_EOD_REQUIRED) {
 			DefaultJobSchedular defaultJobSchedular = (DefaultJobSchedular) SpringBeanUtil
 					.getBean("defaultJobSchedular");
 			try {
-				defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY, eODConfig.getEODStartJobFrequency());
-				defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency());
-				defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY, eODConfig.getDelayFrequency());
+				if (eODConfig.isAutoEodRequired()) {
+					defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY, eODConfig.getEODStartJobFrequency());
+				}
+				if (eODConfig.isEmailNotifReqrd()) {
+					defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency());
+				}
+				if (eODConfig.isDelayNotifyReq()) {
+					defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY, eODConfig.getDelayFrequency());
+				}
+
 			} catch (SchedulerException e) {
 				e.printStackTrace();
 			}

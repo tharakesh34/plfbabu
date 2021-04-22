@@ -29,8 +29,9 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler"
+	<!-- <bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler"
 		p:nativeJdbcExtractor-ref="nativeJdbcExtractor" />
 
-	<bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor" />
+	<bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.SimpleNativeJdbcExtractor" /> -->
+	 <bean id="oracleLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler"/>
 </beans>

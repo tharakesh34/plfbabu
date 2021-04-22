@@ -48,7 +48,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -64,8 +65,10 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -76,6 +79,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -87,7 +91,7 @@ import com.rits.cloning.Cloner;
  */
 public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private static final long serialVersionUID = 4157448822555239535L;
-	private static final Logger logger = Logger.getLogger(FinAdvancePaymentsListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinAdvancePaymentsListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -118,6 +122,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	private List<FinanceDisbursement> financeDisbursement;
 	private List<FinanceDisbursement> approvedDisbursments;
 	String moduleDefiner = "";
+	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>();;
 
 	/**
 	 * default constructor.<br>
@@ -298,12 +303,14 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
+	 * @param commodityHeader
 	 * 
 	 */
 	public void doWriteBeanToComponents() {
 		logger.debug("Entering ");
 
-		doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList());
+		doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList(),
+				getFinancedetail().getFinScheduleData().getVasRecordingList());
 
 		logger.debug("Leaving ");
 	}
@@ -352,7 +359,15 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			boolean realized = false;
 			boolean disbDownload = false;
 			for (FinAdvancePayments advancePayments : finDetail.getAdvancePaymentsList()) {
-				if (DisbursementConstants.STATUS_REALIZED.equals(advancePayments.getStatus()) && (StringUtils
+				if (ImplementationConstants.CHEQUENO_MANDATORY_DISB_INS
+						&& (DisbursementConstants.STATUS_PAID.equals(advancePayments.getStatus())
+								|| DisbursementConstants.STATUS_PRINT.equals(advancePayments.getStatus()))
+						&& (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE,
+								advancePayments.getPaymentType())
+								|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
+										advancePayments.getPaymentType()))) {
+					realized = true;
+				} else if (DisbursementConstants.STATUS_REALIZED.equals(advancePayments.getStatus()) && (StringUtils
 						.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, advancePayments.getPaymentType())
 						|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
 								advancePayments.getPaymentType()))) {
@@ -415,6 +430,9 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 					disbursementInstCtrl.setFinanceDisbursement(schdData.getDisbursementDetails());
 					disbursementInstCtrl.setFinanceMain(main);
 					disbursementInstCtrl.markCancelIfNoDisbursmnetFound(getFinAdvancePaymentsList());
+					if (CollectionUtils.isNotEmpty(schdData.getFinFeeDetailList())) {
+						disbursementInstCtrl.setFinFeeDetailList(schdData.getFinFeeDetailList());
+					}
 					boolean validate = getUserWorkspace()
 							.isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail") || isFinalStage;
 
@@ -425,6 +443,17 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 
 					List<ErrorDetail> valid = disbursementInstCtrl
 							.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
+					//VAS FrontEndFunctionality Validations
+					if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
+							&& !StringUtils.equalsIgnoreCase(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+						List<ErrorDetail> vasErrList = null;
+						disbursementInstCtrl.setVasRecordingList(vasRecordingList);
+						vasErrList = disbursementInstCtrl.validateVasInstructions(getFinAdvancePaymentsList(),
+								validate);
+						if (vasErrList != null) {
+							valid.addAll(vasErrList);
+						}
+					}
 
 					valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
 
@@ -479,9 +508,16 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		//disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		if (CollectionUtils.isNotEmpty(findetails.getFinScheduleData().getFinFeeDetailList())) {
+			disbursementInstCtrl.setFinFeeDetailList(findetails.getFinScheduleData().getFinFeeDetailList());
+		}
+		if (CollectionUtils.isNotEmpty(getVasRecordingList())) {
+			disbursementInstCtrl.setVasRecordingList(getVasRecordingList());
+		}
+		disbursementInstCtrl.setModuleDefiner(moduleDefiner);
 		disbursementInstCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan, getFinAdvancePaymentsList(),
-				null);
+				null, moduleDefiner);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -493,18 +529,31 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		//disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		if (CollectionUtils.isNotEmpty(findetails.getFinScheduleData().getFinFeeDetailList())) {
+			disbursementInstCtrl.setFinFeeDetailList(findetails.getFinScheduleData().getFinFeeDetailList());
+		}
+		if (CollectionUtils.isNotEmpty(getVasRecordingList())) {
+			disbursementInstCtrl.setVasRecordingList(getVasRecordingList());
+		}
+		disbursementInstCtrl.setModuleDefiner(moduleDefiner);
 		disbursementInstCtrl.onDoubleClick(this, this.financeMainDialogCtrl, ModuleType_Loan, isEnquiry, null);
 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
+	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails,
+			List<VASRecording> vasRecordingList) {
 		logger.debug("Entering");
 		setFinAdvancePaymentsList(finAdvancePayDetails);
+		setVasRecordingList(vasRecordingList);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
+				&& StringUtils.isEmpty(moduleDefiner)) {//added empty check skip the below VAS process in LMS) {
+			String entityCode = getFinancedetail().getFinScheduleData().getFinanceMain().getLovDescEntityCode();
+			finAdvancePaymentsService.processVasInstructions(vasRecordingList, getFinAdvancePaymentsList(), entityCode);
+		}
 		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList(),
-				getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"),
-				getFinancedetail().getFinScheduleData().getVasRecordingList());
+				getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"), vasRecordingList);
 		logger.debug("Leaving");
 	}
 
@@ -575,6 +624,14 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 
 	public void setFinAdvancePaymentsList(List<FinAdvancePayments> finAdvancePaymentsList) {
 		this.finAdvancePaymentsList = finAdvancePaymentsList;
+	}
+
+	public List<VASRecording> getVasRecordingList() {
+		return vasRecordingList;
+	}
+
+	public void setVasRecordingList(List<VASRecording> vasRecordingList) {
+		this.vasRecordingList = vasRecordingList;
 	}
 
 	public boolean isNewFinance() {

@@ -42,20 +42,23 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -71,7 +74,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
-	private static Logger logger = Logger.getLogger(CurrencyDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CurrencyDAOImpl.class);
 
 	public CurrencyDAOImpl() {
 		super();
@@ -88,37 +91,76 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 	 */
 	@Override
 	public Currency getCurrencyById(final String id, String type) {
-		//logger.debug("Entering ");
-		Currency currency = new Currency();
-		currency.setId(id);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CcyCode, CcyNumber, CcyDesc, CcySwiftCode, CcyEditField, CcyMinorCcyUnits, CcyDrRateBasisCode");
+		sql.append(", CcyCrRateBasisCode, CcyIsIntRounding, CcySpotRate, CcyIsReceprocal, CcyUserRateBuy");
+		sql.append(", CcyUserRateSell, CcyIsMember, CcyIsGroup, CcyIsAlwForLoans, CcyIsAlwForDepo");
+		sql.append(", CcyIsAlwForAc, CcyIsActive, CcyMinorCcyDesc, CcySymbol");
 
-		StringBuilder selectSql = new StringBuilder("SELECT CcyCode, CcyNumber, CcyDesc, CcySwiftCode,");
-		selectSql.append(" CcyEditField, CcyMinorCcyUnits, CcyDrRateBasisCode,");
-		selectSql.append(" CcyCrRateBasisCode, CcyIsIntRounding, CcySpotRate, CcyIsReceprocal,");
-		selectSql.append(" CcyUserRateBuy, CcyUserRateSell, CcyIsMember, CcyIsGroup,");
-		selectSql.append(" CcyIsAlwForLoans, CcyIsAlwForDepo, CcyIsAlwForAc, CcyIsActive,");
-		selectSql.append(" CcyMinorCcyDesc, CcySymbol,");
 		if (type.contains("View")) {
-			selectSql.append(" lovDescCcyDrRateBasisCodeName, lovDescCcyCrRateBasisCodeName,");
+			sql.append(", LovDescCcyDrRateBasisCodeName, LovDescCcyCrRateBasisCodeName");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  RMTCurrencies");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append("  Where CcyCode =:CcyCode");
 
-		//logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" from RMTCurrencies");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CcyCode = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			currency = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Currency>() {
+				@Override
+				public Currency mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Currency c = new Currency();
+
+					c.setCcyCode(rs.getString("CcyCode"));
+					c.setCcyNumber(rs.getString("CcyNumber"));
+					c.setCcyDesc(rs.getString("CcyDesc"));
+					c.setCcySwiftCode(rs.getString("CcySwiftCode"));
+					c.setCcyEditField(rs.getInt("CcyEditField"));
+					c.setCcyMinorCcyUnits(rs.getBigDecimal("CcyMinorCcyUnits"));
+					c.setCcyDrRateBasisCode(rs.getString("CcyDrRateBasisCode"));
+					c.setCcyCrRateBasisCode(rs.getString("CcyCrRateBasisCode"));
+					c.setCcyIsIntRounding(rs.getBoolean("CcyIsIntRounding"));
+					c.setCcySpotRate(rs.getBigDecimal("CcySpotRate"));
+					c.setCcyIsReceprocal(rs.getBoolean("CcyIsReceprocal"));
+					c.setCcyUserRateBuy(rs.getBigDecimal("CcyUserRateBuy"));
+					c.setCcyUserRateSell(rs.getBigDecimal("CcyUserRateSell"));
+					c.setCcyIsMember(rs.getBoolean("CcyIsMember"));
+					c.setCcyIsGroup(rs.getBoolean("CcyIsGroup"));
+					c.setCcyIsAlwForLoans(rs.getBoolean("CcyIsAlwForLoans"));
+					c.setCcyIsAlwForDepo(rs.getBoolean("CcyIsAlwForDepo"));
+					c.setCcyIsAlwForAc(rs.getBoolean("CcyIsAlwForAc"));
+					c.setCcyIsActive(rs.getBoolean("CcyIsActive"));
+					c.setCcyMinorCcyDesc(rs.getString("CcyMinorCcyDesc"));
+					c.setCcySymbol(rs.getString("CcySymbol"));
+
+					if (type.contains("View")) {
+						c.setLovDescCcyDrRateBasisCodeName(rs.getString("LovDescCcyDrRateBasisCodeName"));
+						c.setLovDescCcyCrRateBasisCodeName(rs.getString("LovDescCcyCrRateBasisCodeName"));
+					}
+
+					c.setVersion(rs.getInt("Version"));
+					c.setLastMntBy(rs.getLong("LastMntBy"));
+					c.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					c.setRecordStatus(rs.getString("RecordStatus"));
+					c.setRoleCode(rs.getString("RoleCode"));
+					c.setNextRoleCode(rs.getString("NextRoleCode"));
+					c.setTaskId(rs.getString("TaskId"));
+					c.setNextTaskId(rs.getString("NextTaskId"));
+					c.setRecordType(rs.getString("RecordType"));
+					c.setWorkflowId(rs.getLong("WorkflowId"));
+
+					return c;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
-			//logger.error("Exception: ", e);
-			currency = null;
+			logger.warn("Records are not found in RMTCurrencies{} for the CcyCode >> {}", type, id);
 		}
-		//logger.debug("Leaving ");
-		return currency;
+
+		return null;
 	}
 
 	/**
@@ -142,7 +184,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		try {
 			currency = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -344,7 +386,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		List<Currency> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		if (list != null && list.size() > 0) {
@@ -374,7 +416,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" FROM  RMTCurrencies");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		List<Currency> currencies = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
 		logger.debug("Leaving");
@@ -393,7 +435,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" FROM  RMTCurrencies where CcyCode = :CcyCode");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		Currency currencies = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		//logger.debug("Leaving");
@@ -413,7 +455,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append("  Where CcyCode IN(:CCYList)");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 
 		logger.debug("Leaving ");
 		return this.jdbcTemplate.query(selectSql.toString(), namedParameters, typeRowMapper);
@@ -434,7 +476,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		logger.debug("Leaving");
 
 		try {
-			RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
+			RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
 			Currency currencies = jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 			if (currencies != null) {
 				return true;

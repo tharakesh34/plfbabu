@@ -48,14 +48,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.errordetail.ErrorDetailDAO;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -87,32 +86,36 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 	 */
 	@Override
 	public ErrorDetail getErrorDetailById(final String id, String type) {
-		log.debug(Literal.ENTERING);
-		ErrorDetail errorDetail = new ErrorDetail();
-		errorDetail.setId(id);
-
 		StringBuilder sql = new StringBuilder();
-
 		sql.append("Select Code, Language, Severity, Message, ExtendedMessage");
-		sql.append(", Version ,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		sql.append(" From ErrorDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where Code =:Code");
+		sql.append(" Where Code = ?");
 
 		log.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(errorDetail);
-		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			ErrorDetail ed = new ErrorDetail();
+			ed.setCode(rs.getString("Code"));
+			ed.setLanguage(rs.getString("Language"));
+			ed.setSeverity(rs.getString("Severity"));
+			ed.setMessage(rs.getString("Message"));
+			ed.setExtendedMessage(rs.getString("ExtendedMessage"));
+			ed.setVersion(rs.getInt("Version"));
+			ed.setLastMntBy(rs.getLong("LastMntBy"));
+			ed.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ed.setRecordStatus(rs.getString("RecordStatus"));
+			ed.setRoleCode(rs.getString("RoleCode"));
+			ed.setNextRoleCode(rs.getString("NextRoleCode"));
+			ed.setTaskId(rs.getString("TaskId"));
+			ed.setNextTaskId(rs.getString("NextTaskId"));
+			ed.setRecordType(rs.getString("RecordType"));
+			ed.setWorkflowId(rs.getLong("WorkflowId"));
 
-		try {
-			errorDetail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			log.warn(Literal.EXCEPTION, e);
-			errorDetail = null;
-		}
-		log.debug(Literal.LEAVING);
-		return errorDetail;
+			return ed;
+		});
 	}
 
 	/**
@@ -237,7 +240,7 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 		Map<String, Object> namedParameters = new HashMap<String, Object>();
 		namedParameters.put("Code", code);
 
-		RowMapper<ErrorDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ErrorDetail.class);
+		RowMapper<ErrorDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(ErrorDetail.class);
 		List<ErrorDetail> errorList = jdbcTemplate.query(sql.toString(), namedParameters, typeRowMapper);
 		if (errorList == null || errorList.isEmpty()) {
 			return null;

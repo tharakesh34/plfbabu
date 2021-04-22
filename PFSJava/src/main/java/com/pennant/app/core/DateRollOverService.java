@@ -3,20 +3,22 @@ package com.pennant.app.core;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DateRollOverService extends ServiceHelper {
 
-	private static Logger logger = Logger.getLogger(DateRollOverService.class);
+	private static Logger logger = LogManager.getLogger(DateRollOverService.class);
 	private static final long serialVersionUID = -3371115026576113554L;
 
-	public CustEODEvent process(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
+	public void process(CustEODEvent custEODEvent) throws Exception {
+		logger.debug(Literal.ENTERING);
+
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -61,35 +63,33 @@ public class DateRollOverService extends ServiceHelper {
 			}
 		}
 
-		logger.debug(" Leaving ");
-		return custEODEvent;
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	//--------------------------------------------------------------------------------------------------------------------------
 	//Next Grace Capitalization Date
 	//--------------------------------------------------------------------------------------------------------------------------
 	private void setNextGraceCpzDate(FinEODEvent finEODEvent) {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		int i = finEODEvent.getIdxGrcCpz();
 		FinanceScheduleDetail curSchd = null;
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(j);
-			if (curSchd.getSchDate().compareTo(finMain.getNextGrcCpzDate()) <= 0) {
+		for (int j = i; j < schedules.size(); j++) {
+			curSchd = schedules.get(j);
+			if (curSchd.getSchDate().compareTo(fm.getNextGrcCpzDate()) <= 0) {
 				continue;
 			}
 
 			if (curSchd.isCpzOnSchDate()) {
-				finMain.setNextGrcCpzDate(curSchd.getSchDate());
+				fm.setNextGrcCpzDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("NextGrcCpzDate");
 				return;
 			}
 
-			if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
+			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) >= 0) {
 				return;
 			}
 		}
@@ -101,27 +101,27 @@ public class DateRollOverService extends ServiceHelper {
 	//Next Grace Profit Date
 	//--------------------------------------------------------------------------------------------------------------------------
 	private void setNextGrcPftDate(FinEODEvent finEODEvent) {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		int i = finEODEvent.getIdxGrcPft();
 		FinanceScheduleDetail curSchd = null;
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(j);
-			if (curSchd.getSchDate().compareTo(finMain.getNextGrcPftDate()) <= 0) {
+		for (int j = i; j < schedules.size(); j++) {
+			curSchd = schedules.get(j);
+			if (curSchd.getSchDate().compareTo(fm.getNextGrcPftDate()) <= 0) {
 				continue;
 			}
 
 			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()) {
-				finMain.setNextGrcPftDate(finSchdDetails.get(i).getSchDate());
+				fm.setNextGrcPftDate(schedules.get(i).getSchDate());
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("NextGrcPftDate");
 
 				return;
 			}
 
-			if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
+			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) >= 0) {
 				return;
 			}
 
@@ -134,12 +134,11 @@ public class DateRollOverService extends ServiceHelper {
 	//Next Grace Profit Review Date
 	//--------------------------------------------------------------------------------------------------------------------------
 	private void setNextGrcPftRvwDate(FinEODEvent finEODEvent, Date valueDate) {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
-		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
-			if (finMain.getFinStartDate().compareTo(valueDate) != 0
-					&& finMain.getMaturityDate().compareTo(valueDate) != 0) {
+		if (!CalculationConstants.RATEREVIEW_NORVW.equals(fm.getRvwRateApplFor())) {
+			if (fm.getFinStartDate().compareTo(valueDate) != 0 && fm.getMaturityDate().compareTo(valueDate) != 0) {
 				finEODEvent.setRateReviewExist(true);
 			}
 		}
@@ -147,21 +146,21 @@ public class DateRollOverService extends ServiceHelper {
 		int i = finEODEvent.getIdxGrcPftRvw();
 		FinanceScheduleDetail curSchd = null;
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(j);
+		for (int j = i; j < schedules.size(); j++) {
+			curSchd = schedules.get(j);
 
-			if (curSchd.getSchDate().compareTo(finMain.getNextGrcPftRvwDate()) <= 0) {
+			if (curSchd.getSchDate().compareTo(fm.getNextGrcPftRvwDate()) <= 0) {
 				continue;
 			}
 
-			if (curSchd.isRvwOnSchDate() || curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) == 0) {
-				finMain.setNextGrcPftRvwDate(curSchd.getSchDate());
+			if (curSchd.isRvwOnSchDate() || curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) == 0) {
+				fm.setNextGrcPftRvwDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("NextGrcPftRvwDate");
 				return;
 			}
 
-			if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) >= 0) {
+			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) >= 0) {
 				return;
 			}
 		}
@@ -173,21 +172,21 @@ public class DateRollOverService extends ServiceHelper {
 	//Next Repay Capitalization Date
 	//--------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayCpzDate(FinEODEvent finEODEvent) {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		int i = finEODEvent.getIdxRpyCpz();
 		FinanceScheduleDetail curSchd = null;
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(j);
-			if (curSchd.getSchDate().compareTo(finMain.getNextRepayCpzDate()) <= 0) {
+		for (int j = i; j < schedules.size(); j++) {
+			curSchd = schedules.get(j);
+			if (curSchd.getSchDate().compareTo(fm.getNextRepayCpzDate()) <= 0) {
 				continue;
 			}
 
 			if (curSchd.isCpzOnSchDate()) {
-				finMain.setLastRepayCpzDate(finMain.getNextRepayCpzDate());
-				finMain.setNextRepayCpzDate(curSchd.getSchDate());
+				fm.setLastRepayCpzDate(fm.getNextRepayCpzDate());
+				fm.setNextRepayCpzDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("LastRepayCpzDate");
 				finEODEvent.addToFinMianUpdate("NextRepayCpzDate");
@@ -202,22 +201,22 @@ public class DateRollOverService extends ServiceHelper {
 	//Next Repayment Date
 	//--------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayDate(FinEODEvent finEODEvent) {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		int i = finEODEvent.getIdxRpy();
 		FinanceScheduleDetail curSchd = null;
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(j);
-			if (curSchd.getSchDate().compareTo(finMain.getNextRepayDate()) <= 0) {
+		for (int j = i; j < schedules.size(); j++) {
+			curSchd = schedules.get(j);
+			if (curSchd.getSchDate().compareTo(fm.getNextRepayDate()) <= 0) {
 				continue;
 			}
 
 			if (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate()
-					|| curSchd.getSchDate().compareTo(finMain.getMaturityDate()) == 0) {
-				finMain.setLastRepayDate(finMain.getNextRepayDate());
-				finMain.setNextRepayDate(curSchd.getSchDate());
+					|| curSchd.getSchDate().compareTo(fm.getMaturityDate()) == 0) {
+				fm.setLastRepayDate(fm.getNextRepayDate());
+				fm.setNextRepayDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("LastRepayDate");
 				finEODEvent.addToFinMianUpdate("NextRepayDate");
@@ -232,21 +231,21 @@ public class DateRollOverService extends ServiceHelper {
 	//Next Repay Profit Date
 	//--------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayPftDate(FinEODEvent finEODEvent) {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		int i = finEODEvent.getIdxRpyPft();
 		FinanceScheduleDetail curSchd = null;
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(j);
-			if (curSchd.getSchDate().compareTo(finMain.getNextRepayPftDate()) <= 0) {
+		for (int j = i; j < schedules.size(); j++) {
+			curSchd = schedules.get(j);
+			if (curSchd.getSchDate().compareTo(fm.getNextRepayPftDate()) <= 0) {
 				continue;
 			}
 
-			if (curSchd.isPftOnSchDate() || curSchd.getSchDate().compareTo(finMain.getMaturityDate()) == 0) {
-				finMain.setLastRepayPftDate(finMain.getNextRepayPftDate());
-				finMain.setNextRepayPftDate(curSchd.getSchDate());
+			if (curSchd.isPftOnSchDate() || curSchd.getSchDate().compareTo(fm.getMaturityDate()) == 0) {
+				fm.setLastRepayPftDate(fm.getNextRepayPftDate());
+				fm.setNextRepayPftDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("LastRepayPftDate");
 				finEODEvent.addToFinMianUpdate("NextRepayPftDate");
@@ -261,12 +260,11 @@ public class DateRollOverService extends ServiceHelper {
 	//Next Repay Review Date
 	//--------------------------------------------------------------------------------------------------------------------------
 	private void setNextRepayRvwDate(FinEODEvent finEODEvent, Date valueDate) {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
-		if (!StringUtils.equals(finMain.getRvwRateApplFor(), CalculationConstants.RATEREVIEW_NORVW)) {
-			if (finMain.getFinStartDate().compareTo(valueDate) != 0
-					&& finMain.getMaturityDate().compareTo(valueDate) != 0) {
+		if (!CalculationConstants.RATEREVIEW_NORVW.equals(fm.getRvwRateApplFor())) {
+			if (fm.getFinStartDate().compareTo(valueDate) != 0 && fm.getMaturityDate().compareTo(valueDate) != 0) {
 				finEODEvent.setRateReviewExist(true);
 			}
 		}
@@ -274,15 +272,15 @@ public class DateRollOverService extends ServiceHelper {
 		int i = finEODEvent.getIdxRpyPftRvw();
 		FinanceScheduleDetail curSchd = null;
 
-		for (int j = i; j < finSchdDetails.size(); j++) {
-			curSchd = finSchdDetails.get(j);
-			if (curSchd.getSchDate().compareTo(finMain.getNextRepayRvwDate()) <= 0) {
+		for (int j = i; j < schedules.size(); j++) {
+			curSchd = schedules.get(j);
+			if (curSchd.getSchDate().compareTo(fm.getNextRepayRvwDate()) <= 0) {
 				continue;
 			}
 
 			if (curSchd.isRvwOnSchDate()) {
-				finMain.setLastRepayRvwDate(finMain.getNextRepayRvwDate());
-				finMain.setNextRepayRvwDate(curSchd.getSchDate());
+				fm.setLastRepayRvwDate(fm.getNextRepayRvwDate());
+				fm.setNextRepayRvwDate(curSchd.getSchDate());
 				finEODEvent.setUpdFinMain(true);
 				finEODEvent.addToFinMianUpdate("LastRepayRvwDate");
 				finEODEvent.addToFinMianUpdate("NextRepayRvwDate");

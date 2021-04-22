@@ -59,7 +59,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -112,6 +113,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.UserWorkspace;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -148,7 +150,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(ExtendedFieldsGenerator.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedFieldsGenerator.class);
 
 	private Window window;
 	private Tabs tabs;
@@ -377,8 +379,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			label.setVisible(detail.isVisible());
 
 			// story #413 Allow scriptlet for extended fields.
-			if (StringUtils.isNotEmpty(detail.getScriptlet())) {
-				String[] scriptlets = detail.getScriptlet().split(SCRIPTLET_DELIMITER);
+			String scriptlt = detail.getScriptlet();
+			if (StringUtils.isNotEmpty(scriptlt)) {
+				String[] scriptlets = StringUtils.split(scriptlt, SCRIPTLET_DELIMITER);
 
 				for (String scriptlet : scriptlets) {
 					String[] props = scriptlet.split(SCRIPT_DELIMITER);
@@ -735,12 +738,24 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 
 		for (ExtendedFieldDetail detail : extendedFieldDetailList) {
-			if (!detail.isInputElement()) {
+			if (!detail.isInputElement() && !ExtendedFieldConstants.FIELDTYPE_LISTBOX.equals(detail.getFieldType())) {
 				notInputElements.add(detail);
 				continue;
 			}
+
+			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_LISTFIELD, detail.getFieldType())) {
+				continue;
+			}
+
 			String id = getComponentId(detail.getFieldName());
-			isReadOnly = !detail.isEditable();
+			//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			if (!isReadOnly) {
+				isReadOnly = !detail.isEditable();
+			}
+
+			if (!isReadOnly && !detail.isVisible()) {
+				isReadOnly = true;
+			}
 
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
 				id = "ad_".concat(detail.getFieldName().concat("_CC"));
@@ -755,7 +770,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						CurrencyBox currencyBox = (CurrencyBox) component;
 						currencyBox.setConstraint("");
 						currencyBox.setErrorMessage("");
-						if (!isReadOnly && (detail.isFieldMandatory() || currencyBox.getActualValue() != null)) {
+						if (!currencyBox.isReadonly() && !currencyBox.isDisabled() && !isReadOnly
+								&& (detail.isFieldMandatory() || currencyBox.getActualValue() != null)) {
 							currencyBox.setConstraint(new PTDecimalValidator(detail.getFieldLabel(), getCcyFormat(),
 									detail.isFieldMandatory(), false));
 						}
@@ -770,7 +786,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Decimalbox decimalbox = (Decimalbox) component;
 						decimalbox.setConstraint("");
 						decimalbox.setErrorMessage("");
-						if (!isReadOnly && (detail.isFieldMandatory() || decimalbox.getValue() != null)) {
+						if (!decimalbox.isReadonly() && !decimalbox.isDisabled() && !isReadOnly
+								&& (detail.isFieldMandatory() || decimalbox.getValue() != null)) {
 							decimalValidation(decimalbox, detail);
 						}
 
@@ -783,7 +800,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Intbox intbox = (Intbox) component;
 						intbox.setConstraint("");
 						intbox.setErrorMessage("");
-						if (!isReadOnly) {
+						if (!intbox.isReadonly() && !intbox.isDisabled() && !isReadOnly) {
 							if (detail.isFieldMandatory()) {
 								intbox.setConstraint(
 										new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(), false,
@@ -809,7 +826,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Longbox longbox = (Longbox) component;
 						longbox.setConstraint("");
 						longbox.setErrorMessage("");
-						if (!isReadOnly) {// TODO: Check for LONG Validation
+						if (!longbox.isReadonly() && !longbox.isDisabled() && !isReadOnly) {// TODO: Check for LONG Validation
 							longbox.setConstraint(
 									new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(), false,
 											Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
@@ -827,7 +844,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						accSelectionBox.setConstraint("");
 						accSelectionBox.setErrorMessage("");
 
-						if (!isReadOnly && detail.isFieldMandatory()) {
+						if (!accSelectionBox.isReadonly() && !isReadOnly && detail.isFieldMandatory()) {
 							accSelectionBox.setConstraint(new PTStringValidator(detail.getFieldLabel(), null, true));
 						}
 
@@ -853,7 +870,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					try {
 						RateBox rateBox = (RateBox) component;
 
-						if (!isReadOnly && detail.isFieldMandatory()) {
+						if (!rateBox.isBaseReadonly() && !isReadOnly && detail.isFieldMandatory()) {
 							rateBox.setBaseConstraint(new PTStringValidator(detail.getFieldLabel(), null,
 									detail.isFieldMandatory(), true));
 						}
@@ -872,7 +889,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 						Date timeValue = DateUtil.parse(DateUtil.format(timebox.getValue(), DateFormat.LONG_TIME),
 								DateFormat.LONG_TIME);
-						if (!isReadOnly && (detail.isFieldMandatory() && timeValue == null)) {
+						if (!timebox.isReadonly() && !timebox.isDisabled() && !isReadOnly
+								&& (detail.isFieldMandatory() && timeValue == null)) {
 							throw new WrongValueException(timebox,
 									Labels.getLabel("FIELD_NO_EMPTY", new String[] { detail.getFieldLabel() }));
 						}
@@ -886,7 +904,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Datebox datebox = (Datebox) component;
 						datebox.setConstraint("");
 						datebox.setErrorMessage("");
-						if (!isReadOnly && (detail.isFieldMandatory() || datebox.getValue() != null)) {
+						if (!datebox.isReadonly() && !datebox.isDisabled() && !isReadOnly
+								&& (detail.isFieldMandatory() || datebox.getValue() != null)) {
 							dateValidation(datebox, detail);
 						}
 
@@ -906,7 +925,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						ExtendedCombobox extendedCombobox = (ExtendedCombobox) component;
 						extendedCombobox.setConstraint("");
 						extendedCombobox.setErrorMessage("");
-						if (!isReadOnly && detail.isFieldMandatory()) {
+						if (!extendedCombobox.isReadonly() && detail.isFieldMandatory() && !isReadOnly) {
 							extendedCombobox.setConstraint(new PTStringValidator(detail.getFieldLabel(), null,
 									detail.isFieldMandatory(), true));
 						}
@@ -922,9 +941,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						combobox.setErrorMessage("");
 
 						if (detail.isFieldMandatory()) {
-							if (!isReadOnly && (combobox.getSelectedItem() == null
-									|| combobox.getSelectedItem().getValue() == null
-									|| "#".equals(combobox.getSelectedItem().getValue().toString()))) {
+							if (!combobox.isDisabled() && !isReadOnly
+									&& (combobox.getSelectedItem() == null
+											|| combobox.getSelectedItem().getValue() == null
+											|| "#".equals(combobox.getSelectedItem().getValue().toString()))) {
 								throw new WrongValueException(combobox,
 										Labels.getLabel("STATIC_INVALID", new String[] { detail.getFieldLabel() }));
 							}
@@ -940,8 +960,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						bandbox.setConstraint("");
 						bandbox.setErrorMessage("");
 
-						if (detail.isFieldMandatory()) {
-							if (!isReadOnly && StringUtils.isEmpty(bandbox.getValue())) {
+						if (!isReadOnly && detail.isFieldMandatory()) {
+							if (!bandbox.isReadonly() && !bandbox.isDisabled()
+									&& StringUtils.isEmpty(bandbox.getValue())) {
 								bandbox.setConstraint(
 										new PTStringValidator(detail.getFieldLabel(), null, detail.isFieldMandatory()));
 							}
@@ -953,7 +974,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					}
 				} else if (component instanceof Radiogroup) {
 					Radiogroup radiogroup = (Radiogroup) component;
-					if (detail.isFieldMandatory()) {
+					if (!isReadOnly && detail.isFieldMandatory()) {
 						if (radiogroup.getSelectedItem() == null) {
 							try {
 								throw new WrongValueException(radiogroup,
@@ -986,7 +1007,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 							Textbox areCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_AC"));
 							Textbox subCode = (Textbox) tabpanel.getFellowIfAny(id.replace("_CC", "_SC"));
 
-							if (!isReadOnly) {
+							if (!countryCode.isReadonly() && !countryCode.isDisabled() && !isReadOnly) {
 								countryCode.setConstraint(new PTPhoneNumberValidator(
 										detail.getFieldLabel().concat(" Country Code "), detail.isFieldMandatory(), 1));
 								areCode.setConstraint(new PTPhoneNumberValidator(
@@ -1008,7 +1029,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 							Textbox textbox = (Textbox) component;
 							textbox.setConstraint("");
 							textbox.setErrorMessage("");
-							if (!isReadOnly && (detail.isFieldMandatory() || textbox.getValue() != null)) {
+							if (!textbox.isReadonly() && !textbox.isDisabled() && !isReadOnly
+									&& (detail.isFieldMandatory() || textbox.getValue() != null)) {
 
 								String regEx = StringUtils.trimToEmpty(detail.getFieldConstraint());
 
@@ -1022,6 +1044,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 											new PTWebValidator(detail.getFieldLabel(), detail.isFieldMandatory()));
 									break;
 								case "REGEX_TELEPHONE_FAX":
+									textbox.setConstraint(new PTPhoneNumberValidator(detail.getFieldLabel(),
+											detail.isFieldMandatory()));
+									break;
+								case "REGEX_TELEPHONE":
 									textbox.setConstraint(new PTPhoneNumberValidator(detail.getFieldLabel(),
 											detail.isFieldMandatory()));
 									break;
@@ -1213,8 +1239,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			}
 
 			if (allownegative) {
-				decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
-						detail.isFieldMandatory(), allownegative, minValue, maxValue);
+				if (ImplementationConstants.ALLOW_NEGATIVE_VALUES_EXTFIELDS) {
+					decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
+							detail.isFieldMandatory(), allownegative, Math.pow(10, detail.getFieldLength()) - 1);
+				} else {
+					decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
+							detail.isFieldMandatory(), allownegative, minValue, maxValue);
+				}
 			} else {
 				decimalValidator = new PTDecimalValidator(detail.getFieldLabel(), detail.getFieldPrec(),
 						detail.isFieldMandatory(), allownegative, Math.pow(10, detail.getFieldLength()) - 1);
@@ -1780,6 +1811,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 
 		currencyBox.getChildren().get(3).setId(currencyBox.getId().concat("_cdb"));
+		//set id to currency  text box
+		currencyBox.getChildren().get(1).setId(currencyBox.getId().concat("_cdt"));
 
 		if (isCommodity) {
 			currencyBox.setDisabled(true);
@@ -1826,7 +1859,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				String[] valueLable = StringUtils.split(valueLables, DELIMITER_PIPELINE);
 				value = valueLable[0];
 				lable = valueLable[1];
-			} else {
+			} else if (StringUtils.isNotBlank(valueLables)) {
 				value = valueLables;
 				lable = valueLables;
 			}
@@ -2100,12 +2133,44 @@ public class ExtendedFieldsGenerator extends AbstractController {
 							textBox.setValue(value);
 							textBox.getValue();
 						}
+						if (childComponent instanceof CurrencyBox) {
+							CurrencyBox currencyBox = (CurrencyBox) childComponent;
+							currencyBox.setValue(value);
+							currencyBox.getActualValue();
+						} else if (childComponent instanceof ExtendedCombobox) {
+							ExtendedCombobox childExtendedCombobox = (ExtendedCombobox) childComponent;
+							childExtendedCombobox.setValue(value);
+						}
+						if (childComponent instanceof Combobox) {
+							Combobox childExtendedCombobox = (Combobox) childComponent;
+							if (StringUtils.isNotEmpty(value)) {
+								if (CollectionUtils.isNotEmpty(childExtendedCombobox.getItems())) {
+									for (Comboitem comboitem : childExtendedCombobox.getItems()) {
+										if (StringUtils.equalsIgnoreCase(comboitem.getValue(), value)) {
+											childExtendedCombobox.setValue(comboitem.getLabel());
+											break;
+										}
+									}
+								} else {
+									childExtendedCombobox.setValue(value);
+								}
+							} else {
+								childExtendedCombobox.setValue(Labels.getLabel("Combo.Select"));
+							}
+						}
 					} else {
 						Component childComponent = tabpanel.getFellowIfAny(getComponentId(fieldDetail.getFieldName()));
 						if (childComponent instanceof Textbox) {
 							Textbox textBox = (Textbox) childComponent;
 							textBox.setValue("");
 							textBox.getValue();
+						} else if (childComponent instanceof ExtendedCombobox) {
+							ExtendedCombobox childExtendedCombobox = (ExtendedCombobox) childComponent;
+							childExtendedCombobox.setValue("");
+						}
+						if (childComponent instanceof Combobox) {
+							Combobox childExtendedCombobox = (Combobox) childComponent;
+							childExtendedCombobox.setValue(Labels.getLabel("Combo.Select"));
 						}
 					}
 				}
@@ -2269,7 +2334,21 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		Filter[] filters = new Filter[filterList.size()];
 		for (int i = 0; i < filterList.size(); i++) {
 			String[] paramsArray = StringUtils.split(filterList.get(i), SCRIPT_DELIMITER);
-			filters[i] = new Filter(paramsArray[0], paramsArray[1], Integer.parseInt(paramsArray[2]));
+			if (App.DATABASE == Database.POSTGRES) { //FIXME Temporary filters with hardcoded values
+				if ("projectId".equals(paramsArray[0])) {
+					if (!StringUtils.equals(" ", paramsArray[1])) {
+						filters[i] = new Filter(paramsArray[0], Integer.parseInt(paramsArray[1]),
+								Integer.parseInt(paramsArray[2]));
+					} else {
+						filters[i] = new Filter(paramsArray[0], -1, Integer.parseInt(paramsArray[2]));
+					}
+				} else {
+					filters[i] = new Filter(paramsArray[0], paramsArray[1], Integer.parseInt(paramsArray[2]));
+				}
+			} else {
+				filters[i] = new Filter(paramsArray[0], paramsArray[1], Integer.parseInt(paramsArray[2]));
+			}
+
 		}
 		extendedCombobox.setFilters(filters);
 	}
@@ -2587,6 +2666,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		groupbox.setId(container.getFieldName());
 		Caption caption = new Caption(StringUtils.trimToEmpty(container.getFieldLabel()));
 		caption.setParent(groupbox);
+		//adding script let events to component
+		addEventListener(groupbox, container);
 		return groupbox;
 	}
 
@@ -2631,7 +2712,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					CurrencyBox currencyBox = (CurrencyBox) component;
 					currencyBox.setConstraint("");
 					currencyBox.setErrorMessage("");
-					currencyBox.setValue(new BigDecimal(stringVal));
+					currencyBox.setValue(PennantApplicationUtil.formateAmount(new BigDecimal(stringVal), ccyFormat));
 				} else if (component instanceof Decimalbox) {
 					Decimalbox decimalbox = (Decimalbox) component;
 					decimalbox.setConstraint("");
@@ -2736,25 +2817,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
 					}
 				} else if (component instanceof Combobox) {
-					Combobox combobox = (Combobox) component;
-					combobox.setConstraint("");
-					combobox.setErrorMessage("");
-
-					String[] staticList = detail.getFieldList().split(",");
-					combobox.getChildren().clear();
-					Comboitem comboitem = new Comboitem();
-					comboitem.setValue(PennantConstants.List_Select);
-					comboitem.setLabel(Labels.getLabel("Combo.Select"));
-					combobox.appendChild(comboitem);
-					combobox.setSelectedItem(comboitem);
-					combobox.setReadonly(true);
-					for (int j = 0; j < staticList.length; j++) {
-						if (fieldValueMap.containsKey(detail.getFieldName())
-								&& fieldValueMap.get(detail.getFieldName()) != null && StringUtils
-										.equals(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
-							combobox.setSelectedItem(comboitem);
-						}
-					}
+					getCombobox(detail);
 				} else if (component instanceof Bandbox) {
 					Bandbox bandbox = (Bandbox) component;
 					Listbox listBox = new Listbox();
@@ -3075,6 +3138,34 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		return years;
 	}
 
+	/**
+	 * addEventListener
+	 * 
+	 * @param component
+	 * @param extendedFieldDetail
+	 * @return
+	 */
+	private void addEventListener(Component component, ExtendedFieldDetail extendedFieldDetail) {
+		if (StringUtils.isNotEmpty(extendedFieldDetail.getScriptlet())) {
+			String[] scriptlets = extendedFieldDetail.getScriptlet().split(SCRIPTLET_DELIMITER);
+			for (String scriptlet : scriptlets) {
+				if (StringUtils.isEmpty(scriptlet)) {
+					continue;
+				}
+				String[] props = scriptlet.split(SCRIPT_DELIMITER);
+				String eventName = StringUtils.trimToEmpty(props[0]);
+				String javaScript = StringUtils.trimToEmpty(props[1]);
+				addEventListener(eventName, javaScript, component, extendedFieldDetail);
+				if (component instanceof Groupbox) {
+					Groupbox groupbox = (Groupbox) component;
+					if (Events.ON_OPEN.equals(eventName)) {
+						Events.postEvent(Events.ON_OPEN, groupbox, null);
+					}
+				}
+			}
+		}
+	}
+
 	// Getters and setters
 	public Window getWindow() {
 		return window;
@@ -3097,7 +3188,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		return fieldValueMap;
 	}
 
-	public void setFieldValueMap(HashMap<String, Object> fieldValueMap) {
+	public void setFieldValueMap(Map<String, Object> fieldValueMap) {
 		this.fieldValueMap = fieldValueMap;
 	}
 

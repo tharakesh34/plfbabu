@@ -46,13 +46,14 @@ package com.pennant.backend.dao.solutionfactory.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.solutionfactory.DeviationHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -68,7 +69,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> implements DeviationHeaderDAO {
-	private static Logger logger = Logger.getLogger(DeviationHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DeviationHeaderDAOImpl.class);
 
 	public DeviationHeaderDAOImpl() {
 		super();
@@ -136,8 +137,7 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationHeader);
-		RowMapper<DeviationHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DeviationHeader.class);
+		RowMapper<DeviationHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationHeader.class);
 
 		try {
 			deviationHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -177,8 +177,7 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationHeader);
-		RowMapper<DeviationHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DeviationHeader.class);
+		RowMapper<DeviationHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationHeader.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -212,8 +211,7 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(deviationHeader);
-		RowMapper<DeviationHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(DeviationHeader.class);
+		RowMapper<DeviationHeader> typeRowMapper = BeanPropertyRowMapper.newInstance(DeviationHeader.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -271,8 +269,8 @@ public class DeviationHeaderDAOImpl extends SequenceDao<DeviationHeader> impleme
 	public long save(DeviationHeader deviationHeader, String type) {
 		logger.debug("Entering");
 		if (deviationHeader.getId() == Long.MIN_VALUE) {
-			deviationHeader.setId(getNextId("SeqDeviationHeader"));
-			logger.debug("get NextID:" + deviationHeader.getId());
+			deviationHeader.setId(getNextValue("SeqDeviationHeader"));
+			logger.debug("get NextValue:" + deviationHeader.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into DeviationHeader");

@@ -46,7 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -68,6 +69,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -75,7 +77,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(DocumentEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DocumentEnquiryDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -91,6 +93,7 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	private FinanceDetailService financeDetailService;
 	private AgreementDetailService agreementDetailService;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -212,7 +215,7 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					|| StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				viewBtn.setLabel("Download");
 			}
-			viewBtn.addForward("onClick", window_DocumentEnquiryDialog, "onDocViewButtonClicked", doc.getDocId());
+			viewBtn.addForward("onClick", window_DocumentEnquiryDialog, "onDocViewButtonClicked", doc);
 			lc.appendChild(viewBtn);
 			viewBtn.setStyle("font-weight:bold;");
 			listitem.appendChild(lc);
@@ -225,8 +228,35 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	public void onDocViewButtonClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		long docId = Long.parseLong(event.getData().toString());
-		DocumentDetails detail = getFinanceDetailService().getFinDocDetailByDocId(docId, "_View", true);
+		DocumentDetails detail = (DocumentDetails) event.getData();
+
+		//Display the Message for the Not Available Doc Image.
+		if (detail == null) {
+			MessageUtil.showMessage(" Document not Avaialble / Generated Yet.");
+			return;
+		}
+
+		//Display the Message for the Not Available Doc Image.
+		if (detail == null) {
+			MessageUtil.showMessage(" Document not Avaialble / Generated Yet.");
+			return;
+		}
+
+		String custCif = detail.getLovDescCustCIF();
+		String docName = detail.getDocName();
+		String docUri = detail.getDocUri();
+		Long docRefId = detail.getDocRefId();
+
+		DocumentDetails dd = null;
+		if (StringUtils.isNotBlank(docUri)) {
+			dd = dMSService.getExternalDocument(custCif, docName, docUri);
+		} else {
+			if (detail.getDocImage() == null) {
+				if (docRefId != null && docRefId != Long.MIN_VALUE) {
+					detail.setDocImage(dMSService.getById(docRefId));
+				}
+			}
+		}
 
 		if (StringUtils.isNotBlank(detail.getDocName()) && detail.getDocImage() != null
 				&& StringUtils.isNotBlank(detail.getDocImage().toString())) {
@@ -247,7 +277,8 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			}
 		} else if (StringUtils.isNotBlank(detail.getDocUri())) {
 			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("documentRef", detail);
+			map.put("documentRef", dd);
+			map.put("docType", detail);
 			Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 		} else {
 			MessageUtil.showError("Document Details not Found.");
@@ -273,6 +304,10 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	public AgreementDetailService getAgreementDetailService() {
 		return agreementDetailService;
+	}
+
+	public void setDMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

@@ -1,0 +1,2251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1929.1" author="sudheer.t">
+		<addColumn tableName="Presentmentdetails_Temp">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1929.2" author="sudheer.t">
+		<addColumn tableName="Presentmentdetails">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1929.3" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAEEVENTS where aeeventcode='PRSNT'; 
+				INSERT INTO BMTAEEVENTS(AEEventCode, AEEventCodeDesc, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Active)VALUES ('PRSNT', 'Presentment Installment', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+				
+				DELETE FROM BMTAMOUNTCODES Where ALLOWEDEVENT = 'PRSNT';				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penalty','Penalty Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penaltyDue','Penalty Due',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penaltyPaid','Penalty Paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_penaltyWaived','Penalty Waived',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpPft','Total Repay Interest now (P)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpPri','Total Repay Principal now (P)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpTot','Total Repay now (P+I)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_schFeePay','Scheduled Fee',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_suplRentPay','Suplementary Rent',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiInAdvance','EMI in advance amount for payment/receipt',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_excessAmt','Excess amount for payment/receipt',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_FeeChargeAmt','Total Fee and Charges paid/scheduled now',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_incrCostPay','Increased Cost Paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_InsPay','Insurance amount paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_insRefund','Insurance amount refunded',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_instpft','Installment Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_instpri','Installment Princiapl',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_insttot','Installment Total (P+I)',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_InsuranceAmt','Insurance amount scheduled',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_payableAdvise','Payable advise amount for payment/receipt',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_toExcessAmt','To Excess Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_toEmiAdvance','To EMI Advance Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpTds','TDS Amount',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceChargePaid','Bounce charges Paid',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceChargeWaived','Bounce charges Waived',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'PA_ReceiptAmount','Total Receipt Amount from Payable',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EX_ReceiptAmount','Total Receipt Amount from Excess',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'PB_ReceiptAmount','Total Receipt Amount from Bank',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EA_ReceiptAmount','Total Receipt Amount from EMIAdvance',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CGST_P','Bounce charge CGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_SGST_P','Bounce charge SGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_IGST_P','Bounce charge IGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_UGST_P','Bounce charge UGST paid',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_lpiPaid','LPI Paid Now',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_lpiWaived','LPI Waived Now',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intAdjusted','Adjusted Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intAdvAvailable','Available Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intDue','Interest Due - Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiAdjusted','Adjusted Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiAdvAvailable','Available Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiDue','EMI Due - Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_advIntDue','Advance Interest Due',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EAI_ReceiptAmount','Total Receipt Amount from Advance Interest',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'EAE_ReceiptAmount','Total Receipt Amount from Advance EMI',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CGST_W','Bounce charge CGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_SGST_W','Bounce charge SGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_IGST_W','Bounce charge IGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_UGST_W','Bounce charge UGST Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_CGST_P','Paid Late Payment Penalty CGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_SGST_P','Paid Late Payment Penalty SGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_UGST_P','Paid Late Payment Penalty UGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'LPP_IGST_P','Paid Late Payment Penalty IGST',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_intTdsAdjusted','TDS on Interest',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_emiTdsAdjusted','TDS on Interest',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_dueTds','TDS on Repayment',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_P','Bounce charge CESS PAID Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_N','Bounce charge CESS NET Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_W','Bounce charge CESS WAIVER Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_SCH','Bounce charge CESS SCHEDULE Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'bounceCharge_CESS_AF','Bounce charge CESS AF Waived',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpPftPr','Total Repay Interest now (P).',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_rpTotPr','Total Repay now (P+I).',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'CACLT_ReceiptAmount','Cash Collateral',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'DSF_ReceiptAmount','Debt Service Fund',1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_priPr','Total Principal Scheduled.',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNT',0,'ae_priSPr','Till Date Principal Scheduled.',1,1,'1005',CURRENT_TIMESTAMP,'Approved','','','','','','0');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1929.4" author="sudheer.t">
+		<sql>
+			<![CDATA[
+			    DELETE FROM BMTAEEVENTS where aeeventcode='PRSNTRSP'; 
+			    INSERT INTO BMTAEEVENTS(AEEventCode, AEEventCodeDesc, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Active)VALUES ('PRSNTRSP', 'Presentment Response', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+			    
+			    DELETE FROM BMTAMOUNTCODES where ALLOWEDEVENT = 'PRSNTRSP' and AMOUNTCODE = 'ae_presentmentAmt';			
+			    INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  values ('PRSNTRSP', 0, 'ae_presentmentAmt', 'Presentment Response', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1929.5" author="sudheer.t">
+		<sql>
+			<![CDATA[
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='C';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='F';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='O';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNT' and CategoryCode ='S';
+			    
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNT', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
+			    
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='C';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='F';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='O';
+			    DELETE  FROM CategoryWiseEvents where AeEventCode='PRSNTRSP' and CategoryCode ='S';
+			    
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+			    INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('PRSNTRSP', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));  
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#395.1_pre" author="saiteja.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#395.1" author="saiteja.r">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT m.mandateid,
+					m.documentname,
+					bd.bankshortcode bankcode,
+					bd.bankname,
+					CASE WHEN lb.branchcode IS NULL THEN cb.branchcode
+						ELSE lb.branchcode END branchcode,
+					CASE WHEN lb.branchdesc IS NULL THEN cb.branchdesc
+						ELSE lb.branchdesc END branchdesc,
+					cust.custcif,
+					cust.custshrtname,
+					cust.custcorebank,
+					ft.fintypedesc fintype,
+					fin.finreference,
+					COALESCE((( SELECT sum(t.totalamount) sum
+						FROM ( SELECT max(fsd.repayamount + fsd.feeschd) totalamount
+							FROM finscheduledetails fsd
+							JOIN financemain fm ON fm.finreference = fsd.finreference AND fm.custid = m.custid
+                  			GROUP BY fm.finreference) t)) / ccy.ccyminorccyunits, 0) cust_emi,
+    				COALESCE((( SELECT sum(t.totalamount) sum
+           				FROM ( SELECT max(fsd.repayamount + fsd.feeschd) totalamount
+                   			FROM FinScheduleDetails fsd
+                  			WHERE (fsd.repayonschdate = 1 OR fsd.pftonschdate = 1) AND (fsd.finreference IN 
+                  				(SELECT financemain.finreference FROM financemain
+                          			WHERE financemain.mandateid = m.mandateid))
+                  			GROUP BY fsd.finreference) t)) / ccy.ccyminorccyunits, 0) emi,
+        			CASE m.openmandate WHEN 1 THEN 'new open ecs'
+            			ELSE 'no open ecs' END openmandate,
+    				m.accnumber,
+        			CASE WHEN m.acctype = '10' THEN 'savings account'
+            			WHEN m.acctype = '11' THEN 'current account'
+            			WHEN m.acctype = '11' THEN 'cash credit account'
+            			ELSE m.acctype END acctype,
+    				m.accholdername,
+    				bb.micr,
+    				bb.ifsc,
+    				bb.addofbranch,
+    				( SELECT min(finpftdetails.firstrepaydate) min FROM FinPftDetails
+          					WHERE (finpftdetails.finreference IN (SELECT financemain.finreference
+                   			FROM financemain WHERE financemain.mandateid = m.mandateid))) firstduedate,
+    				(SELECT max(finscheduledetails.schdate) max FROM FinScheduleDetails
+          					WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) AND
+          					 (finscheduledetails.finreference IN (SELECT financemain.finreference
+                   			FROM financemain WHERE financemain.mandateid = m.mandateid))) emienddate,
+    				COALESCE(m.maxlimit, 0) maxlimit,
+    				COALESCE(( SELECT sum(t.mandatedebitamount) sum FROM (SELECT max(finscheduledetails.repayamount + finscheduledetails.feeschd) mandatedebitamount
+							FROM FinScheduleDetails WHERE (finscheduledetails.repayonschdate = 1 OR finscheduledetails.pftonschdate = 1) 
+							AND (finscheduledetails.finreference IN (SELECT financemain.finreference FROM FinanceMain
+                          		WHERE financemain.mandateid = m.mandateid))
+                  			GROUP BY finscheduledetails.finreference) t), 0) / ccy.ccyminorccyunits debitamount,
+    				fin.numberofterms,
+				    m.periodicity,
+				    m.startdate,
+				    m.expirydate,
+				    fin.applicationno,
+				    m.mandatetype,
+				    m.status,
+				    m.inputdate,
+				    m.recordstatus,
+				    m.recordtype,
+				    m.mandateccy,
+				    COALESCE(ccy.ccyminorccyunits, 100) ccyminorccyunits,
+				    m.entitycode,
+				    cp.phonenumber,
+				    ce.custemail,
+				    pb.partnerbankname,
+				    m.lastmnton,
+				    bb.branchdesc bank_branch_name,
+				    et.entitydesc,
+				    pb.utilitycode,
+				    pb.sponsorbankcode,
+				    m.partnerbankid,
+				    pb.partnerbankcode
+   				FROM Mandates m
+				JOIN BankBranches bb ON bb.bankbranchid = m.bankbranchid
+				JOIN BmtBankDetail bd ON bd.bankcode = bb.bankcode
+				JOIN Customers cust ON cust.custid = m.custid
+				JOIN RmtBranches cb ON cb.branchcode = cust.custdftbranch
+				LEFT JOIN PartnerBanks pb ON pb.partnerbankid = m.partnerbankid
+				LEFT JOIN CustomerEmails ce ON ce.custid = cust.custid AND ce.custemailpriority = 5
+				LEFT JOIN CustomerPhoneNumbers cp ON cp.phonecustid = cust.custid AND cp.phonetypepriority = 5
+				LEFT JOIN RMTCurrencies ccy ON ccy.ccycode = m.mandateccy
+				LEFT JOIN FinanceMain fin ON m.orgreference = fin.finreference
+				LEFT JOIN RMTBranches lb ON lb.branchcode = fin.finbranch
+				LEFT JOIN RMTFinanceTypes ft ON fin.fintype = ft.fintype
+				LEFT JOIN Entity et ON m.entitycode = et.entitycode
+  				WHERE m.status = 'NEW' AND NOT (m.mandateid IN ( SELECT mandate_requests.mandateid
+           			FROM mandate_requests
+          			WHERE mandate_requests.status = 'AC' OR mandate_requests.status = 'NEW'))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#395.1_post" author="saiteja.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#169840.1" author="sudheer.t">
+		<sql>
+			<![CDATA[
+				DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'C';
+    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'F';
+    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'O';
+    			DELETE FROM CategoryWiseEvents where AeEventCode = 'INSPAY' and CategoryCode = 'S';
+    
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+    			INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('INSPAY', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214" author="naveenkumar.a">
+		<createTable tableName="Closure_Types">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" remarks="ClosureType Code Description" type="varchar(100)" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int" defaultValueNumeric="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#214.1" author="naveenkumar.a">
+		<createTable tableName="Closure_Types_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" remarks="ClosureType Code Description" type="varchar(100)" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int" defaultValueNumeric="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#214.2" author="naveenkumar.a">
+		<addPrimaryKey tableName="Closure_Types" columnNames="Id" constraintName="PK_ClosureTypes_Id" />
+	</changeSet>
+
+	<changeSet id="ST#214.3" author="naveenkumar.a">
+		<addUniqueConstraint tableName="Closure_Types" columnNames="Code"
+			constraintName="UK_ClosureTypes_Code" />
+	</changeSet>
+
+	<changeSet id="ST#214.4" author="naveenkumar.a">
+		<addPrimaryKey tableName="Closure_Types_Temp" columnNames="Id" constraintName="PK_ClosureTypes_Tem_Id" />
+	</changeSet>
+
+	<changeSet id="ST#214.5" author="naveenkumar.a">
+		<addUniqueConstraint tableName="Closure_Types_Temp" columnNames="Code"
+			constraintName="UK_ClosureTypes_Temp_Code" />
+	</changeSet>
+
+	<changeSet id="ST#214.6" author="naveenkumar.a">
+		<addColumn tableName="FinReceiptHeader">
+			<column name="ClosureTypeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#214.7" author="naveenkumar.a">
+		<addColumn tableName="FinReceiptHeader_temp">
+			<column name="ClosureTypeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#214.8" author="naveenkumar.a">
+		<addForeignKeyConstraint constraintName="FK_FinReceiptHeader_ClsrTypId"
+			referencedTableName="Closure_Types" baseColumnNames="ClosureTypeId" baseTableName="FinReceiptHeader"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#214.9" author="naveenkumar.a">
+	    <addForeignKeyConstraint constraintName="FK_FRH_Temp_ClsrTypId"
+		referencedTableName="Closure_Types" baseColumnNames="ClosureTypeId" baseTableName="FinReceiptHeader_Temp"
+		referencedColumnNames="Id" />
+    </changeSet>
+
+	<changeSet id="ST#214.10.1" author="naveenkumar.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'ReceiptDialog_ClosureType');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'ReceiptDialog_ClosureType';
+							 
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ReceiptDialog_ClosureType', 'ReceiptDialog', 0, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CLOSURE_RECEIPT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'ReceiptDialog_ClosureType'), 1, 0, 10000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.11.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.11.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+      			SELECT T1.RECEIPTID,
+	      			T1.RECEIPTDATE,
+	      			T1.RECEIPTTYPE,
+	      			T1.RECAGAINST,
+	      			T1.REFERENCE,
+	      			T1.RECEIPTPURPOSE,
+	      			T1.RECEIPTMODE,
+	      			T1.EXCESSADJUSTTO,
+	      			T1.ALLOCATIONTYPE,
+	      			T1.RECEIPTAMOUNT,
+	      			T1.EFFECTSCHDMETHOD,
+	      			T1.EXTREFERENCE,
+	      			T1.MODULE,
+	      			T1.RECEIPTMODESTATUS,
+	      			T1.SUBRECEIPTMODE,
+	      			T1.RECEIPTCHANNEL,
+	      			T1.RECEIVEDFROM,
+	      			T1.PANNUMBER,
+	      			T1.COLLECTIONAGENTID,
+	      			T9.CODE COLLECTIONAGENTCODE,
+	      			T9.DESCRIPTION COLLECTIONAGENTDESC,
+	      			T1.VERSION,
+	      			T1.LASTMNTBY,
+	      			T1.LASTMNTON,
+	      			T1.RECORDSTATUS,
+	      			T1.ROLECODE,
+	      			T1.NEXTROLECODE,
+	      			T1.TASKID,
+	      			T1.NEXTTASKID,
+	      			T1.RECORDTYPE,
+	      			T1.WORKFLOWID,
+	      			T2.FINTYPE,
+	      			T2.FINBRANCH,
+	      			T3.CUSTCIF,
+	      			T3.CUSTSHRTNAME,
+	      			T2.FINCCY,
+	      			T1.REALIZATIONDATE,
+	      			T1.CANCELREASON,
+	      			T4.FINTYPEDESC,
+	      			T6.BRANCHDESC FINBRANCHDESC,
+	      			T5.CCYDESC FINCCYDESC,
+	      			T7.REJECTDESC CANCELREASONDESC,
+	      			T2.FINISACTIVE,
+	      			T1.WAVIEDAMT,
+	      			T1.TOTFEEAMOUNT,
+	      			T1.BOUNCEDATE,
+	      			T1.REMARKS,
+	      			T1.RCDMAINTAINSTS,
+	      			T1.GDRAVAILABLE,
+	      			T1.RELEASETYPE,
+	      			T1.THIRDPARTYNAME,
+	      			T1.THIRDPARTYMOBILENUM,
+	      			T1.DEPOSITPROCESS,
+	      			T1.DEPOSITBRANCH,
+	      			T1.LPIAMOUNT,
+	      			T1.LPPAMOUNT,
+	      			T1.GSTLPIAMOUNT,
+	      			T1.GSTLPPAMOUNT,
+	      			T2.PRODUCTCATEGORY,
+	      			T2.PROMOTIONCODE,
+	      			T2.NEXTREPAYRVWDATE,
+	      			T1.CASHIERBRANCH,
+	      			T1.INITIATEDATE,
+	      			T1.INSTRUCTIONUID,
+	      			T1.FINDIVISION,
+	      			T1.POSTBRANCH,
+	      			T10.DIVISIONCODEDESC FINDIVISIONDESC,
+	      			T11.BRANCHDESC POSTBRANCHDESC,
+	      			T12.BRANCHDESC CASHIERBRANCHDESC,
+	      			T10.ENTITYCODE,
+	      			T1.ACTFINRECEIPT,
+	      			T1.CANCELREMARKS,
+	      			T1.REFWAIVERAMT,        
+	      			T1.SOURCE,             
+	      			T1.VALUEDATE, 
+	      			T1.TRANSACTIONREF,               
+	      			T1.DEPOSITDATE,         
+	      			T1.PARTNERBANKID,       
+	      			T1.PRVRECEIPTPURPOSE,   
+	      			T1.RECEIPTSOURCE,       
+	      			T1.RECAPPDATE,          
+	      			T1.RECEIVEDDATE,
+	      			T1.KNOCKOFFTYPE,
+	      			T1.CLOSURETYPEID,
+	      			T13.CODE CLOSURETYPEDESC
+      			FROM FINRECEIPTHEADER T1
+      			INNER JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
+      			INNER JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+      			INNER JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+      			INNER JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+      			INNER JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+      			LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+      			LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+      			LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+      			LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+      			LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+      			LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+      		]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.11.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.12.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_dview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.12.1" author="naveenkumar.a">
+		<createView viewName="FinReceiptHeader_DView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.REMARKS,
+					T1.DEPOSITBRANCH,
+					T1.RECEIPTAMOUNT AMOUNT,
+					T3.FINREFERENCE,
+					T4.CUSTSHRTNAME,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID FUNDINGAC,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+					T13.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER_TEMP T1
+				INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+				INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH   = T12.BRANCHCODE
+				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				WHERE T1.RECEIPTMODE IN ('CHEQUE', 'DD') AND T1.DEPOSITPROCESS = 1
+					AND T1.RECEIPTID NOT IN (SELECT RECEIPTID FROM DEPOSITCHEQUES_TEMP)
+				UNION ALL
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.REMARKS,
+					T1.DEPOSITBRANCH,
+					T1.RECEIPTAMOUNT AMOUNT,
+					T3.FINREFERENCE,
+					T4.CUSTSHRTNAME,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID FUNDINGAC,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+					T13.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER T1
+				INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+				INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+				WHERE NOT EXISTS (SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
+					AND T1.RECEIPTMODE   IN ('CHEQUE', 'DD') AND T1.DEPOSITPROCESS = 1 AND T1.RECEIPTID NOT IN
+					(SELECT RECEIPTID FROM DEPOSITCHEQUES_TEMP)
+			]]>
+		</createView>
+	</changeSet>
+
+
+	<changeSet id="ST#214.12.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.13.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_fcdview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.13.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_FCDVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					(CASE WHEN T1.RECAGAINST ='C' THEN T13.CUSTCIF
+					ELSE T1.REFERENCE END) REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T1.INSTRUCTIONUID,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+				    T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				UNION ALL
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					(CASE WHEN T1.RECAGAINST ='C' THEN T13.CUSTCIF
+					ELSE T1.REFERENCE END) REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T1.INSTRUCTIONUID,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				WHERE NOT EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.13.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_fcdview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.14.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+		    <![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_fcview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.14.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_FCVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					T1.REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T1.INSTRUCTIONUID,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.ACTFINRECEIPT,
+					T1.REASONCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				UNION ALL
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					T1.REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T1.INSTRUCTIONUID,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.ACTFINRECEIPT,
+					T1.REASONCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				WHERE NOT EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.14.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_fcview');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#214.15.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_fdview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.15.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_FDVIEW" replaceIfExists="true">
+			<![CDATA[
+			    SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					CASE WHEN T1.RECAGAINST = 'C' THEN T10.CUSTCIF
+						ELSE T1.REFERENCE END REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T1.CASHIERBRANCH,
+					T2.NEXTREPAYRVWDATE,
+					T1.INITIATEDATE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T10.CUSTCIF CUSTOMERCIF,
+					T10.CUSTSHRTNAME CUSTOMERNAME,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T11.DIVISIONCODEDESC FINDIVISIONDESC,
+					T12.BRANCHDESC POSTBRANCHDESC,
+					T13.BRANCHDESC CASHIERBRANCHDESC,
+					T11.ENTITYCODE,
+					T1.INSTRUCTIONUID,
+					T1.ACTFINRECEIPT,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC		
+				FROM FINRECEIPTHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN CUSTOMERS T10 ON CAST(T10.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN SMTDIVISIONDETAIL T11 ON T1.FINDIVISION = T11.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.POSTBRANCH = T12.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T13 ON T1.CASHIERBRANCH = T13.BRANCHCODE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.15.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_fdview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.16.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_fedview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.16.1" author="naveenkumar.a">
+		<createView viewName="FinReceiptHeader_FEDView" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					CASE WHEN T1.RECAGAINST ='C' THEN T13.CUSTCIF
+						ELSE T1.REFERENCE END REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T1.INSTRUCTIONUID,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				UNION ALL
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					CASE WHEN T1.RECAGAINST ='C' THEN T13.CUSTCIF
+						ELSE T1.REFERENCE END REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T1.INSTRUCTIONUID,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				WHERE NOT EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.16.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_fedview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.17.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_feview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.17.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_FEVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					T1.REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T4.FINDIVISION LOVDESCFINDIVISION,
+					T2.BUSINESSVERTICAL,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.INSTRUCTIONUID,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T1.COLLECTIONAGENTID,
+					T1.PANNUMBER,
+					T1.RECEIVEDFROM,
+					T1.RECEIPTCHANNEL,
+					T1.SUBRECEIPTMODE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.ACTFINRECEIPT,
+					T1.REASONCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				UNION ALL
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					T1.REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T4.FINDIVISION LOVDESCFINDIVISION,
+					T2.BUSINESSVERTICAL,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.INSTRUCTIONUID,
+					T1.MODULE,
+					T1.EXTREFERENCE,
+					T1.COLLECTIONAGENTID,
+					T1.PANNUMBER,
+					T1.RECEIVEDFROM,
+					T1.RECEIPTCHANNEL,
+					T1.SUBRECEIPTMODE,
+					T13.CUSTCIF CUSTOMERCIF,
+					T13.CUSTSHRTNAME CUSTOMERNAME,
+					T1.ACTFINRECEIPT,
+					T1.REASONCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+				    T14.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER T1
+				LEFT JOIN
+					(SELECT FINREFERENCE,
+					FINBRANCH,
+					FINTYPE,
+					FINCCY,
+					SCHEDULEMETHOD,
+					PROFITDAYSBASIS,
+					FINISACTIVE,
+					CUSTID,
+					PRODUCTCATEGORY,
+					PROMOTIONCODE,
+					NEXTREPAYRVWDATE,
+					BUSINESSVERTICAL
+					FROM FINANCEMAIN_TEMP
+					UNION
+					SELECT FINREFERENCE,
+					FINBRANCH,
+					FINTYPE,
+					FINCCY,
+					SCHEDULEMETHOD,
+					PROFITDAYSBASIS,
+					FINISACTIVE,
+					CUSTID,
+					PRODUCTCATEGORY,
+					PROMOTIONCODE,
+					NEXTREPAYRVWDATE,
+					BUSINESSVERTICAL
+					FROM FINANCEMAIN
+					) T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CUSTOMERS T13 ON CAST(T13.CUSTID AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN CLOSURE_TYPES	T14 ON T14.ID = T1.CLOSURETYPEID
+				WHERE NOT EXISTS (SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.17.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_feview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.18.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_fview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.18.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_FVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.ACTFINRECEIPT,
+					T1.RECAGAINST,
+					T1.REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					COALESCE(T2.FINISACTIVE, 0) FINISACTIVE,
+					T2.SCHEDULEMETHOD,
+					T2.PROFITDAYSBASIS PFTDAYSBASIS,
+					T1.WAVIEDAMT,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T1.CASHIERBRANCH,
+					T2.NEXTREPAYRVWDATE,
+					T1.INITIATEDATE,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.MODULE,
+					T1.INSTRUCTIONUID,
+					T1.EXTREFERENCE,
+					T10.CUSTCIF CustomerCif,
+					T10.CustShrtName CustomerName,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T11.DIVISIONCODEDesc FinDivisionDesc,
+					T12.BRANCHDESC PostBranchDesc,
+					T13.BRANCHDESC CashierBranchDesc,
+					T11.ENTITYCODE,
+					T3.CUSTBASECCY,
+					T1.REASONCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T2.TDSAPPLICABLE FinTDSApplicable,
+					T1.CLOSURETYPEID,
+					T15.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER_TEMP T1
+				LEFT JOIN FINANCEMAIN_TEMP T2 ON T1.REFERENCE = T2.FINREFERENCE
+				LEFT JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				LEFT JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				LEFT JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				LEFT JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN Customers T10 ON CAST(T10.CustId AS VARCHAR(20)) = T1.REFERENCE
+				LEFT JOIN SMTDIVISIONDETAIL T11 ON T1.FINDIVISION = T11.DIVISIONCODE
+				LEFT JOIN RMTBranches T12 ON T1.PostBranch = T12.BranchCode
+				LEFT JOIN RMTBranches T13 ON T1.CASHIERBRANCH = T13.BranchCode
+				LEFT JOIN RMTCURRENCIES T14 ON T14.CCYCODE= T3.CustBaseCcy
+				LEFT JOIN CLOSURE_TYPES	T15 ON T15.ID = T1.CLOSURETYPEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.18.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_fview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.19.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.19.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTTYPE,
+					T1.RECAGAINST,
+					T1.REFERENCE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.EXCESSADJUSTTO,
+					T1.ALLOCATIONTYPE,
+					T1.RECEIPTAMOUNT,
+					T1.EFFECTSCHDMETHOD,
+					T1.EXTREFERENCE,
+					T1.MODULE,
+					T1.RECEIPTMODESTATUS,
+					T1.SUBRECEIPTMODE,
+					T1.RECEIPTCHANNEL,
+					T1.RECEIVEDFROM,
+					T1.PANNUMBER,
+					T1.COLLECTIONAGENTID,
+					T9.CODE COLLECTIONAGENTCODE,
+					T9.DESCRIPTION COLLECTIONAGENTDESC,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FINTYPE,
+					T2.FINBRANCH,
+					T3.CUSTCIF,
+					T3.CUSTSHRTNAME,
+					T2.FINCCY,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T4.FINTYPEDESC,
+					T6.BRANCHDESC FINBRANCHDESC,
+					T5.CCYDESC FINCCYDESC,
+					T7.REJECTDESC CANCELREASONDESC,
+					T2.FINISACTIVE,
+					T1.WAVIEDAMT,
+					T1.TOTFEEAMOUNT,
+					T1.BOUNCEDATE,
+					T1.REMARKS,
+					T1.RCDMAINTAINSTS,
+					T1.GDRAVAILABLE,
+					T1.RELEASETYPE,
+					T1.THIRDPARTYNAME,
+					T1.THIRDPARTYMOBILENUM,
+					T1.DEPOSITPROCESS,
+					T1.DEPOSITBRANCH,
+					T1.LPIAMOUNT,
+					T1.LPPAMOUNT,
+					T1.GSTLPIAMOUNT,
+					T1.GSTLPPAMOUNT,
+					T2.PRODUCTCATEGORY,
+					T2.PROMOTIONCODE,
+					T2.NEXTREPAYRVWDATE,
+					T1.CASHIERBRANCH,
+					T1.INITIATEDATE,
+					T1.INSTRUCTIONUID,
+					T1.FINDIVISION,
+					T1.POSTBRANCH,
+					T10.DIVISIONCODEDESC FINDIVISIONDESC,
+					T11.BRANCHDESC POSTBRANCHDESC,
+					T12.BRANCHDESC CASHIERBRANCHDESC,
+					T10.ENTITYCODE,
+					T1.ACTFINRECEIPT,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+					T13.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER_TEMP T1
+				INNER JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
+				INNER JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+				INNER JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+				INNER JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+				INNER JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+				LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+				LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+				LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+				LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CLOSURE_TYPES	T13 ON T13.ID = T1.CLOSURETYPEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.19.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_tview');
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.20.1_pre" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#214.20.1" author="naveenkumar.a">
+		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+		        SELECT T1.RECEIPTID,
+				    T1.RECEIPTDATE,
+				    T1.RECEIPTTYPE,
+				    T1.RECAGAINST,
+				    T1.REFERENCE,
+				    T1.RECEIPTPURPOSE,
+				    T1.RECEIPTMODE,
+				    T1.EXCESSADJUSTTO,
+				    T1.ALLOCATIONTYPE,
+				    T1.RECEIPTAMOUNT,
+				    T1.EFFECTSCHDMETHOD,
+				    T1.EXTREFERENCE,
+				    T1.MODULE,
+				    T1.RECEIPTMODESTATUS,
+				    T1.SUBRECEIPTMODE,
+				    T1.RECEIPTCHANNEL,
+				    T1.RECEIVEDFROM,
+				    T1.PANNUMBER,
+				    T1.COLLECTIONAGENTID,
+				    T9.CODE COLLECTIONAGENTCODE,
+				    T9.DESCRIPTION COLLECTIONAGENTDESC,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.FINTYPE,
+				    T2.FINBRANCH,
+				    T3.CUSTCIF,
+				    T3.CUSTSHRTNAME,
+				    T2.FINCCY,
+				    T1.REALIZATIONDATE,
+				    T1.CANCELREASON,
+				    T4.FINTYPEDESC,
+				    T6.BRANCHDESC FINBRANCHDESC,
+				    T5.CCYDESC FINCCYDESC,
+				    T7.REJECTDESC CANCELREASONDESC,
+				    T2.FINISACTIVE,
+				    T1.WAVIEDAMT,
+				    T1.TOTFEEAMOUNT,
+				    T1.BOUNCEDATE,
+				    T1.REMARKS,
+				    T1.RCDMAINTAINSTS,
+				    T1.GDRAVAILABLE,
+				    T1.RELEASETYPE,
+				    T1.THIRDPARTYNAME,
+				    T1.THIRDPARTYMOBILENUM,
+				    T1.DEPOSITPROCESS,
+				    T1.DEPOSITBRANCH,
+				    T1.LPIAMOUNT,
+				    T1.LPPAMOUNT,
+				    T1.GSTLPIAMOUNT,
+				    T1.GSTLPPAMOUNT,
+				    T2.PRODUCTCATEGORY,
+				    T2.PROMOTIONCODE,
+				    T2.NEXTREPAYRVWDATE,
+				    T1.CASHIERBRANCH,
+				    T1.INITIATEDATE,
+				    T1.INSTRUCTIONUID,
+				    T1.FINDIVISION,
+				    T1.POSTBRANCH,
+				    T10.DIVISIONCODEDESC FINDIVISIONDESC,
+				    T11.BRANCHDESC POSTBRANCHDESC,
+				    T12.BRANCHDESC CASHIERBRANCHDESC,
+				    T10.ENTITYCODE,
+				    T1.ACTFINRECEIPT,
+					T1.REASONCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+					T13.CODE CLOSURETYPEDESC
+			    FROM FINRECEIPTHEADER_TEMP T1
+			    JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
+			    JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+			    JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+			    JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+			    JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+			    LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+			    LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+			    LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+			    LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+			    LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CLOSURE_TYPES T13 ON T13.ID = T1.CLOSURETYPEID	 
+			    UNION ALL
+			    SELECT T1.RECEIPTID,
+				    T1.RECEIPTDATE,
+				    T1.RECEIPTTYPE,
+				    T1.RECAGAINST,
+				    T1.REFERENCE,
+				    T1.RECEIPTPURPOSE,
+				    T1.RECEIPTMODE,
+				    T1.EXCESSADJUSTTO,
+				    T1.ALLOCATIONTYPE,
+				    T1.RECEIPTAMOUNT,
+				    T1.EFFECTSCHDMETHOD,
+				    T1.EXTREFERENCE,
+				    T1.MODULE,
+				    T1.RECEIPTMODESTATUS,
+				    T1.SUBRECEIPTMODE,
+				    T1.RECEIPTCHANNEL,
+				    T1.RECEIVEDFROM,
+				    T1.PANNUMBER,
+				    T1.COLLECTIONAGENTID,
+				    T9.CODE COLLECTIONAGENTCODE,
+				    T9.DESCRIPTION COLLECTIONAGENTDESC,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T2.FINTYPE,
+				    T2.FINBRANCH,
+				    T3.CUSTCIF,
+				    T3.CUSTSHRTNAME,
+				    T2.FINCCY,
+				    T1.REALIZATIONDATE,
+				    T1.CANCELREASON,
+				    T4.FINTYPEDESC,
+				    T6.BRANCHDESC FINBRANCHDESC,
+				    T5.CCYDESC FINCCYDESC,
+				    T7.REJECTDESC CANCELREASONDESC,
+				    T2.FINISACTIVE,
+				    T1.WAVIEDAMT,
+				    T1.TOTFEEAMOUNT,
+				    T1.BOUNCEDATE,
+				    T1.REMARKS,
+				    T1.RCDMAINTAINSTS,
+				    T1.GDRAVAILABLE,
+				    T1.RELEASETYPE,
+				    T1.THIRDPARTYNAME,
+				    T1.THIRDPARTYMOBILENUM,
+				    T1.DEPOSITPROCESS,
+				    T1.DEPOSITBRANCH,
+				    T1.LPIAMOUNT,
+				    T1.LPPAMOUNT,
+				    T1.GSTLPIAMOUNT,
+				    T1.GSTLPPAMOUNT,
+				    T2.PRODUCTCATEGORY,
+				    T2.PROMOTIONCODE,
+				    T2.NEXTREPAYRVWDATE,
+				    T1.CASHIERBRANCH,
+				    T1.INITIATEDATE,
+				    T1.INSTRUCTIONUID,
+				    T1.FINDIVISION,
+				    T1.POSTBRANCH,
+				    T10.DIVISIONCODEDESC FINDIVISIONDESC,
+				    T11.BRANCHDESC POSTBRANCHDESC,
+				    T12.BRANCHDESC CASHIERBRANCHDESC,
+				    T10.ENTITYCODE,
+				    T1.ACTFINRECEIPT,
+					T1.REASONCODE,
+					T1.CANCELREMARKS,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					T1.CLOSURETYPEID,
+					T13.CODE CLOSURETYPEDESC
+				FROM FINRECEIPTHEADER T1
+			    JOIN FINANCEMAIN T2 ON T1.REFERENCE = T2.FINREFERENCE
+			    JOIN CUSTOMERS T3 ON T2.CUSTID = T3.CUSTID
+			    JOIN RMTFINANCETYPES T4 ON T2.FINTYPE = T4.FINTYPE
+			    JOIN RMTCURRENCIES T5 ON T2.FINCCY = T5.CCYCODE
+			    JOIN RMTBRANCHES T6 ON T2.FINBRANCH = T6.BRANCHCODE
+			    LEFT JOIN BMTREJECTCODES T7 ON T1.CANCELREASON = T7.REJECTCODE
+			    LEFT JOIN COLLECTIONAGENCIES T9 ON T1.COLLECTIONAGENTID = T9.ID
+			    LEFT JOIN SMTDIVISIONDETAIL T10 ON T1.FINDIVISION = T10.DIVISIONCODE
+			    LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
+			    LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
+				LEFT JOIN CLOSURE_TYPES T13 ON T13.ID = T1.CLOSURETYPEID
+			    WHERE NOT (EXISTS ( SELECT 1 FROM FINRECEIPTHEADER_TEMP
+			     	WHERE FINRECEIPTHEADER_TEMP.RECEIPTID = T1.RECEIPTID)) 
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#214.20.1_post" author="naveenkumar.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_view');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#214.21.1" author="naveenkumar.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM CLOSURE_TYPES;
+				INSERT INTO CLOSURE_TYPES (ID, CODE, DESCRIPTION, ACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES (1, 'DE', 'Default',1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#214.22.1" author="naveenkumar.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WorkflowId" tableName="Closure_Types" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#214.22.1" author="naveenkumar.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Closure_Types add constraint DK_CT_WrkflwId default 0 for WorkflowId;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="ST#214.23.1" author="naveenkumar.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WorkflowId" tableName="Closure_Types_Temp" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="ST#214.23.1" author="naveenkumar.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Closure_Types_Temp add constraint DK_CT_T_WrkflwId default 0 for WorkflowId;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#229.1" author="Pavankalyan.s">
+		<sql>
+		    <![CDATA[
+                Delete from SecGrouprights where rightid in (Select rightid from Secrights Where rightname = 'menuItem_MaturedLoanClosureEnquiry');
+			    Delete from SecOperationRoles where OprID = (select OprID from SecOperations WHERE OprCode='MATUREDLOAN_CLOSURE_ENQUIRY') and RoleID = (select RoleID from SecRoles where RoleCd='MATUREDLOAN_CLOSURE_ENQUIRY');
+			    Delete from SecOperations where OprCode = 'MATUREDLOAN_CLOSURE_ENQUIRY';
+			    Delete from SecRoleGroups where GrpID = (select grpId from SecGroups WHERE GrpCode='MATUREDLOAN_CLOSURE_ENQUIRY') and RoleID = (select RoleID from SecRoles where RoleCd='MATUREDLOAN_CLOSURE_ENQUIRY');
+			    Delete from SecRoles where  RoleCd = 'MATUREDLOAN_CLOSURE_ENQUIRY';
+			    Delete from SecGroupRights where grpId = (select grpId from SecGroups WHERE GrpCode='MATUREDLOAN_CLOSURE_ENQUIRY') and RightID = (select RightID from SecRights where RightName='menuItem_MaturedLoanClosureEnquiry');
+			    Delete from SecGroups where GrpCode = 'MATUREDLOAN_CLOSURE_ENQUIRY';
+			    Delete from SECRIGHTS where RIGHTNAME = 'menuItem_MaturedLoanClosureEnquiry';
+			    									
+			    Insert INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(RIGHTID)+1 from SECRIGHTS), 0, 'menuItem_MaturedLoanClosureEnquiry', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			    
+			    Insert INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS), 'MATUREDLOAN_CLOSURE_ENQUIRY', 'Matured Loan Closure Enquiry', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			    
+			    Insert INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (Select GRPID from SECGROUPS where GRPCODE = 'MATUREDLOAN_CLOSURE_ENQUIRY'), (Select RIGHTID from SECRIGHTS where RIGHTNAME = 'menuItem_MaturedLoanClosureEnquiry'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			    
+			    INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(roleid)+1 from secroles), 1, 'MATUREDLOAN_CLOSURE_ENQUIRY', 'Matured Loan Closure Enquiry', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			   
+			    INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values((Select MAX(RoleGrpID)+1 From SecRoleGroups), (Select GrpId  From SecGroups Where GrpCode = 'MATUREDLOAN_CLOSURE_ENQUIRY'), (Select RoleID From SecRoles Where RoleCd = 'MATUREDLOAN_CLOSURE_ENQUIRY'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0); 
+			    				
+			    INSERT INTO SECOPERATIONS (OPRID, OPRCODE, OPRDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select MAX(OprID)+1 from SecOperations), 'MATUREDLOAN_CLOSURE_ENQUIRY', 'Matured Loan Closure Enquiry', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			   
+			    INSERT INTO SECOPERATIONROLES (OPRROLEID, OPRID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='MATUREDLOAN_CLOSURE_ENQUIRY'), (select RoleID from SecRoles where RoleCd='MATUREDLOAN_CLOSURE_ENQUIRY'), 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+    <changeSet id="ST#213.1" author="Venkatesh.ch">
+	     <sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'gb_ReceiptDialog_ForeClosure');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'gb_ReceiptDialog_ForeClosure';
+				 
+				Insert INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'gb_ReceiptDialog_ForeClosure', 'ReceiptDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Insert INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CLOSURE_RECEIPT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'gb_ReceiptDialog_ForeClosure'), 1, 0, 10000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+	    </sql>
+    </changeSet>
+    
+	<changeSet id="ST#216.1" author="naveenkumar.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID in (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_Receiptdialog_ForeClosureEffschd_btnPrint');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_Receiptdialog_ForeClosureEffschd_btnPrint';
+ 
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_Receiptdialog_ForeClosureEffschd_btnPrint', 'ReceiptDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CLOSURE_RECEIPT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_Receiptdialog_ForeClosureEffschd_btnPrint'), 1, 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CLOSURE_RECEIPT_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_Receiptdialog_ForeClosureEffschd_btnPrint'), 1, 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				]]>
+			</sql>
+	</changeSet>
+
+</databaseChangeLog>

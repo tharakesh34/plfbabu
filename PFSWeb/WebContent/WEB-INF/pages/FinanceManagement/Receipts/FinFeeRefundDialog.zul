@@ -154,6 +154,8 @@
 											id="listheader_FinFeeRefundList_PaidGST" align="right"
 											label="${c:l('listheader_FinFeeRefundList_PaidGST.label')}"
 											sort="false" />
+										<listheader id="listheader_FinFeeRefundList_PaidTDS" align="right"
+											label="${c:l('listheader_FinFeeRefundList_PaidTDS.label')}" sort="false" />
 										<listheader
 											id="listheader_FinFeeRefundList_TotalPaidAmount"
 											align="right"
@@ -169,10 +171,13 @@
 											label="${c:l('listheader_FinFeeRefundList_PrvsRefundFeeGST.label')}"
 											sort="false" style="font-size: 11px;" width="100px" />
 										<listheader
+											id="listheader_FinFeeRefundList_TotPrvsRefundTDS"
+											label="${c:l('listheader_FinFeeRefundList_TotPrvsRefundTDS.label')}"
+											sort="false" style="font-size: 11px;" width="100px" />
+										<listheader
 											id="listheader_FinFeeRefundList_TotPrvsRefundFee"
 											label="${c:l('listheader_FinFeeRefundList_TotPrvsRefundFee.label')}"
 											sort="false" style="font-size: 11px;" width="100px" />
-
 										<listheader
 											id="listheader_FinFeeRefundList_AllocatedRefund"
 											align="right"
@@ -182,6 +187,11 @@
 											id="listheader_FinFeeRefundList_AllocatedRefundGST"
 											align="right"
 											label="${c:l('listheader_FinFeeRefundList_AllocatedRefundGST.label')}"
+											sort="false" />
+										<listheader
+											id="listheader_FinFeeRefundList_AllocatedRefundTDS"
+											align="right"
+											label="${c:l('listheader_FinFeeRefundList_AllocatedRefundTDS.label')}"
 											sort="false" />
 										<listheader
 											id="listheader_FinFeeRefundList_AllocatedrefundTotal"

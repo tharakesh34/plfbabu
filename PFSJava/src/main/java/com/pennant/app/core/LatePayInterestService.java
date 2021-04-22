@@ -34,12 +34,12 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
@@ -52,7 +52,7 @@ import com.pennant.backend.util.FinanceConstants;
 
 public class LatePayInterestService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
-	private static Logger logger = Logger.getLogger(LatePayInterestService.class);
+	private static Logger logger = LogManager.getLogger(LatePayInterestService.class);
 
 	/**
 	 * Default constructor
@@ -61,18 +61,19 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, FinanceMain financeMain,
-			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments) {
-		logger.debug(" Entering ");
-
+	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, FinanceMain fm,
+			List<FinanceScheduleDetail> schedules, List<FinanceRepayments> repayments) {
 		String finReference = fod.getFinReference();
+		logger.info("Computing LPI for FinReference >> {}", finReference);
+
 		Date odDate = fod.getFinODSchdDate();
-		BigDecimal lpiMargin = financeMain.getPastduePftMargin().divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
+		BigDecimal lpiMargin = fm.getPastduePftMargin();
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
+		fod.setLPIAmt(BigDecimal.ZERO);
 
-		List<OverdueChargeRecovery> schdODCRecoveries = new ArrayList<OverdueChargeRecovery>();
+		List<OverdueChargeRecovery> schdODCRecoveries = new ArrayList<>();
 		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 
 		//Add Schedule Date to the ODC Recovery
@@ -86,12 +87,11 @@ public class LatePayInterestService extends ServiceHelper {
 		schdODCRecoveries.add(odcr);
 
 		if (repayments == null) {
-			repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
+			repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, odDate);
 		}
 
 		//Load Overdue Charge Recovery from Repayment Movements
-		for (int i = 0; i < repayments.size(); i++) {
-			FinanceRepayments repayment = repayments.get(i);
+		for (FinanceRepayments repayment : repayments) {
 
 			//check the payment made against the actual schedule date 
 			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
@@ -116,14 +116,16 @@ public class LatePayInterestService extends ServiceHelper {
 			odcr.setFinCurODAmt(odPri.add(odPft));
 			schdODCRecoveries.add(odcr);
 		}
+		BigDecimal odAmt = fod.getLPIAmt().add(fod.getTotPenaltyAmt());
 
-		fod.setLPIAmt(BigDecimal.ZERO);
+		if (odAmt.compareTo(BigDecimal.ZERO) <= 0) {
+			fod.setLPIAmt(BigDecimal.ZERO);
+		}
 
 		//Add record with today date
 		boolean isAddTodayRcd = true;
-		for (int i = 0; i < schdODCRecoveries.size(); i++) {
-			odcr = schdODCRecoveries.get(i);
-			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
+		for (OverdueChargeRecovery item : schdODCRecoveries) {
+			if (item.getMovementDate().compareTo(valueDate) == 0) {
 				isAddTodayRcd = false;
 				break;
 			}
@@ -139,6 +141,10 @@ public class LatePayInterestService extends ServiceHelper {
 		}
 
 		//Calculate the Penalty
+		String roundingMode = fm.getCalRoundingMode();
+		int roundingTarget = fm.getRoundingTarget();
+		String profitDaysBasis = fm.getProfitDaysBasis();
+
 		for (int i = 0; i < schdODCRecoveries.size() - 1; i++) {
 			OverdueChargeRecovery odcrCur = schdODCRecoveries.get(i);
 			OverdueChargeRecovery odcrNext = schdODCRecoveries.get(i + 1);
@@ -146,11 +152,11 @@ public class LatePayInterestService extends ServiceHelper {
 			Date dateCur = odcrCur.getMovementDate();
 			Date dateNext = odcrNext.getMovementDate();
 
-			BigDecimal penaltyRate = getPenaltyRate(finScheduleDetails, dateCur, lpiMargin);
+			BigDecimal penaltyRate = getPenaltyRate(schedules, dateCur, lpiMargin);
+
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(),
-					financeMain.getProfitDaysBasis(), penaltyRate);
-			penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(),
-					financeMain.getRoundingTarget());
+					profitDaysBasis, penaltyRate);
+			penalty = CalculationUtil.roundAmount(penalty, roundingMode, roundingTarget);
 
 			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
@@ -158,30 +164,31 @@ public class LatePayInterestService extends ServiceHelper {
 			odcrCur.setPenaltyBal(
 					odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid().subtract(odcrCur.getWaivedAmt())));
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
+
 		}
 
-		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), financeMain.getCalRoundingMode(),
-				financeMain.getRoundingTarget()));
+		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, roundingTarget));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 
 		//if the record added for calculation it should not be displayed in screen.
 		if (isAddTodayRcd) {
 			schdODCRecoveries.remove(schdODCRecoveries.size() - 1);
 		}
-		logger.debug(" Leaving ");
+
+		logger.info("Computing LPI for FinReference >> {} completed", finReference);
 		return schdODCRecoveries;
 	}
 
-	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> finSchdDetails, Date mvtDate, BigDecimal lpiMargin) {
+	public BigDecimal getPenaltyRate(List<FinanceScheduleDetail> schedules, Date mvtDate, BigDecimal lpiMargin) {
 
 		BigDecimal penaltyRate = BigDecimal.ZERO;
 
-		for (int i = 0; i < finSchdDetails.size(); i++) {
-			if (finSchdDetails.get(i).getSchDate().compareTo(mvtDate) > 0) {
+		for (FinanceScheduleDetail schd : schedules) {
+			if (schd.getSchDate().compareTo(mvtDate) > 0) {
 				break;
 			}
 
-			penaltyRate = finSchdDetails.get(i).getCalculatedRate();
+			penaltyRate = schd.getCalculatedRate();
 		}
 		penaltyRate = penaltyRate.add(lpiMargin);
 		return penaltyRate;

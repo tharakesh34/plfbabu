@@ -46,13 +46,14 @@ package com.pennant.backend.dao.assignmentupload.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.assignmentupload.AssignmentUploadDAO;
 import com.pennant.backend.model.assignmentupload.AssignmentUpload;
@@ -66,7 +67,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> implements AssignmentUploadDAO {
-	private static Logger logger = Logger.getLogger(AssignmentUploadDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AssignmentUploadDAOImpl.class);
 
 	public AssignmentUploadDAOImpl() {
 		super();
@@ -101,8 +102,7 @@ public class AssignmentUploadDAOImpl extends SequenceDao<AssignmentUpload> imple
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(assignmentUpload);
-		RowMapper<AssignmentUpload> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AssignmentUpload.class);
+		RowMapper<AssignmentUpload> typeRowMapper = BeanPropertyRowMapper.newInstance(AssignmentUpload.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

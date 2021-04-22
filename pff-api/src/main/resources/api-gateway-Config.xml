@@ -76,7 +76,35 @@
 	<!-- soap container -->
 	<jaxws:endpoint id="customerSOAPService" implementor="#wsCustomerService" address="/customerSoap"
 		publish="false" />
+	
+	<!-- rest container -->
+	<bean id="wsPresentmentService" class="com.pennanttech.service.impl.PresentmentWebServiceImpl" />
 
+	<jaxrs:server id="presentmentRESTService" address="/presentmentRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsPresentmentService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="presentmentSOAPService" implementor="#wsPresentmentService" address="/presentmentSoap"
+		publish="false" />
+	
 	<!-- Loan Schedule Service -->
 	<bean id="wsFinanceSchedule" class="com.pennanttech.service.impl.FinanceScheduleWebServiceImpl" />
 	<!-- Rest container -->
@@ -765,4 +793,84 @@
 	</jaxrs:server>
 
 	<jaxws:endpoint id="dealerSoapService" implementor="#wsDealerService" address="/dealerSoap" publish="false" />
+
+	<!-- RelationshipOfficer API gateway -->
+	<bean id="wsRelationshipOfficersService" class="com.pennanttech.service.impl.RelationshipOfficersWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="relationshipOfficersRestService" address="/relationshipOfficersRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsRelationshipOfficersService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="relationshipOfficersSoapService" implementor="#wsRelationshipOfficersService"
+		address="/relationshipOfficersSoap" publish="false" />
+
+	<!-- rest container Disbursement API GateWay -->
+	<bean id="wsDisbursementService" class="com.pennanttech.pff.api.ws.impl.DisbursementWebServiceImpl" />
+
+	<jaxrs:server id="disbursementRestService" address="/disbursementRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsDisbursementService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+	
+	<!-- soap container -->
+	<jaxws:endpoint id="disbursementSOAPService" implementor="#wsDisbursementService" address="/disbursementSoap"
+		publish="false" />
+		
+	<!-- rest container -->
+	<bean id="wsVerificationsService" class="com.pennanttech.service.impl.VerificationsWebServiceImpl" />
+
+	<jaxrs:server id="verificationsRESTService" address="/verificationsRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsVerificationsService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+	
+	
 </beans>

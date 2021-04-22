@@ -121,6 +121,11 @@
 									<listbox id="sortOperator_partnerBank" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="partnerBank" />
 								</row>
+								<row id="row_6" visible="false">
+								<label id="label_ReceiptList_ReceivedDate" value="${c:l('label_ReceiptList_ReceivedDate.value')}" />
+									<listbox id="sortOperator_receivedDate" width="43px" mold="select" rows="1" />
+									<datebox id="receivedDate" width="183px" />
+								</row>
 							</rows>
 						</grid>
 
@@ -131,6 +136,8 @@
 								<listheader id="listHeader_CheckBox_Name" hflex="min" align="center" visible="false" />
 								<listheader id="listheader_ReceiptId" label="${c:l('listheader_ReceiptId.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptDate" label="${c:l('listheader_ReceiptDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ReceivedDate" label="${c:l('listheader_Received_Date.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_KnockOffType" visible="false" label="${c:l('listheader_KnockOffType.label')}"
 									sort="auto" hflex="min" />

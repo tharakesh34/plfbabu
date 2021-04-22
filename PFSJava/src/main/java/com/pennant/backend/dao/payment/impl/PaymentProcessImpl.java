@@ -3,7 +3,8 @@ package com.pennant.backend.dao.payment.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -28,7 +29,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.process.PaymentProcess;
 
 public class PaymentProcessImpl implements PaymentProcess {
-	private static Logger logger = Logger.getLogger(PaymentProcessImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentProcessImpl.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private BeneficiaryDAO beneficiaryDAO;
@@ -36,27 +37,35 @@ public class PaymentProcessImpl implements PaymentProcess {
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private InsuranceDetailService insuranceDetailService;
 	private PlatformTransactionManager transactionManager;
+	private static String PAID_STATUS = "E";
+	private static String REALIZED_STATUS = "P";
 
 	@Override
-	public void process(PaymentInstruction paymentInstruction) {
-		logger.debug(Literal.ENTERING);
-
-		FinanceMain financeMain = null;
-		TransactionStatus txStatus = null;
+	public int processPayment(PaymentInstruction paymentInstruction) {
 		int count = 0;
 
 		try {
-			financeMain = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(),
-					TableType.MAIN_TAB);
+			String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+			String finReference = paymentInstruction.getFinReference();
+			FinanceMain fm = financeMainDAO.getDisbursmentFinMainById(finReference, TableType.MAIN_TAB);
+
+			if (StringUtils.isNotBlank(disbStatus)) {
+				PAID_STATUS = disbStatus;
+			}
+			//In case of IMD or excess amount processing there is a chance of LAN in temp queue.
+			if (fm == null) {
+				fm = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(), TableType.TEMP_TAB);
+			}
+
 			String paymentType = paymentInstruction.getPaymentType();
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-			txStatus = this.transactionManager.getTransaction(txDef);
-
-			if (StringUtils.equals("E", paymentInstruction.getStatus())) {
+			//E -> PAID 
+			if (StringUtils.equals(PAID_STATUS, paymentInstruction.getStatus())
+					|| DisbursementConstants.STATUS_PAID.equals(paymentInstruction.getStatus())) {
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_PAID);
+			} else if (StringUtils.equals("P", paymentInstruction.getStatus())//P->REALIZED
+					|| DisbursementConstants.STATUS_REALIZED.equals(paymentInstruction.getStatus())) {
+				paymentInstruction.setStatus(DisbursementConstants.STATUS_REALIZED);
 			} else {
 				paymentDetailService.paymentReversal(paymentInstruction);
 				AEEvent aeEvent = new AEEvent();
@@ -70,17 +79,36 @@ public class PaymentProcessImpl implements PaymentProcess {
 					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
-				addToCustomerBeneficiary(paymentInstruction, financeMain.getCustID());
+				addToCustomerBeneficiary(paymentInstruction, fm.getCustID());
 			}
 
 			// update paid or rejected
 			count = paymentDetailService.updatePaymentStatus(paymentInstruction);
-			if (count == 0) {
+
+		} catch (Exception e) {
+			throw e;
+		}
+		return count;
+	}
+
+	@Override
+	public void process(PaymentInstruction paymentInstruction) {
+		logger.debug(Literal.ENTERING);
+
+		TransactionStatus txStatus = null;
+		try {
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			txStatus = this.transactionManager.getTransaction(txDef);
+
+			int count = processPayment(paymentInstruction);
+			if (count == 0 || count > 1) {
 				transactionManager.rollback(txStatus);
 			} else {
 				this.transactionManager.commit(txStatus);
 			}
 		} catch (Exception e) {
+			transactionManager.rollback(txStatus);
 			logger.error(Literal.EXCEPTION, e);
 		}
 
@@ -89,18 +117,25 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 	//Processing the Insurance payments 
 	@Override
-	public void processInsPayments(InsurancePaymentInstructions instruction) {
+	public int processInsPayment(InsurancePaymentInstructions instruction) {
 		logger.debug(Literal.ENTERING);
-
+		int count = 0;
 		try {
+
+			String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+			if (StringUtils.isNotBlank(disbStatus)) {
+				PAID_STATUS = disbStatus;
+			}
+
 			String paymentType = instruction.getPaymentType();
 
-			if (StringUtils.equals("E", instruction.getStatus())) {
+			String status = instruction.getStatus();
+			if (PAID_STATUS.equals(status)) {
 				instruction.setStatus(DisbursementConstants.STATUS_PAID);
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
 					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
 				}
-			} else if (StringUtils.equals("P", instruction.getStatus())) {
+			} else if (REALIZED_STATUS.equals(status)) {
 				instruction.setStatus(DisbursementConstants.STATUS_REALIZED);
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
 					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
@@ -123,11 +158,12 @@ public class PaymentProcessImpl implements PaymentProcess {
 					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
 			}
 			// update paid or rejected
-			insuranceDetailService.updatePaymentStatus(instruction);
+			count = insuranceDetailService.updatePaymentStatus(instruction);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
+		return count;
 	}
 
 	public void addToCustomerBeneficiary(PaymentInstruction instruction, long cusID) {
@@ -159,10 +195,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 		instruction.setPaymentInstructionId(paymentId);
 
 		instruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
-
-		if (instruction == null) {
-			instruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");
-		}
 
 		if (instruction == null) {
 			instruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");

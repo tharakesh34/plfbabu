@@ -44,7 +44,8 @@ package com.pennant.backend.service.cashmanagement.impl;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>BranchCashLimit</b>.<br>
  */
 public class BranchCashLimitServiceImpl extends GenericService<BranchCashLimit> implements BranchCashLimitService {
-	private static final Logger logger = Logger.getLogger(BranchCashLimitServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(BranchCashLimitServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BranchCashLimitDAO branchCashLimitDAO;

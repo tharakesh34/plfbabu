@@ -51,25 +51,27 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements FinFeeScheduleDetailDAO {
-	private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFeeScheduleDetailDAOImpl.class);
 
 	public FinFeeScheduleDetailDAOImpl() {
 		super();
@@ -243,8 +245,7 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 		source.addValue("FeeID", feeID);
 
 		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeScheduleDetail.class);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 
 		logger.debug(Literal.LEAVING);
 		try {
@@ -284,8 +285,7 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeScheduleDetail.class);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		logger.debug("Leaving");
@@ -307,8 +307,7 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeScheduleDetail.class);
+		RowMapper<FinFeeScheduleDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinFeeScheduleDetail.class);
 		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
 		logger.debug("Leaving");
@@ -317,28 +316,38 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 
 	@Override
 	public List<FinFeeScheduleDetail> getFeeSchdTPost(String finReference, Date schDate) {
-		logger.debug("Entering");
-		FinFeeScheduleDetail feeSchd = new FinFeeScheduleDetail();
-		feeSchd.setFinReference(finReference);
-		feeSchd.setSchDate(schDate);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ft.FeeTypeCode, fed.FinReference, fesd.SchDate, fesd.SchAmount, fesd.OsAmount");
+		sql.append(", fesd.CGST, fesd.SGST, fesd.UGST, fesd.IGST");
+		sql.append(", fesd.PaidAmount, fesd.WaiverAmount, fesd.WriteoffAmount");
+		sql.append(" From FINFEESCHEDULEDETAIL fesd");
+		sql.append(" Inner Join FINFEEDETAIL fed on fesd.FeeID = fed.FeeID");
+		sql.append(" Inner Join FEETYPES ft on ft.FeeTypeID = fed.FeeTypeID");
+		sql.append(" Where fed.FinReference= ? and fesd.SchDate = ?");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT FT.FEETYPECODE,FED.FINREFERENCE,FESD.SCHDATE,FESD.SCHAMOUNT,FESD.OSAMOUNT, FESD.CGST, FESD.SGST, FESD.UGST, FESD.IGST ");
-		selectSql.append(" ,FESD.PAIDAMOUNT,FESD.WAIVERAMOUNT,FESD.WRITEOFFAMOUNT ");
-		selectSql.append(" FROM FINFEESCHEDULEDETAIL FESD inner join FINFEEDETAIL FED ON ");
-		selectSql.append(" FESD.FEEID=FED.FEEID INNER JOIN FEETYPES FT on FT.FEETYPEID= FED.FEETYPEID ");
-		selectSql.append(" WHERE FED.FinReference=:FinReference AND FESD.SchDate=:SchDate ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeSchd);
-		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+			ps.setString(index++, finReference);
+			ps.setDate(index, JdbcUtil.getDate(schDate));
+		}, (rs, rowNum) -> {
+			FinFeeScheduleDetail fsd = new FinFeeScheduleDetail();
 
-		logger.debug("Leaving");
-		return feeList;
+			fsd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			fsd.setFinReference(rs.getString("FinReference"));
+			fsd.setSchDate(rs.getTimestamp("SchDate"));
+			fsd.setSchAmount(rs.getBigDecimal("SchAmount"));
+			fsd.setOsAmount(rs.getBigDecimal("OsAmount"));
+			fsd.setCGST(rs.getBigDecimal("CGST"));
+			fsd.setSGST(rs.getBigDecimal("SGST"));
+			fsd.setUGST(rs.getBigDecimal("UGST"));
+			fsd.setIGST(rs.getBigDecimal("IGST"));
+			fsd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			fsd.setWaiverAmount(rs.getBigDecimal("WaiverAmount"));
+			fsd.setWriteoffAmount(rs.getBigDecimal("WriteoffAmount"));
+
+			return fsd;
+		});
 	}
 
 	@Override

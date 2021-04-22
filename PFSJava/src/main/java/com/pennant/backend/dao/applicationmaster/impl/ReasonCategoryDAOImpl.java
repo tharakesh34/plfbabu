@@ -42,15 +42,16 @@
 */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.ReasonCategoryDAO;
 import com.pennant.backend.model.applicationmaster.ReasonCategory;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>ReasonCategory</code> with set of CRUD operations.
  */
 public class ReasonCategoryDAOImpl extends SequenceDao<ReasonCategory> implements ReasonCategoryDAO {
-	private static Logger logger = Logger.getLogger(ReasonCategoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ReasonCategoryDAOImpl.class);
 
 	public ReasonCategoryDAOImpl() {
 		super();
@@ -92,7 +93,7 @@ public class ReasonCategoryDAOImpl extends SequenceDao<ReasonCategory> implement
 		reasonCategory.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reasonCategory);
-		RowMapper<ReasonCategory> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCategory.class);
+		RowMapper<ReasonCategory> rowMapper = BeanPropertyRowMapper.newInstance(ReasonCategory.class);
 
 		try {
 			reasonCategory = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -158,7 +159,7 @@ public class ReasonCategoryDAOImpl extends SequenceDao<ReasonCategory> implement
 
 		// Get the identity sequence number.
 		if (reasonCategory.getId() <= 0) {
-			reasonCategory.setId(getNextId("SeqReasonCategory"));
+			reasonCategory.setId(getNextValue("SeqReasonCategory"));
 		}
 
 		// Execute the SQL, binding the arguments.

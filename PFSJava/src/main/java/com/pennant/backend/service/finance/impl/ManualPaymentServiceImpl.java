@@ -42,6 +42,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,7 +55,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountEventConstants;
@@ -66,7 +68,9 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -87,6 +91,7 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceRepayPriority;
@@ -100,10 +105,14 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.rulefactory.SubHeadRule;
+import com.pennant.backend.service.collateral.CollateralMarkProcess;
+import com.pennant.backend.service.dda.DDAControllerService;
+import com.pennant.backend.service.ddapayments.impl.DDARepresentmentService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ManualPaymentService;
+import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.CollateralConstants;
@@ -112,21 +121,26 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ManualPaymentServiceImpl extends GenericFinanceDetailService implements ManualPaymentService {
-	private static final Logger logger = Logger.getLogger(ManualPaymentServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(ManualPaymentServiceImpl.class);
 
 	private FinanceRepayPriorityDAO financeRepayPriorityDAO;
 	private FinRepayQueueDAO finRepayQueueDAO;
 	private RepaymentPostingsUtil repayPostingUtil;
 	private AccountingSetDAO accountingSetDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private DDAControllerService ddaControllerService;
+	private CollateralMarkProcess collateralMarkProcess;
+	private HandlingInstructionService handlingInstructionService;
 	private LimitInterfaceDAO limitInterfaceDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
+	private DDARepresentmentService ddaRepresentmentService;
 	private LimitCheckDetails limitCheckDetails;
 	private RuleService ruleService;
 	private FinanceDetailService financeDetailService;
@@ -873,6 +887,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		//===========================================
 		//Fetch Total Repayment Amount till Maturity date for Early Settlement
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(financeMain.getClosingStatus())) {
+			getDdaControllerService().cancelDDARegistration(financeMain.getFinReference());
 
 			// send Collateral DeMark request to Interface
 			//==========================================
@@ -898,9 +913,17 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				}
 			} else {
 				if (repayData.getFinanceDetail().getFinanceCollaterals() != null) {
-					// Release the collateral.
+					getCollateralMarkProcess().deMarkCollateral(repayData.getFinanceDetail().getFinanceCollaterals());
 				}
 			}
+		}
+
+		// Send FinanceMaintenance Handling Instruction to ICCS
+		doHandlingInstructionProcess(repayData);
+
+		// Log Process for DDA Re-presentment
+		if (StringUtils.equals(financeMain.getFinRepayMethod(), FinanceConstants.REPAYMTH_AUTODDA)) {
+			getDdaRepresentmentService().doDDARepresentment(repayData);
 		}
 
 		// send Limit Amendment Request to ACP Interface and save log details
@@ -926,6 +949,59 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	/**
+	 * Method for process Finance Maintenance and sending handling instruction request to ICCS interface
+	 * 
+	 * @param finScheduleData
+	 * @throws InterfaceException
+	 * 
+	 */
+	private void doHandlingInstructionProcess(RepayData repayData) throws InterfaceException {
+		logger.debug("Entering");
+
+		FinRepayHeader finRepayHeader = repayData.getFinRepayHeader();
+
+		HandlingInstruction handlingInstruction = new HandlingInstruction();
+		String narration = "";
+
+		if (StringUtils.equals(repayData.getFinRepayHeader().getFinEvent(),
+				FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {//Early Settlement
+			handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_EARLYSTLMNT);
+			narration = "Early Settlement";
+		} else if (StringUtils.equals(repayData.getFinRepayHeader().getFinEvent(),
+				FinanceConstants.FINSER_EVENT_EARLYRPY)) {//Partial Settlement
+			if (StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_NOEFCT)
+					|| StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_RECRPY)
+					|| StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_RECPFI)) {
+
+				handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_PARSTLMNT);
+				narration = "Partial Settlement–Installment Reduction";
+			} else if (StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_ADJMUR)
+					|| StringUtils.equals(finRepayHeader.getEarlyPayEffMtd(), CalculationConstants.EARLYPAY_ADMPFI)) {
+
+				handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_TENUREREDUCTN);
+				Date newMaturityDate = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain()
+						.getMaturityDate();
+				handlingInstruction.setNewMaturityDate(newMaturityDate);
+				narration = "Tenure Reduction";
+			}
+		} else if (StringUtils.equals(repayData.getFinRepayHeader().getFinEvent(),
+				FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_RESCHDPAY);
+			narration = "ReSchedule";
+		}
+
+		if (!StringUtils.isBlank(handlingInstruction.getMaintenanceCode())) {
+			handlingInstruction.setFinanceRef(finRepayHeader.getFinReference());
+			handlingInstruction.setRemarks(narration);
+
+			// Send Handling instruction to ICCS interface
+			getHandlingInstructionService().sendFinanceMaintenanceRequest(handlingInstruction);
+		}
+
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -971,6 +1047,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			BigDecimal totRefund = BigDecimal.ZERO;
 			BigDecimal totSchdFee = BigDecimal.ZERO;
 			BigDecimal totSchdIns = BigDecimal.ZERO;
+			BigDecimal totSchdSuplRent = BigDecimal.ZERO;
+			BigDecimal totSchdIncrCost = BigDecimal.ZERO;
 
 			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
 			Map<String, BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
@@ -1001,6 +1079,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				//Fee Details
 				totSchdFee = totSchdFee.add(repaySchdList.get(i).getSchdFeePayNow());
 				totSchdIns = totSchdIns.add(repaySchdList.get(i).getSchdInsPayNow());
+				totSchdSuplRent = totSchdSuplRent.add(repaySchdList.get(i).getSchdSuplRentPayNow());
+				totSchdIncrCost = totSchdIncrCost.add(repaySchdList.get(i).getSchdIncrCostPayNow());
 
 				finRepayQueues.add(finRepayQueue);
 
@@ -1017,6 +1097,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			//Fee Details
 			totalsMap.put("insPay", totSchdIns);
 			totalsMap.put("schFeePay", totSchdFee);
+			totalsMap.put("suplRentPay", totSchdSuplRent);
+			totalsMap.put("incrCostPay", totSchdIncrCost);
 
 			//Repayments Process For Schedule Repay List			
 			returnList = getRepayPostingUtil().postingsScreenRepayProcess(financeMain, scheduleDetails, profitDetail,
@@ -1084,6 +1166,18 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		finRepayQueue.setSchdInsPayNow(rsd.getSchdInsPayNow());
 		finRepayQueue.setSchdInsPaid(rsd.getSchdInsPaid());
 
+		//	3. Schedule Supplementary Rent Amount
+		finRepayQueue.setSchdSuplRent(rsd.getSchdSuplRent());
+		finRepayQueue.setSchdSuplRentBal(rsd.getSchdSuplRentBal());
+		finRepayQueue.setSchdSuplRentPayNow(rsd.getSchdSuplRentPayNow());
+		finRepayQueue.setSchdSuplRentPaid(rsd.getSchdSuplRentPaid());
+
+		//	4. Schedule Fee Amount
+		finRepayQueue.setSchdIncrCost(rsd.getSchdIncrCost());
+		finRepayQueue.setSchdIncrCostBal(rsd.getSchdIncrCostBal());
+		finRepayQueue.setSchdIncrCostPayNow(rsd.getSchdIncrCostPayNow());
+		finRepayQueue.setSchdIncrCostPaid(rsd.getSchdIncrCostPaid());
+
 		logger.debug("Leaving");
 		return finRepayQueue;
 	}
@@ -1146,12 +1240,15 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (logKey != 0) {
 			// Finance Disbursement Details
 			mapDateSeq = new HashMap<Date, Integer>();
-			Date curBDay = DateUtility.getAppDate();
-			for (int i = 0; i < scheduleData.getDisbursementDetails().size(); i++) {
-				scheduleData.getDisbursementDetails().get(i).setFinReference(scheduleData.getFinReference());
-				scheduleData.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
-				scheduleData.getDisbursementDetails().get(i).setDisbIsActive(true);
-				scheduleData.getDisbursementDetails().get(i).setLogKey(logKey);
+			Date curBDay = SysParamUtil.getAppDate();
+			for (FinanceDisbursement fd : scheduleData.getDisbursementDetails()) {
+				fd.setFinReference(scheduleData.getFinReference());
+				fd.setDisbReqDate(curBDay);
+				fd.setDisbIsActive(true);
+				fd.setDisbDisbursed(true);
+				fd.setLogKey(logKey);
+				fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				fd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
 			}
 			getFinanceDisbursementDAO().saveList(scheduleData.getDisbursementDetails(), tableType, false);
 
@@ -1537,7 +1634,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			Rule insRefundRule = getRuleService().getApprovedRuleById("INSREFND", RuleConstants.MODULE_REFUND,
 					RuleConstants.EVENT_REFUND);
 			if (insRefundRule != null) {
-				BigDecimal refundResult = (BigDecimal) getRuleExecutionUtil().executeRule(insRefundRule.getSQLRule(),
+				BigDecimal refundResult = (BigDecimal) RuleExecutionUtil.executeRule(insRefundRule.getSQLRule(),
 						subHeadRule.getDeclaredFieldValues(), financeMain.getFinCcy(), RuleReturnType.DECIMAL);
 				repayData.getRepayMain().setInsRefund(refundResult);
 			}
@@ -1707,6 +1804,30 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
 
+	public DDAControllerService getDdaControllerService() {
+		return ddaControllerService;
+	}
+
+	public void setDdaControllerService(DDAControllerService ddaControllerService) {
+		this.ddaControllerService = ddaControllerService;
+	}
+
+	public CollateralMarkProcess getCollateralMarkProcess() {
+		return collateralMarkProcess;
+	}
+
+	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
+		this.collateralMarkProcess = collateralMarkProcess;
+	}
+
+	public HandlingInstructionService getHandlingInstructionService() {
+		return handlingInstructionService;
+	}
+
+	public void setHandlingInstructionService(HandlingInstructionService handlingInstructionService) {
+		this.handlingInstructionService = handlingInstructionService;
+	}
+
 	public LimitInterfaceDAO getLimitInterfaceDAO() {
 		return limitInterfaceDAO;
 	}
@@ -1721,6 +1842,14 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
 		this.custLimitIntefaceService = custLimitIntefaceService;
+	}
+
+	public DDARepresentmentService getDdaRepresentmentService() {
+		return ddaRepresentmentService;
+	}
+
+	public void setDdaRepresentmentService(DDARepresentmentService ddaRepresentmentService) {
+		this.ddaRepresentmentService = ddaRepresentmentService;
 	}
 
 	public LimitCheckDetails getLimitCheckDetails() {

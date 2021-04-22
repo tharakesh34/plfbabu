@@ -23,7 +23,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -67,7 +68,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  * 
  */
 public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload> implements AssignmentUploadService {
-	private static final Logger logger = Logger.getLogger(AssignmentUploadServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(AssignmentUploadServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AssignmentUploadDAO assignmentUploadDAO;
@@ -773,9 +774,9 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			}
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 			Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(financeMain.getFinReference());
-			dataMap.put("emptype", map.get("emptype"));
-			dataMap.put("branchcity", map.get("branchcity"));
-			dataMap.put("fincollateralreq", map.get("fincollateralreq"));
+			dataMap.put("emptype", map.get("EMPTYPE"));
+			dataMap.put("branchcity", map.get("BRANCHCITY"));
+			dataMap.put("fincollateralreq", map.get("FINCOLLATERALREQ"));
 			dataMap.put("btloan", financeMain.getLoanCategory());
 			aeEvent.setDataMap(dataMap);
 

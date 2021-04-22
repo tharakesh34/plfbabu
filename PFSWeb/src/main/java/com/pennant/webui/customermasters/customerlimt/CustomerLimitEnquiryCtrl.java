@@ -47,7 +47,8 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory> {
 	private static final long serialVersionUID = 8602015982512929710L;
-	private static final Logger logger = Logger.getLogger(CustomerLimitEnquiryCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CustomerLimitEnquiryCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

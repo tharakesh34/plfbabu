@@ -72,6 +72,7 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 	private String bankShortCode;
 	private boolean active;
 	private int accNoLength;
+	private int minAccNoLength;
 	private boolean newRecord;
 	private String lovValue;
 	private BankDetail befImage;
@@ -210,6 +211,14 @@ public class BankDetail extends AbstractWorkflowEntity implements java.io.Serial
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public int getMinAccNoLength() {
+		return minAccNoLength;
+	}
+
+	public void setMinAccNoLength(int minAccNoLength) {
+		this.minAccNoLength = minAccNoLength;
 	}
 
 }

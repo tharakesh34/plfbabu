@@ -45,15 +45,16 @@ package com.pennant.backend.dao.applicationmaster.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.NPABucketConfigurationDAO;
 import com.pennant.backend.model.applicationmaster.NPABucketConfiguration;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfiguration>
 		implements NPABucketConfigurationDAO {
-	private static Logger logger = Logger.getLogger(NPABucketConfigurationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(NPABucketConfigurationDAOImpl.class);
 
 	public NPABucketConfigurationDAOImpl() {
 		super();
@@ -98,8 +99,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		nPABucketConfiguration.setConfigID(configID);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(nPABucketConfiguration);
-		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPABucketConfiguration.class);
+		RowMapper<NPABucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(NPABucketConfiguration.class);
 
 		try {
 			nPABucketConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -166,7 +166,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (nPABucketConfiguration.getConfigID() <= 0) {
-			nPABucketConfiguration.setConfigID(getNextId("SeqNPABUCKETSCONFIG"));
+			nPABucketConfiguration.setConfigID(getNextValue("SeqNPABUCKETSCONFIG"));
 		}
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -288,8 +288,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPABucketConfiguration.class);
+		RowMapper<NPABucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(NPABucketConfiguration.class);
 
 		List<NPABucketConfiguration> list = jdbcTemplate.query(sql.toString(), rowMapper);
 
@@ -311,8 +310,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		RowMapper<NPABucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(NPABucketConfiguration.class);
+		RowMapper<NPABucketConfiguration> rowMapper = BeanPropertyRowMapper.newInstance(NPABucketConfiguration.class);
 
 		List<NPABucketConfiguration> list = jdbcTemplate.query(sql.toString(), source, rowMapper);
 

@@ -45,15 +45,16 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
@@ -69,7 +70,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>FinTypePartnerBank</code> with set of CRUD operations.
  */
 public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> implements FinTypePartnerBankDAO {
-	private static Logger logger = Logger.getLogger(FinTypePartnerBankDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinTypePartnerBankDAOImpl.class);
 
 	public FinTypePartnerBankDAOImpl() {
 		super();
@@ -100,8 +101,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		finTypePartnerBank.setFinType(finType);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		RowMapper<FinTypePartnerBank> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypePartnerBank.class);
+		RowMapper<FinTypePartnerBank> rowMapper = BeanPropertyRowMapper.newInstance(FinTypePartnerBank.class);
 
 		try {
 			finTypePartnerBank = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -136,8 +136,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		RowMapper<FinTypePartnerBank> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypePartnerBank.class);
+		RowMapper<FinTypePartnerBank> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypePartnerBank.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
@@ -344,8 +343,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		finTypePartnerBank.setPaymentMode(paymentMode);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
-		RowMapper<FinTypePartnerBank> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinTypePartnerBank.class);
+		RowMapper<FinTypePartnerBank> rowMapper = BeanPropertyRowMapper.newInstance(FinTypePartnerBank.class);
 
 		try {
 			finTypePartnerBank = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);

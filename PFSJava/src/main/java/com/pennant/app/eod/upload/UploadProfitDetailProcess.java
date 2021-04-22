@@ -45,14 +45,15 @@ package com.pennant.app.eod.upload;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.eod.service.UploadFinPftDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class UploadProfitDetailProcess extends Thread {
-	private static final Logger logger = Logger.getLogger(UploadProfitDetailProcess.class);
+	private static final Logger logger = LogManager.getLogger(UploadProfitDetailProcess.class);
 
 	private static UploadProfitDetailProcess me = null;
 	private DataEngineStatus status = new DataEngineStatus();

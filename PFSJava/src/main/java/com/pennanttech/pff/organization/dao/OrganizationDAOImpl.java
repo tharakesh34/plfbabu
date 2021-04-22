@@ -1,13 +1,14 @@
 package com.pennanttech.pff.organization.dao;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -17,7 +18,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.organization.model.Organization;
 
 public class OrganizationDAOImpl extends SequenceDao<Organization> implements OrganizationDAO {
-	private static Logger logger = Logger.getLogger(OrganizationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(OrganizationDAOImpl.class);
 
 	@Override
 	public Organization getOrganization(long id, String type) {
@@ -27,7 +28,7 @@ public class OrganizationDAOImpl extends SequenceDao<Organization> implements Or
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from organizations").append(type).append(" where id=:id");
 
-		RowMapper<Organization> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Organization.class);
+		RowMapper<Organization> rowMapper = BeanPropertyRowMapper.newInstance(Organization.class);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 

@@ -67,6 +67,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private String guarantorExposure;
 	private String worstStatus;
 	private String status;
+	@XmlElement
 	private String catOfcoApplicant;
 	@XmlElement
 	private boolean authoritySignatory;

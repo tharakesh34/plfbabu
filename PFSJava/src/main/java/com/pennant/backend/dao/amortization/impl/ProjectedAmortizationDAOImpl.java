@@ -51,15 +51,17 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
@@ -77,7 +79,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortization>
 		implements ProjectedAmortizationDAO {
-	private static Logger logger = Logger.getLogger(ProjectedAmortizationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProjectedAmortizationDAOImpl.class);
 
 	private static final String UPDATE_SQL = "UPDATE AmortizationQueuing set ThreadId = :ThreadId Where ThreadId = :AcThreadId";
 	private static final String UPDATE_SQL_RC = "UPDATE Top(:RowCount) AmortizationQueuing set ThreadId = :ThreadId Where ThreadId = :AcThreadId";
@@ -262,31 +264,42 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 */
 	@Override
 	public ProjectedAccrual getPrvProjectedAccrual(String finRef, Date prvMonthEndDate, String type) {
-
-		ProjectedAccrual projAcc = new ProjectedAccrual();
-		projAcc.setFinReference(finRef);
-		projAcc.setAccruedOn(prvMonthEndDate);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select FinReference, AccruedOn, PftAccrued, CumulativeAccrued");
-		sql.append(", POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage");
-		sql.append(", PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, AccruedOn, PftAccrued, CumulativeAccrued, POSAccrued, CumulativePOS");
+		sql.append(", NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd");
+		sql.append(", AvgPOS");
 		sql.append(" From ProjectedAccruals");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference");
+		sql.append(" Where FinReference = ?");
+
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
-		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAccrual.class);
-
 		try {
-			projAcc = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finRef }, (rs, rowNum) -> {
+				ProjectedAccrual pa = new ProjectedAccrual();
+
+				pa.setFinReference(rs.getString("FinReference"));
+				pa.setAccruedOn(rs.getTimestamp("AccruedOn"));
+				pa.setPftAccrued(rs.getBigDecimal("PftAccrued"));
+				pa.setCumulativeAccrued(rs.getBigDecimal("CumulativeAccrued"));
+				pa.setPOSAccrued(rs.getBigDecimal("POSAccrued"));
+				pa.setCumulativePOS(rs.getBigDecimal("CumulativePOS"));
+				pa.setNoOfDays(rs.getInt("NoOfDays"));
+				pa.setCumulativeDays(rs.getInt("CumulativeDays"));
+				pa.setAMZPercentage(rs.getBigDecimal("AMZPercentage"));
+				pa.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
+				pa.setPartialAMZPerc(rs.getBigDecimal("PartialAMZPerc"));
+				pa.setMonthEnd(rs.getBoolean("MonthEnd"));
+				pa.setAvgPOS(rs.getBigDecimal("AvgPOS"));
+				pa.setAccruedOn(prvMonthEndDate);
+
+				return pa;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			projAcc = null;
+			logger.warn("Projected Accruals not exists for the specified FinReference {}", finRef);
 		}
 
-		return projAcc;
+		return null;
 	}
 
 	/**
@@ -340,8 +353,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
-		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAccrual.class);
+		RowMapper<ProjectedAccrual> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAccrual.class);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
@@ -360,7 +372,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, AccruedOn, AMZPercentage, PartialAMZPerc, MonthEnd");
 		sql.append(" from ProjectedAccruals");
-		sql.append("  Where FinReference = ? AND AccruedOn >= ?");
+		sql.append("  Where FinReference = ? AND AccruedOn >= ? order by AccruedOn");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -399,20 +411,64 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	 * @param projAccrualList
 	 */
 	@Override
-	public void saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList) {
-		StringBuilder sql = new StringBuilder("Insert Into ProjectedAccruals");
-		sql.append(" (FinReference, AccruedOn, PftAccrued, CumulativeAccrued");
-		sql.append(", POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt");
-		sql.append(", PartialAMZPerc, MonthEnd, AvgPOS)");
-		sql.append(" Values(:FinReference, :AccruedOn, :PftAccrued, :CumulativeAccrued");
-		sql.append(", :POSAccrued, :CumulativePOS, :NoOfDays, :CumulativeDays, :AMZPercentage, :PartialPaidAmt");
-		sql.append(", :PartialAMZPerc, :MonthEnd, :AvgPOS)");
+	public int saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList) {
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" ProjectedAccruals");
+		sql.append(" (FinReference, AccruedOn, PftAccrued, CumulativeAccrued, POSAccrued, CumulativePOS");
+		sql.append(", NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd");
+		sql.append(", AvgPOS");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(projAccrualList.toArray());
-		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					ProjectedAccrual projAccrls = projAccrualList.get(i);
 
+					int index = 1;
+
+					ps.setString(index++, projAccrls.getFinReference());
+					ps.setDate(index++, JdbcUtil.getDate(projAccrls.getAccruedOn()));
+					ps.setBigDecimal(index++, projAccrls.getPftAccrued());
+					ps.setBigDecimal(index++, projAccrls.getCumulativeAccrued());
+					ps.setBigDecimal(index++, projAccrls.getPOSAccrued());
+					ps.setBigDecimal(index++, projAccrls.getCumulativePOS());
+					ps.setInt(index++, projAccrls.getNoOfDays());
+					ps.setInt(index++, projAccrls.getCumulativeDays());
+					ps.setBigDecimal(index++, projAccrls.getAMZPercentage());
+					ps.setBigDecimal(index++, projAccrls.getPartialPaidAmt());
+					ps.setBigDecimal(index++, projAccrls.getPartialAMZPerc());
+					ps.setBoolean(index++, projAccrls.isMonthEnd());
+					ps.setBigDecimal(index++, projAccrls.getAvgPOS());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return projAccrualList.size();
+				}
+			}).length;
+
+		} catch (Exception e) {
+			for (ProjectedAccrual projAccrls : projAccrualList) {
+				logger.info("FinReference {}", projAccrls.getFinReference());
+				logger.info("AccruedOn {}", JdbcUtil.getDate(projAccrls.getAccruedOn()));
+				logger.info("PftAccrued {}", projAccrls.getPftAccrued());
+				logger.info("CumulativeAccrued {}", projAccrls.getCumulativeAccrued());
+				logger.info("POSAccrued {}", projAccrls.getPOSAccrued());
+				logger.info("CumulativePOS {}", projAccrls.getCumulativePOS());
+				logger.info("NoOfDays {}", projAccrls.getNoOfDays());
+				logger.info("CumulativeDays {}", projAccrls.getCumulativeDays());
+				logger.info("AMZPercentage {}", projAccrls.getAMZPercentage());
+				logger.info("PartialPaidAmt {}", projAccrls.getPartialPaidAmt());
+				logger.info("PartialAMZPerc {}", projAccrls.getPartialAMZPerc());
+				logger.info("MonthEnd {}", projAccrls.isMonthEnd());
+				logger.info("AvgPOS {}", projAccrls.getAvgPOS());
+			}
+			throw e;
+		}
 	}
 
 	/**
@@ -471,8 +527,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAMZ);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
@@ -563,7 +618,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		// Get the identity sequence number.
 		if (proAmortization.getAmzLogId() <= 0) {
-			proAmortization.setAmzLogId(getNextId("SeqAmortizationLog"));
+			proAmortization.setAmzLogId(getNextValue("SeqAmortizationLog"));
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(proAmortization);
@@ -603,8 +658,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
 			amzLog = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -636,8 +690,6 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 	@Override
 	public void deleteFutureProjAccruals(Date curMonthStart) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("DELETE FROM ProjectedAccruals");
 		sql.append(" WHERE AccruedOn >= :AccruedOn");
 
@@ -647,23 +699,16 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		source.addValue("AccruedOn", curMonthStart);
 
 		this.jdbcTemplate.update(sql.toString(), source);
-
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
 	public void deleteAllProjAccruals() {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("DELETE FROM ProjectedAccruals");
-		logger.debug("deleteSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		this.jdbcTemplate.update(sql.toString(), source);
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	// Calculate Average POS
@@ -678,8 +723,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = BeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
 
 		try {
 			amzLog = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
@@ -700,7 +744,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		// Get the identity sequence number.
 		if (proAmortization.getAmzLogId() <= 0) {
-			proAmortization.setAmzLogId(getNextId("SeqCalAvgPOSLog"));
+			proAmortization.setAmzLogId(getNextValue("SeqCalAvgPOSLog"));
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -796,6 +840,9 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 				} else if (App.DATABASE == Database.ORACLE) {
 					logger.trace(Literal.SQL + UPDATE_ORCL_RC);
 					return this.jdbcTemplate.update(UPDATE_ORCL_RC, source);
+				} else {
+					logger.trace(Literal.SQL + UPDATE_SQL);
+					return this.jdbcTemplate.update(UPDATE_SQL, source);
 				}
 			}
 

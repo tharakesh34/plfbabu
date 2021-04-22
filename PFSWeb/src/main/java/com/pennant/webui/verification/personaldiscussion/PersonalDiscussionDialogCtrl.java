@@ -21,7 +21,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -43,6 +44,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -52,7 +54,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -66,6 +68,7 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -98,7 +101,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PersonalDiscussionDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PersonalDiscussionDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -143,7 +146,8 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	protected Textbox summaryRemarks;
 	protected North north;
 	protected South south;
-
+	protected Space space_AgentCode;
+	protected Space space_AgentName;
 	private PersonalDiscussion personalDiscussion;
 	protected Map<String, DocumentDetails> docDetailMap = null;
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
@@ -247,8 +251,13 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.FISRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
 
 		this.agentCode.setMaxlength(8);
@@ -263,6 +272,8 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
 
+		this.space_AgentCode.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
+		this.space_AgentName.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -626,7 +637,11 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		}
 
 		try {
-			pd.setVerifiedDate(this.verificationDate.getValue());
+			if (this.verificationDate.getValue() != null) {
+				pd.setVerifiedDate(this.verificationDate.getValue());
+			} else {
+				pd.setVerifiedDate(SysParamUtil.getAppDate());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -685,11 +700,24 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	}
 
 	private void visibleComponent(Integer type) {
-		if (type == PDStatus.NEGATIVE.getKey() || type == PDStatus.REFERTOCREDIT.getKey()) {
+		String reasonType = null;
+		if (type == PDStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-		} else {
+			reasonType = StatuReasons.PDNTVRTY.getKey();
+		} else if (type == PDStatus.REFERTOCREDIT.getKey()) {
+			this.reason.setMandatoryStyle(true);
+			reasonType = StatuReasons.PDRFRRTY.getKey();
+		} else if (type == PDStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
+			reasonType = StatuReasons.PDPOSTVRTY.getKey();
 		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
+
 	}
 
 	/**
@@ -800,17 +828,17 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 			this.verificationDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_PersonalDiscussionDialog_VerificationDate.value"), true,
 							DateUtil.getDatePart(personalDiscussion.getCreatedOn()),
-							DateUtil.getDatePart(DateUtility.getAppDate()), true));
+							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
-			this.agentCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_PersonalDiscussionDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.agentCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_PersonalDiscussionDialog_AgentCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PersonalDiscussionDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, true));
+							PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(new PTListValidator(
@@ -842,6 +870,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		this.reason.setConstraint("");
 		this.summaryRemarks.setConstraint("");
 		this.summaryRemarks.setConstraint("");
+		this.verificationDate.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1033,6 +1062,9 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		try {
 			if (doProcess(pd, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(pd.getRoleCode(), pd.getNextRoleCode(),
+						pd.getKeyReference(), " Loan ", pd.getRecordStatus(), getNextTaskId());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 

@@ -23,15 +23,21 @@ public class FinanceWriteoff implements Serializable {
 	private String writtenoffAcc;
 
 	private BigDecimal writtenoffIns = BigDecimal.ZERO;
+	private BigDecimal writtenoffIncrCost = BigDecimal.ZERO;
+	private BigDecimal writtenoffSuplRent = BigDecimal.ZERO;
 	private BigDecimal writtenoffSchFee = BigDecimal.ZERO;
 
 	private BigDecimal unpaidIns = BigDecimal.ZERO;
+	private BigDecimal unpaidIncrCost = BigDecimal.ZERO;
+	private BigDecimal unpaidSuplRent = BigDecimal.ZERO;
 	private BigDecimal unpaidSchFee = BigDecimal.ZERO;
 
 	private Date writeoffDate;
 	private BigDecimal writeoffPrincipal = BigDecimal.ZERO;
 	private BigDecimal writeoffProfit = BigDecimal.ZERO;
 	private BigDecimal writeoffIns = BigDecimal.ZERO;
+	private BigDecimal writeoffIncrCost = BigDecimal.ZERO;
+	private BigDecimal writeoffSuplRent = BigDecimal.ZERO;
 	private BigDecimal writeoffSchFee = BigDecimal.ZERO;
 	private BigDecimal adjAmount = BigDecimal.ZERO;
 	private String remarks;
@@ -189,6 +195,22 @@ public class FinanceWriteoff implements Serializable {
 		this.writtenoffIns = writtenoffIns;
 	}
 
+	public BigDecimal getWrittenoffIncrCost() {
+		return writtenoffIncrCost;
+	}
+
+	public void setWrittenoffIncrCost(BigDecimal writtenoffIncrCost) {
+		this.writtenoffIncrCost = writtenoffIncrCost;
+	}
+
+	public BigDecimal getWrittenoffSuplRent() {
+		return writtenoffSuplRent;
+	}
+
+	public void setWrittenoffSuplRent(BigDecimal writtenoffSuplRent) {
+		this.writtenoffSuplRent = writtenoffSuplRent;
+	}
+
 	public BigDecimal getWrittenoffSchFee() {
 		return writtenoffSchFee;
 	}
@@ -205,12 +227,44 @@ public class FinanceWriteoff implements Serializable {
 		this.unpaidIns = unpaidIns;
 	}
 
+	public BigDecimal getUnpaidIncrCost() {
+		return unpaidIncrCost;
+	}
+
+	public void setUnpaidIncrCost(BigDecimal unpaidIncrCost) {
+		this.unpaidIncrCost = unpaidIncrCost;
+	}
+
+	public BigDecimal getUnpaidSuplRent() {
+		return unpaidSuplRent;
+	}
+
+	public void setUnpaidSuplRent(BigDecimal unpaidSuplRent) {
+		this.unpaidSuplRent = unpaidSuplRent;
+	}
+
 	public BigDecimal getWriteoffIns() {
 		return writeoffIns;
 	}
 
 	public void setWriteoffIns(BigDecimal writeoffIns) {
 		this.writeoffIns = writeoffIns;
+	}
+
+	public BigDecimal getWriteoffIncrCost() {
+		return writeoffIncrCost;
+	}
+
+	public void setWriteoffIncrCost(BigDecimal writeoffIncrCost) {
+		this.writeoffIncrCost = writeoffIncrCost;
+	}
+
+	public BigDecimal getWriteoffSuplRent() {
+		return writeoffSuplRent;
+	}
+
+	public void setWriteoffSuplRent(BigDecimal writeoffSuplRent) {
+		this.writeoffSuplRent = writeoffSuplRent;
 	}
 
 	public BigDecimal getWriteoffSchFee() {

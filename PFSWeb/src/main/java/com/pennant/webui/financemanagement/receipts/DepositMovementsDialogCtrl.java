@@ -43,13 +43,13 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
@@ -96,7 +96,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(DepositMovementsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DepositMovementsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -211,7 +211,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 		this.transactionAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.transactionAmount.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
-		this.transactionAmount.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.transactionAmount.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.transactionAmount.setScale(PennantConstants.defaultCCYDecPos);
 
 		this.depositSlipNumber.setMaxlength(20);

@@ -51,7 +51,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -82,7 +83,7 @@ import com.pennanttech.pennapps.lic.exception.LicenseException;
  */
 public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWorkspace {
 	private static final long serialVersionUID = -3936210543827830197L;
-	private static final Logger logger = Logger.getLogger(UserWorkspace.class);
+	private static final Logger logger = LogManager.getLogger(UserWorkspace.class);
 
 	private User userDetails;
 	private Map<String, String> hasMenuRights;
@@ -244,7 +245,9 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 			secRight.setPage(page);
 			secRight.setMenuRight(menuRightName);
 			Collection<SecurityRight> rights = userService.getPageRights(secRight);
-			rightsMap.put(rightKey.toString(), rights);
+			if (!rights.isEmpty()) {
+				rightsMap.put(rightKey.toString(), rights);
+			}
 			return rights;
 		}
 

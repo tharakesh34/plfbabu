@@ -78,4 +78,6 @@ public interface VehicleDealerDAO {
 
 	List<VehicleDealer> getVehicleDealerBranchCodes(String dealerType, String type);
 
+	VehicleDealer getVehicleDealerById(Long id, String delarType, String type);
+
 }

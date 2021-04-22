@@ -48,7 +48,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -95,7 +96,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	private SecurityUserOperationsDAO securityUserOperationsDAO;
 	private ReportingManagerDAO reportingManagerDAO;
 
-	private static Logger logger = Logger.getLogger(SecurityUserServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityUserServiceImpl.class);
 
 	public SecurityUserServiceImpl() {
 		super();
@@ -165,9 +166,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			saveUserDivisions(securityUser, tableType.getSuffix(), null);
 		}
 
-		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
-			auditDetails
-					.addAll(processingDetailList(auditHeader.getAuditDetails(), tableType.getSuffix(), securityUser));
+		List<AuditDetail> userDivBranchs = securityUser.getAuditDetailMap().get("UserDivBranchs");
+		if (CollectionUtils.isNotEmpty(userDivBranchs)) {
+			auditDetails.addAll(processingDetailList(userDivBranchs, tableType.getSuffix(), securityUser));
 		}
 
 		List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");

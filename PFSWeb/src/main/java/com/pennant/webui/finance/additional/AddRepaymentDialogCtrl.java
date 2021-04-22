@@ -48,7 +48,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -90,7 +91,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 454600127282110738L;
-	private static final Logger logger = Logger.getLogger(AddRepaymentDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AddRepaymentDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -127,6 +128,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private BigDecimal totalAlwRpyAmt = BigDecimal.ZERO;
 	private transient AddRepaymentService addRepaymentService;
 	private boolean appDateValidationReq = false;
+	private String moduleDefiner;
 
 	/**
 	 * default constructor.<br>
@@ -171,6 +173,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (arguments.containsKey("appDateValidationReq")) {
 				this.appDateValidationReq = (boolean) arguments.get("appDateValidationReq");
+			}
+
+			if (arguments.containsKey("moduleDefiner")) {
+				this.moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
 			// READ OVERHANDED params !
@@ -403,7 +409,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					",TILLMDT,TILLDATE,ADDRECAL,ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
 		} else {
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-					PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+					PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,STEPPOS,");//,ADDTERM
 		}
 
 		logger.debug("Leaving");
@@ -469,6 +475,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
+				if (curSchd.isRvwOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isCpzOnSchDate()
+						&& !curSchd.isPftOnSchDate()) {
+					continue;
+				}
+
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
@@ -527,6 +538,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				// If maturity Terms, not include in list
 				if (!isSnctBsdSchd && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+
+				if (curSchd.isRvwOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isCpzOnSchDate()
+						&& !curSchd.isPftOnSchDate()) {
 					continue;
 				}
 
@@ -807,7 +823,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Schedule Calculator method calling
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
-		setFinScheduleData(addRepaymentService.getAddRepaymentDetails(getFinScheduleData(), finServiceInstruction));
+		setFinScheduleData(addRepaymentService.getAddRepaymentDetails(getFinScheduleData(), finServiceInstruction,
+				this.moduleDefiner));
 
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
@@ -987,11 +1004,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else if (repayToDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0
 					|| this.cbRepayToDate.getSelectedIndex() != (totalCount - 1)) {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
-						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,CURPRD,ADDTERM,STEPPOS,");
 			} else {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getSchCalCodes(),
-						",ADDLAST,ADJTERMS,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
+						",ADDLAST,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
 			}
 
 			fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),

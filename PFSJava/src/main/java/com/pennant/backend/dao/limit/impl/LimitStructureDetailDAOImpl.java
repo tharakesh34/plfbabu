@@ -48,14 +48,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
  */
 
 public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> implements LimitStructureDetailDAO {
-	private static Logger logger = Logger.getLogger(LimitStructureDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(LimitStructureDetailDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new LimitStructureDetail
@@ -213,8 +214,8 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 			limitStructureDetail.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 		}
 		if (limitStructureDetail.getId() == Long.MIN_VALUE) {
-			limitStructureDetail.setId(getNextId("SeqLimitStructureDetails"));
-			logger.debug("get NextID:" + limitStructureDetail.getId());
+			limitStructureDetail.setId(getNextValue("SeqLimitStructureDetails"));
+			logger.debug("get NextValue:" + limitStructureDetail.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into LimitStructureDetails");
@@ -333,8 +334,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		source = new MapSqlParameterSource();
 		source.addValue("LimitStructureCode", id);
 
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -428,8 +428,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -502,8 +501,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		source.addValue("LimitLine", code);
 		source.addValue("LimitCategory", limitCategory);
 
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			structureList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -555,8 +553,7 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(structureDetail);
-		RowMapper<LimitStructureDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(LimitStructureDetail.class);
+		RowMapper<LimitStructureDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitStructureDetail.class);
 		try {
 			structureDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {

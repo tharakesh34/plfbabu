@@ -50,7 +50,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
@@ -81,7 +82,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
  */
 public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument> implements CustomerDocumentService {
 
-	private static Logger logger = Logger.getLogger(CustomerDocumentServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerDocumentServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerDAO customerDAO;

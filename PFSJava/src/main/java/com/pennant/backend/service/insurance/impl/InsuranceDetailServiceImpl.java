@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -36,6 +37,8 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
@@ -57,6 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -65,7 +69,7 @@ import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails> implements InsuranceDetailService {
-	private static Logger logger = Logger.getLogger(InsuranceDetailServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(InsuranceDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private InsuranceDetailDAO insuranceDetailDAO;
@@ -381,7 +385,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setEntityCode(details.getEntityCode());
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
 		// Setting FinReference instead of provider ID
-		aeEvent.setFinReference(details.getFinReference());
+		aeEvent.setFinReference(details.getVasReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setCcy(details.getPaymentCCy());
 		aeEvent.setCcy("INR");
@@ -400,8 +404,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
-				AccountEventConstants.ACCEVENT_INSPAY);
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_INSPAY, FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
@@ -593,10 +597,13 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	}
 
 	@Override
-	public void doApproveVASInsurance(List<VASRecording> vasRecording, LoggedInUser loginUser) {
+	public void doApproveVASInsurance(List<VASRecording> vasRecording, LoggedInUser loginUser,
+			FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+		//TODO:GANESH
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
+				&& SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_INSPAYINST)) {
 			for (VASRecording vasDetail : vasRecording) {
 
 				VASConfiguration configuration = vasDetail.getVasConfiguration();
@@ -625,22 +632,25 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 					payments.setNoOfReceivables(0);
 					payments.setLinkedTranId(0);
 					payments.setReceivableAmount(BigDecimal.ZERO);
-
 					payments.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					payments.setStatus(DisbursementConstants.STATUS_APPROVED);
 					payments.setPaymentCCy(SysParamUtil.getAppCurrency());
 					payments.setLastMntBy(loginUser.getUserId());
 					payments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					payments.setUserDetails(loginUser);
+					FinAdvancePayments advancePayments = financeDetail.getAdvancePaymentsList().get(0);
+					if (financeDetail.isDisbStp()
+							|| DisbursementConstants.STATUS_AWAITCON.equals(advancePayments.getStatus())) {
+						payments.setStatus(DisbursementConstants.STATUS_AWAITCON);
+					} else {
+						payments.setStatus(DisbursementConstants.STATUS_APPROVED);
+					}
 
 					long id = this.insuranceDetailDAO.saveInsurancePayments(payments, TableType.MAIN_TAB);
 					vASRecordingDAO.updateVasStatus(vasDetail.getVasReference(), id);
-
 				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
@@ -655,7 +665,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 	@Override
 	public void updateInsuranceDetails(InsuranceDetails insuranceDetail, String tableType) {
-		getInsuranceDetailDAO().updateInsuranceDetails(insuranceDetail, tableType);
+		insuranceDetailDAO.updateInsuranceDetails(insuranceDetail, tableType);
 	}
 
 	@Override
@@ -704,8 +714,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	}
 
 	@Override
-	public void updatePaymentStatus(InsurancePaymentInstructions instruction) {
-		getInsuranceDetailDAO().updatePaymentStatus(instruction);
+	public int updatePaymentStatus(InsurancePaymentInstructions instruction) {
+		return insuranceDetailDAO.updatePaymentStatus(instruction);
 	}
 
 	// Getters and setters

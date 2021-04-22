@@ -14,6 +14,14 @@ public class ManualAdviseReserve implements Serializable {
 		super();
 	}
 
+	public ManualAdviseReserve copyEntity() {
+		ManualAdviseReserve entity = new ManualAdviseReserve();
+		entity.setAdviseID(this.adviseID);
+		entity.setReceiptSeqID(this.receiptSeqID);
+		entity.setReservedAmt(this.reservedAmt);
+		return entity;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

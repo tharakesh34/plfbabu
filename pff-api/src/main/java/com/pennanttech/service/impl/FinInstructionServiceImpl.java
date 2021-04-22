@@ -1,24 +1,37 @@
 package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReceiptCalculator;
-import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
+import com.pennant.backend.dao.pdc.ChequeDetailDAO;
+import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
+import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.AddTermsService;
@@ -33,9 +46,15 @@ import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -45,20 +64,28 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
+import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
+import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
+import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
+import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
 import com.pennant.validation.AddTermsGroup;
@@ -68,6 +95,8 @@ import com.pennant.validation.ChangeInterestGroup;
 import com.pennant.validation.ChangeRepaymentGroup;
 import com.pennant.validation.DefermentsGroup;
 import com.pennant.validation.EarlySettlementGroup;
+import com.pennant.validation.NonLanReceiptGroup;
+import com.pennant.validation.PartCancellationGroup;
 import com.pennant.validation.PartialSettlementGroup;
 import com.pennant.validation.ReSchedulingGroup;
 import com.pennant.validation.RecalculateGroup;
@@ -79,10 +108,14 @@ import com.pennant.validation.UpfrontFeesGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CreateFinanceController;
+import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
 import com.pennanttech.util.APIConstants;
@@ -93,8 +126,9 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.pennanttech.ws.service.FinanceValidationService;
 
 @Service
-public class FinInstructionServiceImpl implements FinServiceInstRESTService, FinServiceInstSOAPService {
-	private static final Logger logger = Logger.getLogger(FinInstructionServiceImpl.class);
+public class FinInstructionServiceImpl extends ExtendedTestClass
+		implements FinServiceInstRESTService, FinServiceInstSOAPService {
+	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 
 	private FinServiceInstController finServiceInstController;
 	private CreateFinanceController createFinanceController;
@@ -122,6 +156,19 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private SecurityUserDAO securityUserDAO;
 	private FinanceTaxDetailService financeTaxDetailService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
+	private CustomerDetailsService customerDetailsService;
+	private BranchDAO branchDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ChequeHeaderService chequeHeaderService;
+	private ChequeHeaderDAO chequeHeaderDAO;
+	private ChequeDetailDAO chequeDetailDAO;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private VASRecordingDAO vASRecordingDAO;
+	private InsuranceDetailDAO insuranceDetailDAO;
+	private VASConfigurationDAO vASConfigurationDAO;
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+	private NonLanReceiptService nonLanReceiptService;
+	private PartCancellationService partCancellationService;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -152,7 +199,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
-		// Set null for Empty values 
+		// Set null for Empty values
 		setDefaultForReferenceFields(finServiceInstruction);
 		// validate ReqType
 		returnStatus = validateReqType(finServiceInstruction.getReqType());
@@ -251,8 +298,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Open when the flexi is comes in core
+		// restrict FLEXI Finances
+		// FIXME Open when the flexi is comes in core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeRepaymentAmount"); }
 		 */
@@ -321,8 +368,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Deferments"); }
 		 */
@@ -395,8 +442,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("AddTerms"); }
@@ -483,8 +530,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("RemoveTerms"); }
 		 */
@@ -540,24 +587,95 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		// for logging purpose
 		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
-		if (finServiceInstruction.getAmount() == null) {
-			finServiceInstruction.setAmount(BigDecimal.ZERO);
-		}
+
 		// bean validations
 		validationUtility.validate(finServiceInstruction, UpfrontFeesGroup.class);
 
+		if (StringUtils.isBlank(finServiceInstruction.getFinReference())
+				&& StringUtils.isBlank(finServiceInstruction.getExternalReference())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "finReference";
+			valueParm[1] = "externalReference";
+			return errorDetails("90123", valueParm);
+		} else if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())
+				&& StringUtils.isNotBlank(finServiceInstruction.getExternalReference())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "finReference";
+			valueParm[1] = "externalReference";
+			return errorDetails("30511", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())) {
+			finServiceInstruction.setFromBranch("");
+			finServiceInstruction.setToBranch("");
+			finServiceInstruction.setFinType("");
+			finServiceInstruction.setCustCIF("");
+		} else {
+			// for logging purpose
+			APIErrorHandlerService.logReference(finServiceInstruction.getExternalReference());
+
+			if (StringUtils.isBlank(finServiceInstruction.getFromBranch())) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "fromBranch";
+				return errorDetails("90502", valueParm);
+			}
+
+			if (StringUtils.isBlank(finServiceInstruction.getFinType())) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "finType";
+				return errorDetails("90502", valueParm);
+			}
+
+			if (StringUtils.isBlank(finServiceInstruction.getCustCIF())) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "cif";
+				return errorDetails("90502", valueParm);
+			}
+
+			Branch fromBranch = branchDAO.getBranchById(finServiceInstruction.getFromBranch(), "");
+			if (fromBranch == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getFromBranch();
+				return errorDetails("90129", valueParm);
+			}
+
+			Customer customer = customerDetailsService.checkCustomerByCIF(finServiceInstruction.getCustCIF(),
+					TableType.MAIN_TAB.getSuffix());
+			if (customer == null) {
+				String valueParm[] = new String[1];
+				valueParm[0] = finServiceInstruction.getCustCIF();
+				return errorDetails("90101", valueParm);
+			}
+			finServiceInstruction.setCustID(customer.getCustID());
+
+			int count = receiptService.geFeeReceiptCountByExtReference(Objects.toString(customer.getCustID(), ""),
+					FinanceConstants.FINSER_EVENT_FEEPAYMENT, finServiceInstruction.getExternalReference());
+			if (count > 0) {
+				String valueParm[] = new String[3];
+				valueParm[0] = "Invalid CIF";
+				valueParm[1] = finServiceInstruction.getCustCIF();
+				valueParm[2] = "externalreference is already assigned to another customer.";
+				return errorDetails("30550", valueParm);
+			}
+		}
+
+		if (finServiceInstruction.getAmount() == null) {
+			finServiceInstruction.setAmount(BigDecimal.ZERO);
+		}
+
 		String moduleDefiner = FinanceConstants.FINSER_EVENT_FEEPAYMENT;
-		//String eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
 
 		FinanceDetail financeDetail = null;
 
-		//vlidate duplicate record
+		// vlidate duplicate record
 		boolean dedupFound = checkUpFrontDuplicateRequest(finServiceInstruction, moduleDefiner);
 		if (dedupFound) {
-			return errorDetails();
+			String valueParm[] = new String[1];
+			valueParm[0] = "transaction";
+			return errorDetails("41014", valueParm);
 		}
 		// execute manual payment service
 		financeDetail = finServiceInstController.doFeePayment(finServiceInstruction);
@@ -566,26 +684,36 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return financeDetail;
 	}
 
-	private FinanceDetail errorDetails() {
+	private FinanceDetail errorDetails(String errorCode, String parameter[]) {
 		FinanceDetail financeDetail;
 		financeDetail = new FinanceDetail();
 		doEmptyResponseObject(financeDetail);
-		String valueParm[] = new String[1];
-		valueParm[0] = "transaction";
-		financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("41014", valueParm));
+		financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorCode, parameter));
 		return financeDetail;
 	}
 
 	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction finServiceInstruction, String moduleDefiner) {
-		List<FinReceiptDetail> receiptDetails = finReceiptDetailDAO
-				.getFinReceiptDetailByReference(finServiceInstruction.getFinReference());
-		if (finServiceInstruction.getReceiptDetail() != null) {
-			if (receiptDetails != null && !receiptDetails.isEmpty()) {
-				for (FinReceiptDetail finReceiptDetail : receiptDetails) {
-					if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0
-							&& StringUtils.equals(finReceiptDetail.getTransactionRef(),
-									finServiceInstruction.getReceiptDetail().getTransactionRef())) {
-						return true;
+
+		List<FinReceiptDetail> receiptDetails = null;
+		if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())) {
+			receiptDetails = finReceiptDetailDAO
+					.getFinReceiptDetailByReference(finServiceInstruction.getFinReference());
+		} else {
+			receiptDetails = finReceiptDetailDAO
+					.getFinReceiptDetailByReference(Objects.toString(finServiceInstruction.getCustID(), ""));
+		}
+		String paymentMode = finServiceInstruction.getPaymentMode();
+		if (paymentMode.equals(RepayConstants.RECEIPTMODE_RTGS) || paymentMode.equals(RepayConstants.RECEIPTMODE_NEFT)
+				|| paymentMode.equals(RepayConstants.RECEIPTMODE_IMPS)
+				|| paymentMode.equals(RepayConstants.RECEIPTMODE_ESCROW)) {
+			if (finServiceInstruction.getReceiptDetail() != null) {
+				if (receiptDetails != null && !receiptDetails.isEmpty()) {
+					for (FinReceiptDetail finReceiptDetail : receiptDetails) {
+						if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0
+								&& StringUtils.equals(finReceiptDetail.getTransactionRef(),
+										finServiceInstruction.getReceiptDetail().getTransactionRef())) {
+							return true;
+						}
 					}
 				}
 			}
@@ -629,8 +757,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Recalculate"); }
@@ -704,8 +832,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeInterest"); }
 		 */
@@ -789,7 +917,17 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
+
 		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
+		List<FinFeeDetail> feeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
+
+		List<FinFeeDetail> newList = new ArrayList<>();
+		for (FinFeeDetail fd : feeDetailList) {
+			if (!fd.isOriginationFee()) {
+				newList.add(fd);
+			}
+		}
+		financeDetail.getFinScheduleData().setFinFeeDetailList(newList);
 
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 			finServiceInstruction.setToDate(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
@@ -942,8 +1080,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ReScheduling"); }
 		 */
@@ -1139,6 +1277,9 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
+		} catch (ServiceException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new ServiceException(e.getFaultDetails());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1231,6 +1372,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());
 		finScheduleData.setFinServiceInstruction(fsi);
 		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
+		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
 		FinReceiptData receiptData = receiptService.doReceiptValidations(financeDetail, moduleDefiner);
 		financeDetail = receiptData.getFinanceDetail();
 		finScheduleData = financeDetail.getFinScheduleData();
@@ -1304,12 +1446,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
-		//restrict FLEXI Finances
-		//FIXME Used only when flexi changes comes to core
+		// restrict FLEXI Finances
+		// FIXME Used only when flexi changes comes to core
 		/*
 		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Schedule Change Method"); }
 		 */
-		//Step Loan not accepted FIXME
+		// Step Loan not accepted FIXME
 		FinanceMain finMain = financeMainDAO.getFinanceMainById(finServiceInstruction.getFinReference(), "",
 				finServiceInstruction.isWif());
 		if (finMain.isStepFinance()) {
@@ -1874,7 +2016,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					|| StringUtils.equals("E", disbRequest.getStatus()))) {
 				String[] valueParam = new String[2];
 				valueParam[0] = "Status";
-				valueParam[1] = "P," + "R";
+				valueParam[1] = "E," + "R";
 				return APIErrorHandlerService.getFailedStatus("90337", valueParam);
 			}
 		}
@@ -1922,53 +2064,440 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return null;
 	}
 
-	/**
-	 * Method to get DisbusmentDetails based on finReference
-	 * 
-	 * @param finReference
-	 */
 	@Override
 	public FinAdvPaymentDetail getDisbursmentDetails(String finReference) throws ServiceException {
-		logger.debug(Literal.ENTERING);
+		logger.info("Identifying Disb/Vas instructions for the specified FinReference>> {}", finReference);
 
-		List<DisbResponse> disbResponse = new ArrayList<DisbResponse>();
+		List<DisbResponse> disbResponse = new ArrayList<>();
+
 		// Mandatory validation
 		if (StringUtils.isBlank(finReference)) {
 			validationUtility.fieldLevelException();
 		}
+
 		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
 		FinAdvPaymentDetail response = new FinAdvPaymentDetail();
+
 		// validation
 		int count = financeMainDAO.getFinanceCountById(finReference, " ", false);
 		if (count <= 0) {
 			String[] valueParam = new String[1];
 			valueParam[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
-		} else {
-			List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, " ");
-			for (FinAdvancePayments fap : fapList) {
-				DisbResponse detail = new DisbResponse();
-				detail.setPaymentId(fap.getPaymentId());
-				detail.setAccountNo(fap.getBeneficiaryAccNo());
-				detail.setDisbAmount(fap.getAmtToBeReleased());
-				detail.setDisbDate(fap.getLlDate());
-				detail.setStatus(fap.getStatus()); //FIXME set the actual status after marking the disbursement status as AC
-				disbResponse.add(detail);
+
+			logger.info("The specified FinReference>> {} is not exists or in-active", finReference);
+			return response;
+		}
+
+		/* Fetching Disbursement instructions */
+		disbResponse.addAll(getDisbInstructions(finReference));
+
+		/* Fetching VAS instructions */
+		disbResponse.addAll(getVasInstructions(finReference));
+
+		int size = disbResponse.size();
+
+		if (size == 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "There is no pending Disb/Vas instructions to update the status";
+			valueParam[1] = "FinReference " + finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParam));
+
+			logger.info("There is no pending Disb/Vas instructions for the specified FinReference>> {}", finReference);
+			return response;
+		}
+
+		response.setDisbResponse(disbResponse);
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.info("Total {} Disb/Vas instructions found the specified FinReference>> {}", size, finReference);
+
+		return response;
+	}
+
+	private List<DisbResponse> getVasInstructions(String finReference) {
+		List<DisbResponse> vasInstructions = new ArrayList<>();
+		List<VASRecording> vrList = vASRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
+
+		VASProviderAccDetail vpad = null;
+		VASConfiguration vc = null;
+
+		for (VASRecording vr : vrList) {
+			long paymentInsId = vr.getPaymentInsId();
+			InsurancePaymentInstructions ipi = insuranceDetailDAO.getInsurancePaymentInstructionStatus(paymentInsId);
+
+			if (ipi == null) {
+				continue;
 			}
 
-			if (CollectionUtils.isEmpty(disbResponse)) {
-				String[] valueParam = new String[2];
-				valueParam[0] = "There is no pending disbursement instructions to update the status";
-				valueParam[1] = "FinReference " + finReference;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("21005", valueParam));
-				return response;
+			vc = vASConfigurationDAO.getVASConfigurationByCode(vr.getProductCode(), "");
+
+			if (vc != null) {
+				long manufacturerId = vc.getManufacturerId();
+				String entityCode = vr.getEntityCode();
+				vpad = vASProviderAccDetailDAO.getVASProviderAccDetByPRoviderId(manufacturerId, entityCode, "_view");
 			}
-			response.setDisbResponse(disbResponse);
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+			DisbResponse detail = new DisbResponse();
+			detail.setPaymentId(paymentInsId);
+
+			if (vpad != null) {
+				detail.setAccountNo(vpad.getAccountNumber());
+			}
+
+			detail.setDisbAmount(vr.getFee());
+			// detail.setDisbDate(fap.getLlDate());
+			detail.setStatus(ipi.getStatus());
+			detail.setType(DisbursementConstants.CHANNEL_INSURANCE);
+			vasInstructions.add(detail);
 		}
-		logger.info(Literal.LEAVING);
-		return response;
+
+		return vasInstructions;
+	}
+
+	private List<DisbResponse> getDisbInstructions(String finReference) {
+		List<DisbResponse> disbInstructions = new ArrayList<>();
+		List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, " ");
+		for (FinAdvancePayments fap : fapList) {
+			DisbResponse detail = new DisbResponse();
+			detail.setPaymentId(fap.getPaymentId());
+			detail.setAccountNo(fap.getBeneficiaryAccNo());
+			detail.setDisbAmount(fap.getAmtToBeReleased());
+			detail.setDisbDate(fap.getLlDate());
+			detail.setStatus(fap.getStatus());
+			detail.setType(DisbursementConstants.CHANNEL_DISBURSEMENT);
+			disbInstructions.add(detail);
+		}
+		return disbInstructions;
+	}
+
+	@Override
+	public WSReturnStatus updateCovenants(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		try {
+
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			List<Covenant> covenantsList = financeDetail.getCovenants();
+
+			//validating the covenants if same covenant type and same category name
+
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinIsActive", "FinStartDate",
+						"MaturityDate, WorkFlowId, CustId, FinReference" }, "");
+				if (financeMain == null || !financeMain.isFinIsActive()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				}
+			}
+
+			financeMain.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
+
+			if (covenantsList == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "CovenatDetails ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+
+			errorDetails = financeDataValidation.covenantValidation(financeMain, covenantsList, null);
+
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			returnStatus = finServiceInstController.processCovenants(financeMain, covenantsList);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	@Override
+	public WSReturnStatus saveChequeDetails(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				financeMain = financeMainDAO.getFinanceMainById(finReference, "", false);
+				if (financeMain == null || !financeMain.isFinIsActive()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				} else {
+					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				}
+			}
+
+			if (chequeHeader == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_save,
+					"");
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(financeMain.getFinReference(), "", false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.processChequeDetail(financeDetail, "");
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	// cheque Validations for schedule
+	private FinScheduleData validateChequeDetails(FinanceDetail financeDetail) {
+		boolean date = true;
+		boolean amount = true;
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
+		for (ChequeDetail chequeDetail : chequeDetailsList) {
+			// schedules validation
+			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())) {
+				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+				for (FinanceScheduleDetail fsd : schedules) {
+					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
+						date = true;
+						chequeDetail.seteMIRefNo(fsd.getInstNumber());
+						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
+							amount = false;
+							// {0} Should be equal To {1}
+							String[] valueParm = new String[2];
+							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
+							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
+							finScheduleData
+									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+							return finScheduleData;
+
+						} else {
+							break;
+						}
+
+					} else {
+						date = false;
+					}
+				}
+				if (date == false) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Cheque Date";
+					valueParm[1] = "ScheduleDates";
+					finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+					return finScheduleData;
+
+				}
+			}
+
+		}
+
+		return finScheduleData;
+	}
+
+	@Override
+	public WSReturnStatus createChequeDetails(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		String tableType = "_Temp";
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			if (finReference == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			} else {
+				financeMain = financeMainDAO.getFinanceMainById(finReference, tableType, false);
+				if (financeMain == null || !financeMain.isFinIsActive()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finReference;
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+				} else {
+					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				}
+			}
+
+			if (chequeHeader == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidation(financeDetail, PennantConstants.method_save, tableType);
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(financeMain.getFinReference(), tableType, false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.processChequeDetail(financeDetail, tableType);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	@Override
+	public WSReturnStatus updateChequeDetailsInMaintainence(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidationInMaintainence(financeDetail,
+					PennantConstants.method_Update, "");
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			if (chequeHeader.getChequeDetailList() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
+			for (ChequeDetail chequeDetail : chequeDetails) {
+				if (chequeDetail.getChequeDetailsID() == 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "ChequeDetails Id ";
+					return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				}
+
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(finReference, "", false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			financeDetail.getFinScheduleData()
+					.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "", false));
+
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.updateChequeDetailsinMaintainence(financeDetail, "");
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		return returnStatus;
+	}
+
+	@Override
+	public WSReturnStatus updateChequeDetails(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		List<ErrorDetail> errorDetails;
+		String tableType = "_Temp";
+		try {
+			FinanceMain financeMain = null;
+			String finReference = financeDetail.getFinReference();
+			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finReference);
+			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_Update,
+					tableType);
+			for (ErrorDetail errorDetail : errorDetails) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
+				return returnStatus;
+			}
+
+			if (chequeHeader.getChequeDetailList() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Cheque Details ";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			List<FinanceScheduleDetail> finScheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(finReference, tableType, false);
+			financeDetail.getFinScheduleData().setFinanceScheduleDetails(finScheduleDetails);
+			financeDetail.getFinScheduleData()
+					.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, tableType, false));
+			FinScheduleData finSchdData = validateChequeDetails(financeDetail);
+			if (CollectionUtils.isNotEmpty(finSchdData.getErrorDetails())) {
+				for (ErrorDetail errorDetail : finSchdData.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+			returnStatus = finServiceInstController.updateCheque(financeDetail, tableType);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		return returnStatus;
 	}
 
 	/**
@@ -2159,10 +2688,213 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 	}
 
+	@Override
+	public ChequeHeader getChequeDetails(String finReference) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		ChequeHeader response = new ChequeHeader();
+		// Mandatory validation
+		if (StringUtils.isBlank(finReference)) {
+			validationUtility.fieldLevelException();
+		}
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(finReference);
+
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+		}
+		try {
+			response = chequeHeaderDAO.getChequeHeaderByRef(finReference, "_View");
+			if (response == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "No Cheque Details";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return response;
+			}
+
+			if (response != null) {
+				List<ChequeDetail> chequeDetailList = chequeDetailDAO.getChequeDetailList(response.getHeaderID(),
+						"_View");
+				response.setChequeDetailList(chequeDetailList);
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION + e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+		return response;
+	}
+
+	@Override
+	public WSReturnStatus cancelDisbursementInstructions(FinServiceInstruction finServiceInstRequest)
+			throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = new WSReturnStatus();
+
+		// for logging purpose
+		String finReference = finServiceInstRequest.getFinReference();
+		APIErrorHandlerService.logReference(finReference);
+
+		// set Default date formats
+		setDefaultDateFormats(finServiceInstRequest);
+
+		int countRef = financeMainDAO.getFinanceCountById(finReference, "", false);
+		if (countRef < 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
+		}
+
+		int count = validateBlockedFinances(finReference);
+		if (count > 0) {
+			String valueParm[] = new String[2];
+			valueParm[0] = "Disbursement";
+			valueParm[1] = "FinReference: " + finReference;
+			return APIErrorHandlerService.getFailedStatus("90204", valueParm);
+		}
+
+		long paymentId = finServiceInstRequest.getPaymentId();
+		if (paymentId == Long.MIN_VALUE && paymentId <= 0) {
+			String valueParm[] = new String[1];
+			valueParm[0] = "PaymentId";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		int paymentIdCount = finAdvancePaymentsService.getCountByPaymentId(finReference, paymentId);
+		if (paymentIdCount <= 0) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "PaymentId";
+			return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+		}
+
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setPaymentId(paymentId);
+		FinAdvancePayments finAdv = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
+
+		if (DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
+			List<FinAdvancePayments> disbursementDetailsList = finServiceInstRequest.getDisbursementDetails();
+			if (CollectionUtils.isEmpty(disbursementDetailsList)) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "DisbursementDetails";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+
+			String eventCode = AccountEventConstants.ACCEVENT_ADDDBSN;
+			FinanceDetail financeDetail = finServiceInstController.getFinanceDetails(finServiceInstRequest, eventCode);
+			financeDetail.setAdvancePaymentsList(disbursementDetailsList);
+			AuditDetail auditDetail = addDisbursementService.doCancelDisbValidations(financeDetail);
+
+			if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				}
+			}
+
+			financeDetail.getAdvancePaymentsList().add(finAdv);
+			response = finServiceInstController.doCancelDisbursementInstructions(financeDetail);
+		} else {
+			String[] valueParam = new String[2];
+			valueParam[0] = "Cancel Disbursement Instructions";
+			valueParam[1] = finAdv.getStatus();
+			return APIErrorHandlerService.getFailedStatus("90329", valueParam);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	private void buildFinFeeForUpload(FinServiceInstruction finSrvcInst) {
 		for (FinFeeDetail feeDtl : finSrvcInst.getFinFeeDetails()) {
 			feeDtl.setFeeScheduleMethod("");
 		}
+	}
+
+	@Override
+	public FinanceDetail partCancellation(FinServiceInstruction finServiceInstruction) {
+		logger.debug(Literal.ENTERING);
+		FinanceDetail financeDetail = null;
+
+		try {
+
+			validationUtility.validate(finServiceInstruction, PartCancellationGroup.class);
+
+			// for logging purpose
+			APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+
+			// set Default date formats
+			setDefaultDateFormats(finServiceInstruction);
+
+			// validate ReqType
+			WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				financeDetail = new FinanceDetail();
+				doEmptyResponseObject(financeDetail);
+				financeDetail.setReturnStatus(returnStatus);
+				return financeDetail;
+			}
+
+			String eventCode = AccountEventConstants.PART_CANCELATION;
+			financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
+
+			// validate service instruction data
+			AuditDetail auditDetail = partCancellationService.validateRequest(finServiceInstruction, financeDetail);
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					financeDetail = new FinanceDetail();
+					doEmptyResponseObject(financeDetail);
+					financeDetail.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return financeDetail;
+				}
+			}
+
+			// call part cancellation service
+			financeDetail = partCancellationService.doPartCancellation(finServiceInstruction, financeDetail);
+
+			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
+
+			// Get the response
+			financeDetail = finServiceInstController.getResponse(financeDetail, finServiceInstruction);
+
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return financeDetail;
 	}
 
 	@Autowired
@@ -2185,4 +2917,134 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
+	}
+
+	@Autowired
+	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
+		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	@Autowired
+	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
+		this.chequeDetailDAO = chequeDetailDAO;
+	}
+
+	@Autowired
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	@Autowired
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
+	}
+
+	@Autowired
+	public void setInsuranceDetailDAOImpl(InsuranceDetailDAO insuranceDetailDAO) {
+		this.insuranceDetailDAO = insuranceDetailDAO;
+	}
+
+	@Autowired
+	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
+		this.insuranceDetailDAO = insuranceDetailDAO;
+	}
+
+	@Autowired
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	@Autowired
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	}
+
+	@Autowired
+	public void setPartCancellationService(PartCancellationService partCancellationService) {
+		this.partCancellationService = partCancellationService;
+	}
+
+	@Override
+	public FinanceDetail nonLanReceipt(FinServiceInstruction finServiceInstruction) throws ServiceException {
+		String moduleDefiner = FinanceConstants.FINSER_EVENT_SCHDRPY;
+		FinanceDetail financeDetail = nonLanReceiptTransaction(finServiceInstruction, moduleDefiner);
+		return financeDetail;
+	}
+
+	private FinanceDetail nonLanReceiptTransaction(FinServiceInstruction fsi, String moduleDefiner) {
+		logger.info(Literal.ENTERING);
+
+		String eventCode = null;
+		if (!fsi.isReceiptUpload()) {
+			validationUtility.validate(fsi, NonLanReceiptGroup.class);
+		}
+
+		// Method for validate instruction details
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		finScheduleData.setFinServiceInstruction(fsi);
+		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
+
+		if (fsi.getValueDate() == null) {
+			fsi.setValueDate(fsi.getReceivedDate());
+		}
+
+		FinReceiptData receiptData = nonLanReceiptService.doReceiptValidations(financeDetail, moduleDefiner);
+		financeDetail = receiptData.getFinanceDetail();
+		finScheduleData = financeDetail.getFinScheduleData();
+
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			logger.debug("Leaving - doReceiptValidations Error");
+			return setReturnStatus(financeDetail);
+		}
+
+		receiptData = nonLanReceiptService.setReceiptData(receiptData);
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			return setReturnStatus(financeDetail);
+		}
+
+		try {
+			financeDetail = finServiceInstController.doProcessNonLanReceipt(receiptData, eventCode);
+		} catch (Exception e) {
+			e.printStackTrace();
+			finScheduleData = nonLanReceiptService.setErrorToFSD(finScheduleData, "90502", e.getMessage());
+		}
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			return setReturnStatus(financeDetail);
+		}
+		if (financeDetail.getFinScheduleData().getErrorDetails() != null
+				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+			financeDetail = setReturnStatus(financeDetail);
+		}
+
+		logger.info(Literal.LEAVING);
+		return financeDetail;
+	}
+
+	public NonLanReceiptService getNonLanReceiptService() {
+		return nonLanReceiptService;
+	}
+
+	@Autowired
+	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
+		this.nonLanReceiptService = nonLanReceiptService;
+	}
 }

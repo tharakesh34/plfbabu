@@ -52,7 +52,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,6 +65,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -77,6 +79,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -88,9 +91,12 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.InvoiceDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.collateral.CollateralMarkProcess;
+import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
@@ -101,6 +107,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -110,11 +117,13 @@ import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationServiceImpl extends GenericFinanceDetailService implements FinanceCancellationService {
-	private static final Logger logger = Logger.getLogger(FinanceCancellationServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceCancellationServiceImpl.class);
 
+	private DDAControllerService ddaControllerService;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private LimitInterfaceDAO limitInterfaceDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
+	private CollateralMarkProcess collateralMarkProcess;
 	private LimitCheckDetails limitCheckDetails;
 	private LimitManagement limitManagement;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
@@ -124,6 +133,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired(required = false)
 	private NotificationService notificationService;
+	private VASRecordingDAO vASRecordingDAO;
 	private long tempWorkflowId;
 
 	ReasonDetailDAO reasonDetailDAO;
@@ -216,7 +226,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
 	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinanceMain/FinanceMain_Temp by
 	 * using FinanceMainDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using FinanceMainDAO's update method
+	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -433,6 +444,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		//Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
+		reasonDetailDAO.deleteCancelReasonDetails(financeMain.getFinReference());
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -620,9 +633,13 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		} else {
 			List<FinCollaterals> collateralList = financeDetail.getFinanceCollaterals();
 			if (collateralList != null && !collateralList.isEmpty()) {
-				// Release the collateral.
+				getCollateralMarkProcess().deMarkCollateral(financeDetail.getFinanceCollaterals());
 			}
 		}
+
+		// send DDA Cancellation Request to Interface
+		//==========================================
+		getDdaControllerService().cancelDDARegistration(financeMain.getFinReference());
 
 		// send Cancel Utilization Request to ACP Interface and save log details
 		//=======================================
@@ -942,19 +959,40 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
-		/*
-		 * List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList(); if (list != null && !list.isEmpty())
-		 * { for (FinAdvancePayments finAdvPayment : list) { if (StringUtils.equals(finAdvPayment.getStatus(),
-		 * DisbursementConstants.STATUS_PAID)) { //Disbursement instructions should be cancelled before canceling a
-		 * loan. auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD,
-		 * "60406", errParm, valueParm), usrLanguage)); }
-		 * 
-		 * if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) { //Disbursement
-		 * instructions should be cancelled before canceling a loan.
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "60408",
-		 * errParm, valueParm), usrLanguage)); } } }
-		 */
+		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
+		if (CollectionUtils.isNotEmpty(list)) {
+			//Disbursement instructions should be reversed before canceling loan
+			for (FinAdvancePayments finAdvPayment : list) {
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60406", errParm, valueParm), usrLanguage));
+				}
 
+				// instructions should be cancelled before canceling a loan.
+				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) { //Disbursement
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60408", errParm, valueParm), usrLanguage));
+				}
+			}
+		}
+
+		List<VASRecording> vasRecordings = vASRecordingDAO
+				.getVASRecordingsStatusByReference(financeMain.getFinReference(), "");
+		//Checking VAS instruction status.
+		if (CollectionUtils.isNotEmpty(vasRecordings)) {
+			for (VASRecording vasRecording : vasRecordings) {
+				if (!StringUtils.equals(vasRecording.getVasStatus(), VASConsatnts.STATUS_CANCEL)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60214", errParm, valueParm), usrLanguage));
+				}
+			}
+		}
+		//vallidation for manual dues
+		List<ManualAdvise> manualAdvise = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");
+		if (CollectionUtils.isNotEmpty(manualAdvise)) {
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60022", errParm, valueParm));
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeMain.isWorkflow()) {
@@ -1041,6 +1079,15 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public DDAControllerService getDdaControllerService() {
+		return ddaControllerService;
+	}
+
+	public void setDdaControllerService(DDAControllerService ddaControllerService) {
+		this.ddaControllerService = ddaControllerService;
+	}
+
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
 	}
@@ -1063,6 +1110,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setCustLimitIntefaceService(CustomerLimitIntefaceService custLimitIntefaceService) {
 		this.custLimitIntefaceService = custLimitIntefaceService;
+	}
+
+	public CollateralMarkProcess getCollateralMarkProcess() {
+		return collateralMarkProcess;
+	}
+
+	public void setCollateralMarkProcess(CollateralMarkProcess collateralMarkProcess) {
+		this.collateralMarkProcess = collateralMarkProcess;
 	}
 
 	public LimitCheckDetails getLimitCheckDetails() {
@@ -1125,4 +1180,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		this.reasonDetailDAO = reasonDetailDAO;
 	}
 
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
+	}
 }

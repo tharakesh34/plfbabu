@@ -2,7 +2,8 @@ package com.pennanttech.pff.schedule.jobs;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -17,7 +18,7 @@ import com.pennanttech.pff.process.DMSAddDocJobProcess;
 @DisallowConcurrentExecution
 public class DMSAddDocJob implements Job, Serializable {
 
-	private static final Logger logger = Logger.getLogger(DMSAddDocJob.class);
+	private static final Logger logger = LogManager.getLogger(DMSAddDocJob.class);
 
 	private static final long serialVersionUID = -8885818824679309674L;
 

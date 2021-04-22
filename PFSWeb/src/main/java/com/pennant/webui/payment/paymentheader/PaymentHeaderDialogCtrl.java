@@ -50,7 +50,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -121,8 +122,10 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -133,7 +136,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PaymentHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PaymentHeaderDialogCtrl.class);
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
@@ -938,6 +941,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 		}
 
+		//#Bug Fix 153031
+		if (totAmount == null) {
+			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_NoPayInstruction.value"));
+			return;
+		}
+
 		doWriteComponentsToBean(aPaymentHeader);
 
 		isNew = aPaymentHeader.isNew();
@@ -966,6 +975,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		try {
 			if (doProcess(aPaymentHeader, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(aPaymentHeader.getRoleCode(),
+						aPaymentHeader.getNextRoleCode(), aPaymentHeader.getFinReference(), " Payment Instructions ",
+						aPaymentHeader.getRecordStatus(), aPaymentHeader.getNextRoleCode());
+				Clients.showNotification(msg, "info", null, null, -1);
+
 				closeDialog();
 				if (getDisbursementInstructionsDialogCtrl() != null) {
 					getDisbursementInstructionsDialogCtrl().closeDialog();
@@ -979,6 +993,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			logger.error(e);
 			MessageUtil.showError(e);
 		} catch (final InterfaceException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		} catch (final ConcurrencyException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
@@ -1198,18 +1215,19 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private void calculatePaymentDetail(PaymentHeader aPaymentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		PaymentDetail paymentDetail = null;
+		PaymentDetail pd = null;
 		List<PaymentDetail> detailList = new ArrayList<PaymentDetail>();
 		List<FinExcessAmount> finExcessAmountList = this.paymentHeaderService
 				.getfinExcessAmount(this.financeMain.getFinReference());
 		if (finExcessAmountList != null && !finExcessAmountList.isEmpty()) {
+			finExcessAmountList = processFinExcessAmount(finExcessAmountList);
 			for (FinExcessAmount finExcessAmount : finExcessAmountList) {
-				paymentDetail = new PaymentDetail();
-				paymentDetail.setNewRecord(true);
-				paymentDetail.setReferenceId(finExcessAmount.getId());
-				paymentDetail.setAvailableAmount(finExcessAmount.getBalanceAmt());
-				paymentDetail.setAmountType(finExcessAmount.getAmountType());
-				detailList.add(paymentDetail);
+				pd = new PaymentDetail();
+				pd.setNewRecord(true);
+				pd.setReferenceId(finExcessAmount.getId());
+				pd.setAvailableAmount(finExcessAmount.getBalanceAmt());
+				pd.setAmountType(finExcessAmount.getAmountType());
+				detailList.add(pd);
 			}
 		}
 
@@ -1221,20 +1239,28 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 
 		if (CollectionUtils.isNotEmpty(manualAdviseList)) {
-			for (ManualAdvise manualAdvise : manualAdviseList) {
-				paymentDetail = new PaymentDetail();
-				paymentDetail.setNewRecord(true);
-				paymentDetail.setReferenceId(manualAdvise.getAdviseID());
-				paymentDetail.setAvailableAmount(manualAdvise.getBalanceAmt());
-				paymentDetail.setAmountType(String.valueOf(manualAdvise.getAdviseType()));
-				paymentDetail.setFeeTypeCode(manualAdvise.getFeeTypeCode());
-				paymentDetail.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+			for (ManualAdvise ma : manualAdviseList) {
+				pd = new PaymentDetail();
+				pd.setNewRecord(true);
+				pd.setReferenceId(ma.getAdviseID());
+				pd.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount()).subtract(ma.getWaivedAmount()));
+				pd.setAmountType(String.valueOf(ma.getAdviseType()));
+				pd.setFeeTypeCode(ma.getFeeTypeCode());
+				pd.setFeeTypeDesc(ma.getFeeTypeDesc());
+				pd.setAdviseAmount(ma.getAdviseAmount());
 
+				BigDecimal paidTGST = ma.getPaidCGST().add(ma.getPaidSGST()).add(ma.getPaidIGST()).add(ma.getPaidUGST())
+						.add(ma.getPaidCESS());
+				BigDecimal waivedTGST = ma.getWaivedCGST().add(ma.getWaivedSGST()).add(ma.getWaivedIGST())
+						.add(ma.getWaivedUGST()).add(ma.getWaivedCESS());
+
+				pd.setPrvGST(paidTGST.add(waivedTGST));
+				pd.setManualAdvise(ma);
 				// GST Field details
-				paymentDetail.setTaxApplicable(manualAdvise.isTaxApplicable());
-				paymentDetail.setTaxComponent(manualAdvise.getTaxComponent());
+				pd.setTaxApplicable(ma.isTaxApplicable());
+				pd.setTaxComponent(ma.getTaxComponent());
 
-				detailList.add(paymentDetail);
+				detailList.add(pd);
 			}
 		}
 
@@ -1249,7 +1275,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 
 		for (PaymentDetail detail : getPaymentDetailList()) {
-			if (!StringUtils.equals(detail.getAmountType(), String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))) {
+			if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
 				continue;
 			}
 
@@ -1278,16 +1304,25 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				List<Taxes> taxDetails = taxHeader.getTaxDetails();
 				if (CollectionUtils.isNotEmpty(taxDetails)) {
 					for (Taxes taxes : taxDetails) {
-						if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+
+						switch (taxes.getTaxType()) {
+						case RuleConstants.CODE_CGST:
 							cgstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-							sgstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+							break;
+						case RuleConstants.CODE_IGST:
 							igstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+							break;
+						case RuleConstants.CODE_SGST:
+							sgstTax = taxes;
+							break;
+						case RuleConstants.CODE_UGST:
 							ugstTax = taxes;
-						} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+							break;
+						case RuleConstants.CODE_CESS:
 							cessTax = taxes;
+							break;
+						default:
+							break;
 						}
 					}
 				}
@@ -1343,11 +1378,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 
 				TaxAmountSplit taxSplit = null;
-				if (StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
 					taxSplit = GSTCalculator.getExclusiveGST(detail.getAvailableAmount(), taxPercMap);
-				} else if (StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+				} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(detail.getTaxComponent())) {
 					taxSplit = GSTCalculator.getInclusiveGST(detail.getAvailableAmount(), taxPercMap);
 				}
+
+				getActualGST(detail, taxSplit);
 
 				if (taxSplit != null) {
 					cgstTax.setActualTax(taxSplit.getcGST());
@@ -1370,6 +1408,61 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void getActualGST(PaymentDetail detail, TaxAmountSplit taxSplit) {
+		if (taxSplit == null) {
+			return;
+		}
+
+		if (detail.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+
+		ManualAdvise ma = detail.getManualAdvise();
+
+		if (ma == null) {
+			return;
+		}
+
+		TaxAmountSplit adviseSplit = null;
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
+			adviseSplit = GSTCalculator.getExclusiveGST(detail.getAdviseAmount(), taxPercMap);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(detail.getTaxComponent())) {
+			adviseSplit = GSTCalculator.getInclusiveGST(detail.getAdviseAmount(), taxPercMap);
+		}
+
+		BigDecimal diffGST = BigDecimal.ZERO;
+
+		BigDecimal payableGST = taxSplit.gettGST().add(detail.getPrvGST());
+
+		if (payableGST.compareTo(adviseSplit.gettGST()) > 0) {
+			diffGST = payableGST.subtract(adviseSplit.gettGST());
+			taxSplit.settGST(taxSplit.gettGST().subtract(diffGST));
+		}
+
+		if (diffGST.compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
+
+		BigDecimal prvCGst = ma.getPaidCGST().add(ma.getWaivedCGST());
+		BigDecimal prvSGst = ma.getPaidSGST().add(ma.getWaivedSGST());
+		BigDecimal prvIGst = ma.getPaidIGST().add(ma.getWaivedIGST());
+		BigDecimal prvUGst = ma.getPaidUGST().add(ma.getWaivedUGST());
+		BigDecimal prvCess = ma.getPaidCESS().add(ma.getWaivedCESS());
+
+		BigDecimal diffCGST = taxSplit.getcGST().add(prvCGst).subtract(adviseSplit.getcGST());
+		BigDecimal diffSGST = taxSplit.getsGST().add(prvSGst).subtract(adviseSplit.getsGST());
+		BigDecimal diffIGST = taxSplit.getiGST().add(prvIGst).subtract(adviseSplit.getiGST());
+		BigDecimal diffUGST = taxSplit.getuGST().add(prvUGst).subtract(adviseSplit.getuGST());
+		BigDecimal diffCESS = taxSplit.getCess().add(prvCess).subtract(adviseSplit.getCess());
+
+		taxSplit.setcGST(taxSplit.getcGST().subtract(diffCGST));
+		taxSplit.setsGST(taxSplit.getsGST().subtract(diffSGST));
+		taxSplit.setiGST(taxSplit.getiGST().subtract(diffIGST));
+		taxSplit.setuGST(taxSplit.getuGST().subtract(diffUGST));
+		taxSplit.setCess(taxSplit.getCess().subtract(diffCESS));
+	}
+
 	private Taxes getTaxDetail(String taxType, BigDecimal taxPerc, TaxHeader taxHeader) {
 		Taxes taxes = new Taxes();
 		taxes.setTaxType(taxType);
@@ -1377,11 +1470,38 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		return taxes;
 	}
 
+	/**
+	 * Method for process the FinExcessAmount's
+	 * <li>In case of cancelled loan return a list that contain EXCESS FinExcessAmount.</li>
+	 * <li>In other cases return the complete FinExcessAmount's list.</li> <br>
+	 * In case of loan cancel before disbursement and excess amount are taken from deduct from disbursment in that case
+	 * system is displaying those advance's in payment instruction to avoid this we are validating excess amount's here
+	 * #PSD 153031 </br>
+	 * 
+	 * @param finExcessAmountList
+	 * @return
+	 */
+	private List<FinExcessAmount> processFinExcessAmount(List<FinExcessAmount> finExcessAmountList) {
+		logger.debug(Literal.LEAVING);
+		if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equalsIgnoreCase(this.financeMain.getClosingStatus())) {
+			return finExcessAmountList;
+		}
+		List<FinExcessAmount> excessAmountList = new ArrayList<>(1);
+		for (FinExcessAmount finExcessAmount : finExcessAmountList) {
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equalsIgnoreCase(finExcessAmount.getAmountType())) {
+				excessAmountList.add(finExcessAmount);
+				break;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return excessAmountList;
+	}
+
 	// Update the latest balance amount..
 	private void updatePaybleAmounts(List<PaymentDetail> newList, List<PaymentDetail> oldList) {
 		logger.debug(Literal.ENTERING);
 
-		List<PaymentDetail> tempList = new ArrayList<PaymentDetail>();
+		List<PaymentDetail> tempList = new ArrayList<>();
 		tempList.addAll(newList);
 
 		for (PaymentDetail oldDetail : oldList) {
@@ -1389,8 +1509,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				if (oldDetail.getReferenceId() == newDetail.getReferenceId()) {
 
 					BigDecimal amount = oldDetail.getAmount();
-					if (oldDetail.getTaxHeader() != null && StringUtils.equals(oldDetail.getTaxComponent(),
-							FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+					if (oldDetail.getTaxHeader() != null
+							&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(oldDetail.getTaxComponent())) {
 						//GST Calculations
 						TaxHeader taxHeader = oldDetail.getTaxHeader();
 						List<Taxes> taxDetails = taxHeader.getTaxDetails();
@@ -1403,7 +1523,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 						amount = amount.subtract(gstAmount);
 					}
 
-					oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
+					oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
+					oldDetail.setAdviseAmount(newDetail.getAdviseAmount());
+					oldDetail.setManualAdvise(newDetail.getManualAdvise());
+					oldDetail.setPrvGST(newDetail.getPrvGST());
 					oldDetail.setNewRecord(false);
 					oldDetail.setFeeTypeCode(newDetail.getFeeTypeCode());
 					oldDetail.setFeeTypeDesc(newDetail.getFeeTypeDesc());
@@ -1502,6 +1625,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		logger.debug("Entering");
 
 		List<PaymentDetail> list = new ArrayList<PaymentDetail>();
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		long userId = loggedInUser.getUserId();
+
 		if (aPaymentHeader.isNewRecord()) {
 			for (PaymentDetail detail : getPaymentDetailList()) {
 				if (detail.getAmount() != null && (BigDecimal.ZERO.compareTo(detail.getAmount()) == 0)) {
@@ -1511,11 +1637,17 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				detail.setNewRecord(true);
 
+				detail.setLastMntBy(userId);
+				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				detail.setUserDetails(loggedInUser);
 				detail = calTaxDetail(detail);
 				list.add(detail);
 			}
 		} else {
 			for (PaymentDetail detail : getPaymentDetailList()) {
+				detail.setLastMntBy(userId);
+				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				detail.setUserDetails(loggedInUser);
 				if (detail.isNewRecord()) {
 					if (detail.getAmount() != null && (BigDecimal.ZERO.compareTo(detail.getAmount()) == 0)) {
 						continue;
@@ -1552,7 +1684,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 */
 	private PaymentDetail calTaxDetail(PaymentDetail detail) {
 
-		if (!StringUtils.equals(detail.getAmountType(), String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE))
+		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())
 				|| detail.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			detail.setTaxHeader(null);
 			return detail;
@@ -1574,21 +1706,30 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			List<Taxes> taxDetails = taxHeader.getTaxDetails();
 			if (CollectionUtils.isNotEmpty(taxDetails)) {
 				for (Taxes taxes : taxDetails) {
-					if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+					switch (taxes.getTaxType()) {
+					case RuleConstants.CODE_CGST:
 						cgstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_SGST:
 						sgstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_IGST:
 						igstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_UGST:
 						ugstTax = taxes;
-					} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+						break;
+					case RuleConstants.CODE_CESS:
 						cessTax = taxes;
+						break;
+					default:
+						break;
 					}
 				}
 			}
 
 			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(detail.getAmount(), taxPercMap);
+			getActualGST(detail, taxSplit);
 			cgstTax.setPaidTax(taxSplit.getcGST());
 			sgstTax.setPaidTax(taxSplit.getsGST());
 			igstTax.setPaidTax(taxSplit.getiGST());
@@ -1928,18 +2069,21 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 					//GST Calculations
 					TaxHeader taxHeader = advise.getTaxHeader();
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (taxHeader != null && CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							calGST = calGST.add(taxes.getActualTax());
-						}
+					if (taxHeader != null) {
+						List<Taxes> taxDetails = taxHeader.getTaxDetails();
+						if (CollectionUtils.isNotEmpty(taxDetails)) {
+							for (Taxes taxes : taxDetails) {
+								calGST = calGST.add(taxes.getActualTax());
+							}
 
-						if (StringUtils.equals(advise.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-							availAmount = availAmount.subtract(calGST);
-							desc = desc.concat(" (Inclusive)");
-						} else if (StringUtils.equals(advise.getTaxComponent(),
-								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-							desc = desc.concat(" (Exclusive)");
+							if (StringUtils.equals(advise.getTaxComponent(),
+									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+								availAmount = availAmount.subtract(calGST);
+								desc = desc.concat(" (Inclusive)");
+							} else if (StringUtils.equals(advise.getTaxComponent(),
+									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+								desc = desc.concat(" (Exclusive)");
+							}
 						}
 					}
 
@@ -2036,12 +2180,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 				//GST Calculations
 				TaxHeader taxHeader = detail.getTaxHeader();
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				if (taxHeader != null
-						&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)
-						&& CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						avaAmount = avaAmount.add(taxes.getActualTax());
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (taxHeader != null
+							&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)
+							&& CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							avaAmount = avaAmount.add(taxes.getActualTax());
+						}
 					}
 				}
 

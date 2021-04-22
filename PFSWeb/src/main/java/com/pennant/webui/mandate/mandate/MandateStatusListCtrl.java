@@ -48,7 +48,8 @@ import java.text.ParseException;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Borderlayout;
@@ -73,7 +74,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 public class MandateStatusListCtrl extends GFCBaseCtrl<MandateStatus> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(MandateStatusListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MandateStatusListCtrl.class);
 
 	protected Window window_MandateStatusList;
 	protected Borderlayout borderLayout_MandateStatusList;

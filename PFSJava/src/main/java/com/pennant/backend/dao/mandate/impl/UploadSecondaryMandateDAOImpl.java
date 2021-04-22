@@ -3,14 +3,15 @@ package com.pennant.backend.dao.mandate.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.mandate.UploadSecondaryMandateDAO;
 import com.pennant.backend.model.mandate.UploadSecondaryMandate;
@@ -19,7 +20,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class UploadSecondaryMandateDAOImpl extends BasicDao<UploadSecondaryMandate>
 		implements UploadSecondaryMandateDAO {
-	private static Logger logger = Logger.getLogger(UploadSecondaryMandateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadSecondaryMandateDAOImpl.class);
 
 	/**
 	 * 
@@ -91,7 +92,7 @@ public class UploadSecondaryMandateDAOImpl extends BasicDao<UploadSecondaryManda
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secondaryMandateStatus);
-		RowMapper<UploadSecondaryMandate> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<UploadSecondaryMandate> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(UploadSecondaryMandate.class);
 
 		try {

@@ -45,12 +45,13 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * 
  */
 public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> implements FinExpenseDetailsDAO {
-	private static Logger logger = Logger.getLogger(FinExpenseDetailsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinExpenseDetailsDAOImpl.class);
 
 	public FinExpenseDetailsDAOImpl() {
 		super();
@@ -116,8 +117,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 		logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExpenseDetails);
-		RowMapper<FinExpenseDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinExpenseDetails.class);
+		RowMapper<FinExpenseDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinExpenseDetails.class);
 
 		try {
 			finExpenseDetails = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -169,8 +169,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExpenseDetails);
-		RowMapper<FinExpenseDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinExpenseDetails.class);
+		RowMapper<FinExpenseDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinExpenseDetails.class);
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -193,8 +192,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(expenseDetail);
-		RowMapper<FinExpenseDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinExpenseDetails.class);
+		RowMapper<FinExpenseDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinExpenseDetails.class);
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

@@ -54,7 +54,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -111,7 +112,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
  */
 public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceScheduleDetail> implements Serializable {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ManualScheduleDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ManualScheduleDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -142,6 +143,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	protected Label schdl_NonBankShare;
 	protected Label effectiveRateOfReturn;
 
+	protected Row row_istisna;
+	protected Row row_Musharak;
 	protected Row row_totalCost;
 	protected Row row_ContractPrice;
 	protected Hbox hbox_LinkedDownPayRef;
@@ -276,6 +279,14 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					.setValue(Labels.getLabel("labelFinanceMainDialog_PromotionCode.value"));
 		}
 
+		if (product.equals(FinanceConstants.PRODUCT_ISTISNA)) {
+			this.row_istisna.setVisible(true);
+			this.label_ScheduleDetailDialog_Graceprofit
+					.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInGrace.value"));
+			this.label_ScheduleDetailDialog_Repayprofit
+					.setValue(Labels.getLabel("label_ScheduleDetailDialog_ProfitInRepay.value"));
+		}
+
 		listheader_ScheduleDetailDialog_Date.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Date"));
 		listheader_ScheduleDetailDialog_ScheduleEvent
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEvent"));
@@ -292,6 +303,13 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		listheader_ScheduleDetailDialog_Total.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Total"));
 		listheader_ScheduleDetailDialog_ScheduleEndBal
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEndBal"));
+
+		if (StringUtils.equals(product, FinanceConstants.PRODUCT_QARDHASSAN)) {
+			this.label_ScheduleDetailDialog_ProfitDaysBasis.setVisible(false);
+			this.schdl_profitDaysBasis.setVisible(false);
+			this.row_totalCost.setVisible(false);
+			this.row_ContractPrice.setVisible(false);
+		}
 
 		logger.debug("Leaving");
 	}
@@ -1086,6 +1104,21 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		financeMain.setTotalPriAmt(this.schdl_contractPrice.getValue());
 		if (financeMain.getEffectiveRateOfReturn() == null) {
 			financeMain.setEffectiveRateOfReturn(BigDecimal.ZERO);
+		}
+
+		if (aFinSchData.getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_MUSHARAKA)) {
+			BigDecimal finAmount = financeMain.getFinAmount();
+			BigDecimal downPayment = financeMain.getDownPayment();
+
+			BigDecimal nonbankShare = downPayment.multiply(new BigDecimal(100)).divide(finAmount, 2,
+					RoundingMode.HALF_DOWN);
+			BigDecimal bankShare = finAmount.subtract(downPayment).multiply(new BigDecimal(100)).divide(finAmount, 2,
+					RoundingMode.HALF_DOWN);
+
+			this.schdl_NonBankShare.setValue(
+					PennantApplicationUtil.formatRate(nonbankShare.doubleValue(), PennantConstants.rateFormate) + "%");
+			this.schdl_BankShare.setValue(
+					PennantApplicationUtil.formatRate(bankShare.doubleValue(), PennantConstants.rateFormate) + "%");
 		}
 
 		logger.debug("Leaving");
@@ -1998,7 +2031,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
 			list.add(subList1);
 			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null,
-					true, false);
+					true, false, false);
 			list.add(subList);
 			// To get Parent Window i.e Finance main based on product
 			Component component = this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()

@@ -4,20 +4,21 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.sessionvalidation.SessionValidationDAO;
 import com.pennant.backend.model.sessionvalidation.SessionValidation;
 
 public class SessionValidationDAOImpl implements SessionValidationDAO {
 
-	private static Logger logger = Logger.getLogger(SessionValidationDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SessionValidationDAOImpl.class);
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	/**
@@ -55,8 +56,7 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 		selectSql.append(" Where AgentId =:AgentId");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sessionValidation);
-		RowMapper<SessionValidation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SessionValidation.class);
+		RowMapper<SessionValidation> typeRowMapper = BeanPropertyRowMapper.newInstance(SessionValidation.class);
 
 		logger.debug("selectSql: " + selectSql.toString());
 
@@ -101,8 +101,7 @@ public class SessionValidationDAOImpl implements SessionValidationDAO {
 		logger.debug("selectSql:" + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(new SessionValidation());
-		RowMapper<SessionValidation> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SessionValidation.class);
+		RowMapper<SessionValidation> typeRowMapper = BeanPropertyRowMapper.newInstance(SessionValidation.class);
 
 		logger.debug("Leaving");
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);

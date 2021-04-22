@@ -2,7 +2,8 @@ package com.pennant.backend.financeservice.impl;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.financeservice.AddDatedScheduleService;
@@ -13,7 +14,7 @@ import com.pennant.backend.service.GenericService;
 public class AddDatedScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		implements AddDatedScheduleService {
 
-	private static Logger logger = Logger.getLogger(AddDatedScheduleServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(AddDatedScheduleServiceImpl.class);
 
 	/**
 	 * Method for perform addition of Dated Schedule on Schedule flow

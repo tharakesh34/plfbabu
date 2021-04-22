@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
 
@@ -92,5 +93,17 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 			Integer tvStatus);
 
 	Verification getVerificationStatus(String reference, int verificationType, String addressType, String custCif);
+
+	List<String> getAprrovedLVVerifications(int decision, int verificationType);
+
+	List<Verification> getVerifications(String finReference, int verificationType, int requestType);
+
+	boolean isVerificationIdExists(String finReference, String referenceFor, String reference, int verificationType,
+			String referenceType);
+
+	boolean isInitiatedVerfication(VerificationType verificationType, long verificationId, String type);
+
+	Long isVerificationExist(String finReference, String referenceFor, String reference, int verificationType,
+			String referenceType);
 
 }

@@ -11,6 +11,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -73,7 +74,7 @@ public interface ReceiptService {
 	Map<Long, String> getOrnamentDescriptions(List<Long> idList);
 
 	// ### Ticket id:124998
-	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
+	FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif);
 
 	// ### 29-10-2018, Ticket id:124998
 	boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose);
@@ -139,7 +140,7 @@ public interface ReceiptService {
 
 	FinTaxReceivable getTaxReceivable(String finReference, String taxFor);
 
-	// ## For MultiReceipt 
+	// ## For MultiReceipt
 	void saveMultiReceipt(List<AuditHeader> auditHeaderList) throws Exception;
 
 	void saveMultiReceipt(AuditHeader auditHeader) throws Exception;
@@ -159,5 +160,17 @@ public interface ReceiptService {
 	boolean isPartialSettlementInitiated(String finreference);
 
 	String getLoanReferenc(String finreference, String fileName);
+
+	List<FinExcessAmount> xcessList(String finreference);
+
+	FinReceiptData recalculateReceipt(FinReceiptData receiptData);
+
+	Date getLastWaiverDate(String finReference, Date appDate, Date receiptDate);
+
+	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
+
+	ErrorDetail getWaiverValidation(String finReference, String receiptPurpose, Date valueDate);
+
+	ErrorDetail receiptCancelValidation(String finReference, Date lastReceivedDate);
 
 }

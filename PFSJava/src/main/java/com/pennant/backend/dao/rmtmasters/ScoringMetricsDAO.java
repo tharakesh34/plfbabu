@@ -63,4 +63,6 @@ public interface ScoringMetricsDAO {
 
 	int getScoringMetricsByRuleCode(long ruleId, String type);
 
+	List<ScoringMetrics> getScoreMatricsListByCustType(String scoreRuleCode, String custType);
+
 }

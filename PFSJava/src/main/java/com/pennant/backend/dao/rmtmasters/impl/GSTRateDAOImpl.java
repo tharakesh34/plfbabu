@@ -45,15 +45,16 @@ package com.pennant.backend.dao.rmtmasters.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.rmtmasters.GSTRateDAO;
 import com.pennant.backend.model.rmtmasters.GSTRate;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>GSTRate</code> with set of CRUD operations.
  */
 public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
-	private static Logger logger = Logger.getLogger(GSTRateDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(GSTRateDAOImpl.class);
 
 	public GSTRateDAOImpl() {
 		super();
@@ -97,7 +98,7 @@ public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
 		gSTRate.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(gSTRate);
-		RowMapper<GSTRate> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GSTRate.class);
+		RowMapper<GSTRate> rowMapper = BeanPropertyRowMapper.newInstance(GSTRate.class);
 
 		try {
 			gSTRate = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -292,7 +293,7 @@ public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
 		sql.append(" Where fromState = :fromState and toState = :toState and active = :active");
 
 		logger.debug("selectSql : " + sql.toString());
-		RowMapper<GSTRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GSTRate.class);
+		RowMapper<GSTRate> typeRowMapper = BeanPropertyRowMapper.newInstance(GSTRate.class);
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);

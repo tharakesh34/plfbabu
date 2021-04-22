@@ -47,7 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -83,7 +84,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHeader>
 		implements FinTaxUploadDetailService {
-	private static final Logger logger = Logger.getLogger(FinTaxUploadDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FinTaxUploadDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinTaxUploadDetailDAO finTaxUploadDetailDAO;

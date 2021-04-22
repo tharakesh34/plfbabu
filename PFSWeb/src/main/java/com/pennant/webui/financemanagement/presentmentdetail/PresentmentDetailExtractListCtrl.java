@@ -49,7 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -93,7 +94,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<PresentmentDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(PresentmentDetailExtractListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(PresentmentDetailExtractListCtrl.class);
 
 	protected Window window_PresentmentExtractDetailList;
 	protected Borderlayout borderLayout_PresentmentExtractDetailList;
@@ -216,10 +217,11 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
-		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
+				&& !mandateType.getSelectedItem().getValue().equals(MandateConstants.TYPE_NACH)) {
 			this.loanType
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PresentmentDetailList_Product.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_COMMAHIPHEN, true));
 		}
 		this.mandateType
 				.setConstraint(new PTListValidator<>(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
@@ -288,7 +290,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
 			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
 				throw new WrongValueException(this.toDate,
-						Labels.getLabel("label_Difference_between_days") + diffentDays);
+						Labels.getLabel("label_Difference_between_days") + " " + diffentDays);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -299,7 +301,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			if (alwdDaysFromAppDate > 0 && DateUtility.getDaysBetween(this.toDate.getValue(),
 					DateUtility.getAppDate()) >= alwdDaysFromAppDate) {
 				throw new WrongValueException(this.toDate,
-						Labels.getLabel("label_Diff_btwn_To_and_App_date") + alwdDaysFromAppDate);
+						Labels.getLabel("label_Diff_btwn_To_and_App_date") + " " + alwdDaysFromAppDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -457,6 +459,10 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		String code = mandateType.getSelectedItem().getValue();
+		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
+				&& StringUtils.equals(code, MandateConstants.TYPE_NACH)) {
+			this.space_LoanType.setSclass("");
+		}
 		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
 			this.emandateSource.setValue("");
 			this.emandateSource.setDescColumn("");

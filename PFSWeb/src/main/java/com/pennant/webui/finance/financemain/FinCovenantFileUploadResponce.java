@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.media.Media;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
@@ -26,7 +27,6 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -193,7 +193,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
 			throws Exception {
 		try {
-			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
+			if (ImplementationConstants.COVENANT_MODULE_NEW) {
 
 				Date maturityDate = financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
 				Date loanStartDt = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
@@ -303,10 +303,6 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (StringUtils.isNotBlank(covenantTypeData.getMandatoryRole()) && covenantTypeData.isOtc()) {
 					throw new AppException("Please select either OTC or Mandatory Role");
 				}
-				if (!covenantTypeData.isPdd() && !covenantTypeData.isOtc()) {
-					throw new AppException("Please select either PDD or OTC ");
-				}
-
 				if (covenantTypeData.isDocumentReceived() && StringUtils.isBlank(covenantTypeData.getFrequency())) {
 					throw new AppException("Covenant Frequency Type is Mandatory");
 				}

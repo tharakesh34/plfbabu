@@ -47,28 +47,33 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.util.BusinessCalendar;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.smtmasters.HolidayMasterDAO;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.smtmasters.HolidayMaster;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.eod.EODUtil;
 
 /**
  * DAO methods implementation for the <b>HolidayMaster model</b> class.<br>
  * 
  */
 public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements HolidayMasterDAO {
-	private static Logger logger = Logger.getLogger(HolidayMasterDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(HolidayMasterDAOImpl.class);
 
 	public HolidayMasterDAOImpl() {
 		super();
@@ -103,7 +108,7 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
-		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
+		RowMapper<HolidayMaster> typeRowMapper = BeanPropertyRowMapper.newInstance(HolidayMaster.class);
 
 		try {
 			holidayMaster = this.jdbcTemplate.queryForObject(selectListSql.toString(), beanParameters, typeRowMapper);
@@ -146,7 +151,7 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
-		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
+		RowMapper<HolidayMaster> typeRowMapper = BeanPropertyRowMapper.newInstance(HolidayMaster.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
@@ -183,7 +188,7 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 
 		logger.debug("selectListSql: " + selectListSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
-		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
+		RowMapper<HolidayMaster> typeRowMapper = BeanPropertyRowMapper.newInstance(HolidayMaster.class);
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectListSql.toString(), beanParameters, typeRowMapper);
@@ -201,30 +206,34 @@ public class HolidayMasterDAOImpl extends BasicDao<HolidayMaster> implements Hol
 	// Fetch the records by Code and Year
 	@Override
 	public List<HolidayMaster> getHolidayMasterCode(final String holidayCode) {
-		logger.debug("Entering");
+		EventProperties eventProperties = EODUtil.EVENT_PROPS;
+		Date curBussDate = null;
+		if (eventProperties.isParameterLoaded()) {
+			curBussDate = eventProperties.getAppDate();
+		} else {
+			curBussDate = SysParamUtil.getAppDate();
+		}
 
-		Date curBussDate = DateUtility.getAppDate();
-		int holidayYear = DateUtility.getYear(curBussDate);
+		int holidayYear = DateUtil.getYear(curBussDate);
 
 		HolidayMaster holidayMaster = new HolidayMaster();
 		holidayMaster.setHolidayCode(holidayCode);
 		holidayMaster.setHolidayYear(new BigDecimal(holidayYear));
 
-		StringBuilder selectListSql = new StringBuilder(
-				"Select HolidayCode,HolidayCategory, HolidayYear, HolidayType,");
-		selectListSql.append(" Holidays, HolidayDesc1, HolidayDesc2, HolidayDesc3, ");
-		selectListSql.append(
+		StringBuilder sql = new StringBuilder("Select HolidayCode,HolidayCategory, HolidayYear, HolidayType,");
+		sql.append(" Holidays, HolidayDesc1, HolidayDesc2, HolidayDesc3, ");
+		sql.append(
 				" Version , LastMntBy, LastMntOn,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectListSql.append(" From SMTHolidayMaster");
-		selectListSql.append(
+		sql.append(" From SMTHolidayMaster");
+		sql.append(
 				" Where HolidayCode =:HolidayCode AND (HolidayYear >= :HolidayYear-1 AND HolidayYear <= :HolidayYear+1) ORDER BY HolidayYear asc");
 
-		logger.debug("selectListSql: " + selectListSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
-		RowMapper<HolidayMaster> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(HolidayMaster.class);
+		logger.trace(Literal.SQL + sql.toString());
 
-		List<HolidayMaster> holidayMasters = this.jdbcTemplate.query(selectListSql.toString(), beanParameters,
-				typeRowMapper);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(holidayMaster);
+		RowMapper<HolidayMaster> typeRowMapper = BeanPropertyRowMapper.newInstance(HolidayMaster.class);
+
+		List<HolidayMaster> holidayMasters = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");
 		return holidayMasters;

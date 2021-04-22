@@ -45,7 +45,8 @@ package com.pennant.webui.customermasters.corporatecustomerdetail;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Datebox;
@@ -73,7 +74,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCustomerDetail> {
 	private static final long serialVersionUID = -6934733332123850099L;
-	private static final Logger logger = Logger.getLogger(CorporateCustomerDetailSearchCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CorporateCustomerDetailSearchCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

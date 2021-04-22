@@ -50,7 +50,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -96,7 +97,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = Logger.getLogger(UploadListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(UploadListCtrl.class);
 
 	protected Window window_UploadList;
 	protected Borderlayout borderLayout_UploadList;
@@ -158,9 +159,11 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			super.moduleCode = "ManualUploadHeader";
 		}
 
-		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)
-				|| JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+		if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
 			this.listBoxUpload.setCheckmark(true);
+			this.btnDownload.setVisible(true);
+			this.btnApprove.setVisible(true);
+			this.btnReject.setVisible(true);
 		}
 		this.transactionDate.setFormat(PennantConstants.dateFormat);
 	}
@@ -207,7 +210,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	public void onCreate$window_UploadList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_UploadList, borderLayout_UploadList, listBoxUpload, pagingUploadList);
-		setItemRender(new UploadListModelItemRenderer());
+		setItemRender(new UploadListModelItemRenderer(this.module));
 
 		String newButtonRight = "";
 		registerButton(button_UploadList_New, "", false);

@@ -64,6 +64,10 @@ public interface FinODDetailsDAO {
 
 	void updateTotals(FinODDetails detail);
 
+	void updateTotals(List<FinODDetails> list);
+
+	void updateLatePftTotals(List<FinODDetails> list);
+
 	void resetTotals(FinODDetails detail);
 
 	int getFinODDays(String finReference, String type);
@@ -120,7 +124,7 @@ public interface FinODDetailsDAO {
 
 	void deleteAfterODDate(String finReference, Date odDate);
 
-	void saveList(List<FinODDetails> finOdDetails);
+	int saveList(List<FinODDetails> finOdDetails);
 
 	List<FinODDetails> getFinODPenalityByFinRef(String finReference, boolean ispft, boolean isRender);
 
@@ -130,8 +134,10 @@ public interface FinODDetailsDAO {
 
 	List<FinODDetails> getCustomerDues(long custId);
 
-	void updateODDetailsBatch(List<FinODDetails> overdues);
+	int updateODDetailsBatch(List<FinODDetails> overdues);
 
 	boolean isLppMethodOnMinPenalBalSchdExsts(String finReference);
+
+	FinODDetails getFinODByFinRef(String finReference, Date schDate);
 
 }

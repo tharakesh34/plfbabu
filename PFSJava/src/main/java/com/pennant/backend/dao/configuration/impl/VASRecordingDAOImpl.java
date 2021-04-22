@@ -43,26 +43,26 @@
 package com.pennant.backend.dao.configuration.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -75,7 +75,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRecordingDAO {
-	private static Logger logger = Logger.getLogger(VASRecordingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VASRecordingDAOImpl.class);
 
 	public VASRecordingDAOImpl() {
 		super();
@@ -192,19 +192,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		return sql;
 	}
 
-	/**
-	 * Fetch the Record VASRecording details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return VASRecording
-	 */
 	@Override
 	public List<VASRecording> getVASRecordingsByLinkRef(String primaryLinkRef, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where PrimaryLinkRef = ?");
 
@@ -212,20 +201,10 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, primaryLinkRef);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, primaryLinkRef);
+		}, rowMapper);
 	}
 
 	/**
@@ -470,8 +449,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 				source = new MapSqlParameterSource();
 				source.addValue("PrimaryLinkRef", primaryLinkRef);
 
-				RowMapper<VasCustomer> typeRowMapper = ParameterizedBeanPropertyRowMapper
-						.newInstance(VasCustomer.class);
+				RowMapper<VasCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(VasCustomer.class);
 
 				vasCustomer = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 			}
@@ -547,7 +525,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		logger.debug("selectSql: " + sql.toString());
 
-		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+		RowMapper<VASRecording> typeRowMapper = BeanPropertyRowMapper.newInstance(VASRecording.class);
 
 		source = new MapSqlParameterSource();
 		source.addValue("PrimaryLinkRef", primaryLinkRef);
@@ -625,7 +603,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 				vas.setManufacturerDesc(rs.getString("ManufacturerDesc"));
 				vas.setFinType(rs.getString("finType"));
 				vas.setFlpDays(rs.getInt("FlpDays"));
-				vas.setFlpDays(rs.getInt("FeeAccounting"));
+				vas.setFeeAccounting(rs.getInt("FeeAccounting"));
 			}
 
 			return vas;
@@ -678,25 +656,152 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 	@Override
 	public void updatePaidAmt(String vasReference, String primaryLinkRef, BigDecimal paidAmt, String type) {
-		int recordCount = 0;
 		logger.debug(Literal.ENTERING);
-		StringBuilder updateSql = new StringBuilder("Update VASRecording");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set PaidAmt =:PaidAmt ");
-		updateSql.append(" Where VasReference = :VasReference AND PrimaryLinkRef =:PrimaryLinkRef");
 
-		logger.debug(Literal.SQL + updateSql.toString());
+		StringBuilder sql = new StringBuilder("Update VASRecording");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set PaidAmt =:PaidAmt ");
+		sql.append(" Where VasReference = :VasReference AND PrimaryLinkRef =:PrimaryLinkRef");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PaidAmt", paidAmt);
 		source.addValue("VasReference", vasReference);
 		source.addValue("PrimaryLinkRef", primaryLinkRef);
 
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), source);
 
+		logger.debug(Literal.LEAVING);
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+	}
+
+	@Override
+	public List<VASRecording> getLoanReportVasRecordingByRef(String finReference) {
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		List<VASRecording> vasRecordingList = new ArrayList<>();
+		sql = new StringBuilder("Select  vr.fee,vs.modeofPayment,vr.productcode ");
+		sql.append("from vasrecording vr JOIN VasStructure vs ON vr.productcode = vs.productcode ");
+		sql.append("Where PrimaryLinkRef=:PrimaryLinkRef");
+		logger.debug("selectSql: " + sql.toString());
+
+		RowMapper<VASRecording> typeRowMapper = BeanPropertyRowMapper.newInstance(VASRecording.class);
+
+		source = new MapSqlParameterSource();
+		source.addValue("PrimaryLinkRef", finReference);
+		vasRecordingList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		logger.debug(Literal.LEAVING);
+		return vasRecordingList;
+	}
+
+	public Long getPaymentInsId(String vasReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select PaymentInsId");
+		sql.append(" from VasRecording");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where VasReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.LEAVING);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { vasReference },
+					new RowMapper<Long>() {
+
+						@Override
+						public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							return rs.getLong("PaymentInsId");
+						}
+					});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e.getCause());
+		}
+		return null;
+	}
+
+	public String getVasInsStatus(long paymentInsId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select status");
+		sql.append(" from InsurancePaymentInstructions ");
+		sql.append(" Where Id = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.LEAVING);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentInsId },
+					new RowMapper<String>() {
+
+						@Override
+						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+							return rs.getString("Status");
+						}
+					});
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e.getCause());
+		}
+		return null;
+	}
+
+	public void updateVasInsStatus(long id) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update InsurancePaymentInstructions");
+		sql.append(" Set Status = (case when Status = " + "'" + DisbursementConstants.STATUS_APPROVED + "'");
+		sql.append(" then " + "'" + DisbursementConstants.STATUS_CANCEL + "'");
+		sql.append(" when Status = " + "'" + DisbursementConstants.STATUS_PAID + "'");
+		sql.append(" then " + "'" + DisbursementConstants.STATUS_REVERSED + "'" + " else  status end )");
+
+		sql.append(" Where Id = :Id");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	@Override
+	public String getProductCodeByReference(String primaryLinkRef, String vasReference) {
+		logger.debug(Literal.ENTERING);
+
+		String productDesc = null;
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ProductDesc");
+		sql.append(" From VASRECORDING_VIEW ");
+		sql.append(" Where PrimaryLinkRef = ? and vasReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			productDesc = jdbcOperations.queryForObject(sql.toString(), new Object[] { primaryLinkRef, vasReference },
+					new RowMapper<String>() {
+						@Override
+						public String mapRow(ResultSet rs, int arg1) throws SQLException {
+							return rs.getString("ProductDesc");
+						}
+					});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return productDesc;
 	}
 
 }

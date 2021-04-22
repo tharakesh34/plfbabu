@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.staticparms.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.staticparms.FrequencyDAO;
 import com.pennant.backend.model.staticparms.Frequency;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDAO {
-	private static Logger logger = Logger.getLogger(FrequencyDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FrequencyDAOImpl.class);
 
 	public FrequencyDAOImpl() {
 		super();
@@ -97,7 +98,7 @@ public class FrequencyDAOImpl extends BasicDao<Frequency> implements FrequencyDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(frequency);
-		RowMapper<Frequency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Frequency.class);
+		RowMapper<Frequency> typeRowMapper = BeanPropertyRowMapper.newInstance(Frequency.class);
 
 		try {
 			frequency = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -45,15 +45,16 @@ package com.pennant.backend.dao.cashmanagement.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.cashmanagement.BranchCashLimitDAO;
 import com.pennant.backend.model.cashmanagement.BranchCashLimit;
@@ -68,7 +69,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>BranchCashLimit</code> with set of CRUD operations.
  */
 public class BranchCashLimitDAOImpl extends BasicDao<BranchCashLimit> implements BranchCashLimitDAO {
-	private static Logger logger = Logger.getLogger(BranchCashLimitDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BranchCashLimitDAOImpl.class);
 
 	public BranchCashLimitDAOImpl() {
 		super();
@@ -99,7 +100,7 @@ public class BranchCashLimitDAOImpl extends BasicDao<BranchCashLimit> implements
 		branchCashLimit.setBranchCode(branchCode);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(branchCashLimit);
-		RowMapper<BranchCashLimit> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BranchCashLimit.class);
+		RowMapper<BranchCashLimit> rowMapper = BeanPropertyRowMapper.newInstance(BranchCashLimit.class);
 
 		try {
 			branchCashLimit = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -259,7 +260,7 @@ public class BranchCashLimitDAOImpl extends BasicDao<BranchCashLimit> implements
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("BranchCode", branchCode);
 
-		RowMapper<BranchCashLimit> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BranchCashLimit.class);
+		RowMapper<BranchCashLimit> rowMapper = BeanPropertyRowMapper.newInstance(BranchCashLimit.class);
 		logger.debug(Literal.LEAVING);
 
 		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);

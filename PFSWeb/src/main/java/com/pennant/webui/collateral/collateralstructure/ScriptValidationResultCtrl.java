@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -19,7 +22,7 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennanttech.pennapps.core.script.ScriptEngine;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -31,7 +34,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(ScriptValidationResultCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ScriptValidationResultCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -113,24 +116,26 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 	 * @throws InterruptedException
 	 * @throws ScriptException
 	 */
-	public void onClick$btn_Stimulate(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING);
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		
-		try(ScriptEngine scriptEngine = new ScriptEngine()){
-			for (Object variable : variables) {
-				JSONObject jsonObject = (JSONObject) variable;
-				if (!"errors".equals(jsonObject.get("name"))) {
-					textbox = (Textbox) rows_Fields.getFellowIfAny(jsonObject.get("name").toString().trim());
-					dataMap.put(textbox.getId().trim(),
+	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
+		logger.debug("Entering" + event.toString());
+
+		Map<String, Object> bindings = new HashMap<>();
+		try {
+			for (int i = 0; i < variables.size(); i++) {
+				JSONObject variable = (JSONObject) variables.get(i);
+				if (!"errors".equals(variable.get("name"))) {
+					textbox = (Textbox) rows_Fields.getFellowIfAny(variable.get("name").toString().trim());
+					// bindings to the engine
+					bindings.put(textbox.getId().trim(),
 							textbox.getValue() == null ? BigDecimal.ZERO : textbox.getValue());
 				}
 			}
-			String rule =scriptRule;
 
 			ScriptErrors errors = new ScriptErrors();
-			dataMap.put("errors", errors);
-			scriptEngine.getResultAsObject(rule, dataMap);
+			bindings.put("defaults", errors);
+
+			RuleExecutionUtil.executeRule(scriptRule, bindings, "defaults");
+
 			// Print the results
 
 			String errorMessage = "";
@@ -151,6 +156,9 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 			// make result row visible and set value
 			this.rowResult.setVisible(true);
 			this.result.setValue(errorMessage);
+
+			bindings = null;
+
 		} catch (Exception e) {
 			MessageUtil.showMessage(Labels.getLabel("label_ExtendedFieldModule_ScriptValidation.value"));
 			logger.debug(Literal.EXCEPTION, e);

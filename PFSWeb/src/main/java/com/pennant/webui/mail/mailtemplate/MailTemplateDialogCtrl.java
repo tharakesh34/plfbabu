@@ -49,7 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -111,7 +112,7 @@ import freemarker.template.Template;
  */
 public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	private static final long serialVersionUID = 4140622258920094017L;
-	private static final Logger logger = Logger.getLogger(MailTemplateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(MailTemplateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -241,7 +242,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			}
 
 			getBorderLayoutHeight();
-			this.htmlArtifact.setHeight(borderLayoutHeight - 270 + "px");
+			this.htmlArtifact.setHeight(borderLayoutHeight - 170 + "px");
 			// this.emailSubject.setHeight(borderLayoutHeight-270+"px");
 			this.templateData.setHeight(borderLayoutHeight - 230 + "px");
 
@@ -939,6 +940,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			this.btnSimulate.setVisible(false);
 			this.divHtmlArtifact.setVisible(true);
 			this.htmlArtifact.setVisible(false);
+			this.templateData.setVisible(false);
+			this.templateData1.setVisible(false);
 		}
 		logger.debug("Leaving");
 	}
@@ -1429,6 +1432,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				this.btnSimulate.setVisible(false);
 				this.divHtmlArtifact.setVisible(true);
 				this.htmlArtifact.setVisible(false);
+				this.templateData.setVisible(false);
+				this.templateData1.setVisible(false);
 			} else {
 				this.btnSimulate.setVisible(true);
 				this.htmlArtifact.setVisible(true);

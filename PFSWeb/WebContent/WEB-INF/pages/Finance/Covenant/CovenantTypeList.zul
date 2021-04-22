@@ -50,6 +50,14 @@
 							</columns>
 							<rows>
 								<row>
+									<label id="label_CovenantTypeList_Code" value="${c:l('label_CovenantTypeListCode.value')}" />
+									<listbox id="sortOperator_Code" width="43px" mold="select" rows="1" />
+									<uppercasebox id="code" width="96px" maxlength="8" />
+									<label id="label_CovenantTypeList_Desc" value="${c:l('label_CovenantTypeListDesc.value')}" />
+									<listbox id="sortOperator_Description" width="43px" mold="select" rows="1" />
+									<textbox id="description" width="96px" maxlength="50" />
+								</row>
+								<row>
 									<label id="label_CovenantTypeList_Category" value="${c:l('label_CovenantTypeList_Category.value')}" />
 									<listbox id="sortOperator_Category" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<combobox id="category" width="200px" />

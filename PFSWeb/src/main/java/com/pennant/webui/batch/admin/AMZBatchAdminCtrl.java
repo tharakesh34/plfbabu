@@ -49,7 +49,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
 import org.zkoss.util.resource.Labels;
@@ -95,7 +96,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = 4309463490869641570L;
-	private static final Logger logger = Logger.getLogger(AMZBatchAdminCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AMZBatchAdminCtrl.class);
 
 	protected Window window_AMZBatchAdmin;
 	protected Textbox lable_LastAMZMonth_Date;

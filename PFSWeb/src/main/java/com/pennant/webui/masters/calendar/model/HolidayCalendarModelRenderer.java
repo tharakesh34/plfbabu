@@ -6,7 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.calendar.api.CalendarEvent;
 import org.zkoss.calendar.api.RenderContext;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
@@ -16,7 +17,7 @@ import org.zkoss.calendar.impl.SimpleCalendarModel;
  */
 public class HolidayCalendarModelRenderer extends SimpleCalendarModel implements Serializable {
 	private static final long serialVersionUID = -2365559110743187158L;
-	private static final Logger logger = Logger.getLogger(HolidayCalendarModelRenderer.class);
+	private static final Logger logger = LogManager.getLogger(HolidayCalendarModelRenderer.class);
 
 	private String filterText = "";
 

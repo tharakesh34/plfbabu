@@ -22,8 +22,7 @@
 								<label id="label_AddDisbursementDialog_FromDate" value="${c:l('label_AddDisbursementDialog_FromDate.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<datebox id="fromDate" width="144px">
-									</datebox>
+									<datebox id="fromDate" width="144px"></datebox>
 								</hbox>
 							</row>
 
@@ -34,6 +33,7 @@
 									<checkbox id="qDP" />
 								</hbox>
 							</row>
+
 							<row>
 								<label id="label_AddDisbursementDialog_Amount" value="${c:l('label_AddDisbursementDialog_Amount.value')}" />
 								<currencyBox id="disbAmount" />
@@ -49,24 +49,21 @@
 								<label id="label_AddDisbursementDialog_ReCalType" value="${c:l('label_AddDisbursementDialog_RecalType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="cbReCalType" width="200px" readonly="true">
-									</combobox>
+									<combobox id="cbReCalType" width="200px" readonly="true"></combobox>
 								</hbox>
 							</row>
 							<row id="fromDateRow" visible="false">
 								<label id="label_AddDisbursementDialog_TillFromDate" value="${c:l('label_AddDisbursementDialog_CalFromDate.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" id="space_TillFromDate" />
-									<combobox id="cbFromDate" readonly="true" width="144px">
-									</combobox>
+									<combobox id="cbFromDate" readonly="true" width="144px"></combobox>
 								</hbox>
 							</row>
 							<row id="tillDateRow" visible="false">
 								<label id="label_AddDisbursementDialog_TillDate" value="${c:l('label_AddDisbursementDialog_TillDate.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" id="space_TillDate" />
-									<combobox id="cbTillDate" readonly="true" width="144px">
-									</combobox>
+									<combobox id="cbTillDate" readonly="true" width="144px"></combobox>
 								</hbox>
 							</row>
 							<row id="numOfTermsRow" visible="false">
@@ -80,8 +77,7 @@
 								<label id="label_AddDisbursementDialog_AddTermAfter" value="${c:l('label_AddDisbursementDialog_AddTermAfter.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" id="space_AddTermAfter" />
-									<combobox id="cbAddTermAfter" readonly="true" width="120px">
-									</combobox>
+									<combobox id="cbAddTermAfter" readonly="true" width="120px"></combobox>
 								</hbox>
 							</row>
 							<row id="disbursementAccount">

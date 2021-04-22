@@ -1,6 +1,7 @@
 package com.pennant.webui.eod.upload;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -17,7 +18,7 @@ import com.pennanttech.dataengine.excecution.ProcessExecution;
 public class UploadFinPftDetailsCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 1L;
-	public static final Logger logger = Logger.getLogger(UploadFinPftDetailsCtrl.class);
+	public static final Logger logger = LogManager.getLogger(UploadFinPftDetailsCtrl.class);
 
 	protected Window window_UploadFinPftDetails;
 	protected Button btnUpload; //autowire

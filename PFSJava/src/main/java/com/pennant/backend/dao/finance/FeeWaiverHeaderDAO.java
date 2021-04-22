@@ -42,7 +42,7 @@
  */
 package com.pennant.backend.dao.finance;
 
-import java.util.List;
+import java.util.Date;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
@@ -53,6 +53,6 @@ public interface FeeWaiverHeaderDAO extends BasicCrudDao<FeeWaiverHeader> {
 
 	FeeWaiverHeader getFeeWaiverHeaderById(long waiverId, String type);
 
-	List<FeeWaiverHeader> getFeeWaiverHeaderEnqByFinRef(String finReference, String type);
+	Date getLastWaiverDate(String finReference, Date appDate, Date receiptDate);
 
 }

@@ -34,6 +34,17 @@ public class ExtendedFieldData implements Serializable {
 		super();
 	}
 
+	public ExtendedFieldData copyEntity() {
+		ExtendedFieldData entity = new ExtendedFieldData();
+		entity.setFieldName(this.fieldName);
+		entity.setFieldValue(this.fieldValue);
+		entity.setFieldLabel(this.fieldLabel);
+		entity.setFieldType(this.fieldType);
+		entity.setFieldSeqOrder(this.fieldSeqOrder);
+		entity.setFieldPrec(this.fieldPrec);
+		return entity;
+	}
+
 	public String getFieldName() {
 		return fieldName;
 	}

@@ -135,6 +135,15 @@
 									<listbox id="sortOperator_recordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="180px" mold="select" />
 								</row>
+								<row>
+									<label id="label_FinanceMainDialog_ApplicationNo" value="${c:l('label_FinanceMainDialog_ApplicationNo.value')}" />
+									<listbox id="sortOperator_applicationNo" width="43px" mold="select" rows="1" />
+									<textbox id="applicationNo" width="170px" visible="true" />
+
+									<label id="label_FinanceMainSearch_OfferId" value="${c:l('label_FinanceMainSearch_OfferId.value')}" />
+									<listbox id="sortOperator_offerId" width="43px" mold="select" rows="1" />
+									<textbox id="offerId" width="170px" />
+								</row>
 							</rows>
 						</grid>
 						<listbox id="listBoxFinanceMain" fixedLayout="true" sizedByContent="true" span="true"
@@ -167,6 +176,9 @@
 									hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
 									hflex="min" visible="false" />
+								<listheader id="listheader_ApplicationNo" label="${c:l('listheader_ApplicationNo.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_OfferId" label="${c:l('listheader_OfferId.label')}" sort="auto" hflex="min" />
 							</listhead>
 
 						</listbox>

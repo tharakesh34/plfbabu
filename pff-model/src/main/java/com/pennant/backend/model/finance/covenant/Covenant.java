@@ -6,38 +6,61 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 
 public class Covenant extends CovenantType {
 	private static final long serialVersionUID = 1L;
 
 	private String keyReference;
+	@XmlElement
 	private Date receivableDate;
 	private boolean documentReceived;
+	@XmlElement
 	private Date documentReceivedDate;
 	private Date nextFrequencyDate;
 	private Date graceDueDate;
+	@XmlElement
 	private boolean internalUse;
+	@XmlElement
 	private Date extendedDate;
+	@XmlElement(name = "description")
 	private String remarks;
+	private byte[] remarks1;
+	@XmlElement(name = "remarks")
 	private String additionalField1;
+	@XmlElement(name = "standardValue")
 	private String additionalField2;
+	@XmlElement(name = "actualValue")
 	private String additionalField3;
 	private String additionalField4;
+	@XmlElement
 	private String mandatoryRole;
 	private String mandRoleDescription;
+	@XmlElement
 	private boolean allowWaiver;
+	@XmlElement
 	private String notifyTo;
 	private String module;
 	private String covenantTypeDescription;
+	@XmlElement
 	private long covenantTypeId;
 	private boolean los;
 	private boolean otc;
 	private boolean pdd;
 	private String covenantTypeCode;
+	@XmlElement
 	private List<CovenantDocument> covenantDocuments = new ArrayList<>();
 	private List<DocumentDetails> documentDetails = new ArrayList<>();
 	private Date alertsentOn;
+
+	@XmlElement(name = "pdd")
+	private String strPdd;
+	@XmlElement(name = "otc")
+	private String strOtc;
+	@XmlElement(name = "documentReceived")
+	private String strDocumentReceived;
 
 	public Covenant() {
 		super();
@@ -81,6 +104,13 @@ public class Covenant extends CovenantType {
 		excludeFields.add("covenantTypeCode");
 		excludeFields.add("alertsentOn");
 		excludeFields.add("documentDetails");
+		excludeFields.add("strPdd");
+		excludeFields.add("strOtc");
+		excludeFields.add("strDocumentReceived");
+		excludeFields.add("strAlertsRequired");
+		excludeFields.add("lGraceDays");
+		excludeFields.add("lAlertDays");
+		excludeFields.add("strAllowPostPonement");
 		return excludeFields;
 	}
 
@@ -146,6 +176,14 @@ public class Covenant extends CovenantType {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public byte[] getRemarks1() {
+		return remarks1;
+	}
+
+	public void setRemarks1(byte[] remarks1) {
+		this.remarks1 = remarks1;
 	}
 
 	public String getAdditionalField1() {
@@ -298,6 +336,30 @@ public class Covenant extends CovenantType {
 
 	public void setAlertsentOn(Date alertsentOn) {
 		this.alertsentOn = alertsentOn;
+	}
+
+	public String getStrPdd() {
+		return strPdd;
+	}
+
+	public void setStrPdd(String strPdd) {
+		this.strPdd = strPdd;
+	}
+
+	public String getStrOtc() {
+		return strOtc;
+	}
+
+	public void setStrOtc(String strOtc) {
+		this.strOtc = strOtc;
+	}
+
+	public String getStrDocumentReceived() {
+		return strDocumentReceived;
+	}
+
+	public void setStrDocumentReceived(String strDocumentReceived) {
+		this.strDocumentReceived = strDocumentReceived;
 	}
 
 }

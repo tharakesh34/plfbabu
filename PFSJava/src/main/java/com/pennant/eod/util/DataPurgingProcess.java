@@ -7,7 +7,8 @@ import java.sql.Types;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class DataPurgingProcess extends BasicDao<Object> {
-	private Logger logger = Logger.getLogger(DataPurgingProcess.class);
+	private Logger logger = LogManager.getLogger(DataPurgingProcess.class);
 
 	public DataPurgingProcess() {
 

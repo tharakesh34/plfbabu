@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinAdvancePayments.java                                                   * 	  
+ * FileName    		:  EtihadCreditBureauDetail.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -44,6 +44,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +60,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * Model class for the <b>FinAdvancePayments table</b>.<br>
+ * Model class for the <b>EtihadCreditBureauDetail table</b>.<br>
  * 
  */
 @XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "branchBankCode", "branchBankName",
@@ -71,8 +72,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -6234931333270161797L;
-
+	@XmlElement(name = "disbInstId")
 	private long paymentId = Long.MIN_VALUE;
+	@XmlElement
 	private String finReference;
 	private int paymentSeq;
 	private int disbSeq;
@@ -162,6 +164,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	@XmlElement
 	private String partnerbankCode;
 	private String partnerBankName;
+	@XmlElement
 	private String finType;
 	private List<FinanceDisbursement> financeDisbursements;
 
@@ -174,8 +177,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String partnerBankAc;
 	private boolean alwFileDownload;
 	private String fileNamePrefix;
+	@XmlElement
 	private String channel;
+	@XmlElement
 	private String entityCode;
+	private String vasReference;
 	private long providerId;
 	private boolean paymentProcReq;
 	private int tempSeq = 0;
@@ -196,6 +202,25 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	@XmlElement
 	private boolean holdDisbursement = false;
 
+	private Date postDate;
+	private String dealerShortCode;
+	private String productShortCode;
+	private boolean postingQdp = false;
+
+	@XmlElement
+	private Date fromDate;
+	@XmlElement
+	private Date toDate;
+
+	@XmlElement(name = "docName")
+	private String documentName;
+	@XmlElement(name = "docContent")
+	private byte[] docImage;
+	@XmlElement(name = "docFormat")
+	private String docType;
+	@XmlElement
+	private String vasProductCode;
+
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
 	}
@@ -210,6 +235,111 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public FinAdvancePayments() {
 		super();
+	}
+
+	public FinAdvancePayments copyEntity() {
+		FinAdvancePayments entity = new FinAdvancePayments();
+		entity.setPaymentId(this.paymentId);
+		entity.setFinReference(this.finReference);
+		entity.setPaymentSeq(this.paymentSeq);
+		entity.setDisbSeq(this.disbSeq);
+		entity.setServiceReqNo(this.serviceReqNo);
+		entity.setPaymentDetail(this.paymentDetail);
+		entity.setAmtToBeReleased(this.amtToBeReleased);
+		entity.setLiabilityHoldName(this.liabilityHoldName);
+		entity.setBeneficiaryName(this.beneficiaryName);
+		entity.setBeneficiaryAccNo(this.beneficiaryAccNo);
+		entity.setReEnterBeneficiaryAccNo(this.reEnterBeneficiaryAccNo);
+		entity.setDescription(this.description);
+		entity.setPaymentType(this.paymentType);
+		entity.setLLReferenceNo(this.llReferenceNo);
+		entity.setLLDate(this.llDate);
+		entity.setCustContribution(this.custContribution);
+		entity.setSellerContribution(this.sellerContribution);
+		entity.setRemarks(this.remarks);
+		entity.setBankCode(this.bankCode);
+		entity.setBankName(this.bankName);
+		entity.setBranchBankCode(this.branchBankCode);
+		entity.setBranchBankName(this.branchBankName);
+		entity.setBranchCode(this.branchCode);
+		entity.setBranchDesc(this.branchDesc);
+		entity.setCity(this.city);
+		entity.setiFSC(this.iFSC);
+		entity.setPayableLoc(this.payableLoc);
+		entity.setPrintingLoc(this.printingLoc);
+		entity.setPrintingLocDesc(this.printingLocDesc);
+		entity.setValueDate(this.valueDate);
+		entity.setBankBranchID(this.bankBranchID);
+		entity.setPhoneCountryCode(this.phoneCountryCode);
+		entity.setPhoneAreaCode(this.phoneAreaCode);
+		entity.setPhoneNumber(this.phoneNumber);
+		entity.setClearingDate(this.clearingDate);
+		entity.setStatus(this.status);
+		entity.setActive(this.active);
+		entity.setInputDate(this.inputDate);
+		entity.setDisbCCy(this.disbCCy);
+		entity.setpOIssued(this.pOIssued);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setPartnerBankID(this.partnerBankID);
+		entity.setPartnerbankCode(this.partnerbankCode);
+		entity.setPartnerBankName(this.partnerBankName);
+		entity.setFinType(this.finType);
+		if (financeDisbursements != null) {
+			entity.setFinanceDisbursements(new ArrayList<FinanceDisbursement>());
+			this.financeDisbursements.stream()
+					.forEach(e -> entity.getFinanceDisbursements().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setCustShrtName(this.custShrtName);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setPartnerBankAcType(this.partnerBankAcType);
+		entity.setTransactionRef(this.transactionRef);
+		entity.setRejectReason(this.rejectReason);
+		entity.setPartnerBankAc(this.partnerBankAc);
+		entity.setAlwFileDownload(this.alwFileDownload);
+		entity.setFileNamePrefix(this.fileNamePrefix);
+		entity.setChannel(this.channel);
+		entity.setEntityCode(this.entityCode);
+		entity.setVasReference(this.vasReference);
+		entity.setProviderId(this.providerId);
+		entity.setPaymentProcReq(this.paymentProcReq);
+		entity.setTempSeq(this.tempSeq);
+		entity.setTempReference(this.tempReference);
+		entity.setConfigName(this.configName);
+		entity.setFileName(this.fileName);
+		entity.setAutoDisbStatus(this.autoDisbStatus);
+		entity.setErrorCode(this.errorCode);
+		entity.setPickUpBatchId(this.pickUpBatchId);
+		entity.setCustID(this.custID);
+		entity.setReversedDate(this.reversedDate);
+		entity.setDownloadedon(this.downloadedon);
+		entity.setRealizationDate(this.realizationDate);
+		entity.setOnlineProcReq(this.onlineProcReq);
+		entity.setHoldDisbursement(this.holdDisbursement);
+		entity.setPostDate(this.postDate);
+		entity.setDealerShortCode(this.dealerShortCode);
+		entity.setProductShortCode(this.productShortCode);
+		entity.setPostingQdp(this.postingQdp);
+		entity.setFromDate(this.fromDate);
+		entity.setToDate(this.toDate);
+		entity.setDocumentName(this.documentName);
+		entity.setDocImage(this.docImage);
+		entity.setDocType(this.docType);
+		entity.setVasProductCode(this.vasProductCode);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	public Set<String> getExcludeFields() {
@@ -249,6 +379,17 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("reversedDate");
 		excludeFields.add("onlineProcReq");
 		excludeFields.add("holdDisbursement");
+		excludeFields.add("postDate");
+		excludeFields.add("dealerShortCode");
+		excludeFields.add("productShortCode");
+		excludeFields.add("postingQdp");
+		excludeFields.add("fromDate");
+		excludeFields.add("toDate");
+		excludeFields.add("documentName");
+		excludeFields.add("docImage");
+		excludeFields.add("docType");
+		excludeFields.add("vasProductCode");
+
 		return excludeFields;
 	}
 
@@ -716,6 +857,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.entityCode = entityCode;
 	}
 
+	public String getVasReference() {
+		return vasReference;
+	}
+
+	public void setVasReference(String vasReference) {
+		this.vasReference = vasReference;
+	}
+
 	public String getReEnterBeneficiaryAccNo() {
 		return reEnterBeneficiaryAccNo;
 	}
@@ -859,4 +1008,85 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setHoldDisbursement(boolean holdDisbursement) {
 		this.holdDisbursement = holdDisbursement;
 	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
+	}
+
+	public String getDealerShortCode() {
+		return dealerShortCode;
+	}
+
+	public void setDealerShortCode(String dealerShortCode) {
+		this.dealerShortCode = dealerShortCode;
+	}
+
+	public String getProductShortCode() {
+		return productShortCode;
+	}
+
+	public void setProductShortCode(String productShortCode) {
+		this.productShortCode = productShortCode;
+	}
+
+	public boolean isPostingQdp() {
+		return postingQdp;
+	}
+
+	public void setPostingQdp(boolean postingQdp) {
+		this.postingQdp = postingQdp;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getDocumentName() {
+		return documentName;
+	}
+
+	public void setDocumentName(String documentName) {
+		this.documentName = documentName;
+	}
+
+	public byte[] getDocImage() {
+		return docImage;
+	}
+
+	public void setDocImage(byte[] docImage) {
+		this.docImage = docImage;
+	}
+
+	public String getDocType() {
+		return docType;
+	}
+
+	public void setDocType(String docType) {
+		this.docType = docType;
+	}
+
+	public String getVasProductCode() {
+		return vasProductCode;
+	}
+
+	public void setVasProductCode(String vasProductCode) {
+		this.vasProductCode = vasProductCode;
+	}
+
 }

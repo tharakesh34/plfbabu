@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -46,6 +47,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.constants.InterfaceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -53,7 +55,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 @SuppressWarnings("rawtypes")
 public class ShowCustomerDedupListBox extends Window implements Serializable {
 	private static final long serialVersionUID = -2854517425413800019L;
-	private static final Logger logger = Logger.getLogger(ShowCustomerDedupListBox.class);
+	private static final Logger logger = LogManager.getLogger(ShowCustomerDedupListBox.class);
 	private Textbox _textbox;
 	private Paging _paging;
 	private int pageSize = 10;
@@ -191,14 +193,14 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		// Button for Not Duplicate
 		final Button btnProceed = new Button();
 		btnProceed.setSclass("z-toolbarbutton");
-		btnProceed.setLabel("Not Duplicate");
+		btnProceed.setLabel(Labels.getLabel("button_NotDuplicate_label"));
 		btnProceed.addEventListener("onClick", new OnProceedListener());
 		btnProceed.setParent(startToolbar);
 
 		// Button for Duplicate Found
 		final Button btnCancel = new Button();
 		btnCancel.setSclass("z-toolbarbutton");
-		btnCancel.setLabel("Duplicate Record");
+		btnCancel.setLabel(Labels.getLabel("button_DuplicateRecord_label"));
 		btnCancel.addEventListener("onClick", new OnCancelListener());
 		btnCancel.setParent(startToolbar);
 
@@ -247,7 +249,8 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 				DateUtility.formatToLongDate(custDedup.getCustDOB())));
 		if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_CustShrtName.value"),
-					custDedup.getCustShrtName() == "" ? custDedup.getCustFName() : custDedup.getCustShrtName(),
+					StringUtils.isNotEmpty(custDedup.getCustShrtName()) ? custDedup.getCustShrtName()
+							: custDedup.getCustFName(),
 					Labels.getLabel("label_CustomerDedupDialog_EID.value"), custDedup.getCustCRCPR()));
 			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_MobileNum.value"),
 					custDedup.getMobileNumber(), Labels.getLabel("label_CustomerDedupDialog_appScore.value"),
@@ -531,7 +534,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 					}
 					lc = new Listcell(fieldValue);
 					for (int k = 0; k < ruleFields.length; k++) {
-						if (!StringUtils.equals(ruleFields[k], "Core")) {
+						if (!StringUtils.equals(ruleFields[k], InterfaceConstants.DEDUP_CORE)) {
 							if (StringUtils.equals(fieldMethod, "get" + ruleFields[k])) {
 								if (StringUtils.equals(ruleFields[k], MOB_NUM)
 										|| StringUtils.equals(ruleFields[k], CRCPR)) {
@@ -559,7 +562,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 
 					if (dateFieldValue != null && curdateFieldValue != null) {
 						for (int k = 0; k < ruleFields.length; k++) {
-							if (!StringUtils.equals(ruleFields[k], "Core")) {
+							if (!StringUtils.equals(ruleFields[k], InterfaceConstants.DEDUP_CORE)) {
 								if (StringUtils.equals(fieldMethod, "get" + ruleFields[k])) {
 									if (dateFieldValue.compareTo(curdateFieldValue) == 0) {
 										lc.setStyle(COLOR);

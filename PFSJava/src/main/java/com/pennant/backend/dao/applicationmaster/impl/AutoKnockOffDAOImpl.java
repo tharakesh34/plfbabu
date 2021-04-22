@@ -379,6 +379,20 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Delete");
+		sql.append(" From AUTO_KNOCKOFF_EXCESS_DETAILS");
+		sql.append(" Where ExcessId in (");
+		sql.append(" Select ID from AUTO_KNOCKOFF_EXCESS");
+		sql.append(" Where ValueDate = ?)");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			this.jdbcOperations.update(sql.toString(), JdbcUtil.getDate(valueDate));
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		sql = new StringBuilder("Delete");
 		sql.append(" From AUTO_KNOCKOFF_EXCESS");
 		sql.append(" Where ValueDate = ?");
 

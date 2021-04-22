@@ -13,8 +13,10 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -55,6 +57,8 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	private List<FinCovenantType> covenantTypeList = new ArrayList<FinCovenantType>();
 	private List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>(1);
+	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
+	private List<JointAccountDetail> jointAccountDetails = new ArrayList<JointAccountDetail>(1);
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -87,6 +91,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		excludeFields.add("alwMultiPartyDisb");
 		excludeFields.add("vASRecordings");
 		excludeFields.add("finAssetValue");
+		excludeFields.add("jointAccountDetails");
 
 		return excludeFields;
 	}
@@ -307,6 +312,14 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		this.documentDetailsList = documentDetailsList;
 	}
 
+	public List<FinFeeDetail> getFinFeeDetailList() {
+		return finFeeDetailList;
+	}
+
+	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {
+		this.finFeeDetailList = finFeeDetailList;
+	}
+
 	public List<VASRecording> getvASRecordings() {
 		return vASRecordings;
 	}
@@ -322,4 +335,13 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	public void setFinAssetValue(BigDecimal finAssetValue) {
 		this.finAssetValue = finAssetValue;
 	}
+
+	public List<JointAccountDetail> getJointAccountDetails() {
+		return jointAccountDetails;
+	}
+
+	public void setJointAccountDetails(List<JointAccountDetail> jointAccountDetails) {
+		this.jointAccountDetails = jointAccountDetails;
+	}
+
 }

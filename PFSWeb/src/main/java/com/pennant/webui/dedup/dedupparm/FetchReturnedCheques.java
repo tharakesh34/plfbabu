@@ -2,7 +2,8 @@ package com.pennant.webui.dedup.dedupparm;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 
 import com.pennant.backend.model.customermasters.Customer;
@@ -12,7 +13,7 @@ import com.pennant.backend.service.applicationmaster.ReturnedChequeService;
 
 public class FetchReturnedCheques {
 
-	private static final Logger logger = Logger.getLogger(FetchReturnedCheques.class);
+	private static final Logger logger = LogManager.getLogger(FetchReturnedCheques.class);
 
 	private int userAction = -1;
 	private static ReturnedChequeService returnedChequeService;

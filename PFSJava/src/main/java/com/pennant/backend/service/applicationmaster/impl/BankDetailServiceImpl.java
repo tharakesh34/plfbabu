@@ -43,7 +43,8 @@
 
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -74,7 +75,7 @@ import com.pennanttech.pff.core.TableType;
  */
 public class BankDetailServiceImpl extends GenericService<BankDetail> implements BankDetailService {
 
-	private static Logger logger = Logger.getLogger(BankDetailServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(BankDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BankDetailDAO bankDetailDAO;
@@ -219,7 +220,7 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 	 * @return AccNoLength
 	 */
 	@Override
-	public int getAccNoLengthByCode(String bankCode) {
+	public BankDetail getAccNoLengthByCode(String bankCode) {
 		return getBankDetailDAO().getAccNoLengthByCode(bankCode, "_View");
 	}
 
@@ -365,7 +366,8 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		if (!bankDetail.isActive()) {
-			if (partnerBankDAO.getPartnerBankbyBank(code, "") != 0 || finAdvancePaymentsDAO.getBankCode(code, "") != 0
+			if (partnerBankDAO.getPartnerBankbyBank(code, "") != 0 || financeMainDAO.getFinanceMainByBank(code, "") != 0
+					|| finAdvancePaymentsDAO.getBankCode(code, "") != 0
 					|| finCollateralsDAO.getFinCollateralsByBank(code, "") != 0
 					|| finReceiptDetailDAO.getReceiptHeaderByBank(code, "") != 0
 					|| bankBranchDAO.getBankBrachByBank(code, "") != 0

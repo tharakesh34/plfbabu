@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -34,7 +35,7 @@ import com.pennanttech.pff.external.DrawingPower;
 
 public class DrawingPowerServiceImpl implements DrawingPowerService {
 
-	private static final Logger logger = Logger.getLogger(DrawingPowerServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DrawingPowerServiceImpl.class);
 
 	@Autowired(required = false)
 	private DrawingPower drawingPower;
@@ -99,7 +100,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		return auditDetail;
 	}
 
-	private ErrorDetail doRevolvingValidations(FinanceDetail financeDetail) {
+	public ErrorDetail doRevolvingValidations(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -147,7 +148,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		return null;
 	}
 
-	private ErrorDetail doDrawingPowerCheck(FinanceDetail financeDetail, String moduleDefiner) {
+	public ErrorDetail doDrawingPowerCheck(FinanceDetail financeDetail, String moduleDefiner) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -166,6 +167,15 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		FinanceProfitDetail profitDetail = financeDetail.getFinScheduleData().getFinPftDeatil();
 
+		// Setting drawing power amount to extended fields
+		if (financeDetail.getExtendedFieldRender() != null
+				&& financeDetail.getExtendedFieldRender().getMapValues() != null) {
+			if (financeDetail.getExtendedFieldRender().getMapValues().containsKey("DRAWINGPOWAMT")) {
+				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
+				financeDetail.getExtendedFieldRender().getMapValues().put("DRAWINGPOWAMT", drawingPowerAmt);
+			}
+		}
+
 		if (!StringUtils.isEmpty(moduleDefiner)
 				&& (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG))) {
 			if (profitDetail == null) {
@@ -174,8 +184,6 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			if (profitDetail != null) {
 				totOutStanding = totOutStanding.add(profitDetail.getTotalPriBal());// Principal
 																					// outstanding
-				totOutStanding = totOutStanding.add(profitDetail.getTdSchdPftBal());// Interest
-																					// receivable
 				totOutStanding = totOutStanding.add(profitDetail.getPenaltyDue().subtract(profitDetail.getPenaltyPaid())
 						.subtract(profitDetail.getPenaltyWaived()));// Penal
 				// receivable

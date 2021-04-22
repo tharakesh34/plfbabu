@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -23,7 +24,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> implements ExtendedFieldRenderDAO {
-	private static Logger logger = Logger.getLogger(ExtendedFieldRenderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ExtendedFieldRenderDAOImpl.class);
 
 	public ExtendedFieldRenderDAOImpl() {
 		super();
@@ -46,13 +47,13 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where  Reference =:Reference AND SeqNo = :SeqNo ");
 
-		RowMapper<ExtendedFieldRender> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ExtendedFieldRender.class);
+		RowMapper<ExtendedFieldRender> typeRowMapper = BeanPropertyRowMapper.newInstance(ExtendedFieldRender.class);
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
 			fieldRender = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.info("Exceprtion ", e);
+			logger.warn("Records are not found in {} for the specified Reference >> {} and Seq No >> {}", tableName,
+					reference, seqNo);
 			fieldRender = null;
 		}
 
@@ -65,13 +66,9 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 */
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMap(String reference, String tableName, String type) {
-		logger.debug(Literal.ENTERING);
-
 		List<Map<String, Object>> renderMap = null;
 
-		type = StringUtils.trimToEmpty(type);
-
-		type = type.toLowerCase();
+		type = StringUtils.trimToEmpty(type).toLowerCase();
 
 		StringBuilder sql = new StringBuilder();
 		if (StringUtils.startsWith(type, "_view")) {
@@ -90,6 +87,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			sql.append(StringUtils.trimToEmpty(type));
 			sql.append(" where reference = :reference order by seqno");
 		}
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -97,11 +95,10 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		try {
 			renderMap = this.jdbcTemplate.queryForList(sql.toString(), source);
 		} catch (Exception e) {
-			logger.error(Literal.ENTERING, e);
+			logger.warn("Records not found in {}{} for the reference : {}", tableName, type, reference);
 			renderMap = new ArrayList<>();
 		}
 
-		logger.debug(Literal.LEAVING);
 		return renderMap;
 	}
 
@@ -159,6 +156,48 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			selectSql.append(tableName);
 			selectSql.append(StringUtils.trimToEmpty(type));
 			selectSql.append(" where  Reference = :Reference ");
+		}
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Records are not found in {}{} for the specified Reference >> {}", tableName, type, reference);
+			renderMap = null;
+		}
+
+		logger.debug("Leaving");
+		return renderMap;
+	}
+
+	/**
+	 * Get Extended field details Maps by Reference
+	 */
+	@Override
+	public Map<String, Object> getExtendedField(String reference, int seqNo, String tableName, String type) {
+		logger.debug("Entering");
+
+		Map<String, Object> renderMap = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		source.addValue("SeqNo", seqNo);
+
+		StringBuilder selectSql = null;
+		if (StringUtils.startsWithIgnoreCase(type, "_View")) {
+			selectSql = new StringBuilder("Select * from (Select * from ");
+			selectSql.append(tableName);
+			selectSql.append("_Temp");
+			selectSql.append(" T1  UNION ALL  Select * from ");
+			selectSql.append(tableName);
+			selectSql.append(" T1  WHERE NOT EXISTS (SELECT 1 FROM ");
+			selectSql.append(tableName);
+			selectSql.append("_Temp");
+			selectSql.append(" where  Reference =T1.Reference)) T WHERE T.Reference = :Reference and SeqNo= :SeqNo ");
+		} else {
+			selectSql = new StringBuilder("Select * from ");
+			selectSql.append(tableName);
+			selectSql.append(StringUtils.trimToEmpty(type));
+			selectSql.append(" where  Reference = :Reference and SeqNo= :SeqNo ");
 		}
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -595,7 +634,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			renderMap = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, String>>() {
 				@Override
 				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					HashMap<String, String> mapRet = new HashMap<String, String>();
+					Map<String, String> mapRet = new HashMap<String, String>();
 					while (rs.next()) {
 						if (rs.getString("UpdateCpID") == null) {
 							mapRet.put(rs.getString("Reference"), rs.getString("UpdateCpID"));
@@ -644,7 +683,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			renderMap = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, String>>() {
 				@Override
 				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					HashMap<String, String> mapRet = new HashMap<String, String>();
+					Map<String, String> mapRet = new HashMap<String, String>();
 					while (rs.next()) {
 						if (rs.getString("UpdateCpID") != null) {
 							mapRet.put(rs.getString("Reference"), rs.getString("UpdateCpID"));
@@ -661,4 +700,5 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		logger.debug(Literal.LEAVING);
 		return renderMap;
 	}
+
 }

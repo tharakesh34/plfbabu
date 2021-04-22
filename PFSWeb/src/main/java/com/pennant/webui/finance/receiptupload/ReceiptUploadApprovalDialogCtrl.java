@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReceiptUploadApprover.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-07-2018    														*
- *                                                                  						*
- * Modified Date    :  18-07-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReceiptUploadApprover.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-07-2018 * *
+ * Modified Date : 18-07-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-07-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-07-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.receiptupload;
@@ -61,7 +43,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
@@ -89,6 +72,7 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -110,7 +94,7 @@ import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
  */
 public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 3184249234920071313L;
-	private static final Logger logger = Logger.getLogger(ReceiptUploadApprovalDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ReceiptUploadApprovalDialogCtrl.class);
 
 	protected Window window_ReceiptUploadApproval; // autoWired
 
@@ -241,7 +225,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 				out.write(outputStream.toByteArray());
 				out.closeEntry();
 
-				//this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_DOWNLOADED);
+				// this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_DOWNLOADED);
 			}
 			out.close();
 			String zipfileName = "ReceiptUpload.zip";
@@ -256,7 +240,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 				ByteArrayOutputStream outputStream = null;
 				outputStream = doDownloadFiles(id);
 				Filedownload.save(new AMedia(id, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
-				//	this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_DOWNLOADED);
+				// this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_DOWNLOADED);
 			}
 		}
 
@@ -275,7 +259,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 		logger.debug(Literal.ENTERING);
 
 		String whereCond = " where receiptUploadId in (" + "'" + id + "'" + ") and  UploadStatus in (" + "'"
-				+ PennantConstants.UPLOAD_STATUS_SUCCESS + "'" + ")";
+				+ ReceiptDetailStatus.SUCCESS.getValue() + "'" + ")";
 		StringBuilder searchCriteria = new StringBuilder(" ");
 
 		String reportName = "";
@@ -318,7 +302,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			reportArgumentsMap.put("reportHeading", reportName);
 			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 			reportArgumentsMap.put("appDate", DateUtility.getAppDate());
-			reportArgumentsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
+			reportArgumentsMap.put("appCcy", SysParamUtil.getAppCurrency());
 			reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 			reportArgumentsMap.put("unitParam", "Pff");
 			reportArgumentsMap.put("whereCondition", whereCond);
@@ -394,15 +378,16 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			return;
 		}
 
-		//check whether Connection established 
+		// check whether Connection established
 		doConnectionEstablished();
 
 		for (String id : listUploadId) {
-			//ReceiptUploadHeader receiptUploadHeader = receiptUploadHeaderService.getUploadHeaderById(Long.valueOf(id));
+			// ReceiptUploadHeader receiptUploadHeader =
+			// receiptUploadHeaderService.getUploadHeaderById(Long.valueOf(id));
 
 			doApprove(receiptUploadHeader);
 
-			//this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_APPROVED);
+			// this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_APPROVED);
 		}
 
 		clearData();
@@ -414,14 +399,14 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 
 	private void doApprove(ReceiptUploadHeader aReceiptUploadHeader) {
 
-		//Call Api
+		// Call Api
 		List<ReceiptUploadDetail> receiptUploadDetailList = callApi(aReceiptUploadHeader);
 
 		int sucessCount = 0;
 		int failedCount = 0;
 		if (receiptUploadDetailList != null && !receiptUploadDetailList.isEmpty()) {
 			for (ReceiptUploadDetail receiptUploadDetail : receiptUploadDetailList) {
-				if (PennantConstants.UPLOAD_STATUS_SUCCESS.equals(receiptUploadDetail.getUploadStatus())) {
+				if (ReceiptDetailStatus.SUCCESS.getValue() == receiptUploadDetail.getProcessingStatus()) {
 					sucessCount = sucessCount + 1;
 				} else {
 					failedCount = failedCount + 1;
@@ -429,10 +414,11 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			}
 		}
 
-		//Update Details
-		//this.receiptUploadHeaderService.updateStatusOFList(receiptUploadDetailList);
+		// Update Details
+		// this.receiptUploadHeaderService.updateStatusOFList(receiptUploadDetailList);
 
-		//this.receiptUploadHeaderService.uploadHeaderStatusCnt(aReceiptUploadHeader.getReceiptUploadId(), sucessCount,failedCount);
+		// this.receiptUploadHeaderService.uploadHeaderStatusCnt(aReceiptUploadHeader.getReceiptUploadId(),
+		// sucessCount,failedCount);
 
 	}
 
@@ -440,8 +426,8 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 
 		for (String id : listUploadId) {
 
-			//boolean isDownloaded = this.receiptUploadHeaderService.isFileDownloaded(id,
-			//		PennantConstants.RECEIPT_DOWNLOADED);
+			// boolean isDownloaded = this.receiptUploadHeaderService.isFileDownloaded(id,
+			// PennantConstants.RECEIPT_DOWNLOADED);
 			/*
 			 * if (!isDownloaded) { MessageUtil.showError("Upload id:" + id + " is not download atleast one time");
 			 * return true; }
@@ -478,7 +464,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 		}
 
 		for (String id : listUploadId) {
-			//this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_REJECTED);
+			// this.receiptUploadHeaderService.updateUploadProgress(id, PennantConstants.RECEIPT_REJECTED);
 			this.receiptUploadHeaderService.updateRejectStatusById(id, Labels.getLabel("receiptUpload_Reject"));
 		}
 
@@ -753,12 +739,12 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 	}
 
 	private void doConnectionEstablished() {
-		//connection 
+		// connection
 
 		WebClient client = null;
 		Response response = null;
 
-		//URLAuthorization
+		// URLAuthorization
 		String authorization = SysParamUtil.getValueAsString("URLAuthorization");
 
 		try {
@@ -788,13 +774,13 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 		List<ReceiptUploadDetail> receiptUploadList = new ArrayList<>();
 		for (ReceiptUploadDetail receiptUploadDetail : aReceiptUploadHeader.getReceiptUploadList()) {
 
-			if (receiptUploadDetail.getUploadStatus().equals(PennantConstants.UPLOAD_STATUS_FAIL)) {
+			if (receiptUploadDetail.getProcessingStatus() == ReceiptDetailStatus.FAILED.getValue()) {
 				receiptUploadList.add(receiptUploadDetail);
 				continue;
 			}
 
 			ReceiptUploadDetail UploadDetail = new ReceiptUploadDetail();
-			//	logger.debug("API REQUEST :: " + receiptUploadDetail.getJsonObject());
+			// logger.debug("API REQUEST :: " + receiptUploadDetail.getJsonObject());
 			String ReturnText = null;
 			String ReturnCode = null;
 			WebClient client = null;
@@ -809,7 +795,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			try {
 
 				String url = SysParamUtil.getValueAsString("RECEIPTAPIURL");
-				//URLAuthorization
+				// URLAuthorization
 
 				authorization = SysParamUtil.getValueAsString("URLAuthorization");
 
@@ -877,12 +863,12 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			UploadDetail.setUploadheaderId(receiptUploadDetail.getUploadheaderId());
 
 			if (StringUtils.equals("0000", ReturnCode)) {
-				UploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+				UploadDetail.setProcessingStatus(ReceiptDetailStatus.SUCCESS.getValue());
 				UploadDetail.setReason("");
 			} else {
-				UploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+				UploadDetail.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
 				UploadDetail.setReason(ReturnText);
-				UploadDetail.setReceiptId(0);
+				UploadDetail.setReceiptId(null);
 			}
 			receiptUploadList.add(UploadDetail);
 		}

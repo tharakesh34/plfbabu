@@ -45,7 +45,8 @@ package com.pennant.webui.administration.securityrole.model;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -61,7 +62,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class SecurityRoleListModelItemRenderer implements ListitemRenderer<SecurityRole>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(SecurityRoleListModelItemRenderer.class);
+	private static Logger logger = LogManager.getLogger(SecurityRoleListModelItemRenderer.class);
 
 	public SecurityRoleListModelItemRenderer() {
 

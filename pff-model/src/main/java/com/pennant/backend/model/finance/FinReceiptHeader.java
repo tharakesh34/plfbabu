@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -18,7 +21,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = -58727889587717168L;
 
-	private long receiptID = 0;// Auto Generated Sequence
+	private long receiptID = 0;
 	private Date receiptDate;
 	private String receiptType;
 	private String recAgainst;
@@ -58,7 +61,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String knockoffAmount;
 	private String slipNo;
 	private String realizeStatus;
-	private String bounceReason;
+	private long bounceReason;
 	private String realizeRemarks;
 	private String extReference;
 	private String module;
@@ -81,7 +84,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	protected Date loanClosureIntTillDate;
 
 	private Date depositDate;
-	private String depositBank;
 	private Date cancelDate;
 	private String lovDescRequestStage;
 
@@ -91,8 +93,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal gstLppAmount = BigDecimal.ZERO;
 
 	private String remarks;
-	private boolean depositProcess = false; // added for Cash Management 
-	private String depositBranch; // added for Cash Management 
+	private boolean depositProcess = false;
+	private String depositBranch;
 	private boolean newRecord;
 	private String lovValue;
 	private FinReceiptHeader befImage;
@@ -111,7 +113,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private Date nextRepayRvwDate;
 	private long knockOffRefId = 0;
 
-	//Upfront Fees
+	// Upfront Fees
 	private String finDivision;
 	private String customerCIF;
 	private String customerName;
@@ -130,8 +132,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private List<ManualAdviseReserve> payableReserves = new ArrayList<>(1);
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<>(1);
 	private List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<>(1);
-	private ManualAdvise manualAdvise; // Bounce Reason
-	private List<FinFeeDetail> paidFeeList = new ArrayList<FinFeeDetail>(1); // Paid Fee Detail List for Fee Receipt
+	private ManualAdvise manualAdvise;
+	private List<FinFeeDetail> paidFeeList = new ArrayList<FinFeeDetail>(1);
 	private List<FinODDetails> finODDetails = new ArrayList<>(1);
 	private List<ManualAdviseMovements> payablesMovements = new ArrayList<>(1);
 	private List<FinExcessMovement> finExcessMovements = new ArrayList<>(1);
@@ -167,17 +169,44 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private long batchId;
 	private long bounceId;
 	private String custBaseCcy;
-	private String favourNumber;
 	private Long reasonCode;
-
+	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private String prvReceiptPurpose;
 	private Long partnerBankId;
 	private String receiptSource;
 	private Long linkedTranId;
+	private BigDecimal refWaiverAmt = BigDecimal.ZERO; // default value 0
+	private String source = "PLF";
+	private Date recAppDate;
+	private Date receivedDate; // Payment date
+	private String bankCode;
+	private Date presentmentSchDate;
+	private boolean finTDSApplicable;
+	private String sourceofFund;
+	private BigDecimal tdsAmount = BigDecimal.ZERO;
+	private Long closureTypeId;
+	private String closureTypeDesc;
+	private boolean dedupCheckRequied = true;
+	private boolean writeoffLoan;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+	private String receiptSourceAcType;
+	private String receiptSourceAcDesc;
+	private String entityDesc;
+	private String sourceId;
+
+	public FinReceiptHeader() {
+		super();
+	}
+
+	public FinReceiptHeader(long id) {
+		super();
+		this.setId(id);
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("receiptDetails");
@@ -212,7 +241,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("lpiIdx");
 		excludeFields.add("lppIdx");
 		excludeFields.add("isPenalSeparate");
-		excludeFields.add("valueDate");
 		excludeFields.add("totalPastDues");
 		excludeFields.add("totalAdvises");
 		excludeFields.add("totalXcess");
@@ -256,7 +284,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("loanClosureReceiptDate");
 		excludeFields.add("loanClosureIntTillDate");
 		excludeFields.add("depositDate");
-		excludeFields.add("depositBank");
 		excludeFields.add("cancelDate");
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("waivedAmt");
@@ -280,27 +307,205 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("batchId");
 		excludeFields.add("bounceId");
 		excludeFields.add("custBaseCcy");
-		excludeFields.add("favourNumber");
-
-		excludeFields.add("prvReceiptPurpose");
-		excludeFields.add("partnerBankId");
 		excludeFields.add("receiptSource");
 		excludeFields.add("linkedTranId");
+		excludeFields.add("presentmentSchDate");
+		excludeFields.add("documentDetails");
+		excludeFields.add("finTDSApplicable");
+		excludeFields.add("closureTypeDesc");
+		excludeFields.add("entityDesc");
+		excludeFields.add("receiptSourceAcType");
+		excludeFields.add("receiptSourceAcDesc");
+		excludeFields.add("sourceId");
+		excludeFields.add("dedupCheckRequied");
+		excludeFields.add("writeoffLoan");
 
 		return excludeFields;
 	}
 
+	public FinReceiptHeader copyEntity() {
+		FinReceiptHeader entity = new FinReceiptHeader();
+		entity.setReceiptID(this.receiptID);
+		entity.setReceiptDate(this.receiptDate);
+		entity.setReceiptType(this.receiptType);
+		entity.setRecAgainst(this.recAgainst);
+		entity.setReference(this.reference);
+		entity.setReceiptPurpose(this.receiptPurpose);
+		entity.setReceiptMode(this.receiptMode);
+		entity.setExcessAdjustTo(this.excessAdjustTo);
+		entity.setFinType(this.finType);
+		entity.setFinTypeDesc(this.finTypeDesc);
+		entity.setFinBranch(this.finBranch);
+		entity.setFinBranchDesc(this.finBranchDesc);
+		entity.setFinCcy(this.finCcy);
+		entity.setFinCcyDesc(this.finCcyDesc);
+		entity.setCustID(this.custID);
+		entity.setCustCIF(this.custCIF);
+		entity.setCustShrtName(this.custShrtName);
+		entity.setAllocationType(this.allocationType);
+		entity.setReceiptAmount(this.receiptAmount);
+		entity.setEffectSchdMethod(this.effectSchdMethod);
+		entity.setReceiptModeStatus(this.receiptModeStatus);
+		entity.setRealizationDate(this.realizationDate);
+		entity.setCancelReason(this.cancelReason);
+		entity.setCancelReasonDesc(this.cancelReasonDesc);
+		entity.setFinIsActive(this.finIsActive);
+		entity.setScheduleMethod(this.scheduleMethod);
+		entity.setPftDaysBasis(this.pftDaysBasis);
+		entity.setWaviedAmt(this.waviedAmt);
+		entity.setTotFeeAmount(this.totFeeAmount);
+		entity.setBounceDate(this.bounceDate);
+		entity.setRcdMaintainSts(this.rcdMaintainSts);
+		entity.setCashierBranch(this.cashierBranch);
+		entity.setInitiateDate(this.initiateDate);
+		entity.setPartnerBankCode(this.partnerBankCode);
+		entity.setKnockoffId(this.knockoffId);
+		entity.setKnockoffFrom(this.knockoffFrom);
+		entity.setKnockoffRefDate(this.knockoffRefDate);
+		entity.setKnockoffAmount(this.knockoffAmount);
+		entity.setSlipNo(this.slipNo);
+		entity.setRealizeStatus(this.realizeStatus);
+		entity.setBounceReason(this.bounceReason);
+		entity.setRealizeRemarks(this.realizeRemarks);
+		entity.setExtReference(this.extReference);
+		entity.setModule(this.module);
+		entity.setSubReceiptMode(this.subReceiptMode);
+		entity.setReceiptChannel(this.receiptChannel);
+		entity.setCollectionAgentId(this.collectionAgentId);
+		entity.setCollectionAgentCode(this.collectionAgentCode);
+		entity.setCollectionAgentDesc(this.collectionAgentDesc);
+		entity.setReceivedFrom(this.receivedFrom);
+		entity.setPanNumber(this.panNumber);
+		entity.setPaymentType(this.paymentType);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setActFinReceipt(this.actFinReceipt);
+		entity.setLoanClosureCustCIF(this.loanClosureCustCIF);
+		entity.setLoanClosureFinReference(this.loanClosureFinReference);
+		entity.setLoanClosureKnockOffFrom(this.loanClosureKnockOffFrom);
+		entity.setLoanClosureRefId(this.loanClosureRefId);
+		entity.setLoanClosureReceiptDate(this.loanClosureReceiptDate);
+		entity.setLoanClosureIntTillDate(this.loanClosureIntTillDate);
+		entity.setDepositDate(this.depositDate);
+		entity.setCancelDate(this.cancelDate);
+		entity.setLovDescRequestStage(this.lovDescRequestStage);
+		entity.setLpiAmount(this.lpiAmount);
+		entity.setLppAmount(this.lppAmount);
+		entity.setGstLpiAmount(this.gstLpiAmount);
+		entity.setGstLppAmount(this.gstLppAmount);
+		entity.setRemarks(this.remarks);
+		entity.setDepositProcess(this.depositProcess);
+		entity.setDepositBranch(this.depositBranch);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setPostBranch(this.postBranch);
+		entity.setLogSchInPresentment(this.logSchInPresentment);
+		entity.setGDRAvailable(this.gDRAvailable);
+		entity.setReleaseType(this.releaseType);
+		entity.setThirdPartyName(this.thirdPartyName);
+		entity.setThirdPartyMobileNum(this.thirdPartyMobileNum);
+		entity.setTransactionRef(this.transactionRef);
+		entity.setPromotionCode(this.promotionCode);
+		entity.setProductCategory(this.productCategory);
+		entity.setNextRepayRvwDate(this.nextRepayRvwDate);
+		entity.setKnockOffRefId(this.knockOffRefId);
+		entity.setFinDivision(this.finDivision);
+		entity.setCustomerCIF(this.customerCIF);
+		entity.setCustomerName(this.customerName);
+		entity.setPostBranchDesc(this.postBranchDesc);
+		entity.setCashierBranchDesc(this.cashierBranchDesc);
+		entity.setFinDivisionDesc(this.finDivisionDesc);
+		entity.setEntityCode(this.entityCode);
+		entity.setCancelRemarks(this.cancelRemarks);
+		entity.setKnockOffType(this.knockOffType);
+		this.receiptDetails.stream().forEach(e -> entity.getReceiptDetails().add(e == null ? null : e.copyEntity()));
+		this.excessAmounts.stream().forEach(e -> entity.getExcessAmounts().add(e == null ? null : e.copyEntity()));
+		this.excessReserves.stream().forEach(e -> entity.getExcessReserves().add(e == null ? null : e.copyEntity()));
+		this.payableAdvises.stream().forEach(e -> entity.getPayableAdvises().add(e == null ? null : e.copyEntity()));
+		this.receivableAdvises.stream()
+				.forEach(e -> entity.getReceivableAdvises().add(e == null ? null : e.copyEntity()));
+		this.payableReserves.stream().forEach(e -> entity.getPayableReserves().add(e == null ? null : e.copyEntity()));
+		this.allocations.stream().forEach(e -> entity.getAllocations().add(e == null ? null : e.copyEntity()));
+		this.allocationsSummary.stream()
+				.forEach(e -> entity.getAllocationsSummary().add(e == null ? null : e.copyEntity()));
+		entity.setManualAdvise(this.manualAdvise == null ? null : this.manualAdvise.copyEntity());
+		this.paidFeeList.stream().forEach(e -> entity.getPaidFeeList().add(e == null ? null : e.copyEntity()));
+		this.finODDetails.stream().forEach(e -> entity.getFinODDetails().add(e == null ? null : e.copyEntity()));
+		this.payablesMovements.stream()
+				.forEach(e -> entity.getPayablesMovements().add(e == null ? null : e.copyEntity()));
+		this.finExcessMovements.stream()
+				.forEach(e -> entity.getFinExcessMovements().add(e == null ? null : e.copyEntity()));
+		this.xcessPayables.stream().forEach(e -> entity.getXcessPayables().add(e == null ? null : e.copyEntity()));
+		entity.setBalAmount(this.balAmount);
+		entity.setPartPayAmount(this.partPayAmount);
+		entity.setTds(this.tds);
+		entity.setSchdIdx(this.schdIdx);
+		entity.setOdIdx(this.odIdx);
+		entity.setPftIdx(this.pftIdx);
+		entity.setFutPftIdx(this.futPftIdx);
+		entity.setTdsIdx(this.tdsIdx);
+		entity.setFutTdsIdx(this.futTdsIdx);
+		entity.setNPftIdx(this.nPftIdx);
+		entity.setFutNPftIdx(this.futNPftIdx);
+		entity.setPriIdx(this.priIdx);
+		entity.setFutPriIdx(this.futPriIdx);
+		entity.setLpiIdx(this.lpiIdx);
+		entity.setLppIdx(this.lppIdx);
+		entity.setEmiIdx(this.emiIdx);
+		entity.setPpIdx(this.ppIdx);
+		entity.setPenalSeparate(this.isPenalSeparate);
+		entity.setValueDate(this.valueDate);
+		entity.setTotalPastDues(this.totalPastDues == null ? null : this.totalPastDues.copyEntity());
+		entity.setTotalRcvAdvises(this.totalRcvAdvises == null ? null : this.totalRcvAdvises.copyEntity());
+		entity.setTotalXcess(this.totalXcess == null ? null : this.totalXcess.copyEntity());
+		entity.setTotalFees(this.totalFees == null ? null : this.totalFees.copyEntity());
+		entity.setTotalBounces(this.totalBounces == null ? null : this.totalBounces.copyEntity());
+		entity.setLoanInActive(this.loanInActive);
+		entity.setPayAgainstId(this.payAgainstId);
+		entity.setBatchId(this.batchId);
+		entity.setBounceId(this.bounceId);
+		entity.setCustBaseCcy(this.custBaseCcy);
+		entity.setReasonCode(this.reasonCode);
+		this.documentDetails.stream().forEach(e -> entity.getDocumentDetails().add(e == null ? null : e.copyEntity()));
+
+		entity.setPrvReceiptPurpose(this.prvReceiptPurpose);
+		entity.setPartnerBankId(this.partnerBankId);
+		entity.setReceiptSource(this.receiptSource);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setRefWaiverAmt(this.refWaiverAmt);
+		entity.setSource(this.source);
+		entity.setRecAppDate(this.recAppDate);
+		entity.setReceivedDate(this.receivedDate);
+		entity.setBankCode(this.bankCode);
+		entity.setPresentmentSchDate(this.presentmentSchDate);
+		entity.setFinTDSApplicable(this.finTDSApplicable);
+		entity.setSourceofFund(this.sourceofFund);
+		entity.setTdsAmount(this.tdsAmount);
+		entity.setClosureTypeId(this.closureTypeId);
+		entity.setClosureTypeDesc(this.closureTypeDesc);
+		entity.setDedupCheckRequied(this.dedupCheckRequied);
+		entity.setWriteoffLoan(this.writeoffLoan);
+		entity.setReceiptSourceAcType(this.receiptSourceAcType);
+		entity.setReceiptSourceAcDesc(this.receiptSourceAcDesc);
+		entity.setEntityDesc(this.entityDesc);
+		entity.setSourceId(this.sourceId);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public FinReceiptHeader() {
-		super();
-	}
-
-	public FinReceiptHeader(long id) {
-		super();
-		this.setId(id);
 	}
 
 	public long getId() {
@@ -1055,14 +1260,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.depositDate = depositDate;
 	}
 
-	public String getDepositBank() {
-		return depositBank;
-	}
-
-	public void setDepositBank(String depositBank) {
-		this.depositBank = depositBank;
-	}
-
 	public Date getCancelDate() {
 		return cancelDate;
 	}
@@ -1159,11 +1356,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.realizeStatus = realizeStatus;
 	}
 
-	public String getBounceReason() {
+	public long getBounceReason() {
 		return bounceReason;
 	}
 
-	public void setBounceReason(String bounceReason) {
+	public void setBounceReason(long bounceReason) {
 		this.bounceReason = bounceReason;
 	}
 
@@ -1413,20 +1610,28 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.custBaseCcy = custBaseCcy;
 	}
 
-	public String getFavourNumber() {
-		return favourNumber;
-	}
-
-	public void setFavourNumber(String favourNumber) {
-		this.favourNumber = favourNumber;
-	}
-
 	public Long getReasonCode() {
 		return reasonCode;
 	}
 
 	public void setReasonCode(Long reasonCode) {
 		this.reasonCode = reasonCode;
+	}
+
+	public List<DocumentDetails> getDocumentDetails() {
+		return documentDetails;
+	}
+
+	public void setDocumentDetails(List<DocumentDetails> documentDetails) {
+		this.documentDetails = documentDetails;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
 	}
 
 	public String getPrvReceiptPurpose() {
@@ -1475,6 +1680,141 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setLinkedTranId(Long linkedTranId) {
 		this.linkedTranId = linkedTranId;
+	}
+
+	public BigDecimal getRefWaiverAmt() {
+		return refWaiverAmt;
+	}
+
+	public void setRefWaiverAmt(BigDecimal refWaiverAmt) {
+		this.refWaiverAmt = refWaiverAmt;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public Date getRecAppDate() {
+		return recAppDate;
+	}
+
+	public void setRecAppDate(Date recAppDate) {
+		this.recAppDate = recAppDate;
+	}
+
+	public Date getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(Date receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public Date getPresentmentSchDate() {
+		return presentmentSchDate;
+	}
+
+	public void setPresentmentSchDate(Date presentmentSchDate) {
+		this.presentmentSchDate = presentmentSchDate;
+	}
+
+	public boolean isFinTDSApplicable() {
+		return finTDSApplicable;
+	}
+
+	public void setFinTDSApplicable(boolean finTDSApplicable) {
+		this.finTDSApplicable = finTDSApplicable;
+	}
+
+	public String getSourceofFund() {
+		return sourceofFund;
+	}
+
+	public void setSourceofFund(String sourceofFund) {
+		this.sourceofFund = sourceofFund;
+	}
+
+	public BigDecimal getTdsAmount() {
+		return tdsAmount;
+	}
+
+	public void setTdsAmount(BigDecimal tdsAmount) {
+		this.tdsAmount = tdsAmount;
+	}
+
+	public Long getClosureTypeId() {
+		return closureTypeId;
+	}
+
+	public void setClosureTypeId(Long closureTypeId) {
+		this.closureTypeId = closureTypeId;
+	}
+
+	public String getClosureTypeDesc() {
+		return closureTypeDesc;
+	}
+
+	public void setClosureTypeDesc(String closureTypeDesc) {
+		this.closureTypeDesc = closureTypeDesc;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public String getReceiptSourceAcType() {
+		return receiptSourceAcType;
+	}
+
+	public void setReceiptSourceAcType(String receiptSourceAcType) {
+		this.receiptSourceAcType = receiptSourceAcType;
+	}
+
+	public String getReceiptSourceAcDesc() {
+		return receiptSourceAcDesc;
+	}
+
+	public void setReceiptSourceAcDesc(String receiptSourceAcDesc) {
+		this.receiptSourceAcDesc = receiptSourceAcDesc;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public boolean isDedupCheckRequied() {
+		return dedupCheckRequied;
+	}
+
+	public void setDedupCheckRequied(boolean dedupCheckRequied) {
+		this.dedupCheckRequied = dedupCheckRequied;
+	}
+	public boolean isWriteoffLoan() {
+		return writeoffLoan;
+	}
+
+	public void setWriteoffLoan(boolean writeoffLoan) {
+		this.writeoffLoan = writeoffLoan;
 	}
 
 }

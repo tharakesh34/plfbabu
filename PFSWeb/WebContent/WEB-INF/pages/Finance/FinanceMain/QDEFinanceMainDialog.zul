@@ -66,12 +66,12 @@
 											</columns>
 											<rows>
 												<row>
-													<label id="label_CustCIF" value="${c:l('label_CustCIF.value')}" />
+													<label id="label_MurabahaFinanceMainDialog_CustID" value="${c:l('label_MurabahaFinanceMainDialog_CustID.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<longbox id="custID" width="171px" maxlength="26" visible="false" />
 														<uppercasebox id="custCIF" width="150px" readonly="true" />
-														<button id="btnSearchCustCIF" tooltiptext="${c:l('label_ConvFinanceMainDialog_btnSearchCustCIF.tooltiptext')}"
+														<button id="btnSearchCustCIF" tooltiptext="${c:l('label_MurabahaFinanceMainDialog_btnSearchCustCIF.tooltiptext')}"
 															image="/images/icons/LOVSearch.png" visible="false" />
 														<label id="custShrtName" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 														<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}"
@@ -172,14 +172,14 @@
 											</columns>
 											<rows>
 												<row id="row_PromotionProduct">
-													<label id="label_FinType" value="${c:l('label_FinType.value')}" />
+													<label id="label_MurabahaFinanceMainDialog_FinType" value="${c:l('label_MurabahaFinanceMainDialog_FinType.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<textbox id="finType" width="72px" visible="false" />
 														<textbox id="lovDescFinTypeName" width="250px" readonly="true" />
 														<button id="btnSearchFinType" image="/images/icons/LOVSearch.png" disabled="true" visible="false" />
 													</hbox>
-													<label id="label_PromotionProduct" value="${c:l('label_ConvFinanceMainDialog_PromotionProduct.value')}" />
+													<label id="label_PromotionProduct" value="${c:l('label_MurabahaFinanceMainDialog_PromotionProduct.value')}" />
 													<hbox id="hboxPromotionProduct">
 														<space spacing="2px" sclass="mandatory" />
 														<textbox id="promotionProduct" width="250px" readonly="true" />

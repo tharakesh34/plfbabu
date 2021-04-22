@@ -75,7 +75,7 @@ public interface AssetClassificationHeaderDAO extends BasicCrudDao<AssetClassifi
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long id, String code, int stageOrder, TableType tableType);
+	boolean isDuplicateKey(long id, String code, int stageOrder, Long npaTemplateId, TableType tableType);
 
 	void saveFinType(AssetClassificationDetail assetClassificationDetail, TableType tableType);
 
@@ -89,11 +89,13 @@ public interface AssetClassificationHeaderDAO extends BasicCrudDao<AssetClassifi
 
 	AssetClassificationDetail getAssetClassificationDetail(long id, String type);
 
-	boolean isStageOrderExists(int stageOrder, TableType type);
+	boolean isStageOrderExists(int stageOrder, Long npaTemplateId, TableType type);
 
 	boolean isAssetCodeExists(String code, TableType type);
 
 	List<AssetClassificationDetail> getAssetClassificationDetails(String finType, TableType tableType);
 
 	public int getCountByFinType(String id, TableType type);
+
+	List<AssetClassificationHeader> getAssetClassificationHeaderByTemplate(long templateId, String tableType);
 }

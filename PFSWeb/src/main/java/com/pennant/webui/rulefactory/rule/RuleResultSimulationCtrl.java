@@ -1,12 +1,19 @@
 package com.pennant.webui.rulefactory.rule;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
@@ -30,12 +37,14 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
 /**
  * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/RuleResultSimulation.zul file.
  */
 public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	private static final long serialVersionUID = -546886879998950467L;
-	private static final Logger logger = Logger.getLogger(RuleResultSimulationCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RuleResultSimulationCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -60,7 +69,6 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	List<String> variables = new ArrayList<String>();
 	List<GlobalVariable> globalList = new ArrayList<GlobalVariable>();
 	String ruleResult = "";
-	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleReturnType returnType = null;
 
 	/**
@@ -102,7 +110,12 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 			globalList = (List<GlobalVariable>) arguments.get("varList");
 		}
 
-		ruleResult = ruleBuilder.getSqlQuery();
+		String splCodemirror = "";
+		if (arguments.containsKey("splCodemirror")) {
+			splCodemirror = (String) arguments.get("splCodemirror");
+		}
+
+		ruleResult = splCodemirror + ruleBuilder.getSqlQuery();
 		returnType = ruleBuilder.getRuleType();
 
 		Map<String, String> usedMapValues = new HashMap<String, String>();
@@ -148,6 +161,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 					break;
 
 				case "smalldatetime":
+				case "datetime":
 					datebox = new Datebox();
 					datebox.setId(details.getRbFldName());
 					row.appendChild(datebox);
@@ -165,7 +179,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (rows_Fields.getVisibleItemCount() == 0) {
-			Object result = ruleExecutionUtil.executeRule(ruleResult, null, null, this.returnType);
+			Object result = RuleExecutionUtil.executeRule(ruleResult, null, null, this.returnType);
 			getRuleResult(result);
 			this.btn_Stimulate.setVisible(false);
 		}
@@ -188,40 +202,137 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * On click event for stimulate button
 	 */
-	public void onClick$btn_Stimulate(Event event) throws InterruptedException {
+	public void onClick$btn_Stimulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		// evaluate JavaScript code from String
-		try {
-			for (int i = 0; i < variables.size(); i++) {
-				if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Textbox) {
-					textbox = (Textbox) rows_Fields.getFellowIfAny(variables.get(i));
-					map.put(textbox.getId().trim(), textbox.getValue().trim());
-				} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Intbox) {
-					intbox = (Intbox) rows_Fields.getFellowIfAny(variables.get(i));
-					map.put(intbox.getId().trim(), intbox.intValue());
-				} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Decimalbox) {
-					decimalbox = (Decimalbox) rows_Fields.getFellowIfAny(variables.get(i));
-					//map.put(decimalbox.getId().trim(), PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), PennantConstants.defaultCCYDecPos));
-					map.put(decimalbox.getId().trim(), decimalbox.getValue());
-				} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Datebox) {
-					datebox = (Datebox) rows_Fields.getFellowIfAny(variables.get(i));
-					map.put(datebox.getId().trim(), datebox.getValue());
-				} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Checkbox) {
-					checkbox = (Checkbox) rows_Fields.getFellowIfAny(variables.get(i));
-					map.put(checkbox.getId().trim(), checkbox.isChecked());
+		boolean splRule = false;
+		if (splRule) {
+			// create a script engine manager
+			ScriptEngineManager factory = new ScriptEngineManager();
+			// create a JavaScript engine
+			ScriptEngine engine = factory.getEngineByName("JavaScript");
+			// evaluate JavaScript code from String
+			try {
+				for (int i = 0; i < variables.size(); i++) {
+					if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Textbox) {
+						textbox = (Textbox) rows_Fields.getFellowIfAny(variables.get(i));
+						// bindings to the engine
+						engine.put(textbox.getId().trim(), textbox.getValue().trim());
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Intbox) {
+						intbox = (Intbox) rows_Fields.getFellowIfAny(variables.get(i));
+						// bindings to the engine
+						engine.put(intbox.getId().trim(), intbox.intValue());
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Decimalbox) {
+						decimalbox = (Decimalbox) rows_Fields.getFellowIfAny(variables.get(i));
+						// bindings to the engine
+						engine.put(decimalbox.getId().trim(), decimalbox.getValue());
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Datebox) {
+						datebox = (Datebox) rows_Fields.getFellowIfAny(variables.get(i));
+						// bindings to the engine
+						engine.put(datebox.getId().trim(), datebox.getValue());
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Checkbox) {
+						checkbox = (Checkbox) rows_Fields.getFellowIfAny(variables.get(i));
+						// bindings to the engine
+						engine.put(checkbox.getId().trim(), checkbox.isChecked());
+					}
 				}
+
+				String amountRule = ruleResult;
+
+				// Execute the engine
+				String rule = "function Rule(){" + amountRule + "}Rule();";
+				BigDecimal tempResult = BigDecimal.ZERO;
+				String result = "0";
+
+				if (engine.eval(rule) != null) {
+					tempResult = new BigDecimal(engine.eval(rule).toString());
+					result = tempResult.toString();
+				} else {
+					if (engine.get("Result") != null) {
+						if (engine.get("Result") instanceof ScriptObjectMirror) {
+							ScriptObjectMirror nav = (ScriptObjectMirror) engine.get("Result");
+							if (nav != null) {
+								Map<String, String> map = new HashMap<String, String>();
+								for (String resultKey : nav.keySet()) {
+									String key = resultKey;
+									String value = String.valueOf(nav.get(resultKey));
+									map.put(key, value);
+								}
+								result = "";
+								for (String key : map.keySet()) {
+									result = result.concat(key + " : " + map.get(key) + " ,");
+								}
+							}
+						} else {
+							result = engine.get("Result").toString();
+							try {
+
+								if (returnType.value().equalsIgnoreCase("Decimal")) {
+									tempResult = new BigDecimal(result);
+									tempResult = tempResult.setScale(2, RoundingMode.UP);
+									result = tempResult.toString();
+								} else if (returnType.value().equalsIgnoreCase("String")) {
+									result = result.trim().toString();
+								} else {
+									tempResult = new BigDecimal(result);
+									tempResult = tempResult.setScale(0, RoundingMode.FLOOR);
+									result = tempResult.toString();
+								}
+
+							} catch (Exception e) {
+								//do Nothing-- if return type is not a decimal
+								result = engine.get("Result").toString();
+							}
+						}
+
+					}
+				}
+
+				// make result row visible and set value
+				this.rowResult.setVisible(true);
+				this.result.setValue(result);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
+			logger.debug("Leaving" + event.toString());
 
-			Object object = ruleExecutionUtil.executeRule(ruleResult, map, null, returnType);
+		} else {
 
-			// make result row visible and set value
-			getRuleResult(object);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			// evaluate JavaScript code from String
+			try {
+				for (int i = 0; i < variables.size(); i++) {
+					if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Textbox) {
+						textbox = (Textbox) rows_Fields.getFellowIfAny(variables.get(i));
+						map.put(textbox.getId().trim(), textbox.getValue().trim());
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Intbox) {
+						intbox = (Intbox) rows_Fields.getFellowIfAny(variables.get(i));
+						map.put(intbox.getId().trim(), intbox.intValue());
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Decimalbox) {
+						decimalbox = (Decimalbox) rows_Fields.getFellowIfAny(variables.get(i));
+						//map.put(decimalbox.getId().trim(), PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), PennantConstants.defaultCCYDecPos));
+						map.put(decimalbox.getId().trim(), decimalbox.getValue());
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Datebox) {
+						datebox = (Datebox) rows_Fields.getFellowIfAny(variables.get(i));
+						String value = new SimpleDateFormat("dd-MM-yyyy").format(datebox.getValue());
+						map.put(datebox.getId().trim(), value);
+					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Checkbox) {
+						checkbox = (Checkbox) rows_Fields.getFellowIfAny(variables.get(i));
+						map.put(checkbox.getId().trim(), checkbox.isChecked());
+					}
+				}
+
+				Object object = RuleExecutionUtil.executeRule(ruleResult, map, null, returnType);
+
+				// make result row visible and set value
+				getRuleResult(object);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+			logger.debug("Leaving" + event.toString());
+
 		}
-		logger.debug("Leaving" + event.toString());
+
 	}
 
 	/**
@@ -279,13 +390,5 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 		// make result row visible and set value
 		this.rowResult.setVisible(true);
 		this.result.setValue(resultValue);
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 }

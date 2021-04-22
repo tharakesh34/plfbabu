@@ -44,7 +44,8 @@ package com.pennant.webui.util;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Window;
@@ -58,7 +59,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Serializable {
 	private static final long serialVersionUID = 7494345200993379495L;
-	private static final Logger logger = Logger.getLogger(ProcessViewCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ProcessViewCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

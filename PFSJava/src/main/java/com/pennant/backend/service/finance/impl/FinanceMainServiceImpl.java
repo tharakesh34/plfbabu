@@ -203,6 +203,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
+	public Date getFinClosedDate(String finReference) {
+		return financeMainDAO.getClosedDate(finReference);
+	}
+
+	@Override
 	public ErrorDetail rescheduleValidation(Date receiptDate, String finReference, Date startDate) {
 		// TODO Auto-generated method stub
 		return null;
@@ -214,8 +219,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public FinanceMain getFinanceMain(String finReference, String[] columns) {
-		return financeMainDAO.getFinanceMain(finReference, columns);
+	public FinanceMain getFinanceMain(String finReference, String[] columns, String type) {
+		return financeMainDAO.getFinanceMain(finReference, columns, type);
 	}
 
 	@Override

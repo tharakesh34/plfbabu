@@ -8,6 +8,8 @@ import java.util.Map;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
+import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.ReceiptAPIRequest;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -96,4 +98,28 @@ public interface FinReceiptHeaderDAO {
 	String getLoanReferenc(String finReference, String receiptFileName);
 
 	boolean isReceiptsInProcess(String reference, String receiptPurpose, long receiptId, String type);
+
+	FinReceiptHeader getFinTypeByReceiptID(long receiptID);
+
+	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
+
+	boolean isReceiptExists(String reference, String type);
+
+	List<Long> isDedupReceiptExists(FinServiceInstruction fsi);
+
+	//### 15-12-2020, ST#1627
+	FinReceiptHeader getNonLanReceiptHeader(long receiptID, String type);
+
+	long getCollectionAgencyId(String collectionAgency);
+
+	void updateCollectionMobAgencyLimit(ReceiptAPIRequest request);
+
+	long saveCollectionAPILog(ReceiptAPIRequest request);
+
+	List<ReceiptAPIRequest> getCollectionAPILog();
+
+	Date getMaxReceiptDateByRef(String finrefeRence);
+
+	List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate, Date endDate,
+			String type);
 }

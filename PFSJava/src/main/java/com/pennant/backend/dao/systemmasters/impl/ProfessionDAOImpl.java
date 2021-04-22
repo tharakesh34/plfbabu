@@ -43,15 +43,16 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.ProfessionDAO;
 import com.pennant.backend.model.systemmasters.Profession;
@@ -67,7 +68,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * 
  */
 public class ProfessionDAOImpl extends BasicDao<Profession> implements ProfessionDAO {
-	private static Logger logger = Logger.getLogger(ProfessionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(ProfessionDAOImpl.class);
 
 	public ProfessionDAOImpl() {
 		super();
@@ -99,7 +100,7 @@ public class ProfessionDAOImpl extends BasicDao<Profession> implements Professio
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(profession);
-		RowMapper<Profession> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Profession.class);
+		RowMapper<Profession> typeRowMapper = BeanPropertyRowMapper.newInstance(Profession.class);
 
 		try {
 			profession = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

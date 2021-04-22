@@ -45,7 +45,8 @@ package com.pennant.backend.service.feetype.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTypeService {
-	private static final Logger logger = Logger.getLogger(FeeTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(FeeTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FeeTypeDAO feeTypeDAO;
@@ -356,8 +357,7 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	}
 
 	@Override
-	public long getFinFeeTypeIdByFeeType(String feeTypeCode) {
-
+	public Long getFinFeeTypeIdByFeeType(String feeTypeCode) {
 		return feeTypeDAO.getFinFeeTypeIdByFeeType(feeTypeCode, "_View");
 	}
 

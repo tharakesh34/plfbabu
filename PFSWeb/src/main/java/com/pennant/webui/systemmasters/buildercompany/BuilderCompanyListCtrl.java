@@ -45,7 +45,8 @@ package com.pennant.webui.systemmasters.buildercompany;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -77,7 +78,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(BuilderCompanyListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BuilderCompanyListCtrl.class);
 
 	protected Window window_BuilderCompanyList;
 	protected Borderlayout borderLayout_BuilderCompanyList;
@@ -88,7 +89,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	protected Listheader listheader_name;
 	protected Listheader listheader_segmentation;
 	protected Listheader listheader_groupId;
-	protected Listheader listheader_active;
+	//protected Listheader listheader_active;
 
 	// checkRights
 	protected Button button_BuilderCompanyList_NewBuilderCompany;
@@ -153,6 +154,7 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation,
 				Operators.STRING);
 		registerField("groupId", listheader_groupId, SortOrder.NONE, groupId, sortOperator_groupId, Operators.NUMERIC);
+		//registerField("active", listheader_active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 		registerField("groupIdName");
 		doSetFieldProperties();
 		// Render the page and display the data.

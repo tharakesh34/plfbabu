@@ -46,13 +46,14 @@ package com.pennant.backend.dao.solutionfactory.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -65,7 +66,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class StepPolicyDetailDAOImpl extends BasicDao<StepPolicyDetail> implements StepPolicyDetailDAO {
-	private static Logger logger = Logger.getLogger(StepPolicyDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(StepPolicyDetailDAOImpl.class);
 
 	public StepPolicyDetailDAOImpl() {
 		super();
@@ -124,8 +125,7 @@ public class StepPolicyDetailDAOImpl extends BasicDao<StepPolicyDetail> implemen
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyDetail);
-		RowMapper<StepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(StepPolicyDetail.class);
+		RowMapper<StepPolicyDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(StepPolicyDetail.class);
 
 		List<StepPolicyDetail> StepPolicyDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -156,8 +156,7 @@ public class StepPolicyDetailDAOImpl extends BasicDao<StepPolicyDetail> implemen
 
 		logger.debug("selectListSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(stepPolicyDetail);
-		RowMapper<StepPolicyDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(StepPolicyDetail.class);
+		RowMapper<StepPolicyDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(StepPolicyDetail.class);
 
 		try {
 			stepPolicyDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

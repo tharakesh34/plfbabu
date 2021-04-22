@@ -46,8 +46,10 @@ package com.pennant.backend.dao.lmtmasters;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.coreinterface.model.handlinginstructions.HandlingInstruction;
 
 public interface FinanceReferenceDetailDAO {
 
@@ -83,11 +85,13 @@ public interface FinanceReferenceDetailDAO {
 
 	List<FinanceReferenceDetail> getFinanceRefListByFinType(String product, String type);
 
+	void saveHandlInstructionDetails(HandlingInstruction handlingInstruction);
+
 	FinCollaterals getFinCollaterals(String finReference, String collateralType);
 
 	int getFinanceReferenceDetailByRuleCode(long ruleId, String type);
 
-	String getAllowedRolesByCode(String finType, int finRefType, String quickDisbCode);
+	String getAllowedRolesByCode(String finType, int finRefType, String quickDisbCode, String finEvent);
 	// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
 
 	String getWorkflowType(String finType, String finEvent, String module);
@@ -109,4 +113,6 @@ public interface FinanceReferenceDetailDAO {
 			Integer finRefType, String type);
 
 	List<FinanceReferenceDetail> getAgreemantsListByFinType(String finType);
+
+	List<SecurityUser> getUpLevelUsers(long usrId, String branch);
 }

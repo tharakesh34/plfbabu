@@ -46,15 +46,16 @@ package com.pennant.backend.dao.receipts.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.model.finance.DepositCheques;
@@ -70,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>DepositCheques</code> with set of CRUD operations.
  */
 public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implements DepositChequesDAO {
-	private static Logger logger = Logger.getLogger(DepositChequesDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(DepositChequesDAOImpl.class);
 
 	public DepositChequesDAOImpl() {
 		super();
@@ -217,7 +218,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		depositCheques.setMovementId(movementId);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositCheques);
-		RowMapper<DepositCheques> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
+		RowMapper<DepositCheques> rowMapper = BeanPropertyRowMapper.newInstance(DepositCheques.class);
 		list = jdbcTemplate.query(sql.toString(), beanParameters, rowMapper);
 
 		logger.debug(Literal.LEAVING);
@@ -232,7 +233,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, FavourNumber, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
+				" SELECT ReceiptId, Receiptpurpose, ReceiptMode, Remarks, TransactionRef, ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
 		sql.append(" FROM FinReceiptHeader_DView");
 		sql.append(" WHERE DepositBranch = :DepositBranch");
 
@@ -241,7 +242,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("DepositBranch", branchCode);
-		RowMapper<DepositCheques> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
+		RowMapper<DepositCheques> typeRowMapper = BeanPropertyRowMapper.newInstance(DepositCheques.class);
 
 		try {
 			list = jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
@@ -306,7 +307,7 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 		depositCheques.setReceiptId(receiptID);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(depositCheques);
-		RowMapper<DepositCheques> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DepositCheques.class);
+		RowMapper<DepositCheques> rowMapper = BeanPropertyRowMapper.newInstance(DepositCheques.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, rowMapper);

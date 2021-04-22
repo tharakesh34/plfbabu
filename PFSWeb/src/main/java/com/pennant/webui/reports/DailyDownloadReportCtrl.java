@@ -59,7 +59,8 @@ import java.util.zip.ZipOutputStream;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -98,7 +99,7 @@ import net.sf.jasperreports.engine.util.JRSwapFile;
 
 public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConfiguration> {
 	private static final long serialVersionUID = 4678287540046204660L;
-	private static final Logger logger = Logger.getLogger(DailyDownloadReportCtrl.class);
+	private static final Logger logger = LogManager.getLogger(DailyDownloadReportCtrl.class);
 
 	protected Window window_DialyDownloadReport;
 	protected Combobox moduleName;

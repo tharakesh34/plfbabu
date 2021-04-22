@@ -46,7 +46,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -60,6 +61,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -69,7 +71,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>PaymentInstruction</code> with set of CRUD operations.
  */
 public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> implements PaymentInstructionDAO {
-	private static Logger logger = Logger.getLogger(PaymentInstructionDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(PaymentInstructionDAOImpl.class);
 
 	public PaymentInstructionDAOImpl() {
 		super();
@@ -100,14 +102,14 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks, PartnerBankId");
 		sql.append(", IssuingBank, FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate");
-		sql.append(", Status, TransactionRef, BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode");
-		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy");
+		sql.append(", Status, RejectReason, TransactionRef, BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode");
+		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy, RejectReason");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", PartnerBankCode, PartnerBankName, BankBranchIFSC, BankBranchCode");
-			sql.append(", IssuingBankName, PCCityName, BranchDesc, BankName");
+			sql.append(", IssuingBankName, PCCityName, BranchDesc, BankName, BranchBankCode");
 			sql.append(", PartnerBankAc, PartnerBankAcType");
 		}
 
@@ -365,6 +367,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			fpd.setValueDate(rs.getTimestamp("ValueDate"));
 			fpd.setPostDate(rs.getTimestamp("PostDate"));
 			fpd.setStatus(rs.getString("Status"));
+			fpd.setRejectReason(rs.getString("RejectReason"));
 			fpd.setTransactionRef(rs.getString("TransactionRef"));
 			fpd.setBankBranchId(rs.getLong("BankBranchId"));
 			fpd.setAcctHolderName(rs.getString("AcctHolderName"));
@@ -396,10 +399,52 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				fpd.setBankName(rs.getString("BankName"));
 				fpd.setPartnerBankAc(rs.getString("PartnerBankAc"));
 				fpd.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
+				fpd.setBranchBankCode(rs.getString("BranchBankCode"));
 			}
 
 			return fpd;
 		}
+
+	}
+
+	@Override
+	public long getPymntsCustId(long paymentId) {
+		StringBuilder sql = new StringBuilder("Select c.custid from customers c");
+		sql.append(" inner join financemain fm on fm.custid = c.custid");
+		sql.append(" inner join  paymentheader ph on ph.finreference = fm.finreference");
+		sql.append(" where ph.paymentid = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, Long.class);
+		} catch (Exception e) {
+			logger.warn("Record is not found in PaymentHeader for the specified PaymentId >> {}", paymentId);
+			throw new InterfaceException(Literal.EXCEPTION, e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean isInstructionInProgress(String finReference) {
+		logger.debug(Literal.ENTERING);
+		boolean exists = false;
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(" count(*) from PAYMENTINSTRUCTIONS_TEMP pi");
+		sql.append(" left join PAYMENTHEADER_temp ph on ph.PAYMENTID = pi.PAYMENTID");
+		sql.append(" left join PAYMENTDETAILS_temp pd on pd.PAYMENTID = ph.PAYMENTID");
+		sql.append(" where ph.finReference =:finReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("finReference", finReference);
+		Integer count = jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
+		if (count > 0) {
+			exists = true;
+		}
+		logger.debug(Literal.LEAVING);
+		return exists;
 
 	}
 }

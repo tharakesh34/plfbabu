@@ -7,7 +7,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
@@ -24,8 +25,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class RefundUploadController {
-	private final Logger logger = Logger.getLogger(getClass());
+public class RefundUploadController extends ExtendedTestClass {
+	private final Logger logger = LogManager.getLogger(getClass());
 
 	private UploadHeaderService uploadHeaderService;
 
@@ -71,7 +72,7 @@ public class RefundUploadController {
 			uploadHeader.setTransactionDate(DateUtility.getSysDate());
 			refundUploads.add(refundUpload);
 			uploadHeader.setRefundUploads(refundUploads);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			AuditHeader auditHeader = getAuditHeader(uploadHeader, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 

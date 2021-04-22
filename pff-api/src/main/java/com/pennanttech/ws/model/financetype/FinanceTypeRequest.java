@@ -26,6 +26,7 @@ public class FinanceTypeRequest implements Serializable {
 	private boolean repayDetailReq;
 	private boolean overdueDetailReq;
 	private boolean overdueProfitDetailReq;
+	private boolean insuranceDetailReq;
 	private boolean stepDetailReq;
 	private boolean feeReq;
 	private boolean partnerBankDetailReq;
@@ -84,6 +85,14 @@ public class FinanceTypeRequest implements Serializable {
 
 	public void setOverdueProfitDetailReq(boolean overdueProfitDetailReq) {
 		this.overdueProfitDetailReq = overdueProfitDetailReq;
+	}
+
+	public boolean isInsuranceDetailReq() {
+		return insuranceDetailReq;
+	}
+
+	public void setInsuranceDetailReq(boolean insuranceDetailReq) {
+		this.insuranceDetailReq = insuranceDetailReq;
 	}
 
 	public boolean isStepDetailReq() {

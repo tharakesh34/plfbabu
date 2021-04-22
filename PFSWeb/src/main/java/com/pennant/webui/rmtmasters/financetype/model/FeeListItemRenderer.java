@@ -45,7 +45,8 @@ package com.pennant.webui.rmtmasters.financetype.model;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -60,7 +61,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 public class FeeListItemRenderer implements ListitemRenderer<Rule>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(FeeListItemRenderer.class);
+	private static final Logger logger = LogManager.getLogger(FeeListItemRenderer.class);
 
 	public FeeListItemRenderer() {
 

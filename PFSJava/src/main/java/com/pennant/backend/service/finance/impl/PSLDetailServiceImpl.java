@@ -45,7 +45,8 @@ package com.pennant.backend.service.finance.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PSLDetail</b>.<br>
  */
 public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements PSLDetailService {
-	private static final Logger logger = Logger.getLogger(PSLDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PSLDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PSLDetailDAO pSLDetailDAO;
@@ -220,7 +221,7 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		getPSLDetailDAO().delete(pslDetail, tableType);
 
 		logger.debug(Literal.LEAVING);
-		return new AuditDetail(auditTranType, 1, fields[0], fields[1], null, pslDetail);
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(), pslDetail);
 	}
 
 	/**

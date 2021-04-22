@@ -70,7 +70,7 @@ public class NPAProvisionHeaderListModelItemRenderer implements ListitemRenderer
 		Listcell lc;
 		lc = new Listcell(header.getEntity() + " - " + header.getEntityName());
 		lc.setParent(item);
-		lc = new Listcell(header.getFinType()+ " - " + header.getFinTypeName());
+		lc = new Listcell(header.getFinType() + " - " + header.getFinTypeName());
 		lc.setParent(item);
 		lc = new Listcell(header.getRecordStatus());
 		lc.setParent(item);

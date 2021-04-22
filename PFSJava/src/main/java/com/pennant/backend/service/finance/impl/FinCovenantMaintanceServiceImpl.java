@@ -48,7 +48,8 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -77,7 +78,7 @@ import com.pennanttech.pff.core.TableType;
 public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainInstruction>
 		implements FinCovenantMaintanceService {
 
-	private static Logger logger = Logger.getLogger(FinCovenantMaintanceServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(FinCovenantMaintanceServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
@@ -169,8 +170,8 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		List<Covenant> covenants = finMaintainInstruction.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			auditDetails.addAll(
-					covenantsService.doProcess(covenants, TableType.TEMP_TAB, auditHeader.getAuditTranType(), false));
+			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.TEMP_TAB,
+					auditHeader.getAuditTranType(), false, 0));
 		}
 
 		// Add Audit
@@ -302,7 +303,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		List<Covenant> covenants = finMaintainInstruction.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB, "", true));
+			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB, "", true, 0));
 		}
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
@@ -312,7 +313,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditHeader.getAuditTranType())));
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
 				auditHeader.getAuditDetail().getBefImage(), auditHeader.getAuditDetail().getModelData()));
-
+		covenantsService.delete(covenants, TableType.TEMP_TAB, auditHeader.getAuditTranType());
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		// Audit for Before And After Images

@@ -18,16 +18,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -67,8 +67,7 @@ public class PersonalDiscussionDAOImpl extends SequenceDao<PersonalDiscussion> i
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("keyreference", keyReference);
 
-		RowMapper<PersonalDiscussion> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PersonalDiscussion.class);
+		RowMapper<PersonalDiscussion> rowMapper = BeanPropertyRowMapper.newInstance(PersonalDiscussion.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -96,8 +95,7 @@ public class PersonalDiscussionDAOImpl extends SequenceDao<PersonalDiscussion> i
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("cif", Arrays.asList(cif));
 
-		RowMapper<PersonalDiscussion> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PersonalDiscussion.class);
+		RowMapper<PersonalDiscussion> rowMapper = BeanPropertyRowMapper.newInstance(PersonalDiscussion.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -210,11 +208,12 @@ public class PersonalDiscussionDAOImpl extends SequenceDao<PersonalDiscussion> i
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select verificationid, name, addresstype, housenumber,flatnumber, street,");
 		sql.append(
-				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city, countryDesc, ");
-		sql.append(" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, verifiedDate, ");
+				" addressline1, addressline2, addressline3, addressline4, addressline5, pobox, country, province, city,");
+		sql.append(" zipcode, contactnumber1, contactnumber2, verifiedDate, ");
 		sql.append(" agentcode, agentname, status, reason, summaryremarks,");
 		if ("_view".equalsIgnoreCase(type)) {
-			sql.append("cif, custid, keyreference, createdon, reasoncode, reasondesc,");
+			sql.append(
+					"cif, custid, keyreference, createdon, reasoncode, reasondesc, countryDesc, provinceDesc, cityDesc, ");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -229,7 +228,7 @@ public class PersonalDiscussionDAOImpl extends SequenceDao<PersonalDiscussion> i
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource,
-					ParameterizedBeanPropertyRowMapper.newInstance(PersonalDiscussion.class));
+					BeanPropertyRowMapper.newInstance(PersonalDiscussion.class));
 		} catch (EmptyResultDataAccessException e) {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

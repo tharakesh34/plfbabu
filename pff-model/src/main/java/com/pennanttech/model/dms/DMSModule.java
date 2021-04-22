@@ -16,7 +16,12 @@ public enum DMSModule {
 	FI,
 	TV,
 	PD,
-	RCU;
+	RCU,
+	OCR,
+	RECEIPT,
+	DISBINST,
+	LV,
+	DMS;
 
 	public static DMSModule getModule(String module) {
 		for (DMSModule dmsModule : DMSModule.values()) {

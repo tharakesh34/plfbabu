@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -21,7 +22,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.log.model.APILogDetail;
 
 public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements APILogDetailDAO {
-	private static Logger logger = Logger.getLogger(APILogDetailDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(APILogDetailDAOImpl.class);
 
 	public APILogDetailDAOImpl() {
 		super();

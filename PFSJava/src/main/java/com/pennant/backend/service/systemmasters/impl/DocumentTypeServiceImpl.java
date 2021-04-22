@@ -44,7 +44,8 @@ package com.pennant.backend.service.systemmasters.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -65,7 +66,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class DocumentTypeServiceImpl extends GenericService<DocumentType> implements DocumentTypeService {
-	private static final Logger logger = Logger.getLogger(DocumentTypeServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DocumentTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DocumentTypeDAO documentTypeDAO;

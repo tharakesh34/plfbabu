@@ -4,18 +4,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.dedup.DedupParm;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -24,9 +30,9 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public class FetchCustomerDedupDetails {
 
-	private static final Logger logger = Logger.getLogger(FetchCustomerDedupDetails.class);
+	private static final Logger logger = LogManager.getLogger(FetchCustomerDedupDetails.class);
 
-	private static final String CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custFName,custLName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
+	private static String CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custFName,custLName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
 			+ "custNationality,dedupRule,override";
 
 	private static DedupParmService dedupParmService;
@@ -39,7 +45,7 @@ public class FetchCustomerDedupDetails {
 
 	@SuppressWarnings("unchecked")
 	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails customerDetails,
-			Window parentWindow, String curLoginUser) throws InterfaceException {
+			Window parentWindow, String curLoginUser, String finType) throws InterfaceException {
 		List<CustomerDedup> customerDedupList = null;
 
 		if (customerDetails != null && customerDetails.getCustomer() != null) {
@@ -48,10 +54,15 @@ public class FetchCustomerDedupDetails {
 
 			Customer customer = customerDetails.getCustomer();
 
-			List<CustomerDedup> custDedupData = fetchCustomerDedupDetails(userRole, customerDedup, curLoginUser);
+			List<CustomerDedup> custDedupData = fetchCustomerDedupDetails(userRole, customerDedup, curLoginUser,
+					finType);
 
 			if (custDedupData != null && !custDedupData.isEmpty()) {
 				customer.setDedupFound(true);
+				if (ImplementationConstants.SHOW_CUSTOM_BLACKLIST_FIELDS) {
+					CUSTOMERDEDUP_LABELS = "custCIF,custDOB,custShrtName,custCRCPR,custEMail,mobileNumber,aadharNumber,"
+							+ "custNationality,dedupRule,override";
+				}
 				Object dataObject = ShowCustomerDedupListBox.show(parentWindow, custDedupData, CUSTOMERDEDUP_LABELS,
 						customerDedup, curLoginUser);
 
@@ -84,23 +95,60 @@ public class FetchCustomerDedupDetails {
 	}
 
 	public static List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup,
-			String curLoginUser) throws InterfaceException {
+			String curLoginUser, String finType) throws InterfaceException {
 
 		List<CustomerDedup> overridedCustDedupList = new ArrayList<CustomerDedup>();
 		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
+		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
+		List<FinanceReferenceDetail> queryCodeList = new ArrayList<>();
+		if (StringUtils.isNotEmpty(finType)) {
+			referenceDetail.setMandInputInStage(userRole + ",");
+			referenceDetail.setFinType(finType);
+			queryCodeList = getDedupParmService().getQueryCodeList(referenceDetail, "_ACDView");
+		}
+		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isEmpty(queryCodeList)) {
+			return new ArrayList<>();
+		}
+
 		List<DedupParm> list = getDedupParmService().getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER,
 				customerDedup.getCustCtgCode(), "");
-		for (DedupParm dedupParm : list) {
-			// to get previously overridden data
-			List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
-					customerDedup.getCustCIF(), dedupParm.getQueryCode(), FinanceConstants.DEDUP_CUSTOMER);
-			for (CustomerDedup custDedup : custDedupList) {
-				custDedup.setOverridenby(custDedup.getOverrideUser());
-				overridedCustDedupList.add(custDedup);
+
+		List<DedupParm> finDedupParmList = new ArrayList<>();
+
+		if (StringUtils.isNotEmpty(finType) && CollectionUtils.isNotEmpty(queryCodeList)
+				&& CollectionUtils.isNotEmpty(list)) {
+			for (FinanceReferenceDetail queryCode : queryCodeList) {
+
+				// to get previously overridden data
+				List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
+						customerDedup.getCustCIF(), queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_CUSTOMER);
+				for (CustomerDedup custDedup : custDedupList) {
+					custDedup.setOverridenby(custDedup.getOverrideUser());
+					overridedCustDedupList.add(custDedup);
+				}
+				for (DedupParm parm : list) {
+					if (StringUtils.equals(parm.getQueryCode(), queryCode.getLovDescNamelov())) {
+						finDedupParmList.add(parm);
+					}
+				}
+
 			}
 			//to get the de dup details based on the de dup parameters i.e query's list from both application and core banking
-			customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, list));
-
+			customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, finDedupParmList));
+		} else {
+			if (CollectionUtils.isNotEmpty(list)) {
+				for (DedupParm dedupParm : list) {
+					// to get previously overridden data
+					List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
+							customerDedup.getCustCIF(), dedupParm.getQueryCode(), FinanceConstants.DEDUP_CUSTOMER);
+					for (CustomerDedup custDedup : custDedupList) {
+						custDedup.setOverridenby(custDedup.getOverrideUser());
+						overridedCustDedupList.add(custDedup);
+					}
+				}
+				//to get the de dup details based on the de dup parameters i.e query's list from both application and core banking
+				customerDedupList.addAll(getDedupParmService().getCustomerDedup(customerDedup, list));
+			}
 		}
 		customerDedupList = doSetCustomerDeDupGrouping(customerDedupList);
 
@@ -219,8 +267,15 @@ public class FetchCustomerDedupDetails {
 		String mobileNumber = "";
 		String emailid = "";
 		String aadharId = "";
+		String voterId = "";
+		String drivingLicenseNo = "";
 		String aadhar = masterDefDAO.getMasterCode("DOC_TYPE", "AADHAAR");
 		String passPort = masterDefDAO.getMasterCode("DOC_TYPE", "PASSPORT");
+		String voterIdCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE, PennantConstants.VOTER_ID);
+		String drivingLicenseCode = masterDefDAO.getMasterCode(PennantConstants.DOC_TYPE,
+				PennantConstants.DRIVING_LICENCE);
+		StringBuilder custAddress = new StringBuilder("");
+
 		Customer customer = customerDetails.getCustomer();
 		if (customerDetails.getCustomerPhoneNumList() != null) {
 			for (CustomerPhoneNumber custPhone : customerDetails.getCustomerPhoneNumList()) {
@@ -258,6 +313,41 @@ public class FetchCustomerDedupDetails {
 			}
 		}
 
+		//Driving License 
+		if (customerDetails.getCustomerDocumentsList() != null && StringUtils.isNotEmpty(drivingLicenseCode)) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (StringUtils.equals(drivingLicenseCode, document.getCustDocCategory())) {
+					drivingLicenseNo = document.getCustDocTitle();
+					break;
+				}
+			}
+		}
+		//VoterId 
+		if (customerDetails.getCustomerDocumentsList() != null && StringUtils.isNotEmpty(voterIdCode)) {
+			for (CustomerDocument document : customerDetails.getCustomerDocumentsList()) {
+				if (StringUtils.equals(voterIdCode, document.getCustDocCategory())) {
+					voterId = document.getCustDocTitle();
+					break;
+				}
+			}
+		}
+
+		//Address
+		if (customerDetails.getAddressList() != null) {
+			for (CustomerAddres address : customerDetails.getAddressList()) {
+				if (String.valueOf(address.getCustAddrPriority()).equals(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+					custAddress.append(address.getCustAddrHNbr()).append(", ");
+					custAddress.append(StringUtils.isNotBlank(address.getCustAddrStreet())
+							? address.getCustAddrStreet().concat(", ") : "");
+					custAddress.append(address.getCustAddrCity()).append(", ");
+					custAddress.append(address.getCustAddrProvince()).append(", ");
+					custAddress.append(address.getCustAddrZIP()).append(", ");
+					custAddress.append(address.getCustAddrCountry());
+					break;
+				}
+			}
+		}
+
 		CustomerDedup customerDedup = new CustomerDedup();
 		customerDedup.setFinReference(customer.getCustCIF());
 		customerDedup.setCustId(customer.getCustID());
@@ -280,6 +370,9 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setCustPOB(customer.getCustPOB());
 		customerDedup.setCustResdCountry(customer.getCustResdCountry());
 		customerDedup.setCustEMail(emailid);
+		customerDedup.setVoterID(voterId);
+		customerDedup.setDrivingLicenceNo(drivingLicenseNo);
+		customerDedup.setAddress(custAddress.toString());
 
 		logger.debug("Leaving");
 		return customerDedup;

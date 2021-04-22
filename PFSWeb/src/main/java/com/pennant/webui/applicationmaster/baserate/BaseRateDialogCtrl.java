@@ -43,13 +43,13 @@
 package com.pennant.webui.applicationmaster.baserate;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -84,7 +84,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	private static final long serialVersionUID = -5990530952612454146L;
-	private static final Logger logger = Logger.getLogger(BaseRateDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(BaseRateDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -192,7 +192,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		this.bREffDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.bRRate.setMaxlength(13);
 		this.bRRate.setFormat(PennantConstants.rateFormate9);
-		this.bRRate.setRoundingMode(RoundingMode.DOWN.ordinal());
+		this.bRRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.bRRate.setScale(9);
 
 		this.bRType.setMandatoryStyle(true);

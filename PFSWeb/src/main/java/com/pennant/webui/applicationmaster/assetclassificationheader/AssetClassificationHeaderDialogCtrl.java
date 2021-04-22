@@ -51,7 +51,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
@@ -88,7 +89,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassificationHeader> {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(AssetClassificationHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AssetClassificationHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -102,8 +103,8 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	protected Button btnFinType;
 	protected Textbox finType;
 
-	private AssetClassificationHeader assetClssfcatnHeader;  
-	private transient AssetClassificationHeaderListCtrl listCtrl;  
+	private AssetClassificationHeader assetClssfcatnHeader;
+	private transient AssetClassificationHeaderListCtrl listCtrl;
 	private transient AssetClassificationHeaderService assetClassificationHeaderService;
 	private List<AssetClassificationDetail> classificationDetailsList = new ArrayList<AssetClassificationDetail>();
 
@@ -142,8 +143,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		try {
 			// Get the required arguments.
 			this.assetClssfcatnHeader = (AssetClassificationHeader) arguments.get("assetClassificationHeader");
-			this.listCtrl = (AssetClassificationHeaderListCtrl) arguments
-					.get("assetClassificationHeaderListCtrl");
+			this.listCtrl = (AssetClassificationHeaderListCtrl) arguments.get("assetClassificationHeaderListCtrl");
 
 			if (this.assetClssfcatnHeader == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
@@ -328,14 +328,14 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		this.code.setValue(header.getCode());
 		this.description.setValue(header.getDescription());
 		this.stageOrder.setValue(header.getStageOrder());
-		
+
 		if (header.isNew() || (StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, header.getRecordType()))) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		} else {
 			this.active.setChecked(header.isActive());
 		}
-		
+
 		doFillFinTypeList(header.getAssetClassificationDetailList());
 
 		this.recordStatus.setValue(header.getRecordStatus());
@@ -435,7 +435,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		}
 
 		doWriteBeanToComponents(assetClassificationHeader);
-		
+
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
@@ -461,9 +461,10 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 			this.stageOrder.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_AssetClassificationHeaderDialog_StageOrder.value"), true, false, 99));
 		}
-		if (!this.btnFinType.isDisabled() &&  (StringUtils.trimToNull(this.finType.getValue())==null)) {
-			this.finType.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_AssetClassificationHeaderDialog_FinType.value"), PennantRegularExpressions.REGEX_NAME, true));
+		if (!this.btnFinType.isDisabled() && (StringUtils.trimToNull(this.finType.getValue()) == null)) {
+			this.finType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_FinType.value"),
+							PennantRegularExpressions.REGEX_NAME, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -489,7 +490,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.finType.setErrorMessage("");
 		this.code.setErrorMessage("");
 		this.description.setErrorMessage("");
@@ -562,7 +563,6 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		this.btnFinType.setDisabled(isReadOnly("button_AssetClassificationHeaderDialog_FinType"));
 		this.finType.setReadonly(true);
 
-
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -608,10 +608,11 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	 */
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.code.setValue("");
 		this.description.setValue("");
-		this.stageOrder.setValue(0);;
+		this.stageOrder.setValue(0);
+		;
 		this.active.setChecked(false);
 		this.finType.setValue("");
 		this.finType.setTooltiptext("");
@@ -624,7 +625,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
-		
+
 		final AssetClassificationHeader classificationHeader = new AssetClassificationHeader();
 		BeanUtils.copyProperties(this.assetClssfcatnHeader, classificationHeader);
 		boolean isNew = false;
@@ -653,7 +654,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 
 		// FintypeDetails
 		classificationHeader.setAssetClassificationDetailList(fetchFinTypeDetails());
-		
+
 		isNew = classificationHeader.isNew();
 		String tranType = "";
 
@@ -704,7 +705,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	 */
 	private boolean doProcess(AssetClassificationHeader header, String tranType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -758,9 +759,8 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 			header.setNextRoleCode(nextRoleCode);
 
 			// AssetClassificationDetail
-			List<AssetClassificationDetail> detailsList = header
-					.getAssetClassificationDetailList();
-			
+			List<AssetClassificationDetail> detailsList = header.getAssetClassificationDetailList();
+
 			if (CollectionUtils.isNotEmpty(detailsList)) {
 				for (AssetClassificationDetail details : detailsList) {
 					if (StringUtils.isNotBlank(details.getRecordType())) {
@@ -787,7 +787,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 				processCompleted = doSaveProcess(getAuditHeader(header, tranType), null);
 			} else {
 				String[] list = getOperationRefs().split(";");
-				 auditHeader = getAuditHeader(header, PennantConstants.TRAN_WF);
+				auditHeader = getAuditHeader(header, PennantConstants.TRAN_WF);
 
 				for (int i = 0; i < list.length; i++) {
 					processCompleted = doSaveProcess(auditHeader, list[i]);
@@ -817,7 +817,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
-		
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		AssetClassificationHeader aAssetClassificationHeader = (AssetClassificationHeader) auditHeader.getAuditDetail()
@@ -888,7 +888,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 
 	public void onClick$btnFinType(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
-		
+
 		this.finType.setConstraint("");
 		this.finType.setErrorMessage("");
 
@@ -926,9 +926,9 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 					if (financeType != null) {
 						toolTipDesc = toolTipDesc.concat(financeType.getFinTypeDesc() + " , ");
 					}
-				} 
+				}
 			}
-			
+
 			if (StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")) {
 				toolTipDesc = toolTipDesc.substring(0, toolTipDesc.length() - 2);
 			}
@@ -941,13 +941,14 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		logger.debug(Literal.ENTERING);
 
 		String finType = "";
-		
+
 		for (AssetClassificationDetail detail : assetClassificationDetailList) {
-			if (detail.getFinType() != null && !StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+			if (detail.getFinType() != null
+					&& !StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 				finType = finType + detail.getFinType().concat(",");
 			}
 		}
-		
+
 		this.finType.setTooltip(getFormattedFinType(finType));
 
 		logger.debug(Literal.LEAVING);
@@ -960,14 +961,14 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		}
 		return finType;
 	}
-	
+
 	private void doFillFinTypeList(List<AssetClassificationDetail> detailList) {
 		logger.debug(Literal.ENTERING);
 
 		if (CollectionUtils.isEmpty(detailList)) {
 			return;
 		}
-		
+
 		setClassificationDetailsList(detailList);
 
 		String tempFinType = "";
@@ -982,7 +983,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 		}
 		this.finType.setValue(tempFinType);
 		setFinTypeDescription(detailList);
-		
+
 		logger.debug(Literal.ENTERING);
 	}
 
@@ -1056,19 +1057,16 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 			}
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 		return resultList;
 	}
-	 
- 
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
 	 * @return
 	 */
 
-	
-	
 	private AuditHeader getAuditHeader(AssetClassificationHeader aAssetClassificationHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aAssetClassificationHeader.getBefImage(),
 				aAssetClassificationHeader);
@@ -1087,5 +1085,5 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 	public void setAssetClassificationHeaderService(AssetClassificationHeaderService assetClassificationHeaderService) {
 		this.assetClassificationHeaderService = assetClassificationHeaderService;
 	}
-	
+
 }

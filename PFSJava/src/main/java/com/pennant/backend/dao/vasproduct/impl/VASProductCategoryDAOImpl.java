@@ -44,13 +44,14 @@
 package com.pennant.backend.dao.vasproduct.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.vasproduct.VASProductCategoryDAO;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
@@ -64,7 +65,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> implements VASProductCategoryDAO {
-	private static Logger logger = Logger.getLogger(VASProductCategoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(VASProductCategoryDAOImpl.class);
 
 	/**
 	 * This method set the Work Flow id based on the module name and return the new VASProductCategory
@@ -122,8 +123,7 @@ public class VASProductCategoryDAOImpl extends BasicDao<VASProductCategory> impl
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASProductCategory);
-		RowMapper<VASProductCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(VASProductCategory.class);
+		RowMapper<VASProductCategory> typeRowMapper = BeanPropertyRowMapper.newInstance(VASProductCategory.class);
 
 		try {
 			vASProductCategory = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

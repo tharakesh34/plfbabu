@@ -44,14 +44,15 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AccountMappingDAO;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>AccountMapping</code> with set of CRUD operations.
  */
 public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements AccountMappingDAO {
-	private static Logger logger = Logger.getLogger(AccountMappingDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AccountMappingDAOImpl.class);
 
 	public AccountMappingDAOImpl() {
 		super();
@@ -96,7 +97,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		accountMapping.setAccount(account);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(accountMapping);
-		RowMapper<AccountMapping> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountMapping.class);
+		RowMapper<AccountMapping> rowMapper = BeanPropertyRowMapper.newInstance(AccountMapping.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -133,7 +134,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountMapping);
-		RowMapper<AccountMapping> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountMapping.class);
+		RowMapper<AccountMapping> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountMapping.class);
 
 		logger.debug(Literal.LEAVING);
 

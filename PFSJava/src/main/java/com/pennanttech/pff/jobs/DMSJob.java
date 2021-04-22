@@ -1,6 +1,8 @@
 package com.pennanttech.pff.jobs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.quartz.CronExpression;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -8,6 +10,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.service.DMSService;
@@ -15,12 +18,12 @@ import com.pennanttech.pennapps.dms.service.DMSService;
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class DMSJob implements Job {
-	private static Logger logger = Logger.getLogger(DMSJob.class);
+	private static Logger logger = LogManager.getLogger(DMSJob.class);
 
 	public static final String JOB_KEY = "DMS_JOB";
 	public static final String JOB_KEY_DESCRIPTION = "File Based Document Management System";
 	public static final String JOB_TRIGGER = "DMS_JOB_TRIGGER";
-	private static final String DEFAULT_JOB_FREQUENCY = " 0 0/1 * 1/1 * ? *";
+	private static final String DEFAULT_JOB_FREQUENCY = "0 0/1 * 1/1 * ? *";
 
 	private DMSService dMSService;
 
@@ -34,7 +37,11 @@ public class DMSJob implements Job {
 	}
 
 	public static String getCronExpression() {
-		String cronExpression = DEFAULT_JOB_FREQUENCY;
+		String cronExpression = App.getProperty("dms.job.cron.expression");
+
+		if (StringUtils.isEmpty(cronExpression)) {
+			cronExpression = DEFAULT_JOB_FREQUENCY;
+		}
 
 		if (!CronExpression.isValidExpression(cronExpression)) {
 			throw new AppException(String.format(

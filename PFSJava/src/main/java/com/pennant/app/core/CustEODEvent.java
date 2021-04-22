@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 public class CustEODEvent extends AbstractEntity {
@@ -30,6 +31,7 @@ public class CustEODEvent extends AbstractEntity {
 	private boolean customerProvision;
 	private String provisionBooks;
 	private Date provisionEffectiveDate;
+	private EventProperties eventProperties = new EventProperties();
 
 	public Customer getCustomer() {
 		return customer;
@@ -186,6 +188,14 @@ public class CustEODEvent extends AbstractEntity {
 
 	public String getCustIdAsString() {
 		return customer != null ? String.valueOf(customer.getCustID()) : "";
+	}
+
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
 	}
 
 }

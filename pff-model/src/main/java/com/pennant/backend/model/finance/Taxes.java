@@ -48,15 +48,13 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class Taxes extends AbstractWorkflowEntity implements Entity {
-
+public class Taxes extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long id = Long.MIN_VALUE;
-	private long referenceId = Long.MIN_VALUE;
+	private Long referenceId;
 	private String taxType;
 	private BigDecimal taxPerc = BigDecimal.ZERO;
 	private boolean newRecord;
@@ -70,26 +68,47 @@ public class Taxes extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal remFeeTax = BigDecimal.ZERO;
 	private BigDecimal waivedTax = BigDecimal.ZERO;
 
-	@Override
-	public boolean isNew() {
-		return newRecord;
+	public Taxes copyEntity() {
+		Taxes entity = new Taxes();
+		entity.setId(this.id);
+		entity.setReferenceId(this.referenceId);
+		entity.setTaxType(this.taxType);
+		entity.setTaxPerc(this.taxPerc);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setActualTax(this.actualTax);
+		entity.setPaidTax(this.paidTax);
+		entity.setNetTax(this.netTax);
+		entity.setRemFeeTax(this.remFeeTax);
+		entity.setWaivedTax(this.waivedTax);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
-	@Override
 	public long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.id = id;
 	}
 
-	public long getReferenceId() {
+	public Long getReferenceId() {
 		return referenceId;
 	}
 
-	public void setReferenceId(long referenceId) {
+	public void setReferenceId(Long referenceId) {
 		this.referenceId = referenceId;
 	}
 

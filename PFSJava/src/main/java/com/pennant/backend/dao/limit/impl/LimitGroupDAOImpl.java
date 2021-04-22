@@ -48,10 +48,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitGroupDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -126,7 +126,7 @@ public class LimitGroupDAOImpl extends BasicDao<LimitGroup> implements LimitGrou
 		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitGroup);
-		RowMapper<LimitGroup> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitGroup.class);
+		RowMapper<LimitGroup> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitGroup.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);

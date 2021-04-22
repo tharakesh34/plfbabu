@@ -61,6 +61,8 @@ public interface FinTypeExpenseDAO {
 
 	List<FinTypeExpense> getFinTypeExpenseListByFinType(String finType, String type);
 
+	List<FinTypeExpense> getLoanQueueExpenseListByFinType(String finType, String type);
+
 	void update(FinTypeExpense finTypeExpense, String type);
 
 	long save(FinTypeExpense finTypeExpense, String type);

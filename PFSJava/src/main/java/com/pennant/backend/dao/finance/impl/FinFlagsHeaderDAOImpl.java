@@ -1,13 +1,14 @@
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -17,7 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinFlagsHeaderDAO {
-	private static Logger logger = Logger.getLogger(FinFlagsHeaderDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinFlagsHeaderDAOImpl.class);
 
 	public FinFlagsHeaderDAOImpl() {
 		super();
@@ -155,7 +156,7 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeFlags);
-		RowMapper<FinanceFlag> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceFlag.class);
+		RowMapper<FinanceFlag> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceFlag.class);
 
 		try {
 			financeFlags = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -47,14 +47,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -71,7 +72,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
 public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCategory>
 		implements FinCreditRevSubCategoryDAO {
-	private static Logger logger = Logger.getLogger(FinCreditRevSubCategoryDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(FinCreditRevSubCategoryDAOImpl.class);
 
 	public FinCreditRevSubCategoryDAOImpl() {
 		super();
@@ -137,7 +138,7 @@ public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCate
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCreditRevSubCategory);
-		RowMapper<FinCreditRevSubCategory> typeRowMapper = ParameterizedBeanPropertyRowMapper
+		RowMapper<FinCreditRevSubCategory> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(FinCreditRevSubCategory.class);
 
 		try {

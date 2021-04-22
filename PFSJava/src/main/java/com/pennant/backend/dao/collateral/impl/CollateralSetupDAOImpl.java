@@ -43,23 +43,21 @@
 
 package com.pennant.backend.dao.collateral.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -74,7 +72,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
  */
 
 public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements CollateralSetupDAO {
-	private static Logger logger = Logger.getLogger(CollateralSetupDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(CollateralSetupDAOImpl.class);
 
 	/**
 	 * Fetch the Record CollateralSetup details by key field
@@ -110,8 +108,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
 
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -385,8 +382,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		selectSql.append(" Where CollateralRef = :CollateralRef AND DepositorId = :DepositorId AND Status is null ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CollateralSetup> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CollateralSetup.class);
+		RowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
@@ -409,29 +405,18 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	 */
 	@Override
 	public List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where DepositorId = ? and Status is null");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		CollateralSetupRowMapper rowMapper = new CollateralSetupRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, depositorId);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, depositorId);
+		}, rowMapper);
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	/**
@@ -464,8 +449,6 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 	@Override
 	public List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinReference = ? and Status is null");
 
@@ -473,20 +456,11 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		CollateralSetupRowMapper rowMapper = new CollateralSetupRowMapper(type);
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			ps.setString(index++, finReference);
+		}, rowMapper);
 	}
 
 	/**
@@ -600,7 +574,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			sql.append(", CollateralType, DepositorCif, DepositorName, CollateralTypeName");
 		}
 
-		sql.append(" from CollateralSetup");
+		sql.append(" From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}
@@ -656,5 +630,34 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			return cs;
 		}
 
+	}
+
+	@Override
+	public boolean isCollateralInMaintenance(String collatrlRef, String type) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+		sql.append(" Select Count(*) from CollateralSetup");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CollateralRef = :CollateralRef AND Status is null AND finreference is null");
+		logger.debug("Sql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("CollateralRef", collatrlRef);
+		try {
+			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (EmptyResultDataAccessException e) {
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+		return false;
 	}
 }

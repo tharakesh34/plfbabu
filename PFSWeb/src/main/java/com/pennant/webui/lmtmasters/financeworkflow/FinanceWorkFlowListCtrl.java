@@ -47,7 +47,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -82,7 +83,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 	private static final long serialVersionUID = 3938682418831790487L;
-	private static final Logger logger = Logger.getLogger(FinanceWorkFlowListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(FinanceWorkFlowListCtrl.class);
 
 	protected Window window_FinanceWorkFlowList;
 	protected Borderlayout borderLayout_FinanceWorkFlowList;
@@ -181,6 +182,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 				&& !StringUtils.equals(PennantConstants.WORFLOW_MODULE_COMMITMENT, this.module)) {
 			if (isPromotion) {
 				this.searchObject.addFilter(new Filter("lovDescProductName", "", Filter.OP_NOT_EQUAL));
+				this.searchObject.addFilter(new Filter("ReferenceId", 0, Filter.OP_EQUAL));
 			} else {
 				this.searchObject.addFilter(new Filter("lovDescProductName", "", Filter.OP_EQUAL));
 			}
@@ -320,9 +322,10 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " where FinType=?";
+		String whereCond = " where FinType = ? and FinEvent = ?";
 
-		if (doCheckAuthority(aFinanceWorkFlow, whereCond, new Object[] { aFinanceWorkFlow.getFinType() })) {
+		if (doCheckAuthority(aFinanceWorkFlow, whereCond,
+				new Object[] { aFinanceWorkFlow.getFinType(), aFinanceWorkFlow.getFinEvent() })) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && aFinanceWorkFlow.getWorkflowId() == 0) {
 				aFinanceWorkFlow.setWorkflowId(getWorkFlowId());

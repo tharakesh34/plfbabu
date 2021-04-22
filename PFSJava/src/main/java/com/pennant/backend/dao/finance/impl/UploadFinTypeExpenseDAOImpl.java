@@ -45,12 +45,13 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.UploadFinTypeExpenseDAO;
 import com.pennant.backend.model.expenses.UploadFinTypeExpense;
@@ -61,7 +62,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class UploadFinTypeExpenseDAOImpl extends BasicDao<UploadFinTypeExpense> implements UploadFinTypeExpenseDAO {
-	private static Logger logger = Logger.getLogger(UploadFinTypeExpenseDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UploadFinTypeExpenseDAOImpl.class);
 
 	public UploadFinTypeExpenseDAOImpl() {
 		super();
@@ -98,8 +99,7 @@ public class UploadFinTypeExpenseDAOImpl extends BasicDao<UploadFinTypeExpense> 
 		selectSql.append(" Where UploadId = :UploadId Group By STATUS");
 
 		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<UploadFinTypeExpense> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(UploadFinTypeExpense.class);
+		RowMapper<UploadFinTypeExpense> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadFinTypeExpense.class);
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);

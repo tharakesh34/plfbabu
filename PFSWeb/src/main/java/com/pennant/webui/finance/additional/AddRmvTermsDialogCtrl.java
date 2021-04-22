@@ -48,7 +48,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -65,12 +66,14 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SanctionBasedSchedule;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -80,7 +83,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 2623911832045017662L;
-	private static final Logger logger = Logger.getLogger(AddRmvTermsDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(AddRmvTermsDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -221,7 +224,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.terms.setMaxlength(3);
+		this.terms.setMaxlength(PennantConstants.NUMBER_OF_TERMS_LENGTH);
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
 		logger.debug("Leaving");
@@ -282,6 +285,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		Date appDate = SysParamUtil.getAppDate();
 
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -310,7 +314,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					if (fillBefore != null && curSchd.getSchDate().compareTo(fillBefore) < 0) {
-						if (i != financeScheduleDetails.size() - 1) {
+						if (i != financeScheduleDetails.size() - 1 && curSchd.getSchDate().compareTo(appDate) > 0) {
 							dateCombobox.appendChild(comboitem);
 							if (getFinanceScheduleDetail() != null
 									&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {

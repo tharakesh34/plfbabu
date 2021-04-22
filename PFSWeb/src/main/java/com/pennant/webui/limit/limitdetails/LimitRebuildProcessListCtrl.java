@@ -46,7 +46,8 @@ import java.io.Serializable;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
@@ -63,7 +64,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
  */
 public class LimitRebuildProcessListCtrl extends GFCBaseListCtrl<LimitHeader> implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(LimitRebuildProcessListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LimitRebuildProcessListCtrl.class);
 
 	protected Window window_limitRebuildProcessList;
 	protected Borderlayout borderLayout_LimitRebuildProcessList;

@@ -47,17 +47,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -73,7 +75,7 @@ import com.pennanttech.pff.core.util.QueryUtil;
  */
 
 public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBranchDAO {
-	private static Logger logger = Logger.getLogger(BankBranchDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(BankBranchDAOImpl.class);
 
 	public BankBranchDAOImpl() {
 		super();
@@ -142,7 +144,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
+		RowMapper<BankBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(BankBranch.class);
 
 		try {
 			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -236,8 +238,8 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	public long save(BankBranch bankBranch, String type) {
 		logger.debug(Literal.ENTERING);
 		if (bankBranch.getId() == Long.MIN_VALUE) {
-			bankBranch.setId(getNextId("SeqBankBranches"));
-			logger.debug("get NextID:" + bankBranch.getId());
+			bankBranch.setId(getNextValue("SeqBankBranches"));
+			logger.debug("get NextValue:" + bankBranch.getId());
 		}
 		//since it has foreign key
 		bankBranch.setCity(StringUtils.trimToNull(bankBranch.getCity()));
@@ -312,8 +314,6 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 */
 	@Override
 	public BankBranch getBankBrachByIFSC(String ifsc, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR");
 		sql.append(", IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
@@ -365,14 +365,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public BankBranch getBankBrachByCode(String bankCode, String branchCode, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch");
 		sql.append(", Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc, Emandate, AllowedSources");
@@ -422,10 +419,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn(
+					"Record not found in BankBranches {} table/view for the specified BankCode >> {} and BranchCode >> {} ",
+					type, bankCode, branchCode);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -462,7 +460,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
+		RowMapper<BankBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(BankBranch.class);
 
 		try {
 			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -524,7 +522,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
-		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
+		RowMapper<BankBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(BankBranch.class);
 
 		try {
 			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -566,5 +564,29 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		}
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	@Override
+	public int getAccNoLengthByIFSC(String ifscCode, String type) {
+		logger.debug("Entering");
+
+		BankDetail bankDetail = new BankDetail();
+		bankDetail.setIfsc(String.valueOf(ifscCode));
+
+		StringBuilder selectSql = new StringBuilder("Select AccNoLength");
+
+		selectSql.append(" From BankBranches");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where Ifsc =:Ifsc");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug(dae);
+			return 0;
+		}
 	}
 }

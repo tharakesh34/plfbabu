@@ -11,7 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -63,7 +64,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 2290501784830847866L;
-	private static final Logger logger = Logger.getLogger(CreditApprovalDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CreditApprovalDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -528,11 +529,11 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				listcell.setParent(listitem);
 
 				totScore = totScore.add(financeScoreDetail.getMaxScore());
-				listcell = new Listcell(PennantAppUtil.formatAmount(financeScoreDetail.getMaxScore(), 0, false));
+				listcell = new Listcell(PennantAppUtil.formatAmount(financeScoreDetail.getMaxScore(), 0));
 				listcell.setParent(listitem);
 
 				totExeScore = totExeScore.add(financeScoreDetail.getExecScore());
-				listcell = new Listcell(PennantAppUtil.formatAmount(financeScoreDetail.getExecScore(), 0, false));
+				listcell = new Listcell(PennantAppUtil.formatAmount(financeScoreDetail.getExecScore(), 0));
 				listcell.setParent(listitem);
 				this.listBoxRetailScoRef.appendChild(listitem);
 			}
@@ -547,11 +548,11 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			listcell.setStyle(bold);
 			listcell.setParent(listfoot);
 
-			listcell = new Listcell(PennantAppUtil.formatAmount(totScore, 0, false));
+			listcell = new Listcell(PennantAppUtil.formatAmount(totScore, 0));
 			listcell.setStyle(bold);
 			listcell.setParent(listfoot);
 
-			listcell = new Listcell(PennantAppUtil.formatAmount(totExeScore, 0, false));
+			listcell = new Listcell(PennantAppUtil.formatAmount(totExeScore, 0));
 			listcell.setStyle(bold);
 			listcell.setParent(listfoot);
 			this.listBoxRetailScoRef.appendChild(listfoot);

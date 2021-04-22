@@ -51,7 +51,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -102,7 +103,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchResult;
 public class ExtendedSearchListBox extends Window implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(ExtendedSearchListBox.class);
+	private static final Logger logger = LogManager.getLogger(ExtendedSearchListBox.class);
 	private Textbox _textbox;
 
 	private Button _searchButton;
@@ -659,7 +660,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		}
 
 		String[] lovFields = getModuleMapping().getLovFields();
-		if (lovFields != null && lovFields.length > 0) {
+		//if module filters are 1
+		if (lovFields != null && lovFields.length == 1) {
+			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
+		} else if (lovFields != null && lovFields.length > 1) { //if module filters are > 1 
 			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
 			this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
 		}

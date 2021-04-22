@@ -14,6 +14,8 @@ package com.pennanttech.pennapps.pff.verification;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zkoss.util.resource.Labels;
+
 import com.pennant.backend.model.ValueLabel;
 
 /**
@@ -22,7 +24,10 @@ import com.pennant.backend.model.ValueLabel;
  *
  */
 public enum RequestType {
-	INITIATE(1, "Initiate"), WAIVE(2, "Waive"), NOT_REQUIRED(3, "Not Required"), REQUEST(4, "Request");
+	INITIATE(1, Labels.getLabel("label_INITIATE")),
+	WAIVE(2, Labels.getLabel("label_WAIVE")),
+	NOT_REQUIRED(3, Labels.getLabel("label_NOT_REQUIRED")),
+	REQUEST(4, Labels.getLabel("label_REQUEST"));
 
 	private final Integer key;
 	private final String value;
@@ -53,6 +58,15 @@ public enum RequestType {
 		List<ValueLabel> list = new ArrayList<>();
 		for (RequestType type : values()) {
 			list.add(new ValueLabel(String.valueOf(type.getKey()), type.getValue()));
+		}
+		return list;
+	}
+
+	public static List<ValueLabel> getRCURequestTypes() {
+		List<ValueLabel> list = new ArrayList<>();
+		for (RequestType type : values()) {
+			String labelCode = "label_RCU_" + type.name();
+			list.add(new ValueLabel(String.valueOf(type.getKey()), Labels.getLabel(labelCode)));
 		}
 		return list;
 	}

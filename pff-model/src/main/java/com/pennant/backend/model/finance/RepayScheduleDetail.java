@@ -73,6 +73,20 @@ public class RepayScheduleDetail implements Serializable {
 	private BigDecimal schdInsPayNow = BigDecimal.ZERO;
 	private BigDecimal schdInsWaivedNow = BigDecimal.ZERO;
 
+	// Supplementary Rent
+	private BigDecimal schdSuplRent = BigDecimal.ZERO;
+	private BigDecimal schdSuplRentPaid = BigDecimal.ZERO;
+	private BigDecimal schdSuplRentBal = BigDecimal.ZERO;
+	private BigDecimal schdSuplRentPayNow = BigDecimal.ZERO;
+	private BigDecimal schdSuplRentWaivedNow = BigDecimal.ZERO;
+
+	// Increased Cost Amount
+	private BigDecimal schdIncrCost = BigDecimal.ZERO;
+	private BigDecimal schdIncrCostPaid = BigDecimal.ZERO;
+	private BigDecimal schdIncrCostBal = BigDecimal.ZERO;
+	private BigDecimal schdIncrCostPayNow = BigDecimal.ZERO;
+	private BigDecimal schdIncrCostWaivedNow = BigDecimal.ZERO;
+
 	private Long lppTaxHeaderId;
 	private Long lpiTaxHeaderId;
 
@@ -104,6 +118,74 @@ public class RepayScheduleDetail implements Serializable {
 
 	public RepayScheduleDetail() {
 
+	}
+
+	public RepayScheduleDetail copyEntity() {
+		RepayScheduleDetail entity = new RepayScheduleDetail();
+		entity.setFinReference(this.finReference);
+		entity.setSchDate(this.schDate);
+		entity.setDefSchdDate(this.defSchdDate);
+		entity.setSchdFor(this.schdFor);
+		entity.setProfitSchd(this.profitSchd);
+		entity.setProfitSchdPaid(this.profitSchdPaid);
+		entity.setProfitSchdBal(this.profitSchdBal);
+		entity.setProfitSchdPayNow(this.profitSchdPayNow);
+		entity.setTdsSchdPayNow(this.tdsSchdPayNow);
+		entity.setPftSchdWaivedNow(this.pftSchdWaivedNow);
+		entity.setLatePftSchd(this.latePftSchd);
+		entity.setLatePftSchdPaid(this.latePftSchdPaid);
+		entity.setLatePftSchdBal(this.latePftSchdBal);
+		entity.setLatePftSchdPayNow(this.latePftSchdPayNow);
+		entity.setLatePftSchdWaivedNow(this.latePftSchdWaivedNow);
+		entity.setPrincipalSchd(this.principalSchd);
+		entity.setPrincipalSchdPaid(this.principalSchdPaid);
+		entity.setPrincipalSchdBal(this.principalSchdBal);
+		entity.setPrincipalSchdPayNow(this.principalSchdPayNow);
+		entity.setPriSchdWaivedNow(this.priSchdWaivedNow);
+		entity.setSchdFee(this.schdFee);
+		entity.setSchdFeePaid(this.schdFeePaid);
+		entity.setSchdFeeBal(this.schdFeeBal);
+		entity.setSchdFeePayNow(this.schdFeePayNow);
+		entity.setSchdFeeWaivedNow(this.schdFeeWaivedNow);
+		entity.setSchdIns(this.schdIns);
+		entity.setSchdInsPaid(this.schdInsPaid);
+		entity.setSchdInsBal(this.schdInsBal);
+		entity.setSchdInsPayNow(this.schdInsPayNow);
+		entity.setSchdInsWaivedNow(this.schdInsWaivedNow);
+		entity.setSchdSuplRent(this.schdSuplRent);
+		entity.setSchdSuplRentPaid(this.schdSuplRentPaid);
+		entity.setSchdSuplRentBal(this.schdSuplRentBal);
+		entity.setSchdSuplRentPayNow(this.schdSuplRentPayNow);
+		entity.setSchdSuplRentWaivedNow(this.schdSuplRentWaivedNow);
+		entity.setSchdIncrCost(this.schdIncrCost);
+		entity.setSchdIncrCostPaid(this.schdIncrCostPaid);
+		entity.setSchdIncrCostBal(this.schdIncrCostBal);
+		entity.setSchdIncrCostPayNow(this.schdIncrCostPayNow);
+		entity.setSchdIncrCostWaivedNow(this.schdIncrCostWaivedNow);
+		entity.setLppTaxHeaderId(this.lppTaxHeaderId);
+		entity.setLpiTaxHeaderId(this.lpiTaxHeaderId);
+		entity.setRefundMax(this.refundMax);
+		entity.setRefundReq(this.refundReq);
+		entity.setDaysLate(this.daysLate);
+		entity.setDaysEarly(this.daysEarly);
+		entity.setAllowRefund(this.allowRefund);
+		entity.setRepayNet(this.repayNet);
+		entity.setRepayBalance(this.repayBalance);
+		entity.setSchdIndex(this.schdIndex);
+		entity.setAllowWaiver(this.allowWaiver);
+		entity.setPenaltyAmt(this.penaltyAmt);
+		entity.setPenaltyPayNow(this.penaltyPayNow);
+		entity.setMaxWaiver(this.maxWaiver);
+		entity.setWaivedAmt(this.waivedAmt);
+		entity.setChargeType(this.chargeType);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setRepayID(this.repayID);
+		entity.setRepaySchID(this.repaySchID);
+		entity.setValueDate(this.valueDate);
+		entity.setWaiverId(this.waiverId);
+		entity.setTaxHeaderId(this.taxHeaderId);
+		entity.setTaxHeader(this.taxHeader);
+		return entity;
 	}
 
 	public String getFinReference() {
@@ -386,6 +468,70 @@ public class RepayScheduleDetail implements Serializable {
 		this.schdInsPayNow = schdInsPayNow;
 	}
 
+	public BigDecimal getSchdSuplRent() {
+		return schdSuplRent;
+	}
+
+	public void setSchdSuplRent(BigDecimal schdSuplRent) {
+		this.schdSuplRent = schdSuplRent;
+	}
+
+	public BigDecimal getSchdSuplRentPaid() {
+		return schdSuplRentPaid;
+	}
+
+	public void setSchdSuplRentPaid(BigDecimal schdSuplRentPaid) {
+		this.schdSuplRentPaid = schdSuplRentPaid;
+	}
+
+	public BigDecimal getSchdSuplRentBal() {
+		return schdSuplRentBal;
+	}
+
+	public void setSchdSuplRentBal(BigDecimal schdSuplRentBal) {
+		this.schdSuplRentBal = schdSuplRentBal;
+	}
+
+	public BigDecimal getSchdSuplRentPayNow() {
+		return schdSuplRentPayNow;
+	}
+
+	public void setSchdSuplRentPayNow(BigDecimal schdSuplRentPayNow) {
+		this.schdSuplRentPayNow = schdSuplRentPayNow;
+	}
+
+	public BigDecimal getSchdIncrCost() {
+		return schdIncrCost;
+	}
+
+	public void setSchdIncrCost(BigDecimal schdIncrCost) {
+		this.schdIncrCost = schdIncrCost;
+	}
+
+	public BigDecimal getSchdIncrCostPaid() {
+		return schdIncrCostPaid;
+	}
+
+	public void setSchdIncrCostPaid(BigDecimal schdIncrCostPaid) {
+		this.schdIncrCostPaid = schdIncrCostPaid;
+	}
+
+	public BigDecimal getSchdIncrCostBal() {
+		return schdIncrCostBal;
+	}
+
+	public void setSchdIncrCostBal(BigDecimal schdIncrCostBal) {
+		this.schdIncrCostBal = schdIncrCostBal;
+	}
+
+	public BigDecimal getSchdIncrCostPayNow() {
+		return schdIncrCostPayNow;
+	}
+
+	public void setSchdIncrCostPayNow(BigDecimal schdIncrCostPayNow) {
+		this.schdIncrCostPayNow = schdIncrCostPayNow;
+	}
+
 	public long getRepayID() {
 		return repayID;
 	}
@@ -472,6 +618,22 @@ public class RepayScheduleDetail implements Serializable {
 
 	public void setSchdInsWaivedNow(BigDecimal schdInsWaivedNow) {
 		this.schdInsWaivedNow = schdInsWaivedNow;
+	}
+
+	public BigDecimal getSchdSuplRentWaivedNow() {
+		return schdSuplRentWaivedNow;
+	}
+
+	public void setSchdSuplRentWaivedNow(BigDecimal schdSuplRentWaivedNow) {
+		this.schdSuplRentWaivedNow = schdSuplRentWaivedNow;
+	}
+
+	public BigDecimal getSchdIncrCostWaivedNow() {
+		return schdIncrCostWaivedNow;
+	}
+
+	public void setSchdIncrCostWaivedNow(BigDecimal schdIncrCostWaivedNow) {
+		this.schdIncrCostWaivedNow = schdIncrCostWaivedNow;
 	}
 
 	public BigDecimal getTdsSchdPayNow() {

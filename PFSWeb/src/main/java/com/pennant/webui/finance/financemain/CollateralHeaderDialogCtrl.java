@@ -50,7 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -93,7 +94,7 @@ import com.pennanttech.webui.verification.TVerificationDialogCtrl;
  */
 public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment> {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(CollateralHeaderDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CollateralHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
@@ -293,7 +294,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			doFillCollateralDetails(getCollateralAssignments(), false);
 			setCollateralSetups(getFinanceDetail().getCollaterals());
 			doFillAssetDetails(getExtendedFieldRenderList());
-
+			setCollateralSetups(getFinanceDetail().getCollaterals());
 			// Setting Controller to the Parent Controller
 			try {
 				if (getFinanceMainDialogCtrl() != null) {
@@ -710,7 +711,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			totalLtv = totalLtv.divide(new BigDecimal(assignedCount), 2, RoundingMode.HALF_DOWN);
 		}
 
-		this.collateralCount.setValue(PennantApplicationUtil.amountFormate(loanAssignedValue, getFormat()));
+		this.collateralCount.setValue(PennantApplicationUtil.amountFormate(loanAssignedValue, ccyFormat));
 		if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(this.finLTVCheck)
 				&& utilizedAmount.compareTo(totAssignedColValue) > 0) {
 			this.availableCollateral.setValue("Shortfall");

@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -15,6 +16,7 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -38,7 +40,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CustomizeFinanceDataValidation {
 
-	private static final Logger logger = Logger.getLogger(CustomizeFinanceDataValidation.class);
+	private static final Logger logger = LogManager.getLogger(CustomizeFinanceDataValidation.class);
 
 	private CustomerDAO customerDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
@@ -329,14 +331,18 @@ public class CustomizeFinanceDataValidation {
 					return errorDetails;
 				}
 				//validate AccNumber length
-				if (StringUtils.isNotBlank(mandate.getBankCode())) {
-					int accNoLength = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
-					if (accNoLength != 0) {
-						if (mandate.getAccNumber().length() != accNoLength) {
-							String[] valueParm = new String[2];
+				if (StringUtils.isNotBlank(mandate.getBankCode()) && StringUtils.isNotBlank(mandate.getAccNumber())) {
+					BankDetail bankDetail = bankDetailService.getAccNoLengthByCode(mandate.getBankCode());
+					if (bankDetail != null) {
+						int maxAccNoLength = bankDetail.getAccNoLength();
+						int minAccNoLength = bankDetail.getMinAccNoLength();
+						if (mandate.getAccNumber().length() < minAccNoLength
+								|| mandate.getAccNumber().length() > maxAccNoLength) {
+							String[] valueParm = new String[3];
 							valueParm[0] = "AccountNumber(Mandate)";
-							valueParm[1] = String.valueOf(accNoLength) + " characters";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+							valueParm[1] = String.valueOf(minAccNoLength) + " characters";
+							valueParm[2] = String.valueOf(maxAccNoLength) + " characters";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", valueParm)));
 							return errorDetails;
 						}
 					}

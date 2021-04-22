@@ -54,7 +54,8 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -97,6 +98,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -108,7 +110,7 @@ import com.pennanttech.pff.core.TableType;
  * Service implementation for methods that depends on <b>PaymentHeader</b>.<br>
  */
 public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> implements PaymentHeaderService {
-	private static final Logger logger = Logger.getLogger(PaymentHeaderServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(PaymentHeaderServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentHeaderDAO paymentHeaderDAO;
@@ -768,6 +770,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		BigDecimal emiInAdavance = BigDecimal.ZERO;
+		BigDecimal advInst = BigDecimal.ZERO;
 		BigDecimal cashCtrl = BigDecimal.ZERO;
 		BigDecimal dsf = BigDecimal.ZERO;
 
@@ -815,48 +818,51 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 							cessTax = taxes;
 						}
 					}
-				}
 
-				//CGST
-				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(cgstTax.getPaidTax()));
+					//CGST
+					BigDecimal gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(cgstTax.getPaidTax()));
 
-				//SGST
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(sgstTax.getPaidTax()));
+					//SGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(sgstTax.getPaidTax()));
 
-				//UGST
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(ugstTax.getPaidTax()));
+					//UGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(ugstTax.getPaidTax()));
 
-				//IGST
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
-				}
-				eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(igstTax.getPaidTax()));
+					//IGST
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
+					}
+					eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(igstTax.getPaidTax()));
 
-				//CESS
-				gstAmount = BigDecimal.ZERO;
-				if (eventMapping.containsKey(feeTypeCode + "_CESS_P")) {
-					gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CESS_P");
+					//CESS
+					gstAmount = BigDecimal.ZERO;
+					if (eventMapping.containsKey(feeTypeCode + "_CESS_P")) {
+						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CESS_P");
+					}
+					eventMapping.put(feeTypeCode + "_CESS_P", gstAmount.add(cessTax.getPaidTax()));
 				}
-				eventMapping.put(feeTypeCode + "_CESS_P", gstAmount.add(cessTax.getPaidTax()));
-
+				break;
 			case RepayConstants.EXAMOUNTTYPE_EXCESS:
 				excessAmount = excessAmount.add(paymentDetail.getAmount());
 				break;
 			case RepayConstants.EXAMOUNTTYPE_EMIINADV:
 				emiInAdavance = emiInAdavance.add(paymentDetail.getAmount());
+				break;
+			case RepayConstants.EXAMOUNTTYPE_ADVINT:
+				advInst = emiInAdavance.add(paymentDetail.getAmount());
 				break;
 			case RepayConstants.EXAMOUNTTYPE_CASHCLT:
 				cashCtrl = cashCtrl.add(paymentDetail.getAmount());
@@ -871,6 +877,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			eventMapping.put("pi_excessAmount", excessAmount);
 			eventMapping.put("pi_emiInAdvance", emiInAdavance);
 			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+			eventMapping.put("pi_advInst", advInst);
 			eventMapping.put("CASHCLT_P", cashCtrl);
 			eventMapping.put("DSF_P", dsf);
 
@@ -883,14 +890,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 					}
 				}
 			}
-
-			long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
-
-			aeEvent.getAcSetIDList().add(accountsetId);
-
-			logger.debug(Literal.LEAVING);
 		}
+
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
+				AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+
+		aeEvent.getAcSetIDList().add(accountsetId);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1013,7 +1020,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug(Literal.LEAVING);
 
 		// GST Invoice data resetting based on Accounting Process
-		if (SysParamUtil.isAllowed("GST_INV_ON_DUE") && advise.isDueCreation()) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE) && advise.isDueCreation()) {
 			return movement;
 		}
 
@@ -1029,6 +1036,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
 		return this.paymentInstructionService.getPaymentInstruction(paymentId);
+	}
+
+	@Override
+	public boolean isInstructionInProgress(String finReference) {
+		return this.paymentInstructionService.isInstructionInProgress(finReference);
 	}
 
 	public FinFeeDetailService getFinFeeDetailService() {

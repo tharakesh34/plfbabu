@@ -47,4 +47,6 @@ public interface CustomerExtLiabilityDAO {
 
 	BigDecimal getSumCredtAmtCustomerBankInfoById(Set<Long> custId);
 
+	void delete(long liabilityId, String type);
+
 }

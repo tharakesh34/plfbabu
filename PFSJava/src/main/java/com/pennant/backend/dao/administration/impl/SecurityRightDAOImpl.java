@@ -42,13 +42,11 @@
  */
 package com.pennant.backend.dao.administration.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.RowMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -61,7 +59,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements SecurityRightDAO {
-	private static Logger logger = Logger.getLogger(SecurityRightDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(SecurityRightDAOImpl.class);
 
 	public SecurityRightDAOImpl() {
 		super();
@@ -69,41 +67,31 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 
 	@Override
 	public List<SecurityRight> getMenuRightsByUser(SecurityUser user) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName");
 		sql.append(" from SecUserOperations uo");
 		sql.append(" inner join SecOperationRoles opr on opr.OprID = uo.OprID");
 		sql.append(" inner join SecRoles r on r.RoleID = opr.RoleID");
 		sql.append(" inner join SecRoleGroups rg on rg.RoleID = r.RoleID");
 		sql.append(" inner join SecGroupRights gr on gr.GrpID = rg.GrpID");
-		sql.append(" inner join SecRights rt on rt.RightID = gr.RightID and rt.RightType = :RightType");
-		sql.append(" where uo.UsrID = :UsrID");
+		sql.append(" inner join SecRights rt on rt.RightID = gr.RightID and rt.RightType = ?");
+		sql.append(" where uo.UsrID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("UsrID", user.getUsrID());
-		parameterSource.addValue("RightType", 0);
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setInt(1, 0);
+			ps.setLong(2, user.getUsrID());
+		}, (rs, rowNum) -> {
+			SecurityRight right = new SecurityRight();
 
-		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.query(sql.toString(), parameterSource, new RowMapper<SecurityRight>() {
+			right.setRightName(rs.getString("RightName"));
 
-			@Override
-			public SecurityRight mapRow(ResultSet rs, int rowNum) throws SQLException {
-				SecurityRight right = new SecurityRight();
-
-				right.setRightName(rs.getString("RightName"));
-
-				return right;
-			}
+			return right;
 		});
 	}
 
 	@Override
 	public List<SecurityRight> getPageRights(SecurityRight right) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName");
 		sql.append(" from SecUserOperations UO");
 		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
@@ -125,17 +113,12 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(right);
 
-		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.query(sql.toString(), paramSource, new RowMapper<SecurityRight>() {
+		return jdbcTemplate.query(sql.toString(), paramSource, (rs, rowNum) -> {
+			SecurityRight sr = new SecurityRight();
 
-			@Override
-			public SecurityRight mapRow(ResultSet rs, int rowNum) throws SQLException {
-				SecurityRight right = new SecurityRight();
+			sr.setRightName(rs.getString("RightName"));
 
-				right.setRightName(rs.getString("RightName"));
-
-				return right;
-			}
+			return sr;
 		});
 	}
 
@@ -162,8 +145,8 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 		logger.debug(Literal.ENTERING);
 
 		if (right.getId() == Long.MIN_VALUE) {
-			right.setId(getNextId("SeqSecRights"));
-			logger.debug("get NextID:" + right.getId());
+			right.setId(getNextValue("SeqSecRights"));
+			logger.debug("get NextValue:" + right.getId());
 		}
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert into SecRights(RightID,RightType,RightName,Page,Version,LastMntBy,LastMntOn, ");

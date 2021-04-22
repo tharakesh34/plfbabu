@@ -48,10 +48,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -64,6 +66,7 @@ import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
+import com.pennant.webui.legal.legaldetail.LegalDetailLoanListCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -73,13 +76,14 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 	private static final long serialVersionUID = 6004939933729664895L;
-	private static final Logger logger = Logger.getLogger(ConvFinanceMainDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(ConvFinanceMainDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ConvFinanceMainDialog; // autoWired
+	private LegalDetailLoanListCtrl legalDetailLoanListCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -263,6 +267,14 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		Long capturereaonse = null;
 		String taskId = getTaskId(getRole());
 		financeMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+		if (isNotesMandatory(taskId, financeMain)) {
+			if (!notesEntered) {
+				MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+				return;
+			}
+		}
+
 		capturereaonse = getWorkFlow().getReasonTypeToCapture(taskId, financeMain);
 		if (capturereaonse != null && capturereaonse.intValue() != 0) {
 			doFillReasons(capturereaonse.intValue());
@@ -270,6 +282,8 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 			try {
 				doSave();
 			} catch (WrongValuesException e) {
+				throw e;
+			} catch (WrongValueException e) {
 				throw e;
 			} catch (Exception e) {
 				MessageUtil.showError(e);
@@ -328,6 +342,14 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("Entering " + event.toString());
 		super.onCheckmanualSchedule();
 		logger.debug("Leaving " + event.toString());
+	}
+
+	public LegalDetailLoanListCtrl getLegalDetailLoanListCtrl() {
+		return legalDetailLoanListCtrl;
+	}
+
+	public void setLegalDetailLoanListCtrl(LegalDetailLoanListCtrl legalDetailLoanListCtrl) {
+		this.legalDetailLoanListCtrl = legalDetailLoanListCtrl;
 	}
 
 }

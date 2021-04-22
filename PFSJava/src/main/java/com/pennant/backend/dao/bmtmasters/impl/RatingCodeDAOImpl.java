@@ -43,13 +43,14 @@
 package com.pennant.backend.dao.bmtmasters.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.bmtmasters.RatingCodeDAO;
 import com.pennant.backend.model.bmtmasters.RatingCode;
@@ -62,7 +63,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCodeDAO {
-	private static Logger logger = Logger.getLogger(RatingCodeDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(RatingCodeDAOImpl.class);
 
 	public RatingCodeDAOImpl() {
 		super();
@@ -97,7 +98,7 @@ public class RatingCodeDAOImpl extends BasicDao<RatingCode> implements RatingCod
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aRatingCode);
-		RowMapper<RatingCode> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(RatingCode.class);
+		RowMapper<RatingCode> typeRowMapper = BeanPropertyRowMapper.newInstance(RatingCode.class);
 
 		try {
 			aRatingCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);

@@ -16,8 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.app.util.DateUtility;
 
 public class Dataset {
-	public static boolean loaded;
-	public static Workbook schedule;
+	public static boolean	loaded;
+	public static Workbook	schedule;
 
 	public static void load() throws BiffException, IOException {
 		URL url = (new Dataset()).getClass().getClassLoader().getResource("TestScenarios.xls");
@@ -47,7 +47,7 @@ public class Dataset {
 	}
 
 	public static Long getLong(Cell[] data, int index) {
-		return Long.valueOf(data[index].getContents());
+		return new Long(data[index].getContents());
 	}
 
 	public static BigDecimal getBigDecimal(Cell[] data, int index) {
@@ -63,7 +63,7 @@ public class Dataset {
 	}
 
 	public static boolean getBoolean(Cell[] data, int index) {
-		return Boolean.valueOf(data[index].getContents());
+		return new Boolean(data[index].getContents());
 	}
 
 	public static void close() {

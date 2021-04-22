@@ -21,7 +21,8 @@ import org.apache.cxf.io.CachedOutputStreamCallback;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptorChain;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -44,7 +45,7 @@ import com.pennanttech.ws.log.model.APILogDetail;
 
 public class LogResponseInterceptor extends LoggingOutInterceptor {
 
-	private static final Logger LOG = Logger.getLogger(LogResponseInterceptor.class);
+	private static final Logger LOG = LogManager.getLogger(LogResponseInterceptor.class);
 	private APILogDetailDAO apiLogDetailDAO;
 	private String returnCode;
 

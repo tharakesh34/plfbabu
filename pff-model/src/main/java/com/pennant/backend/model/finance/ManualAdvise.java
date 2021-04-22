@@ -44,8 +44,11 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -55,6 +58,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -138,6 +143,8 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private boolean holdDue;
 
 	private FeeType feeType;
+	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public String getFinSource() {
 		return finSource;
@@ -153,6 +160,69 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public ManualAdvise() {
 		super();
+	}
+
+	public ManualAdvise copyEntity() {
+		ManualAdvise entity = new ManualAdvise();
+		entity.setAdviseID(this.adviseID);
+		entity.setAdviseType(this.adviseType);
+		entity.setAdviseTypeName(this.adviseTypeName);
+		entity.setFinReference(this.finReference);
+		entity.setFeeTypeID(this.feeTypeID);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setSequence(this.sequence);
+		entity.setAdviseAmount(this.adviseAmount);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setWaivedAmount(this.waivedAmount);
+		entity.setReservedAmt(this.reservedAmt);
+		entity.setBalanceAmt(this.balanceAmt);
+		entity.setTaxPercent(this.taxPercent);
+		entity.setPaidCGST(this.paidCGST);
+		entity.setPaidSGST(this.paidSGST);
+		entity.setPaidUGST(this.paidUGST);
+		entity.setPaidIGST(this.paidIGST);
+		entity.setPaidCESS(this.paidCESS);
+		entity.setWaivedCGST(this.waivedCGST);
+		entity.setWaivedSGST(this.waivedSGST);
+		entity.setWaivedUGST(this.waivedUGST);
+		entity.setWaivedIGST(this.waivedIGST);
+		entity.setWaivedCESS(this.waivedCESS);
+		entity.setTdsPaid(this.tdsPaid);
+		entity.setRemarks(this.remarks);
+		entity.setValueDate(this.valueDate);
+		entity.setPostDate(this.postDate);
+		entity.setNewRecord(this.newRecord);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setBounceID(this.bounceID);
+		entity.setBounceCode(this.bounceCode);
+		entity.setBounceCodeDesc(this.bounceCodeDesc);
+		entity.setReceiptID(this.receiptID);
+		entity.setTaxApplicable(this.taxApplicable);
+		entity.setTaxComponent(this.taxComponent);
+		entity.setTdsReq(this.tdsReq);
+		entity.setStp(this.stp);
+		entity.setFinSourceId(this.finSourceId);
+		entity.setFinSource(this.finSource);
+		entity.setDueCreation(this.dueCreation);
+		entity.setLinkedTranId(this.linkedTranId);
+		entity.setHoldDue(this.holdDue);
+		entity.setFeeType(this.feeType == null ? null : this.feeType.copyEntity());
+		this.documentDetails.stream().forEach(e -> entity.getDocumentDetails().add(e == null ? null : e.copyEntity()));
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	public ManualAdvise(long id) {
@@ -174,6 +244,8 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("taxComponent");
 		excludeFields.add("stp");
 		excludeFields.add("finSourceId");
+		excludeFields.add("documentDetails");
+		excludeFields.add("auditDetailMap");
 		excludeFields.add("feeType");
 		excludeFields.add("tdsPaid");
 		excludeFields.add("tdsReq");
@@ -550,6 +622,22 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setHoldDue(boolean holdDue) {
 		this.holdDue = holdDue;
+	}
+
+	public List<DocumentDetails> getDocumentDetails() {
+		return documentDetails;
+	}
+
+	public void setDocumentDetails(List<DocumentDetails> documentDetails) {
+		this.documentDetails = documentDetails;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
 	}
 
 }

@@ -10,11 +10,11 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.limit.LimitStructureDAO;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class LimitsUpdate implements Tasklet {
@@ -30,8 +30,10 @@ public class LimitsUpdate implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
-		Date valueDate = SysParamUtil.getAppValueDate();
+		Date valueDate = EODUtil.getDate("APP_VALUEDATE", context);
+
 		logger.info("START Update Limits On  {}", valueDate);
+
 		BatchUtil.setExecutionStatus(context, StepUtil.CUSTOMER_LIMITS_UPDATE);
 
 		StepUtil.CUSTOMER_LIMITS_UPDATE.setTotalRecords(1);

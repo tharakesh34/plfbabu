@@ -45,7 +45,8 @@ package com.pennant.backend.service.systemmasters.impl;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
@@ -66,7 +67,7 @@ import com.pennanttech.pff.core.TableType;
  * 
  */
 public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> implements EmployerDetailService {
-	private static final Logger logger = Logger.getLogger(EmployerDetailServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(EmployerDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 
@@ -218,6 +219,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 	 * @return EmployerDetail
 	 */
 
+	@Override
 	public EmployerDetail getApprovedEmployerDetailById(long id) {
 		return getEmployerDetailDAO().getEmployerDetailById(id, "_AView");
 	}
@@ -237,6 +239,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
+	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		String tranType = "";
@@ -246,7 +249,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		}
 
 		EmployerDetail employerDetail = new EmployerDetail();
-		BeanUtils.copyProperties((EmployerDetail) auditHeader.getAuditDetail().getModelData(), employerDetail);
+		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), employerDetail);
 
 		if (employerDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
@@ -296,6 +299,7 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 	 * @return auditHeader
 	 */
 
+	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 		auditHeader = businessValidation(auditHeader, "doApprove", false);
@@ -451,6 +455,11 @@ public class EmployerDetailServiceImpl extends GenericService<EmployerDetail> im
 		}
 
 		return auditDetail;
+	}
+
+	@Override
+	public boolean isNonTargetEmployee(String name, String category, String type) {
+		return getEmployerDetailDAO().isNonTargetEmployee(name, category, type);
 	}
 
 }

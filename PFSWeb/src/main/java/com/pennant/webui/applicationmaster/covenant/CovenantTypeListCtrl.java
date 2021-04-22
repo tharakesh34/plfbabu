@@ -46,7 +46,8 @@ package com.pennant.webui.applicationmaster.covenant;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -84,7 +85,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CovenantTypeListCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CovenantTypeListCtrl.class);
 
 	protected Window window_CovenantTypeList;
 	protected Borderlayout borderLayout_CovenantTypeList;
@@ -150,8 +151,9 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		registerField("Id");
 		registerField("Category", listheader_Category, SortOrder.NONE, category, sortOperator_Category,
 				Operators.STRING);
-		registerField("Code");
-		registerField("Description");
+		registerField("Code", listheader_Code, SortOrder.ASC, code, sortOperator_Code, Operators.STRING);
+		registerField("Description", listheader_Description, SortOrder.NONE, description, sortOperator_Description,
+				Operators.STRING);
 		registerField("DocType", listheader_DocType, SortOrder.ASC, docType, sortOperator_DocType, Operators.DEFAULT);
 		registerField("DocTypeName");
 		//registerField("Los");		

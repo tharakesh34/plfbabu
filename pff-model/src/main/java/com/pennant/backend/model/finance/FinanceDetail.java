@@ -71,6 +71,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
@@ -88,6 +89,7 @@ import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -107,7 +109,7 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
 		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "receiptAllocations",
-		"returnStatus" })
+		"finOCRHeader", "returnStatus", "receiptProcessingAmt", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -126,7 +128,11 @@ public class FinanceDetail implements java.io.Serializable {
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>(1);
 	private FinContributorHeader finContributorHeader;
 	private CustomerEligibilityCheck customerEligibilityCheck;
+	private IndicativeTermDetail indicativeTermDetail;
+	private EtihadCreditBureauDetail etihadCreditBureauDetail;
+	private BundledProductsDetail bundledProductsDetail;
 	private TATDetail tatDetail;
+	private FinAssetEvaluation finAssetEvaluation;
 	private CollateralSetup collSetup;
 	private List<FinanceCheckListReference> financeCheckList = new ArrayList<>(1);
 	private List<FinanceReferenceDetail> checkList = new ArrayList<>(1);
@@ -161,6 +167,7 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElementWrapper(name = "coApplicants")
 	@XmlElement(name = "coApplicant")
 	private List<JointAccountDetail> jountAccountDetailList = new ArrayList<>(1);
+	private List<ContractorAssetDetail> contractorAssetDetails = new ArrayList<>(1);
 	private List<FinanceDeviations> financeDeviations = new ArrayList<>();
 	private List<FinanceDeviations> approvedFinanceDeviations = new ArrayList<>();
 	private List<FinanceDeviations> manualDeviations = new ArrayList<>();
@@ -173,6 +180,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<>(1);
 	private List<FinBlacklistCustomer> finBlacklistCustomer;
 	private List<FinanceDedup> finDedupDetails;
+	private List<PoliceCase> dedupPoliceCaseDetails;
 	private List<CustomerDedup> customerDedupList;
 	@XmlElement(name = "disbursement")
 	private List<FinAdvancePayments> advancePaymentsList;
@@ -181,7 +189,9 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name = "covenant")
 	private List<FinCovenantType> covenantTypeList;
 	private Covenant covenant;
+	@XmlElement(name = "covenantDetails")
 	private List<Covenant> covenants;
+	private RolledoverFinanceHeader rolledoverFinanceHeader;
 	@XmlElement(name = "customer")
 	private CustomerDetails customerDetails;
 	private StorageDetail storageDetail;
@@ -206,6 +216,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private ExtendedFieldRender extendedFieldRender;
 	private transient Map<String, Object> lovDescExtendedFieldValues = new HashMap<>(1);
 	private FinWriteoffPayment finwriteoffPayment;
+	private AgreementFieldDetails agreementFieldDetails;
 	private FinRepayHeader finRepayHeader;
 	@XmlElement(name = "mandateDetail")
 	private Mandate mandate;
@@ -232,6 +243,7 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
+	@XmlElement
 	private ChequeHeader chequeHeader;
 	@XmlElement
 	private ReasonHeader reasonHeader;
@@ -243,6 +255,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private Verification lvVerification;
 	private Verification rcuVerification;
 	private Verification pdVerification;
+	@XmlElement
+	private Verification legalVetting;
 	@XmlElement
 	private PSLDetail pslDetail;
 	private boolean fiApprovalTab = false;
@@ -296,10 +310,24 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<CollateralAssignment> tempCollateralAssignmentList = new ArrayList<>();
 	@XmlElement
 	private boolean disbStp;
+	private PricingDetail pricingDetail;
+	private List<FinFeeConfig> finFeeConfigList;
+
+	@XmlElement
+	private BigDecimal receiptProcessingAmt;
+
 
 	// used for Interfaces
 	private Long usrID;
 	private String usrLogin;
+	@XmlElement
+	private FinOCRHeader finOCRHeader;
+	private boolean vettingApprovalTab = false;
+	private boolean vettingInitTab = false;
+	private PMAY pmay;
+
+	//Documents uploaded in DMS for already approved collateral, those documents need to synch PLF.
+	private List<CollateralSetup> dmsCollateralDocuments;
 
 	public FinanceDetail() {
 		super();
@@ -308,6 +336,7 @@ public class FinanceDetail implements java.io.Serializable {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("orderStatus");
+		excludeFields.add("receiptProcessingAmt");
 
 		return excludeFields;
 	}
@@ -392,6 +421,30 @@ public class FinanceDetail implements java.io.Serializable {
 		this.customerEligibilityCheck = customerEligibilityCheck;
 	}
 
+	public IndicativeTermDetail getIndicativeTermDetail() {
+		return indicativeTermDetail;
+	}
+
+	public void setIndicativeTermDetail(IndicativeTermDetail indicativeTermDetail) {
+		this.indicativeTermDetail = indicativeTermDetail;
+	}
+
+	public EtihadCreditBureauDetail getEtihadCreditBureauDetail() {
+		return etihadCreditBureauDetail;
+	}
+
+	public void setEtihadCreditBureauDetail(EtihadCreditBureauDetail etihadCreditBureauDetail) {
+		this.etihadCreditBureauDetail = etihadCreditBureauDetail;
+	}
+
+	public BundledProductsDetail getBundledProductsDetail() {
+		return bundledProductsDetail;
+	}
+
+	public void setBundledProductsDetail(BundledProductsDetail bundledProductsDetail) {
+		this.bundledProductsDetail = bundledProductsDetail;
+	}
+
 	public TATDetail getTatDetail() {
 		return tatDetail;
 	}
@@ -402,6 +455,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public FinAssetEvaluation getFinAssetEvaluation() {
+		return finAssetEvaluation;
+	}
+
+	public void setFinAssetEvaluation(FinAssetEvaluation finAssetEvaluation) {
+		this.finAssetEvaluation = finAssetEvaluation;
 	}
 
 	public CollateralSetup getCollSetup() {
@@ -612,6 +673,14 @@ public class FinanceDetail implements java.io.Serializable {
 		this.jountAccountDetailList = jountAccountDetailList;
 	}
 
+	public List<ContractorAssetDetail> getContractorAssetDetails() {
+		return contractorAssetDetails;
+	}
+
+	public void setContractorAssetDetails(List<ContractorAssetDetail> contractorAssetDetails) {
+		this.contractorAssetDetails = contractorAssetDetails;
+	}
+
 	public List<FinanceDeviations> getFinanceDeviations() {
 		return financeDeviations;
 	}
@@ -692,6 +761,14 @@ public class FinanceDetail implements java.io.Serializable {
 		this.finDedupDetails = finDedupDetails;
 	}
 
+	public List<PoliceCase> getDedupPoliceCaseDetails() {
+		return dedupPoliceCaseDetails;
+	}
+
+	public void setDedupPoliceCaseDetails(List<PoliceCase> dedupPoliceCaseDetails) {
+		this.dedupPoliceCaseDetails = dedupPoliceCaseDetails;
+	}
+
 	public List<CustomerDedup> getCustomerDedupList() {
 		return customerDedupList;
 	}
@@ -722,6 +799,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setCovenantTypeList(List<FinCovenantType> covenantTypeList) {
 		this.covenantTypeList = covenantTypeList;
+	}
+
+	public RolledoverFinanceHeader getRolledoverFinanceHeader() {
+		return rolledoverFinanceHeader;
+	}
+
+	public void setRolledoverFinanceHeader(RolledoverFinanceHeader rolledoverFinanceHeader) {
+		this.rolledoverFinanceHeader = rolledoverFinanceHeader;
 	}
 
 	public CustomerDetails getCustomerDetails() {
@@ -906,6 +991,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setFinwriteoffPayment(FinWriteoffPayment finwriteoffPayment) {
 		this.finwriteoffPayment = finwriteoffPayment;
+	}
+
+	public AgreementFieldDetails getAgreementFieldDetails() {
+		return agreementFieldDetails;
+	}
+
+	public void setAgreementFieldDetails(AgreementFieldDetails agreementFieldDetails) {
+		this.agreementFieldDetails = agreementFieldDetails;
 	}
 
 	public FinRepayHeader getFinRepayHeader() {
@@ -1513,5 +1606,79 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setDisbStp(boolean disbStp) {
 		this.disbStp = disbStp;
 	}
+
+	public FinOCRHeader getFinOCRHeader() {
+		return finOCRHeader;
+	}
+
+	public void setFinOCRHeader(FinOCRHeader finOCRHeader) {
+		this.finOCRHeader = finOCRHeader;
+	}
+
+	public Verification getLegalVetting() {
+		return legalVetting;
+	}
+
+	public void setLegalVetting(Verification legalVetting) {
+		this.legalVetting = legalVetting;
+	}
+
+	public boolean isVettingApprovalTab() {
+		return vettingApprovalTab;
+	}
+
+	public void setVettingApprovalTab(boolean vettingApprovalTab) {
+		this.vettingApprovalTab = vettingApprovalTab;
+	}
+
+	public boolean isVettingInitTab() {
+		return vettingInitTab;
+	}
+
+	public void setVettingInitTab(boolean vettingInitTab) {
+		this.vettingInitTab = vettingInitTab;
+	}
+
+	public PMAY getPmay() {
+		return pmay;
+	}
+
+	public void setPmay(PMAY pmay) {
+		this.pmay = pmay;
+	}
+
+	public PricingDetail getPricingDetail() {
+		return pricingDetail;
+	}
+
+	public void setPricingDetail(PricingDetail pricingDetail) {
+		this.pricingDetail = pricingDetail;
+	}
+
+	public List<FinFeeConfig> getFinFeeConfigList() {
+		return finFeeConfigList;
+	}
+
+	public void setFinFeeConfigList(List<FinFeeConfig> finFeeConfigList) {
+		this.finFeeConfigList = finFeeConfigList;
+	}
+
+	public List<CollateralSetup> getDmsCollateralDocuments() {
+		return dmsCollateralDocuments;
+	}
+
+	public void setDmsCollateralDocuments(List<CollateralSetup> dmsCollateralDocuments) {
+		this.dmsCollateralDocuments = dmsCollateralDocuments;
+	}
+
+	public BigDecimal getReceiptProcessingAmt() {
+		return receiptProcessingAmt;
+	}
+
+	public void setReceiptProcessingAmt(BigDecimal receiptProcessingAmt) {
+		this.receiptProcessingAmt = receiptProcessingAmt;
+	}
+
+
 
 }

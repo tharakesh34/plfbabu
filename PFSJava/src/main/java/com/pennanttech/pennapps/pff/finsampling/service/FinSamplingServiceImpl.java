@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -285,7 +285,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			object = object.toString();
 		}
 
-		return Long.valueOf(object.toString());
+		return new Long(object.toString());
 	}
 
 	private Integer getInt(ExtendedFieldData data) {
@@ -298,7 +298,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 			object = object.toString();
 		}
 
-		return Integer.valueOf(object.toString());
+		return new Integer(object.toString());
 	}
 
 	private String getVariance(Integer original, Integer current) {

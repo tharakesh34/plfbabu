@@ -265,6 +265,42 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 			subventionMapdata.addValue("LinkedTranId", linkedTranId);
 			subventionProcessDAO.saveSubventionProcessRequest(subventionMapdata);
 
+			//DBD Payment/Receipt Creation
+
+			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
+
+				Date appDate = SysParamUtil.getAppDate();
+				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getDlrCbToCust());
+
+				if (DateUtility.compare(appDate, cbDate) >= 0) {
+
+					feeType = feeTypeDAO.getFeeTypeById(promotion.getDbdFeeTypId(), "");
+					CashBackDetail cashBackDetail = cashBackDetailDAO
+							.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
+					finMain.setLastMntBy(1000);
+					finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					finMain.setFinCcy(SysParamUtil.getAppCurrency());
+
+					if (cashBackDetail != null) {
+						BigDecimal balAmount = cashBackDetail.getAmount();
+						// Cash Back amount adjustments
+						if (promotion.isKnckOffDueAmt()) {
+							try {
+								balAmount = cashBackProcessService.createReceiptOnCashBack(cashBackDetail);
+							} catch (Exception e) {
+								logger.error("Exception", e);
+							}
+						}
+						if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
+							cashBackProcessService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
+									cashBackDetail.getAdviseId(), balAmount);
+						} else {
+							cashBackDetailDAO.updateCashBackDetail(cashBackDetail.getAdviseId());
+						}
+					}
+				}
+			}
+
 			// Cash Back amount adjustments
 			if (promotion.isMbd() && !promotion.isMbdRtnd()) {
 
@@ -275,6 +311,11 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 					CashBackDetail cashBackDetail = cashBackDetailDAO
 							.getManualAdviseIdByFinReference(finMain.getFinReference(), "MBD");
+					if (cashBackDetail == null) {
+						cashBackDetail = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(),
+								"DBMBD");
+						feeType = feeTypeDAO.getFeeTypeById(promotion.getDbdAndMbdFeeTypId(), "");
+					}
 
 					if (cashBackDetail != null && cashBackDetail.getAdviseId() > 0) {
 

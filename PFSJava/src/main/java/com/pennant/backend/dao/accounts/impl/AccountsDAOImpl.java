@@ -46,15 +46,16 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -69,7 +70,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
  * 
  */
 public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
-	private static Logger logger = Logger.getLogger(AccountsDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(AccountsDAOImpl.class);
 
 	public AccountsDAOImpl() {
 		super();
@@ -141,7 +142,7 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
-		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
+		RowMapper<Accounts> typeRowMapper = BeanPropertyRowMapper.newInstance(Accounts.class);
 
 		try {
 			accounts = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -176,7 +177,7 @@ public class AccountsDAOImpl extends BasicDao<Accounts> implements AccountsDAO {
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accounts);
-		RowMapper<Accounts> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Accounts.class);
+		RowMapper<Accounts> typeRowMapper = BeanPropertyRowMapper.newInstance(Accounts.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}

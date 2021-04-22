@@ -45,13 +45,14 @@ package com.pennant.backend.dao.impl;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.UserActivityLogDAO;
 import com.pennant.backend.model.UserActivityLog;
@@ -59,7 +60,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements UserActivityLogDAO {
-	private static Logger logger = Logger.getLogger(UserActivityLogDAOImpl.class);
+	private static Logger logger = LogManager.getLogger(UserActivityLogDAOImpl.class);
 
 	public UserActivityLogDAOImpl() {
 		super();
@@ -151,8 +152,7 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 		source.addValue("module", module);
 		source.addValue("reference", reference);
 
-		RowMapper<UserActivityLog> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(UserActivityLog.class);
+		RowMapper<UserActivityLog> typeRowMapper = BeanPropertyRowMapper.newInstance(UserActivityLog.class);
 
 		List<UserActivityLog> activities = jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 

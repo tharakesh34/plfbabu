@@ -8,7 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.dms.DMSIdentificationDAO;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.DocumentManagementService;
 
 public class DMSAddDocJobProcess {
-	private static final Logger logger = Logger.getLogger(DMSAddDocJobProcess.class);
+	private static final Logger logger = LogManager.getLogger(DMSAddDocJobProcess.class);
 	private int retryCount;
 	private int threadCount;
 	private int threadAwaitPeroid;

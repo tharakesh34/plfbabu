@@ -10,7 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -38,6 +39,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -47,6 +49,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
@@ -58,6 +61,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -73,6 +77,7 @@ import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
@@ -93,7 +98,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUnit> {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(RiskContainmentUnitDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(RiskContainmentUnitDialogCtrl.class);
 
 	protected Window window_RiskContainmentUnitDialog;
 	protected Tab verificationDetails;
@@ -119,6 +124,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 	protected North north;
 	protected South south;
+	protected Space space_AgentCode;
+	protected Space space_AgentName;
 
 	private RiskContainmentUnit riskContainmentUnit;
 	protected Map<String, DocumentDetails> docDetailMap = null;
@@ -136,6 +143,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	private boolean fromLoanOrg;
 
 	protected Button btnSearchCustomerDetails;
+	private DMSService dMSService;
 
 	/**
 	 * default constructor.<br>
@@ -224,8 +232,13 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.reason.setValueColumn("Code");
 		this.reason.setDescColumn("Description");
 		this.reason.setValidateColumns(new String[] { "Code" });
+
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			reasonFilter[0] = new Filter("ReasonTypecode", null, Filter.OP_EQUAL);
+		} else {
+			reasonFilter[0] = new Filter("ReasonTypecode", StatuReasons.RCUSRES.getKey(), Filter.OP_EQUAL);
+		}
 		reason.setFilters(reasonFilter);
 
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -240,6 +253,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
 
+		this.space_AgentCode.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
+		this.space_AgentName.setVisible(!ImplementationConstants.VER_INIT_FROM_OUTSIDE);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -447,6 +462,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 					label.setValue(" - " + document.getReferenceId());
 					lc.appendChild(label);
 					lc.setParent(item);
+				} else if (document.getDocumentType() == DocumentType.COAPPLICANT.getKey()) {
+					lc.setLabel(" CoApplicant-  " + document.getReferenceId());
+				} else if (document.getDocumentType() == DocumentType.CUSTOMER.getKey()) {
+					lc.setLabel(" Customer- " + document.getReferenceId());
 				}
 
 				lc = new Listcell();
@@ -507,8 +526,15 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				remarks.setWidth("350px");
 				lc.appendChild(remarks);
 				lc.setParent(item);
-
-				fillComboBox(verificationType, document.getVerificationType(), RCUDocVerificationType.getList());
+				int type = document.getVerificationType();
+				if (ImplementationConstants.RCU_DOC_FIELDS_DISABLED) {
+					type = 1;//Defaulting to Sampled and disabling
+					verificationType.setDisabled(true);
+					rcuDocStatus.setDisabled(true);
+					pagesEyeBalled.setReadonly(true);
+					pagesSampled.setReadonly(true);
+				}
+				fillComboBox(verificationType, type, RCUDocVerificationType.getList());
 				fillComboBox(rcuDocStatus, document.getStatus(), RCUDocStatus.getList());
 				readOnlyComponents(verificationType, pagesEyeBalled, pagesSampled);
 
@@ -528,6 +554,21 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		RCUDocument details = (RCUDocument) event.getData();
 
 		DocumentManager docDetails = riskContainmentUnitService.getDocumentById(details.getDocumentRefId());
+
+		Long docRefId = details.getDocumentRefId();
+		String docName = details.getDocName();
+		String docUri = details.getDocumentUri();
+		if (StringUtils.isNotBlank(docUri)) {
+			DocumentDetails dd = dMSService.getExternalDocument(this.custCIF.getValue(), docName, docUri);
+			docDetails.setDocImage(dd.getDocImage());
+			details.setDocName(dd.getDocName());
+		} else {
+			if (docDetails.getDocImage() == null) {
+				if (docRefId != null && docRefId != Long.MIN_VALUE) {
+					docDetails.setDocImage(dMSService.getById(docRefId));
+				}
+			}
+		}
 
 		if (docDetails != null && docDetails.getDocImage() != null) {
 			downloadFile(details.getDocType(), docDetails.getDocImage(), details.getDocName());
@@ -790,17 +831,41 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	public void onChange$recommendations(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		this.reason.setErrorMessage("");
+		this.reason.setValue("");
 		String type = this.recommendations.getSelectedItem().getValue();
 		visibleComponent(Integer.parseInt(type));
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	private void visibleComponent(Integer type) {
-		if (type == RCUStatus.NEGATIVE.getKey() || type == RCUStatus.REFERTOCREDIT.getKey()) {
+		String reasonType = null;
+		if (type == RCUStatus.NEGATIVE.getKey()) {
 			this.reason.setMandatoryStyle(true);
-		} else {
+			reasonType = StatuReasons.RCUNTVRTY.getKey();
+		} else if (type == RCUStatus.REFERTOCREDIT.getKey()) {
+			this.reason.setMandatoryStyle(true);
+			reasonType = StatuReasons.RCURFRRTY.getKey();
+		} else if (type == RCUStatus.POSITIVE.getKey()) {
 			this.reason.setMandatoryStyle(false);
+			reasonType = StatuReasons.RCUPOSTVRTY.getKey();
+			//#PSD:168882:System displaying reason field as mandatory when select recommendation value as screened or sampled or hold
+		} else if (type == RCUStatus.HOLD.getKey()) {
+			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
+		} else if (type == RCUStatus.SAMPLED.getKey()) {
+			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
+		} else if (type == RCUStatus.SCREENED.getKey()) {
+			this.reason.setMandatoryStyle(false);
+			PennantAppUtil.setReasonCodeFilters(this.reason, StatuReasons.RCUPOSTVRTY.getKey());
 		}
+
+		if (ImplementationConstants.VER_REASON_CODE_FILTER_BY_REASONTYPE) {
+			Filter[] reasonFilter = new Filter[1];
+			reasonFilter[0] = new Filter("ReasonTypecode", reasonType, Filter.OP_EQUAL);
+			reason.setFilters(reasonFilter);
+		}
+
 	}
 
 	private void setValue(Listitem listitem, String comonentId) {
@@ -1051,14 +1116,14 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 							DateUtil.getDatePart(SysParamUtil.getAppDate()), true));
 		}
 		if (!this.agentCode.isReadonly()) {
-			this.agentCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+			this.agentCode.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_RiskContainmentUnitDialog_AgentCode.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_RiskContainmentUnitDialog_AgentName.value"),
-							PennantRegularExpressions.REGEX_CUST_NAME, true));
+							PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(
@@ -1090,7 +1155,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.recommendations.setConstraint("");
 		this.reason.setConstraint("");
 		this.remarks.setConstraint("");
-		this.remarks.setConstraint("");
+		this.verificationDate.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1207,6 +1272,9 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		try {
 			if (doProcess(rcu, tranType)) {
 				refreshList();
+				String msg = PennantApplicationUtil.getSavingStatus(rcu.getRoleCode(), rcu.getNextRoleCode(),
+						rcu.getKeyReference(), " Loan ", rcu.getRecordStatus(), getNextTaskId());
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 
@@ -1544,6 +1612,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 	public void setRcuDocumentsList(List<RCUDocument> rcuDocumentsList) {
 		this.rcuDocumentsList = rcuDocumentsList;
+	}
+
+	public void setdMSService(DMSService dMSService) {
+		this.dMSService = dMSService;
 	}
 
 }

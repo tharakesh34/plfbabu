@@ -16,6 +16,8 @@ public class FinRepayQueueHeader {
 	private BigDecimal penalty = BigDecimal.ZERO;
 	private BigDecimal fee = BigDecimal.ZERO;
 	private BigDecimal insurance = BigDecimal.ZERO;
+	private BigDecimal suplRent = BigDecimal.ZERO;
+	private BigDecimal incrCost = BigDecimal.ZERO;
 
 	private BigDecimal partialPaid = BigDecimal.ZERO;
 
@@ -27,6 +29,8 @@ public class FinRepayQueueHeader {
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal feeWaived = BigDecimal.ZERO;
 	private BigDecimal insWaived = BigDecimal.ZERO;
+	private BigDecimal suplRentWaived = BigDecimal.ZERO;
+	private BigDecimal incrCostWaived = BigDecimal.ZERO;
 
 	private BigDecimal manAdvPaid = BigDecimal.ZERO;
 	private BigDecimal manAdvWaived = BigDecimal.ZERO;
@@ -106,6 +110,22 @@ public class FinRepayQueueHeader {
 		this.insurance = insurance;
 	}
 
+	public BigDecimal getSuplRent() {
+		return suplRent;
+	}
+
+	public void setSuplRent(BigDecimal suplRent) {
+		this.suplRent = suplRent;
+	}
+
+	public BigDecimal getIncrCost() {
+		return incrCost;
+	}
+
+	public void setIncrCost(BigDecimal incrCost) {
+		this.incrCost = incrCost;
+	}
+
 	public BigDecimal getPriWaived() {
 		return priWaived;
 	}
@@ -152,6 +172,22 @@ public class FinRepayQueueHeader {
 
 	public void setInsWaived(BigDecimal insWaived) {
 		this.insWaived = insWaived;
+	}
+
+	public BigDecimal getSuplRentWaived() {
+		return suplRentWaived;
+	}
+
+	public void setSuplRentWaived(BigDecimal suplRentWaived) {
+		this.suplRentWaived = suplRentWaived;
+	}
+
+	public BigDecimal getIncrCostWaived() {
+		return incrCostWaived;
+	}
+
+	public void setIncrCostWaived(BigDecimal incrCostWaived) {
+		this.incrCostWaived = incrCostWaived;
 	}
 
 	public List<FinRepayQueue> getQueueList() {

@@ -19,11 +19,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -33,20 +38,28 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FieldInvestigation table</b>.<br>
  *
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class TechnicalVerification extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long verificationId;
+	@XmlElement
 	private String agentCode;
+	@XmlElement
 	private String agentName;
 	private int type;
+	@XmlElement
 	private Date verifiedDate;
+	@XmlElement(name = "recommendations")
 	private int status;
+	@XmlElement
 	private Long reason;
+	@XmlElement(name = "remarks")
 	private String summaryRemarks;
 	private String sourceFormName;
 	private String verificationFormName;
 	private String observationRemarks;
+	@XmlElement
 	private BigDecimal valuationAmount;
 
 	private String reasonCode;
@@ -55,9 +68,13 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private Timestamp createdOn;
 	private String cif;
 	private Long custId;
+	@XmlElement(name = "name")
 	private String custName;
+	@XmlElement
 	private String keyReference;
+	@XmlElement
 	private String collateralType;
+	@XmlElement
 	private String collateralRef;
 	private String collateralCcy;
 	private String collateralLoc;
@@ -89,6 +106,18 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	private long documentRef;
 	@XmlElement(name = "docContent")
 	private byte[] docImage;
+	private String loanType;
+	private String lovDescLoanTypeName;
+	private String sourcingBranch;
+	private String lovDescSourcingBranch;
+
+	@XmlElementWrapper(name = "extendedDetails")
+	@XmlElement(name = "extendedDetail")
+	private List<ExtendedField> extendedDetails;
+
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	private String sourceId;
 
 	public TechnicalVerification() {
 		super();
@@ -125,6 +154,13 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		excludeFields.add("docImage");
 		excludeFields.add("productCategory");
 		excludeFields.add("verificationCategory");
+		excludeFields.add("loanType");
+		excludeFields.add("lovDescLoanTypeName");
+		excludeFields.add("sourcingBranch");
+		excludeFields.add("lovDescSourcingBranch");
+		excludeFields.add("extendedDetails");
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
 		return excludeFields;
 	}
 
@@ -479,4 +515,61 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 	public void setProductCategory(String productCategory) {
 		this.productCategory = productCategory;
 	}
+
+	public String getLoanType() {
+		return loanType;
+	}
+
+	public void setLoanType(String loanType) {
+		this.loanType = loanType;
+	}
+
+	public String getLovDescLoanTypeName() {
+		return lovDescLoanTypeName;
+	}
+
+	public void setLovDescLoanTypeName(String lovDescLoanTypeName) {
+		this.lovDescLoanTypeName = lovDescLoanTypeName;
+	}
+
+	public String getSourcingBranch() {
+		return sourcingBranch;
+	}
+
+	public void setSourcingBranch(String sourcingBranch) {
+		this.sourcingBranch = sourcingBranch;
+	}
+
+	public String getLovDescSourcingBranch() {
+		return lovDescSourcingBranch;
+	}
+
+	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
+		this.lovDescSourcingBranch = lovDescSourcingBranch;
+	}
+
+	public List<ExtendedField> getExtendedDetails() {
+		return extendedDetails;
+	}
+
+	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
+		this.extendedDetails = extendedDetails;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
 }

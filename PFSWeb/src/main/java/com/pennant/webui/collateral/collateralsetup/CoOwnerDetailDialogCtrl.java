@@ -48,7 +48,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
@@ -104,7 +105,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(CoOwnerDetailDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(CoOwnerDetailDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
@@ -686,7 +687,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			this.coOwnerCIF.setValue(getCustData(aCoOwnerDetail.getCustomerId()));
 			dosetCustAddress(aCoOwnerDetail.getCustomerId());
 		}
-		getcoOwnerIdNumber();
+//		getcoOwnerIdNumber();
 		addrCountryTemp = this.addrCountry.getValue();
 		Filter[] provinceFilters = new Filter[1];
 		provinceFilters[0] = new Filter("CPCountry", this.addrCountry.getValue(), Filter.OP_EQUAL);
@@ -790,11 +791,10 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			if (!this.bankCustomer.isChecked()) {
 				aCoOwnerDetail.setCoOwnerIDNumber(this.coOwnerIDNumber.getValue());
 			}
-			getcoOwnerIdNumber();
+//			getcoOwnerIdNumber();
 			if (this.coOwnerIDType.getSelectedIndex() != 0) {
 				if (this.coOwnerIDType.getSelectedItem().getValue().toString().equals(PennantConstants.CPRCODE)) {
-					aCoOwnerDetail.setCoOwnerIDNumber(
-							PennantApplicationUtil.unFormatEIDNumber(this.coOwnerIDNumber.getValue()));
+					aCoOwnerDetail.setCoOwnerIDNumber(this.coOwnerIDNumber.getValue());
 				}
 			}
 		} catch (WrongValueException we) {
@@ -1042,7 +1042,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 			if (!this.mobileNo.isReadonly()) {
 				this.mobileNo.setConstraint(
 						new PTMobileNumberValidator(Labels.getLabel("label_CoOwnerDetailDialog_MobileNo.value"), false,
-								PennantRegularExpressions.TELEPHONE_FAX_REGEX));
+								PennantRegularExpressions.REGEX_FAX));
 			}
 
 			if (!this.emailId.isReadonly()) {
@@ -1571,7 +1571,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 	 */
 	public void onChange$coOwnerIDNumber(Event event) {
 		logger.debug("Entering" + event.toString());
-		getcoOwnerIdNumber();
+//		getcoOwnerIdNumber();
 		logger.debug("Leaving" + event.toString());
 	}
 
