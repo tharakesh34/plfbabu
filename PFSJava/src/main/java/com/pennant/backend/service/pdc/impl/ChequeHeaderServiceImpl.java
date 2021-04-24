@@ -230,6 +230,8 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			details = processingChequeDetailList(details, tableType, chequeHeader.getHeaderID());
 			auditDetails.addAll(details);
 		}
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_CHEQUEDETAILS;
+		financeMainDAO.updateMaintainceStatus(chequeHeader.getFinReference(), rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -601,6 +603,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				getChequeHeaderDAO().update(chequeHeader, TableType.MAIN_TAB);
 			}
 		}
+		financeMainDAO.updateMaintainceStatus(chequeHeader.getFinReference(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -687,8 +690,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, PennantConstants.TRAN_WF)));
-		getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		financeMainDAO.updateMaintainceStatus(chequeHeader.getFinReference(), "");
+		chequeHeaderDAO.delete(chequeHeader, TableType.TEMP_TAB);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;

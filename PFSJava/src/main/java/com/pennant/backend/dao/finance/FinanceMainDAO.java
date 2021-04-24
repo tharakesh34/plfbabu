@@ -480,4 +480,6 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinCategoryByFinRef(String finReference);
 
+	void updateMaintainceStatus(String finReference, String rcdMaintainSts);
+
 }

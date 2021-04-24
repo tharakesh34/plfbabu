@@ -650,7 +650,7 @@ public class SelectMiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader>
 			int count = 0;
 			List<MiscPostingUpload> miscPostingUploads = new ArrayList<MiscPostingUpload>();
 			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-			String dateFormat = "dd-MM-YYYY";
+			String dateFormat = "dd-MM-yyyy";
 
 			int countRows = 0;
 			while ((line = br.readLine()) != null) {

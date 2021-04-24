@@ -613,7 +613,7 @@ public class ExtendedFieldDetailsService {
 			}
 
 			// Add Common Fields
-			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
 					mapValues.put("Reference", extendedFieldRender.getReference());

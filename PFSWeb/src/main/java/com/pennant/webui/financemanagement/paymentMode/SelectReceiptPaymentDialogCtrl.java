@@ -35,6 +35,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptData;
@@ -146,6 +147,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	private FinanceEnquiry financeEnquiry;
 	private Customer customer;
+	private FinanceMainDAO financeMainDAO;
 
 	// private DueData dueData;
 	private int daysBackValueAllowed, daysBackValue;
@@ -251,8 +253,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		this.referenceId.setMandatoryStyle(true);
 		this.referenceId.setDescColumn("BalanceAmt");
+		this.referenceId.setConstraint("");
 		this.referenceId.setValue("", "");
 		this.referenceId.setValueType(DataType.LONG);
+		this.receiptAmount.setValue(BigDecimal.ZERO);
 		Filter filter[] = new Filter[2];
 		filter[0] = new Filter("FinReference", this.finReference.getValue(), Filter.OP_EQUAL);
 		filter[1] = new Filter("BalanceAmt", BigDecimal.ZERO, Filter.OP_GREATER_THAN);
@@ -372,6 +376,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
 		}
 		if (isKnockOff) {
+			this.finReference.setFilters((new Filter[] { new Filter("WriteOffLoan", 0, Filter.OP_EQUAL) }));
 			this.receiptAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
 		} else {
 			this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
@@ -556,9 +561,17 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			}
 
 		}
-
+		
 		errorDetail = receiptService.getWaiverValidation(this.finReference.getValue(),
 				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
+		
+		// Validate Loan is INPROGRESS in WRITEOFF or NOT ?
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
+		if (FinanceConstants.FINSER_EVENT_WRITEOFF.equals(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("LMS001", valueParm));
+		}
 
 		/*
 		 * if (isKnockOff) { BigDecimal receiptDues = this.receiptDues.getActualValue(); BigDecimal knockOffAmount =
@@ -1304,5 +1317,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	@Qualifier(value = "subReceiptPaymentModes")
 	public void setPartnerBankCodeValidation(SubReceiptPaymentModes subReceiptPaymentModes) {
 		this.subReceiptPaymentModes = subReceiptPaymentModes;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 }

@@ -61,15 +61,18 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.model.finance.FinChangeCustomer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.FinChangeCustomerService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.HoldDisbursementService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.finance.finchangecustomer.FinChangeCustomerListCtrl;
 import com.pennant.webui.finance.holddisbursement.HoldDisbursementListCtrl;
@@ -109,6 +112,8 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	List<JointAccountDetail> joinAccountDetail = null;
 	private String custChangeRoles = SysParamUtil.getValueAsString(SMTParameterConstants.CUST_CHANGE_ROLES);
 	private static final String FINCHANGECUSTOMER = "FinChangeCustomer";
+	private FinanceWriteoffDAO financeWriteoffDAO;
+	private FinanceDetailService financeDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -227,6 +232,20 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		if (!doFieldValidation()) {
 			return;
 		}
+		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
+		if (StringUtils.isNotEmpty(rcdMntnSts) && (!FinanceConstants.FINSER_EVENT_MANUALADVISE.equals(rcdMntnSts)
+				|| !FinanceConstants.FINSER_EVENT_HOLDDISB.equals(rcdMntnSts))) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+			return;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(this.finReference.getValue(), "");
+		if (writeoffLoan) {
+			MessageUtil.showMessage(Labels.getLabel("label_Writeoff_Loan"));
+			return;
+		}
+
 		HashMap<String, Object> arg = new HashMap<String, Object>();
 		if (StringUtils.equals(moduleDefiner, "holdDisbursement")) {
 			arg.put("holdDisbursement", holdDisbursement);
@@ -409,6 +428,14 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 
 	public void setFinChangeCustomerService(FinChangeCustomerService finChangeCustomerService) {
 		this.finChangeCustomerService = finChangeCustomerService;
+	}
+
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }

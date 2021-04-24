@@ -42,10 +42,10 @@ public class VocherDownloadServiceImpl implements VocherDownloadService {
 		Map<String, Object> parameterMap = new HashMap<>();
 		Map<String, Object> filterMap = new HashMap<>();
 
-		parameterMap.put("FROM_DATE", DateUtil.format(postDate, "YYYYMMdd"));
-		parameterMap.put("TO_DATE", DateUtil.format(toDate, "YYYYMMdd"));
+		parameterMap.put("FROM_DATE", DateUtil.format(postDate, "yyyyMMdd"));
+		parameterMap.put("TO_DATE", DateUtil.format(toDate, "yyyyMMdd"));
 		parameterMap.put("VOCHER_DATE",
-				DateUtil.format(postDate, "YYYYMMdd") + "_" + DateUtil.format(toDate, "YYYYMMdd"));
+				DateUtil.format(postDate, "yyyyMMdd") + "_" + DateUtil.format(toDate, "yyyyMMdd"));
 		parameterMap.put("ORDER_BY_CLAUSE", "order by PostDate, LinkedTranId, TransOrder");
 
 		filterMap.put("POSTDATE", postDate);

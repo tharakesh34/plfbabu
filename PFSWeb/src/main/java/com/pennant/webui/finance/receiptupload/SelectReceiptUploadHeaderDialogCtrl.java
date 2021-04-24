@@ -466,7 +466,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			int maxRecords = SysParamUtil.getValueAsInt(SMTParameterConstants.RECEIPT_UPLOAD_RECORD_DEFAULT_SIZE);
 			// If Uploaded Receipt record count > 1000
 			if (sheet.getPhysicalNumberOfRows() > maxRecords + 1) {
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_MaxRows"));
+				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_MaxRows" + maxRecords));
 				return false;
 			}
 

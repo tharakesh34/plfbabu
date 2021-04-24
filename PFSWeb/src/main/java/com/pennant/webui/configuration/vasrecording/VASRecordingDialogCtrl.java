@@ -3250,7 +3250,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		List<CustomerAddres> customerAddres = details.getAddressList();
 		List<CustomerDocument> custDoc = details.getCustomerDocumentsList();
 
-		String date = DateUtility.format(customer.getCustDOB(), "dd-MMM-YYYY");
+		String date = DateUtility.format(customer.getCustDOB(), "dd-MMM-yyyy");
 
 		formData.put("Title", customer.getLovDescCustSalutationCodeName());
 		formData.put("FirstName", customer.getCustFName());
@@ -3507,7 +3507,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		insPremCalReq.setSource(App.getProperty("source"));
 		insPremCalReq.setCoverageTerm(insPremCalReq.getLoanTenure());
 
-		SimpleDateFormat formt = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat formt = new SimpleDateFormat("yyyy-MM-dd");
 		Date dateOfBirth = insPremCalReq.getDateOfBirth();
 		String strDate = formt.format(dateOfBirth);
 

@@ -52,8 +52,8 @@ public class OrganizationUtil {
 				String financialYearStart = null;
 				String financialYearEnd = null;
 				for (int i = 0; i < 10; i++) {
-					financialYearStart = DateUtil.format(date, "YYYY");
-					financialYearEnd = DateUtil.format(DateUtil.addMonths(date, -12), "YYYY");
+					financialYearStart = DateUtil.format(date, "yyyy");
+					financialYearEnd = DateUtil.format(DateUtil.addMonths(date, -12), "yyyy");
 					finacialYears.add(new ValueLabel(financialYearStart,
 							financialYearEnd.concat("-".concat(financialYearStart))));
 					date = DateUtil.addMonths(date, -12);

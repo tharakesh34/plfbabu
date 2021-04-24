@@ -1637,6 +1637,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setGrcStps(this.isGrcStps);
 		entity.setNoOfGrcSteps(this.noOfGrcSteps);
 		entity.setCpzPosIntact(this.cpzPosIntact);
+		entity.setWriteoffLoan(this.writeoffLoan);
+		entity.setRestructure(this.restructure);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());

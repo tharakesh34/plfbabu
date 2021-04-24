@@ -234,6 +234,13 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_RECADV = "RecAdvise";
 	public static final String FINSER_EVENT_PAYADV = "PayAdvise";
 	public static final String FINSER_EVENT_RESTRUCTURE = "Restructure";
+	public static final String FINSER_EVENT_DISBINST = "DisbInstruction";
+	public static final String FINSER_EVENT_GSTDETAILS = "GSTDetails";
+	public static final String FINSER_EVENT_CHEQUEDETAILS = "ChequeDetails"; 
+	public static final String FINSER_EVENT_MANUALADVISE = "ManualAdvise";
+	public static final String FINSER_EVENT_FEEPOSTING = "FeePosting";
+	public static final String FINSER_EVENT_JVPOSTING = "JVPosting";
+	public static final String FINSER_EVENT_PAYMENTINST = "PaymentInst";
 
 	// Finance Collateral Details
 	public static final String COLLATERAL_FIXEDDEPOSIT = "FD";

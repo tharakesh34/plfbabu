@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -36,28 +37,31 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" FROM RATECHANGE_UPLOAD_DETAILS");
 		sql.append(" WHERE BATCHID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { batchId }, (rs, rowNum) -> {
-			RateChangeUpload rateChange = new RateChangeUpload();
+		List<RateChangeUpload> list = this.jdbcOperations.query(sql.toString(), new Object[] { batchId },
+				(rs, rowNum) -> {
+					RateChangeUpload rateChange = new RateChangeUpload();
 
-			rateChange.setId(rs.getLong("Id"));
-			rateChange.setBatchId(rs.getLong("BatchId"));
-			rateChange.setFinReference(rs.getString("FINREFERENCE"));
-			rateChange.setBaseRateCode(rs.getString("BaseRateCode"));
-			rateChange.setMargin(rs.getBigDecimal("Margin"));
-			rateChange.setActualRate(rs.getBigDecimal("ActualRate"));
-			rateChange.setRecalType(rs.getString("ReCalType"));
-			rateChange.setRecalFromDate(rs.getDate("RecalFromDate"));
-			rateChange.setRecalToDate(rs.getDate("RecalToDate"));
-			rateChange.setSpecialRate(rs.getString("SpecialRate"));
-			rateChange.setRemarks(rs.getString("Remarks"));
-			rateChange.setFromDate(JdbcUtil.getDate(rs.getDate("FromDate")));
-			rateChange.setToDate(JdbcUtil.getDate(rs.getDate("ToDate")));
-			rateChange.setUploadStatusRemarks((rs.getString("UploadStatusRemarks")));
+					rateChange.setId(rs.getLong("Id"));
+					rateChange.setBatchId(rs.getLong("BatchId"));
+					rateChange.setFinReference(rs.getString("FINREFERENCE"));
+					rateChange.setBaseRateCode(rs.getString("BaseRateCode"));
+					rateChange.setMargin(rs.getBigDecimal("Margin"));
+					rateChange.setActualRate(rs.getBigDecimal("ActualRate"));
+					rateChange.setRecalType(rs.getString("ReCalType"));
+					rateChange.setRecalFromDate(rs.getDate("RecalFromDate"));
+					rateChange.setRecalToDate(rs.getDate("RecalToDate"));
+					rateChange.setSpecialRate(rs.getString("SpecialRate"));
+					rateChange.setRemarks(rs.getString("Remarks"));
+					rateChange.setFromDate(JdbcUtil.getDate(rs.getDate("FromDate")));
+					rateChange.setToDate(JdbcUtil.getDate(rs.getDate("ToDate")));
+					rateChange.setUploadStatusRemarks((rs.getString("UploadStatusRemarks")));
 
-			return rateChange;
-		});
+					return rateChange;
+				});
+
+		return list.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId())).collect(Collectors.toList());
 	}
 
 	@Override

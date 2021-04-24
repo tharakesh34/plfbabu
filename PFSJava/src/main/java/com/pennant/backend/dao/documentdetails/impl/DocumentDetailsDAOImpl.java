@@ -299,29 +299,52 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 	@Override
 	public List<DocumentDetails> getDocumentDetailsByRef(String ref, String module, String finEvent, String type) {
-		StringBuilder sql = new StringBuilder("select DocId, DocModule, DocCategory,");
-		sql.append(
-				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode, Remarks,");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DocId, DocModule, DocCategory, Doctype, DocName, ReferenceId, FinEvent, DocPurpose");
+		sql.append(", DocUri, DocReceivedDate, DocReceived, DocOriginal, DocBarcode, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
+		sql.append(", WorkflowId, DocRefId, InstructionUID");
 		sql.append(" from DocumentDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" where ReferenceId = :ReferenceId AND DocModule =:DocModule ");
-		/*
-		 * if(StringUtils.isNotBlank(finEvent)){ sql.append(" AND (FinEvent = :FinEvent OR FinEvent = '' )"); }
-		 */
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Where ReferenceId = ? and DocModule = ?");
 
-		DocumentDetails documentDetails = new DocumentDetails();
-		documentDetails.setReferenceId(ref);
-		documentDetails.setDocModule(module);
-		documentDetails.setFinEvent(finEvent);
+		logger.trace(Literal.SQL + sql);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentDetails);
-		RowMapper<DocumentDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(DocumentDetails.class);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, ref);
+			ps.setString(2, module);
 
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		}, (rs, rowNum) -> {
+			DocumentDetails doc = new DocumentDetails();
 
+			doc.setDocId(rs.getLong("DocId"));
+			doc.setDocModule(rs.getString("DocModule"));
+			doc.setDocCategory(rs.getString("DocCategory"));
+			doc.setDoctype(rs.getString("Doctype"));
+			doc.setDocName(rs.getString("DocName"));
+			doc.setReferenceId(rs.getString("ReferenceId"));
+			doc.setFinEvent(rs.getString("FinEvent"));
+			doc.setDocPurpose(rs.getString("DocPurpose"));
+			doc.setDocUri(rs.getString("DocUri"));
+			doc.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+			doc.setDocReceived(rs.getBoolean("DocReceived"));
+			doc.setDocOriginal(rs.getBoolean("DocOriginal"));
+			doc.setDocBarcode(rs.getString("DocBarcode"));
+			doc.setVersion(rs.getInt("Version"));
+			doc.setLastMntBy(rs.getLong("LastMntBy"));
+			doc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			doc.setRecordStatus(rs.getString("RecordStatus"));
+			doc.setRoleCode(rs.getString("RoleCode"));
+			doc.setNextRoleCode(rs.getString("NextRoleCode"));
+			doc.setTaskId(rs.getString("TaskId"));
+			doc.setNextTaskId(rs.getString("NextTaskId"));
+			doc.setRecordType(rs.getString("RecordType"));
+			doc.setWorkflowId(rs.getLong("WorkflowId"));
+			doc.setDocRefId(rs.getLong("DocRefId"));
+			doc.setInstructionUID(rs.getLong("InstructionUID"));
+
+			return doc;
+		});
 	}
 
 	@Override

@@ -591,6 +591,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			details = processingFeeWaiverdetails(details, tableType);
 			auditDetails.addAll(details);
 		}
+		
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
+		financeMainDAO.updateMaintainceStatus(feeWaiverHeader.getFinReference(), rcdMaintainSts);
 
 		// Add Audit
 		auditHeader.setAuditDetails(auditDetails);
@@ -805,6 +808,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		feeWaiverHeaderDAO.delete(feeWaiverHeader, TableType.TEMP_TAB);
+		financeMainDAO.updateMaintainceStatus(feeWaiverHeader.getFinReference(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -2050,12 +2054,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		auditHeader.setAuditDetails(
 				processChildsAudit(deleteChilds(feeWaiverHeader, "_Temp", auditHeader.getAuditTranType())));
 
-		getFeeWaiverHeaderDAO().delete(feeWaiverHeader, TableType.TEMP_TAB);
+		feeWaiverHeaderDAO.delete(feeWaiverHeader, TableType.TEMP_TAB);
 
 		// auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, feeWaiverHeader.getBefImage(),
 		// feeWaiverHeader));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		financeMainDAO.updateMaintainceStatus(feeWaiverHeader.getFinReference(), "");
+
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;

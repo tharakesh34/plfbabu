@@ -56,7 +56,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.util.PennantAppUtil;
+import com.pennant.backend.util.PennantApplicationUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -97,7 +97,7 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setParent(item);
 		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
 				.add(financeMain.getInsuranceAmt());
-		lc = new Listcell(PennantAppUtil.amountFormate(finAmount, format));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(finAmount, format));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (financeMain.getFinRepaymentAmount() != null) {
@@ -107,10 +107,12 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(financeMain.getClosingStatus())) {
 				curFinAmountValue = BigDecimal.ZERO;
 			} else {
-				curFinAmountValue = finAmount.subtract(financeMain.getFinRepaymentAmount());
+				curFinAmountValue = finAmount.add(financeMain.getTotalCpz())
+						.subtract(financeMain.getFinRepaymentAmount()).subtract(financeMain.getDownPayment())
+						.subtract(financeMain.getSvAmount());
 			}
 
-			lc = new Listcell(PennantAppUtil.amountFormate(curFinAmountValue, format));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(curFinAmountValue, format));
 			lc.setStyle("text-align:right");
 		} else {
 			lc = new Listcell("");

@@ -3365,7 +3365,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				reportList.add(data);
 			}
 
-			if (aFinScheduleData.getFinanceMain().getTotalCpz().compareTo(BigDecimal.ZERO) != 0 && false) {
+			if (aFinScheduleData.getFinanceMain().getTotalCpz().compareTo(BigDecimal.ZERO) != 0) {
 				data = new FinanceScheduleReportData();
 				data.setSchDate("");
 				data.setLabel(Labels.getLabel("label_listcell_totalCpz.label"));

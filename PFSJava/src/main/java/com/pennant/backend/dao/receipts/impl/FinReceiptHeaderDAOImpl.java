@@ -31,7 +31,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -1030,66 +1029,22 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public boolean checkEarlySettlementInitiation(String reference) {
-
-		MapSqlParameterSource source = null;
-		boolean isReceiptsInProcess = false;
-
-		StringBuilder sql = new StringBuilder("Select count(*)  from FinReceiptHeader_view where ");
-		sql.append(" Reference = :Reference AND");
-		sql.append(" Receiptpurpose IN (:Receiptpurpose) AND");
-		sql.append(" ReceiptModeStatus not in ( :Status)");
-
-		source = new MapSqlParameterSource();
-		source.addValue("Reference", reference);
-		source.addValue("Receiptpurpose", Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYSETTLE));
-		source.addValue("Status", Arrays.asList("B", "C"));
-
-		try {
-			int count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-
-			if (count > 0) {
-				isReceiptsInProcess = true;
-			}
-			logger.debug("Already Early Settlement Initiated");
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		return isReceiptsInProcess;
-
+		return checkReceiptInitiation(reference, "_view", FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 	}
-
+	
 	@Override
 	public boolean checkPartialSettlementInitiation(String reference) {
-
-		MapSqlParameterSource source = null;
-		boolean isReceiptsInProcess = false;
-
-		StringBuilder sql = new StringBuilder("Select count(*)  from FinReceiptHeader_Temp where ");
-		sql.append(" Reference = :Reference AND");
-		sql.append(" Receiptpurpose IN (:Receiptpurpose) AND");
-		sql.append(" ReceiptModeStatus not in ( :Status)");
-
-		source = new MapSqlParameterSource();
-		source.addValue("Reference", reference);
-		source.addValue("Receiptpurpose", Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYRPY));
-		source.addValue("Status", Arrays.asList("B", "C"));
-
-		try {
-			int count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
-
-			if (count > 0) {
-				isReceiptsInProcess = true;
-			}
-			logger.debug("Already Partial Settlement Initiated");
-		} catch (DataAccessException e) {
-			logger.error(e);
-		}
-
-		return isReceiptsInProcess;
-
+		return checkReceiptInitiation(reference, "_Temp", FinanceConstants.FINSER_EVENT_EARLYRPY);
 	}
 
+	private boolean checkReceiptInitiation(String reference, String type, String purpose){
+		StringBuilder sql = new StringBuilder("Select count(*)  from FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Where Reference = ? and Receiptpurpose = ? and ReceiptModeStatus not in (?,?)");
+
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[]{reference, purpose, "B", "C"}, (rs, rowNum) -> rs.getInt(1)) > 0;
+	}
+	
 	@Override
 	public boolean isChequeExists(String reference, String paytypeCheque, String bankCode, String favourNumber,
 			String type) {

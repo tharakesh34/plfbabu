@@ -812,6 +812,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		map.put("financeDetail", financeDetail);
 		map.put("finHeaderList", getFinBasicDetails());
 		map.put("acSetID", acSetID);
+		map.put("DisableZeroCal", false);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_ACCOUNTING), map);
 
@@ -1233,6 +1234,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<Object> rp = repayProcessUtil.doProcessReceipts(financeMain, schdList, profitDetail, rch,
 				scheduleData.getFinFeeDetailList(), scheduleData, valueDate, curBusDate, fd);
 		List<ReturnDataSet> returnDataSet = financeMain.getReturnDataSet();
+
+		getFinanceDetail().setReturnDataSetList(returnDataSet);
 
 		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(returnDataSet);
@@ -3757,6 +3760,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				allocteDtl.setTotalPaid(pft);
 				allocteDtl.setPaidAmount(paidAmount);
 				allocteDtl.setTdsPaid(pft.subtract(paidAmount));
+				if (allocteDtl.getTdsPaid().compareTo(BigDecimal.ZERO) <= 0) {
+					allocteDtl.setTdsPaid(BigDecimal.ZERO);
+				}
 			}
 
 		}
@@ -5938,6 +5944,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		map.put("financeDetail", receiptData.getFinanceDetail());
 		map.put("finHeaderList", getFinBasicDetails());
 		map.put("acSetID", accountSetId);
+		map.put("DisableZeroCal", false);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul", tabpanel, map);
 
 		Tab tab = null;

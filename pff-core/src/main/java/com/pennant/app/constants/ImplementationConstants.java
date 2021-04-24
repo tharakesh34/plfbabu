@@ -151,6 +151,7 @@ public class ImplementationConstants {
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
 		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean(extensions, "ALLOW_AUTO_GRACE_EXT", false);
 		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean(extensions, "ALLOW_LOAN_DOWNSIZING", false);
+		ALLOW_RESTRUCTURE = getValueAsBoolean(extensions, "ALLOW_RESTRUCTURE", false);
 		LOAN_DOWNSIZING_ACCOUNTING_REQ = getValueAsBoolean(extensions, "LOAN_DOWNSIZING_ACCOUNTING_REQ", false);
 
 		// FROM HL
@@ -438,6 +439,7 @@ public class ImplementationConstants {
 	public static boolean ALW_VERIFICATION_SYNC;
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;
+	public static boolean ALLOW_RESTRUCTURE;
 	public static boolean LOAN_DOWNSIZING_ACCOUNTING_REQ;
 	public static boolean DEFAULT_VAS_MODE_OF_PAYMENT;
 	public static boolean PRESENTMENT_EXTRACT_DEALER_MAN;

@@ -426,63 +426,112 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 */
 
 	@Override
-	public long save(FinFeeDetail finFeeDetail, boolean isWIF, String type) {
-		logger.debug(Literal.ENTERING);
-
-		if (finFeeDetail.getFeeID() == Long.MIN_VALUE) {
-			finFeeDetail.setFeeID(getNextValue("SeqFinFeeDetail"));
+	public long save(FinFeeDetail fe, boolean isWIF, String type) {
+		if (fe.getFeeID() == Long.MIN_VALUE) {
+			fe.setFeeID(getNextValue("SeqFinFeeDetail"));
 		}
 
-		// Post date is added for the SOA purpose. It will always be replaced
-		// with application date at the approval.
-		finFeeDetail.setPostDate(SysParamUtil.getAppDate());
+		fe.setPostDate(SysParamUtil.getAppDate());
 
-		StringBuilder sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder("Insert into");
 		if (isWIF) {
-			sql.append("Insert Into WIFFinFeeDetail");
+			sql.append(" WIFFinFeeDetail");
 		} else {
-			sql.append("Insert Into FinFeeDetail");
+			sql.append(" FinFeeDetail");
 		}
-
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(FeeID, FinReference, OriginationFee , FinEvent, FeeTypeID, FeeSeq, FeeOrder");
-		sql.append(", CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, FeeScheduleMethod");
-		sql.append(", Terms, RemainingFee, PaymentRef, CalculationType, VasReference, Status");
-		sql.append(", RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc");
-		sql.append(", AlwModifyFee, AlwModifyFeeSchdMthd, PostDate, Refundable, PaidAmountOriginal");
-		sql.append(", PaidAmountGST, NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal");
-		sql.append(", RemainingFeeGST, TaxApplicable, TaxComponent, ActualAmountOriginal");
-		sql.append(", ActualAmountGST, TransactionId, InstructionUID");
-		sql.append(", NetTDS, PaidTDS, RemTDS");
+		sql.append(" (FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeSeq, FeeOrder, CalculatedAmount");
+		sql.append(", ActualAmount, WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee");
+		sql.append(", PaymentRef, CalculationType, VasReference, Status, RuleCode, FixedAmount, Percentage");
+		sql.append(", CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, PostDate");
+		sql.append(", Refundable, PaidAmountOriginal, PaidAmountGST, NetAmountOriginal, NetAmountGST");
+		sql.append(", NetAmount, RemainingFeeOriginal, RemainingFeeGST, TaxApplicable, TaxComponent");
+		sql.append(", ActualAmountOriginal, ActualAmountGST, TransactionId, InstructionUID, NetTDS, PaidTDS, RemTDS");
+
 		if (!isWIF) {
 			sql.append(", ActPercentage, TaxPercent");
 		}
-		sql.append(", WaivedGST, ReferenceId, TaxHeaderId");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values (:FeeID, :FinReference, :OriginationFee , :FinEvent, :FeeTypeID, :FeeSeq, :FeeOrder");
-		sql.append(", :CalculatedAmount, :ActualAmount, :WaivedAmount, :PaidAmount, :FeeScheduleMethod");
-		sql.append(", :Terms, :RemainingFee, :PaymentRef, :CalculationType, :VasReference, :Status");
-		sql.append(", :RuleCode, :FixedAmount, :Percentage, :CalculateOn, :AlwDeviation, :MaxWaiverPerc");
-		sql.append(", :AlwModifyFee, :AlwModifyFeeSchdMthd, :PostDate, :Refundable, :PaidAmountOriginal");
-		sql.append(", :PaidAmountGST, :NetAmountOriginal, :NetAmountGST, :NetAmount, :RemainingFeeOriginal");
-		sql.append(", :RemainingFeeGST, :TaxApplicable, :TaxComponent, :ActualAmountOriginal");
-		sql.append(", :ActualAmountGST, :TransactionId, :InstructionUID");
-		sql.append(", :NetTDS , :PaidTDS, :RemTDS");
+
+		sql.append(", WaivedGST, ReferenceId, TaxHeaderId, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(") values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		if (!isWIF) {
-			sql.append(", :ActPercentage, :TaxPercent");
+		sql.append(", ?, ?");
 		}
-		sql.append(", :WaivedGST, :ReferenceId, :TaxHeaderId");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		
 
-		logger.trace(Literal.SQL + sql.toString());
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+			ps.setLong(index++, JdbcUtil.setLong(fe.getFeeID()));
+			ps.setString(index++, fe.getFinReference());
+			ps.setBoolean(index++, fe.isOriginationFee());
+			ps.setString(index++, fe.getFinEvent());
+			ps.setLong(index++, JdbcUtil.setLong(fe.getFeeTypeID()));
+			ps.setInt(index++, fe.getFeeSeq());
+			ps.setInt(index++, fe.getFeeOrder());
+			ps.setBigDecimal(index++, fe.getCalculatedAmount());
+			ps.setBigDecimal(index++, fe.getActualAmount());
+			ps.setBigDecimal(index++, fe.getWaivedAmount());
+			ps.setBigDecimal(index++, fe.getPaidAmount());
+			ps.setString(index++, fe.getFeeScheduleMethod());
+			ps.setInt(index++, fe.getTerms());
+			ps.setBigDecimal(index++, fe.getRemainingFee());
+			ps.setString(index++, fe.getPaymentRef());
+			ps.setString(index++, fe.getCalculationType());
+			ps.setString(index++, fe.getVasReference());
+			ps.setString(index++, fe.getStatus());
+			ps.setString(index++, fe.getRuleCode());
+			ps.setBigDecimal(index++, fe.getFixedAmount());
+			ps.setBigDecimal(index++, fe.getPercentage());
+			ps.setString(index++, fe.getCalculateOn());
+			ps.setBoolean(index++, fe.isAlwDeviation());
+			ps.setBigDecimal(index++, fe.getMaxWaiverPerc());
+			ps.setBoolean(index++, fe.isAlwModifyFee());
+			ps.setBoolean(index++, fe.isAlwModifyFeeSchdMthd());
+			ps.setDate(index++, JdbcUtil.getDate(fe.getPostDate()));
+			ps.setBoolean(index++, fe.isRefundable());
+			ps.setBigDecimal(index++, fe.getPaidAmountOriginal());
+			ps.setBigDecimal(index++, fe.getPaidAmountGST());
+			ps.setBigDecimal(index++, fe.getNetAmountOriginal());
+			ps.setBigDecimal(index++, fe.getNetAmountGST());
+			ps.setBigDecimal(index++, fe.getNetAmount());
+			ps.setBigDecimal(index++, fe.getRemainingFeeOriginal());
+			ps.setBigDecimal(index++, fe.getRemainingFeeGST());
+			ps.setBoolean(index++, fe.isTaxApplicable());
+			ps.setString(index++, fe.getTaxComponent());
+			ps.setBigDecimal(index++, fe.getActualAmountOriginal());
+			ps.setBigDecimal(index++, fe.getActualAmountGST());
+			ps.setString(index++, fe.getTransactionId());
+			ps.setLong(index++, JdbcUtil.setLong(fe.getInstructionUID()));
+			ps.setBigDecimal(index++, fe.getNetTDS());
+			ps.setBigDecimal(index++, fe.getPaidTDS());
+			ps.setBigDecimal(index++, fe.getRemTDS());
 
-		return finFeeDetail.getFeeID();
+			if (!isWIF) {
+				ps.setBigDecimal(index++, fe.getActPercentage());
+				ps.setBigDecimal(index++, fe.getTaxPercent());
+			}
+
+			ps.setBigDecimal(index++, fe.getWaivedGST());
+			ps.setLong(index++, JdbcUtil.setLong(fe.getReferenceId()));
+			ps.setLong(index++, JdbcUtil.setLong(fe.getTaxHeaderId()));
+			ps.setInt(index++, fe.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(fe.getLastMntBy()));
+			ps.setTimestamp(index++, fe.getLastMntOn());
+			ps.setString(index++, fe.getRecordStatus());
+			ps.setString(index++, fe.getRoleCode());
+			ps.setString(index++, fe.getNextRoleCode());
+			ps.setString(index++, fe.getTaskId());
+			ps.setString(index++, fe.getNextTaskId());
+			ps.setString(index++, fe.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(fe.getWorkflowId()));
+		});
+
+		return fe.getFeeID();
 	}
 
 	/**
@@ -648,11 +697,6 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 	@Override
 	public void deleteServiceFeesByFinRef(String loanReference, boolean isWIF, String tableType) {
-		logger.debug(Literal.ENTERING);
-
-		FinFeeDetail finFeeDetail = new FinFeeDetail();
-		finFeeDetail.setFinReference(loanReference);
-
 		StringBuilder sql = new StringBuilder();
 		if (isWIF) {
 			sql.append("Delete From WIFFinFeeDetail");
@@ -660,14 +704,11 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			sql.append("Delete From FinFeeDetail");
 		}
 		sql.append(StringUtils.trimToEmpty(tableType));
-		sql.append(" Where FinReference = :FinReference AND OriginationFee = 0");
+		sql.append(" Where FinReference = ? and OriginationFee = 0");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setString(1, loanReference));
 	}
 
 	@Override

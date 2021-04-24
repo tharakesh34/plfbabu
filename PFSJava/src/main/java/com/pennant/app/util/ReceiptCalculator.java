@@ -1315,10 +1315,8 @@ public class ReceiptCalculator implements Serializable {
 		List<FinExcessAmount> excessList = receiptData.getReceiptHeader().getExcessAmounts();
 
 		if (CollectionUtils.isEmpty(excessList)) {
-				if(!receiptData.getReceiptHeader().isWriteoffLoan()){
-					receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
-				}
-				return receiptData;
+			receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
+			return receiptData;
 		}
 
 		List<FinExcessAmountReserve> excessAmtRev = receiptData.getReceiptHeader().getExcessReserves();
@@ -4438,7 +4436,9 @@ public class ReceiptCalculator implements Serializable {
 		allocate.setWaivedAvailable(allocate.getWaivedAvailable().subtract(waivedNow));
 		allocate.setTdsPaid(allocate.getTdsPaid().add(tdsPaidNow));
 		allocate.setTdsWaived(allocate.getTdsWaived().add(tdsWaivedNow));
-
+		if (allocate.getTdsPaid().compareTo(BigDecimal.ZERO) <= 0) {
+			allocate.setTdsPaid(BigDecimal.ZERO);
+		}
 		// GST calculation for Paid and waived amounts(always Paid Amount we are
 		// taking the inclusive type here because we are doing reverse
 		// calculation here)
@@ -4453,6 +4453,10 @@ public class ReceiptCalculator implements Serializable {
 					calAllocationWaiverGST(detail, waivedNow, allocate);
 					allocate.setTaxType(taxType);
 				}
+			}
+
+			if (allocate.getTdsPaid().compareTo(BigDecimal.ZERO) <= 0) {
+				allocate.setTdsPaid(BigDecimal.ZERO);
 			}
 
 			if (waivedNow.compareTo(BigDecimal.ZERO) > 0) {

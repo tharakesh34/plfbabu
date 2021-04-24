@@ -46,6 +46,7 @@ package com.pennant.webui.pdc.chequeheader;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -62,9 +63,12 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.pdc.chequeheader.model.ChequeHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -104,6 +108,8 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 
 	private ChequeHeaderService chequeHeaderService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceDetailService financeDetailService;
+	private FinanceWriteoffDAO financeWriteoffDAO;
 
 	/**
 	 * default constructor.<br>
@@ -215,6 +221,20 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 			return;
 		}
 
+		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(chequeheader.getFinReference(),
+				"_View");
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_CHEQUEDETAILS.equals(rcdMntnSts)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+			return;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(this.finReference.getValue(), "");
+		if (writeoffLoan) {
+			MessageUtil.showMessage(Labels.getLabel("label_Writeoff_Loan"));
+			return;
+		}
+
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  where  HeaderID =?");
 
@@ -300,6 +320,14 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
 
 }

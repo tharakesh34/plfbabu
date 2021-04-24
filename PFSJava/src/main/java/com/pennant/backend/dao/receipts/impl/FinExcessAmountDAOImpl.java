@@ -305,20 +305,20 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public int updateExcessBalByRef(String reference, String amountType, BigDecimal amount) {
-		int recordCount = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", reference);
-		source.addValue("AmountType", amountType);
-		source.addValue("PaidNow", amount);
-
 		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
-		sql.append(" Set Amount = Amount + :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
-		sql.append(" Where FinReference =:FinReference And AmountType=:AmountType");
+		sql.append(" Set Amount = Amount + ?, BalanceAmt = BalanceAmt + ? ");
+		sql.append(" Where FinReference = ? And AmountType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		recordCount = this.jdbcTemplate.update(sql.toString(), source);
-
-		return recordCount;
+		logger.trace(Literal.SQL + sql);
+		
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			
+			ps.setBigDecimal(index++, amount);
+			ps.setBigDecimal(index++, amount);
+			ps.setString(index++, reference);
+			ps.setString(index++, amountType);
+		});
 	}
 
 	/**
@@ -502,18 +502,20 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			String paymentType) {
 
 		int recordCount = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptSeqID", receiptID);
-		source.addValue("ExcessID", payAgainstID);
-		source.addValue("PaidNow", diffInReserve);
-		source.addValue("PaymentType", paymentType);
 
-		StringBuilder sql = new StringBuilder("Update FinExcessAmountReserve ");
-		sql.append(" Set ReservedAmt = ReservedAmt + :PaidNow ");
-		sql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID =:ExcessID AND PaymentType =:PaymentType ");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmountReserve");
+		sql.append(" Set ReservedAmt = ReservedAmt + ? ");
+		sql.append(" Where ReceiptSeqID = ? AND ExcessID = ? AND PaymentType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		recordCount = this.jdbcTemplate.update(sql.toString(), source);
+		logger.trace(Literal.SQL + sql);
+		
+		recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setBigDecimal(index++, diffInReserve);
+			ps.setLong(index++, receiptID);
+			ps.setLong(index++, payAgainstID);
+			ps.setString(index++, paymentType);
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -1018,18 +1020,18 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public List<FinExcessAmount> getFinExcessDetailsByRef(String finReference) {
-		StringBuilder sql = new StringBuilder("Select ExcessID, AmountType, Amount");
-		sql.append(", UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
-		sql.append(" Where FinReference = ? and BalanceAmt > 0");
+	public boolean isFinExcessAmtExists(String finReference) {
+		StringBuilder sql = new StringBuilder("Select Count(*)");
+		sql.append(" From FinExcessAmount Where FinReference = ? ");
+		sql.append(" and (BalanceAmt > 0 or ReservedAmt > 0)");
 
 		logger.trace(Literal.SQL + sql.toString());
 		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { finReference },
-					new ExcessAmountRowMapper());
+			Object[] object = new Object[] { finReference };
+			return this.jdbcOperations.queryForObject(sql.toString(), object, Integer.class) > 0 ? true : false;
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record not found in FinExcessAmount table for the specified FinReference >> {}", finReference);
 		}
-		return null;
+		return false;
 	}
 }

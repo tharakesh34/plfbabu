@@ -252,6 +252,11 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			return;
 		}
 
+		if (financeMain.isWriteoffLoan()) {
+			MessageUtil.showError(PennantJavaUtil.getLabel("label_Writeoff_Loan"));
+			return;
+		}
+
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return;
@@ -273,9 +278,13 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finMain.getId(), eventCode, null,
 				userRole);
 		financeDetail.setModuleDefiner(moduleDefiner);
+
 		// TODO:Removing feed in Restructure event
-		if ((StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RESTRUCTURE))
-				&& CollectionUtils.isNotEmpty(financeDetail.getFinTypeFeesList())) {
+		List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
+		if (FinanceConstants.FINSER_EVENT_RESTRUCTURE.equals(moduleDefiner)
+				&& CollectionUtils.isNotEmpty(finTypeFeesList)) {
+			financeDetail.setFinTypeFeesList(finTypeFeesList);
+		} else {
 			financeDetail.setFinTypeFeesList(new ArrayList<FinTypeFees>());
 		}
 

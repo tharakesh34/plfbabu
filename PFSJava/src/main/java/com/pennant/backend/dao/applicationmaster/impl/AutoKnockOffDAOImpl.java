@@ -335,16 +335,16 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		sql.append(", ExcessId PayableId");
 		sql.append(" From FinExcessAmount ea");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ea.FinReference");
-		sql.append(" Where  AmountType = ? and BALANCEAMT > ? and fm.FinIsActive = ?");
-		sql.append(" Group by fm.FinReference, AmountType, ExcessId");
+		sql.append(" Where  AmountType = ? and BALANCEAMT > ? and fm.FinIsActive = ? and");
+		sql.append(" fm.WriteoffLoan = ? Group by fm.FinReference, AmountType, ExcessId");
 		sql.append(" Union All");
 		sql.append(" Select FinReference, AmountType, sum(BALANCEAMT) BalanceAmount");
 		sql.append(", PayableId from ");
 		sql.append(" (Select fm.FinReference, ? AmountType, BALANCEAMT, AdviseId PayableId");
 		sql.append(" From ManualAdvise ma");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ma.FinReference");
-		sql.append(" Where  ma.AdviseType = ? and BALANCEAMT > ? and fm.FinIsActive = ?) it");
-		sql.append(" Group by it.FinReference, it.AmountType, it.PayableId) T");
+		sql.append(" Where  ma.AdviseType = ? and BALANCEAMT > ? and fm.FinIsActive = ? and");
+		sql.append(" fm.WriteoffLoan = ?) it Group by it.FinReference, it.AmountType, it.PayableId) T");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -361,10 +361,12 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 					ps.setString(index++, "E");
 					ps.setInt(index++, 0);
 					ps.setInt(index++, 1);
+					ps.setInt(index++, 0);
 					ps.setString(index++, "P");
 					ps.setInt(index++, 2);
 					ps.setInt(index++, 0);
-					ps.setInt(index, 1);
+					ps.setInt(index++, 1);
+					ps.setInt(index, 0);
 				}
 			});
 		} catch (Exception e) {

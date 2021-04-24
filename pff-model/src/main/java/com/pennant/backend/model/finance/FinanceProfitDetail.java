@@ -410,6 +410,9 @@ public class FinanceProfitDetail implements Serializable {
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setExtODDays(this.extODDays);
 		entity.setEventProperties(this.eventProperties);
+		entity.setWriteoffLoan(this.writeoffLoan);
+		entity.setExtODDays(this.extODDays);
+
 		return entity;
 	}
 
@@ -1689,16 +1692,187 @@ public class FinanceProfitDetail implements Serializable {
 	 * 
 	 * @param fieldsAndValuesMap
 	 */
-	public void getDeclaredFieldValues(HashMap<String, Object> fieldsAndValuesMap) {
-		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
-			try {
-				//"fpt_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				fieldsAndValuesMap.put("fpt_" + this.getClass().getDeclaredFields()[i].getName(),
-						this.getClass().getDeclaredFields()[i].get(this));
-			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				// Nothing TO DO
-			}
-		}
+	public void getDeclaredFieldValues(HashMap<String, Object> map) {
+		map.put("fpt_finReference", this.finReference);
+		map.put("fpt_custId", this.custId);
+		map.put("fpt_finBranch", this.finBranch);
+		map.put("fpt_finType", this.finType);
+		map.put("fpt_lastMdfDate", this.lastMdfDate);
+		map.put("fpt_totalPftSchd", this.totalPftSchd);
+		map.put("fpt_totalPftCpz", this.totalPftCpz);
+		map.put("fpt_totalPftPaid", this.totalPftPaid);
+		map.put("fpt_totalPftBal", this.totalPftBal);
+		map.put("fpt_totalPftPaidInAdv", this.totalPftPaidInAdv);
+		map.put("fpt_totalAdvPftSchd", this.totalAdvPftSchd);
+		map.put("fpt_totalRbtSchd", this.totalRbtSchd);
+		map.put("fpt_totalpriSchd", this.totalpriSchd);
+		map.put("fpt_totalPriPaid", this.totalPriPaid);
+		map.put("fpt_totalPriPaidInAdv", this.totalPriPaidInAdv);
+		map.put("fpt_totalPriBal", this.totalPriBal);
+		map.put("fpt_tdSchdPft", this.tdSchdPft);
+		map.put("fpt_tdPftCpz", this.tdPftCpz);
+		map.put("fpt_tdSchdPftPaid", this.tdSchdPftPaid);
+		map.put("fpt_tdSchdPftBal", this.tdSchdPftBal);
+		map.put("fpt_tdSchdAdvPft", this.tdSchdAdvPft);
+		map.put("fpt_tdSchdRbt", this.tdSchdRbt);
+		map.put("fpt_pftAmz", this.pftAmz);
+		map.put("fpt_pftAmzNormal", this.pftAmzNormal);
+		map.put("fpt_pftAmzPD", this.pftAmzPD);
+		map.put("fpt_pftAmzSusp", this.pftAmzSusp);
+		map.put("fpt_tdSchdPri", this.tdSchdPri);
+		map.put("fpt_tdSchdPriPaid", this.tdSchdPriPaid);
+		map.put("fpt_tdSchdPriBal", this.tdSchdPriBal);
+		map.put("fpt_amzTillLBD", this.amzTillLBD);
+		map.put("fpt_lpiTillLBD", this.lpiTillLBD);
+		map.put("fpt_gstLpiTillLBD", this.gstLpiTillLBD);
+		map.put("fpt_lppTillLBD", this.lppTillLBD);
+		map.put("fpt_gstLppTillLBD", this.gstLppTillLBD);
+		map.put("fpt_amzTillLBDNormal", this.amzTillLBDNormal);
+		map.put("fpt_amzTillLBDPD", this.amzTillLBDPD);
+		map.put("fpt_amzTillLBDPIS", this.amzTillLBDPIS);
+		map.put("fpt_RepayFrq", this.RepayFrq);
+		map.put("fpt_CustCIF", this.CustCIF);
+		map.put("fpt_FinCcy", this.FinCcy);
+		map.put("fpt_FinPurpose", this.FinPurpose);
+		map.put("fpt_FinContractDate", this.FinContractDate);
+		map.put("fpt_FinApprovedDate", this.FinApprovedDate);
+		map.put("fpt_FinStartDate", this.FinStartDate);
+		map.put("fpt_MaturityDate", this.MaturityDate);
+		map.put("fpt_FullPaidDate", this.FullPaidDate);
+		map.put("fpt_FinAmount", this.FinAmount);
+		map.put("fpt_DownPayment", this.DownPayment);
+		map.put("fpt_advanceEMI", this.advanceEMI);
+		map.put("fpt_CurReducingRate", this.CurReducingRate);
+		map.put("fpt_curFlatRate", this.curFlatRate);
+		map.put("fpt_ODPrincipal", this.ODPrincipal);
+		map.put("fpt_ODProfit", this.ODProfit);
+		map.put("fpt_PenaltyPaid", this.PenaltyPaid);
+		map.put("fpt_PenaltyDue", this.PenaltyDue);
+		map.put("fpt_PenaltyWaived", this.PenaltyWaived);
+		map.put("fpt_NSchdDate", this.NSchdDate);
+		map.put("fpt_NSchdPri", this.NSchdPri);
+		map.put("fpt_NSchdPft", this.NSchdPft);
+		map.put("fpt_NSchdPriDue", this.NSchdPriDue);
+		map.put("fpt_NSchdPftDue", this.NSchdPftDue);
+		map.put("fpt_PftInSusp", this.PftInSusp);
+		map.put("fpt_provision", this.provision);
+		map.put("fpt_FinStatus", this.FinStatus);
+		map.put("fpt_FinStsReason", this.FinStsReason);
+		map.put("fpt_FinWorstStatus", this.FinWorstStatus);
+		map.put("fpt_NOInst", this.NOInst);
+		map.put("fpt_NOPaidInst", this.NOPaidInst);
+		map.put("fpt_NOODInst", this.NOODInst);
+		map.put("fpt_FinAccount", this.FinAccount);
+		map.put("fpt_FinAcType", this.FinAcType);
+		map.put("fpt_DisbAccountId", this.DisbAccountId);
+		map.put("fpt_DisbActCcy", this.DisbActCcy);
+		map.put("fpt_RepayAccountId", this.RepayAccountId);
+		map.put("fpt_FinCustPftAccount", this.FinCustPftAccount);
+		map.put("fpt_IncomeAccount", this.IncomeAccount);
+		map.put("fpt_UEIncomeSuspAccount", this.UEIncomeSuspAccount);
+		map.put("fpt_FinCommitmentRef", this.FinCommitmentRef);
+		map.put("fpt_FinIsActive", this.FinIsActive);
+		map.put("fpt_firstRepayDate", this.firstRepayDate);
+		map.put("fpt_FirstRepayAmt", this.FirstRepayAmt);
+		map.put("fpt_finalRepayAmt", this.finalRepayAmt);
+		map.put("fpt_curODDays", this.curODDays);
+		map.put("fpt_actualODDays", this.actualODDays);
+		map.put("fpt_dueBucket", this.dueBucket);
+		map.put("fpt_firstODDate", this.firstODDate);
+		map.put("fpt_prvODDate", this.prvODDate);
+		map.put("fpt_closingStatus", this.closingStatus);
+		map.put("fpt_finCategory", this.finCategory);
+		map.put("fpt_prvRpySchDate", this.prvRpySchDate);
+		map.put("fpt_prvRpySchPri", this.prvRpySchPri);
+		map.put("fpt_prvRpySchPft", this.prvRpySchPft);
+		map.put("fpt_latestRpyDate", this.latestRpyDate);
+		map.put("fpt_latestRpyPri", this.latestRpyPri);
+		map.put("fpt_latestRpyPft", this.latestRpyPft);
+		map.put("fpt_totalWriteoff", this.totalWriteoff);
+		map.put("fpt_accumulatedDepPri", this.accumulatedDepPri);
+		map.put("fpt_depreciatePri", this.depreciatePri);
+		map.put("fpt_acrTillLBD", this.acrTillLBD);
+		map.put("fpt_EarnedPft", this.EarnedPft);
+		map.put("fpt_Unearned", this.Unearned);
+		map.put("fpt_pftAccrued", this.pftAccrued);
+		map.put("fpt_pftAccrueSusp", this.pftAccrueSusp);
+		map.put("fpt_maxODDays", this.maxODDays);
+		map.put("fpt_calPftOnPD", this.calPftOnPD);
+		map.put("fpt_pftOnPDMethod", this.pftOnPDMethod);
+		map.put("fpt_pftOnPDMrg", this.pftOnPDMrg);
+		map.put("fpt_totPftOnPD", this.totPftOnPD);
+		map.put("fpt_totPftOnPDPaid", this.totPftOnPDPaid);
+		map.put("fpt_totPftOnPDWaived", this.totPftOnPDWaived);
+		map.put("fpt_totPftOnPDDue", this.totPftOnPDDue);
+		map.put("fpt_acrSuspTillLBD", this.acrSuspTillLBD);
+		map.put("fpt_prvMthAmz", this.prvMthAmz);
+		map.put("fpt_prvMthAmzNrm", this.prvMthAmzNrm);
+		map.put("fpt_prvMthAmzPD", this.prvMthAmzPD);
+		map.put("fpt_prvMthAmzSusp", this.prvMthAmzSusp);
+		map.put("fpt_prvMthAcr", this.prvMthAcr);
+		map.put("fpt_prvMthAcrSusp", this.prvMthAcrSusp);
+		map.put("fpt_firstDisbDate", this.firstDisbDate);
+		map.put("fpt_latestDisbDate", this.latestDisbDate);
+		map.put("fpt_futureInst", this.futureInst);
+		map.put("fpt_remainingTenor", this.remainingTenor);
+		map.put("fpt_totalTenor", this.totalTenor);
+		map.put("fpt_excessAmt", this.excessAmt);
+		map.put("fpt_emiInAdvance", this.emiInAdvance);
+		map.put("fpt_payableAdvise", this.payableAdvise);
+		map.put("fpt_excessAmtResv", this.excessAmtResv);
+		map.put("fpt_emiInAdvanceResv", this.emiInAdvanceResv);
+		map.put("fpt_payableAdviseResv", this.payableAdviseResv);
+		map.put("fpt_productCategory", this.productCategory);
+		map.put("fpt_futureRpyPri", this.futureRpyPri);
+		map.put("fpt_futureRpyPft", this.futureRpyPft);
+		map.put("fpt_totChargesPaid", this.totChargesPaid);
+		map.put("fpt_linkedFinRef", this.linkedFinRef);
+		map.put("fpt_closedlinkedFinRef", this.closedlinkedFinRef);
+		map.put("fpt_bounceAmt", this.bounceAmt);
+		map.put("fpt_bounceAmtDue", this.bounceAmtDue);
+		map.put("fpt_bounceAmtPaid", this.bounceAmtPaid);
+		map.put("fpt_upfrontFee", this.upfrontFee);
+		map.put("fpt_lastDisburseDate", this.lastDisburseDate);
+		map.put("fpt_receivableAdvise", this.receivableAdvise);
+		map.put("fpt_excessAmtBal", this.excessAmtBal);
+		map.put("fpt_emiInAdvanceBal", this.emiInAdvanceBal);
+		map.put("fpt_receivableAdviseBal", this.receivableAdviseBal);
+		map.put("fpt_payableAdviseBal", this.payableAdviseBal);
+		map.put("fpt_maxRpyAmount", this.maxRpyAmount);
+		map.put("fpt_cpzPosted", this.cpzPosted);
+		map.put("fpt_curCpzBalance", this.curCpzBalance);
+		map.put("fpt_lpiAmount", this.lpiAmount);
+		map.put("fpt_gstLpiAmount", this.gstLpiAmount);
+		map.put("fpt_lppAmount", this.lppAmount);
+		map.put("fpt_gstLppAmount", this.gstLppAmount);
+		map.put("fpt_glPaymentSts", this.glPaymentSts);
+		map.put("fpt_svnAcrTillLBD", this.svnAcrTillLBD);
+		map.put("fpt_svnPftAmount", this.svnPftAmount);
+		map.put("fpt_svnAcrCalReq", this.svnAcrCalReq);
+		map.put("fpt_NOAutoIncGrcEnd", this.NOAutoIncGrcEnd);
+		map.put("fpt_assignBPI1", this.assignBPI1);
+		map.put("fpt_assignBPI2", this.assignBPI2);
+		map.put("fpt_baseRateCode", this.baseRateCode);
+		map.put("fpt_splRateCode", this.splRateCode);
+		map.put("fpt_baseRate", this.baseRate);
+		map.put("fpt_splRate", this.splRate);
+		map.put("fpt_mrgRate", this.mrgRate);
+		map.put("fpt_tdTdsAmount", this.tdTdsAmount);
+		map.put("fpt_tdTdsPaid", this.tdTdsPaid);
+		map.put("fpt_tdTdsBal", this.tdTdsBal);
+		map.put("fpt_tdsAccrued", this.tdsAccrued);
+		map.put("fpt_totalSvnAmount", this.totalSvnAmount);
+		map.put("fpt_noInstEarlyStl", this.noInstEarlyStl);
+		map.put("fpt_gapIntAmz", this.gapIntAmz);
+		map.put("fpt_gapIntAmzLbd", this.gapIntAmzLbd);
+		map.put("fpt_prvMthGapIntAmz", this.prvMthGapIntAmz);
+		map.put("fpt_svAmount", this.svAmount);
+		map.put("fpt_cbAmount", this.cbAmount);
+		map.put("fpt_aMZMethod", this.aMZMethod);
+		map.put("fpt_writeoffLoan", this.writeoffLoan);
+		map.put("fpt_extODDays", this.extODDays);
+		map.put("fpt_eventProperties", this.eventProperties);
+
 	}
 
 	public BigDecimal getAssignBPI1() {

@@ -19,9 +19,9 @@ public class BatchFileUtil {
 	public static final String TXT_QUA = "'";
 
 	// Date Formats
-	public static final String DATE_FORMAT_YMd = "YYYYMMdd";
-	public static final String DATE_FORMAT_YMD = "YYYYMMDD";
-	public static final String DATE_FORMAT_DMYT = "DDMMYYYYkkmm";
+	public static final String DATE_FORMAT_YMd = "yyyyMMdd";
+	public static final String DATE_FORMAT_YMD = "yyyyMMDD";
+	public static final String DATE_FORMAT_DMYT = "DDMMyyyykkmm";
 	public static final String DATE_FORMAT_MDY = "MMddyyyy";
 
 	// Auto Payments

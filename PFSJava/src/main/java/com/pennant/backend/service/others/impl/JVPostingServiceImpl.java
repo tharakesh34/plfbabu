@@ -47,7 +47,8 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.expenses.LegalExpensesDAO;
-import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -67,6 +68,7 @@ import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.others.JVPostingService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -74,6 +76,7 @@ import com.pennant.backend.util.UploadConstants;
 import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service implementation for methods that depends on <b>JVPosting</b>.<br>
@@ -95,7 +98,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private CurrencyService currencyService;
 	private TransactionCodeService transactionCodeService;
 	private AccountMappingService accountMappingService;
-	FinServiceInstrutionDAO finServiceInstrutionDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceWriteoffDAO financeWriteoffDAO;
 
 	public JVPostingServiceImpl() {
 		super();
@@ -212,6 +216,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			auditDetails.addAll(details);
 		}
 
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_JVPOSTING;
+		financeMainDAO.updateMaintainceStatus(jVPosting.getReference(), rcdMaintainSts);
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -252,9 +259,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			logger.error("Exception: ", e);
 			for (JVPostingEntry jVPostingEntry : distinctEntryList) {
 				jVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
-				jVPostingEntry
-						.setValidationStatus(PennantConstants.POSTSTS_FAILED + " : " + (e instanceof InterfaceException
-								? ((InterfaceException) e).getErrorMessage() : e.getMessage()));
+				jVPostingEntry.setValidationStatus(PennantConstants.POSTSTS_FAILED + " : "
+						+ (e instanceof InterfaceException ? ((InterfaceException) e).getErrorMessage()
+								: e.getMessage()));
 			}
 			return false;
 		}
@@ -404,6 +411,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
 						CurrencyUtil.getFormat(jVPosting.getCurrency()), false));
 			}
+
+			financeMainDAO.updateMaintainceStatus(jVPosting.getExpReference(), "");
 
 			// Processing Account Postings from Approver level
 			Collections.sort(dbList, new EntryComparator());
@@ -563,14 +572,14 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		JVPosting jVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getJVPostingDAO().delete(jVPosting, "_Temp");
+		jVPostingDAO.delete(jVPosting, "_Temp");
+		financeMainDAO.updateMaintainceStatus(jVPosting.getExpReference(), "");
 
-		auditHeader
-				.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
-		auditHeader
-				.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_Temp", auditHeader.getAuditTranType())));
+		String auditTranType = auditHeader.getAuditTranType();
+		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, jVPosting.getBefImage(), jVPosting));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_Temp", auditTranType)));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -602,29 +611,17 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return auditHeader;
 	}
 
-	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getJVPostingDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
-	 * @return auditHeader
-	 */
-
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		logger.debug(Literal.ENTERING);
+
+		auditDetail.setErrorDetails(new ArrayList<>());
 		JVPosting jVPosting = (JVPosting) auditDetail.getModelData();
 
 		JVPosting tempJVPosting = null;
 		if (jVPosting.isWorkflow()) {
-			tempJVPosting = getJVPostingDAO().getJVPostingById(jVPosting.getId(), "_Temp");
+			tempJVPosting = jVPostingDAO.getJVPostingById(jVPosting.getId(), "_Temp");
 		}
-		JVPosting befJVPosting = getJVPostingDAO().getJVPostingById(jVPosting.getId(), "");
+		JVPosting befJVPosting = jVPostingDAO.getJVPostingById(jVPosting.getId(), "");
 
 		JVPosting oldJVPosting = jVPosting.getBefImage();
 
@@ -715,6 +712,21 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "E0061", errParm, valueParm), usrLanguage));
 			}
+		}
+
+		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		String reference = jVPosting.getReference();
+		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(reference, "_View");
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEPOSTING.equals(rcdMntnSts)) {
+			String[] valueParm1 = new String[1];
+			valueParm1[0] = rcdMntnSts;
+			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
+		}
+
+		if (financeWriteoffDAO.isWriteoffLoan(reference, "")) {
+			String[] valueParm1 = new String[1];
+			valueParm1[0] = "";
+			auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -1497,4 +1509,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return auditHeader;
 	}
 
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
+	}
 }

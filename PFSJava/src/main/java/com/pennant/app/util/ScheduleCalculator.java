@@ -1459,6 +1459,9 @@ public class ScheduleCalculator {
 		}
 
 		// Recalculate Schedule
+		if (finMain.getRecalFromDate() != null) {
+			finMain.setEventFromDate(finMain.getRecalFromDate());
+		}
 		finScheduleData = procReCalSchd(finScheduleData, "");
 		finMain.setScheduleMaintained(true);
 
@@ -5710,6 +5713,10 @@ public class ScheduleCalculator {
 					schdInterest = BigDecimal.ZERO;
 				}
 
+				if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_RESTRUCTURE)) {
+					curSchd.setPrincipalSchd(BigDecimal.ZERO);
+				}
+
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0
 						|| schdInterest.compareTo(curSchd.getRepayAmount()) < 0) {
 					curSchd.setProfitSchd(schdInterest);
@@ -8040,10 +8047,6 @@ public class ScheduleCalculator {
 
 		} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
 			finMain.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
-			//FiXME ME Srikanth need to review  siva
-			if (!PROC_CHANGEGRACEEND.equals(recalPurpose) && !PROC_ADDDISBURSEMENT.equals(recalPurpose)) {
-				finMain.setEventFromDate(finMain.getRecalFromDate());
-			}
 		}
 
 		// Set maturity Date schedule amount
@@ -9992,7 +9995,7 @@ public class ScheduleCalculator {
 		fm.setEventToDate(fm.getMaturityDate());
 		fm.setRecalToDate(fm.getMaturityDate());
 
-		if (idxHldEnd <= 1) {
+		if (idxHldEnd < 1) {
 			setRpyInstructDetails(fsData, rstDetail.getRestructureDate(), fm.getMaturityDate(), BigDecimal.ZERO,
 					fm.getRecalSchdMethod());
 		}
@@ -10148,9 +10151,6 @@ public class ScheduleCalculator {
 
 			// Calculate Schedule
 			fsData = calSchdProcess(fsData, false, false);
-			System.out.println("But Last EMI " + fsdList.get(iLast - 1).getRepayAmount() + " Closing Bal "
-					+ fsdList.get(iLast - 1).getClosingBalance() + " Last EMI " + fsdList.get(iLast).getRepayAmount()
-					+ " Closing Bal " + fsdList.get(iLast).getClosingBalance());
 			iLast = iLast + 1;
 			if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
 				if (fsdList.get(iLast).getRepayAmount().compareTo(lastTermLimit) <= 0) {
@@ -10245,7 +10245,7 @@ public class ScheduleCalculator {
 	}
 
 	private int buildRestructurePRIHLD(FinScheduleData fsData, Date HldStart, int idxRef) {
-		Date grcEndDate = fsData.getFinanceMain().getGrcPeriodEndDate();
+		// Date grcEndDate = fsData.getFinanceMain().getGrcPeriodEndDate();
 
 		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
 		RestructureDetail rstDetail = fsData.getRestructureDetail();
@@ -10257,9 +10257,9 @@ public class ScheduleCalculator {
 		for (int iFsd = idxRef; iFsd < fsdSize; iFsd++) {
 			FinanceScheduleDetail fsd = fsdList.get(iFsd);
 
-			if (fsd.getSchDate().compareTo(grcEndDate) <= 0) {
-				continue;
-			}
+			/*
+			 * if (fsd.getSchDate().compareTo(grcEndDate) <= 0) { continue; }
+			 */
 
 			if (fsd.getSchDate().compareTo(HldStart) < 0) {
 				continue;

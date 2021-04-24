@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +47,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 	private RateChangeUploadDAO rateChangeUploadDAO;
@@ -220,8 +223,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
 
 		// call schedule calculator for Rate change
-		fsd = rateChangeService.getRateChangeDetails(fsd, fsi,
-				FinanceConstants.FINSER_EVENT_RATECHG);
+		fsd = rateChangeService.getRateChangeDetails(fsd, fsi, FinanceConstants.FINSER_EVENT_RATECHG);
 		fd.setFinScheduleData(fsd);
 		int version = fd.getFinScheduleData().getFinanceMain().getVersion();
 		finMain.setVersion(version + 1);
@@ -319,6 +321,21 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			rcu.setUploadStatusRemarks(remarks.toString());
 		}
 
+		Set<String> tempSet = new HashSet<>();
+		error = "Duplicate Reference .";
+		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
+			if (!tempSet.add(rcu.getFinReference())) {
+				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+				if (remarks.length() > 0) {
+					remarks.append(", ");
+				}
+				remarks.append(error);
+				rcu.setUploadStatusRemarks(remarks.toString());
+				rcu.setErrorDetail(getErrorDetail("RCU002", error));
+				break;
+			}
+		}
+
 		error = "Loan not exists.";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
@@ -350,17 +367,21 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			if (rcu.getFromDate() != null) {
 				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
 				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
-				Date lastPaidDate = fd.getFinScheduleData().getFinanceMain().getFinStartDate();
+				List<Date> dates = new ArrayList<>();
 				List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : finSchdDetails) {
 					if (fsd.getPresentmentId() > 0) {
-						lastPaidDate = fsd.getSchDate();
+						dates.add(fsd.getSchDate());
+
 					}
-					if (DateUtility.compare(rcu.getFromDate(), lastPaidDate) < 0) {
+				}
+				for (Date lastPaidDate : dates) {
+					if (DateUtil.compare(rcu.getFromDate(), lastPaidDate) <= 0) {
 						if (remarks.length() > 0) {
 							remarks.append(",");
 						}
-						remarks.append(error + DateUtility.formatToShortDate(lastPaidDate));
+						lastPaidDate = dates.get(dates.size() - 1);
+						remarks.append(error + DateUtil.formatToLongDate(lastPaidDate));
 						rcu.setUploadStatusRemarks(remarks.toString());
 						rcu.setErrorDetail(getErrorDetail("RCU003", error));
 						break;
@@ -374,17 +395,20 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			if (rcu.getToDate() != null) {
 				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
 				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
-				Date lastPaidDate = fd.getFinScheduleData().getFinanceMain().getFinStartDate();
+				List<Date> dates = new ArrayList<>();
 				List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : finSchdDetails) {
 					if (fsd.getPresentmentId() > 0) {
-						lastPaidDate = fsd.getSchDate();
+						dates.add(fsd.getSchDate());
 					}
-					if (DateUtility.compare(rcu.getToDate(), lastPaidDate) < 0) {
+				}
+				for (Date lastPaidDate : dates) {
+					if (DateUtil.compare(rcu.getToDate(), lastPaidDate) <= 0) {
 						if (remarks.length() > 0) {
 							remarks.append(",");
 						}
-						remarks.append(error + DateUtility.formatToShortDate(lastPaidDate));
+						lastPaidDate = dates.get(dates.size() - 1);
+						remarks.append(error + DateUtil.formatToLongDate(lastPaidDate));
 						rcu.setUploadStatusRemarks(remarks.toString());
 						rcu.setErrorDetail(getErrorDetail("RCU003", error));
 						break;

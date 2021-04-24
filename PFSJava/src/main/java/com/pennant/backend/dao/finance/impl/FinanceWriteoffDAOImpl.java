@@ -438,4 +438,21 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		logger.debug("Leaving");
 		return seqNo;
 	}
+
+	@Override
+	public boolean isWriteoffLoan(String finReference, String type) {
+		StringBuilder sql = new StringBuilder(" Select Count(1) ");
+		sql.append(" from FinWriteoffDetail");
+		sql.append(type);
+		sql.append(" where Finreference = ?");
+
+		try {
+			Object[] object = new Object[] { finReference };
+			return this.jdbcOperations.queryForObject(sql.toString(), object, Integer.class) > 0 ? true : false;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in FinWriteoffDetail {} table for the specified FinReference >> {}", type,
+					finReference);
+		}
+		return false;
+	}
 }

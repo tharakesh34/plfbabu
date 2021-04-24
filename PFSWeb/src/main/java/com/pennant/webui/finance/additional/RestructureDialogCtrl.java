@@ -399,6 +399,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (StringUtils.equals("Scenario7", restructureType.getRstTypeCode())
 				|| StringUtils.equals("Scenario8", restructureType.getRstTypeCode())) {
 			recalType = CalculationConstants.RST_RECAL_ADJUSTTENURE;
+			this.numberOfEMITerms.setDisabled(false); 
 		}
 		fillComboBox(this.recalculationType, recalType, PennantStaticListUtil.getRecalTypeList(), "");
 
@@ -574,7 +575,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					rstDetail.setTenorChange(true);
 					rstDetail.setEmiRecal(false);
 				} else if (CalculationConstants.RST_RECAL_RECALEMI.equals(finServiceInstruction.getSchdMethod())) {
-					rstDetail.setTenorChange(true);
+					rstDetail.setTenorChange(false);
 					rstDetail.setEmiRecal(true);
 				} else {
 					rstDetail.setTenorChange(true);

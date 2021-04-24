@@ -291,7 +291,7 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 				seqGstInvoice.setEntityCode(taxDetail.getEntityCode());
 			}
 
-			String currentMontYear = DateUtil.format(appDate, "MMYY");
+			String currentMontYear = DateUtil.format(appDate, "MMyy");
 			seqGstInvoice.setMonthYear(currentMontYear);
 
 			seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT);

@@ -36,7 +36,7 @@ public class EODResponseSimulator {
 	public static final String FILE_EXT = ".txt";
 	public static final String REQ_FILE = "AccountPost_Daily_";
 	public static final String RSP_FILE = "AccountPost_Resp_Daily_";
-	public static final String FILE_DATE_FORMAT = "YYYYMMdd";
+	public static final String FILE_DATE_FORMAT = "yyyyMMdd";
 
 	// attributes
 	public static final String REQUEST_DATA = "RequestData";

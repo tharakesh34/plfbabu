@@ -267,26 +267,40 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	 * @return FeeType
 	 */
 	@Override
-	public FeeType getApprovedFeeTypeByFeeCode(String feeTypeCode) {
+	public FeeType getApprovedFeeTypeByFeeCode(String feeTypeCd) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
+		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq");
+		sql.append(", DueAccSet, TdsReq");
+		sql.append(" from FeeTypes");
+		sql.append(" Where FeeTypeCode = ?");
 
-		FeeType feeType = new FeeType();
-		feeType.setFeeTypeCode(feeTypeCode);
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
-		sql.append(
-				", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable, DueAccReq ,DueAccSet ,TdsReq");
-		sql.append(" From FeeTypes");
-		sql.append(" Where FeeTypeCode = :FeeTypeCode");
-
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCd }, (rs, rowNum) -> {
+				FeeType fee = new FeeType();
+			
+				fee.setFeeTypeID(rs.getLong("FeeTypeID"));
+				fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				fee.setActive(rs.getBoolean("Active"));
+				fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
+				fee.setAdviseType(rs.getInt("AdviseType"));
+				fee.setAccountSetId(rs.getLong("AccountSetId"));
+				fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
+				fee.setAmortzReq(rs.getBoolean("AmortzReq"));
+				fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				fee.setTaxComponent(rs.getString("TaxComponent"));
+				fee.setrefundable(rs.getBoolean("Refundable"));
+				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
+				fee.setDueAccSet(rs.getLong("DueAccSet"));
+				fee.setTdsReq(rs.getBoolean("TdsReq"));
+				
+				return fee;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Record not found in FeeTypes table with feeTypeCode>>{}", feeTypeCd);
 		}
 
 		return null;

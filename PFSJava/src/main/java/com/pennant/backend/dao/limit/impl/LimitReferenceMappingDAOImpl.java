@@ -98,26 +98,29 @@ public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapp
 	 */
 	@Override
 	public LimitReferenceMapping getLimitReferencemapping(String reference, long headerId) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReferenceNumber", reference);
-		source.addValue("HeaderId", headerId);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select ReferenceId, ReferenceCode, ReferenceNumber, HeaderId, LimitLine");
 		sql.append(" From LimitReferenceMapping");
-		sql.append(" Where ReferenceNumber =:ReferenceNumber and HeaderId=:HeaderId");
+		sql.append(" Where ReferenceNumber = ? and HeaderId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-		RowMapper<LimitReferenceMapping> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitReferenceMapping.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, headerId },
+					(rs, rowNum) -> {
+						LimitReferenceMapping fee = new LimitReferenceMapping();
+
+						fee.setReferenceId(rs.getLong("ReferenceId"));
+						fee.setReferenceCode(rs.getString("ReferenceCode"));
+						fee.setReferenceNumber(rs.getString("ReferenceNumber"));
+						fee.setHeaderId(rs.getLong("HeaderId"));
+						fee.setLimitLine(rs.getString("LimitLine"));
+
+						return fee;
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Limit mapping details not available for the specified Reference {}, HeaderId {}", reference,
 					headerId);
-
 		}
 		return null;
 

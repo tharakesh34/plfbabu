@@ -61,6 +61,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -77,6 +78,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private PaymentHeaderListCtrl paymentHeaderListCtrl;
 	private PaymentHeader paymentHeader;
 	private PaymentHeaderService paymentHeaderService;
+	private FinanceDetailService financeDetailService;
 
 	public SelectPaymentHeaderDialogCtrl() {
 		super();
@@ -164,6 +166,13 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 			return;
 		}
 
+		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_PAYMENTINST.equals(rcdMntnSts)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+			return;
+		}
+
 		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(this.finReference.getValue());
 
 		HashMap<String, Object> arg = new HashMap<String, Object>();
@@ -240,6 +249,10 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }

@@ -3936,6 +3936,13 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		}
+		
+			if ((StringUtils.isBlank(finMain.getRpyAdvBaseRate()) || finMain.getRpyAdvBaseRate() == null)
+				&& finMain.getRpyAdvMargin() != null) {
+				if (finMain.getRpyAdvMargin().compareTo(BigDecimal.ZERO) > 0) {
+					finMain.setRpyAdvMargin(BigDecimal.ZERO);
+				}
+			}
 
 		return errorDetails;
 	}

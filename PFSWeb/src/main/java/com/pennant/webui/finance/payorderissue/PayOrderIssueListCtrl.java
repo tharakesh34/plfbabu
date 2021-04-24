@@ -44,6 +44,7 @@ package com.pennant.webui.finance.payorderissue;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -59,9 +60,12 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.finance.payorderissue.model.PayOrderIssueListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -105,6 +109,8 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	private transient PayOrderIssueService payOrderIssueService;
+	private FinanceWriteoffDAO financeWriteoffDAO;
+	private FinanceDetailService financeDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -210,6 +216,19 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 
 		if (aPayOrderIssueHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
+
+		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finRef, "_View");
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_DISBINST.equals(rcdMntnSts)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+			return;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finRef, "");
+		if (writeoffLoan) {
+			MessageUtil.showMessage(Labels.getLabel("label_Writeoff_Loan"));
 			return;
 		}
 
@@ -327,6 +346,14 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 
 	public void setPayOrderIssueService(PayOrderIssueService payOrderIssueService) {
 		this.payOrderIssueService = payOrderIssueService;
+	}
+
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }

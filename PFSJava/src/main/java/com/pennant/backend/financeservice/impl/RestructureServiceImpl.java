@@ -812,6 +812,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			}
 		}
 		financeMainDAO.updateRestructure(financeMain.getFinReference(), true);
+		financeMain.setRestructure(true);
 
 		restructureDAO.delete(restructureDetail.getId(), TableType.TEMP_TAB.getSuffix());
 
@@ -927,9 +928,10 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		} else {
 			resEndDate = rsd.getEmiHldEndDate();
 		}
-		if (DateUtil.compare(resEndDate, SysParamUtil.getAppDate()) > 0) {
-			resEndDate = SysParamUtil.getAppDate();
-		}
+		/*
+		 * if (DateUtil.compare(resEndDate, SysParamUtil.getAppDate()) > 0) { resEndDate = SysParamUtil.getAppDate(); }
+		 */
+
 		// Previous
 		for (FinanceScheduleDetail prvsSchd : prvsSchedules) {
 			if (DateUtil.compare(prvsSchd.getSchDate(), resEndDate) > 0) {

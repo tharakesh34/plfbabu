@@ -258,7 +258,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-
+		
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  where  PaymentId =? ");
 
@@ -341,4 +341,5 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
 		this.paymentHeaderService = paymentHeaderService;
 	}
+
 }

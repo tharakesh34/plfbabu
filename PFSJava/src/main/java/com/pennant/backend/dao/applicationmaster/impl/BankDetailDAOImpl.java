@@ -110,32 +110,44 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 	 */
 	@Override
 	public BankDetail getBankDetailById(final String id, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" BankCode, BankName, BankShortCode, Active, AccNoLength, MinAccNoLength, Version");
+		sql.append(", LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(" from BMTBankDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BankCode = ?");
 
-		BankDetail bankDetail = new BankDetail();
-		bankDetail.setId(id);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select BankCode, BankName, BankShortCode, Active,  AccNoLength, MinAccNoLength,");
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  BMTBankDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BankCode =:BankCode");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
-		RowMapper<BankDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(BankDetail.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			bankDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+				BankDetail bd = new BankDetail();
+
+				bd.setBankCode(rs.getString("BankCode"));
+				bd.setBankName(rs.getString("BankName"));
+				bd.setBankShortCode(rs.getString("BankShortCode"));
+				bd.setActive(rs.getBoolean("Active"));
+				bd.setAccNoLength(rs.getInt("AccNoLength"));
+				bd.setMinAccNoLength(rs.getInt("MinAccNoLength"));
+				bd.setVersion(rs.getInt("Version"));
+				bd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				bd.setLastMntBy(rs.getLong("LastMntBy"));
+				bd.setRecordStatus(rs.getString("RecordStatus"));
+				bd.setRoleCode(rs.getString("RoleCode"));
+				bd.setNextRoleCode(rs.getString("NextRoleCode"));
+				bd.setTaskId(rs.getString("TaskId"));
+				bd.setNextTaskId(rs.getString("NextTaskId"));
+				bd.setRecordType(rs.getString("RecordType"));
+				bd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return bd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			bankDetail = null;
+			logger.warn("Record not found in BMTBankDetail{} with BankCode>>{}", type, id);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return bankDetail;
+		return null;
 	}
 
 	@Override

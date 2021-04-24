@@ -629,29 +629,19 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 	@Override
 	public List<Integer> getFinanceDisbSeqs(String finReferecne, String type, boolean isWIF) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT DisbSeq ");
+		StringBuilder sql = new StringBuilder("Select DisbSeq");
 		if (isWIF) {
 			sql.append(" From WIFFinDisbursementDetails");
 		} else {
 			sql.append(" From FinDisbursementDetails");
 		}
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference =:FinReference");
+		sql.append(" Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReferecne);
 
-		try {
-			return this.jdbcTemplate.queryForList(sql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finReferecne),
+				(rs, rowNum) -> rs.getInt(1));
 	}
 
 	/**

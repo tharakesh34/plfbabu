@@ -350,19 +350,22 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public void updateReserveUtilise(LimitDetails limitDetail, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Update LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set ReservedLimit = :ReservedLimit, UtilisedLimit = :UtilisedLimit");
-		sql.append(", NonRvlUtilised = :NonRvlUtilised");
-		sql.append(" Where DetailId = :DetailId");
+		sql.append(" Set ReservedLimit = ?, UtilisedLimit = ?");
+		sql.append(", NonRvlUtilised = ?");
+		sql.append(" Where DetailId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitDetail);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, limitDetail.getReservedLimit());
+			ps.setBigDecimal(index++, limitDetail.getUtilisedLimit());
+			ps.setBigDecimal(index++, limitDetail.getNonRvlUtilised());
+			ps.setLong(index++, limitDetail.getDetailId());
+		});
 	}
 
 	@Override
@@ -492,15 +495,19 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select R.RuleCode  LimitLine, R.RuleCodeDesc LimitLineDesc, R.SqlRule");
 		sql.append(" from Rules R where RuleCode in ( select LimitLine from LimitDetails_view");
-		sql.append(" where LimitLine is not null and LimitHeaderId= :LimitHeaderId)");
+		sql.append(" where LimitLine is not null and LimitHeaderId= ?)");
 		sql.append(StringUtils.trimToEmpty(type));
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("LimitHeaderId", headeId);
-
-		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
-		return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, headeId);
+		}, (rs, rowNum) -> {
+			LimitDetails ld = new LimitDetails();
+			ld.setLimitLine(rs.getString("RuleCode"));
+			ld.setLimitLineDesc(rs.getString("LimitLineDesc"));
+			ld.setSqlRule(rs.getString("SqlRule"));
+			return ld;
+		});
 
 	}
 

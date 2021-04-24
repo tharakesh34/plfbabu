@@ -863,12 +863,6 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		rud.setRootId(strValue);
 		rud.setUploadheaderId(headerId);
 
-		if (strValue.length() > 4) {
-			setErrorToRUD(rud, "RU0040", "[<ROOT>_id] with length > 4 ");
-			rud.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
-		}
-
-		// Loan Reference
 		strValue = getCellStringValue(rchRow, 1).trim().toUpperCase();
 		if (StringUtils.isNotBlank(strValue)) {
 			rud.setReference(strValue);

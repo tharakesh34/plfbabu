@@ -135,7 +135,6 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.systemmasters.IncomeTypeDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
-import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.UserActivityLog;
@@ -516,7 +515,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Qualifier("verificationPostExteranalServiceHook")
 	private PostExteranalServiceHook postExteranalServiceHook;
 
-	private RestructureService restructureService;
 	private TaxHeaderDetailsService taxHeaderDetailsService;
 
 	public FinanceDetailServiceImpl() {
@@ -13383,10 +13381,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
-	}
-
-	public void setRestructureService(RestructureService restructureService) {
-		this.restructureService = restructureService;
 	}
 
 	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {

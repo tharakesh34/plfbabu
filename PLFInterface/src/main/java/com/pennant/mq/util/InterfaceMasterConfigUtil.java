@@ -57,7 +57,7 @@ public class InterfaceMasterConfigUtil {
 	public static final String SUCCESS_RETURN_CODE = "0000";
 
 	// XML Date formats
-	public static final String XML_DATETIME = "YYYYMMddHHmmssFFF";
+	public static final String XML_DATETIME = "yyyyMMddHHmmssFFF";
 	public static final String XML_DATE = "yyyy-MM-dd";
 
 	public static final String REQUEST = "Request";

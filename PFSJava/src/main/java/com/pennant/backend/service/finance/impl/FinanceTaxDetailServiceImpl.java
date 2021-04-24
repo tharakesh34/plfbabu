@@ -57,6 +57,7 @@ import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
@@ -79,6 +80,7 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -105,6 +107,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	private CountryDAO countryDAO;
 	private CityDAO cityDAO;
 	private CustomerAddresDAO customerAddresDAO;
+	private FinanceWriteoffDAO financeWriteoffDAO;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -140,6 +143,9 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		} else {
 			getFinanceTaxDetailDAO().update(financeTaxDetail, tableType);
 		}
+
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_GSTDETAILS;
+		financeMainDAO.updateMaintainceStatus(financeTaxDetail.getFinReference(), rcdMaintainSts);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
@@ -259,6 +265,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				getFinanceTaxDetailDAO().update(financeTaxDetail, TableType.MAIN_TAB);
 			}
 		}
+		financeMainDAO.updateMaintainceStatus(financeTaxDetail.getFinReference(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -297,9 +304,10 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		FinanceTaxDetail financeTaxDetail = (FinanceTaxDetail) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFinanceTaxDetailDAO().delete(financeTaxDetail, TableType.TEMP_TAB);
+		financeTaxDetailDAO.delete(financeTaxDetail, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		financeMainDAO.updateMaintainceStatus(financeTaxDetail.getFinReference(), "");
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -338,14 +346,14 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		auditDetail.setErrorDetails(new ArrayList<>());
 		FinanceTaxDetail financeTaxDetail = (FinanceTaxDetail) auditDetail.getModelData();
 
 		FinanceTaxDetail tempMandate = null;
 		if (financeTaxDetail.isWorkflow()) {
-			tempMandate = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeTaxDetail.getId(), "_Temp");
+			tempMandate = financeTaxDetailDAO.getFinanceTaxDetail(financeTaxDetail.getId(), "_Temp");
 		}
-		FinanceTaxDetail befMandate = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeTaxDetail.getId(), "");
+		FinanceTaxDetail befMandate = financeTaxDetailDAO.getFinanceTaxDetail(financeTaxDetail.getId(), "");
 		FinanceTaxDetail oldMandate = financeTaxDetail.getBefImage();
 
 		String[] errParm = new String[1];
@@ -410,6 +418,21 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		}
 
 		auditDetail = gstNumbeValidation(auditDetail, financeTaxDetail);
+
+		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		String finReference = financeTaxDetail.getFinReference();
+		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEPOSTING.equals(rcdMntnSts)) {
+			String[] valueParm1 = new String[1];
+			valueParm1[0] = rcdMntnSts;
+			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
+		}
+
+		if (financeWriteoffDAO.isWriteoffLoan(finReference, "")) {
+			String[] valueParm1 = new String[1];
+			valueParm1[0] = "";
+			auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -905,6 +928,10 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
 
 }

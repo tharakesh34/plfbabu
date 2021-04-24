@@ -1752,9 +1752,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
-		FinServiceInstruction fsi = scheduleData.getFinServiceInstruction();
-		if ((fsi != null && fsi.isReceiptUpload())
-				|| !StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
+		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
 			//rch.setReceivedDate(rch.getValueDate());
 			rch.setReceivedDate(rch.getReceiptDate());
@@ -3901,27 +3899,25 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		if (receiptUpload && SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
-
 			BigDecimal recAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), formatter);
 			BigDecimal cashLimit = new BigDecimal(
 					SysParamUtil.getSystemParameterObject("RECEIPT_CASH_PAN_LIMIT").getSysParmValue());
+
+			String panNumber = fsi.getPanNumber();
+			if (StringUtils.isEmpty(panNumber)) {
 			if (recAmount.compareTo(cashLimit) > 0
 					&& StringUtils.equals(fsi.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
-
-				String panNumber = fsi.getPanNumber();
 				String valueParm = "PanNumber";
-				if (StringUtils.isEmpty(panNumber)) {
-					finScheduleData = setErrorToFSD(finScheduleData, "30561", valueParm);
-					return receiptData;
-				}
-
-				Pattern pattern = Pattern
-						.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
-				Matcher matcher = pattern.matcher(panNumber);
-				if (!matcher.matches()) {
-					finScheduleData = setErrorToFSD(finScheduleData, "90251", panNumber);
-					return receiptData;
-				}
+				finScheduleData = setErrorToFSD(finScheduleData, "30561", valueParm);
+				return receiptData;
+			}
+		} else {
+			Pattern pattern = Pattern
+					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
+			Matcher matcher = pattern.matcher(panNumber);
+			if (!matcher.matches()) {
+				finScheduleData = setErrorToFSD(finScheduleData, "90251", panNumber);
+				return receiptData;
 			}
 		}
 		
@@ -3932,6 +3928,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return receiptData;
 			}
 		}
+	}
 
 		receiptData = validateDual(receiptData, methodCtg);
 
@@ -4613,6 +4610,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setReceiptDate(rcd.getReceivedDate());
 			rch.setPanNumber(fsi.getPanNumber());
 			rch.setExtReference(fsi.getExternalReference());
+			rch.setReceivedDate(fsi.getReceivedDate());
 		} else {
 			rcd.setValueDate(rcd.getReceivedDate());
 			rch.setReceiptDate(SysParamUtil.getAppDate());

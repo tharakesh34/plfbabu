@@ -7,11 +7,11 @@
 
 	<window>
 		<window id="window_SelectRestructureDialog" title="${c:l('window_SelectRestructureDialog.title')}" apply="${selectRestructureDialogCtrl}"
-			width="500px" height="180px" sizable="true" closable="true">
+			width="500px" height="180px" sizable="false" closable="true">
 
 			<borderlayout id="borderlayoutManualAdvise">
 				<center border="none" autoscroll="false">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; overflow:inherit;">
 						<columns>
 							<column width="150px" />
 							<column width="60px" />

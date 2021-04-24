@@ -594,7 +594,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(" Set ProcessingStatus = ?");
 		sql.append(" Where UploadHeaderid in ( ");
 		sql.append(commaJoin(uploadHeaderIdList));
-		sql.append(" ) And ProcessingStatus = ?");
+		sql.append(" ) And ProcessingStatus = ?  And ReceiptId is null");
 
 		logger.trace(Literal.SQL, sql.toString());
 		return this.jdbcOperations.update(sql.toString(), ps -> {

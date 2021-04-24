@@ -66,6 +66,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.fees.FeePostingsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
@@ -107,6 +108,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	private FeeTypeDAO feeTypeDAO;
 	private LimitHeaderDAO limitHeaderDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceWriteoffDAO financeWriteoffDAO;
 
 	@Override
 	public FeePostings getFeePostings() {
@@ -143,6 +145,9 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			getFeePostingsDAO().update(feePostings, tableType);
 		}
 
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_FEEPOSTING;
+		financeMainDAO.updateMaintainceStatus(feePostings.getReference(), rcdMaintainSts);
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -173,15 +178,16 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	 */
 
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		logger.debug(Literal.ENTERING);
+
+		auditDetail.setErrorDetails(new ArrayList<>());
 		FeePostings feePostings = (FeePostings) auditDetail.getModelData();
 
 		FeePostings tempfeePostings = null;
 		if (feePostings.isWorkflow()) {
-			tempfeePostings = getFeePostingsDAO().getFeePostingsById(feePostings.getPostId(), "_Temp");
+			tempfeePostings = feePostingsDAO.getFeePostingsById(feePostings.getPostId(), "_Temp");
 		}
-		FeePostings befFeePostings = getFeePostingsDAO().getFeePostingsById(feePostings.getPostId(), "");
+		FeePostings befFeePostings = feePostingsDAO.getFeePostingsById(feePostings.getPostId(), "");
 
 		FeePostings oldfeePostings = feePostings.getBefImage();
 
@@ -240,6 +246,22 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
 			}
+		}
+
+		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+		String reference = feePostings.getReference();
+		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(reference, "_View");
+
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEPOSTING.equals(rcdMntnSts)) {
+			String[] valueParm1 = new String[1];
+			valueParm1[0] = rcdMntnSts;
+			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
+		}
+
+		if (financeWriteoffDAO.isWriteoffLoan(reference, "")) {
+			String[] valueParm1 = new String[1];
+			valueParm1[0] = " ";
+			auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -344,6 +366,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			auditHeader.setAuditDetails(auditDetailList);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
+		financeMainDAO.updateMaintainceStatus(feePostings.getFinReference(), "");
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -461,12 +484,13 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				feePostings.getBefImage(), feePostings));
 
-		getFeePostingsDAO().delete(feePostings, "_Temp");
+		feePostingsDAO.delete(feePostings, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		financeMainDAO.updateMaintainceStatus(feePostings.getFinReference(), "");
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -785,4 +809,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
+	}
 }

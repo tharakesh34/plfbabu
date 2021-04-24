@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -22,6 +23,7 @@ import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinOptionMaintanceService;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -37,6 +39,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 	private FinOptionDAO finOptionDAO;
 	private FinMaintainInstructionDAO finMaintainInstructionDAO;
 	private FinOptionService finOptionService;
+	private FinanceMainDAO financeMainDAO;
 
 	@Override
 	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
@@ -78,6 +81,9 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 			auditDetails.addAll(finOptionService.processFinOptions(finOptions, TableType.TEMP_TAB,
 					auditHeader.getAuditTranType(), false));
 		}
+		
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_PUTCALL;
+		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), rcdMaintainSts);
 
 		// Add Audit
 		auditHeader.setAuditDetails(auditDetails);
@@ -334,6 +340,8 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		}
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		
+		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(
@@ -372,14 +380,15 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		finMaintainInstructionDAO.delete(finMaintainInstruction, TableType.TEMP_TAB);
+		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				finMaintainInstruction.getBefImage(), finMaintainInstruction));
-		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditHeader.getAuditTranType())));
+		String auditTranType = auditHeader.getAuditTranType();
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditTranType, 1, finMaintainInstruction.getBefImage(), finMaintainInstruction));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditTranType)));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -559,6 +568,10 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

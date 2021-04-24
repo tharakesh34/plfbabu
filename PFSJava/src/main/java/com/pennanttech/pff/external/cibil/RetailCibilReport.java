@@ -953,7 +953,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		builder.append(File.separator);
 		builder.append(memberId);
 		builder.append("_");
-		builder.append(DateUtil.getSysDate("ddMMYYYY"));
+		builder.append(DateUtil.getSysDate("ddMMyyyy"));
 		//builder.append("_");
 		//builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".txt");
@@ -975,7 +975,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		builder.append(File.separator);
 		builder.append(memberId);
 		builder.append("_");
-		builder.append(DateUtil.getSysDate("ddMMYYYY"));
+		builder.append(DateUtil.getSysDate("ddMMyyyy"));
 		//builder.append("_");
 		//builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".xlsx");

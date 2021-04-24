@@ -53,6 +53,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.HoldDisbursementDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -78,6 +79,7 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 	private HoldDisbursementDAO holdDisbursementDAO;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
+	private FinanceMainDAO financeMainDAO;
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -148,12 +150,13 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		if (holdDisbursement.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-
 		if (holdDisbursement.isNew()) {
-			getHoldDisbursementDAO().save(holdDisbursement, tableType);
+			holdDisbursementDAO.save(holdDisbursement, tableType);
 		} else {
-			getHoldDisbursementDAO().update(holdDisbursement, tableType);
+			holdDisbursementDAO.update(holdDisbursement, tableType);
 		}
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_HOLDDISB;
+		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), rcdMaintainSts);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
@@ -286,6 +289,7 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_HOLDDISB);
 		finServiceInstruction.setAmount(holdDisbursement.getHoldLimitAmount());
 		getFinServiceInstructionDAO().save(finServiceInstruction, "");
+		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), "");
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -320,9 +324,10 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		HoldDisbursement holdDisbursement = (HoldDisbursement) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getHoldDisbursementDAO().delete(holdDisbursement, TableType.TEMP_TAB);
+		holdDisbursementDAO.delete(holdDisbursement, TableType.TEMP_TAB);
+		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -405,6 +410,10 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+	
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 	@Override

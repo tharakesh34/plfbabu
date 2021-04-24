@@ -202,11 +202,12 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			this.vasRecording = (VASRecording) arguments.get("vASRecording");
 		}
 
+		Boolean zerocal = (Boolean) arguments.get("DisableZeroCal");
 		// Common Dialog Controller
 		if (arguments.containsKey("dialogCtrl")) {
 			setDialogCtrl((Object) arguments.get("dialogCtrl"));
 			this.btnPrintAccounting.setVisible(false);
-			this.showZeroCal.setDisabled(true);
+			this.showZeroCal.setDisabled(zerocal == null ? true : zerocal);
 		}
 
 		// Post Details Previous Accounting is Visible or not

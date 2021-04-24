@@ -239,7 +239,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 			selectSql.append(" And PostDate <= (Select sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
 		} else {
 			selectSql.append(
-					" And PostDate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD') sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
+					" And PostDate <= (Select to_date(sysparmvalue, 'yyyy-MM-DD') sysparmvalue From smtparameters where SYSPARMCODE='APP_DATE')");
 		}
 		logger.trace(Literal.SQL + selectSql.toString());
 
@@ -964,7 +964,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 			sql.append(" WHERE T1.Schdate <= (Select sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
 		} else {
 			sql.append(
-					" WHERE T1.Schdate <= (Select to_date(sysparmvalue, 'YYYY-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
+					" WHERE T1.Schdate <= (Select to_date(sysparmvalue, 'yyyy-MM-DD')  sysparmvalue from smtparameters where SYSPARMCODE='APP_DATE')");
 		}
 		sql.append(" And T1.SchAmount !=0 And T2.FinReference = :FinReference");
 

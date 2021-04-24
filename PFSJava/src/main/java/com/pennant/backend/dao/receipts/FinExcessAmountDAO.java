@@ -85,6 +85,6 @@ public interface FinExcessAmountDAO {
 
 	int updateExcessEMIAmount(List<FinExcessAmount> emiInAdvance, String amtType);
 
-	List<FinExcessAmount> getFinExcessDetailsByRef(String finReference);
+	boolean isFinExcessAmtExists(String finReference);
 
 }

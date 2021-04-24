@@ -1298,7 +1298,10 @@ public class PennantStaticListUtil {
 			// Labels.getLabel("label_CustomerAccountSummary")));
 			enquiryTypes.add(new ValueLabel("OCRENQ", Labels.getLabel("label_OCREnquiry")));
 			enquiryTypes.add(new ValueLabel("EXCESSENQ", Labels.getLabel("label_ExcessEnquiry")));
-			enquiryTypes.add(new ValueLabel("RSTENQ", Labels.getLabel("label_RestructureEnquiry")));
+
+			if (ImplementationConstants.ALLOW_RESTRUCTURE) {
+				enquiryTypes.add(new ValueLabel("RSTENQ", Labels.getLabel("label_RestructureEnquiry")));
+			}
 		}
 		return enquiryTypes;
 	}
@@ -2453,8 +2456,11 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_ChangeTDS"), "CTDS"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
 					Labels.getLabel("label_FinSerEvent_LoanDownSizing"), "LDS"));
-			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RESTRUCTURE,
+
+			if (ImplementationConstants.ALLOW_RESTRUCTURE) {
+				events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RESTRUCTURE,
 					Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
+			}
 		}
 		return events;
 	}

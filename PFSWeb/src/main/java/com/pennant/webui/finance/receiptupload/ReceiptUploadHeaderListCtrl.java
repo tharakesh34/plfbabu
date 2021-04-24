@@ -667,12 +667,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(upldHdr.getFailedCount()));
 			lc.setParent(item);
-
-			if (upldHdr.getUploadProgress() == ReceiptUploadConstants.RECEIPT_IMPORTED) {
-				lc = new Listcell("Imported");
-			} else
-				lc = new Listcell(upldHdr.getRecordStatus());
-
+		
 			String uploadStatus = null;
 
 			switch (upldHdr.getUploadProgress()) {

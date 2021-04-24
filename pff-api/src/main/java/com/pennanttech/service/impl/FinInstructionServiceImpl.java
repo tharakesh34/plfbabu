@@ -27,6 +27,7 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
@@ -169,6 +170,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private NonLanReceiptService nonLanReceiptService;
 	private PartCancellationService partCancellationService;
+	private FinanceWriteoffDAO financeWriteoffDAO;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -195,7 +197,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		validationUtility.validate(finServiceInstruction, AddRateChangeGroup.class);
 
 		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		String finReference = finServiceInstruction.getFinReference();
+		APIErrorHandlerService.logReference(finReference);
 
 		// set Default date formats
 		setDefaultDateFormats(finServiceInstruction);
@@ -230,6 +233,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		if (StringUtils.equals(UploadConstants.FRR, finServiceInstruction.getReqFrom())) {
 			finServiceInstruction = (FinServiceInstruction) auditDetail.getModelData();
+		}
+		returnStatus = isWriteoffLoan(finReference);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
 		}
 
 		if (auditDetail.getErrorDetails() != null) {
@@ -292,6 +302,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -368,6 +386,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
 		// restrict FLEXI Finances
 		// FIXME Used only when flexi changes comes to core
 		/*
@@ -436,6 +462,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		// service level validations
 		returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -524,6 +558,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		// service level validations
 		WSReturnStatus returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -757,6 +799,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
 		// restrict FLEXI Finances
 		// FIXME Used only when flexi changes comes to core
 
@@ -826,6 +876,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -910,6 +968,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -1074,6 +1140,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -1446,6 +1520,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			financeDetail.setReturnStatus(returnStatus);
 			return financeDetail;
 		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
 		// restrict FLEXI Finances
 		// FIXME Used only when flexi changes comes to core
 		/*
@@ -1522,6 +1604,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = validateFinReference(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			financeDetail = new FinanceDetail();
+			doEmptyResponseObject(financeDetail);
+			financeDetail.setReturnStatus(returnStatus);
+			return financeDetail;
+		}
+
+		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			financeDetail = new FinanceDetail();
 			doEmptyResponseObject(financeDetail);
@@ -1732,26 +1822,27 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
 		// check records in origination and WIF
-		int count = financeMainDAO.getFinanceCountById(serviceInst.getFinReference(), "", false);
+		String finReference = serviceInst.getFinReference();
+		int count = financeMainDAO.getFinanceCountById(finReference, "", false);
 		if (count > 0) {
 			serviceInst.setWif(false);
 		} else {
-			count = financeMainDAO.getFinanceCountById(serviceInst.getFinReference(), "", true);
+			count = financeMainDAO.getFinanceCountById(finReference, "", true);
 			if (count > 0) {
 				serviceInst.setWif(true);
 			} else {
 				String[] valueParm = new String[1];
-				valueParm[0] = serviceInst.getFinReference();
+				valueParm[0] = finReference;
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
 
-		// validate maintained records.
-		int tempCount = financeMainDAO.getFinanceCountById(serviceInst.getFinReference(), "_Temp", serviceInst.isWif());
-		if (tempCount > 0) {
+		// Validate Loan is INPROGRESS in any Other Servicing Event or NOT ?
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
-			valueParm[0] = serviceInst.getFinReference();
-			return returnStatus = APIErrorHandlerService.getFailedStatus("90248", valueParm);
+			valueParm[0] = rcdMaintainSts;
+			return returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1872,6 +1963,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		logger.info(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
+		returnStatus = isWriteoffLoan(financeTaxDetail.getFinReference());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
 
 		List<ErrorDetail> validationErrors = financeTaxDetailService.doGSTValidations(financeTaxDetail);
 		if (CollectionUtils.isEmpty(validationErrors)) {
@@ -1960,6 +2055,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		// validation
 		returnStatus = validateDisbursementResponse(disbRequest);
+		returnStatus = isWriteoffLoan(disbRequest.getFinReference());
 		if (returnStatus != null) {
 			return returnStatus;
 		}
@@ -2243,12 +2339,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			} else {
 				financeMain = financeMainDAO.getFinanceMainById(finReference, "", false);
-				if (financeMain == null || !financeMain.isFinIsActive()) {
+				if (financeMain == null || !financeMain.isFinIsActive()
+						|| StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finReference;
 					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				} else {
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				}
+				returnStatus = isWriteoffLoan(finReference);
+				if (returnStatus != null) {
+					return returnStatus;
 				}
 			}
 
@@ -2352,12 +2453,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			} else {
 				financeMain = financeMainDAO.getFinanceMainById(finReference, tableType, false);
-				if (financeMain == null || !financeMain.isFinIsActive()) {
+				if (financeMain == null || !financeMain.isFinIsActive()
+						|| StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finReference;
 					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				} else {
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				}
+				returnStatus = isWriteoffLoan(finReference);
+				if (returnStatus != null) {
+					return returnStatus;
 				}
 			}
 
@@ -2897,6 +3003,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return financeDetail;
 	}
 
+	private WSReturnStatus isWriteoffLoan(String finReference) {
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finReference, "");
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			return returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+		return returnStatus;
+	}
+
 	@Autowired
 	public void setFeeDetailService(FeeDetailService feeDetailService) {
 		this.feeDetailService = feeDetailService;
@@ -3046,5 +3163,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
 		this.nonLanReceiptService = nonLanReceiptService;
+	}
+	@Autowired
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
 }

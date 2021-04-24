@@ -4566,288 +4566,290 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public void updateFromReceipt(FinanceMain financeMain, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("update ");
-		sql.append(" FinanceMain");
-		sql.append(tableType.getSuffix());
-		sql.append(" Set");
-		sql.append(" BankName = :BankName");
-		sql.append(", StepFinance = :StepFinance");
-		sql.append(", RepayAccountId = :RepayAccountId");
-		sql.append(", AccountsOfficer = :AccountsOfficer");
-		// sql.append(", DevName = :DevName");
-		sql.append(", PlanEMIHMax = :PlanEMIHMax");
-		sql.append(", ShariaStatus = :ShariaStatus");
-		sql.append(", RepayCpzFrq = :RepayCpzFrq");
-		sql.append(", WorkflowId = :WorkflowId");
-		sql.append(", UnPlanEMIHLockPeriod = :UnPlanEMIHLockPeriod");
-		sql.append(", NextRoleCode = :NextRoleCode");
-		sql.append(", GrcPftRate = :GrcPftRate");
-		sql.append(", AllowGrcRepay = :AllowGrcRepay");
-		sql.append(", GrcCpzFrq = :GrcCpzFrq");
-		sql.append(", NextRolloverDate = :NextRolloverDate");
-		sql.append(", LastRepayPftDate = :LastRepayPftDate");
-		sql.append(", NextGrcPftDate = :NextGrcPftDate");
-		sql.append(", RecalType = :RecalType");
-		sql.append(", AllowedDefRpyChange = :AllowedDefRpyChange");
-		// sql.append(", Rsa = :Rsa");
-		sql.append(", MinDownPayPerc = :MinDownPayPerc");
-		sql.append(", CustDSR = :CustDSR");
-		sql.append(", RvwRateApplFor = :RvwRateApplFor");
-		sql.append(", RateChgAnyDay = :RateChgAnyDay");
-		sql.append(", DownPayAccount = :DownPayAccount");
-		sql.append(", RcdMaintainSts = :RcdMaintainSts");
-		sql.append(", MaxReAgeHolidays = :MaxReAgeHolidays");
-		sql.append(", FinAccount = :FinAccount");
-		sql.append(", DepreciationFrq = :DepreciationFrq");
-		sql.append(", CustID = :CustID");
-		// sql.append(", CofRate = :CofRate");
-		sql.append(", RpyAdvPftRate = :RpyAdvPftRate");
-		sql.append(", CalTerms = :CalTerms");
-		// sql.append(", DropLineCalcOn = :DropLineCalcOn");
-		// sql.append(", ReqloanTenor = :ReqloanTenor");
-		sql.append(", FinAmount = :FinAmount");
-		sql.append(", UnPlanEMICpz = :UnPlanEMICpz");
-		sql.append(", PlanDeferCount = :PlanDeferCount");
-		sql.append(", PlanEMIHAlw = :PlanEMIHAlw");
-		sql.append(", PlanEMIHAlwInGrace = :PlanEMIHAlwInGrace");
-		sql.append(", CalMaturity = :CalMaturity");
-		sql.append(", DsaCode = :DsaCode");
-		sql.append(", Defferments = :Defferments");
-		// sql.append(", ProjectName = :ProjectName");
-		sql.append(", BpiAmount = :BpiAmount");
-		sql.append(", ApplicationNo = :ApplicationNo");
-		sql.append(", LegalRequired = :LegalRequired");
-		sql.append(", RoleCode = :RoleCode");
-		sql.append(", FinPurpose = :FinPurpose");
-		sql.append(", FinCurrAssetValue = :FinCurrAssetValue");
-		sql.append(", FinStsReason = :FinStsReason");
-		sql.append(", NextTaskId = :NextTaskId");
-		// sql.append(", SourChannelCategory = :SourChannelCategory");
-		sql.append(", GrcRateBasis = :GrcRateBasis");
-		sql.append(", LastRepayRvwDate = :LastRepayRvwDate");
-		sql.append(", RecordStatus = :RecordStatus");
-		// sql.append(", ReqLoanAmt = :ReqLoanAmt");
-		sql.append(", TotalGraceCpz = :TotalGraceCpz");
-		sql.append(", RpyMaxRate = :RpyMaxRate");
-		// sql.append(", AdvEMITerms = :AdvEMITerms");
-		sql.append(", RpyMinRate = :RpyMinRate");
-		sql.append(", AlwMultiDisb = :AlwMultiDisb");
-		sql.append(", NextRepayCpzDate = :NextRepayCpzDate");
-		sql.append(", FinRepaymentAmount = :FinRepaymentAmount");
-		sql.append(", GrcAdvPftRate = :GrcAdvPftRate");
-		sql.append(", DmaCode = :DmaCode");
-		sql.append(", ReqRepayAmount = :ReqRepayAmount");
-		sql.append(", MaxUnplannedEmi = :MaxUnplannedEmi");
-		sql.append(", ScheduleRegenerated = :ScheduleRegenerated");
-		sql.append(", GrcAdvMargin = :GrcAdvMargin");
-		sql.append(", FixedRateTenor = :FixedRateTenor");
-		sql.append(", DisbAccountId = :DisbAccountId");
-		sql.append(", GrcProfitDaysBasis = :GrcProfitDaysBasis");
-		sql.append(", DownPayBank = :DownPayBank");
-		sql.append(", LastDepDate = :LastDepDate");
-		sql.append(", DroplineFrq = :DroplineFrq");
-		sql.append(", FinStatus = :FinStatus");
-		sql.append(", NumberOfTerms = :NumberOfTerms");
-		// sql.append(", AlwAutoRateRvw = :AlwAutoRateRvw");
-		sql.append(", OverrideLimit = :OverrideLimit");
-		sql.append(", Version = :Version");
-		sql.append(", ScheduleMethod = :ScheduleMethod");
-		sql.append(", RpyAdvBaseRate = :RpyAdvBaseRate");
-		// sql.append(", PromotionSeqId = :PromotionSeqId");
-		// sql.append(", SvAmount = :SvAmount");
-		// sql.append(", CbAmount = :CbAmount");
-		// sql.append(", BaseProduct = :BaseProduct");
-		sql.append(", FirstRepay = :FirstRepay");
-		sql.append(", RepayProfitRate = :RepayProfitRate");
-		sql.append(", FinIsActive = :FinIsActive");
-		sql.append(", GrcPeriodEndDate = :GrcPeriodEndDate");
-		// sql.append(", Psl = :Psl");
-		// sql.append(", BureauTimeSeries = :BureauTimeSeries");
-		sql.append(", RpyAdvMargin = :RpyAdvMargin");
-		sql.append(", RepayRvwFrq = :RepayRvwFrq");
-		sql.append(", FinLimitRef = :FinLimitRef");
-		sql.append(", ProductCategory = :ProductCategory");
-		sql.append(", FinCustPftAccount = :FinCustPftAccount");
-		sql.append(", FinRepayPftOnFrq = :FinRepayPftOnFrq");
-		sql.append(", EmployeeName = :EmployeeName");
-		sql.append(", TDSApplicable = :TDSApplicable");
-		sql.append(", TdsType = :TdsType");
-		sql.append(", IncreasedCost = :IncreasedCost");
-		// sql.append(", EndGrcPeriodAftrFullDisb = :EndGrcPeriodAftrFullDisb");
-		sql.append(", Connector = :Connector");
-		sql.append(", AvailedDefRpyChange = :AvailedDefRpyChange");
-		sql.append(", ScheduleMaintained = :ScheduleMaintained");
-		sql.append(", LastRepayDate = :LastRepayDate");
-		sql.append(", LastRepay = :LastRepay");
-		sql.append(", ReqMaturity = :ReqMaturity");
-		// sql.append(", PMay = :PMay");
-		sql.append(", PastduePftMargin = :PastduePftMargin");
-		sql.append(", RepayFrq = :RepayFrq");
-		sql.append(", TotalCpz = :TotalCpz");
-		sql.append(", TotalGrossPft = :TotalGrossPft");
-		sql.append(", SecurityDeposit = :SecurityDeposit");
-		sql.append(", FinRepayMethod = :FinRepayMethod");
-		sql.append(", AllowRepayRvw = :AllowRepayRvw");
-		// sql.append(", TypeOfFacility = :TypeOfFacility");
-		sql.append(", TotalProfit = :TotalProfit");
-		// sql.append(", AlwStrtPrdHday = :AlwStrtPrdHday");
-		sql.append(", AvailedUnPlanEmi = :AvailedUnPlanEmi");
-		sql.append(", FinCategory = :FinCategory");
-		sql.append(", GrcPftRvwFrq = :GrcPftRvwFrq");
-		sql.append(", FinCommitmentRef = :FinCommitmentRef");
-		sql.append(", TotalGrossGrcPft = :TotalGrossGrcPft");
-		sql.append(", DownPaySupl = :DownPaySupl");
-		sql.append(", AllowGrcPeriod = :AllowGrcPeriod");
-		sql.append(", SalesDepartment = :SalesDepartment");
-		sql.append(", PlanEMICpz = :PlanEMICpz");
-		sql.append(", GrcMaxRate = :GrcMaxRate");
-		sql.append(", FirstDroplineDate = :FirstDroplineDate");
-		sql.append(", Iban = :Iban");
-		sql.append(", MandateID = :MandateID");
-		sql.append(", AvailedDefFrqChange = :AvailedDefFrqChange");
-		// sql.append(", StrtprdCpzMethod = :StrtprdCpzMethod");
-		sql.append(", CpzAtGraceEnd = :CpzAtGraceEnd");
-		sql.append(", StepPolicy = :StepPolicy");
-		sql.append(", AllowGrcCpz = :AllowGrcCpz");
-		// sql.append(", AlwFlexi = :AlwFlexi");
-		// sql.append(", CofCode = :CofCode");
-		sql.append(", NextRepayPftDate = :NextRepayPftDate");
-		sql.append(", AllowGrcPftRvw = :AllowGrcPftRvw");
-		// sql.append(", AllowSubvention = :AllowSubvention");
-		sql.append(", NextGrcPftRvwDate = :NextGrcPftRvwDate");
-		sql.append(", FinContractDate = :FinContractDate");
-		sql.append(", InvestmentRef = :InvestmentRef");
-		// sql.append(", OfferAmount = :OfferAmount");
-		sql.append(", PromotionCode = :PromotionCode");
-		sql.append(", FinPreApprovedRef = :FinPreApprovedRef");
-		sql.append(", LimitValid = :LimitValid");
-		sql.append(", NoOfSteps = :NoOfSteps");
-		sql.append(", FeeAccountId = :FeeAccountId");
-		sql.append(", DdaReferenceNo = :DdaReferenceNo");
-		sql.append(", SupplementRent = :SupplementRent");
-		sql.append(", RoundingTarget = :RoundingTarget");
-		sql.append(", LastRepayCpzDate = :LastRepayCpzDate");
-		// sql.append(", EndUse = :EndUse");
-		sql.append(", NextGrcCpzDate = :NextGrcCpzDate");
-		sql.append(", PlanEMIHMethod = :PlanEMIHMethod");
-		// sql.append(", PoSource = :PoSource");
-		sql.append(", AdvanceEMI = :AdvanceEMI");
-		sql.append(", AnualizedPercRate = :AnualizedPercRate");
-		sql.append(", FinCcy = :FinCcy");
-		sql.append(", TaskId = :TaskId");
-		sql.append(", BpiPftDaysBasis = :BpiPftDaysBasis");
-		sql.append(", StepType = :StepType");
-		sql.append(", WifReference = :WifReference");
-		sql.append(", InitiateDate = :InitiateDate");
-		// sql.append(", ProcessType = :ProcessType");
-		// sql.append(", OfferProduct = :OfferProduct");
-		sql.append(", FinApprovedDate = :FinApprovedDate");
-		sql.append(", GrcAdvBaseRate = :GrcAdvBaseRate");
-		// sql.append(", SourcingBranch = :SourcingBranch");
-		sql.append(", BpiTreatment = :BpiTreatment");
-		sql.append(", NextRepayDate = :NextRepayDate");
-		sql.append(", NextDepDate = :NextDepDate");
-		sql.append(", DroppingMethod = :DroppingMethod");
-		sql.append(", RepayBaseRate = :RepayBaseRate");
-		sql.append(", SchCalOnRvw = :SchCalOnRvw");
-		sql.append(", AvailedReAgeH = :AvailedReAgeH");
-		sql.append(", FeeChargeAmt = :FeeChargeAmt");
-		sql.append(", MigratedFinance = :MigratedFinance");
-		// sql.append(", Verification = :Verification");
-		sql.append(", FixedTenorRate = :FixedTenorRate");
-		sql.append(", LastMntOn = :LastMntOn");
-		// sql.append(", SurrogateType = :SurrogateType");
-		sql.append(", GrcMaxAmount = :GrcMaxAmount");
-		sql.append(", PlanEMIHLockPeriod = :PlanEMIHLockPeriod");
-		sql.append(", InitiateUser = :InitiateUser");
-		sql.append(", RepayPftFrq = :RepayPftFrq");
-		sql.append(", ProfitDaysBasis = :ProfitDaysBasis");
-		sql.append(", JointAccount = :JointAccount");
-		sql.append(", FinBranch = :FinBranch");
-		// sql.append(", StrtPrdHdays = :StrtPrdHdays");
-		sql.append(", GrcPftFrq = :GrcPftFrq");
-		sql.append(", FinSourceID = :FinSourceID");
-		sql.append(", EligibilityMethod = :EligibilityMethod");
-		sql.append(", CalRoundingMode = :CalRoundingMode");
-		// sql.append(", CustSegmentation = :CustSegmentation");
-		sql.append(", DeductFeeDisb = :DeductFeeDisb");
-		sql.append(", FinType = :FinType");
-		sql.append(", EffectiveRateOfReturn = :EffectiveRateOfReturn");
-		sql.append(", GraceTerms = :GraceTerms");
-		sql.append(", DownPayment = :DownPayment");
-		sql.append(", FinAssetValue = :FinAssetValue");
-		sql.append(", RolloverFrq = :RolloverFrq");
-		// sql.append(", AlwUnderConstruction = :AlwUnderConstruction");
-		sql.append(", InsuranceAmt = :InsuranceAmt");
-		sql.append(", FinRemarks = :FinRemarks");
-		sql.append(", Priority = :Priority");
-		// sql.append(", Rog = :Rog");
-		// sql.append(", ParentRef = :ParentRef");
-		sql.append(", AllowedDefFrqChange = :AllowedDefFrqChange");
-		sql.append(", DeviationApproval = :DeviationApproval");
-		sql.append(", ManualSchedule = :ManualSchedule");
-		// sql.append(", LeadSource = :LeadSource");
-		sql.append(", GraceBaseRate = :GraceBaseRate");
-		sql.append(", ReferralId = :ReferralId");
-		sql.append(", SamplingRequired = :SamplingRequired");
-		// sql.append(", ExistingLanRefNo = :ExistingLanRefNo");
-		sql.append(", AlwBPI = :AlwBPI");
-		sql.append(", AlwManualSteps = :AlwManualSteps");
-		sql.append(", GrcMargin = :GrcMargin");
-		sql.append(", RepayMargin = :RepayMargin");
-		sql.append(", RepayRateBasis = :RepayRateBasis");
-		sql.append(", LinkedFinRef = :LinkedFinRef");
-		// sql.append(", CampaignName = :CampaignName");
-		sql.append(", TotalRepayAmt = :TotalRepayAmt");
-		sql.append(", JointCustId = :JointCustId");
-		sql.append(", TakeOverFinance = :TakeOverFinance");
-		sql.append(", TotalGracePft = :TotalGracePft");
-		// sql.append(", LoanCategory = :LoanCategory");
-		sql.append(", RepaySpecialRate = :RepaySpecialRate");
-		sql.append(", RecordType = :RecordType");
-		sql.append(", FinCancelAc = :FinCancelAc");
-		sql.append(", ReAgeCpz = :ReAgeCpz");
-		sql.append(", GraceSpecialRate = :GraceSpecialRate");
-		// sql.append(", AlwRateChangeAnyDate = :AlwRateChangeAnyDate");
-		sql.append(", AllowRepayCpz = :AllowRepayCpz");
-		sql.append(", NextRepayRvwDate = :NextRepayRvwDate");
-		sql.append(", PlanEMIHMaxPerYear = :PlanEMIHMaxPerYear");
-		// sql.append(", FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw");
-		sql.append(", GrcSchdMthd = :GrcSchdMthd");
-		sql.append(", LastMntBy = :LastMntBy");
-		sql.append(", NextUserId = :NextUserId");
-		sql.append(", FinStartDate = :FinStartDate");
-		sql.append(", MaturityDate = :MaturityDate");
-		sql.append(", ClosingStatus = :ClosingStatus");
-		sql.append(", AccountType = :AccountType");
-		sql.append(", PftServicingODLimit = :PftServicingODLimit");
-		sql.append(", QuickDisb = :QuickDisb");
-		// sql.append(", FlexiType = :FlexiType");
-		// sql.append(", AutoIncGrcEndDate = :AutoIncGrcEndDate");
-		sql.append(", GrcMinRate = :GrcMinRate");
-		sql.append(", PastduePftCalMthd = :PastduePftCalMthd");
-		sql.append(", MMAId = :MMAId");
-		sql.append(", ReAgeBucket = :ReAgeBucket");
+	public void updateFromReceipt(FinanceMain fm, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update");
+		sql.append(" FinanceMain set");
+		sql.append(" BankName = ?, StepFinance = ?, RepayAccountId = ?, AccountsOfficer = ?, PlanEMIHMax = ?");
+		sql.append(", ShariaStatus = ?, RepayCpzFrq = ?, WorkflowId = ?, UnPlanEMIHLockPeriod = ?");
+		sql.append(", NextRoleCode = ?, GrcPftRate = ?, AllowGrcRepay = ?, GrcCpzFrq = ?, NextRolloverDate = ?");
+		sql.append(", LastRepayPftDate = ?, NextGrcPftDate = ?, RecalType = ?, AllowedDefRpyChange = ?");
+		sql.append(", MinDownPayPerc = ?, CustDSR = ?, RvwRateApplFor = ?, RateChgAnyDay = ?, DownPayAccount = ?");
+		sql.append(", RcdMaintainSts = ?, MaxReAgeHolidays = ?, FinAccount = ?, DepreciationFrq = ?");
+		sql.append(", CustID = ?, RpyAdvPftRate = ?, CalTerms = ?, FinAmount = ?, UnPlanEMICpz = ?");
+		sql.append(", PlanDeferCount = ?, PlanEMIHAlw = ?, PlanEMIHAlwInGrace = ?, CalMaturity = ?");
+		sql.append(", DsaCode = ?, Defferments = ?, BpiAmount = ?, ApplicationNo = ?, LegalRequired = ?");
+		sql.append(", RoleCode = ?, FinPurpose = ?, FinCurrAssetValue = ?, FinStsReason = ?, NextTaskId = ?");
+		sql.append(", GrcRateBasis = ?, LastRepayRvwDate = ?, RecordStatus = ?, TotalGraceCpz = ?");
+		sql.append(", RpyMaxRate = ?, RpyMinRate = ?, AlwMultiDisb = ?, NextRepayCpzDate = ?, FinRepaymentAmount = ?");
+		sql.append(", GrcAdvPftRate = ?, DmaCode = ?, ReqRepayAmount = ?, MaxUnplannedEmi = ?");
+		sql.append(", ScheduleRegenerated = ?, GrcAdvMargin = ?, FixedRateTenor = ?, DisbAccountId = ?, GrcProfitDaysBasis = ?");
+		sql.append(", DownPayBank = ?, LastDepDate = ?, DroplineFrq = ?, FinStatus = ?, NumberOfTerms = ?");
+		sql.append(", OverrideLimit = ?, Version = ?, ScheduleMethod = ?, RpyAdvBaseRate = ?, FirstRepay = ?");
+		sql.append(", RepayProfitRate = ?, FinIsActive = ?, GrcPeriodEndDate = ?, RpyAdvMargin = ?");
+		sql.append(", RepayRvwFrq = ?, FinLimitRef = ?, ProductCategory = ?, FinCustPftAccount = ?");
+		sql.append(", FinRepayPftOnFrq = ?, EmployeeName = ?, TDSApplicable = ?, IncreasedCost = ?");
+		sql.append(", Connector = ?, AvailedDefRpyChange = ?, ScheduleMaintained = ?, LastRepayDate = ?");
+		sql.append(", LastRepay = ?, ReqMaturity = ?, PastduePftMargin = ?, RepayFrq = ?, TotalCpz = ?");
+		sql.append(", TotalGrossPft = ?, SecurityDeposit = ?, FinRepayMethod = ?, AllowRepayRvw = ?");
+		sql.append(", TotalProfit = ?, AvailedUnPlanEmi = ?, FinCategory = ?, GrcPftRvwFrq = ?, FinCommitmentRef = ?");
+		sql.append(", TotalGrossGrcPft = ?, DownPaySupl = ?, AllowGrcPeriod = ?, SalesDepartment = ?");
+		sql.append(", PlanEMICpz = ?, GrcMaxRate = ?, FirstDroplineDate = ?, Iban = ?, MandateID = ?");
+		sql.append(", AvailedDefFrqChange = ?, CpzAtGraceEnd = ?, StepPolicy = ?, AllowGrcCpz = ?");
+		sql.append(", NextRepayPftDate = ?, AllowGrcPftRvw = ?, NextGrcPftRvwDate = ?, FinContractDate = ?");
+		sql.append(", InvestmentRef = ?, PromotionCode = ?, FinPreApprovedRef = ?, LimitValid = ?");
+		sql.append(", NoOfSteps = ?, FeeAccountId = ?, DdaReferenceNo = ?, SupplementRent = ?, RoundingTarget = ?");
+		sql.append(", LastRepayCpzDate = ?, NextGrcCpzDate = ?, PlanEMIHMethod = ?, AdvanceEMI = ?");
+		sql.append(", AnualizedPercRate = ?, FinCcy = ?, TaskId = ?, BpiPftDaysBasis = ?, StepType = ?");
+		sql.append(", WifReference = ?, InitiateDate = ?, FinApprovedDate = ?, GrcAdvBaseRate = ?");
+		sql.append(", BpiTreatment = ?, NextRepayDate = ?, NextDepDate = ?, DroppingMethod = ?, RepayBaseRate = ?");
+		sql.append(", SchCalOnRvw = ?, AvailedReAgeH = ?, FeeChargeAmt = ?, MigratedFinance = ?");
+		sql.append(", FixedTenorRate = ?, LastMntOn = ?, GrcMaxAmount = ?, PlanEMIHLockPeriod = ?");
+		sql.append(", InitiateUser = ?, RepayPftFrq = ?, ProfitDaysBasis = ?, JointAccount = ?, FinBranch = ?");
+		sql.append(", GrcPftFrq = ?, FinSourceID = ?, EligibilityMethod = ?, CalRoundingMode = ?");
+		sql.append(", DeductFeeDisb = ?, FinType = ?, EffectiveRateOfReturn = ?, GraceTerms = ?");
+		sql.append(", DownPayment = ?, FinAssetValue = ?, RolloverFrq = ?, InsuranceAmt = ?, FinRemarks = ?");
+		sql.append(", Priority = ?, AllowedDefFrqChange = ?, DeviationApproval = ?, ManualSchedule = ?");
+		sql.append(", GraceBaseRate = ?, ReferralId = ?, SamplingRequired = ?, AlwBPI = ?, AlwManualSteps = ?");
+		sql.append(", GrcMargin = ?, RepayMargin = ?, RepayRateBasis = ?, LinkedFinRef = ?, TotalRepayAmt = ?");
+		sql.append(", JointCustId = ?, TakeOverFinance = ?, TotalGracePft = ?, RepaySpecialRate = ?");
+		sql.append(", RecordType = ?, FinCancelAc = ?, ReAgeCpz = ?, GraceSpecialRate = ?, AllowRepayCpz = ?");
+		sql.append(", NextRepayRvwDate = ?, PlanEMIHMaxPerYear = ?, GrcSchdMthd = ?, LastMntBy = ?");
+		sql.append(", NextUserId = ?, FinStartDate = ?, MaturityDate = ?, ClosingStatus = ?, AccountType = ?");
+		sql.append(", PftServicingODLimit = ?, QuickDisb = ?, GrcMinRate = ?, PastduePftCalMthd = ?");
+		sql.append(", MMAId = ?, ReAgeBucket = ?, , TdsType = ?");
 
-		// For InActive Loans, Update Loan Closed Date
-		if (!financeMain.isFinIsActive()) {
-			if (financeMain.getClosedDate() == null) {
-				financeMain.setClosedDate(SysParamUtil.getAppDate());
+		if (!fm.isFinIsActive()) {
+			if (fm.getClosedDate() == null) {
+				fm.setClosedDate(SysParamUtil.getAppDate());
 			}
-			sql.append(", ClosedDate = :ClosedDate");
+			sql.append(", ClosedDate = ?");
 		}
 
-		sql.append(" where FinReference = :FinReference");
+		sql.append(" where FinReference = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setString(index++, fm.getBankName());
+			ps.setBoolean(index++, fm.isStepFinance());
+			ps.setString(index++, fm.getRepayAccountId());
+			ps.setLong(index++, fm.getAccountsOfficer());
+			ps.setInt(index++, fm.getPlanEMIHMax());
+			ps.setString(index++, fm.getShariaStatus());
+			ps.setString(index++, fm.getRepayCpzFrq());
+			ps.setLong(index++, fm.getWorkflowId());
+			ps.setInt(index++, fm.getUnPlanEMIHLockPeriod());
+			ps.setString(index++, fm.getNextRoleCode());
+			ps.setBigDecimal(index++, fm.getGrcPftRate());
+			ps.setBoolean(index++, fm.isAllowGrcRepay());
+			ps.setString(index++, fm.getGrcCpzFrq());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextRolloverDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayPftDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextGrcPftDate()));
+			ps.setString(index++, fm.getRecalType());
+			ps.setInt(index++, fm.getAllowedDefRpyChange());
+			ps.setBigDecimal(index++, fm.getMinDownPayPerc());
+			ps.setBigDecimal(index++, fm.getCustDSR());
+			ps.setString(index++, fm.getRvwRateApplFor());
+			ps.setBoolean(index++, fm.isRateChgAnyDay());
+			ps.setString(index++, fm.getDownPayAccount());
+			ps.setString(index++, fm.getRcdMaintainSts());
+			ps.setInt(index++, fm.getMaxReAgeHolidays());
+			ps.setString(index++, fm.getFinAccount());
+			ps.setString(index++, fm.getDepreciationFrq());
+			ps.setLong(index++, fm.getCustID());
+			ps.setBigDecimal(index++, fm.getRpyAdvPftRate());
+			ps.setInt(index++, fm.getCalTerms());
+			ps.setBigDecimal(index++, fm.getFinAmount());
+			ps.setBoolean(index++, fm.isUnPlanEMICpz());
+			ps.setInt(index++, fm.getPlanDeferCount());
+			ps.setBoolean(index++, fm.isPlanEMIHAlw());
+			ps.setBoolean(index++, fm.isPlanEMIHAlwInGrace());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getCalMaturity()));
+			ps.setString(index++, fm.getDsaCode());
+			ps.setInt(index++, fm.getDefferments());
+			ps.setBigDecimal(index++, fm.getBpiAmount());
+			ps.setString(index++, fm.getApplicationNo());
+			ps.setBoolean(index++, fm.isLegalRequired());
+			ps.setString(index++, fm.getRoleCode());
+			ps.setString(index++, fm.getFinPurpose());
+			ps.setBigDecimal(index++, fm.getFinCurrAssetValue());
+			ps.setString(index++, fm.getFinStsReason());
+			ps.setString(index++, fm.getNextTaskId());
+			ps.setString(index++, fm.getGrcRateBasis());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayRvwDate()));
+			ps.setString(index++, fm.getRecordStatus());
+			ps.setBigDecimal(index++, fm.getTotalGraceCpz());
+			ps.setBigDecimal(index++, fm.getRpyMaxRate());
+			ps.setBigDecimal(index++, fm.getRpyMinRate());
+			ps.setBoolean(index++, fm.isAlwMultiDisb());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayCpzDate()));
+			ps.setBigDecimal(index++, fm.getFinRepaymentAmount());
+			ps.setBigDecimal(index++, fm.getGrcAdvPftRate());
+			ps.setString(index++, fm.getDmaCode());
+			ps.setBigDecimal(index++, fm.getReqRepayAmount());
+			ps.setInt(index++, fm.getMaxUnplannedEmi());
+			ps.setBoolean(index++, fm.isScheduleRegenerated());
+			ps.setBigDecimal(index++, fm.getGrcAdvMargin());
+			ps.setInt(index++, fm.getFixedRateTenor());
+			ps.setString(index++, fm.getDisbAccountId());
+			ps.setString(index++, fm.getGrcProfitDaysBasis());
+			ps.setBigDecimal(index++, fm.getDownPayBank());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getLastDepDate()));
+			ps.setString(index++, fm.getDroplineFrq());
+			ps.setString(index++, fm.getFinStatus());
+			ps.setInt(index++, fm.getNumberOfTerms());
+			ps.setBoolean(index++, fm.isOverrideLimit());
+			ps.setInt(index++, fm.getVersion());
+			ps.setString(index++, fm.getScheduleMethod());
+			ps.setString(index++, fm.getRpyAdvBaseRate());
+			ps.setBigDecimal(index++, fm.getFirstRepay());
+			ps.setBigDecimal(index++, fm.getRepayProfitRate());
+			ps.setBoolean(index++, fm.isFinIsActive());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getGrcPeriodEndDate()));
+			ps.setBigDecimal(index++, fm.getRpyAdvMargin());
+			ps.setString(index++, fm.getRepayRvwFrq());
+			ps.setString(index++, fm.getFinLimitRef());
+			ps.setString(index++, fm.getProductCategory());
+			ps.setString(index++, fm.getFinCustPftAccount());
+			ps.setBoolean(index++, fm.isFinRepayPftOnFrq());
+			ps.setString(index++, fm.getEmployeeName());
+			ps.setBoolean(index++, fm.isTDSApplicable());
+			ps.setBigDecimal(index++, fm.getIncreasedCost());
+			ps.setLong(index++, fm.getConnector());
+			ps.setInt(index++, fm.getAvailedDefRpyChange());
+			ps.setBoolean(index++, fm.isScheduleMaintained());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayDate()));
+			ps.setBigDecimal(index++, fm.getLastRepay());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getReqMaturity()));
+			ps.setBigDecimal(index++, fm.getPastduePftMargin());
+			ps.setString(index++, fm.getRepayFrq());
+			ps.setBigDecimal(index++, fm.getTotalCpz());
+			ps.setBigDecimal(index++, fm.getTotalGrossPft());
+			ps.setBigDecimal(index++, fm.getSecurityDeposit());
+			ps.setString(index++, fm.getFinRepayMethod());
+			ps.setBoolean(index++, fm.isAllowRepayRvw());
+			ps.setBigDecimal(index++, fm.getTotalProfit());
+			ps.setInt(index++, fm.getAvailedUnPlanEmi());
+			ps.setString(index++, fm.getFinCategory());
+			ps.setString(index++, fm.getGrcPftRvwFrq());
+			ps.setString(index++, fm.getFinCommitmentRef());
+			ps.setBigDecimal(index++, fm.getTotalGrossGrcPft());
+			ps.setBigDecimal(index++, fm.getDownPaySupl());
+			ps.setBoolean(index++, fm.isAllowGrcPeriod());
+			ps.setString(index++, fm.getSalesDepartment());
+			ps.setBoolean(index++, fm.isPlanEMICpz());
+			ps.setBigDecimal(index++, fm.getGrcMaxRate());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getFirstDroplineDate()));
+			ps.setString(index++, fm.getIban());
+			ps.setLong(index++, fm.getMandateID());
+			ps.setInt(index++, fm.getAvailedDefFrqChange());
+			ps.setBoolean(index++, fm.isCpzAtGraceEnd());
+			ps.setString(index++, fm.getStepPolicy());
+			ps.setBoolean(index++, fm.isAllowGrcCpz());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayPftDate()));
+			ps.setBoolean(index++, fm.isAllowGrcPftRvw());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextGrcPftRvwDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fm.getFinContractDate()));
+			ps.setString(index++, fm.getInvestmentRef());
+			ps.setString(index++, fm.getPromotionCode());
+			ps.setString(index++, fm.getFinPreApprovedRef());
+			ps.setBoolean(index++, fm.isLimitValid());
+			ps.setInt(index++, fm.getNoOfSteps());
+			ps.setString(index++, fm.getFeeAccountId());
+			ps.setString(index++, fm.getDdaReferenceNo());
+			ps.setBigDecimal(index++, fm.getSupplementRent());
+			ps.setInt(index++, fm.getRoundingTarget());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayCpzDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextGrcCpzDate()));
+			ps.setString(index++, fm.getPlanEMIHMethod());
+			ps.setBigDecimal(index++, fm.getAdvanceEMI());
+			ps.setBigDecimal(index++, fm.getAnualizedPercRate());
+			ps.setString(index++, fm.getFinCcy());
+			ps.setString(index++, fm.getTaskId());
+			ps.setString(index++, fm.getBpiPftDaysBasis());
+			ps.setString(index++, fm.getStepType());
+			ps.setString(index++, fm.getWifReference());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getInitiateDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fm.getFinApprovedDate()));
+			ps.setString(index++, fm.getGrcAdvBaseRate());
+			ps.setString(index++, fm.getBpiTreatment());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextDepDate()));
+			ps.setString(index++, fm.getDroppingMethod());
+			ps.setString(index++, fm.getRepayBaseRate());
+			ps.setString(index++, fm.getSchCalOnRvw());
+			ps.setInt(index++, fm.getAvailedReAgeH());
+			ps.setBigDecimal(index++, fm.getFeeChargeAmt());
+			ps.setBoolean(index++, fm.isMigratedFinance());
+			ps.setBigDecimal(index++, fm.getFixedTenorRate());
+			ps.setTimestamp(index++, fm.getLastMntOn());
+			ps.setBigDecimal(index++, fm.getGrcMaxAmount());
+			ps.setInt(index++, fm.getPlanEMIHLockPeriod());
+			ps.setLong(index++, fm.getInitiateUser());
+			ps.setString(index++, fm.getRepayPftFrq());
+			ps.setString(index++, fm.getProfitDaysBasis());
+			ps.setBoolean(index++, fm.isJointAccount());
+			ps.setString(index++, fm.getFinBranch());
+			ps.setString(index++, fm.getGrcPftFrq());
+			ps.setString(index++, fm.getFinSourceID());
+			ps.setLong(index++, fm.getEligibilityMethod());
+			ps.setString(index++, fm.getCalRoundingMode());
+			ps.setBigDecimal(index++, fm.getDeductFeeDisb());
+			ps.setString(index++, fm.getFinType());
+			ps.setBigDecimal(index++, fm.getEffectiveRateOfReturn());
+			ps.setInt(index++, fm.getGraceTerms());
+			ps.setBigDecimal(index++, fm.getDownPayment());
+			ps.setBigDecimal(index++, fm.getFinAssetValue());
+			ps.setString(index++, fm.getRolloverFrq());
+			ps.setBigDecimal(index++, fm.getInsuranceAmt());
+			ps.setString(index++, fm.getFinRemarks());
+			ps.setInt(index++, fm.getPriority());
+			ps.setInt(index++, fm.getAllowedDefFrqChange());
+			ps.setBoolean(index++, fm.isDeviationApproval());
+			ps.setBoolean(index++, fm.isManualSchedule());
+			ps.setString(index++, fm.getGraceBaseRate());
+			ps.setString(index++, fm.getReferralId());
+			ps.setBoolean(index++, fm.isSamplingRequired());
+			ps.setBoolean(index++, fm.isAlwBPI());
+			ps.setBoolean(index++, fm.isAlwManualSteps());
+			ps.setBigDecimal(index++, fm.getGrcMargin());
+			ps.setBigDecimal(index++, fm.getRepayMargin());
+			ps.setString(index++, fm.getRepayRateBasis());
+			ps.setString(index++, fm.getLinkedFinRef());
+			ps.setBigDecimal(index++, fm.getTotalRepayAmt());
+			ps.setLong(index++, fm.getJointCustId());
+			ps.setBoolean(index++, fm.isTakeOverFinance());
+			ps.setBigDecimal(index++, fm.getTotalGracePft());
+			ps.setString(index++, fm.getRepaySpecialRate());
+			ps.setString(index++, fm.getRecordType());
+			ps.setString(index++, fm.getFinCancelAc());
+			ps.setBoolean(index++, fm.isReAgeCpz());
+			ps.setString(index++, fm.getGraceSpecialRate());
+			ps.setBoolean(index++, fm.isAllowRepayCpz());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayRvwDate()));
+			ps.setInt(index++, fm.getPlanEMIHMaxPerYear());
+			ps.setString(index++, fm.getGrcSchdMthd());
+			ps.setLong(index++, fm.getLastMntBy());
+			ps.setString(index++, fm.getNextUserId());
+			ps.setDate(index++, JdbcUtil.getDate(fm.getFinStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fm.getMaturityDate()));
+			ps.setString(index++, fm.getClosingStatus());
+			ps.setString(index++, fm.getAccountType());
+			ps.setBoolean(index++, fm.isPftServicingODLimit());
+			ps.setBoolean(index++, fm.isQuickDisb());
+			ps.setBigDecimal(index++, fm.getGrcMinRate());
+			ps.setString(index++, fm.getPastduePftCalMthd());
+			ps.setLong(index++, fm.getMMAId());
+			ps.setInt(index++, fm.getReAgeBucket());
+			ps.setString(index++, fm.getTdsType());
+			if (!fm.isFinIsActive()) {
+				ps.setDate(index++, JdbcUtil.getDate(fm.getClosedDate()));
+			}
+			ps.setString(index, fm.getFinReference());
+
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -5076,20 +5078,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public boolean isFinActive(String finReference) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("select FinisActive");
-		sql.append(" From FinanceMain");
-		sql.append(" Where FinReference = :finReference");
+		String sql = "Select FinisActive From FinanceMain Where FinReference = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("finReference", finReference);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, Boolean.class);
+			return this.jdbcOperations.queryForObject(sql, new Object[] { finReference },
+					(rs, rowNum) -> rs.getBoolean(1));
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn("Record not found in FinanceMain for the Finreference >>{}", finReference);
 		}
 
 		return false;
@@ -5099,8 +5096,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public String getFinanceMainByRcdMaintenance(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" RcdMaintainSts");
 		sql.append(" from FinanceMain");
@@ -5109,28 +5104,20 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.trace(Literal.SQL + sql.toString());
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceMain>() {
-						@Override
-						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceMain fm = new FinanceMain();
-
-							fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
-
-							return fm;
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, i) -> {
+				return rs.getString(1);
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record is not found in FinanceMain{} for the specified finreference >> {}", type,
+					finReference);
 		}
-		logger.debug(Literal.LEAVING);
-		return fm.getRcdMaintainSts();
+		return null;
 	}
 
-	@Override 
+	@Override
 	public FinanceMain getRcdMaintenanceByRef(String finReference, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" RcdMaintainSts, MaturityDate");
+		sql.append(" RcdMaintainSts, MaturityDate, WriteoffLoan");
 		sql.append(" from FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = ?");
@@ -5144,6 +5131,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 							fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+							fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
 							return fm;
 					});
@@ -7120,15 +7108,27 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public void updateWriteOffStatus(String finReference, boolean writeoffLoan) {
+		String sql = "Update FinanceMain Set WriteoffLoan = ? Where FinReference = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setBoolean(1, writeoffLoan);
+			ps.setString(2, finReference);
+		});
+	}
+
+	@Override
+	public void updateMaintainceStatus(String finReference, String rcdMaintainSts) {
 		StringBuilder sql = new StringBuilder("Update FinanceMain");
-		sql.append(" Set WriteoffLoan = ? ");
+		sql.append(" Set RcdMaintainSts = ?");
 		sql.append(" Where FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setBoolean(index++, writeoffLoan);
+			ps.setString(index++, rcdMaintainSts);
 			ps.setString(index++, finReference);
 		});
 	}

@@ -64,6 +64,7 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
@@ -128,6 +129,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	//IMPS Splitting
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
+	private  FinanceMainDAO financeMainDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -214,6 +216,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 					.processPaymentInstrDetails(paymentInstrAuditDetails, tableType, "");
 			auditDetails.addAll(paymentInstrAuditDetails);
 		}
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_PAYMENTINST;
+		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), rcdMaintainSts);
+		
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -424,6 +429,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			getAuditHeaderDAO().addAudit(auditHeader);
 			getPaymentHeaderDAO().delete(paymentHeader, TableType.TEMP_TAB);
 		}
+		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), "");
+		
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -538,8 +545,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(
 				processChildsAudit(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
-		getPaymentHeaderDAO().delete(paymentHeader, TableType.TEMP_TAB);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), "");
+		paymentHeaderDAO.delete(paymentHeader, TableType.TEMP_TAB);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -1099,4 +1107,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+	
 }

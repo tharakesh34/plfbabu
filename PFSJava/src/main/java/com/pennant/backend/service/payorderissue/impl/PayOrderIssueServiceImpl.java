@@ -204,10 +204,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		if (payOrderIssueHeader.isNew()) {
-			getPayOrderIssueHeaderDAO().save(payOrderIssueHeader, tableType);
+			payOrderIssueHeaderDAO.save(payOrderIssueHeader, tableType);
 		} else {
-			getPayOrderIssueHeaderDAO().update(payOrderIssueHeader, tableType);
+			payOrderIssueHeaderDAO.update(payOrderIssueHeader, tableType);
 		}
+		
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_DISBINST;
+		financeMainDAO.updateMaintainceStatus(payOrderIssueHeader.getFinReference(), rcdMaintainSts);
 
 		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, tableType, null);
 		auditDetails.addAll(details);
@@ -439,11 +442,13 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				payOrderIssueHeader.setRecordType("");
-				getPayOrderIssueHeaderDAO().save(payOrderIssueHeader, "");
+				payOrderIssueHeaderDAO.save(payOrderIssueHeader, "");
+				financeMainDAO.updateMaintainceStatus(payOrderIssueHeader.getFinReference(), "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				payOrderIssueHeader.setRecordType("");
-				getPayOrderIssueHeaderDAO().update(payOrderIssueHeader, "");
+				payOrderIssueHeaderDAO.update(payOrderIssueHeader, "");
+				financeMainDAO.updateMaintainceStatus(payOrderIssueHeader.getFinReference(), "");
 			}
 
 		}
@@ -542,17 +547,18 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		PayOrderIssueHeader payOrderIssueHeader = (PayOrderIssueHeader) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "_Temp");
+		payOrderIssueHeaderDAO.delete(payOrderIssueHeader, "_Temp");
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, payOrderIssueHeader.getBefImage(),
+				payOrderIssueHeader));
 
-				payOrderIssueHeader.getBefImage(), payOrderIssueHeader));
+		financeMainDAO.updateMaintainceStatus(payOrderIssueHeader.getFinReference(), "");
 
 		List<FinAdvancePayments> list = payOrderIssueHeader.getFinAdvancePaymentsList();
 		if (list != null && !list.isEmpty()) {
 			finAdvancePaymentsDAO.deleteByFinRef(payOrderIssueHeader.getFinReference(), "_Temp");
 		}
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;

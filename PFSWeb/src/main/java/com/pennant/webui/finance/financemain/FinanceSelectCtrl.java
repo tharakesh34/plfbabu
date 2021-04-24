@@ -84,6 +84,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -241,6 +242,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient ChangeTDSService changeTDSService;// Clix Requirement added new change TDS Service
 	private transient LoanDownSizingService loanDownSizingService;
 	private transient FinServiceInstrutionDAO finServiceInstructionDAO;
+	private transient FinExcessAmountDAO finExcessAmountDAO;
 
 	/**
 	 * Default constructor
@@ -1205,10 +1207,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND RcdMaintainSts = 'Restructure' AND FinIsActive = 1 ");
 		}
 
-		// Written Off Finance Reference Details Condition
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
+		// Written Off Finance Reference Details Condition 
+		if (FinanceConstants.FINSER_EVENT_WRITEOFFPAY.equals(moduleDefiner)) {
 			whereClause.append(" AND FinReference IN (SELECT FinReference From FinWriteoffDetail) ");
-		} else {
+		} else if (!(FinanceConstants.FINSER_EVENT_BASICMAINTAIN.equals(moduleDefiner)
+				|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
+				|| FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN.equals(moduleDefiner))) {
 			whereClause.append(" AND FinReference NOT IN (SELECT FinReference From FinWriteoffDetail) ");
 		}
 
@@ -1938,11 +1942,17 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
+			boolean finExcessAmtExists = finExcessAmountDAO.isFinExcessAmtExists(aFinanceMain.getFinReference());
+			if (finExcessAmtExists) {
+				MessageUtil.showError(Labels.getLabel("EXCESS/MANUALADVISE_EXITS"));
+				return;
+			}
+
 			//check if payable amount present
 			List<ManualAdvise> manualAdvise = financeWriteoffService.getManualAdviseByRef(finRef,
 					FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
 			if (CollectionUtils.isNotEmpty(manualAdvise)) {
-				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
+				MessageUtil.showError(Labels.getLabel("EXCESS/MANUALADVISE_EXITS"));
 				return;
 			}
 
@@ -4003,5 +4013,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }

@@ -62,6 +62,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -110,6 +111,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	private FinFeeDetailService finFeeDetailService;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
+	private FinanceMainDAO financeMainDAO;
 
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentManagerDAO documentManagerDAO;
@@ -194,6 +196,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			auditDetails.addAll(details);
 			auditHeader.setAuditDetails(auditDetails);
 		}
+
+		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_MANUALADVISE;
+		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), rcdMaintainSts);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
@@ -385,7 +390,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			auditHeader.setAuditDetails(
 					listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		}
-
+		
+		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), "");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -424,9 +430,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditDetails.addAll(listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
-		getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
+		manualAdviseDAO.delete(manualAdvise, TableType.TEMP_TAB);
+		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), "");
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -1052,6 +1059,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

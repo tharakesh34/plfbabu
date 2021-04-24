@@ -301,16 +301,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Groupbox eventHistory;
 	protected Caption eventHistoryCaption;
 	protected Listbox listBoxEventHistory;
-	protected Listheader listheader_ScheduleDetailDialog_RestructureAppDate;
-	protected Listheader listheader_ScheduleDetailDialog_RestructureReason;
-	protected Listheader listheader_ScheduleDetailDialog_RestructureType;
-	protected Listheader listheader_ScheduleDetailDialog_RestructureDate;
-	protected Listheader listheader_ScheduleDetailDialog_EmiHolidayTerms;
-	protected Listheader listheader_ScheduleDetailDialog_PrincipalHolidayTerms;
-	protected Listheader listheader_ScheduleDetailDialog_EmiTerms;
-	protected Listheader listheader_ScheduleDetailDialog_TotalTerms;
-	protected Listheader listheader_ScheduleDetailDialog_Recalcultionype;
-	protected Listheader listheader_ScheduleDetailDialog_OldMaturity;
+	protected Listheader listheader1;
+	protected Listheader listheader2;
+	protected Listheader listheader3;
+	protected Listheader listheader4;
+	protected Listheader listheader5;
+	protected Listheader listheader6;
+	protected Listheader listheader7;
+	protected Listheader listheader8;
+	protected Listheader listheader9;
+	protected Listheader listheader10;
 
 	protected ApprovalScreenEventHistory approvalScreenEventHistory;
 	boolean printNotRequired = false;
@@ -602,35 +602,35 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RESTRUCTURE)) {
 			this.eventHistory.setVisible(true);
 			this.eventHistoryCaption.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_AddRestructureDetail"));
-			this.listheader_ScheduleDetailDialog_RestructureAppDate.setVisible(true);
-			this.listheader_ScheduleDetailDialog_RestructureReason.setVisible(true);
-			this.listheader_ScheduleDetailDialog_RestructureType.setVisible(true);
-			this.listheader_ScheduleDetailDialog_RestructureDate.setVisible(true);
-			this.listheader_ScheduleDetailDialog_EmiHolidayTerms.setVisible(true);
-			this.listheader_ScheduleDetailDialog_PrincipalHolidayTerms.setVisible(true);
-			this.listheader_ScheduleDetailDialog_EmiTerms.setVisible(true);
-			this.listheader_ScheduleDetailDialog_TotalTerms.setVisible(true);
-			this.listheader_ScheduleDetailDialog_Recalcultionype.setVisible(true);
-			this.listheader_ScheduleDetailDialog_OldMaturity.setVisible(true);
-			this.listheader_ScheduleDetailDialog_RestructureAppDate
+			this.listheader1.setVisible(true);
+			this.listheader2.setVisible(true);
+			this.listheader3.setVisible(true);
+			this.listheader4.setVisible(true);
+			this.listheader5.setVisible(true);
+			this.listheader6.setVisible(true);
+			this.listheader7.setVisible(true);
+			this.listheader8.setVisible(true);
+			this.listheader9.setVisible(true);
+			this.listheader10.setVisible(true);
+			this.listheader1
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureAppDate"));
-			this.listheader_ScheduleDetailDialog_RestructureReason
+			this.listheader2
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureReason"));
-			this.listheader_ScheduleDetailDialog_RestructureType
+			this.listheader3
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureType"));
-			this.listheader_ScheduleDetailDialog_RestructureDate
+			this.listheader4
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureDate"));
-			this.listheader_ScheduleDetailDialog_EmiHolidayTerms
+			this.listheader5
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_EmiHolidayTerms"));
-			this.listheader_ScheduleDetailDialog_PrincipalHolidayTerms
+			this.listheader6
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_PrincipalHolidayTerms"));
-			this.listheader_ScheduleDetailDialog_EmiTerms
+			this.listheader7
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_EmiTerms"));
-			this.listheader_ScheduleDetailDialog_TotalTerms
+			this.listheader8
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_TotalTerms"));
-			this.listheader_ScheduleDetailDialog_Recalcultionype
+			this.listheader9
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_Recalcultionype"));
-			this.listheader_ScheduleDetailDialog_OldMaturity
+			this.listheader10
 					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_OldMaturity"));
 		}
 
@@ -815,6 +815,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			} else {
 				this.listBoxSchedule.setHeight(this.borderLayoutHeight - 170 + "px");
 				this.window_ScheduleDetailDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+			}
+
+			if (eventHistory.isVisible()) {
+				this.listBoxSchedule.setHeight(this.borderLayoutHeight - 300 + "px");
+				this.window_ScheduleDetailDialog.setHeight(this.borderLayoutHeight - 100 + "px");
 			}
 
 			if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {

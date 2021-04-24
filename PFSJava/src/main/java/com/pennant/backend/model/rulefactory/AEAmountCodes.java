@@ -449,8 +449,11 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_pastCpzChg", this.pastCpzChg);
 		map.put("ae_oemSbvAmount", this.oemSbvAmount);
 		map.put("ae_advInst", this.advInst);
-		map.put("ae_odPft", this.odPft);
+		map.put("ae_prvMthAcr", this.prvMthAcr);
+		map.put("ae_isWriteOff", this.isWriteOff);
+		map.put("ae_prvMntAmz", this.prvMntAmz);
 		map.put("ae_odPri", this.odPri);
+		map.put("ae_odPft", this.odPft);
 
 		return map;
 	}

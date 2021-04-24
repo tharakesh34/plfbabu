@@ -33,4 +33,6 @@ public interface FinanceWriteoffDAO {
 	Date getFinWriteoffDate(String finReference);
 
 	long getfinWriteoffPaySeqNo(String finreference, String type);
+
+	boolean isWriteoffLoan(String reference, String type);
 }

@@ -92,7 +92,7 @@ public class GSTInvoiceGeneratorServiceImpl extends SequenceDao<DocumentDetails>
 				String monthYear = temp.getMonthYear();
 				long seqNo = temp.getSeqNo();
 
-				String currentMontYear = DateUtil.format(invoiceDate, "MMYY");
+				String currentMontYear = DateUtil.format(invoiceDate, "MMyy");
 
 				if (!monthYear.equals(currentMontYear)) {
 					seqNo = 0;

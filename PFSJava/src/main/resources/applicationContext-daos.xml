@@ -3738,10 +3738,6 @@
 		<!-- Stage Accounting -->
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
-		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="receiptService" ref="receiptService" />
 	</bean>
 
 	<!--============ Finance Schedule Details ============== -->
@@ -5312,6 +5308,8 @@
 		<property name="legalExpensesDAO" ref="legalExpensesDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
 
 	</bean>
 
@@ -7330,6 +7328,7 @@
 		<property name="countryDAO" ref="countryDAO" />
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
 	</bean>
 
 	<!-- CollateralStructure -->
@@ -8307,6 +8306,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!-- BounceReason -->
@@ -8594,6 +8594,7 @@
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
 	</bean>
 
 	<!-- BuilderCompany -->
@@ -8724,6 +8725,7 @@
 		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
@@ -8947,6 +8949,7 @@
 		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!-- Extended field config -->
@@ -10373,6 +10376,7 @@
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 
 	</bean>
 
@@ -10817,6 +10821,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finOptionDAO" ref="finOptionDAO" />
 		<property name="finOptionService" ref="finOptionService" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!-- New Receipts Module Changes -->

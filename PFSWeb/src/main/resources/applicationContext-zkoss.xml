@@ -1738,6 +1738,8 @@
 		scope="prototype">
 		<property name="chequeHeaderService" ref="chequeHeaderService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean id="istisnaDisbursementDialogCtrl" class="com.pennant.webui.finance.billing.IstisnaDisbursementDetailDialogCtrl"
@@ -1871,6 +1873,7 @@
 		<property name="loanDownSizingService" ref="loanDownSizingService" />
 		<property name="finOCRHeaderService" ref="finOCRHeaderService" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2411,6 +2414,8 @@
 	<bean id="payOrderIssueListCtrl" class="com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="payOrderIssueService" ref="payOrderIssueService" />
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 	<bean id="payOrderIssueDialogCtrl" class="com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl" parent="basisCtrl"
 		scope="prototype">
@@ -4126,6 +4131,8 @@
 		<property name="holdDisbursementService" ref="holdDisbursementService"></property>
 		<property name="jointAccountDetailService" ref="jointAccountDetailService"></property>
 		<property name="finChangeCustomerService" ref="finChangeCustomerService"></property>
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<!-- FinanceStatusCode -->
@@ -4378,6 +4385,7 @@
 	<bean id="selectPaymentHeaderDialogCtrl" class="com.pennant.webui.payment.paymentheader.SelectPaymentHeaderDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<!-- DisbursementsInstructionsDialogCtrl -->
@@ -5262,6 +5270,7 @@
 		<property name="customerService" ref="customerServiceTarget" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean id="selectReceiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.SelectReceiptDialogCtrl"

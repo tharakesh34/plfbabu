@@ -26,16 +26,16 @@
 							<listbox id="listBoxEventHistory" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 								sizedByContent="true" span="true" width="100%" height="100%" multiple="false">
 								<listhead sizable="false" style="padding:0px;position:relative;">
-									<listheader id="listheader_ScheduleDetailDialog_RestructureAppDate" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_RestructureReason" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_RestructureType" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_RestructureDate" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_EmiHolidayTerms" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_PrincipalHolidayTerms" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_EmiTerms" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_TotalTerms" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_Recalcultionype" hflex="min" visible="true" />
-									<listheader id="listheader_ScheduleDetailDialog_OldMaturity" hflex="min" visible="true" />
+									<listheader id="listheader1" hflex="min" visible="false" />
+									<listheader id="listheader2" hflex="min" visible="false" />
+									<listheader id="listheader3" hflex="min" visible="false" />
+									<listheader id="listheader4" hflex="min" visible="false" />
+									<listheader id="listheader5" hflex="min" visible="false" />
+									<listheader id="listheader6" hflex="min" visible="false" />
+									<listheader id="listheader7" hflex="min" visible="false" />
+									<listheader id="listheader8" hflex="min" visible="false" />
+									<listheader id="listheader9" hflex="min" visible="false" />
+									<listheader id="listheader10" hflex="min" visible="false" />
 								</listhead>
 							</listbox>
 						</groupbox>
