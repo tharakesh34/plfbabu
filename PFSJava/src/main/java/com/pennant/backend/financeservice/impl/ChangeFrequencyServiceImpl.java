@@ -145,14 +145,10 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			curSchd.setDisbAmount(BigDecimal.ZERO);
 			curSchd.setFeeChargeAmt(BigDecimal.ZERO);
 
-			if (scheduleData.getFinanceMain().isPlanEMIHAlw() && StringUtils
-					.equals(scheduleData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-				for (Date planEMIHDate : scheduleData.getPlanEMIHDates()) {
-					if (planEMIHDate.compareTo(oldDate) == 0) {
-						scheduleData.getPlanEMIHDates().remove(oldDate);
-						scheduleData.getPlanEMIHDates().add(curSchd.getSchDate());
-					}
-				}
+			String planEMIHM = financeMain.getPlanEMIHMethod();
+			if (financeMain.isPlanEMIHAlw() && FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHM)) {
+				scheduleData.getPlanEMIHDates().removeIf(e -> (e.compareTo(oldDate) == 0));
+				scheduleData.getPlanEMIHDates().add(curSchd.getSchDate());
 			}
 
 			if (DateUtility.compare(oldDate, financeMain.getGrcPeriodEndDate()) == 0) {
