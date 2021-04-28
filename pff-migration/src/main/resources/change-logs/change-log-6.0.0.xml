@@ -32252,9 +32252,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 	</changeSet>
 	
 	<changeSet id="PSD#168759.1" author="bhaskar.m">
-	<dropForeignKeyConstraint baseTableName="secus
-	r_reporting_managers_temp"
-		constraintName="fk_reportmng_usrid_t" />
+		<dropForeignKeyConstraint baseTableName="secusr_reporting_managers_temp" constraintName="fk_reportmng_usrid_t" />
 	</changeSet>
 
 </databaseChangeLog>
