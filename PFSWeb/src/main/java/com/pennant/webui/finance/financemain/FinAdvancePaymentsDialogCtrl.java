@@ -2823,7 +2823,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			boolean isDeletedVAS = true;
 			for (VASRecording vasRecording : vasRecordingList) {
 				vasReferences.add(new ValueLabel(vasRecording.getVasReference(), vasRecording.getVasReference()));
-				vasAmountsMAP.put(vasRecording.getVasReference(), vasRecording.getFee());
+				vasAmountsMAP.put(vasRecording.getVasReference(),
+						vasRecording.getFee().subtract(vasRecording.getPaidAmt()));
 				if (StringUtils.equals(vasRecording.getVasReference(), vasReference)) {
 					isDeletedVAS = false;
 				}
