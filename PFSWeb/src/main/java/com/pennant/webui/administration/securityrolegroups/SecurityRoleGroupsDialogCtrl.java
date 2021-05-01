@@ -698,7 +698,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 
 		} catch (DataAccessException e) {
 			logger.debug("Exception: ", e);
-			showMessage(e);
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

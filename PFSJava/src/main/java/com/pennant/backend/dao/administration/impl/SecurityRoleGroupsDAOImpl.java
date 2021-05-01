@@ -64,6 +64,7 @@ import com.pennant.backend.model.administration.SecurityRoleGroups;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> implements SecurityRoleGroupsDAO {
 	private static Logger logger = LogManager.getLogger(SecurityRoleGroupsDAOImpl.class);
@@ -117,29 +118,26 @@ public class SecurityRoleGroupsDAOImpl extends SequenceDao<SecurityRole> impleme
 	 *            (SecurityRoleGroups)
 	 */
 	public void save(SecurityRoleGroups securityRoleGroups) {
-		logger.debug("Entering");
-
 		if (securityRoleGroups.getRoleGrpID() == Long.MIN_VALUE) {
 			securityRoleGroups.setId(getNextValue("SeqSecRoleGroups"));
-			logger.debug("get NextValue:" + securityRoleGroups.getRoleGrpID());
 		}
 
-		StringBuilder insertSql = new StringBuilder(" INSERT INTO SecRoleGroups ");
-		insertSql.append(" ( RoleGrpID , GrpID , RoleID , ");
-		insertSql.append(" Version , LastMntBy , LastMntOn , RecordStatus , RoleCode , ");
-		insertSql.append(" NextRoleCode , TaskId , NextTaskId , RecordType , WorkflowId ) ");
-		insertSql.append(" VALUES (:RoleGrpID , :GrpID , :RoleID , ");
-		insertSql.append(" :Version , :LastMntBy , :LastMntOn , :RecordStatus, ");
-		insertSql.append(" :RoleCode , :NextRoleCode , :TaskId , :NextTaskId , :RecordType , :WorkflowId ) ");
-		logger.debug("insertSql:" + insertSql.toString());
+		StringBuilder sql = new StringBuilder(" INSERT INTO SecRoleGroups ");
+		sql.append(" ( RoleGrpID , GrpID , RoleID , ");
+		sql.append(" Version , LastMntBy , LastMntOn , RecordStatus , RoleCode , ");
+		sql.append(" NextRoleCode , TaskId , NextTaskId , RecordType , WorkflowId ) ");
+		sql.append(" VALUES (:RoleGrpID , :GrpID , :RoleID , ");
+		sql.append(" :Version , :LastMntBy , :LastMntOn , :RecordStatus, ");
+		sql.append(" :RoleCode , :NextRoleCode , :TaskId , :NextTaskId , :RecordType , :WorkflowId)");
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityRoleGroups);
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
+			this.jdbcTemplate.update(sql.toString(), beanParameters);
+		} catch (DataAccessException e) {
+			throw e;
 		}
 
-		logger.debug("Leaving");
 	}
 
 	/**
