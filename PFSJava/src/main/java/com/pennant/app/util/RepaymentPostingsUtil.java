@@ -1180,7 +1180,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 
 			// TDS Due
-			if (financeMain.isTDSApplicable()) {
+			if (TDSCalculator.isTDSApplicable(financeMain)) {
 				amountCodes.setDueTds((amountCodes.getPftDuePaid().multiply(tdsPerc)).divide(BigDecimal.valueOf(100), 0,
 						RoundingMode.HALF_DOWN));
 			}

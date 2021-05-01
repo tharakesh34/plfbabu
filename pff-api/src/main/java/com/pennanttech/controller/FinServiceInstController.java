@@ -47,6 +47,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -1952,7 +1953,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		if (!StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			BigDecimal tdsMultiplier = BigDecimal.ONE;
-			if (financeMain.isTDSApplicable()) {
+			if (TDSCalculator.isTDSApplicable(financeMain)) {
 				BigDecimal tdsPerc = new BigDecimal(
 						SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 				if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {

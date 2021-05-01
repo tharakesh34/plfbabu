@@ -92,6 +92,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
@@ -612,26 +613,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.listheader8.setVisible(true);
 			this.listheader9.setVisible(true);
 			this.listheader10.setVisible(true);
-			this.listheader1
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureAppDate"));
-			this.listheader2
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureReason"));
-			this.listheader3
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureType"));
-			this.listheader4
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureDate"));
-			this.listheader5
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_EmiHolidayTerms"));
-			this.listheader6
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_PrincipalHolidayTerms"));
-			this.listheader7
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_EmiTerms"));
-			this.listheader8
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_TotalTerms"));
-			this.listheader9
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_Recalcultionype"));
-			this.listheader10
-					.setLabel(Labels.getLabel("label_ScheduleDetailDialog_OldMaturity"));
+			this.listheader1.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureAppDate"));
+			this.listheader2.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureReason"));
+			this.listheader3.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureType"));
+			this.listheader4.setLabel(Labels.getLabel("label_ScheduleDetailDialog_RestructureDate"));
+			this.listheader5.setLabel(Labels.getLabel("label_ScheduleDetailDialog_EmiHolidayTerms"));
+			this.listheader6.setLabel(Labels.getLabel("label_ScheduleDetailDialog_PrincipalHolidayTerms"));
+			this.listheader7.setLabel(Labels.getLabel("label_ScheduleDetailDialog_EmiTerms"));
+			this.listheader8.setLabel(Labels.getLabel("label_ScheduleDetailDialog_TotalTerms"));
+			this.listheader9.setLabel(Labels.getLabel("label_ScheduleDetailDialog_Recalcultionype"));
+			this.listheader10.setLabel(Labels.getLabel("label_ScheduleDetailDialog_OldMaturity"));
 		}
 
 		// Structured Murabaha for Enquiry
@@ -1542,12 +1533,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 		}
 
-		this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
-		if (financeMain.isTDSApplicable()) {
-			if (StringUtils.equalsIgnoreCase(financeMain.getTdsType(), PennantConstants.TDS_AUTO)) {
-				this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(true);
-			}
-		}
+		this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(TDSCalculator.isTDSApplicable(financeMain));
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 			this.listheader_AvailableLimit.setVisible(true);

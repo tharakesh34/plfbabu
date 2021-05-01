@@ -84,6 +84,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -1042,15 +1043,11 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 
-		if (!aFinSchData.getFinanceMain().isTDSApplicable()) {
-			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(false);
-		} else {
-			this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(true);
-		}
+		FinanceMain fm = aFinSchData.getFinanceMain();
+		this.listheader_ScheduleDetailDialog_TDSAmount.setVisible(TDSCalculator.isTDSApplicable(fm));
 
-		if (aFinSchData.getFinanceMain().getGrcPeriodEndDate() != null) {
-			if (aFinSchData.getFinanceMain().getFinStartDate()
-					.compareTo(aFinSchData.getFinanceMain().getGrcPeriodEndDate()) == 0) {
+		if (fm.getGrcPeriodEndDate() != null) {
+			if (fm.getFinStartDate().compareTo(fm.getGrcPeriodEndDate()) == 0) {
 				this.label_ScheduleDetailDialog_GrcEndDate.setVisible(false);
 				this.schdl_grcEndDate.setVisible(false);
 			} else {
@@ -1078,7 +1075,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		}
 
 		setFinScheduleData(aFinSchData);
-		FinanceMain financeMain = aFinSchData.getFinanceMain();
+		FinanceMain financeMain = fm;
 		int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		BigDecimal totalCost = financeMain.getFinAmount().subtract(financeMain.getDownPaySupl())
 				.add(financeMain.getFeeChargeAmt()).add(financeMain.getInsuranceAmt());

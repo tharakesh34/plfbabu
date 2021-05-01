@@ -629,16 +629,17 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	private void calculateTDS() {
 		boolean tdsApplicable = (boolean) this.feeTypeID.getAttribute("TDSApplicable");
 
-		if (!tdsApplicable || !financeMain.istDSApplicable()) {
+		if (!TDSCalculator.isTDSApplicable(financeMain, tdsApplicable)) {
 			this.gb_TDSDetails.setVisible(false);
 			this.tds.setValue(BigDecimal.ZERO);
 			return;
 		}
 
 		FinanceDetail fd = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
-		tdsApplicable = fd.getFinScheduleData().getFinanceMain().isTDSApplicable();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		tdsApplicable = TDSCalculator.isTDSApplicable(fm);
 		this.gb_TDSDetails.setVisible(true);
-		int formatter = CurrencyUtil.getFormat(fd.getFinScheduleData().getFinanceMain().getFinCcy());
+		int formatter = CurrencyUtil.getFormat(fm.getFinCcy());
 
 		BigDecimal adviseAmountVal = BigDecimal.ZERO;
 		BigDecimal tdsAmount = BigDecimal.ZERO;

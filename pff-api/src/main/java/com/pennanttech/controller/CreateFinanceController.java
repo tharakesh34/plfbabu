@@ -43,6 +43,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -3044,33 +3045,27 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeDetail.setFinFlagsDetails(null);
 		financeDetail.setCovenantTypeList(null);
 		// ReqStage and Status
-		financeDetail.getFinScheduleData().getFinanceMain()
-				.setStatus(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus());
-		financeDetail.getFinScheduleData().getFinanceMain()
-				.setStage(financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
-		if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain().getDmaCode())) {
-			vehicleDealer = vehicleDealerDao.getVehicleDealerById(
-					Long.valueOf((financeDetail.getFinScheduleData().getFinanceMain().getDmaCode())), "");
-			financeDetail.getFinScheduleData().getFinanceMain().setDmaCodeReference(vehicleDealer.getCode());
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
+		fm.setStatus(fm.getRecordStatus());
+		fm.setStage(fm.getNextRoleCode());
+		if (StringUtils.isNotEmpty(fm.getDmaCode())) {
+			vehicleDealer = vehicleDealerDao.getVehicleDealerById(Long.valueOf((fm.getDmaCode())), "");
+			fm.setDmaCodeReference(vehicleDealer.getCode());
 		}
 
-		if (financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer() > 0) {
-			vehicleDealer = vehicleDealerDao
-					.getVehicleDealerById(financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer(), "");
-			financeDetail.getFinScheduleData().getFinanceMain()
-					.setAccountsOfficerReference(String.valueOf(vehicleDealer.getDealerId()));
+		if (fm.getAccountsOfficer() > 0) {
+			vehicleDealer = vehicleDealerDao.getVehicleDealerById(fm.getAccountsOfficer(), "");
+			fm.setAccountsOfficerReference(String.valueOf(vehicleDealer.getDealerId()));
 		}
 
-		if (StringUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinanceMain().getDsaCode())) {
-			vehicleDealer = vehicleDealerDao.getVehicleDealerById(
-					Long.valueOf((financeDetail.getFinScheduleData().getFinanceMain().getDsaCode())), "");
-			financeDetail.getFinScheduleData().getFinanceMain().setDsaCodeReference(vehicleDealer.getCode());
+		if (StringUtils.isNotEmpty(fm.getDsaCode())) {
+			vehicleDealer = vehicleDealerDao.getVehicleDealerById(Long.valueOf((fm.getDsaCode())), "");
+			fm.setDsaCodeReference(vehicleDealer.getCode());
 		}
 
-		if (financeDetail.getFinScheduleData().getFinanceMain().getConnector() > 0) {
-			vehicleDealer = vehicleDealerDao
-					.getVehicleDealerById(((financeDetail.getFinScheduleData().getFinanceMain().getConnector())), "");
-			financeDetail.getFinScheduleData().getFinanceMain().setConnectorReference(vehicleDealer.getCode());
+		if (fm.getConnector() > 0) {
+			vehicleDealer = vehicleDealerDao.getVehicleDealerById(((fm.getConnector())), "");
+			fm.setConnectorReference(vehicleDealer.getCode());
 		}
 		// disbursement Dates
 		List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
@@ -3083,12 +3078,11 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		if (disbList != null && disbList.size() > 0) {
 			if (disbList.size() == 1) {
-				financeDetail.getFinScheduleData().getFinanceMain().setFirstDisbDate(disbList.get(0).getDisbDate());
-				financeDetail.getFinScheduleData().getFinanceMain().setLastDisbDate(disbList.get(0).getDisbDate());
+				fm.setFirstDisbDate(disbList.get(0).getDisbDate());
+				fm.setLastDisbDate(disbList.get(0).getDisbDate());
 			} else {
-				financeDetail.getFinScheduleData().getFinanceMain().setFirstDisbDate(disbList.get(0).getDisbDate());
-				financeDetail.getFinScheduleData().getFinanceMain()
-						.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
+				fm.setFirstDisbDate(disbList.get(0).getDisbDate());
+				fm.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
 			}
 		}
 
@@ -3096,7 +3090,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeDetail.setFinFeeDetails(getUpdatedFees(finFeeDetail));
 
 		// Bounce and manual advice fees if applicable
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		String finReference = fm.getFinReference();
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finReference,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
@@ -3132,9 +3126,8 @@ public class CreateFinanceController extends SummaryDetailService {
 					}
 					BigDecimal tdsAmount = BigDecimal.ZERO;
 
-					// if tds applicable
-					if (advisedFees.isTdsReq()
-							&& financeDetail.getFinScheduleData().getFinanceMain().isTDSApplicable()) {
+					// if tds applicable					
+					if (TDSCalculator.isTDSApplicable(fm, advisedFees.isTdsReq())) {
 						BigDecimal taxableAmount = BigDecimal.ZERO;
 
 						if (StringUtils.isNotEmpty(advisedFees.getTaxComponent())
@@ -3145,8 +3138,7 @@ public class CreateFinanceController extends SummaryDetailService {
 							taxableAmount = totalAmount;
 						}
 
-						tdsAmount = receiptCalculator.getTDSAmount(financeDetail.getFinScheduleData().getFinanceMain(),
-								taxableAmount);
+						tdsAmount = receiptCalculator.getTDSAmount(fm, taxableAmount);
 						totalDue = totalDue.subtract(tdsAmount);
 					}
 				}

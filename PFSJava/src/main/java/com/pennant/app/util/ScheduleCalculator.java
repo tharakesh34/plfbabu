@@ -3497,10 +3497,7 @@ public class ScheduleCalculator {
 		sd.setMrgRate(lastSchd.getMrgRate());
 		sd.setActRate(lastSchd.getActRate());
 		sd.setCalculatedRate(lastSchd.getCalculatedRate());
-		if (finMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())) {
-			// 124631 TDS applicable flag Added
-			sd.setTDSApplicable(lastSchd.isTDSApplicable());
-		}
+		sd.setTDSApplicable(TDSCalculator.isTDSApplicable(finMain));
 
 		int iRepay = finScheduleData.getRepayInstructions().size();
 		String schdMethod = finScheduleData.getFinanceMain().getScheduleMethod();
@@ -3989,8 +3986,7 @@ public class ScheduleCalculator {
 			curSchd = finScheduleDetails.get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (finMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())
-					&& tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+			if (TDSCalculator.isTDSApplicable(finMain) && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 
 				boolean taxOnSysPerc = true;
 				if (ltdApplicable) {
@@ -4185,9 +4181,7 @@ public class ScheduleCalculator {
 			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (finMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())
-					&& tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
-
+			if (TDSCalculator.isTDSApplicable(finMain) && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 				tdsAmount = null;
 				boolean taxOnSysPerc = true;
 				if (ltdApplicable) {
@@ -6433,65 +6427,63 @@ public class ScheduleCalculator {
 	 */
 
 	public FinScheduleData addBPISchd(FinScheduleData finScheduleData) {
-		logger.debug("Entering");
+		FinanceMain fm = finScheduleData.getFinanceMain();
 
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-
-		if (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_NO)) {
-			logger.debug("Leaving");
+		if (FinanceConstants.BPI_NO.equals(fm.getBpiTreatment())) {
+			logger.info("NO BPI Treatment.");
 			return finScheduleData;
 		}
 
-		Date firstSchdDate = finScheduleData.getFinanceScheduleDetails().get(1).getSchDate();
+		FinanceScheduleDetail schd = finScheduleData.getFinanceScheduleDetails().get(1);
+		Date firstSchdDate = schd.getSchDate();
 		String frqBPI = "";
 
 		Date nextInstDate = null;
-		if (finMain.isAllowGrcPeriod()) {
-			frqBPI = finMain.getGrcPftFrq();
-			nextInstDate = finMain.getNextGrcPftDate();
+		if (fm.isAllowGrcPeriod()) {
+			frqBPI = fm.getGrcPftFrq();
+			nextInstDate = fm.getNextGrcPftDate();
 		} else {
-			frqBPI = finMain.getRepayPftFrq();
-			nextInstDate = finMain.getNextRepayPftDate();
+			frqBPI = fm.getRepayPftFrq();
+			nextInstDate = fm.getNextRepayPftDate();
 		}
 
 		String bpiCalOn = SysParamUtil.getValueAsString("BPI_CALC_ON");
 		Date bpiDate = null;
 		if (StringUtils.equals(bpiCalOn, FinanceConstants.BPI_CAL_ON_LASTFRQDATE)) {
-			int terms = FrequencyUtil.getTerms(frqBPI, finMain.getFinStartDate(), nextInstDate, false, true).getTerms();
+			int terms = FrequencyUtil.getTerms(frqBPI, fm.getFinStartDate(), nextInstDate, false, true).getTerms();
 			List<Calendar> termSchList = FrequencyUtil
-					.getNextDate(frqBPI, terms - 1, finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false)
+					.getNextDate(frqBPI, terms - 1, fm.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false)
 					.getScheduleList();
 			bpiDate = DateUtility.getDate(
 					DateUtility.format(termSchList.get(termSchList.size() - 1).getTime(), PennantConstants.dateFormat));
 		} else {
 			bpiDate = DateUtility
-					.getDate(DateUtility.format(
-							FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
-									HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
-							PennantConstants.dateFormat));
+					.getDate(
+							DateUtility.format(
+									FrequencyUtil.getNextDate(frqBPI, 1, fm.getFinStartDate(),
+											HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
+									PennantConstants.dateFormat));
 		}
 
 		if (DateUtility.compare(bpiDate, firstSchdDate) >= 0) {
-			finScheduleData.getFinanceScheduleDetails().get(1).setBpiOrHoliday(FinanceConstants.FLAG_BPI);
-			if (StringUtils.isNotEmpty(finMain.getBpiPftDaysBasis())) {
-				finScheduleData.getFinanceScheduleDetails().get(1).setPftDaysBasis(finMain.getBpiPftDaysBasis());
+			schd.setBpiOrHoliday(FinanceConstants.FLAG_BPI);
+			if (StringUtils.isNotEmpty(fm.getBpiPftDaysBasis())) {
+				schd.setPftDaysBasis(fm.getBpiPftDaysBasis());
 			}
 
-			if (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_CAPITALIZE)) {
-				finScheduleData.getFinanceScheduleDetails().get(1).setPftOnSchDate(false);
-				finScheduleData.getFinanceScheduleDetails().get(1).setCpzOnSchDate(true);
+			if (StringUtils.equals(fm.getBpiTreatment(), FinanceConstants.BPI_CAPITALIZE)) {
+				schd.setPftOnSchDate(false);
+				schd.setCpzOnSchDate(true);
 			} else {
-				finScheduleData.getFinanceScheduleDetails().get(1).setPftOnSchDate(true);
-				finScheduleData.getFinanceScheduleDetails().get(1).setCpzOnSchDate(false);
-				if (finMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())) {
-					finScheduleData.getFinanceScheduleDetails().get(1).setTDSApplicable(finMain.isTDSApplicable());
-				}
+				schd.setPftOnSchDate(true);
+				schd.setCpzOnSchDate(false);
+				schd.setTDSApplicable(TDSCalculator.isTDSApplicable(fm));
 			}
 
-			if (DateUtility.compare(bpiDate, finMain.getGrcPeriodEndDate()) > 0) {
-				finScheduleData.getFinanceScheduleDetails().get(1).setSchdMethod(finMain.getScheduleMethod());
+			if (DateUtility.compare(bpiDate, fm.getGrcPeriodEndDate()) > 0) {
+				schd.setSchdMethod(fm.getScheduleMethod());
 			} else {
-				finScheduleData.getFinanceScheduleDetails().get(1).setSchdMethod(finMain.getGrcSchdMthd());
+				schd.setSchdMethod(fm.getGrcSchdMthd());
 			}
 			logger.debug("Leaving");
 			return finScheduleData;
@@ -6501,7 +6493,7 @@ public class ScheduleCalculator {
 		FinanceScheduleDetail openSchd = finScheduleData.getFinanceScheduleDetails().get(0);
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
 
-		sd.setFinReference(finMain.getFinReference());
+		sd.setFinReference(fm.getFinReference());
 		sd.setSchDate(bpiDate);
 		sd.setDefSchdDate(bpiDate);
 		sd.setBpiOrHoliday(FinanceConstants.FLAG_BPI);
@@ -6524,8 +6516,8 @@ public class ScheduleCalculator {
 		sd.setMrgRate(openSchd.getMrgRate());
 		sd.setActRate(openSchd.getActRate());
 		sd.setCalculatedRate(openSchd.getCalculatedRate());
-		if (StringUtils.isNotEmpty(finMain.getBpiPftDaysBasis())) {
-			sd.setPftDaysBasis(finMain.getBpiPftDaysBasis());
+		if (StringUtils.isNotEmpty(fm.getBpiPftDaysBasis())) {
+			sd.setPftDaysBasis(fm.getBpiPftDaysBasis());
 		} else {
 			sd.setPftDaysBasis(openSchd.getPftDaysBasis());
 		}
@@ -6534,17 +6526,15 @@ public class ScheduleCalculator {
 		sd.setAdvPftRate(openSchd.getAdvPftRate());
 		sd.setSuplRent(openSchd.getSuplRent());
 		sd.setIncrCost(openSchd.getIncrCost());
-		if (finMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())) {
-			sd.setTDSApplicable(finMain.isTDSApplicable());
-		}
+		sd.setTDSApplicable(TDSCalculator.isTDSApplicable(fm));
 
-		if (DateUtility.compare(bpiDate, finMain.getGrcPeriodEndDate()) > 0) {
-			sd.setSchdMethod(finMain.getScheduleMethod());
+		if (DateUtility.compare(bpiDate, fm.getGrcPeriodEndDate()) > 0) {
+			sd.setSchdMethod(fm.getScheduleMethod());
 		} else {
-			sd.setSchdMethod(finMain.getGrcSchdMthd());
+			sd.setSchdMethod(fm.getGrcSchdMthd());
 		}
 
-		if (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_CAPITALIZE)) {
+		if (StringUtils.equals(fm.getBpiTreatment(), FinanceConstants.BPI_CAPITALIZE)) {
 			sd.setPftOnSchDate(false);
 			sd.setCpzOnSchDate(true);
 		} else {
@@ -6559,7 +6549,7 @@ public class ScheduleCalculator {
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 
 		if (sd.isRepayOnSchDate()) {
-			finMain.setNumberOfTerms(finMain.getNumberOfTerms() + 1);
+			fm.setNumberOfTerms(fm.getNumberOfTerms() + 1);
 		}
 
 		logger.debug("Leaving");
@@ -7867,18 +7857,19 @@ public class ScheduleCalculator {
 		Date recalFromDate = eventFromDate;
 
 		// TODO : If Early settle on or before Grace end , need to re-modify
-		Date graceEndDate = finScheduleData.getFinanceMain().getGrcPeriodEndDate();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		Date graceEndDate = fm.getGrcPeriodEndDate();
 		FinanceScheduleDetail openSchd = null;
 		int prvIndex = -1;
 
 		// Resetting Recal Schedule Method & Next Recal From Date if not exists
 		String recalSchdMethod = null;
-		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
-		for (int i = 0; i < schdList.size(); i++) {
-			FinanceScheduleDetail curSchd = schdList.get(i);
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+		for (int i = 0; i < schedules.size(); i++) {
+			FinanceScheduleDetail curSchd = schedules.get(i);
 
 			if (DateUtility.compare(curSchd.getSchDate(), eventFromDate) == 0) {
-				finScheduleData.getFinanceMain().setIndexMisc(i);
+				fm.setIndexMisc(i);
 				openSchd = curSchd;
 
 				if (curSchd.isRepayOnSchDate()) {
@@ -7933,7 +7924,7 @@ public class ScheduleCalculator {
 		// If schedule Not found
 		if (openSchd == null) {
 			finScheduleData = addSchdRcd(finScheduleData, eventFromDate, prvIndex, true);
-			openSchd = finScheduleData.getFinanceScheduleDetails().get(prvIndex + 1);
+			openSchd = schedules.get(prvIndex + 1);
 
 			if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 				recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
@@ -7954,21 +7945,19 @@ public class ScheduleCalculator {
 			openSchd.setPartialPaidAmt(openSchd.getPartialPaidAmt().add(amount));
 		}
 		openSchd.setRepayOnSchDate(true);
-		if (finScheduleData.getFinanceMain().isTDSApplicable()
-				&& PennantConstants.TDS_AUTO.equalsIgnoreCase(finScheduleData.getFinanceMain().getTdsType())) {
-			openSchd.setTDSApplicable(finScheduleData.getFinanceScheduleDetails().get(prvIndex + 2).isTDSApplicable());
+		if (TDSCalculator.isTDSApplicable(fm)) {
+			openSchd.setTDSApplicable(schedules.get(prvIndex + 2).isTDSApplicable());
+			Date maturityDate = fm.getMaturityDate();
+
+			if (maturityDate.compareTo(SysParamUtil.getAppDate()) < 0) {
+				openSchd.setTDSApplicable(schedules.get(prvIndex + 1).isTDSApplicable());
+			} else {
+				openSchd.setTDSApplicable(schedules.get(prvIndex + 2).isTDSApplicable());
+			}
 		}
 
-		Date maturityDate = finScheduleData.getFinanceMain().getMaturityDate();
-
-		if (maturityDate.compareTo(SysParamUtil.getAppDate()) < 0) {
-			openSchd.setTDSApplicable(finScheduleData.getFinanceScheduleDetails().get(prvIndex + 1).isTDSApplicable());
-		} else {
-			openSchd.setTDSApplicable(finScheduleData.getFinanceScheduleDetails().get(prvIndex + 2).isTDSApplicable());
-		}
-
-		finScheduleData.getFinanceMain().setRecalSchdMethod(recalSchdMethod);
-		finScheduleData.getFinanceMain().setRecalFromDate(recalFromDate);
+		fm.setRecalSchdMethod(recalSchdMethod);
+		fm.setRecalFromDate(recalFromDate);
 
 		return finScheduleData;
 	}
@@ -9047,8 +9036,7 @@ public class ScheduleCalculator {
 			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (finMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(finMain.getTdsType())
-					&& tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+			if (TDSCalculator.isTDSApplicable(finMain) && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 
 				/*
 				 * if (i < recalIdx) { continue; }

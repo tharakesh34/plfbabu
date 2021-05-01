@@ -119,9 +119,7 @@ public class ScheduleGenerator {
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 
-			if (financeMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(financeMain.getTdsType())) {
-				curSchd.setTDSApplicable(financeMain.isTDSApplicable());
-			}
+			curSchd.setTDSApplicable(TDSCalculator.isTDSApplicable(financeMain));
 
 			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setActRate(financeMain.getGrcPftRate());
@@ -301,9 +299,7 @@ public class ScheduleGenerator {
 				}
 			}
 
-			if (financeMain.isTDSApplicable() && PennantConstants.TDS_AUTO.equalsIgnoreCase(financeMain.getTdsType())) {
-				curSchd.setTDSApplicable(financeMain.isTDSApplicable());
-			}
+			curSchd.setTDSApplicable(TDSCalculator.isTDSApplicable(financeMain));
 
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 				//Bugfix:Removed '=' condition to fix ROI Issue in Change Moratorium at GraceEnd 
@@ -519,7 +515,7 @@ public class ScheduleGenerator {
 				}
 			}
 
-			curSchd.setTDSApplicable(finMain.isTDSApplicable());
+			curSchd.setTDSApplicable(TDSCalculator.isTDSApplicable(finMain));
 			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setSchdMethod(finMain.getGrcSchdMthd());
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);

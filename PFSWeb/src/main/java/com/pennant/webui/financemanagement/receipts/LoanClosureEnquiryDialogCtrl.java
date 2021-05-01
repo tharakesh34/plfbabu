@@ -80,6 +80,7 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.Notes;
@@ -1225,7 +1226,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (allocationList.isEmpty()) {
 			return;
 		}
-		if (receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()) {
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		if (TDSCalculator.isTDSApplicable(fm)) {
 			this.listheader_ReceiptDialog_TDS.setVisible(true);
 			this.listheader_ReceiptDialog_PaidTDS.setVisible(true);
 		}
@@ -2304,7 +2306,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 				}
 
-				if (finMain.isTDSApplicable()) {
+				if (TDSCalculator.isTDSApplicable(finMain)) {
 					// TDS for Last Installment
 					BigDecimal tdsPerc = new BigDecimal(
 							SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());

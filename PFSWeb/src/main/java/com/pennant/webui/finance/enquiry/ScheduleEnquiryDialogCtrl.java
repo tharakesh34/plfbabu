@@ -76,6 +76,7 @@ import com.pennant.ChartType;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -232,11 +233,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			this.listheader_IncreasedCost.setVisible(true);
 		}
 
-		if (!getFinScheduleData().getFinanceMain().isTDSApplicable()) {
-			this.listheader_TDSAmount.setVisible(false);
-		} else {
-			this.listheader_TDSAmount.setVisible(true);
-		}
+		this.listheader_TDSAmount.setVisible(TDSCalculator.isTDSApplicable(getFinScheduleData().getFinanceMain()));
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				getFinScheduleData().getFinanceMain().getProductCategory())) {

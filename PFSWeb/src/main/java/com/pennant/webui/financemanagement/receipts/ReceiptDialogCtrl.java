@@ -142,6 +142,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -3365,7 +3366,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		this.listBoxPastdues.getItems().clear();
 
-		if (receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isTDSApplicable()) {
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		if (TDSCalculator.isTDSApplicable(fm)) {
 			listheader_ReceiptDialog_TDS.setVisible(true);
 			listheader_ReceiptDialog_PaidTDS.setVisible(true);
 		}
@@ -5307,7 +5309,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					amountCodes.setFuturePriWaived(amountCodes.getPriWaived());
 				}
 
-				if (finMain.isTDSApplicable()) {
+				if (TDSCalculator.isTDSApplicable(finMain)) {
 					// TDS for Last Installment
 					BigDecimal tdsPerc = new BigDecimal(
 							SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());

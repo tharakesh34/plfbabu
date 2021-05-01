@@ -83,6 +83,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -1619,7 +1620,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			lc.setStyle("cursor:default;");
 		}
 
-		boolean tdsApplicable = financeMain.isTDSApplicable();
+		boolean tdsApplicable = TDSCalculator.isTDSApplicable(financeMain);
 		int colSpan = 0;
 
 		if (fillType == 2) {

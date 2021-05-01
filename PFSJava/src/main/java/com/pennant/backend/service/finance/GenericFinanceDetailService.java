@@ -81,6 +81,7 @@ import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SuspensePostingUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
@@ -1496,7 +1497,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
 		if (StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
-			if (finMain.isTDSApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
+			if (TDSCalculator.isTDSApplicable(finMain, SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG))) {
 				for (int i = 0; i < finSchdDetails.size(); i++) {
 					FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 					if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {

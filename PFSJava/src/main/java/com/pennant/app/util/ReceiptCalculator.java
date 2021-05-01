@@ -599,7 +599,7 @@ public class ReceiptCalculator implements Serializable {
 			allocDetail.setFeeTypeCode(feeDtls.getFeeTypeCode());
 
 			BigDecimal tdsAmount = BigDecimal.ZERO;
-			if (feeDtls.isTdsReq() && fm.isTDSApplicable()) {
+			if (TDSCalculator.isTDSApplicable(fm, feeDtls)) {
 				BigDecimal taxableAmount = BigDecimal.ZERO;
 				if (StringUtils.isNotEmpty(feeDtls.getTaxComponent())) {
 					taxableAmount = allocDetail.getTotRecv().subtract(allocDetail.getDueGST());
@@ -1126,7 +1126,7 @@ public class ReceiptCalculator implements Serializable {
 
 				}
 
-				if (lppFeeType.isTdsReq() && fm.isTDSApplicable()) {
+				if (TDSCalculator.isTDSApplicable(fm, lppFeeType)) {
 					tdsAmount = tdsAmount.add(getTDSAmount(fm, taxableAmount));
 				}
 
@@ -1146,7 +1146,7 @@ public class ReceiptCalculator implements Serializable {
 			rd.setPendingODC(lppBal);
 			ReceiptAllocationDetail lpp = setAllocationRecord(rd, RepayConstants.ALLOCATION_ODC, 6, lppBal, desc, 0,
 					taxType, true, true);
-			if (lppFeeType.isTdsReq() && fm.isTDSApplicable()) {
+			if (TDSCalculator.isTDSApplicable(fm, lppFeeType)) {
 				if (ObjectUtils.isNotEmpty(finODPenaltyRate) && finODPenaltyRate.isoDTDSReq()) {
 					lpp.setPercTds(tdsPerc);
 					lpp.setTdsReq(true);
@@ -1219,7 +1219,7 @@ public class ReceiptCalculator implements Serializable {
 					true, true);
 			allocDetail.setFeeTypeCode(advise.getFeeTypeCode());
 			BigDecimal tdsAmount = BigDecimal.ZERO;
-			if (isTdsApplicable && fsd.getFinanceMain().isTDSApplicable()) {
+			if (TDSCalculator.isTDSApplicable(fsd.getFinanceMain(), isTdsApplicable)) {
 				BigDecimal taxableAmount = BigDecimal.ZERO;
 				if (StringUtils.isNotEmpty(taxType)) {
 					taxableAmount = allocDetail.getTotRecv().subtract(allocDetail.getDueGST());

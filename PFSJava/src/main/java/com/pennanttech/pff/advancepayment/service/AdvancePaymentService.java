@@ -24,6 +24,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.AdvancePaymentDetailDAO;
@@ -627,7 +628,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
 		String finReference = financeMain.getFinReference();
-		boolean tdsApplicable = financeMain.isTDSApplicable();
+		boolean tdsApplicable = TDSCalculator.isTDSApplicable(financeMain);
 		BigDecimal pftSchd = curSchd.getProfitSchd();
 		BigDecimal tdsAmount = curSchd.getTDSAmount();
 		String amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;

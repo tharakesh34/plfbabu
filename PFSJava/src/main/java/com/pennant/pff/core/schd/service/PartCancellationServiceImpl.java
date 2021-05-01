@@ -17,6 +17,7 @@ import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -277,7 +278,7 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		/**
 		 * Checking whether TDS Applicable or not.If Loan have TDSApplicable not applicable part cancellation
 		 */
-		if (fm.isTDSApplicable()) {
+		if (TDSCalculator.isTDSApplicable(fm)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Part Cancellation";
 			valueParm[1] = "TDS Applicable Loans";

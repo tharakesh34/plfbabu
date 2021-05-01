@@ -21,6 +21,7 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -404,10 +405,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				}
 				chkFirstRpyDate = true;
 			}
-
-			if (financeMain.isTDSApplicable()) {
-				curSchd.setTDSApplicable(true);
-			}
+			
+			curSchd.setTDSApplicable(TDSCalculator.isTDSApplicable(financeMain));
 
 			if (fromDate.compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
 				if (i != 0 && curSchd.getSchDate().compareTo(fromDate) > 0) {

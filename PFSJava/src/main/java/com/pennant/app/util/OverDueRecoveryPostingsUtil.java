@@ -328,7 +328,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			addZeroifNotContains(dataMap, "LPP_CESS_R");
 		}
 
-		if (fm.isTDSApplicable() && movement.isTdsReq()) {
+		if (TDSCalculator.isTDSApplicable(fm) && movement.isTdsReq()) {
 			BigDecimal totalGST = cgstPaid.add(sgstPaid).add(igstPaid).add(ugstPaid).add(cessPaid);
 			BigDecimal paidAmount = movement.getPaidAmount();
 			movement.setTdsPaid(calcTDSOnFee(paidAmount, totalGST, movement.getTaxComponent()));

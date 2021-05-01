@@ -88,6 +88,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -1082,7 +1083,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				this.finType.setValue(main.getFinType(), main.getLovDescFinTypeName());
 				this.finCcy.setValue(main.getFinCcy(), CurrencyUtil.getCcyDesc(main.getFinCcy()));
 				this.finBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
-				this.isFinTDSApplicable = main.isTDSApplicable();
+				this.isFinTDSApplicable = TDSCalculator.isTDSApplicable(main);
 
 				setFinanceDetail(finFeeRefundService.getFinanceDetailById(main.getFinReference()));
 				FinScheduleData scheduleData = getFinanceDetail().getFinScheduleData();

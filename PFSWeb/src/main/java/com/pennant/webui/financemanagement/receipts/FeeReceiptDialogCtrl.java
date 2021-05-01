@@ -97,6 +97,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -596,7 +597,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.custName.setValue(main.getLovDescCustShrtName());
 				this.finDivision.setValue(main.getLovDescFinDivision());
 				this.postBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
-				this.isFinTDSApplicable = main.isTDSApplicable();
+				this.isFinTDSApplicable = TDSCalculator.isTDSApplicable(main);
 
 				//setting data
 				customerID = main.getCustID();

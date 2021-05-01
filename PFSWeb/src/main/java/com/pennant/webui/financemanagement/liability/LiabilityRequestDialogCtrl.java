@@ -88,6 +88,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -1257,7 +1258,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.finLimitRef.setValue(aFinanceMain.getFinLimitRef(),
 				StringUtils.trimToEmpty(aFinanceMain.getFinLimitRef()));
 
-		if (!aFinanceMain.isTDSApplicable()) {
+		if (!TDSCalculator.isTDSApplicable(aFinanceMain)) {
 			this.tDSApplicable.setVisible(false);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(false);
 			this.label_FinanceMainDialog_TDSType.setVisible(false);

@@ -38,6 +38,7 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
@@ -108,7 +109,8 @@ public class FinStatementController extends SummaryDetailService {
 	private InterestCertificateService interestCertificateService;
 	private ReportConfigurationDAO reportConfigurationDAO;
 	private ReportConfiguration reportConfiguration;
-    private CustomerDetailsService customerDetailsService;
+	private CustomerDetailsService customerDetailsService;
+
 	/**
 	 * get the FinStatement Details by the given FinReferences.
 	 * 
@@ -219,7 +221,7 @@ public class FinStatementController extends SummaryDetailService {
 					finScheduleData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
 					finScheduleData.setFinODDetails(aFinanceDetail.getFinScheduleData().getFinODDetails());
 				}
-				
+
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSUREV1, serviceName)) {
 					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference,
 							AccountEventConstants.ACCEVENT_EARLYSTL, FinanceConstants.FINSER_EVENT_RECEIPT, "");
@@ -595,9 +597,7 @@ public class FinStatementController extends SummaryDetailService {
 		return financeDetail;
 	}
 
-	
-	public FinStatementResponse getForeClosureReport(FinReceiptData receiptData,
-			FinStatementResponse finStmtResponse) {
+	public FinStatementResponse getForeClosureReport(FinReceiptData receiptData, FinStatementResponse finStmtResponse) {
 		logger.debug(Literal.ENTERING);
 		ForeClosureReport closureReport = new ForeClosureReport();
 		try {
@@ -955,7 +955,7 @@ public class FinStatementController extends SummaryDetailService {
 		logger.debug(Literal.LEAVING);
 		return finStmtResponse;
 	}
-	
+
 	/**
 	 * Method for fetch Schedule Date against the presentment bounce charge
 	 * 
@@ -976,8 +976,8 @@ public class FinStatementController extends SummaryDetailService {
 		int TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 
 		BigDecimal tdsMultiplier = BigDecimal.ONE;
-		if (finScheduleData.getFinanceMain().isTDSApplicable()) {
-
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		if (TDSCalculator.isTDSApplicable(fm)) {
 			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 			if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
 				tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
@@ -1011,7 +1011,7 @@ public class FinStatementController extends SummaryDetailService {
 				pftAccruedTillNow = pftAccruedTillNow.add(curSchd.getProfitSchd());
 				priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 
-				if (finScheduleData.getFinanceMain().isTDSApplicable()) {
+				if (TDSCalculator.isTDSApplicable(fm)) {
 					BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 					BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 					BigDecimal tds = pft.subtract(actualPft);
@@ -1030,7 +1030,7 @@ public class FinStatementController extends SummaryDetailService {
 				priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()))
 						.subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
 
-				if (finScheduleData.getFinanceMain().isTDSApplicable()) {
+				if (TDSCalculator.isTDSApplicable(fm)) {
 					BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
 					BigDecimal tds = remPft.subtract(actualPft);
 					tds = CalculationUtil.roundAmount(tds, TDS_ROUNDING_MODE, TDS_ROUNDING_TARGET);
@@ -1044,14 +1044,13 @@ public class FinStatementController extends SummaryDetailService {
 					BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), valueDate,
 							curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 					accruedPft = accruedPft.add(prvSchd.getProfitFraction());
-					accruedPft = CalculationUtil.roundAmount(accruedPft,
-							finScheduleData.getFinanceMain().getCalRoundingMode(),
-							finScheduleData.getFinanceMain().getRoundingTarget());
+					accruedPft = CalculationUtil.roundAmount(accruedPft, fm.getCalRoundingMode(),
+							fm.getRoundingTarget());
 					pftAccruedTillNow = pftAccruedTillNow.add(accruedPft).add(prvSchd.getProfitBalance());
 
 					priBalance = priBalance.add(prvSchd.getClosingBalance());
 
-					if (finScheduleData.getFinanceMain().isTDSApplicable()) {
+					if (TDSCalculator.isTDSApplicable(fm)) {
 						BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance())).divide(tdsMultiplier, 0,
 								RoundingMode.HALF_DOWN);
 						BigDecimal tds = accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft);
@@ -1089,7 +1088,7 @@ public class FinStatementController extends SummaryDetailService {
 		allocations.add(ad);
 
 		// Calculate overdue Penalties
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
+		String finReference = fm.getFinReference();
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 		if (DateUtil.compare(valueDate, DateUtility.getAppDate()) != 0) {
 			if (overdueList != null) {

@@ -95,6 +95,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -3326,7 +3327,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		FeeType fee = feeTypeService.getFeeTypeById(feeDetails.getFeeTypeID());
 
-		if (fee == null || !fee.isTdsReq() || !finMain.isTDSApplicable()) {
+		if (fee == null || !TDSCalculator.isTDSApplicable(finMain, fee)) {
 			feeDetails.setNetAmount(feeDetails.getNetAmount().add(feeDetails.getNetTDS()));
 			feeDetails.setRemainingFee(feeDetails.getRemainingFee().add(feeDetails.getRemTDS()));
 			feeDetails.setNetTDS(tdsNetFee);
