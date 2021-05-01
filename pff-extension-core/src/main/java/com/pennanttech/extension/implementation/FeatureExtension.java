@@ -70,6 +70,9 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_LOAN_DOWNSIZING", true);
 
 		customConstants.put("ALLOW_RESTRUCTURE", true);
+		
+		customConstants.put("ALLOW_LOAN_SPLIT", true);
+				
 
 	}
 
