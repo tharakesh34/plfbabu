@@ -12311,6 +12311,7 @@
 		<property name="ocrHeaderDAO" ref="ocrHeaderDAO" />
 		<property name="ocrDetailDAO" ref="ocrDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 	<bean id="ocrDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
