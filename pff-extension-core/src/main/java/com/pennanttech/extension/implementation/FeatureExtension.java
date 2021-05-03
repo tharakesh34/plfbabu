@@ -72,7 +72,15 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_RESTRUCTURE", true);
 		
 		customConstants.put("ALLOW_LOAN_SPLIT", true);
-				
+		
+		customConstants.put("ALLOW_INST_BASED_SCHD", true);
+		
+		
+		
+		// Temporary Enabled, need to disable once the testing is done
+		customConstants.put("MANDATE_ALLOW_CO_APP", true);
+		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);
+		customConstants.put("CHEQUE_ALLOW_CO_APP", true);
 
 	}
 
