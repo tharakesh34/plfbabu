@@ -302,7 +302,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 		this.collateral.setValueColumn("CollateralRef");
 		this.collateral.setDescColumn("CollateralType");
 		this.collateral.setValidateColumns(new String[] { "CollateralRef" });
-		this.collateral.setFilters(new Filter[] { new Filter("CollateralRef", "", Filter.OP_EQUAL) });
+		//this.collateral.setFilters(new Filter[] { new Filter("CollateralRef", "", Filter.OP_EQUAL) });
 
 		if (initiation) {
 			this.agency.setMandatoryStyle(true);
