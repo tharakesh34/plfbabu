@@ -3727,9 +3727,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		FinanceMain financeMain = getChangeTDSService().getFinanceBasicDetailByRef(finReference);
 		FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(finReference, "_AView", false);
 		boolean isTDSCheck = false;
-		Date date = DateUtility.getAppDate();
+		Date date = SysParamUtil.getAppDate();
 		if (finMaintainInstruction.isNewRecord()) {
-			isTDSCheck = getChangeTDSService().isTDSCheck(finMaintainInstruction.getFinReference(), date);
+			isTDSCheck = changeTDSService.isTDSCheck(finMaintainInstruction.getFinReference(), date);
 		} else {
 			isTDSCheck = finMaintainInstruction.istDSApplicable();
 		}

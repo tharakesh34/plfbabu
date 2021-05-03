@@ -302,7 +302,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 		this.collateral.setValueColumn("CollateralRef");
 		this.collateral.setDescColumn("CollateralType");
 		this.collateral.setValidateColumns(new String[] { "CollateralRef" });
-		this.collateral.addForward("onFulfill", self, "onChangeCollateral");
+		this.collateral.setFilters(new Filter[] { new Filter("CollateralRef", "", Filter.OP_EQUAL) });
 
 		if (initiation) {
 			this.agency.setMandatoryStyle(true);
@@ -338,7 +338,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	public void setCollateralTypeList(List<CollateralAssignment> collateralAsssignments,
 			List<CollateralSetup> collateralSetupList) {
 
-		collateralSetupList = getCollateralSetupFetchingService().getResultantCollateralsList(collateralAsssignments,
+		collateralSetupList = collateralSetupFetchingService.getResultantCollateralsList(collateralAsssignments,
 				collateralSetupList);
 
 		StringBuilder whereClause = new StringBuilder();
@@ -351,16 +351,13 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 		Search search = new Search(CollateralSetup.class);
 		search.addTabelName("CollateralSetup_AView");
 		search.addWhereClause(whereClause.toString());
-		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
+		collateralSetupList.addAll(searchProcessor.getResults(search));
 
-		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
-			collateralSetupSearchList = new ArrayList<CollateralSetup>();
+		if (CollectionUtils.isEmpty(collateralSetupList)) {
+			collateralSetupList = null;
 		}
 
-		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			collateralSetupSearchList.addAll(collateralSetupList);
-		}
-		this.collateral.setList(collateralSetupSearchList);
+		this.collateral.setList(collateralSetupList);
 	}
 
 	public void onChangeCollateral(ForwardEvent event) throws Exception {
