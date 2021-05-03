@@ -5047,7 +5047,7 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getReceiptPaymentModes() {
 		if (receiptPaymentModes == null) {
-			receiptPaymentModes = new ArrayList<>(4);
+			receiptPaymentModes = new ArrayList<>(5);
 
 			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH,
 					Labels.getLabel("label_ReceiptPaymentMode_Cash")));
@@ -5057,6 +5057,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ReceiptPaymentMode_DD")));
 			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ONLINE,
 					Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
+			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DIGITAL,
+					Labels.getLabel("label_ReceiptPaymentMode_DIGITAL")));
 		}
 		return receiptPaymentModes;
 	}
