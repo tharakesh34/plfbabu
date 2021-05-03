@@ -1292,13 +1292,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="159" author="murthy.y" dbms="postgresql">
+	<!-- <changeSet id="159" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 			     create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
     		]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="160" author="murthy.y" dbms="postgresql">
 		<sql>
@@ -1308,13 +1308,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="161" author="murthy.y" dbms="postgresql">
+	<!-- <changeSet id="161" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
      			create index ix_fodd_finref on finoddetails(lower(finreference),FinODSchdDate);
     		]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="162" author="murthy.y" dbms="postgresql">
 		<sql>
@@ -4255,7 +4255,7 @@
 	<changeSet id="ST#1923" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				create  nonclustered  index ix_ru_ref_ps_ri on ReceiptUploadDetails (Reference, ProcessingStatus, ReceiptId);		
+				create    index ix_ru_ref_ps_ri on ReceiptUploadDetails (Reference, ProcessingStatus, ReceiptId);		
 			]]>
 		</sql>
 	</changeSet>
@@ -4263,12 +4263,60 @@
 	<changeSet id="ST#1923.1" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				create  nonclustered  index ix_ru_ref_ps_ri on finScheduleDetails (Reference, ProcessingStatus, ReceiptId);		
+				create    index ix_fsd_prsntId on finScheduleDetails (PresentmentId);		
 			]]>
 		</sql>
 	</changeSet>
 	
 	<changeSet id="ST#1923.2" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create    index ix_pd_pid_sts_ref_er on PresentmentDetails (presentmentId, status, FinReference, Excludereason);		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923" author="sudheer.t" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create    index ix_ru_ref_ps_ri on ReceiptUploadDetails (NLSSORT(Reference, ProcessingStatus, ReceiptId,'nls_sort=''BINARY_CI'''));		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.1" author="sudheer.t" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create    index ix_fsd_prsntId on finScheduleDetails (NLSSORT(PresentmentId,'nls_sort=''BINARY_CI'''));			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.2" author="sudheer.t" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create    index ix_pd_pid_sts_ref_er on PresentmentDetails  (NLSSORT(presentmentId, status, FinReference, Excludereason,'nls_sort=''BINARY_CI'''));			
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1923" author="sudheer.t" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_ru_ref_ps_ri on ReceiptUploadDetails (Reference, ProcessingStatus, ReceiptId);		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.1" author="sudheer.t" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_fsd_prsntId on finScheduleDetails (PresentmentId);	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.2" author="sudheer.t" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create  nonclustered  index ix_pd_pid_sts_ref_er on PresentmentDetails (presentmentId, status, FinReference, Excludereason);		
