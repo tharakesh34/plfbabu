@@ -377,7 +377,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,SchdlRepayment,EarlyPayment,");
 		} else {
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
-			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
+			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",DIGITAL,");
 		}
 		if (isKnockOff) {
 			this.finReference.setFilters((new Filter[] { new Filter("WriteOffLoan", 0, Filter.OP_EQUAL) }));
