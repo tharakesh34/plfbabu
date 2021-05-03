@@ -1239,7 +1239,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	protected void appendPostingDetailsTab() {
 		logger.debug("Entering");
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("reinstateFinance", this.reinstateFinance);
 			map.put("fromRejectFinance", true);
 			map.put("finReference", this.finReference.getValue());

@@ -43,7 +43,8 @@
 package com.pennant.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Component;
@@ -87,7 +88,7 @@ public class ErrorControl {
 			} else if (!auditHeader.isOveride() && auditHeader.getOverideMessage() != null
 					&& auditHeader.getOverideMessage().size() > 0) {
 				int selectedBtn = PennantConstants.porcessCONTINUE;
-				HashMap<String, ArrayList<ErrorDetail>> overideMap = auditHeader.getOverideMap();
+				Map<String, List<ErrorDetail>> overideMap = auditHeader.getOverideMap();
 
 				for (int i = 0; i < auditHeader.getOverideMessage().size(); i++) {
 					ErrorDetail overideDetail = auditHeader.getOverideMessage().get(i);
@@ -134,12 +135,12 @@ public class ErrorControl {
 		return returnCode;
 	}
 
-	private HashMap<String, ArrayList<ErrorDetail>> setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap,
+	private Map<String, List<ErrorDetail>> setOverideMap(Map<String, List<ErrorDetail>> overideMap,
 			ErrorDetail errorDetail) {
 
 		if (StringUtils.isNotBlank(errorDetail.getField())) {
 
-			ArrayList<ErrorDetail> errorDetails = null;
+			List<ErrorDetail> errorDetails = null;
 
 			if (overideMap.containsKey(errorDetail.getField())) {
 				errorDetails = overideMap.get(errorDetail.getField());
@@ -175,11 +176,11 @@ public class ErrorControl {
 		this.auditHeader = auditHeader;
 	}
 
-	private boolean isOverride(HashMap<String, ArrayList<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
+	private boolean isOverride(Map<String, List<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
 
 		if (overideMap.containsKey(errorDetail.getField())) {
 
-			ArrayList<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
+			List<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
 
 			for (int i = 0; i < errorDetails.size(); i++) {
 

@@ -90,11 +90,11 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	private Set<String> grantedAuthoritySet = null;
 	private LoggedInUser loggedInUser;
 	private Set<String> userRoleSet = new HashSet<String>();
-	private HashMap<String, Integer> accessType = null;
+	private Map<String, Integer> accessType = null;
 	private Collection<GrantedAuthority> grantedAuthorities;
 	private List<SecurityUserDivBranch> divisionBranches;
 	private List<SecurityRole> securityRoles;
-	private HashMap<String, Collection<SecurityRight>> rightsMap = new HashMap<>();
+	private Map<String, Collection<SecurityRight>> rightsMap = new HashMap<>();
 
 	@Autowired
 	private transient UserService userService;

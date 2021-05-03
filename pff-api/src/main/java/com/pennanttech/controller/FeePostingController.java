@@ -2,7 +2,6 @@ package com.pennanttech.controller;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -381,7 +380,7 @@ public class FeePostingController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aManualAdvise.getBefImage(), aManualAdvise);
 		return new AuditHeader(aManualAdvise.getFinReference(), null, null, null, auditDetail,
-				aManualAdvise.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aManualAdvise.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -394,7 +393,7 @@ public class FeePostingController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(FeePostings aFeePostings, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeePostings.getBefImage(), aFeePostings);
 		return new AuditHeader(String.valueOf(aFeePostings.getId()), String.valueOf(aFeePostings.getId()), null, null,
-				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private void doSetPrepareData(FeePostings feePostings) {

@@ -220,7 +220,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	public void appendCustomerDetailTab() throws InterruptedException {
 		logger.debug("Entering");
 		try {
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			String pageName = PennantAppUtil.getCustomerPageName();
 
 			map.put("roleCode", getRole());
@@ -332,7 +332,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			//Setting Data
 			CustomerEligibilityCheck custElgCheck = setCustomerEligibilityData(
 					getFinanceDetail().getCustomerDetails().getCustomer());
-			HashMap<String, Object> fieldsandvalues = custElgCheck.getDeclaredFieldValues();
+			Map<String, Object> fieldsandvalues = custElgCheck.getDeclaredFieldValues();
 
 			// Fetching Finance Type Details
 			List<FinanceType> promotionDetailList = getPromotionDetails();
@@ -398,7 +398,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 				main.setNumberOfTerms(this.installment.intValue());
 				main.setFinAmount(PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("formatter", formatter);
 				map.put("finElgRuleDetailList", finElgRuleDetailList);
 				map.put("promotionPickListCtrl", this);
@@ -477,7 +477,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 	 */
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);

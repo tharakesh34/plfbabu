@@ -563,7 +563,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	private void showDetailViewforDedUp(CustomerDetails customerDetails) {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		// call the ZUL-file with the parameters packed in a map
 		try {

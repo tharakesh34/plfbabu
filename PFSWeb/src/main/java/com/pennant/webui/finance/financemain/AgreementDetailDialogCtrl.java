@@ -44,6 +44,7 @@ package com.pennant.webui.finance.financemain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -224,7 +225,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 							RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
 					if (rule != null) {
 						if (isFinanceProcess) {
-							HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
+							Map<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
 									.getDeclaredFieldValues();
 							isAgrRender = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 									getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
@@ -270,7 +271,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 	private List<FinanceReferenceDetail> sortAgreementListbyGroup(List<FinanceReferenceDetail> aggList) {
 		logger.debug(Literal.ENTERING);
-		HashMap<String, List<FinanceReferenceDetail>> aggDetailMap = new HashMap<String, List<FinanceReferenceDetail>>();
+		Map<String, List<FinanceReferenceDetail>> aggDetailMap = new HashMap<String, List<FinanceReferenceDetail>>();
 		for (FinanceReferenceDetail financeReferenceDetail : aggList) {
 			String aggName = financeReferenceDetail.getLovDescAggReportName();
 			String aggGrpName = "NOGROUP";
@@ -600,7 +601,7 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			map.put("moduleName", moduleName);

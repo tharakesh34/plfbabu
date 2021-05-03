@@ -3,7 +3,7 @@ package com.pennant.backend.model;
 import org.graalvm.polyglot.HostAccess;
 
 public class ScriptError {
-	
+
 	@HostAccess.Export
 	private String code;
 	@HostAccess.Export
@@ -46,7 +46,7 @@ public class ScriptError {
 	public String getCode() {
 		return code;
 	}
-	
+
 	@HostAccess.Export
 	public void setCode(String code) {
 		this.code = code;
@@ -55,7 +55,7 @@ public class ScriptError {
 	public String getProperty() {
 		return property;
 	}
-	
+
 	@HostAccess.Export
 	public void setProperty(String property) {
 		this.property = property;
@@ -64,7 +64,7 @@ public class ScriptError {
 	public String getValue() {
 		return value;
 	}
-	
+
 	@HostAccess.Export
 	public void setValue(String value) {
 		this.value = value;

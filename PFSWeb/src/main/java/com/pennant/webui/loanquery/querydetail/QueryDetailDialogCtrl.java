@@ -567,7 +567,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			Filedownload.save(new AMedia(docName, "xls", "application/vnd.ms-excel", documentDetails.getDocImage()));
 		} else if (docName.endsWith(".png") || docName.endsWith(".jpeg") || docName.endsWith(".pdf")
 				|| docName.endsWith(".jpg")) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("documentDetails", documentDetails);
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDocumentView.zul", null, map);
 		} else if (docName.endsWith(".zip")) {

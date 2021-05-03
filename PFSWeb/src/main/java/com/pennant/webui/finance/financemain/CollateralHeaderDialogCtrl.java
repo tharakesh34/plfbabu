@@ -383,7 +383,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		CollateralAssignment assignment = new CollateralAssignment();
 		assignment.setNewRecord(true);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("collateralHeaderDialogCtrl", this);
 		map.put("roleCode", this.roleCode);
 		map.put("newRecord", true);
@@ -429,7 +429,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		}
 
 		extendedFieldRender.setSeqNo(seqNo + 1);
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("collateralHeaderDialogCtrl", this);
 		map.put("extendedFieldRender", extendedFieldRender);
 		map.put("ccyFormat", getFormat());
@@ -559,7 +559,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			if (StringUtils.equalsIgnoreCase(fieldRender.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				HashMap<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("collateralHeaderDialogCtrl", this);
 				map.put("extendedFieldRender", fieldRender);
 				map.put("ccyFormat", getFormat());
@@ -806,7 +806,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 
 				map.put("collateralHeaderDialogCtrl", this);
 				map.put("roleCode", this.roleCode);
@@ -833,7 +833,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("moduleName", moduleName);
 

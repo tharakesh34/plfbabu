@@ -48,6 +48,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.script.ScriptException;
 
@@ -815,7 +816,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);

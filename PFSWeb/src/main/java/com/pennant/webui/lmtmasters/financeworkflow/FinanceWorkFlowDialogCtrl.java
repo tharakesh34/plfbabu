@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -119,7 +120,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 
 	// ServiceDAOs / Domain Classes
 	private transient FinanceWorkFlowService financeWorkFlowService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -1233,11 +1234,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		return this.financeWorkFlowListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

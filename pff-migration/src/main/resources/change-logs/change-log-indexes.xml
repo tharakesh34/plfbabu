@@ -4251,5 +4251,29 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1923" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_ru_ref_ps_ri on ReceiptUploadDetails (Reference, ProcessingStatus, ReceiptId);		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.1" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_ru_ref_ps_ri on finScheduleDetails (Reference, ProcessingStatus, ReceiptId);		
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1923.2" author="sudheer.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create  nonclustered  index ix_pd_pid_sts_ref_er on PresentmentDetails (presentmentId, status, FinReference, Excludereason);		
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

@@ -361,7 +361,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 		disbursement.setWorkflowId(0);
 		disbursement.setVersion(1);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeDisbursement", disbursement);
 		map.put("disbursementDetailDialogCtrl", this);
 		map.put("newRecord", "true");
@@ -553,7 +553,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 					}
 				}
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("financeDisbursement", disbursement);
 				map.put("disbursementDetailDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -629,7 +629,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 			contractorAssetDetail.setWorkflowId(0);
 			contractorAssetDetail.setVersion(1);
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("contractorAssetDetail", contractorAssetDetail);
 			map.put("disbursementDetailDialogCtrl", this);
 			map.put("financeMainDialogCtrl", financeMainDialogCtrl);
@@ -659,7 +659,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("contractorAssetDetail", contractorAssetDetail);
 				map.put("disbursementDetailDialogCtrl", this);
 				map.put("financeMainDialogCtrl", financeMainDialogCtrl);
@@ -816,7 +816,7 @@ public class DisbursementDetailDialogCtrl extends GFCBaseCtrl<FinanceDisbursemen
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);

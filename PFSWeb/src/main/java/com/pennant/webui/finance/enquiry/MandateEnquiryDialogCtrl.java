@@ -46,6 +46,7 @@ package com.pennant.webui.finance.enquiry;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -597,7 +598,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 */
 	public void onClick$btnReason(Event event) {
 		logger.debug("Entering");
-		HashMap<String, Object> arg = new HashMap<String, Object>();
+		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("mandateId", mandate.getMandateID());
 
 		Executions.createComponents("/WEB-INF/pages/Mandate/MandateStatusList.zul", null, arg);
@@ -627,7 +628,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 
 			if (mandate.getDocImage() != null) {
-				HashMap<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("mandate", mandate);
 				Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 			}

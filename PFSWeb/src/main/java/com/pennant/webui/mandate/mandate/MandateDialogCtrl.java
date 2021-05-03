@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -661,7 +662,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 */
 	public void onClick$btnReason(Event event) {
 		logger.debug("Entering");
-		HashMap<String, Object> arg = new HashMap<String, Object>();
+		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("mandateId", mandate.getMandateID());
 
 		Executions.createComponents("/WEB-INF/pages/Mandate/MandateStatusList.zul", null, arg);
@@ -2635,7 +2636,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			if (finHeaderList != null) {
 				map.put("finHeaderList", finHeaderList);

@@ -331,7 +331,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 		map.put("documentDetailDialogCtrl", this);
 		if (!isNotFinanceProcess) {
@@ -369,7 +369,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DocumentDetailDialogCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", getRole());
@@ -632,7 +632,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finDocumentDetail", finDocumentDetail);
 		map.put("DocumentDetailDialogCtrl", this);
 		map.put("roleCode", getRole());
@@ -734,7 +734,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	public DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list,
-			HashMap<String, Object> map) {
+			Map<String, Object> map) {
 		if (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) {
 			finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(
 					list != null ? Long.valueOf(list.get(0).toString()) : 0, finDocumentDetail.getDocCategory());
@@ -786,7 +786,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			map.put("moduleName", moduleName);

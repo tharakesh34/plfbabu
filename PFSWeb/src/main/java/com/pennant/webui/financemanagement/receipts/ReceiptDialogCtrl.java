@@ -223,7 +223,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
-import com.pennant.core.EventManager;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.AgreementEngine;
@@ -454,7 +453,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private PartnerBankService partnerBankService;
 	private NotificationService notificationService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
-	private EventManager eventManager;
 	private AccountingDetailDialogCtrl accountingDetailDialogCtrl = null;
 	private DocumentDetailDialogCtrl documentDetailDialogCtrl = null;
 	private AgreementDetailDialogCtrl agreementDetailDialogCtrl = null;
@@ -471,13 +469,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private FinReceiptData orgReceiptData = null;
 	private FinanceDetail financeDetail;
 	private FinScheduleData finSchedData = null;
+	private FinScheduleData befFinSchedData = null;
 	private Map<String, BigDecimal> taxPercMap = null;
 
 	private String recordType = "";
 	private FinReceiptHeader befImage;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>();
 	private List<FinanceScheduleDetail> orgScheduleList = new ArrayList<>();
-	private List<FinanceScheduleDetail> befScheduleList = new ArrayList<>();
+
 	private List<FinReceiptDetail> recDtls = new ArrayList<>();
 
 	// Temporary Fix for the User Next role Modification On Submit-Fail & Saving
@@ -499,7 +498,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected boolean recSave = false;
 	protected Component checkListChildWindow = null;
 	protected boolean isEnquiry = false;
-	protected HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	protected Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	private boolean isPanMandatory = false;
 	private boolean isKnockOff = false;
@@ -709,7 +708,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 		String pageName = PennantAppUtil.getCustomerPageName();
@@ -748,7 +747,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		aFinanceEnq
 				.setFinIsActive(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("moduleCode", moduleCode);
 		map.put("fromApproved", true);
 		map.put("childDialog", true);
@@ -808,7 +807,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountEventConstants.ACCEVENT_REPAY, moduleID);
 		}
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("dialogCtrl", this);
 		map.put("financeDetail", financeDetail);
 		map.put("finHeaderList", getFinBasicDetails());
@@ -1380,7 +1379,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (orgReceiptData != null) {
 			receiptData = orgReceiptData;
 		} else {
-			befScheduleList = receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+			befFinSchedData = receiptData.getFinanceDetail().getFinScheduleData();
 			receiptService.calcuateDues(receiptData);
 			if (!RepayConstants.ALLOCATIONTYPE_MANUAL.equals(receiptData.getReceiptHeader().getAllocationType())
 					&& receiptData.isCalReq()) {
@@ -2258,7 +2257,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finSchdData", aFinScheduleData);
 
 			map.put("financeScheduleDetail", aScheduleDetail);
@@ -3559,7 +3558,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 
 		String buttonId = (String) event.getData();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("data", receiptData);
 		map.put("buttonId", buttonId);
 		map.put("receiptDialogCtrl", this);
@@ -3578,7 +3577,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 
 		String buttonId = (String) event.getData();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("details",
 				receiptData.getReceiptHeader().getAllocationsSummary().get(Integer.parseInt(buttonId)).getSubList());
 		map.put("buttonId", buttonId);
@@ -5527,7 +5526,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (movements != null && !movements.isEmpty()) {
 
 				// Summing Same Type of Fee Types to Single Field
-				HashMap<String, BigDecimal> movementMap = new HashMap<>();
+				Map<String, BigDecimal> movementMap = new HashMap<>();
 				for (int i = 0; i < movements.size(); i++) {
 					ManualAdviseMovements movement = movements.get(i);
 
@@ -5941,7 +5940,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Accounting Detail Tab
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
 		map.put("financeDetail", receiptData.getFinanceDetail());
 		map.put("finHeaderList", getFinBasicDetails());
@@ -6993,7 +6992,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMains", financeMains);
 		map.put("finpftDetails", finpftDetails);
 
@@ -7570,14 +7569,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (!onLoadProcess && getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 
 			map.put("financeMainDialogCtrl", this);
 			map.put("moduleDefiner", module);
 			map.put("profitDaysBasisList", PennantStaticListUtil.getProfitDaysBasis());
 			Cloner cloner = new Cloner();
 			FinanceDetail fd = cloner.deepClone(getFinanceDetail());
-			fd.getFinScheduleData().setFinanceScheduleDetails(befScheduleList);
+			fd.setFinScheduleData(befFinSchedData);
 			map.put("financeDetail", fd);
 			map.put("isEnquiry", true);
 
@@ -7652,7 +7651,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (!onLoadProcess && getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 
 			map.put("financeMainDialogCtrl", this);
 			map.put("moduleDefiner", module);
@@ -7681,8 +7680,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// this.curNextUserId = finReceiptHeader.getNextUserId();
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());
@@ -7742,7 +7741,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void onClick$foreClosureLetter(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isModelWindow", true);
 		map.put("finReference", this.finReference.getValue());
 		try {
@@ -7840,14 +7839,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setOrgReceiptData(FinReceiptData orgReceiptData) {
 		this.orgReceiptData = orgReceiptData;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public ReceiptListCtrl getReceiptListCtrl() {

@@ -319,7 +319,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			this.finType.setValue(dataObject.toString());
 		} else {
 
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";
 				List<String> flagKeys = new ArrayList<>(details.keySet());

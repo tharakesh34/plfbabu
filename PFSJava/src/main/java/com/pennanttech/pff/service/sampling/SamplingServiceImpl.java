@@ -507,7 +507,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 	@Override
 	public void calculateEligilibity(Sampling sampling) {
 
-		HashMap<String, Object> fieldsandvalues = new HashMap<>();
+		Map<String, Object> fieldsandvalues = new HashMap<>();
 		BigDecimal amount = BigDecimal.ZERO;
 		String ruleCode;
 		Object object = null;
@@ -663,7 +663,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		sampling.setLoanEligibility(loanEligibilityAmount);
 	}
 
-	private Object excuteRule(String foirRule, String finCcy, HashMap<String, Object> fieldsandvalues) {
+	private Object excuteRule(String foirRule, String finCcy, Map<String, Object> fieldsandvalues) {
 		logger.info("Rule >> {}", foirRule);
 		return RuleExecutionUtil.executeRule(foirRule, fieldsandvalues, finCcy, RuleReturnType.DECIMAL);
 	}
@@ -1153,7 +1153,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		Sampling sampling = (Sampling) auditHeader.getAuditDetail().getModelData();
 

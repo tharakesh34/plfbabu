@@ -994,8 +994,8 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-		HashMap<String, AuditDetail> auditDetailMap1 = new HashMap<String, AuditDetail>();// TODO
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, AuditDetail> auditDetailMap1 = new HashMap<String, AuditDetail>();// TODO
 
 		Commitment commitment = (Commitment) auditHeader.getAuditDetail().getModelData();
 

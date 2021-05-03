@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -371,7 +372,7 @@ public class InsuranceFileImportService {
 		int sucessRecords = 0;
 
 		BigDecimal totPaybleAmt = BigDecimal.ZERO;
-		LinkedHashMap<Long, String> adviseRefMap = new LinkedHashMap<>();
+		Map<Long, String> adviseRefMap = new LinkedHashMap<>();
 		List<VASRecording> vasRecordingsList = new ArrayList<>();
 
 		//Processing the data
@@ -508,7 +509,7 @@ public class InsuranceFileImportService {
 		BigDecimal paybleAmt = instructions.getPayableAmount();
 		int noOfReceivables = 0;
 
-		LinkedHashMap<Long, String> adviseRefMap = instructions.getAdviseRefMap();
+		Map<Long, String> adviseRefMap = instructions.getAdviseRefMap();
 		for (Long feeTypeId : adviseRefMap.keySet()) {
 			List<ManualAdvise> receivableAdvises = getInsuranceDetailService()
 					.getManualAdviseByRefAndFeeId(FinanceConstants.MANUAL_ADVISE_RECEIVABLE, feeTypeId);

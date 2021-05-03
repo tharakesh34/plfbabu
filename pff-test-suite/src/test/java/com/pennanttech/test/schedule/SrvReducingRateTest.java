@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import jxl.Cell;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -21,10 +19,12 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennanttech.util.Dataset;
 import com.pennanttech.util.PrintFactory;
 
+import jxl.Cell;
+
 public class SrvReducingRateTest {
-	FinScheduleData	schedule;
-	Cell[]			data;
-	long			t1;
+	FinScheduleData schedule;
+	Cell[] data;
+	long t1;
 
 	public SrvReducingRateTest(FinScheduleData schedule, Cell[] data, long t1) {
 		super();
@@ -35,8 +35,8 @@ public class SrvReducingRateTest {
 	}
 
 	@Test
-	public void testSchedule() throws IllegalAccessException, InstantiationException, InvocationTargetException,
-			NoSuchMethodException {
+	public void testSchedule()
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		long t2 = DateUtility.getSysDate().getTime();
 
 		String name = Dataset.getString(data, 0);
@@ -106,8 +106,8 @@ public class SrvReducingRateTest {
 		System.out.println("total Time in long " + String.valueOf(t1));
 	}
 
-	public FinScheduleData execute(FinScheduleData model) throws IllegalAccessException, InstantiationException,
-			InvocationTargetException, NoSuchMethodException {
+	public FinScheduleData execute(FinScheduleData model)
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		FinScheduleData schedule = (FinScheduleData) BeanUtils.cloneBean(model);
 
 		//_______________________________________________________________________________________________
@@ -556,7 +556,7 @@ public class SrvReducingRateTest {
 			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), 2));
 			schedule = ScheduleCalculator.changeGraceEnd(schedule);
 		}
-		
+
 		if (srvTestCase.equals("GRCCHG_R")) {
 			fm.setRecalType("");
 			fm.setEventFromDate(fm.getGrcPeriodEndDate());
@@ -567,46 +567,46 @@ public class SrvReducingRateTest {
 			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), -2));
 			schedule = ScheduleCalculator.changeGraceEnd(schedule);
 		}
-		
+
 		if (srvTestCase.equals("GRCCHG_ED")) {
 			fm.setRecalType("");
 			fm.setEventFromDate(fm.getGrcPeriodEndDate());
-			
+
 			Date dateCal = DateUtility.addMonths(fm.getGrcPeriodEndDate(), 2);
-			
-			fm.setGrcPeriodEndDate(DateUtility.addDays(dateCal,-10));
+
+			fm.setGrcPeriodEndDate(DateUtility.addDays(dateCal, -10));
 			fm.setNextRepayDate(DateUtility.addMonths(dateCal, 1));
 			fm.setNextRepayPftDate(fm.getNextRepayDate());
 			fm.setNextRepayRvwDate(fm.getNextRepayDate());
 			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), 2));
 			schedule = ScheduleCalculator.changeGraceEnd(schedule);
 		}
-		
+
 		if (srvTestCase.equals("GRCCHG_RD")) {
 			fm.setRecalType("");
 			fm.setEventFromDate(fm.getGrcPeriodEndDate());
-			
+
 			Date dateCal = DateUtility.addMonths(fm.getGrcPeriodEndDate(), -2);
-			
-			fm.setGrcPeriodEndDate(DateUtility.addDays(dateCal,-10));
+
+			fm.setGrcPeriodEndDate(DateUtility.addDays(dateCal, -10));
 			fm.setNextRepayDate(DateUtility.addMonths(dateCal, 1));
 			fm.setNextRepayPftDate(fm.getNextRepayDate());
 			fm.setNextRepayRvwDate(fm.getNextRepayDate());
 			fm.setMaturityDate(DateUtility.addMonths(fm.getMaturityDate(), -2));
 			schedule = ScheduleCalculator.changeGraceEnd(schedule);
 		}
-		
+
 		if (srvTestCase.equals("REAGE")) {
 			fm.setRecalType("");
-			
+
 			fm.setEventFromDate(schedule.getFinanceScheduleDetails().get(2).getSchDate());
 			fm.setEventToDate(schedule.getFinanceScheduleDetails().get(4).getSchDate());
-			
+
 			schedule.getFinanceScheduleDetails().get(3).setSchdPftPaid(new BigDecimal(787629));
 			schedule.getFinanceScheduleDetails().get(3).setSchdPriPaid(new BigDecimal(1528516));
 			schedule.getFinanceScheduleDetails().get(4).setSchdPftPaid(new BigDecimal(730621));
 			schedule.getFinanceScheduleDetails().get(4).setSchdPriPaid(new BigDecimal(2743596));
-			
+
 			schedule = ScheduleCalculator.reAging(schedule);
 		}
 

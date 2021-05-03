@@ -330,7 +330,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 
 	protected void doShowNotes(AbstractWorkflowEntity entity) {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes(entity));
 		map.put("control", this);
 

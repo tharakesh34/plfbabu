@@ -154,7 +154,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	// ServiceDAOs / Domain Classes
 	private transient FinanceReferenceDetailService financeReferenceDetailService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private String roleCodes;
 	private String delegatorRoles;
 	private String moduleName;
@@ -1143,11 +1143,11 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 		logger.debug("Leaving");
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

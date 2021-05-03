@@ -45,6 +45,7 @@ package com.pennant.webui.rulefactory.rule;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -302,7 +303,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 	private void createSimulationWindow(List<ValueLabel> fieldsList) throws InterruptedException {
 		logger.debug("Entering");
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("fieldsList", fieldsList);
 		map.put("ruleResultDialogCtrl", this);
@@ -349,7 +350,7 @@ public class RuleResultDialogCtrl extends GFCBaseCtrl<JavaScriptBuilder> {
 			String values = "";
 			String fieldValue = "";
 			List<ValueLabel> fieldList = new ArrayList<>();
-			HashMap<String, String> fieldMap = new HashMap<>();
+			Map<String, String> fieldMap = new HashMap<>();
 			for (RBFieldDetail rbFieldDetail : objectFieldList) {
 				fieldMap.put(rbFieldDetail.getRbFldName(), rbFieldDetail.getRbFldDesc());
 			}

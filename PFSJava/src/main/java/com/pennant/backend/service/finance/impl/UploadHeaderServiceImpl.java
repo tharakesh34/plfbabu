@@ -685,7 +685,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		// HashMap<String, List<AuditDetail>> auditDetailMap = new
+		// Map<String, List<AuditDetail>> auditDetailMap = new
 		// HashMap<String, List<AuditDetail>>();
 		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
 		// String auditTranType = "";
@@ -728,7 +728,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";

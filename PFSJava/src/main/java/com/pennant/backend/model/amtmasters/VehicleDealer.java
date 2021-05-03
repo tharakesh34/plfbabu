@@ -44,6 +44,7 @@ package com.pennant.backend.model.amtmasters;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -477,14 +478,14 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.code = code;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> customerMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> customerMap = new HashMap<>();
 
 		return getDeclaredFieldValues(customerMap);
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> customerMap) {
-		customerMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> customerMap) {
+		customerMap = new HashMap<>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				if (StringUtils.equals(this.getClass().getDeclaredFields()[i].getName(), "active")) {

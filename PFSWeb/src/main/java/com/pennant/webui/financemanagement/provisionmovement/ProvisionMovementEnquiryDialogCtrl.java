@@ -44,6 +44,7 @@ package com.pennant.webui.financemanagement.provisionmovement;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -353,7 +354,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 			aProvisionMovement.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("provisionMovement", aProvisionMovement);
 		map.put("provision", getProvision());
 		/*

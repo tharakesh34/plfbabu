@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1096,7 +1097,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		// HashMap<String, List<AuditDetail>> auditDetailMap = new
+		// Map<String, List<AuditDetail>> auditDetailMap = new
 		// HashMap<String, List<AuditDetail>>();
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		// String auditTranType = "";
@@ -1119,7 +1120,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";

@@ -424,7 +424,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				 */
 				loadCibilLoanTypes();
 				parseHeaderResponse(response);
-				HashMap<String, String> detailsResult = responseDetails.getCibilResponseArray(response);
+				Map<String, String> detailsResult = responseDetails.getCibilResponseArray(response);
 				jsonObject = parseDetailsresponse(detailsResult);
 				jsonObject.put("PrimaryApplicant", primaryApplicant);
 				if (App.getProperty("cibil.secondaryMatches.report") != null
@@ -468,7 +468,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			for (String response1 : res) {
 				if (secondaryIndex >= 3) {
 					secondaryApplicant = new JSONObject();
-					HashMap<String, String> detailsResult = responseDetails.getCibilResponseArray(response1);
+					Map<String, String> detailsResult = responseDetails.getCibilResponseArray(response1);
 					try {
 						secondaryApplicant = parseSecondaryDetailsresponse(detailsResult);
 						array.add(secondaryApplicant);
@@ -1250,7 +1250,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		parseErrorHeder(header);
 		// get the details Map as key value format where key is segment and
 		// value as segment data.
-		HashMap<String, String> detailsResult = responseDetails.getCibilResponseArray(response);
+		Map<String, String> detailsResult = responseDetails.getCibilResponseArray(response);
 		parseDetailsresponse(detailsResult);
 
 		logger.debug(Literal.LEAVING);
@@ -1349,7 +1349,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * @param detailsResult
 	 */
 
-	private JSONObject parseDetailsresponse(HashMap<String, String> detailsResult) throws Exception {
+	private JSONObject parseDetailsresponse(Map<String, String> detailsResult) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		String extRestructured = "0";
@@ -1364,7 +1364,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		String key = null;
 		try {
-			LinkedHashMap<String, String> requiredValue = new LinkedHashMap<String, String>();
+			Map<String, String> requiredValue = new LinkedHashMap<String, String>();
 			Iterator<String> itr = detailsResult.keySet().iterator();
 			while (itr.hasNext()) {
 				key = itr.next();
@@ -2242,12 +2242,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		return suitFiled;
 	}
 
-	private JSONObject parseSecondaryDetailsresponse(HashMap<String, String> detailsResult) throws Exception {
+	private JSONObject parseSecondaryDetailsresponse(Map<String, String> detailsResult) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		String key = null;
 		try {
-			LinkedHashMap<String, String> requiredValue = new LinkedHashMap<String, String>();
+			Map<String, String> requiredValue = new LinkedHashMap<String, String>();
 			Iterator<String> itr = detailsResult.keySet().iterator();
 			while (itr.hasNext()) {
 				key = itr.next();

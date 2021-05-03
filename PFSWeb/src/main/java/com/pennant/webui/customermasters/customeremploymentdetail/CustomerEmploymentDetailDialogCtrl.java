@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -1434,7 +1435,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	 */
 	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("custCtgType", PennantConstants.PFF_CUSTCTG_INDIV);

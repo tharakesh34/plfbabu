@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -63,6 +64,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -107,6 +109,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient FinanceWorkFlowService financeWorkFlowService;
 	private transient ReceiptService receiptService;
 	private transient WorkFlowDetails workFlowDetails = null;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	/**
 	 * default constructor.<br>
@@ -242,7 +245,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Validate Loan is MATURED or INPROGRESS in any Other Servicing option or NOT ?
-		FinanceMain financeMain = financeDetailService.getRcdMaintenanceByRef(this.finReference.getValidatedValue(), "_View");
+		FinanceMain financeMain = financeDetailService.getRcdMaintenanceByRef(this.finReference.getValidatedValue(),
+				"_View");
 		String rcdMaintainSts = financeMain.getRcdMaintainSts();
 		Date maturityDate = financeMain.getMaturityDate();
 		Date appDate = SysParamUtil.getAppDate();
@@ -264,7 +268,9 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Validation for not allowing Restructure when Presentment/Receipt's are in process.
 		boolean isPending = receiptService.isReceiptsPending(this.finReference.getValidatedValue(), Long.MIN_VALUE);
-		if (isPending) {
+		boolean presentmentsInQueue = finReceiptHeaderDAO
+				.checkPresentmentsInQueue(this.finReference.getValidatedValue());
+		if (isPending || presentmentsInQueue) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
 			return;
 		}
@@ -329,7 +335,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeSelectCtrl", financeSelectCtrl);
 		map.put("financeDetail", financeDetail);
 		map.put("moduleDefiner", moduleDefiner);
@@ -431,5 +437,9 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 }

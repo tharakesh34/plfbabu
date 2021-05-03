@@ -3,6 +3,7 @@ package com.pennanttech.pennapps.pff.verification.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -578,7 +579,7 @@ public class RiskContainmentUnitServiceImpl extends GenericService<RiskContainme
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		RiskContainmentUnit rcu = (RiskContainmentUnit) auditHeader.getAuditDetail().getModelData();
 

@@ -252,7 +252,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private List<FinanceCheckListReference> collateralChecklists = null;
-	private HashMap<Long, Long> selectedAnsCountMap = null;
+	private Map<Long, Long> selectedAnsCountMap = null;
 	protected Map<String, Object> flagTypeDataMap = new HashMap<String, Object>();
 
 	private transient CollateralAssignmentDialogCtrl collateralAssignmentDialogCtrl;
@@ -413,7 +413,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			this.flagDetails.setValue(dataObject.toString());
 			this.flagDetails.setTooltiptext("");
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = details.keySet().toString();
 				tempflagcode = tempflagcode.replace("[", " ").replace("]", "").replace(" ", "");
@@ -828,10 +828,10 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	}
 
 	// ### 16-05-2018 - Start- Development Item 82
-	private HashMap<String, Object> prepareExtendedData(Map<String, Object> detail, ExtendedFieldHeader header,
+	private Map<String, Object> prepareExtendedData(Map<String, Object> detail, ExtendedFieldHeader header,
 			String ccy) {
 
-		HashMap<String, Object> declaredMap = new HashMap<>();
+		Map<String, Object> declaredMap = new HashMap<>();
 		//declaredMap.put("COLLATERAL_GLAP_PROPTYPE", detail.get("PROPTYPE"));
 		for (ExtendedFieldDetail fieldDetail : header.getExtendedFieldDetails()) {
 			if (fieldDetail.isAllowInRule()) {
@@ -858,7 +858,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_CUSTOMERS, true);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("customerDetails", getCollateralSetup().getCustomerDetails());
 				map.put("moduleType", moduleType);
 
@@ -889,7 +889,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_AGREEMENT);
 			if (getCollateralSetup().getAggrements() != null && !getCollateralSetup().getAggrements().isEmpty()) {
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("agreementList", getCollateralSetup().getAggrements());
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
@@ -933,7 +933,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			}
 			if (createcheckLsitTab) {
 				clearTabpanelChildren(AssetConstants.UNIQUE_ID_CHECKLIST);
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("checkList", getCollateralSetup().getCheckLists());
 				map.put("finCheckRefList", getCollateralSetup().getCollateralCheckLists());
 
@@ -956,7 +956,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private void appendDocumentDetailTab() {
 		logger.debug("Entering");
 		createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getCollateralSetup().getDocuments());
 		map.put("module", DocumentCategories.COLLATERAL.getKey());
 		if (enqiryModule) {
@@ -981,7 +981,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
-			HashMap<String, Object> map = getDefaultArguments();
+			Map<String, Object> map = getDefaultArguments();
 			map.put("isFinanceNotes", true);
 			map.put("isRecommendMand", false);
 			map.put("control", this);
@@ -1007,7 +1007,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			this.extendedDetailsTab
 					.setLabel(getCollateralSetup().getCollateralStructure().getExtendedFieldHeader().getTabHeading());
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("dialogCtrl", this);
 			map.put("extendedFieldHeader", getCollateralSetup().getCollateralStructure().getExtendedFieldHeader());
 			map.put("finHeaderList", getHeaderBasicDetails());
@@ -1407,7 +1407,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					new String[] { Labels.getLabel("label_CollateralSetupDialog_DepositorCif.value") }));
 		}
 		try {
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("custCIF", this.depositorCif.getValue());
 			map.put("custid", this.depositorId.getValue());
 			map.put("finance", true);
@@ -1798,7 +1798,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (StringUtils.equalsIgnoreCase(coOwnerDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("coOwnerDetail", coOwnerDetail);
 				map.put("collateralSetupCtrl", this);
 				map.put("roleCode", getRole());
@@ -1835,7 +1835,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		CoOwnerDetail coOwnerDetail = new CoOwnerDetail();
 		coOwnerDetail.setNewRecord(true);
 		coOwnerDetail.setWorkflowId(0);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		coOwnerDetail.setCoOwnerId(getCoOwnerId());
 		map.put("coOwnerDetail", coOwnerDetail);
 		map.put("collateralSetupCtrl", this);
@@ -1933,7 +1933,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			if (StringUtils.equalsIgnoreCase(collateralThirdParty.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("collateralThirdParty", collateralThirdParty);
 				map.put("collateralSetupCtrl", this);
 				map.put("roleCode", getRole());
@@ -1971,7 +1971,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		collaThirdParty.setCollateralRef(this.collateralRef.getValue());
 		collaThirdParty.setNewRecord(true);
 		collaThirdParty.setWorkflowId(0);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("collateralThirdParty", collaThirdParty);
 		map.put("collateralSetupCtrl", this);
 		map.put("newRecord", "true");
@@ -2902,8 +2902,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
@@ -3200,11 +3200,11 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.collateralChecklists = collateralChecklists;
 	}
 
-	public HashMap<Long, Long> getSelectedAnsCountMap() {
+	public Map<Long, Long> getSelectedAnsCountMap() {
 		return selectedAnsCountMap;
 	}
 
-	public void setSelectedAnsCountMap(HashMap<Long, Long> selectedAnsCountMap) {
+	public void setSelectedAnsCountMap(Map<Long, Long> selectedAnsCountMap) {
 		this.selectedAnsCountMap = selectedAnsCountMap;
 	}
 

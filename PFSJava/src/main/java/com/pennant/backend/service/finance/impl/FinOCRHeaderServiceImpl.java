@@ -651,7 +651,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	private AuditHeader getAuditHeader(FinOCRHeader finOCRHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, finOCRHeader.getBefImage(), finOCRHeader);
 		return new AuditHeader(String.valueOf(finOCRHeader.getHeaderID()), null, null, null, auditDetail,
-				finOCRHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				finOCRHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

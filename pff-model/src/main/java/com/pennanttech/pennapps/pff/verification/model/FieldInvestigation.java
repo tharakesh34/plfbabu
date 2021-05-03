@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -100,7 +101,7 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
@@ -518,11 +519,11 @@ public class FieldInvestigation extends AbstractWorkflowEntity {
 		this.documents = documents;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

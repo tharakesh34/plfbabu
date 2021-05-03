@@ -4582,7 +4582,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcRateBasis = ?, LastRepayRvwDate = ?, RecordStatus = ?, TotalGraceCpz = ?");
 		sql.append(", RpyMaxRate = ?, RpyMinRate = ?, AlwMultiDisb = ?, NextRepayCpzDate = ?, FinRepaymentAmount = ?");
 		sql.append(", GrcAdvPftRate = ?, DmaCode = ?, ReqRepayAmount = ?, MaxUnplannedEmi = ?");
-		sql.append(", ScheduleRegenerated = ?, GrcAdvMargin = ?, FixedRateTenor = ?, DisbAccountId = ?, GrcProfitDaysBasis = ?");
+		sql.append(
+				", ScheduleRegenerated = ?, GrcAdvMargin = ?, FixedRateTenor = ?, DisbAccountId = ?, GrcProfitDaysBasis = ?");
 		sql.append(", DownPayBank = ?, LastDepDate = ?, DroplineFrq = ?, FinStatus = ?, NumberOfTerms = ?");
 		sql.append(", OverrideLimit = ?, Version = ?, ScheduleMethod = ?, RpyAdvBaseRate = ?, FirstRepay = ?");
 		sql.append(", RepayProfitRate = ?, FinIsActive = ?, GrcPeriodEndDate = ?, RpyAdvMargin = ?");
@@ -4616,7 +4617,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", NextRepayRvwDate = ?, PlanEMIHMaxPerYear = ?, GrcSchdMthd = ?, LastMntBy = ?");
 		sql.append(", NextUserId = ?, FinStartDate = ?, MaturityDate = ?, ClosingStatus = ?, AccountType = ?");
 		sql.append(", PftServicingODLimit = ?, QuickDisb = ?, GrcMinRate = ?, PastduePftCalMthd = ?");
-		sql.append(", MMAId = ?, ReAgeBucket = ?, , TdsType = ?");
+		sql.append(", MMAId = ?, ReAgeBucket = ?, TdsType = ?, WriteoffLoan = ?");
 
 		if (!fm.isFinIsActive()) {
 			if (fm.getClosedDate() == null) {
@@ -4843,6 +4844,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setLong(index++, fm.getMMAId());
 			ps.setInt(index++, fm.getReAgeBucket());
 			ps.setString(index++, fm.getTdsType());
+			ps.setBoolean(index++, fm.isWriteoffLoan());
 			if (!fm.isFinIsActive()) {
 				ps.setDate(index++, JdbcUtil.getDate(fm.getClosedDate()));
 			}
@@ -5125,23 +5127,22 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					(rs, i) -> {
-							FinanceMain fm = new FinanceMain();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, i) -> {
+				FinanceMain fm = new FinanceMain();
 
-							fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
-							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 
-							return fm;
-					});
+				return fm;
+			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in FinanceMain{} for the specified finreference >> {}", type,
 					finReference);
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize) {
 		logger.debug(Literal.ENTERING);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.Entity;
@@ -28,7 +29,7 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 	private boolean finTDSApplicable;
 	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
 	private List<FinFeeRefundDetails> finFeeRefundDetails = new ArrayList<FinFeeRefundDetails>(1);
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>(1);
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>(1);
 	private long linkedTranId = 0;
 
 	public Set<String> getExcludeFields() {
@@ -151,11 +152,11 @@ public class FinFeeRefundHeader extends AbstractWorkflowEntity implements Entity
 		this.finFeeRefundDetails = finFeeRefundDetails;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

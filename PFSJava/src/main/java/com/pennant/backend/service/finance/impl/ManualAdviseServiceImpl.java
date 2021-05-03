@@ -390,7 +390,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			auditHeader.setAuditDetails(
 					listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		}
-		
+
 		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), "");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);

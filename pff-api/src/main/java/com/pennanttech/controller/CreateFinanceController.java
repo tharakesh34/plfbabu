@@ -94,6 +94,7 @@ import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinOCRCapture;
@@ -535,7 +536,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
-					financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+					financeMain.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -1300,6 +1301,26 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// process mandate details
 		doProcessMandate(financeDetail, moveLoanStage);
+
+		// process covenant details
+		List<FinCovenantType> covenantTypeList = financeDetail.getCovenantTypeList();
+		for (FinCovenantType finCovenantType : covenantTypeList) {
+			finCovenantType.setFinReference(financeMain.getFinReference());
+			finCovenantType.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (!moveLoanStage) {
+				finCovenantType.setNewRecord(true);
+			}
+			finCovenantType.setLastMntBy(financeMain.getLastMntBy());
+			finCovenantType.setLastMntOn(financeMain.getLastMntOn());
+			finCovenantType.setRecordStatus(
+					moveLoanStage ? financeMain.getRecordStatus() : getRecordStatus(financeMain.isQuickDisb(), stp));
+			finCovenantType.setRoleCode(financeMain.getRoleCode());
+			finCovenantType.setNextRoleCode(financeMain.getNextRoleCode());
+			finCovenantType.setTaskId(financeMain.getTaskId());
+			finCovenantType.setNextTaskId(financeMain.getNextTaskId());
+			finCovenantType.setUserDetails(userDetails);
+			finCovenantType.setVersion(1);
+		}
 
 		// co-applicant details
 		for (JointAccountDetail jointAccDetail : financeDetail.getJountAccountDetailList()) {
@@ -2512,7 +2533,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
-					financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+					financeMain.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -3014,25 +3035,25 @@ public class CreateFinanceController extends SummaryDetailService {
 	private AuditHeader getAuditHeader(FinanceMain finMain, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, finMain.getBefImage(), finMain);
 		return new AuditHeader(finMain.getFinReference(), null, null, null, auditDetail, finMain.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private AuditHeader getAuditHeader(DocumentDetails documentDetails, String transType) {
 		AuditDetail auditDetail = new AuditDetail(transType, 1, documentDetails.getBefImage(), documentDetails);
 		return new AuditHeader(documentDetails.getReferenceId(), null, null, null, auditDetail,
-				documentDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				documentDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private AuditHeader getAuditHeader(Mandate aMandate, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMandate.getBefImage(), aMandate);
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), null, null, null, auditDetail,
-				aMandate.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aMandate.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private AuditHeader getAuditHeader(JointAccountDetail jointAccountDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, jointAccountDetail.getBefImage(), jointAccountDetail);
 		return new AuditHeader(String.valueOf(jointAccountDetail.getJointAccountId()), null, null, null, auditDetail,
-				jointAccountDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				jointAccountDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private void prepareResponse(FinanceDetail financeDetail) {
@@ -3556,7 +3577,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceDetail.getBefImage(), aFinanceDetail);
 		AuditHeader auditHeader = new AuditHeader(aFinanceDetail.getFinScheduleData().getFinReference(), null, null,
-				null, auditDetail, aFinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, aFinanceDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
 		auditHeader.setApiHeader(reqHeaderDetails);
@@ -3788,7 +3809,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, findetail);
 		AuditHeader auditHeader = new AuditHeader(findetail.getFinReference(), null, null, null, auditDetail,
 				findetail.getFinScheduleData().getFinanceMain().getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
@@ -3958,7 +3979,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, finDetail);
 			AuditHeader auditHeader = new AuditHeader(finDetail.getFinReference(), null, null, null, auditDetail,
 					finDetail.getFinScheduleData().getFinanceMain().getUserDetails(),
-					new HashMap<String, ArrayList<ErrorDetail>>());
+					new HashMap<String, List<ErrorDetail>>());
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -4068,7 +4089,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, finDetail);
 			AuditHeader auditHeader = new AuditHeader(finDetail.getFinReference(), null, null, null, auditDetail,
-					financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+					financeMain.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -4545,7 +4566,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		String userAtions = workFlow.getUserActionsAsString(workFlow.getUserTaskId(finMain.getNextRoleCode()), null);
-		HashMap<String, String> userActionMap = new HashMap<String, String>();
+		Map<String, String> userActionMap = new HashMap<String, String>();
 		String[] list = userAtions.split("/");
 		for (String detail : list) {
 			String[] status = detail.split("=");

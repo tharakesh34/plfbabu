@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -892,7 +893,7 @@ public class CustomerCategoryDialogCtrl extends GFCBaseCtrl<CustomerCategory> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes(this.customerCategory));
 		map.put("control", this);
 

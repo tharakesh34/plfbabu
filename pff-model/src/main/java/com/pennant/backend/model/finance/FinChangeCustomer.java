@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -73,7 +74,7 @@ public class FinChangeCustomer extends AbstractWorkflowEntity {
 	private FinChangeCustomer befImage;
 	private LoggedInUser userDetails;
 	protected JointAccountDetail jointAccountDetail;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<CollateralSetup> collateralSetups = new ArrayList<CollateralSetup>();
 
 	public boolean isNew() {
@@ -194,11 +195,11 @@ public class FinChangeCustomer extends AbstractWorkflowEntity {
 		this.custCif = custCif;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

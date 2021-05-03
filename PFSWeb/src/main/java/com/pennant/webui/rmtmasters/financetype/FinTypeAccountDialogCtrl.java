@@ -122,7 +122,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 
 	// ServiceDAOs / Domain Classes
 	private transient AccountInterfaceService accountInterfaceService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	protected List<ValueLabel> eventList = PennantStaticListUtil.getAccountEventsList();
 	private String userRole = "";
@@ -796,7 +796,7 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		if (dataObject instanceof String) {
 			this.custAccountTypes.setValue(dataObject.toString());
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String multivalues = details.keySet().toString();
 				this.custAccountTypes.setValue(multivalues.replace("[", "").replace("]", "").replace(" ", ""));
@@ -1118,11 +1118,11 @@ public class FinTypeAccountDialogCtrl extends GFCBaseCtrl<FinTypeAccount> {
 		}
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

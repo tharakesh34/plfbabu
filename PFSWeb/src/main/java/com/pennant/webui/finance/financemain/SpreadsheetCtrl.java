@@ -339,7 +339,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		logger.debug(Literal.ENTERING);
 
 		ObjectMapper obj = new ObjectMapper();
-		HashMap<String, Object> map = null;
+		Map<String, Object> map = null;
 		try {
 			map = obj.readValue(payload, new TypeReference<HashMap<String, Object>>() {
 			});

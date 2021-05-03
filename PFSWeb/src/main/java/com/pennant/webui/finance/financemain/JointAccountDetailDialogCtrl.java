@@ -107,7 +107,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	// wired variables
 	private FinanceDetail financeDetail = null; // over handed per parameters
 	private FinanceMain financeMain = null; // over handed per parameters
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	// Joint Account and Gurantors Details
 	protected Listbox listBoxGurantorsDetail;
 	protected Button btnAddGurantorDetails;
@@ -400,7 +400,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		jountAccountDetail.setNewRecord(true);
 		jountAccountDetail.setWorkflowId(0);
 		jountAccountDetail.setFinReference(finreference);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jountAccountDetail", jountAccountDetail);
 		map.put("finJointAccountCtrl", this);
 		map.put("newRecord", "true");
@@ -570,7 +570,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(jountAccountDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("jountAccountDetail", jountAccountDetail);
 				map.put("finJointAccountCtrl", this);
 				map.put("roleCode", roleCode);
@@ -623,7 +623,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		guarantorDetail.setNewRecord(true);
 		guarantorDetail.setWorkflowId(0);
 		guarantorDetail.setFinReference(finreference);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("guarantorDetail", guarantorDetail);
 		map.put("finJointAccountCtrl", this);
 		map.put("newRecord", "true");
@@ -782,7 +782,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					|| guarantorProofName.toLowerCase().endsWith(".pdf")
 					|| guarantorProofName.toLowerCase().endsWith(".jpg")) {
 				try {
-					HashMap<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("FinGurantorProofDetail", detail);
 					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 				} catch (Exception e) {
@@ -809,7 +809,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					|| PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(guarantorDetail.getRecordType())) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("guarantorDetail", guarantorDetail);
 				map.put("finJointAccountCtrl", this);
 				map.put("roleCode", roleCode);
@@ -915,7 +915,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			map.put("moduleName", moduleName);
@@ -1024,11 +1024,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.financeDetail = financeDetail;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

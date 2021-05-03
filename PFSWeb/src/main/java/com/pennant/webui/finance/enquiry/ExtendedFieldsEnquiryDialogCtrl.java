@@ -44,6 +44,7 @@ package com.pennant.webui.finance.enquiry;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -261,7 +262,7 @@ public class ExtendedFieldsEnquiryDialogCtrl extends GFCBaseCtrl<Object> {
 
 		ExtendedFieldRender fieldRender = (ExtendedFieldRender) item.getAttribute("renderObject");
 		ExtendedFieldHeader extendedFieldHeader = (ExtendedFieldHeader) item.getAttribute("headerObject");
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("extendedFieldHeader", extendedFieldHeader);
 		map.put("extendedFieldRender", fieldRender);
 		map.put("ccyFormat", formatter);

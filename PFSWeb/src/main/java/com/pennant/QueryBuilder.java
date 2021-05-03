@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -1269,7 +1270,7 @@ public class QueryBuilder extends Groupbox {
 
 		if ((operator.getSelectedItem().getLabel().equals(Labels.getLabel("IN_LABEL")))
 				|| (operator.getSelectedItem().getLabel().equals(Labels.getLabel("NOTIN_LABEL")))) {
-			HashMap<String, Object> selectedValues = new HashMap<String, Object>();
+			Map<String, Object> selectedValues = new HashMap<String, Object>();
 			if (StringUtils.isNotBlank(lovText.getValue())) {
 				selectedValues.put(lovText.getValue().trim().replace(",", ""),
 						lovText.getValue().trim().replace(",", ""));
@@ -1280,7 +1281,7 @@ public class QueryBuilder extends Groupbox {
 
 			} else {
 				@SuppressWarnings("unchecked")
-				HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+				Map<String, Object> details = (Map<String, Object>) dataObject;
 				if (details != null) {
 					String multivalues = details.keySet().toString();
 					lovText.setValue(multivalues.replace("[", "").replace("]", ""));

@@ -632,7 +632,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinanceSuspHead financeSuspHead = (FinanceSuspHead) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = financeSuspHead.getFinanceDetail();

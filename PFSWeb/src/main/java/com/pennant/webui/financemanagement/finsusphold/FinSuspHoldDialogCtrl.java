@@ -383,7 +383,7 @@ public class FinSuspHoldDialogCtrl extends GFCBaseCtrl<FinSuspHold> {
 
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);

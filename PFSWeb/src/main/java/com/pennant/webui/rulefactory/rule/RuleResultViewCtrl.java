@@ -3,6 +3,7 @@ package com.pennant.webui.rulefactory.rule;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -166,7 +167,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 	public void onClick$btn_Simulate(Event event) throws InterruptedException, ScriptException {
 		logger.debug("Entering" + event.toString());
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		String rule = null;
 
 		// evaluate JavaScript code from String

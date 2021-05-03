@@ -96,7 +96,6 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 
 	private MessagesService messagesService;
 	private String username;
-	private EventManager eventManager;
 
 	/**
 	 * default constructor.
@@ -345,8 +344,9 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 
 		// Publish the message
 		if (SysParamUtil.isAllowed(SMTParameterConstants.USER_NOTIFICATION_PUBLISH)) {
-			getEventManager().publish(this.messageBox.getValue(), username, notify, to);
+			eventManager.publish(this.messageBox.getValue(), username, notify, to);
 		}
+
 		doClear();
 
 		logger.debug("Leaving");
@@ -469,11 +469,4 @@ public class SendMessageDialogCtrl extends GFCBaseCtrl<ReportConfiguration> {
 		return messagesService;
 	}
 
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
-	}
 }

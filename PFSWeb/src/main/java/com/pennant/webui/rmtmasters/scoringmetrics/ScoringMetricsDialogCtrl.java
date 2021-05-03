@@ -47,6 +47,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -112,7 +113,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	protected Button btnSearchFinScoringCode;
 	protected Button btnSearchNFScoringCode;
 
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private transient ScoringGroup scoringGroup = null;
 	private ScoringGroupDialogCtrl scoringGroupDialogCtrl;
 	private List<ScoringMetrics> scoringMetricsList;
@@ -986,7 +987,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
 		map.put("control", this);
 
@@ -1030,11 +1031,11 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		this.scoringMetrics = scoringMetrics;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

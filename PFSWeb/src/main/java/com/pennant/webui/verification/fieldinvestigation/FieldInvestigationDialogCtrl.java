@@ -540,7 +540,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	private void appendDocumentDetailTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("DOCUMENTDETAIL", true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getFieldInvestigation().getDocuments());
 		map.put("module", DocumentCategories.VERIFICATION_FI.getKey());
 		map.put("enqModule", this.enqiryModule);
@@ -557,8 +557,8 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
@@ -779,7 +779,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	public void onClick$btnSearchCustomerDetails(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 
 		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.fieldInvestigation.getCustId());
 		//Loading the customer page as per the system param

@@ -45,6 +45,7 @@ package com.pennant.webui.customermasters.customeradditionaldetail;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -962,7 +963,7 @@ public class CustomerAdditionalDetailDialogCtrl extends GFCBaseCtrl<CustomerAddi
 	 */
 	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");

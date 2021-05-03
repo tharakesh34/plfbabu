@@ -44,6 +44,7 @@ package com.pennant.webui.finance.enquiry;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -217,7 +218,7 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 
 		List<FinExpenseMovements> finExpenseMovements = getUploadHeaderService()
 				.getFinExpenseMovementById(this.finReference, finExpenseDetails.getFinExpenseId());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("finExpenseDetails", finExpenseDetails);
 		map.put("finExpenseMovements", finExpenseMovements);

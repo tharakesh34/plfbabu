@@ -5,6 +5,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -242,7 +243,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	public void doShowReport(String whereCond, String fromDate, String toDate) throws Exception {
 		logger.debug("Entering");
 
-		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
+		Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
 
 		reportArgumentsMap.put("userName", getUserWorkspace().getLoggedInUser().getFullName());
 		reportArgumentsMap.put("reportHeading", reportConfiguration.getReportHeading());
@@ -288,7 +289,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 				if (!isExcel) {
 
 					buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap, con);
-					HashMap<String, Object> auditMap = new HashMap<String, Object>(4);
+					Map<String, Object> auditMap = new HashMap<String, Object>(4);
 					auditMap.put("reportBuffer", buf);
 					auditMap.put("parentWindow", this.window_ProjectedProfitDetails);
 					auditMap.put("reportName", reportConfiguration.getReportName().replace(EXCEL_TYPE, ""));

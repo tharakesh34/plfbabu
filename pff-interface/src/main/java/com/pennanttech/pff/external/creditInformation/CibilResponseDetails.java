@@ -2,6 +2,7 @@ package com.pennanttech.pff.external.creditInformation;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -23,10 +24,10 @@ public class CibilResponseDetails {
 	String emmsg = "";
 	String urmsg = "";
 
-	LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-	LinkedHashMap<String, String> returnMessages = new LinkedHashMap<String, String>();
+	Map<String, String> map = new LinkedHashMap<String, String>();
+	Map<String, String> returnMessages = new LinkedHashMap<String, String>();
 
-	public LinkedHashMap<String, String> getCibilResponseArray(String str) {
+	public Map<String, String> getCibilResponseArray(String str) {
 		if (str.startsWith("ERRR")) {
 			map.put("UR", "03U");
 			map.put("ES", "");
@@ -534,9 +535,9 @@ public class CibilResponseDetails {
 		return scoreVersion;
 	}
 
-	public LinkedHashMap<String, String> getCibilResponseDetails(String str) {
+	public Map<String, String> getCibilResponseDetails(String str) {
 
-		LinkedHashMap<String, String> detailsMap = new LinkedHashMap<String, String>();
+		Map<String, String> detailsMap = new LinkedHashMap<String, String>();
 
 		String tempStr = "";
 		String balStr = "";

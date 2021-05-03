@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +46,7 @@ public class ReportUtil implements Serializable {
 		String reportSrc = folderPath + tempfile + ".jasper";
 
 		String destinationFile = folderPath + reportName;
-		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
+		Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 		reportArgumentsMap.put("whereCondition", "");
 		reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));

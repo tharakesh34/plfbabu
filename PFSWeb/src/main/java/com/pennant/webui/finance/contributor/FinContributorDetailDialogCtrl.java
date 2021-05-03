@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -1057,7 +1058,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 	 */
 	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("searchObject", this.newSearchObject);
 

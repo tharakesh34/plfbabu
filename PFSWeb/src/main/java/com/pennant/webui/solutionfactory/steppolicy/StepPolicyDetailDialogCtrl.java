@@ -106,7 +106,7 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	private String userRole = "";
 	private StepPolicyDialogCtrl stepPolicyDialogCtrl;
@@ -768,11 +768,11 @@ public class StepPolicyDetailDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		logger.debug("Leaving");
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

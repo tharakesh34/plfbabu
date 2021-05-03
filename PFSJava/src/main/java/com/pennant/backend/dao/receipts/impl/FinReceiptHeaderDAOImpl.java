@@ -718,6 +718,24 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
+	public boolean checkPresentmentsInQueue(String finReference) {
+		StringBuilder sql = new StringBuilder("Select count(FinReference) from PresentmentDetails");
+		sql.append(" where presentmentId In (select PresentmentId from finScheduleDetails");
+		sql.append(" where FinReference = ? and presentmentId != ?)");
+		sql.append(" and status in (?, ?) and FinReference = ? and Excludereason = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(),
+					new Object[] { finReference, 0, "A", "I", finReference, 0 }, Integer.class) > 0;
+		} catch (DataAccessException e) {
+			logger.warn("Presement not found for the Loan Reference {} with status I, A and Excludereason 0.",
+					finReference);
+		}
+		return false;
+	}
+
+	@Override
 	public List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
@@ -1031,20 +1049,21 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public boolean checkEarlySettlementInitiation(String reference) {
 		return checkReceiptInitiation(reference, "_view", FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 	}
-	
+
 	@Override
 	public boolean checkPartialSettlementInitiation(String reference) {
 		return checkReceiptInitiation(reference, "_Temp", FinanceConstants.FINSER_EVENT_EARLYRPY);
 	}
 
-	private boolean checkReceiptInitiation(String reference, String type, String purpose){
+	private boolean checkReceiptInitiation(String reference, String type, String purpose) {
 		StringBuilder sql = new StringBuilder("Select count(*)  from FinReceiptHeader");
 		sql.append(type);
 		sql.append(" Where Reference = ? and Receiptpurpose = ? and ReceiptModeStatus not in (?,?)");
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[]{reference, purpose, "B", "C"}, (rs, rowNum) -> rs.getInt(1)) > 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, purpose, "B", "C" },
+				(rs, rowNum) -> rs.getInt(1)) > 0;
 	}
-	
+
 	@Override
 	public boolean isChequeExists(String reference, String paytypeCheque, String bankCode, String favourNumber,
 			String type) {

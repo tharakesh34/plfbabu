@@ -101,7 +101,7 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 
 	private transient ExtendedFieldDetailService extendedFieldDetailService;
 
-	private HashMap<String, HashMap<String, String>> moduleMap = PennantStaticListUtil.getModuleName();
+	private Map<String, Map<String, String>> moduleMap = PennantStaticListUtil.getModuleName();
 	private List<ValueLabel> modulesList = null;
 
 	/**
@@ -276,7 +276,7 @@ public class ExtendedFieldDetailListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 */
 	private void fillsubModule(Combobox combobox, String moduleName, String value) {
 		if (this.moduleName.getSelectedItem() != null) {
-			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null
+			Map<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null
 					? new HashMap<String, String>() : PennantStaticListUtil.getModuleName().get(moduleName);
 			ArrayList<String> arrayList = new ArrayList<String>(hashMap.keySet());
 			subModuleName.getItems().clear();

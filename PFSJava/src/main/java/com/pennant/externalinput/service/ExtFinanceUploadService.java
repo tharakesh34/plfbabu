@@ -262,7 +262,7 @@ public class ExtFinanceUploadService {
 
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
 		AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null,
-				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 		getFinanceDetailService().doApprove(auditHeader, false);
 
 		logger.debug("Leaving");
@@ -914,7 +914,7 @@ public class ExtFinanceUploadService {
 
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
 		AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null,
-				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, getFinMain().getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 		getFinanceDetailService().doApprove(auditHeader, false);
 
 		logger.debug("Leaving");

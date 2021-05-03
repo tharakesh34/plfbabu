@@ -281,9 +281,9 @@ public class FIInitiationListCtrl extends GFCBaseListCtrl<FieldInvestigation> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
+	public Map<String, Object> getDefaultArguments() {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());

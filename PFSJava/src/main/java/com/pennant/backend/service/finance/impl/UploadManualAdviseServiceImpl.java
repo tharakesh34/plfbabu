@@ -209,7 +209,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aManualAdvise.getBefImage(), aManualAdvise);
 		return new AuditHeader(String.valueOf(aManualAdvise.getAdviseID()), String.valueOf(aManualAdvise.getAdviseID()),
-				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

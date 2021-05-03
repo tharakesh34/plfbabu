@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -356,8 +357,8 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 		this.sQLRule = sQLRule;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> structureMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> structureMap = new HashMap<String, Object>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				structureMap.put(this.getClass().getDeclaredFields()[i].getName(),

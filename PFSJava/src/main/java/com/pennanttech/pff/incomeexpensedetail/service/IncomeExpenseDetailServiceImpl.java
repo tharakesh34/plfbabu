@@ -3,6 +3,7 @@ package com.pennanttech.pff.incomeexpensedetail.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -219,7 +220,7 @@ public class IncomeExpenseDetailServiceImpl extends GenericService<IncomeExpense
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		IncomeExpenseHeader incomeExpenseHeader = (IncomeExpenseHeader) auditHeader.getAuditDetail().getModelData();
 

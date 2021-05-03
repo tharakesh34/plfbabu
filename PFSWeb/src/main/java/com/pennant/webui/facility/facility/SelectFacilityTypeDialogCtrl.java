@@ -44,6 +44,7 @@ package com.pennant.webui.facility.facility;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -227,7 +228,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				getFacility().setCAFReference(ReferenceUtil.genNewCafRef(cafType, getFacility().getCustCtgCode()));
 				setFacility(getFacilityService().setCustomerDocuments(getFacility()));
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("facility", getFacility());
 				map.put("facilityListCtrl", this.facilityListCtrl);
 				// call the zul-file with the parameters packed in a map

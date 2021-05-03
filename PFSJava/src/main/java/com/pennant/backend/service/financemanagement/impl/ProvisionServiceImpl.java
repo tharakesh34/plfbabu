@@ -46,6 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -501,7 +502,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		Provision provision = (Provision) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = provision.getFinanceDetail();

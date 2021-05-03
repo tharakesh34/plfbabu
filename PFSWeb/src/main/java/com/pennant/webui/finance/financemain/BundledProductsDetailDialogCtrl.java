@@ -46,6 +46,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -167,7 +169,7 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 
 	// ServiceDAOs / Domain Classes
 	private transient BundledProductsDetailService bundledProductsDetailService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	// For Dynamically calling of this Controller
 	private Div toolbar;
@@ -1603,7 +1605,7 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", this.finBasicDetailList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
@@ -1646,11 +1648,11 @@ public class BundledProductsDetailDialogCtrl extends GFCBaseCtrl<BundledProducts
 		return this.bundledProductsDetailService;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

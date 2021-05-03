@@ -1853,7 +1853,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.flagDetails.setValue(dataObject.toString());
 			this.flagDetails.setTooltiptext("");
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";
 				List<String> flagKeys = new ArrayList<>(details.keySet());
@@ -2425,7 +2425,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Schedule Tab Rendering
 		if (!onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("menuItemRightName", menuItemRightName);
 			map.put("moduleDefiner", moduleDefiner);
 			map.put("isEnquiry", isEnquiry);
@@ -2507,7 +2507,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					pricingDetail = new PricingDetail();
 				}
 
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("finHeaderList", getFinBasicDetails());
 				map.put("tab", getTab(AssetConstants.UNIQUE_ID_PRICING_DETAILS));
 				map.put("fromLoan", true);
@@ -2608,7 +2608,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_AGREEMENT);
 		}
 		if (getFinanceDetail().getAggrementList() != null && getFinanceDetail().getAggrementList().size() > 0) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("finHeaderList", getFinBasicDetails());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_AGREEMENT), map);
@@ -2642,7 +2642,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!onLoadProcess || (getFinanceDetail().getFinScheduleData().getFinanceMain().isStepFinance()
 				&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty()
 						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setAllowGrcPeriod(this.allowGrace.isChecked());
 			map.put("financeDetail", getFinanceDetail());
 			map.put("isWIF", false);
@@ -2689,7 +2689,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_CHEQUE, false);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			ChequeHeader chequeHeader = null;
 			if (getFinanceMain().isNew() || financeDetail.getChequeHeader() == null) {
 				chequeHeader = new ChequeHeader();
@@ -2723,7 +2723,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_FEE, true);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
 				map.put("moduleDefiner", this.moduleDefiner);
 				map.put("eventCode", eventCode);
@@ -2758,7 +2758,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (getFinanceDetail().getStageTransactionEntries() != null
 				&& getFinanceDetail().getStageTransactionEntries().size() > 0) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("moduleDefiner", moduleDefiner);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StageAccountingDetailsDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_STAGEACCOUNTING), map);
@@ -2796,7 +2796,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_ETIHADCB, true);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("tab", getTab(AssetConstants.UNIQUE_ID_ETIHADCB));
 				etihadCreditBureauWindow = Executions.createComponents(
 						"/WEB-INF/pages/Finance/EtihadCreditBureau/EtihadCreditBureauDetailDialog.zul",
@@ -2834,7 +2834,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_AGREEMENTFIELDS, true);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_AGREEMENTFIELDS));
 				agreementfieldsWindow = Executions.createComponents(
 						"/WEB-INF/pages/Finance/AgreementFields/AgreementFieldsDetailDialog.zul",
@@ -2878,7 +2878,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_ADVANCEPAYMENTS, true);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ADVANCEPAYMENTS));
 				map.put("moduleDefiner", moduleDefiner);
 				if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ADDDISB, moduleDefiner)
@@ -2916,7 +2916,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					url = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
 				}
 
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_COVENANTTYPE));
 				// remove the current role and display allowed roles.
 				map.put("allowedRoles",
@@ -2941,7 +2941,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_PUTCALL, true);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			String url = "/WEB-INF/pages/Finance/FinOption/FinOptionList.zul";
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
@@ -2971,7 +2971,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
 				ComponentsCtrl.applyForward(custDetailTab, selectMethodName);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				String pageName = PennantAppUtil.getCustomerPageName();
 				// In Servicing the Customer Details are not been Editable
 				if (StringUtils.isNotBlank(moduleDefiner)) {
@@ -3053,7 +3053,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
 		}
 		if (!onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("finHeaderList", getFinBasicDetails());
 
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -3104,7 +3104,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
 			Tabpanel panel = getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
 			panel.setAttribute("org.zkoss.zul.client.rod", "false");
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("isFinanceNotes", true);
 			map.put("isRecommendMand", true);
 			map.put("userRole", getRole());
@@ -3129,7 +3129,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("moduleDefiner", moduleDefiner);
 			map.put("module", DocumentCategories.FINANCE.getKey());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
@@ -3146,7 +3146,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_DEVIATION, true);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_DEVIATION));
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DeviationDetailDialog.zul",
 					getTabpanel(AssetConstants.UNIQUE_ID_DEVIATION), map);
@@ -3162,7 +3162,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_MANDATE, false);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_MANDATE));
 			map.put("fromLoan", true);
 			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul",
@@ -3186,7 +3186,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_TAX, false);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_TAX));
 			map.put("fromLoan", true);
 			map.put("panNum", customerDetails.getCustomer().getCustCRCPR());
@@ -3217,7 +3217,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (onLoad) {
 			createTab(AssetConstants.UNIQUE_ID_COLLATERAL, true);
 		} else {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 			BigDecimal utilizedAmt = BigDecimal.ZERO;
@@ -3581,8 +3581,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		finBasicDetailsCtrl.doWriteBeanToComponents(getFinBasicDetails());
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());
@@ -4969,7 +4969,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendQueryMangementTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("financeMain", financeDetail.getFinScheduleData().getFinanceMain());
 		boolean createTab = false;
 		if (getTab(AssetConstants.UNIQUE_ID_QUERY_MGMT) == null) {
@@ -4995,7 +4995,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void appendCreditReviewDetailTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		Map<String, String> dataMapList = getFinanceDetail().getDataMap();
 		long custId = financeMain.getCustID();
@@ -5198,7 +5198,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void appendExtCreditReviewDetailSummaryTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		CreditReviewData creditReviewData = null;
 		boolean createTab = false;
 		ExtCreditReviewConfig extCreditReviewConfig = new ExtCreditReviewConfig();
@@ -5383,7 +5383,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					pslDetail.setNewRecord(true);
 				}
 
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("finHeaderList", getFinBasicDetails());
 				map.put("pSLDetail", pslDetail);
 				map.put("tab", getTab(AssetConstants.UNIQUE_ID_PSL_DETAILS));
@@ -5408,7 +5408,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_LEGAL_DETAILS, true);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("finHeaderList", getFinBasicDetails());
 				map.put("tab", getTab(AssetConstants.UNIQUE_ID_LEGAL_DETAILS));
 				map.put("fromLoan", true);
@@ -9352,7 +9352,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void addCasDocument(FinanceDetail aFinanceDetail) throws Exception {
 		logger.debug(Literal.ENTERING);
-		HashMap<String, Long> docNames = new HashMap<>();
+		Map<String, Long> docNames = new HashMap<>();
 		DocumentDetails details = new DocumentDetails();
 
 		for (FinanceReferenceDetail financeReferenceDetail : getFinanceDetail().getAggrementList()) {
@@ -9454,7 +9454,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			try {
 				// show pop up to take confirmation and stop if any un allowed
 				// deviation
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("roleCode", getRole());
 				map.put("do", this);
 				map.put("financeDetail", aFinanceDetail);
@@ -9779,7 +9779,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
 							RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
 					if (rule != null) {
-						HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
+						Map<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
 								.getDeclaredFieldValues();
 						isAgrRender = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 								getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),
@@ -18894,7 +18894,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					RuleConstants.MODULE_DOWNPAYRULE, RuleConstants.EVENT_DOWNPAYRULE);
 			BigDecimal downpayPercentage = BigDecimal.ZERO;
 			if (StringUtils.isNotEmpty(sqlRule)) {
-				HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
+				Map<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
 				downpayPercentage = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 						finCcy.getValue(), RuleReturnType.DECIMAL);
 			}
@@ -18928,7 +18928,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotBlank(sqlRule)) {
 						CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(isLoadProcess)
 								.getCustomerEligibilityCheck();
-						HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
+						Map<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
 						actRate = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 								finCcy.getValue(), RuleReturnType.DECIMAL);
 					}
@@ -18987,7 +18987,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotBlank(sqlRule)) {
 						CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(isLoadProcess)
 								.getCustomerEligibilityCheck();
-						HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
+						Map<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
 						actRate = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 								finCcy.getValue(), RuleReturnType.DECIMAL);
 					}
@@ -19515,7 +19515,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void onClick$viewCustInfo(Event event) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", this.custID.longValue());
 			map.put("custCIF", this.custCIF.getValue());
 			map.put("custShrtName", this.custShrtName.getValue());
@@ -19596,7 +19596,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("searchObject", this.custCIFSearchObject);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
@@ -21439,7 +21439,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onClick$btnAddSecondaryAccounts(Event event) {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financemainBaseCtrl", this);
 		map.put("financeDetail", this.financeDetail);
 		map.put("repayAccountId", this.repayAcctId.getValue());
@@ -21457,7 +21457,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected void renderBundledProducts() {
 		logger.debug(Literal.ENTERING);
 		try {
-			HashMap<String, Object> map = getDefaultArguments();
+			Map<String, Object> map = getDefaultArguments();
 			map.put("tab", getTab(AssetConstants.UNIQUE_ID_BUNDLEDPRODUCTS));
 			map.put("finBasicDetails", getFinBasicDetails());
 			bundledProductsWindow = Executions.createComponents(
@@ -21725,7 +21725,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doFillReasons(int reason) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
 		map.put("reason", reason);
 		try {
@@ -22615,7 +22615,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_FIAPPROVAL);
 		}
 		if (getFinanceDetail().isFiApprovalTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("financeDetail", financeDetail);
@@ -22647,7 +22647,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_TVINITIATION);
 		}
 		if (getFinanceDetail().isTvInitTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			if (financeDetail.getTvVerification() == null) {
 				financeDetail.setTvVerification(new Verification());
 			}
@@ -22684,7 +22684,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_TVAPPROVAL);
 		}
 		if (getFinanceDetail().isTvApprovalTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getTvVerification());
@@ -22718,7 +22718,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_LVINITIATION);
 		}
 		if (getFinanceDetail().isLvInitTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			if (financeDetail.getLvVerification() == null) {
 				financeDetail.setLvVerification(new Verification());
 			}
@@ -22752,7 +22752,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_LVAPPROVAL);
 		}
 		if (getFinanceDetail().isLvApprovalTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getLvVerification());
@@ -22786,7 +22786,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_LEGAL_VETTING_INITIATION);
 		}
 		if (getFinanceDetail().isVettingInitTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			if (financeDetail.getLegalVetting() == null) {
 				financeDetail.setLegalVetting(new Verification());
 			}
@@ -22820,7 +22820,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_LEGAL_VETTING_APPROVAL);
 		}
 		if (getFinanceDetail().isVettingApprovalTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("verification", financeDetail.getLegalVetting());
@@ -22854,7 +22854,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RCUINITIATION);
 		}
 		if (getFinanceDetail().isRcuInitTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			if (financeDetail.getRcuVerification() == null) {
 				financeDetail.setRcuVerification(new Verification());
 			}
@@ -22889,7 +22889,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
 		}
 		if (getFinanceDetail().isRcuApprovalTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("financeDetail", financeDetail);
@@ -22972,7 +22972,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_SAMPLINGAPPROVAL);
 		}
 		if (getFinanceDetail().isSamplingApprover() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("financeDetail", financeDetail);
@@ -23283,7 +23283,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_PDINITIATION);
 		}
 		if (getFinanceDetail().isPdInitTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			if (financeDetail.getPdVerification() == null) {
 				financeDetail.setPdVerification(new Verification());
 			}
@@ -23316,7 +23316,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_PDAPPROVAL);
 		}
 		if (getFinanceDetail().isPdApprovalTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("financeDetail", financeDetail);
@@ -23833,7 +23833,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				clearTabpanelChildren(AssetConstants.UNIQUE_ID_FINANCIALSUMMARY);
 			}
 			if (getFinanceDetail().isFinancialSummaryTab() && !onLoad) {
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("financeMainBaseCtrl", this);
 				map.put("finHeaderList", getFinBasicDetails());
 				map.put("financeDetail", financeDetail);
@@ -23967,7 +23967,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			getTab(AssetConstants.UNIQUE_ID_OCRDETAILS).setVisible(finOCRRequired.isChecked());
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_OCRDETAILS);
 
-			HashMap<String, Object> defaultArguments = getDefaultArguments();
+			Map<String, Object> defaultArguments = getDefaultArguments();
 			if (StringUtils.isNotEmpty(moduleDefiner)) {
 				defaultArguments.put("definitionApproved", true);
 			}
@@ -24015,7 +24015,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (onLoad) {
 				createTab(AssetConstants.UNIQUE_ID_EXTERNALAGREEMENTS, true);
 			} else {
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("tab", getTab(AssetConstants.UNIQUE_ID_EXTERNALAGREEMENTS));
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Comm360/Comm360Dialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_EXTERNALAGREEMENTS), map);

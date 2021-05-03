@@ -1215,7 +1215,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -1446,7 +1446,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();

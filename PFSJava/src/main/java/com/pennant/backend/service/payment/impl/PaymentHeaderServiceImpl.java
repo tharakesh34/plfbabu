@@ -129,7 +129,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	//IMPS Splitting
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
-	private  FinanceMainDAO financeMainDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -218,7 +218,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_PAYMENTINST;
 		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), rcdMaintainSts);
-		
+
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -430,7 +430,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			getPaymentHeaderDAO().delete(paymentHeader, TableType.TEMP_TAB);
 		}
 		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), "");
-		
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -607,7 +607,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";
@@ -1022,7 +1022,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				movement.setTaxHeader(taxHeader);
 			}
 
-			manualAdviseDAO.saveMovement(movement, "");
+			if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
+				manualAdviseDAO.saveMovement(movement, "");
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1110,5 +1112,5 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-	
+
 }

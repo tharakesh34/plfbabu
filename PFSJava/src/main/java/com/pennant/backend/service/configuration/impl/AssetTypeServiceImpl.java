@@ -45,6 +45,7 @@ package com.pennant.backend.service.configuration.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -519,7 +520,7 @@ public class AssetTypeServiceImpl extends GenericService<AssetType> implements A
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		AssetType assetType = (AssetType) auditHeader.getAuditDetail().getModelData();
 		ExtendedFieldHeader extendedFieldHeader = assetType.getExtendedFieldHeader();

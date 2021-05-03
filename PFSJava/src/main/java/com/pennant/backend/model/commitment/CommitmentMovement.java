@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -30,7 +31,7 @@ public class CommitmentMovement extends AbstractWorkflowEntity {
 	private String lovValue;
 	private CommitmentMovement befImage;
 	private LoggedInUser userDetails;
-	private HashMap<String, AuditDetail> lovDescAuditDetailMap = new HashMap<String, AuditDetail>();
+	private Map<String, AuditDetail> lovDescAuditDetailMap = new HashMap<>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -189,11 +190,11 @@ public class CommitmentMovement extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public HashMap<String, AuditDetail> getLovDescAuditDetailMap() {
+	public Map<String, AuditDetail> getLovDescAuditDetailMap() {
 		return lovDescAuditDetailMap;
 	}
 
-	public void setLovDescAuditDetailMap(HashMap<String, AuditDetail> lovDescAuditDetailMap) {
+	public void setLovDescAuditDetailMap(Map<String, AuditDetail> lovDescAuditDetailMap) {
 		this.lovDescAuditDetailMap = lovDescAuditDetailMap;
 	}
 

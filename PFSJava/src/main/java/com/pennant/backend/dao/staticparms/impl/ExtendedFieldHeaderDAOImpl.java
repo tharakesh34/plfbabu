@@ -128,18 +128,17 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 */
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String event,
 			String type) {
-		logger.debug(Literal.ENTERING);
-
-		Object[] objects = null;
 
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ModuleName = ? and SubModuleName = ?");
 
-		objects = new Object[] { moduleName, subModuleName };
+		Object[] objects = null;
 
 		if (StringUtils.trimToNull(event) != null) {
 			sql.append(" and Event = ?");
 			objects = new Object[] { moduleName, subModuleName, event };
+		} else {
+			objects = new Object[] { moduleName, subModuleName };
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -151,10 +150,9 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			return this.jdbcOperations.queryForObject(sql.toString(), objects, rowMapper);
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

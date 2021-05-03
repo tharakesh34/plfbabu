@@ -287,7 +287,7 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 	private void doShowDialogPage(TechnicalVerification technicalVerification) {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, Object> map = getDefaultArguments();
+		Map<String, Object> map = getDefaultArguments();
 		if (getFinanceDetail().getTvVerification() == null) {
 			getFinanceDetail().setTvVerification(new Verification());
 		}
@@ -311,9 +311,9 @@ public class TVInitiationListCtrl extends GFCBaseListCtrl<TechnicalVerification>
 		logger.debug(Literal.LEAVING);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
+	public Map<String, Object> getDefaultArguments() {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());

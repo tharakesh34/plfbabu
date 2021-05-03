@@ -136,7 +136,6 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_PRSNTRSP = "PRSNTRSP";
 	public static final String PART_CANCELATION = "PARTCAN";
 	public static final String ACCEVENT_NLRCPT = "NLRCPT";
-
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";

@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -1462,7 +1463,7 @@ public class FinStatementController extends SummaryDetailService {
 		logger.debug(Literal.ENTERING);
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
-		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
+		Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
 		String envVariable = System.getenv("APP_ROOT_PATH");
 		PathUtil.setRootPath(envVariable);
 

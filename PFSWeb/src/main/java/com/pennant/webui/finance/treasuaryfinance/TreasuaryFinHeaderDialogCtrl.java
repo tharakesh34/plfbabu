@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -170,7 +171,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 	private transient TreasuaryFinanceService treasuaryFinanceService;
 	private FinanceDetail financeDetail = null;
 	private List<ValueLabel> listProfitDaysBasis = PennantStaticListUtil.getProfitDaysBasis();
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	private BigDecimal totalPrincipalAmt = BigDecimal.ZERO;
 	private BigDecimal principalAmt = BigDecimal.ZERO;
@@ -689,7 +690,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		tabpanel.setStyle("overflow:auto");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isFinanceNotes", true);
 		map.put("notes", getNotes(this.investmentFinHeader));
 		map.put("control", this);
@@ -1083,7 +1084,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			getInvestmentFinHeader().setFinanceDetail(financeDetail);
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("treasuaryFinHeaderDialogCtrl", this);
 			map.put("newRecord", "true");
 			map.put("investmentFinHeader", getInvestmentFinHeader());
@@ -1125,7 +1126,7 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 			if (financeMain.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("treasuaryFinHeaderDialogCtrl", this);
 				map.put("investmentFinHeader", getInvestmentFinHeader());
 
@@ -1454,11 +1455,11 @@ public class TreasuaryFinHeaderDialogCtrl extends GFCBaseCtrl<InvestmentFinHeade
 		this.treasuaryFinanceService = treasuaryFinanceService;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

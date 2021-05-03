@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import jxl.Cell;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.testng.Assert;
@@ -22,10 +20,12 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.util.Dataset;
 import com.pennanttech.util.PrintFactory;
 
+import jxl.Cell;
+
 public class CrtReducingRateTest {
-	FinScheduleData	schedule;
-	Cell[]			data;
-	long			t1;
+	FinScheduleData schedule;
+	Cell[] data;
+	long t1;
 
 	public CrtReducingRateTest(FinScheduleData schedule, Cell[] data, long t1) {
 		super();
@@ -36,8 +36,8 @@ public class CrtReducingRateTest {
 	}
 
 	@Test
-	public void testSchedule() throws IllegalAccessException, InstantiationException, InvocationTargetException,
-			NoSuchMethodException {
+	public void testSchedule()
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		long t2 = DateUtility.getSysDate().getTime();
 
 		String name = Dataset.getString(data, 0);
@@ -117,8 +117,8 @@ public class CrtReducingRateTest {
 		System.out.println("total Time in long " + String.valueOf(t1));
 	}
 
-	public static FinScheduleData execute(FinScheduleData model) throws IllegalAccessException, InstantiationException,
-			InvocationTargetException, NoSuchMethodException {
+	public static FinScheduleData execute(FinScheduleData model)
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		FinScheduleData schedule = (FinScheduleData) BeanUtils.cloneBean(model);
 
 		//_______________________________________________________________________________________________
@@ -128,15 +128,15 @@ public class CrtReducingRateTest {
 		schedule.getFinanceMain().setGrcRateBasis(CalculationConstants.RATE_BASIS_R);
 		schedule.getFinanceMain().setRepayRateBasis(CalculationConstants.RATE_BASIS_R);
 		schedule = ScheduleGenerator.getNewSchd(schedule);
-		
+
 		//FIXME: Temorary
 		String feeSchdMethod = schedule.getFinFeeDetailList().get(0).getFeeScheduleMethod();
 		BigDecimal feeAmount = schedule.getFinFeeDetailList().get(0).getRemainingFee();
-		
+
 		if (StringUtils.equals(feeSchdMethod, CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 			schedule.getFinanceScheduleDetails().get(0).setFeeChargeAmt(feeAmount);
 		}
-		
+
 		schedule = ScheduleCalculator.getCalSchd(schedule, BigDecimal.ZERO);
 
 		if (schedule.getFinanceMain().isPlanEMIHAlw()) {

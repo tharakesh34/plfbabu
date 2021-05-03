@@ -504,7 +504,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 	 */
 	public void createSimulationWindow(JSONArray jsonArray, String scriptRule) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("variables", jsonArray);
 		map.put("scriptRule", scriptRule);
 

@@ -3005,13 +3005,12 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	private WSReturnStatus isWriteoffLoan(String finReference) {
 		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finReference, "");
-		WSReturnStatus returnStatus = new WSReturnStatus();
 		if (writeoffLoan) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "";
-			return returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+			return APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
 		}
-		return returnStatus;
+		return null;
 	}
 
 	@Autowired

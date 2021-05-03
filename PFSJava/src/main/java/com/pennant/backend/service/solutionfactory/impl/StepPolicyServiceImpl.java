@@ -45,6 +45,7 @@ package com.pennant.backend.service.solutionfactory.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -515,7 +516,7 @@ public class StepPolicyServiceImpl extends GenericService<StepPolicyHeader> impl
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		StepPolicyHeader stepPolicyHeader = (StepPolicyHeader) auditHeader.getAuditDetail().getModelData();
 

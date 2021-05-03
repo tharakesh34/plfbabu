@@ -1158,7 +1158,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		CollateralSetup collateralSetup = (CollateralSetup) auditHeader.getAuditDetail().getModelData();
 
@@ -3227,7 +3227,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	private AuditHeader getAuditHeader(CollateralSetup aCollateralSetup, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCollateralSetup.getBefImage(), aCollateralSetup);
 		return new AuditHeader(aCollateralSetup.getCollateralRef(), null, null, null, auditDetail,
-				aCollateralSetup.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCollateralSetup.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	// Collateral details

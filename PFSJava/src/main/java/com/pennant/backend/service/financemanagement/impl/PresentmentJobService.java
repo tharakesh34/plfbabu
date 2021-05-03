@@ -1,8 +1,6 @@
 package com.pennant.backend.service.financemanagement.impl;
 
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -104,7 +102,7 @@ public class PresentmentJobService extends AbstractInterface {
 				logger.debug("No of Records in Exclude List  : {}", excludeList.size());
 
 				if (StringUtils.isEmpty(ph.getPartnerAcctNumber()) && ph.getPartnerBankId() == 0) {
-					Presentment pb = getPartnerBankId(ph.getLoanType());
+					Presentment pb = getPartnerBankId(ph.getLoanType(), ph.getMandateType());
 					ph.setPartnerAcctNumber(pb.getAccountNo());
 					ph.setPartnerBankId(pb.getPartnerBankId());
 				} else {
@@ -414,24 +412,20 @@ public class PresentmentJobService extends AbstractInterface {
 		return null;
 	}
 
-	public Presentment getPartnerBankId(String finType) {
+	public Presentment getPartnerBankId(String finType, String mandateType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append("PartnerBankID, AccountNo");
+		sql.append(" PartnerBankID, AccountNo");
 		sql.append(" From PresentmentPartnerBank");
-		sql.append(" Where FinType = ?");
+		sql.append(" Where FinType = ? and MandateType = ?");
 		try {
-			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { finType },
-					new RowMapper<Presentment>() {
-						@Override
-						public Presentment mapRow(ResultSet rs, int rowNum) throws SQLException {
-							Presentment p = new Presentment();
-							p.setPartnerBankId(rs.getLong("PartnerBankID"));
-							p.setAccountNo(rs.getString("AccountNo"));
-							return p;
-						}
-
+			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql.toString(),
+					new Object[] { finType, mandateType }, (rs, i) -> {
+						Presentment p = new Presentment();
+						p.setPartnerBankId(rs.getLong("PartnerBankID"));
+						p.setAccountNo(rs.getString("AccountNo"));
+						return p;
 					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);

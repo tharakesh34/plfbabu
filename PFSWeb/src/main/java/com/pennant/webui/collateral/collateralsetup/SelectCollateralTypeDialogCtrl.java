@@ -45,6 +45,7 @@ package com.pennant.webui.collateral.collateralsetup;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -387,7 +388,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	private void showDetailView() {
 		logger.debug("Entering");
 
-		HashMap<String, Object> arguments = new HashMap<String, Object>();
+		Map<String, Object> arguments = new HashMap<String, Object>();
 		arguments.put("collateralSetup", this.collateralSetup);
 		arguments.put("collateralSetupListCtrl", this.collateralSetupListCtrl);
 		arguments.put("dialogCtrl", this.dialogCtrl);
@@ -501,7 +502,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("searchObject", this.custCIFSearchObject);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);

@@ -240,7 +240,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		logger.debug(Literal.ENTERING);
 
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			String module = (String) arguments.get("moduleName");
 			map.put("parentCtrl", this);
 			if (finHeaderList != null) {

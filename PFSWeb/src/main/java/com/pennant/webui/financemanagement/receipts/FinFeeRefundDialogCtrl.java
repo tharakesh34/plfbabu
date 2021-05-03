@@ -113,7 +113,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -164,7 +163,6 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	private transient FeeReceiptService feeReceiptService;
 	private AccountingSetService accountingSetService;
 	private AccountEngineExecution engineExecution;
-	private EventManager eventManager;
 
 	private List<FinFeeDetail> paidFeeList = new ArrayList<FinFeeDetail>();
 	private long custID;
@@ -1149,7 +1147,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
 		}
 		if (!onLoadProcess) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails(getFinanceDetail()));
@@ -1470,14 +1468,6 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public void setEngineExecution(AccountEngineExecution engineExecution) {

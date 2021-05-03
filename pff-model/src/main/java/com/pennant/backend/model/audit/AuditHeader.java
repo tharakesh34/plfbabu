@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -84,7 +85,7 @@ public class AuditHeader implements java.io.Serializable {
 	private List<AuditDetail> auditDetails;
 	private int overideCount = 0;
 	private String usrLanguage;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private int processStatus = 0;
 	private boolean nextProcess = false;
 	private Object apiHeader;
@@ -125,7 +126,7 @@ public class AuditHeader implements java.io.Serializable {
 			BeanUtils.copyProperties(this.auditDetail, auditHeader.auditDetail);
 		}
 		if (this.overideMap != null) {
-			auditHeader.setOverideMap(new HashMap<String, ArrayList<ErrorDetail>>());
+			auditHeader.setOverideMap(new HashMap<String, List<ErrorDetail>>());
 			BeanUtils.copyProperties(this.overideMap, auditHeader.overideMap);
 		}
 		if (this.auditDetails != null) {
@@ -443,7 +444,7 @@ public class AuditHeader implements java.io.Serializable {
 	}
 
 	public AuditHeader(String reference, String custNo, String accNo, String loanNo, AuditDetail auditDetail,
-			LoggedInUser userDetails, HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+			LoggedInUser userDetails, Map<String, List<ErrorDetail>> overideMap) {
 
 		this.auditReference = reference;
 		this.auditCustNo = custNo;
@@ -489,11 +490,11 @@ public class AuditHeader implements java.io.Serializable {
 		this.auditDetails = auditDetails;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
@@ -536,7 +537,7 @@ public class AuditHeader implements java.io.Serializable {
 		if (overideMap != null) {
 
 			if (overideMap.containsKey(overideMessage.getField())) {
-				ArrayList<ErrorDetail> overDetails = this.overideMap.get(overideMessage.getField());
+				List<ErrorDetail> overDetails = this.overideMap.get(overideMessage.getField());
 
 				for (int i = 0; i < overDetails.size(); i++) {
 					if (!isEqual(overideMessage, overDetails.get(i))) {

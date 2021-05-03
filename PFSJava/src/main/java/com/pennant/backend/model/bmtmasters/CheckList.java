@@ -45,6 +45,7 @@ package com.pennant.backend.model.bmtmasters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
@@ -72,7 +73,7 @@ public class CheckList extends AbstractWorkflowEntity implements Entity {
 	private CheckList befImage;
 	private LoggedInUser userDetails;
 	private List<CheckListDetail> chkListList = new ArrayList<CheckListDetail>();
-	private HashMap<String, List<AuditDetail>> lovDescAuditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> lovDescAuditDetailMap = new HashMap<>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -195,11 +196,11 @@ public class CheckList extends AbstractWorkflowEntity implements Entity {
 		this.chkListList = chkListList;
 	}
 
-	public HashMap<String, List<AuditDetail>> getLovDescAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getLovDescAuditDetailMap() {
 		return lovDescAuditDetailMap;
 	}
 
-	public void setLovDescAuditDetailMap(HashMap<String, List<AuditDetail>> lovDescAuditDetailMap) {
+	public void setLovDescAuditDetailMap(Map<String, List<AuditDetail>> lovDescAuditDetailMap) {
 		this.lovDescAuditDetailMap = lovDescAuditDetailMap;
 	}
 

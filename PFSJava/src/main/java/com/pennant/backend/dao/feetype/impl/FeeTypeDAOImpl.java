@@ -280,7 +280,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCd }, (rs, rowNum) -> {
 				FeeType fee = new FeeType();
-			
+
 				fee.setFeeTypeID(rs.getLong("FeeTypeID"));
 				fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
 				fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
@@ -296,7 +296,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
 				fee.setDueAccSet(rs.getLong("DueAccSet"));
 				fee.setTdsReq(rs.getBoolean("TdsReq"));
-				
+
 				return fee;
 			});
 		} catch (EmptyResultDataAccessException e) {

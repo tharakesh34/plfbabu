@@ -49,6 +49,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
@@ -127,7 +128,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 
 	// ServiceDAOs / Domain Classes
 	private transient VasMovementService vasMovementService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<>();
 	private List<VasMovementDetail> vasMovementDetailList = new ArrayList<VasMovementDetail>();
 	private PagedListWrapper<VasMovementDetail> chkListDetailPagedListWrapper;
 	int listRows;
@@ -1039,11 +1040,11 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		return this.vasMovementListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

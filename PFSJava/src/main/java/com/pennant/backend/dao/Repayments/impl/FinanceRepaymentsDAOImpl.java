@@ -1189,4 +1189,14 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		return null;
 	}
 
+	@Override
+	public Date getMaxValueDate(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" max(finvaluedate) FinValueDate from FinRepayDetails");
+		sql.append(" Where FinReference = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Date.class);
+	}
 }

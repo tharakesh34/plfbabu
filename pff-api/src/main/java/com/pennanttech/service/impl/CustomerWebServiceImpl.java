@@ -3760,7 +3760,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
-				aCustomerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3775,7 +3775,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 				aCustomerPhoneNumber);
 		return new AuditHeader(String.valueOf(aCustomerPhoneNumber.getPhoneCustID()),
 				String.valueOf(aCustomerPhoneNumber.getPhoneCustID()), null, null, auditDetail,
-				aCustomerPhoneNumber.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerPhoneNumber.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3790,7 +3790,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 				aCustomerEmploymentDetail);
 		return new AuditHeader(String.valueOf(aCustomerEmploymentDetail.getCustID()),
 				String.valueOf(aCustomerEmploymentDetail.getCustID()), null, null, auditDetail,
-				aCustomerEmploymentDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerEmploymentDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3803,8 +3803,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private AuditHeader getAuditHeader(CustomerAddres aCustomerAddres, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerAddres.getBefImage(), aCustomerAddres);
 		return new AuditHeader(String.valueOf(aCustomerAddres.getCustID()), String.valueOf(aCustomerAddres.getCustID()),
-				null, null, auditDetail, aCustomerAddres.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustomerAddres.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3817,8 +3816,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private AuditHeader getAuditHeader(CustomerEMail aCustomerEMail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerEMail.getBefImage(), aCustomerEMail);
 		return new AuditHeader(String.valueOf(aCustomerEMail.getCustID()), String.valueOf(aCustomerEMail.getCustID()),
-				null, null, auditDetail, aCustomerEMail.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustomerEMail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3831,8 +3829,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private AuditHeader getAuditHeader(CustomerIncome aCustomerIncome, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerIncome.getBefImage(), aCustomerIncome);
 		return new AuditHeader(String.valueOf(aCustomerIncome.getCustId()), String.valueOf(aCustomerIncome.getCustId()),
-				null, null, auditDetail, aCustomerIncome.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustomerIncome.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3846,7 +3843,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerBankInfo.getBefImage(), aCustomerBankInfo);
 		return new AuditHeader(String.valueOf(aCustomerBankInfo.getCustID()),
 				String.valueOf(aCustomerBankInfo.getCustID()), null, null, auditDetail,
-				aCustomerBankInfo.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerBankInfo.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3859,8 +3856,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
 		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()),
-				null, null, auditDetail, aCustCardSales.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3873,7 +3869,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
 		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
-				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3887,7 +3883,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, externalLiability.getBefImage(), externalLiability);
 		return new AuditHeader(String.valueOf(externalLiability.getCustId()),
 				String.valueOf(externalLiability.getCustId()), null, null, auditDetail,
-				externalLiability.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				externalLiability.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3901,7 +3897,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDocument.getBefImage(), aCustomerDocument);
 		return new AuditHeader(String.valueOf(aCustomerDocument.getCustID()),
 				String.valueOf(aCustomerDocument.getCustID()), null, null, auditDetail,
-				aCustomerDocument.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerDocument.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3913,8 +3909,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private AuditHeader getAuditHeader(DirectorDetail directorDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, directorDetail.getBefImage(), directorDetail);
 		return new AuditHeader(String.valueOf(directorDetail.getCustID()), String.valueOf(directorDetail.getCustID()),
-				null, null, auditDetail, directorDetail.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, directorDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

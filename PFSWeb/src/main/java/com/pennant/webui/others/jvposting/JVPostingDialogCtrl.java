@@ -442,7 +442,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		// map.put("jVPosting", aJVPosting);
 		if (this.moduleType != null && this.moduleType.getValue().equalsIgnoreCase(PennantConstants.MODULETYPE_ENQ)
 				|| enqModule) {

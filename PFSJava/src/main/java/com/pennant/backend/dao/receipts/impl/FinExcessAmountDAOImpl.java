@@ -310,10 +310,10 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		sql.append(" Where FinReference = ? And AmountType = ?");
 
 		logger.trace(Literal.SQL + sql);
-		
+
 		return this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			
+
 			ps.setBigDecimal(index++, amount);
 			ps.setBigDecimal(index++, amount);
 			ps.setString(index++, reference);
@@ -508,7 +508,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		sql.append(" Where ReceiptSeqID = ? AND ExcessID = ? AND PaymentType = ?");
 
 		logger.trace(Literal.SQL + sql);
-		
+
 		recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setBigDecimal(index++, diffInReserve);

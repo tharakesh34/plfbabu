@@ -1196,7 +1196,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		tabpanel.setStyle("overflow:auto");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isFinanceNotes", true); // TODO
 		// map.put("isRecommendMand", true);
 		map.put("notes", getNotes(this.managerCheque));
@@ -1353,7 +1353,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 		documentDetails.setDocModule("ManagerCheques");
 		documentDetails.setNewRecord(true);
 		documentDetails.setWorkflowId(0);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finDocumentDetail", documentDetails);
 		map.put("DocumentDialogCtrl", this);
 		map.put("financeMain", this.financeMain);
@@ -2616,7 +2616,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finDocumentDetail", finDocumentDetail);
 		map.put("DocumentDialogCtrl", this);
 		map.put("roleCode", getRole());
@@ -2707,7 +2707,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				if (StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)) {
 					Filedownload.save(detail.getDocImage(), "application/msword", detail.getDocName());
 				} else {
-					HashMap<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("FinDocumentDetail", detail);
 					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 				}

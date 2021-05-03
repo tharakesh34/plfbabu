@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -95,7 +96,7 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 	private List<PaymentDetail> paymentDetailList;
 	private PaymentInstruction paymentInstruction;
 	private Beneficiary defaultBeneficiary;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private String finSource;
 
 	public PaymentHeader() {
@@ -253,11 +254,11 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 		this.paymentDetailList = paymentDetailList;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

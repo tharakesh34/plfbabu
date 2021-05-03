@@ -44,6 +44,7 @@ package com.pennant.webui.financemanagement.selectfinance;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -385,7 +386,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					new String[] { Labels.getLabel("label_SelectFinReferenceDialog_FinReference.value") }));
 		}
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_LIABILITY)
 				|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_TAKAFULCLAIM)

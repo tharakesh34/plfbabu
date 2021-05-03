@@ -528,7 +528,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	private void appendDocumentDetailTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("DOCUMENTDETAIL", true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getTechnicalVerification().getDocuments());
 		map.put("module", DocumentCategories.VERIFICATION_TV.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
@@ -544,8 +544,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
@@ -608,7 +608,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		try {
 			this.extendedDetailsTab.setLabel(technicalVerification.getCollateralType());
 			extendedFieldCtrl.setExtendedFieldDetailsService(extendedFieldDetailsService);
-			final HashMap<String, Object> map = getDefaultArguments(tv);
+			final Map<String, Object> map = getDefaultArguments(tv);
 			map.put("dialogCtrl", this);
 			map.put("extendedFieldHeader", extendedFieldHeader);
 			map.put("fieldRenderList",
@@ -623,8 +623,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		logger.debug(Literal.LEAVING);
 	}
 
-	public HashMap<String, Object> getDefaultArguments(TechnicalVerification tv) {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments(TechnicalVerification tv) {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails(tv));
@@ -1141,7 +1141,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	public void onClick$btnSearchCollateralRef(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 
 		CollateralSetup collateralSetup = getCollateralSetupService()
 				.getCollateralSetupByRef(this.collateralReference.getValue(), "", true);
@@ -1163,7 +1163,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 	public void onClick$btnSearchCustomerDetails(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 
 		CustomerDetails customerDetails = customerDetailsService
 				.getCustomerById(this.technicalVerification.getCustId());

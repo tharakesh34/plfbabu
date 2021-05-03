@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -35,7 +36,7 @@ public class BulkProcessHeader extends AbstractWorkflowEntity implements Entity 
 	private LoggedInUser userDetails;
 
 	private List<BulkProcessDetails> bulkProcessDetailsList;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -143,11 +144,11 @@ public class BulkProcessHeader extends AbstractWorkflowEntity implements Entity 
 		this.bulkProcessDetailsList = lovDescBulkProcessDetails;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

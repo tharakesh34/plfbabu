@@ -163,7 +163,6 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		}
 	}
 
-
 	@Override
 	public boolean getRateCodes(String brCode) {
 		StringBuilder sql = new StringBuilder();

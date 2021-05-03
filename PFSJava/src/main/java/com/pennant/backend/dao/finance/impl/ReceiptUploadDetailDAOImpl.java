@@ -639,6 +639,23 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		}, (rs, roNum) -> {
 			return rs.getString(1);
 		});
+	}
 
+	@Override
+	public boolean isReceiptsQueue(String finReference) {
+
+		StringBuilder sql = new StringBuilder("Select count(Reference) From ReceiptUploadDetails");
+		sql.append(" Where Reference = ?  AND ProcessingStatus = ?");
+		sql.append(" AND (ReceiptId = 0 OR ReceiptId is Null )");
+
+		logger.trace(Literal.SQL + sql);
+		try {
+			Object[] object = new Object[] { finReference, ReceiptDetailStatus.SUCCESS.getValue() };
+			return this.jdbcOperations.queryForObject(sql.toString(), object, Integer.class) > 0 ? true : false;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in ReceiptUploadDetails table for the specified FinReference >> {}",
+					finReference);
+		}
+		return false;
 	}
 }

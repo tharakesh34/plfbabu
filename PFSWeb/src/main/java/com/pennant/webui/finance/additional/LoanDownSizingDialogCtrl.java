@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -483,7 +484,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					FinanceConstants.MOVEMENTTYPE_DOWNSIZING);
 		}
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("assetAmtMvntList", assetAmtMvntList);
 		map.put("formatter", formatter);
 
@@ -1123,7 +1124,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				isSchdBuildReq = false;
 			}
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeDetail", aFinanceDetail);
 
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ScheduleDetailDialog.zul",
@@ -1177,7 +1178,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						FinanceConstants.MODULEID_FINTYPE);
 			}
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 
 			map.put("acSetID", acSetID);
 			map.put("financeDetail", financeDetail);
@@ -1281,9 +1282,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @return
 	 */
-	public HashMap<String, Object> getDefaultArguments() {
-
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("isEnquiry", false);
 		map.put("roleCode", getRole());

@@ -81,4 +81,6 @@ public interface ReceiptUploadDetailDAO {
 
 	List<String> isDuplicateExists(ReceiptUploadDetail rud);
 
+	boolean isReceiptsQueue(String finReference);
+
 }

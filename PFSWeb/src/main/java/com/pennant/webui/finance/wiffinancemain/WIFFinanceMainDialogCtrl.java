@@ -504,7 +504,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private List<ValueLabel> profitDaysBasisList = PennantStaticListUtil.getProfitDaysBasis();
 	private List<ValueLabel> schMethodList = PennantStaticListUtil.getScheduleMethods();
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 	Date appStartDate = DateUtility.getAppDate();
@@ -2745,7 +2745,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			Rule rule = getRuleService().getApprovedRuleById(financeType.getDownPayRuleDesc(),
 					RuleConstants.MODULE_DOWNPAYRULE, RuleConstants.EVENT_DOWNPAYRULE);
 			if (rule != null) {
-				HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
+				Map<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
 				downpayPercentage = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 						finCcy.getValue(), RuleReturnType.DECIMAL);
 			}
@@ -2910,7 +2910,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!onLoadProcess || (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0)) {
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleCode", getRole());
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
@@ -2963,7 +2963,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty()
 						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))) {
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleCode", getRole());
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
@@ -3011,7 +3011,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			tabpanel.setHeight("100%");
 			ComponentsCtrl.applyForward(tab, ("onSelect=onSelectFeeTab"));
 			if (feeTabVisible) {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("roleCode", getRole());
 				map.put("financeMainDialogCtrl", this);
 				map.put("financeDetail", getFinanceDetail());
@@ -3043,7 +3043,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("indicativeTermDetail", getFinanceDetail().getIndicativeTermDetail());
@@ -7566,11 +7566,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.wifFinanceMainListCtrl = wifFinanceMainListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

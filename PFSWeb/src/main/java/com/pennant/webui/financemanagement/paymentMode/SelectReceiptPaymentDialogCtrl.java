@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +35,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -68,6 +70,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -154,6 +157,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private String module;
 	private int formatter = 2;
 	Date appDate = SysParamUtil.getAppDate();
+	protected FinanceRepaymentsDAO financeRepaymentsDAO;
 
 	/**
 	 * default constructor.<br>
@@ -561,10 +565,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			}
 
 		}
-		
+
 		errorDetail = receiptService.getWaiverValidation(this.finReference.getValue(),
 				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
-		
+
 		// Validate Loan is INPROGRESS in WRITEOFF or NOT ?
 		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
 		if (FinanceConstants.FINSER_EVENT_WRITEOFF.equals(rcdMaintainSts)) {
@@ -757,7 +761,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Entering " + event.toString());
 		this.finReference.setValue("");
 		doClearMessage();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving " + event.toString());
@@ -897,7 +901,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Entering ");
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		// set new record true
 		setWorkflowDetails(rch.getFinType(), false);
@@ -1148,6 +1152,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finReference.getValue());
+
+		if (DateUtil.compare(maxValueDate, this.receiptDate.getValue()) > 0) {
+			throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_AFTER", new String[] {
+					Labels.getLabel("label_SchedulePayment_ReceiptDate.value"), maxValueDate.toString() }));
+		}
 	}
 
 	public void onFulfill$receiptAmount(Event event) throws InterruptedException {
@@ -1322,4 +1333,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
+
 }

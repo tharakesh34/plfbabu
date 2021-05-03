@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -394,7 +395,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	public void onClick$btnPreviewReport(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		doWriteComponentsToBean(getReportConfiguration());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ReportConfiguration", getReportConfiguration());
 		map.put("dialogWindow", this.window_ReportConfigurationDialog);
 
@@ -1089,7 +1090,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		} else {
 			reportFilterFields.setFieldID(1);
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("reportConfigurationDialogCtrl", this);
 		map.put("reportFilterFields", reportFilterFields);
 		map.put("reportConfiguration", getReportConfiguration());
@@ -1143,7 +1144,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		if (item != null) {
 			final ReportFilterFields reportFilterFields = (ReportFilterFields) item.getAttribute("data");
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			reportFilterFields.setNewRecord(false);
 			map.put("reportConfigurationDialogCtrl", this);
 			map.put("reportFilterFields", reportFilterFields);

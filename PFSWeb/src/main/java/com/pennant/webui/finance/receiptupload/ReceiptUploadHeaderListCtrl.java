@@ -667,7 +667,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(upldHdr.getFailedCount()));
 			lc.setParent(item);
-		
+
 			String uploadStatus = null;
 
 			switch (upldHdr.getUploadProgress()) {
@@ -999,7 +999,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
 
-			HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
+			Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
 			reportArgumentsMap.put("userName", userName);
 			reportArgumentsMap.put("reportHeading", reportName);
 			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));

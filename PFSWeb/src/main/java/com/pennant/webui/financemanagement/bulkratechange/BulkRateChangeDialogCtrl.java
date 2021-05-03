@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
@@ -1642,7 +1643,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		 * (InterruptedException e) { logger.error(e); return; } return; }
 		 */
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("isApplyRateChangeWin", isApplyRateChangeWin);
 		map.put("bulkRateChangeDialogCtrl", this);
@@ -1671,7 +1672,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 			MessageUtil.showError(Labels.getLabel("label_RateChange_FinanceList_Changed"));
 			return;
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("isNewFinList", isNewFinList);
 		map.put("bulkRateChangeDialogCtrl", this);

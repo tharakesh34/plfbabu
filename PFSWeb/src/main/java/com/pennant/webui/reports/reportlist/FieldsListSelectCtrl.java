@@ -46,6 +46,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -165,7 +166,7 @@ public class FieldsListSelectCtrl extends GFCBaseCtrl<ReportList> {
 				setReportList(null);
 			}
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("fieldListSelectCtrl", this);
 
 			this.moduleName = arguments.get("moduleName").toString();

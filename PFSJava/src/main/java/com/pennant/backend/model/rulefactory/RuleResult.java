@@ -68,7 +68,7 @@ public class RuleResult {
 	}
 
 	public Map<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> ruleResultMap = new HashMap<String, Object>();
+		Map<String, Object> ruleResultMap = new HashMap<>();
 
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {

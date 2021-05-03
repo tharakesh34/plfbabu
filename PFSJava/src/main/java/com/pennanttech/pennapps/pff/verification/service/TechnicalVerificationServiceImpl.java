@@ -539,7 +539,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		TechnicalVerification tv = (TechnicalVerification) auditHeader.getAuditDetail().getModelData();
 
@@ -990,7 +990,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 
 				if (StringUtils.isNotEmpty(sqlRule)) {
 
-					HashMap<String, Object> fieldsAndValues = new HashMap<>();
+					Map<String, Object> fieldsAndValues = new HashMap<>();
 					fieldsAndValues.put("roleCode", financeMain.getRoleCode());
 					fieldsAndValues.put("internalTvCount", internalTvCount);
 					fieldsAndValues.put("onePagerTvCount", onePagerTvCount);

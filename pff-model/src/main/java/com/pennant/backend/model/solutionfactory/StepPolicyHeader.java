@@ -46,6 +46,7 @@ package com.pennant.backend.model.solutionfactory;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -89,7 +90,7 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "stepDetails")
 	@XmlElement(name = "stepDetail")
 	private List<StepPolicyDetail> stepPolicyDetails = null;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -186,11 +187,11 @@ public class StepPolicyHeader extends AbstractWorkflowEntity {
 		this.stepPolicyDetails = stepPolicyDetails;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

@@ -162,9 +162,9 @@ public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {
 		final Listitem item = this.listBoxCacheNodes.getSelectedItem();
 
 		if (item != null) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("cacheProcessListCtrl", this);
-			map.put("mapData", (HashMap<String, Object>) item.getAttribute("data"));
+			map.put("mapData", (Map<String, Object>) item.getAttribute("data"));
 			try {
 				Executions.createComponents("/WEB-INF/pages/Cache/CacheParameterDialog.zul", window_CacheNodesList,
 						map);

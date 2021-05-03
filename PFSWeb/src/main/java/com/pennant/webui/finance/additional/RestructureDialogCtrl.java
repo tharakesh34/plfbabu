@@ -399,7 +399,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (StringUtils.equals("Scenario7", restructureType.getRstTypeCode())
 				|| StringUtils.equals("Scenario8", restructureType.getRstTypeCode())) {
 			recalType = CalculationConstants.RST_RECAL_ADJUSTTENURE;
-			this.numberOfEMITerms.setDisabled(false); 
+			this.numberOfEMITerms.setDisabled(false);
 		}
 		fillComboBox(this.recalculationType, recalType, PennantStaticListUtil.getRecalTypeList(), "");
 

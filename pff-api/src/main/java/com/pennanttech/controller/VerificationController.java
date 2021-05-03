@@ -455,7 +455,7 @@ public class VerificationController {
 	private AuditHeader getAuditHeader(TechnicalVerification tv, String tranWf) {
 		AuditDetail auditDetail = new AuditDetail(tranWf, 1, tv.getBefImage(), tv);
 		return new AuditHeader(String.valueOf(tv.getVerificationId()), String.valueOf(tv.getVerificationId()), null,
-				null, auditDetail, tv.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, tv.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private void setExtendedFieldRender(TechnicalVerification tv, LoggedInUser userDetails) {
@@ -620,7 +620,7 @@ public class VerificationController {
 	private AuditHeader getAuditHeader(RiskContainmentUnit rcu, String tranWf) {
 		AuditDetail auditDetail = new AuditDetail(tranWf, 1, rcu.getBefImage(), rcu);
 		return new AuditHeader(String.valueOf(rcu.getVerificationId()), String.valueOf(rcu.getVerificationId()), null,
-				null, auditDetail, rcu.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, rcu.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -631,13 +631,13 @@ public class VerificationController {
 	private AuditHeader getAuditHeader(FieldInvestigation fi, String tranWf) {
 		AuditDetail auditDetail = new AuditDetail(tranWf, 1, fi.getBefImage(), fi);
 		return new AuditHeader(String.valueOf(fi.getVerificationId()), String.valueOf(fi.getVerificationId()), null,
-				null, auditDetail, fi.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, fi.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private AuditHeader getAuditHeader(PersonalDiscussion pd, String tranWf) {
 		AuditDetail auditDetail = new AuditDetail(tranWf, 1, pd.getBefImage(), pd);
 		return new AuditHeader(String.valueOf(pd.getVerificationId()), String.valueOf(pd.getVerificationId()), null,
-				null, auditDetail, pd.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, pd.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -1102,7 +1102,7 @@ public class VerificationController {
 	private AuditHeader getAuditHeader(LegalVerification lv, String tranWf) {
 		AuditDetail auditDetail = new AuditDetail(tranWf, 1, lv.getBefImage(), lv);
 		return new AuditHeader(String.valueOf(lv.getVerificationId()), String.valueOf(lv.getVerificationId()), null,
-				null, auditDetail, lv.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, lv.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private void setDefaultInitiationStatus(Verification item) {

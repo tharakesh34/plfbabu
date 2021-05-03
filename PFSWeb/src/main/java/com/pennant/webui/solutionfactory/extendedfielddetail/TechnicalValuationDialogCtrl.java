@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -527,7 +528,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		aExtendedFieldDetail.setNewRecord(true);
 		aExtendedFieldDetail.setWorkflowId(0);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("extendedFieldDetail", aExtendedFieldDetail);
 		map.put("technicalValuationDialogCtrl", this);
 		map.put("newRecord", true);
@@ -554,7 +555,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			// CAST AND STORE THE SELECTED OBJECT
 			final ExtendedFieldDetail extendedFieldDetail = (ExtendedFieldDetail) item.getAttribute("data");
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("extendedFieldDetail", extendedFieldDetail);
 			map.put("technicalValuationDialogCtrl", this);
 			map.put("roleCode", getRole());

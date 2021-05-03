@@ -541,7 +541,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 		SamplingCollateral collSetup = (SamplingCollateral) event.getData();
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collSetup.getCollateralRef(),
 				"", true);
 
@@ -563,7 +563,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		Customer collSetup = (Customer) event.getData();
 		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(collSetup.getCustID(), true,
 				"_AView");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		String pageName = PennantAppUtil.getCustomerPageName();
 		map.put("customerDetails", customerDetails);
 		map.put("newRecord", false);
@@ -582,7 +582,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		CustomerAddres address;
 
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			address = customerAddresService.getCustomerAddresById(customer.getCustID(), customer.getCustAddlVar1());
 			address.setLovDescCustCIF(sampling.getCustCif());
 			address.setLovDescCustShrtName(sampling.getCustShrtName());
@@ -641,7 +641,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			if (isDeleteRecord(customerIncome.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerIncome", customerIncome);
 				map.put("samplingDialogCtrl", this);
 				map.put("coApplicants", coApplicantIncomeCustomers);
@@ -669,7 +669,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			if (isDeleteRecord(externalLiability.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("externalLiability", externalLiability);
 				map.put("finFormatter", ccyFormatter);
 				map.put("samplingDialogCtrl", this);
@@ -879,8 +879,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
@@ -973,7 +973,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		laibility.setCustCif(this.sampling.getCustCif());
 		laibility.setCustShrtName(this.sampling.getCustShrtName());
 		laibility.setSeqNo(getLiabilitySeq());
-		final HashMap<String, Object> map = new HashMap<>();
+		final Map<String, Object> map = new HashMap<>();
 		map.put("externalLiability", laibility);
 		map.put("finFormatter", ccyFormatter);
 		map.put("samplingDialogCtrl", this);
@@ -996,7 +996,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	protected void appendDocumentDetailTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("DOCUMENTDETAIL", true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getSampling().getDocuments());
 		map.put("module", DocumentCategories.SAMPLING.getKey());
 		map.put("enqiryModule", enqiryModule);
@@ -1012,7 +1012,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	protected void appendCustomerDetailTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("CUSTOMERDETAIL", true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		String pageName = PennantAppUtil.getCustomerPageName();
 		map.put("customerDetails", getSampling().getCustomerDetails());
 		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
@@ -1029,7 +1029,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		createTab("COAPPLICANT", true);
 		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(this.sampling.getKeyReference(),
 				"_View", true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("financeMain", finScheduleData.getFinanceMain());
 		map.put("isFinanceProcess", false);
 		map.put("enquiry", true);
@@ -1045,7 +1045,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	protected void appendQueryModuleTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("QUERYMODULE", true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("queryDetail", this.sampling.getQueryDetail());
 		map.put("sampling", this.sampling);
 		Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/FinQueryDetailList.zul",
@@ -1340,7 +1340,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 			if (isDeleteRecord(collateralSetup.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<>();
+				final Map<String, Object> map = new HashMap<>();
 
 				map.put("sampling", sampling);
 				map.put("samplingDialogCtrl", this);

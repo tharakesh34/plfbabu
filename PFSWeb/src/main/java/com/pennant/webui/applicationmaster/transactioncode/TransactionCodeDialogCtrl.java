@@ -45,6 +45,8 @@ package com.pennant.webui.applicationmaster.transactioncode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -99,7 +101,7 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 
 	// ServiceDAOs / Domain Classes
 	private transient TransactionCodeService transactionCodeService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -918,11 +920,11 @@ public class TransactionCodeDialogCtrl extends GFCBaseCtrl<TransactionCode> {
 		return this.transactionCodeListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 }

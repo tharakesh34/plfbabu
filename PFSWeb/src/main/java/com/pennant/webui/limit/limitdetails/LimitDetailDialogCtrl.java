@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -1563,7 +1564,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	private void validateLimitSetup(LimitHeader aLimitHeader, ArrayList<WrongValueException> wve) {
 		logger.debug(" Entering ");
 
-		HashMap<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
+		Map<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
 		List<Listitem> listtoprocess = this.listBoxLimitDetail.getItems();
 
 		Date lineMaxExpDate = SysParamUtil.getAppDate();

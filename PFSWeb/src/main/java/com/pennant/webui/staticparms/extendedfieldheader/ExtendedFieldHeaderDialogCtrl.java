@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -108,7 +109,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 	// ServiceDAOs / Domain Classes
 	private transient ExtendedFieldHeaderService extendedFieldHeaderService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -855,7 +856,7 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 	private void fillsubModule(Combobox combobox, String moduleName, String value) {
 		if (this.moduleName.getSelectedItem() != null) {
-			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null
+			Map<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName) == null
 					? new HashMap<String, String>() : PennantStaticListUtil.getModuleName().get(moduleName);
 			ArrayList<String> arrayList = new ArrayList<String>(hashMap.keySet());
 			subModuleName.getItems().clear();
@@ -887,11 +888,11 @@ public class ExtendedFieldHeaderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		}
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

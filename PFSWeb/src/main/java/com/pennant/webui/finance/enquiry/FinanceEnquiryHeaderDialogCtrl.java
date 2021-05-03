@@ -362,10 +362,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finStatus_Reason.setValue("Normal");
 		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Cancelled");
-		} else if (enquiry.isWriteoffLoan()) {
-			this.finStatus_Reason.setValue("Written-Off");
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Settled");
+		}
+		if (enquiry.isWriteoffLoan()) {
+			this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
 		}
 
 		this.custCIF_header.setValue(enquiry.getLovDescCustCIF());
@@ -383,7 +384,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			tabPanel_dialogWindow.appendChild(this.grid_BasicDetails);
 		}
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeEnquiryHeaderDialogCtrl", this);
 		String path = "";
 		this.grid_BasicDetails.setVisible(true);
@@ -1048,7 +1049,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				reportView = false;
 			}
 			if (reportView) {
-				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+				final Map<String, Object> auditMap = new HashMap<String, Object>();
 				auditMap.put("reportBuffer", buf);
 				String genReportName = Labels.getLabel(reportName);
 				auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);

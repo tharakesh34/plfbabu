@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -917,7 +918,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 
 	private void setExecutedScore(Facility facility) {
 		List<FinanceScoreHeader> scoringHeaderList = facility.getFinScoreHeaderList();
-		HashMap<Long, List<FinanceScoreDetail>> scoreDtlListMap = facility.getScoreDetailListMap();
+		Map<Long, List<FinanceScoreDetail>> scoreDtlListMap = facility.getScoreDetailListMap();
 		List<FinanceScoreDetail> scoreDetailList = null;
 		List<FacilityReferenceDetail> financeReferenceList = facility.getScoringGroupList();
 		List<ScoringMetrics> scoringMetricsList = null;
@@ -1083,7 +1084,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		Facility facility = (Facility) auditHeader.getAuditDetail().getModelData();
 

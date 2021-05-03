@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -215,7 +216,7 @@ public class FinTypeExpenseListCtrl extends GFCBaseCtrl<FinTypeExpense> {
 
 	private void showDetailFinTypeExpenseView(FinTypeExpense finTypeExpense) throws InterruptedException {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finTypeExpense", finTypeExpense);
 		map.put("finTypeExpenseListCtrl", this);
 		map.put("role", roleCode);

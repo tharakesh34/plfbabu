@@ -2143,7 +2143,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		final Collateral aCollateral = getFacilityService().getNewCollateral();
 		aCollateral.setCAFReference(this.cAFReference.getValue());
 		aCollateral.setLastReview("New");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("collateral", aCollateral);
 		map.put("facilityDialogCtrl", this);
 		map.put("role", getRole());
@@ -2162,7 +2162,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		Collateral itemdata = (Collateral) item.getAttribute("data");
 		if (!StringUtils.trimToEmpty(itemdata.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			itemdata.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("collateral", itemdata);
 			map.put("facilityDialogCtrl", this);
 			map.put("role", getRole());
@@ -2181,7 +2181,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		CustomerCollateral itemdata = (CustomerCollateral) item.getAttribute("data");
 		// Nag
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("eqtnCollateral", itemdata);
 		map.put("facilityDialogCtrl", this);
 		map.put("role", getRole());
@@ -2224,7 +2224,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 			if (customerRating.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerRating", customerRating);
 				map.put("customerDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -2373,7 +2373,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	private void renderComponent(String zulPath, Tabpanel tabpanel) {
 		logger.debug("Entering");
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("isFinanceNotes", true);
 			map.put("facility", getFacility());
 			map.put("isRecommendMand", true);

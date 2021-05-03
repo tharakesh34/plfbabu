@@ -119,7 +119,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		}
 
 		// Removing Schedule Details from Selected Recalculation From Date
-		HashMap<Date, FinanceScheduleDetail> mapList = new HashMap<Date, FinanceScheduleDetail>();
+		Map<Date, FinanceScheduleDetail> mapList = new HashMap<>();
 		BigDecimal schPriDue = BigDecimal.ZERO;
 		BigDecimal schPftDue = BigDecimal.ZERO;
 		BigDecimal unModifiedPft = BigDecimal.ZERO;

@@ -140,7 +140,7 @@ public class ReportGenerationUtil implements Serializable {
 			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
 					createExcel);
 
-			final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+			final Map<String, Object> auditMap = new HashMap<String, Object>();
 			auditMap.put("reportBuffer", buf);
 			String genReportName = Labels.getLabel(reportName);
 			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
@@ -214,7 +214,7 @@ public class ReportGenerationUtil implements Serializable {
 
 			byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, subListDS);
 
-			final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+			final Map<String, Object> auditMap = new HashMap<String, Object>();
 			auditMap.put("reportBuffer", buf);
 			if (dialogWindow != null) {
 				auditMap.put("dialogWindow", dialogWindow);
@@ -262,7 +262,7 @@ public class ReportGenerationUtil implements Serializable {
 			if (isExcel) {
 				return;
 			}
-			HashMap<String, Object> auditMap = new HashMap<String, Object>();
+			Map<String, Object> auditMap = new HashMap<String, Object>();
 			auditMap.put("reportBuffer", buf);
 			String genReportName = Labels.getLabel(reportName);
 			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
@@ -299,7 +299,7 @@ public class ReportGenerationUtil implements Serializable {
 			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
 
-			HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
+			Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
 			reportArgumentsMap.put("userName", userName);
 			reportArgumentsMap.put("reportHeading", reportName);
 			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));

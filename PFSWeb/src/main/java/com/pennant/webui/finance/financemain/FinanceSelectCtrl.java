@@ -84,7 +84,9 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
+import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -243,6 +245,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient LoanDownSizingService loanDownSizingService;
 	private transient FinServiceInstrutionDAO finServiceInstructionDAO;
 	private transient FinExcessAmountDAO finExcessAmountDAO;
+	private transient ReceiptUploadDetailDAO receiptUploadDetailDAO;
+	private transient FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	/**
 	 * Default constructor
@@ -1937,7 +1941,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			boolean isPending = receiptService.isReceiptsPending(finRef, Long.MIN_VALUE);
-			if (isPending) {
+			boolean receiptsQueue = receiptUploadDetailDAO.isReceiptsQueue(finRef);
+			boolean presentmentsInQueue = finReceiptHeaderDAO.checkPresentmentsInQueue(finRef);
+			if (isPending || receiptsQueue || presentmentsInQueue) {
 				MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
 				return;
 			}
@@ -2622,7 +2628,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		writeoffHeader.getFinanceDetail().getFinScheduleData().setFinanceMain(aFinanceMain);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeWriteoffHeader", writeoffHeader);
 		map.put("moduleCode", moduleDefiner);
 		map.put("moduleDefiner", moduleDefiner);
@@ -3464,7 +3470,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		 * FinanceMain. For handed over these parameter only a Map is accepted. So we put the FinanceMain object in a
 		 * HashMap.
 		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("loanType", FinanceConstants.PRODUCT_MURABAHA);
 		map.put("financeSelectCtrl", this);
 		map.put("tabbox", tab);
@@ -4017,5 +4023,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setReceiptUploadDetailDAO(ReceiptUploadDetailDAO receiptUploadDetailDAO) {
+		this.receiptUploadDetailDAO = receiptUploadDetailDAO;
+	}
+
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 }

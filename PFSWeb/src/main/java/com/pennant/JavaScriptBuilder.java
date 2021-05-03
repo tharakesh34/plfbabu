@@ -2033,7 +2033,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		if (StringUtils.equals(operatorLabel, Labels.getLabel("IN_LABEL"))
 				|| StringUtils.equals(operatorLabel, Labels.getLabel("NOTIN_LABEL"))) {
-			HashMap<String, Object> selectedValues = setSelectedValuesMap(lovText.getValue());
+			Map<String, Object> selectedValues = setSelectedValuesMap(lovText.getValue());
 
 			Object dataObject = ExtendedMultipleSearchListBox.show(this, moduleCode, selectedValues);
 
@@ -2041,7 +2041,7 @@ public class JavaScriptBuilder extends Groupbox {
 				lovText.setValue(dataObject.toString());
 			} else {
 				@SuppressWarnings("unchecked")
-				HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+				Map<String, Object> details = (Map<String, Object>) dataObject;
 
 				if (details != null) {
 					String multivalues = details.keySet().toString();
@@ -2076,10 +2076,10 @@ public class JavaScriptBuilder extends Groupbox {
 		logger.debug("Leaving");
 	}
 
-	private HashMap<String, Object> setSelectedValuesMap(String code) {
+	private Map<String, Object> setSelectedValuesMap(String code) {
 		logger.debug("Entering");
 
-		HashMap<String, Object> setValues = new HashMap<String, Object>();
+		Map<String, Object> setValues = new HashMap<String, Object>();
 
 		if (StringUtils.isNotBlank(code)) {
 			for (String value : code.split(",")) {
@@ -2699,7 +2699,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		if (StringUtils.isNotBlank(sqlQuery)) {
 			Map<String, Object> fieldObjectMap = new HashMap<String, Object>();
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 
 			if (objectFieldList == null || objectFieldList.isEmpty()) {
 				this.objectFieldList = PennantAppUtil.getRBFieldDetails(getModule(), getEvent());
@@ -2792,7 +2792,7 @@ public class JavaScriptBuilder extends Groupbox {
 	public void onClickCalculate(ForwardEvent event) {
 		logger.debug("Entering");
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		Textbox calculate = (Textbox) event.getData();
 
 		if (objectFieldList == null || objectFieldList.isEmpty()) {
@@ -2854,7 +2854,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 		String extendedComboValue = extendedCombo.getValue();
 		Object dataObject = null;
-		HashMap<String, Object> selectedValuesMap = null;
+		Map<String, Object> selectedValuesMap = null;
 
 		if (StringUtils.isNotBlank(extendedComboValue)) {
 			selectedValuesMap = setSelectedValuesMap(extendedComboValue);
@@ -2875,7 +2875,7 @@ public class JavaScriptBuilder extends Groupbox {
 			extendedComboValue = dataObject.toString();
 		} else {
 			@SuppressWarnings("unchecked")
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			extendedComboValue = details.keySet().toString();
 
 			if (jsRuleReturnType.isMultiSelection()) {

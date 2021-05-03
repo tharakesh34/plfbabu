@@ -164,7 +164,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	@XmlElement(name = "document")
 	private List<DocumentDetails> documents = null;
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<FinFlagsDetail> finFlagsDetailsList;
 
 	// API specific
@@ -488,11 +488,11 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		this.collateralStructure = collateralStructure;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
@@ -576,7 +576,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		this.bankValuation = bankValuation;
 	}
 
-	public void getDeclaredFieldValues(HashMap<String, Object> collateralSetupMap) {
+	public void getDeclaredFieldValues(Map<String, Object> collateralSetupMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.

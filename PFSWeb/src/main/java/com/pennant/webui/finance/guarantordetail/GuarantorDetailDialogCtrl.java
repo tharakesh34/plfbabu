@@ -591,8 +591,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Leaving ");
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("guarantorDetailDialogCtrl", this);
 		map.put("moduleCode", moduleCode);
@@ -635,7 +635,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 					new String[] { Labels.getLabel("label_GuarantorDetailDialog_GuarantorCIF/ID.value") }));
 		}
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("custCIF", this.guarantorCIF.getValue());
 
 			customer = (Customer) PennantAppUtil.getCustomerObject(this.guarantorCIF.getValue(), null);

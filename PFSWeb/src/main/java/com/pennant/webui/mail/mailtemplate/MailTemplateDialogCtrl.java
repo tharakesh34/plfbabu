@@ -170,13 +170,13 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	// ServiceDAOs / Domain Classes
 	private transient MailTemplateService mailTemplateService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private List<ValueLabel> listEmailFormat = PennantStaticListUtil.getTemplateFormat(); // autowired
 	private List<ValueLabel> listTemplateFor = PennantStaticListUtil.getTemplateForList();
 	private List<ValueLabel> mailTeplateModulesList = PennantStaticListUtil.getMailModulesList();
 	private List<ValueLabel> templateEvents = PennantStaticListUtil.getTemplateEvents();
-	private HashMap<String, String> filedValues = new HashMap<String, String>();
-	private HashMap<String, String> filedDesc = new HashMap<String, String>();
+	private Map<String, String> filedValues = new HashMap<String, String>();
+	private Map<String, String> filedDesc = new HashMap<String, String>();
 
 	/**
 	 * default constructor.<br>
@@ -1552,14 +1552,14 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	private void createSimulator(String mailContent) throws InterruptedException {
 		logger.debug("Entering");
 
-		final HashMap<String, String> fieldsMap = new HashMap<String, String>();
+		final Map<String, String> fieldsMap = new HashMap<String, String>();
 		for (String field : filedValues.keySet()) {
 			if (mailContent.contains(field)) {
 				fieldsMap.put(filedValues.get(field), filedDesc.get(filedValues.get(field)));
 			}
 		}
 
-		final HashMap<String, Object> argsMap = new HashMap<String, Object>();
+		final Map<String, Object> argsMap = new HashMap<String, Object>();
 		argsMap.put("mailTemplateDialogCtrl", this);
 		argsMap.put("fieldsMap", fieldsMap);
 		argsMap.put("mailContent", mailContent);
@@ -1618,11 +1618,11 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.pagedListService = pagedListService;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

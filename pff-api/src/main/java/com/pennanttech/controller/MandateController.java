@@ -2,7 +2,6 @@ package com.pennanttech.controller;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -539,7 +538,7 @@ public class MandateController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(Mandate aMandate, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMandate.getBefImage(), aMandate);
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), String.valueOf(aMandate.getMandateID()), null,
-				null, auditDetail, aMandate.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, aMandate.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public MandateService getMandateService() {

@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
@@ -122,7 +123,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 
 	// ServiceDAOs / Domain Classes
 	private transient StepPolicyService stepPolicyService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private List<StepPolicyDetail> stepPolicyDetailList = new ArrayList<StepPolicyDetail>();
 	int listRows;
 	protected boolean recSave;
@@ -980,7 +981,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		final StepPolicyDetail aStepPolicyDetail = getStepPolicyService().getNewStepPolicyDetail();
 		aStepPolicyDetail.setPolicyCode(this.policyCode.getValue());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("stepPolicyDetail", aStepPolicyDetail);
 		map.put("stepPolicyDialogCtrl", this);
@@ -1016,7 +1017,7 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		} else {
 			stepPolicyDetail.setPolicyCode(this.policyCode.getValue());
 			stepPolicyDetail.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 
 			map.put("stepPolicyDetail", stepPolicyDetail);
 			map.put("stepPolicyDialogCtrl", this);
@@ -1141,11 +1142,11 @@ public class StepPolicyDialogCtrl extends GFCBaseCtrl<StepPolicyDetail> {
 		this.stepPolicyListCtrl = stepPolicyListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

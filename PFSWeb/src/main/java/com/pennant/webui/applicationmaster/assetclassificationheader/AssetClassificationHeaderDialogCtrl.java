@@ -904,7 +904,7 @@ public class AssetClassificationHeaderDialogCtrl extends GFCBaseCtrl<AssetClassi
 			this.finType.setTooltiptext("");
 		} else {
 			@SuppressWarnings("unchecked")
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempCode = details.keySet().toString();
 				tempCode = tempCode.replace("[", " ").replace("]", "").replace(" ", "");

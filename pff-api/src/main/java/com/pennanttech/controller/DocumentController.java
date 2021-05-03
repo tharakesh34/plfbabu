@@ -1,7 +1,6 @@
 package com.pennanttech.controller;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -192,7 +191,7 @@ public class DocumentController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(DocumentDetails documentDetails, String transType) {
 		AuditDetail auditDetail = new AuditDetail(transType, 1, documentDetails.getBefImage(), documentDetails);
 		return new AuditHeader(documentDetails.getReferenceId(), null, null, null, auditDetail,
-				documentDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				documentDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setDocumentService(DocumentService documentService) {

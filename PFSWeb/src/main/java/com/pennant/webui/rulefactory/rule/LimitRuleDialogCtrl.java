@@ -1088,7 +1088,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		Combobox selectionCombo = (Combobox) comp.getPreviousSibling().getPreviousSibling();
 		String selectionType = selectionCombo.getSelectedItem().getValue().toString();
 		if (selectionType.equals("calvalue")) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("returnValue", textbox.getValue());
 			map.put("textbox", textbox);
 			map.put("rbModule", queryModule.getValue());

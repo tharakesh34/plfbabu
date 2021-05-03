@@ -168,54 +168,48 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 	}
 
 	@Override
-	public CreditReviewDetails getCreditReviewDetailsbyLoanType(CreditReviewDetails creditReviewDetail) {
+	public CreditReviewDetails getCreditReviewDetailsbyLoanType(CreditReviewDetails crd) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, FINCATEGORY, EMPLOYMENTTYPE, ELIGIBILITYMETHOD, SECTION");
+		sql.append(", TEMPLATENAME, TEMPLATEVERSION, FIELDS, PROTECTEDCELLS, FieldKeys");
+		sql.append(" FROM CREDITREVIEWCONFIG");
 
-		logger.debug(Literal.ENTERING);
-		StringBuilder selectSql = new StringBuilder();
 		StringBuilder whereCondition = new StringBuilder();
-
-		if (StringUtils.isNotEmpty(creditReviewDetail.getProduct())) {
+		if (StringUtils.isNotEmpty(crd.getProduct())) {
 			whereCondition.append(" Product = :Product");
 		}
 
-		if (StringUtils.isNotEmpty(creditReviewDetail.getEmploymentType())) {
+		if (StringUtils.isNotEmpty(crd.getEmploymentType())) {
 			if (StringUtils.isNotEmpty(whereCondition.toString())) {
 				whereCondition.append(" and ");
 			}
 			whereCondition.append(" EmploymentType = :EmploymentType ");
 		}
 
-		if (StringUtils.isNotEmpty(creditReviewDetail.getEligibilityMethod())) {
+		if (StringUtils.isNotEmpty(crd.getEligibilityMethod())) {
 			if (StringUtils.isNotEmpty(whereCondition.toString())) {
 				whereCondition.append(" and ");
 			}
 			whereCondition.append(" EligibilityMethod = :EligibilityMethod ");
 		}
 
-		selectSql.append(
-				" Select ID,FINCATEGORY,EMPLOYMENTTYPE,ELIGIBILITYMETHOD,SECTION,TEMPLATENAME,TEMPLATEVERSION, FIELDS, PROTECTEDCELLS, FieldKeys");
-		selectSql.append(" FROM  CREDITREVIEWCONFIG ");
 		if (StringUtils.isNotBlank(whereCondition.toString())) {
-			selectSql.append(" Where ").append(whereCondition);
+			sql.append(" Where ").append(whereCondition);
 		} else {
-			return creditReviewDetail = null;
+			return crd = null;
 		}
 
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewDetail);
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(crd);
 		RowMapper<CreditReviewDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(CreditReviewDetails.class);
 
 		try {
-			creditReviewDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			creditReviewDetail = null;
-		} catch (Exception e) {
-			creditReviewDetail = null;
-			logger.debug(Literal.EXCEPTION, e);
+			logger.info("Credit Review Configuration not avilable for the spcified Product >> {}", crd.getProduct());
+			return null;
 		}
-
-		logger.debug(Literal.LEAVING);
-		return creditReviewDetail;
 	}
 
 	@Override

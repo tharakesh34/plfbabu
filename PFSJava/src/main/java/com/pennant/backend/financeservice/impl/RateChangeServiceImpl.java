@@ -201,7 +201,8 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			if (!CalculationConstants.RPYCHG_TILLMDT.equals(recalType)
 					&& !CalculationConstants.RPYCHG_ADJMDT.equals(recalType)
 					&& !CalculationConstants.RPYCHG_TILLDATE.equals(recalType)
-					&& !CalculationConstants.RPYCHG_ADJTERMS.equals(recalType)) {
+					&& !CalculationConstants.RPYCHG_ADJTERMS.equals(recalType)
+					&& !CalculationConstants.RPYCHG_CURPRD.equals(recalType)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = recalType;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91104", "", valueParm), lang));

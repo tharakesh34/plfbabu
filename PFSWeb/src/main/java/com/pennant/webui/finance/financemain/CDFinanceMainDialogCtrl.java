@@ -46,6 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -282,7 +283,7 @@ public class CDFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 
 	public void doFillReasons(int reason) throws InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
 		map.put("reason", reason);
 		try {

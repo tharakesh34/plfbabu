@@ -268,7 +268,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	private void doShowDialogPage(LegalVerification legalVerification) {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, Object> map = getDefaultArguments();
+		Map<String, Object> map = getDefaultArguments();
 		if (getFinanceDetail().getTvVerification() == null) {
 			getFinanceDetail().setTvVerification(new Verification());
 		}
@@ -292,9 +292,9 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
+	public Map<String, Object> getDefaultArguments() {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());

@@ -417,7 +417,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			// Preparing Total Advance Profit Amount
 			totalAdvPft = totalAdvPft.add(curSchd.getAdvProfit());
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finSchdData", finScheduleData);
 			map.put("financeScheduleDetail", curSchd);
 			map.put("paymentDetailsMap", rpyDetailsMap);

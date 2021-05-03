@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -77,7 +78,7 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 
 	private List<NPAProvisionDetail> provisionDetailsList = new LinkedList<>();
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private Long npaTemplateId;
 	private String npaTemplateCode;
 	private String npaTemplateDesc;
@@ -221,11 +222,11 @@ public class NPAProvisionHeader extends AbstractWorkflowEntity {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

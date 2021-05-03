@@ -369,7 +369,7 @@ public class AccountsListCtrl extends GFCBaseListCtrl<Accounts> {
 		 * we can call our AcountsDialog ZUL-file with parameters. So we can call them with a object of the selected
 		 * Accounts. For handed over these parameter only a Map is accepted. So we put the Accounts object in a HashMap.
 		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("acountsCtrl", this);
 		map.put("searchObject", getSearchObj());
 

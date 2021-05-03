@@ -228,7 +228,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		//Check List To display 
 		List<FacilityReferenceDetail> checkListToDisplay = new ArrayList<FacilityReferenceDetail>();
 
-		HashMap<String, Object> fieldsandvalues = null;
+		Map<String, Object> fieldsandvalues = null;
 		if (aFacility.getCustomerEligibilityCheck() != null) {
 			fieldsandvalues = aFacility.getCustomerEligibilityCheck().getDeclaredFieldValues();
 		} else {
@@ -409,9 +409,9 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		}
 	}
 
-	private HashMap<String, Object> doSetEngineData(long custId) {
+	private Map<String, Object> doSetEngineData(long custId) {
 		logger.debug("Entering");
-		HashMap<String, Object> fieldsAndValues = new HashMap<String, Object>();
+		Map<String, Object> fieldsAndValues = new HashMap<String, Object>();
 		Customer aCustomer = getCustomerService().getApprovedCustomerById(custId);
 		// Set Customer Data to check the eligibility
 		fieldsAndValues.put("custAge", DateUtility.getYearsBetween(aCustomer.getCustDOB(), DateUtility.getSysDate()));

@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -422,7 +423,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 				reportView = false;
 			}
 			if (reportView) {
-				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+				final Map<String, Object> auditMap = new HashMap<String, Object>();
 				auditMap.put("reportBuffer", buf);
 				String genReportName = Labels.getLabel(reportName);
 				auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);

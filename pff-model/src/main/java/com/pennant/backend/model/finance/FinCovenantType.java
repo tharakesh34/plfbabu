@@ -68,6 +68,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	@XmlElement
 	private String covenantType;
 	private String covenantTypeDesc;
+	@XmlElement
 	private String mandRole;
 	private String mandRoleDesc;
 	@XmlElement
@@ -80,7 +81,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private boolean alwOtc;
 	@XmlElement
 	private boolean internalUse;
-	@XmlElement
+	//@XmlElement
 	private int postponeDays;
 	private String module;
 
@@ -88,7 +89,7 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinCovenantType befImage;
 	private LoggedInUser userDetails;
-
+	@XmlElement
 	private Date receivableDate;
 	private Date docReceivedDate;
 	private String categoryCode;

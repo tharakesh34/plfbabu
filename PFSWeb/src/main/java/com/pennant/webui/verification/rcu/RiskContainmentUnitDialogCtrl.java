@@ -595,7 +595,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		}
 
 		ExtendedFieldHeader fieldHeader = details.getExtendedFieldHeader();
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("riskContainmentUnitModule", true);
 		map.put("extendedFieldHeader", fieldHeader);
 		map.put("extendedFieldRender", details.getExtendedFieldRender());
@@ -665,7 +665,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	private void appendDocumentDetailTab() {
 		logger.debug("Entering");
 		createTab("DOCUMENTDETAIL", true);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getRiskContainmentUnit().getDocuments());
 		map.put("module", DocumentCategories.VERIFICATION_RCU.getKey());
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
@@ -681,8 +681,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("isNotFinanceProcess", true);
@@ -1061,7 +1061,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	public void onClick$btnSearchCustomerDetails(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.riskContainmentUnit.getCustId());
 		String pageName = PennantAppUtil.getCustomerPageName();
 

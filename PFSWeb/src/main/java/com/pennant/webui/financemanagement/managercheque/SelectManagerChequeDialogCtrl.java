@@ -44,6 +44,7 @@
 package com.pennant.webui.financemanagement.managercheque;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -194,7 +195,7 @@ public class SelectManagerChequeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doSetValidation();
 		this.window_SelectManagerChequeTypeDialog.onClose();
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("enqiryModule", enqiryModule);
 		map.put("managerChequeType", managerChequeType);
 		map.put("financeMain", financeMain);

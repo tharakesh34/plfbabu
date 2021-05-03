@@ -45,7 +45,7 @@
 				<element name="max">500</element>
 			</constraint>
 		</field>
-		<field name="validateCovenantType">
+		<!-- <field name="validateCovenantType">
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>postponeDays applicable only for alwPostpone</message>
 				<groups>
@@ -71,6 +71,6 @@
 					}
 				</element>
 			</constraint>
-		</field>
+		</field> -->
 	</bean>
 </constraint-mappings>

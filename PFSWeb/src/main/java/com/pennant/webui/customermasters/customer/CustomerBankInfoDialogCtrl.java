@@ -2352,7 +2352,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	public boolean saveBankInfoList(CustomerBankInfo customerBankInfo) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<Date, BankInfoDetail> hashMap = new HashMap<>();
+		Map<Date, BankInfoDetail> hashMap = new HashMap<>();
 
 		List<BankInfoDetail> infoList = customerBankInfo.getBankInfoDetails();
 		ArrayList<WrongValueException> wve = new ArrayList<>();

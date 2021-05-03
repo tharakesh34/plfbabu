@@ -2539,7 +2539,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	private void listSave(FinScheduleData finDetail, String tableType, long logKey) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {

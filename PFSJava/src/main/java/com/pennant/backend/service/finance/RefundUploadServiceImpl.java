@@ -553,7 +553,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, paymentHeader.getBefImage(), paymentHeader);
 		return new AuditHeader(String.valueOf(paymentHeader.getPaymentId()),
 				String.valueOf(paymentHeader.getPaymentId()), null, null, auditDetail, paymentHeader.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

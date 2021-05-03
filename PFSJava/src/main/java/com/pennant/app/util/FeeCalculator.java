@@ -388,7 +388,7 @@ public class FeeCalculator implements Serializable {
 					finScheduleData.getFeeEvent());
 
 			if (CollectionUtils.isNotEmpty(feeRules)) {
-				HashMap<String, Object> executionMap = new HashMap<String, Object>();
+				Map<String, Object> executionMap = new HashMap<String, Object>();
 				Map<String, String> ruleSqlMap = new HashMap<String, String>();
 				List<Object> objectList = new ArrayList<Object>();
 

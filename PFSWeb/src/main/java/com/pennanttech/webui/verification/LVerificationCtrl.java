@@ -296,7 +296,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	private void appendFinBasicDetails(Object finHeaderList) {
 		logger.debug(Literal.ENTERING);
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
@@ -343,7 +343,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void onCheck$lv(Event event) {
-		final HashMap<String, Object> map = new HashMap<>();
+		final Map<String, Object> map = new HashMap<>();
 		LegalVerification legalVerification = lv.getSelectedItem().getValue();
 		if (lvInquiry.getChildren().size() >= 2) {
 			lvInquiry.getChildren().remove(1);

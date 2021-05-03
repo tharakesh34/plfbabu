@@ -44,6 +44,7 @@ package com.pennant.webui.finance.enquiry;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -230,7 +231,7 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		if (listitem != null && listitem.getAttribute("data") != null) {
 			final FinCovenantType aFinCovenantType = (FinCovenantType) listitem.getAttribute("data");
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finCovenantTypes", aFinCovenantType);
 			map.put("enqModule", true);
 

@@ -1,7 +1,6 @@
 package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -558,7 +557,7 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 	private AuditHeader getAuditHeader(LimitHeader limitHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, limitHeader.getBefImage(), limitHeader);
 		return new AuditHeader(String.valueOf(limitHeader.getHeaderId()), String.valueOf(limitHeader.getHeaderId()),
-				null, null, auditDetail, limitHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, limitHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

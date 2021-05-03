@@ -246,7 +246,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	}
 
 	protected Map<String, Object> getDefaultArguments() {
-		HashMap<String, Object> aruments = new HashMap<>();
+		Map<String, Object> aruments = new HashMap<>();
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
 		return aruments;

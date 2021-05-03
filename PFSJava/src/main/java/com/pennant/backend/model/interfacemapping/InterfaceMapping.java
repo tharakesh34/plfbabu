@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -75,7 +76,7 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 	private InterfaceMapping befImage;
 	private LoggedInUser userDetails;
 	private List<MasterMapping> masterMappingList;
-	private HashMap<String, List<AuditDetail>> lovDescAuditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> lovDescAuditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -215,11 +216,11 @@ public class InterfaceMapping extends AbstractWorkflowEntity {
 		this.mappingType = mappingType;
 	}
 
-	public HashMap<String, List<AuditDetail>> getLovDescAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getLovDescAuditDetailMap() {
 		return lovDescAuditDetailMap;
 	}
 
-	public void setLovDescAuditDetailMap(HashMap<String, List<AuditDetail>> lovDescAuditDetailMap) {
+	public void setLovDescAuditDetailMap(Map<String, List<AuditDetail>> lovDescAuditDetailMap) {
 		this.lovDescAuditDetailMap = lovDescAuditDetailMap;
 	}
 

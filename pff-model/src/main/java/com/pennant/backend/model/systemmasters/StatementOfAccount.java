@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  Academic.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : Academic.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified Date :
+ * 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.model.systemmasters;
@@ -52,7 +34,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennanttech.pff.external.model.SOAScheduleReport;
 
 /**
  * Model class for the <b>Academic table</b>.<br>
@@ -179,7 +160,7 @@ public class StatementOfAccount {
 	// Customer E-mails
 	private String custEMail;
 
-	//Product Details
+	// Product Details
 	private String productId = "";
 
 	private String productSku = "";
@@ -216,6 +197,9 @@ public class StatementOfAccount {
 	private String advIntAmt;
 	private String cashCollAmt;
 	private String dsraAmt;
+
+	// downpayment
+	private BigDecimal downPayment = BigDecimal.ZERO;
 
 	// Summary Reports List
 	private List<SOASummaryReport> soaSummaryReports = new ArrayList<SOASummaryReport>();
@@ -268,7 +252,7 @@ public class StatementOfAccount {
 	private BigDecimal unAdjAmt = BigDecimal.ZERO;
 	private String unAdjAmtInWords;
 
-	//Net receivable
+	// Net receivable
 	private BigDecimal netReceivable = BigDecimal.ZERO;
 	private String netRcvbleInWords;
 
@@ -1450,6 +1434,14 @@ public class StatementOfAccount {
 
 	public void setNetRcvbleInWords(String netRcvbleInWords) {
 		this.netRcvbleInWords = netRcvbleInWords;
+	}
+	
+	public BigDecimal getDownPayment() {
+		return downPayment;
+	}
+
+	public void setDownPayment(BigDecimal downPayment) {
+		this.downPayment = downPayment;
 	}
 
 }

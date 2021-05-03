@@ -46,6 +46,7 @@ package com.pennant.webui.financemanagement.insurance;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -519,7 +520,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.tabPanelPostingDetails.setHeight(getListBoxHeight(7));
 			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CANINS,
 					AccountEventConstants.ACCEVENT_CANINS);
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", vasRecording);
 			map.put("acSetID", accountsetId);
 			map.put("enqModule", enqiryModule);

@@ -1,7 +1,7 @@
 package com.pennanttech.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -126,7 +126,7 @@ public class FeePostingWebServiceImpl extends ExtendedTestClass
 	private AuditHeader getAuditHeader(FeePostings aFeePostings, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeePostings.getBefImage(), aFeePostings);
 		return new AuditHeader(String.valueOf(aFeePostings.getId()), String.valueOf(aFeePostings.getId()), null, null,
-				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	@Autowired

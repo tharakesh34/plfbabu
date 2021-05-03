@@ -47,6 +47,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -156,7 +158,7 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	// ServiceDAOs / Domain Classes
 	private transient AccountsService accountsService;
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<>();
 
 	/**
 	 * default constructor.<br>
@@ -1286,11 +1288,11 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private void doRemoveLOVValidation() {
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

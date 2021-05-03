@@ -484,7 +484,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		aFinCovenantType.setNewRecord(true);
 		aFinCovenantType.setWorkflowId(0);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finCovenantTypes", aFinCovenantType);
 		map.put("ccyFormatter", ccyFormat);
 		map.put("finCovenantTypesListCtrl", this);
@@ -523,7 +523,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			} else {
 				aFinCovenantType.setNewRecord(false);
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("finCovenantTypes", aFinCovenantType);
 				map.put("ccyFormatter", ccyFormat);
 				map.put("finCovenantTypesListCtrl", this);
@@ -616,7 +616,7 @@ public class FinCovenantTypeListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", headerList);
 			map.put("moduleName", moduleName);

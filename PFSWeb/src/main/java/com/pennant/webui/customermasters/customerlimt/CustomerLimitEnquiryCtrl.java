@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -319,7 +320,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 
 		// get the selected Customer object
 		final Listitem item = this.listBoxCustomerLimit.getSelectedItem();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT

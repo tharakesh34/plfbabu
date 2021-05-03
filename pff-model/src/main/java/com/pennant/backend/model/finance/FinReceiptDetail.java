@@ -77,7 +77,7 @@ public class FinReceiptDetail implements Serializable {
 	private BigDecimal dueAmount = BigDecimal.ZERO;
 
 	public Map<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> receiptDetailMap = new HashMap<>();
+		Map<String, Object> receiptDetailMap = new HashMap<>();
 		getDeclaredFieldValues(receiptDetailMap);
 		return receiptDetailMap;
 	}

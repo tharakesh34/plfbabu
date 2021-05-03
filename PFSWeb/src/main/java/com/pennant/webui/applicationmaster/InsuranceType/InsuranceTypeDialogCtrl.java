@@ -397,7 +397,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		InsuranceTypeProvider itemdata = (InsuranceTypeProvider) item.getAttribute("data");
 		if (!StringUtils.trimToEmpty(itemdata.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			itemdata.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("insuranceTypeProvider", itemdata);
 			itemdata.setInsuranceTypeDesc(this.insuranceType.getInsuranceTypeDesc());
 			map.put("InsuranceTypeDialogCtrl", this);
@@ -792,7 +792,7 @@ public class InsuranceTypeDialogCtrl extends GFCBaseCtrl<InsuranceType> {
 		FinTypeAccount itemdata = (FinTypeAccount) item.getAttribute("data");
 		if (!StringUtils.trimToEmpty(itemdata.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			itemdata.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finTypeAccount", itemdata);
 			map.put("financeTypeDialogCtrl", this);
 			map.put("role", getRole());

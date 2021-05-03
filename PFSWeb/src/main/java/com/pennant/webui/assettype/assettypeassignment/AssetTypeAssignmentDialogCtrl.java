@@ -138,7 +138,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		generator.setCcyFormat(ccyFormat);
 
 		if (getExtendedFieldRender().getMapValues() != null) {
-			generator.setFieldValueMap((HashMap<String, Object>) getExtendedFieldRender().getMapValues());
+			generator.setFieldValueMap((Map<String, Object>) getExtendedFieldRender().getMapValues());
 		}
 
 		doCheckRights();
@@ -329,7 +329,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 					}
 
 					if (fieldValuesMap != null) {
-						generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
+						generator.setFieldValueMap((Map<String, Object>) fieldValuesMap);
 					}
 
 					generator.renderWindow(getExtendedFieldHeader(), newRecord);

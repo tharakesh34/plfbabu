@@ -45,6 +45,7 @@ package com.pennant.webui.applicationmaster.customerstatuscode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -864,7 +865,7 @@ public class CustomerStatusCodeDialogCtrl extends GFCBaseCtrl<CustomerStatusCode
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes(this.customerStatusCode));
 		map.put("control", this);
 

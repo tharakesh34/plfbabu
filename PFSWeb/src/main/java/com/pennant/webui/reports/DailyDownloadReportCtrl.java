@@ -53,6 +53,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -302,7 +303,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ENDOFMONTH) + "/" + folderPath + "/" + reportName
 				+ ".jasper";
-		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
+		Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
 		reportArgumentsMap.put("userName", getUserWorkspace().getLoggedInUser().getUserName());
 		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 		reportArgumentsMap.put("whereCondition", "");

@@ -558,7 +558,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	private void createComponents(Covenant aCovenant) {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		if (!enqiryModule) {
 			map.put("roleCode", roleCode);
@@ -652,7 +652,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", headerList);
 			map.put("moduleName", moduleCode);

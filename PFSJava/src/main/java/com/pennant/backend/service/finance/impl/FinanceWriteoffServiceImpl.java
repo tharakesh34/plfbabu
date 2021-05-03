@@ -560,10 +560,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		for (FinServiceInstruction finServInst : finScheduleData.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
 		}
-		
+
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
 		FinanceScheduleDetail orgNextSchd = financeScheduleDetailDAO.getNextSchPayment(finReference, curBDay);
-		
+
 		// Finance Stage Accounting Process
 		// =======================================
 		auditHeader = executeStageAccounting(auditHeader);
@@ -599,7 +599,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		 * FinanceProfitDetail(); } else { totalPftSchdOld = profitDetail.getTotalPftSchd(); totalPftCpzOld =
 		 * profitDetail.getTotalPftCpz(); }
 		 * 
-		 * AEAmountCodes amountCodes = aeEvent.getAeAmountCodes(); HashMap<String, Object> dataMap =
+		 * AEAmountCodes amountCodes = aeEvent.getAeAmountCodes(); Map<String, Object> dataMap =
 		 * amountCodes.getDeclaredFieldValues();
 		 * 
 		 * BigDecimal totalPftSchdNew = profitDetail.getTotalPftSchd(); BigDecimal totalPftCpzNew =
@@ -868,7 +868,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
@@ -1063,7 +1063,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinanceWriteoffHeader financeWriteoffHeader = (FinanceWriteoffHeader) auditHeader.getAuditDetail()
 				.getModelData();
@@ -1118,7 +1118,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		return auditHeader;
 	}
-
 
 	@Override
 	public int getMaxFinanceWriteoffSeq(String finReference, Date writeoffDate, String string) {

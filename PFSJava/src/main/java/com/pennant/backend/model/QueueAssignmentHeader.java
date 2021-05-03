@@ -3,6 +3,7 @@ package com.pennant.backend.model;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -29,7 +30,7 @@ public class QueueAssignmentHeader extends AbstractWorkflowEntity {
 	private QueueAssignmentHeader befImage;
 	private boolean newRecord = false;
 	private LoggedInUser userDetails;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<QueueAssignment> queueAssignmentsList;
 	private boolean manualAssign = false;
 
@@ -105,11 +106,11 @@ public class QueueAssignmentHeader extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

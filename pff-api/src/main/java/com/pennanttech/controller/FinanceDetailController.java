@@ -176,7 +176,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
 				AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null,
 						null, null, auditDetail, financeMain.getUserDetails(),
-						new HashMap<String, ArrayList<ErrorDetail>>());
+						new HashMap<String, List<ErrorDetail>>());
 				//get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
@@ -613,7 +613,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 			doSetRequiredData(finDetail.getFinScheduleData());
 
-			List<Integer> planEMIHmonths = new ArrayList<Integer>();
+			List<Integer> planEMIHmonths = new ArrayList<>();
 			if (CollectionUtils.isNotEmpty(finDetail.getFinScheduleData().getApiPlanEMIHmonths())
 					&& StringUtils.equals(finDetail.getFinScheduleData().getFinanceMain().getPlanEMIHMethod(),
 							FinanceConstants.PLANEMIHMETHOD_FRQ)) {

@@ -42,6 +42,7 @@ package com.pennant.webui.util;
  ********************************************************************************************
  */
 import java.util.HashMap;
+import java.util.Map;
 
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
@@ -139,7 +140,7 @@ public class ScreenCTL {
 	 */
 	public static void displayNotes(Notes notes, Object control) throws Exception {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", notes);
 		map.put("control", control);
 		Executions.createComponents("/WEB-INF/pages/notes/notes.zul", null, map);

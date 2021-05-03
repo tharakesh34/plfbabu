@@ -109,7 +109,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 		if (arguments.containsKey("dialogCtrl")) {
 
 			object = (Object) arguments.get("dialogCtrl");
-			dataMap = (HashMap<Object, Object>) arguments.get("dataMap");
+			dataMap = (Map<Object, Object>) arguments.get("dataMap");
 			filters = (Object[]) arguments.get("prevFilters");
 		} else {
 			object = null;

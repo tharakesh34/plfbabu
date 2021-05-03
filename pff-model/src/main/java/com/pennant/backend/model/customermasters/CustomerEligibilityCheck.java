@@ -595,8 +595,8 @@ public class CustomerEligibilityCheck implements Serializable {
 		this.custEmpAloc = custEmpAloc;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> customerEligibityMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> customerEligibityMap = new HashMap<String, Object>();
 
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {

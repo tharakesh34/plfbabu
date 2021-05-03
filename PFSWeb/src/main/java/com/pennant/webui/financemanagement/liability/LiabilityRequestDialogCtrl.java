@@ -846,7 +846,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 				Rule rule = getRuleService().getApprovedRuleById(financeReferenceDetail.getLovDescAggRuleName(),
 						RuleConstants.MODULE_AGRRULE, RuleConstants.EVENT_AGRRULE);
 				if (rule != null) {
-					HashMap<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
+					Map<String, Object> fieldsAndValues = getFinanceDetail().getCustomerEligibilityCheck()
 							.getDeclaredFieldValues();
 					isAgrRender = (boolean) RuleExecutionUtil.executeRule(rule.getSQLRule(), fieldsAndValues,
 							getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy(),

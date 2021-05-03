@@ -607,7 +607,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (!onLoadProcess) {
 			accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
 					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("paymentInstruction", paymentInstruction);
 			map.put("acSetID", accountsetId);
 			map.put("enqModule", enqiryModule);

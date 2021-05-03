@@ -743,7 +743,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	private void doShowDialogPage(Mandate mandate) {
 		logger.debug("Entering");
 
-		HashMap<String, Object> arg = new HashMap<String, Object>();
+		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("mandate", mandate);
 		arg.put("mandateRegistrationListCtrl", this);
 		arg.put("enqModule", enqiryModule);

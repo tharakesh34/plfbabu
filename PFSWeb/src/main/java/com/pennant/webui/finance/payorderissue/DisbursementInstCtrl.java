@@ -566,7 +566,7 @@ public class DisbursementInstCtrl {
 		aFinAdvancePayments.setWorkflowId(0);
 		aFinAdvancePayments.setVasReference(PennantConstants.List_Select);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
 		map.put("documentDetails", getDocumentDetails());
@@ -592,7 +592,7 @@ public class DisbursementInstCtrl {
 					MessageUtil.showMessage(Labels.getLabel("common_NoMaintainance"));
 				} else {
 					aFinAdvancePayments.setNewRecord(false);
-					final HashMap<String, Object> map = new HashMap<String, Object>();
+					final Map<String, Object> map = new HashMap<String, Object>();
 					map.put("finAdvancePayments", aFinAdvancePayments);
 					map.put("documentDetails", documentDetails);
 					doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry, payOrderIssueHeader);
@@ -620,7 +620,7 @@ public class DisbursementInstCtrl {
 		logger.debug("Leaving");
 	}
 
-	private void doshowDialog(HashMap<String, Object> map, Object listCtrl, Object dialogCtrl, String module,
+	private void doshowDialog(Map<String, Object> map, Object listCtrl, Object dialogCtrl, String module,
 			boolean isEnquiry, PayOrderIssueHeader payOrderIssueHeader) throws InterruptedException {
 
 		map.put("ccyFormatter", ccyFormat);

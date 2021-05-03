@@ -352,7 +352,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		DocumentType doctype = (DocumentType) this.docCategory.getObject();
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		if (isFacility()) {
 			map.put("DocumentDetailDialogCtrl", this.facilityDocumentDetailDialogCtrl);
 		} else {

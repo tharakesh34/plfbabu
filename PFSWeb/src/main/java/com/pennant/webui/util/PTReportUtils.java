@@ -46,6 +46,7 @@ package com.pennant.webui.util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,7 +65,7 @@ public class PTReportUtils implements Serializable {
 	@SuppressWarnings("rawtypes")
 	public static void getPTReport(String model, List searchObj, int maxResults) throws InterruptedException {
 		logger.debug("Entering ");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("list", searchObj);
 		map.put("reportName", model);
 		map.put("maxcount", maxResults);

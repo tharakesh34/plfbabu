@@ -249,7 +249,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 				subHeadMap = this.accountMappingService.getSubheadRules(subHeadRuleList);
 				Rule rule = null;
-				HashMap<String, Object> executeMap = null;
+				Map<String, Object> executeMap = null;
 				Listitem item = null;
 				Listcell cell = null;
 

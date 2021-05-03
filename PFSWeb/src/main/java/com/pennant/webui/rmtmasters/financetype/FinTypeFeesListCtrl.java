@@ -392,7 +392,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 	private void showDetailFinTypeFeesView(FinTypeFees finTypeFees) throws InterruptedException {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finTypeFees", finTypeFees);
 		map.put("finTypeFeesListCtrl", this);
 		map.put("role", roleCode);

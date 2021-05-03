@@ -3,6 +3,7 @@ package com.pennant.webui.finance.financemain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -309,7 +310,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> arrayList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("displayLog", false);
 			if (arrayList != null) {
@@ -351,7 +352,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		aFinanceDeviations.setDeviationUserId(String.valueOf(userId));
 		aFinanceDeviations.setWorkflowId(0);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeDeviations", aFinanceDeviations);
 		map.put("newRecord", "true");
 		doshowDialog(map, false);
@@ -378,7 +379,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 						initDelegationRole = item.getDelegationRole();
 					}
 				}
-				HashMap<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("financeDeviations", deviation);
 				map.put("InitDelegationRole", initDelegationRole);
 
@@ -390,7 +391,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	}
 
-	private void doshowDialog(HashMap<String, Object> map, boolean isEnquiry) throws InterruptedException {
+	private void doshowDialog(Map<String, Object> map, boolean isEnquiry) throws InterruptedException {
 
 		map.put("enqModule", isEnquiry);
 		map.put("roleCode", roleCode);
@@ -441,7 +442,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		notes.setReference(getReference(deviationDetail));
 		notes.setVersion(0);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", notes);
 		map.put("control", this);
 		if (enquiry) {

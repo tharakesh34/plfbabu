@@ -46,6 +46,7 @@ package com.pennant.backend.model.rmtmasters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -83,7 +84,7 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 	private List<TransactionEntry> lovDescTransactionEntries = new ArrayList<TransactionEntry>();
 
 	@XmlTransient
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -237,11 +238,11 @@ public class AccountingSet extends AbstractWorkflowEntity implements Entity {
 		return lovDescTransactionEntries;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 

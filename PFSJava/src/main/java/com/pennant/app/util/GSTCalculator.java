@@ -384,7 +384,7 @@ public class GSTCalculator {
 	public static Map<String, Object> getGSTDataMap(String finBranch, String custBranch, String custState,
 			String custResdType, String custCountry, FinanceTaxDetail taxDetail) {
 
-		HashMap<String, Object> gstExecutionMap = new HashMap<>();
+		Map<String, Object> gstExecutionMap = new HashMap<>();
 		boolean gstExempted = false;
 
 		if (StringUtils.isBlank(custBranch)) {

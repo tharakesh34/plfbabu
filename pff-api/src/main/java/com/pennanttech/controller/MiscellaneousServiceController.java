@@ -781,7 +781,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJVPosting.getBefImage(), aJVPosting);
 		AuditHeader auditHeader = new AuditHeader(aJVPosting.getReference(),
 				Long.toString(aJVPosting.getBatchReference()), null, null, auditDetail, aJVPosting.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);

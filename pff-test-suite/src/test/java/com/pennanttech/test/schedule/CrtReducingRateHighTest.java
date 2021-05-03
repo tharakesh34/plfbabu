@@ -20,9 +20,9 @@ import com.pennanttech.util.PrintFactory;
 import jxl.Cell;
 
 public class CrtReducingRateHighTest {
-	FinScheduleData	schedule;
-	Cell[]			data;
-	long			t1;
+	FinScheduleData schedule;
+	Cell[] data;
+	long t1;
 
 	public CrtReducingRateHighTest(FinScheduleData schedule, Cell[] data, long t1) {
 		super();
@@ -33,8 +33,8 @@ public class CrtReducingRateHighTest {
 	}
 
 	@Test
-	public void testSchedule() throws IllegalAccessException, InstantiationException, InvocationTargetException,
-			NoSuchMethodException {
+	public void testSchedule()
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 
 		String name = Dataset.getString(data, 0);
 		PrintFactory.toConsole(name);
@@ -53,15 +53,15 @@ public class CrtReducingRateHighTest {
 		long expPrvCloseBal = Dataset.getLong(data, 31);
 		actLastInst = schdDetails.get(size - 1).getRepayAmount().longValue();
 		actPrvCloseBal = schdDetails.get(size - 2).getClosingBalance().longValue();
-		
+
 		PrintFactory.scheduleToExcel(name, schedule);
 
 		Assert.assertEquals(actPrvCloseBal, expPrvCloseBal, (name + " Prv Closing Bal: "));
 		Assert.assertEquals(actLastInst, expLastInst, (name + " Last Installment: "));
 	}
 
-	public static FinScheduleData execute(FinScheduleData model) throws IllegalAccessException, InstantiationException,
-			InvocationTargetException, NoSuchMethodException {
+	public static FinScheduleData execute(FinScheduleData model)
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		FinScheduleData schedule = (FinScheduleData) BeanUtils.cloneBean(model);
 
 		//_______________________________________________________________________________________________

@@ -1077,8 +1077,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	public void appendCreditReviewDetailTab(boolean onLoad, Tabpanel tabPanel) {
 		logger.debug(Literal.ENTERING);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
-		final HashMap<String, Object> btMap = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> btMap = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", financeMainBaseCtrl);
 		map.put("finHeaderList", getFinBasicDetails());
@@ -1697,7 +1697,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 */
 	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");

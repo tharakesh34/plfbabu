@@ -1532,8 +1532,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				? FinanceConstants.FINSER_EVENT_ORG : financeDetail.getModuleDefiner());
 		if (financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)) {
 			//FIXME: PV. 18AUG19. Some confusion. As downpayment was not deducted from current asset value earlier addiing now gives double impact. 
-			//amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
-			amountCodes.setDisburse(finMain.getFinCurrAssetValue());
+			if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
+				amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
+			} else {
+				amountCodes.setDisburse(finMain.getFinCurrAssetValue());
+			}
 		} else {
 			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
 		}
@@ -2266,7 +2269,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		// Preparing Rule Execution Map
-		HashMap<String, Object> executeMap = finMain.getDeclaredFieldValues(); //Finance Main
+		Map<String, Object> executeMap = finMain.getDeclaredFieldValues(); //Finance Main
 		financeDetail.getFinScheduleData().getFinanceType().getDeclaredFieldValues(executeMap); //Finance Type
 		//Receipt Detail
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptData) {
@@ -2687,7 +2690,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 */
 	public void listSave(FinScheduleData finDetail, String tableType, boolean isWIF, long logKey, long instructionUID) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {

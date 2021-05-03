@@ -75,7 +75,7 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 		workFlowDetails.setWorkFlowRoles(firstTaskOwnersAndActors.get(1));
 		AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
 		AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
-				auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 		auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
 		workFlowDetails = (WorkFlowDetails) auditHeader.getAuditDetail().getModelData();
@@ -122,7 +122,7 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 					.setVersion(workFlowDetailsService.getWorkFlowDetailsVersionByID(workFlowDetails.getWorkflowId()));
 			AuditDetail auditDetail = new AuditDetail("", 1, workFlowDetails.getBefImage(), workFlowDetails);
 			AuditHeader auditHeader = new AuditHeader(String.valueOf(workFlowDetails.getId()), null, null, null,
-					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+					auditDetail, workFlowDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 			auditHeader = workFlowDetailsService.saveOrUpdate(auditHeader);
 			doEmptyResponseObject(response);
 			response.setWorkFlowDesignId(((WorkFlowDetails) auditHeader.getAuditDetail().getModelData()).getId());
@@ -259,7 +259,8 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 	 * getRoleCodes method gives the ordered RoleCodes through activities and do the commenting steps in the
 	 * getRoleCodes method<br>
 	 * 
-	 * @param activities (List<Activity>)
+	 * @param activities
+	 *            (List<Activity>)
 	 * 
 	 * @return roles
 	 */
@@ -324,7 +325,8 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 	/**
 	 * To get the Roles with count i.e the number of times the Respective Record has met the same Role.
 	 * 
-	 * @param activities (List<Activity>)
+	 * @param activities
+	 *            (List<Activity>)
 	 * 
 	 * @return rolesWithCount.
 	 */
@@ -398,7 +400,8 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 	/**
 	 * getUniqueNextRoleCodes method is to filter the unique nextRoleCodes from the activities
 	 * 
-	 * @param activities (List<Activity>)
+	 * @param activities
+	 *            (List<Activity>)
 	 * 
 	 * @return uniqueRoles.
 	 */

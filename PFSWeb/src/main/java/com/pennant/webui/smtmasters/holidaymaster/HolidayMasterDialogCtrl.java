@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -347,7 +348,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		if (this.holidayYear.getValue().intValue() == 0) {
 			aHolidayDetail.setHolidayYear(new BigDecimal(DateUtility.getYear(new Date())));
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("holidayDetail", aHolidayDetail);
 		map.put("HolidayMasterDialogCtrl", this);
 

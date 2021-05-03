@@ -3,6 +3,7 @@ package com.pennanttech.pff.external.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennanttech.dataengine.constants.ValueLabel;
 
@@ -297,8 +298,8 @@ public class StaticListUtil {
 
 	}
 
-	public static final HashMap<String, String> getCibilOccupationCode() {
-		HashMap<String, String> occupationTypes = new HashMap<String, String>();
+	public static final Map<String, String> getCibilOccupationCode() {
+		Map<String, String> occupationTypes = new HashMap<String, String>();
 		occupationTypes.put("01", "Salaried");
 		occupationTypes.put("02", "Self Employeed Professional");
 		occupationTypes.put("03", "Self Employed");
@@ -307,24 +308,24 @@ public class StaticListUtil {
 
 	}
 
-	public static final HashMap<String, String> getCibilIncomeIndicator() {
-		HashMap<String, String> incomeIndicator = new HashMap<String, String>();
+	public static final Map<String, String> getCibilIncomeIndicator() {
+		Map<String, String> incomeIndicator = new HashMap<String, String>();
 		incomeIndicator.put("G", "Gross Income");
 		incomeIndicator.put("N", "Net Income");
 		return incomeIndicator;
 
 	}
 
-	public static final HashMap<String, String> getCibilMonthlyAnnualIncomeIndicator() {
-		HashMap<String, String> incomeIndicator = new HashMap<String, String>();
+	public static final Map<String, String> getCibilMonthlyAnnualIncomeIndicator() {
+		Map<String, String> incomeIndicator = new HashMap<String, String>();
 		incomeIndicator.put("M", "Monthly");
 		incomeIndicator.put("A", "Annual");
 		return incomeIndicator;
 
 	}
 
-	public static final HashMap<String, String> getCibilAddrCategory() {
-		HashMap<String, String> addrCategory = new HashMap<String, String>();
+	public static final Map<String, String> getCibilAddrCategory() {
+		Map<String, String> addrCategory = new HashMap<String, String>();
 		addrCategory.put("01", "Permanent Address");
 		addrCategory.put("02", "Residence Address");
 		addrCategory.put("03", "Office Address");
@@ -333,16 +334,16 @@ public class StaticListUtil {
 
 	}
 
-	public static final HashMap<String, String> getCibilResidenceCode() {
-		HashMap<String, String> residenceCode = new HashMap<String, String>();
+	public static final Map<String, String> getCibilResidenceCode() {
+		Map<String, String> residenceCode = new HashMap<String, String>();
 		residenceCode.put("01", "Owned");
 		residenceCode.put("02", "Rented");
 		return residenceCode;
 
 	}
 
-	public static final HashMap<String, String> getCibilIDTypes() {
-		HashMap<String, String> telephoneTypes = new HashMap<String, String>();
+	public static final Map<String, String> getCibilIDTypes() {
+		Map<String, String> telephoneTypes = new HashMap<String, String>();
 		telephoneTypes.put("01", "Pan Number");
 		telephoneTypes.put("02", "PassPortNumber");
 		telephoneTypes.put("03", "Voter ID Number");
@@ -353,8 +354,8 @@ public class StaticListUtil {
 
 	}
 
-	public static final HashMap<String, String> getCibilOnwerShipTypes() {
-		HashMap<String, String> ownershipTypes = new HashMap<String, String>();
+	public static final Map<String, String> getCibilOnwerShipTypes() {
+		Map<String, String> ownershipTypes = new HashMap<String, String>();
 		ownershipTypes.put("1", "Individual");
 		ownershipTypes.put("2", "Authorised User");
 		ownershipTypes.put("3", "Guarantor");
@@ -363,8 +364,8 @@ public class StaticListUtil {
 
 	}
 
-	public static final HashMap<String, String> getCibilPaymentFreqTypes() {
-		HashMap<String, String> ownershipTypes = new HashMap<String, String>();
+	public static final Map<String, String> getCibilPaymentFreqTypes() {
+		Map<String, String> ownershipTypes = new HashMap<String, String>();
 		ownershipTypes.put("01", "Weekly");
 		ownershipTypes.put("02", "Fortnightly");
 		ownershipTypes.put("03", "Monthly");

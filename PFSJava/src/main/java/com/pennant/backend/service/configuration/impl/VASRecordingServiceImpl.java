@@ -1389,7 +1389,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		VASRecording vasRecording = (VASRecording) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";
@@ -1610,7 +1610,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 
 		// Audit Details Preparation
-		HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+		Map<String, Object> auditMapValues = extendedFieldRender.getMapValues();
 		auditMapValues.put("Reference", extendedFieldRender.getReference());
 		auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 		auditMapValues.put("Version", extendedFieldRender.getVersion());

@@ -75,7 +75,7 @@ public class ScoringGroup extends AbstractWorkflowEntity implements Entity {
 	private long lovDescTotRetailScorPoints = 0;
 	private long lovDescTotFinScorPoints = 0;
 	private long lovDescTotNFScorPoints = 0;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<ScoringSlab> scoringSlabList = null;
 	private List<ScoringMetrics> scoringMetricsList = null;
 	private List<ScoringMetrics> finScoringMetricsList = null;
@@ -203,11 +203,11 @@ public class ScoringGroup extends AbstractWorkflowEntity implements Entity {
 		return scoringSlabList;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 

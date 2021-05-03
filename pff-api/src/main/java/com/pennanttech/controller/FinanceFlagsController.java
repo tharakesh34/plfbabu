@@ -1,7 +1,6 @@
 package com.pennanttech.controller;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -167,7 +166,7 @@ public class FinanceFlagsController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(FinanceFlag aFinanceFlag, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceFlag.getBefImage(), aFinanceFlag);
 		return new AuditHeader(null, null, null, null, auditDetail, aFinanceFlag.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setFinanceFlagsService(FinanceFlagsService financeFlagsService) {

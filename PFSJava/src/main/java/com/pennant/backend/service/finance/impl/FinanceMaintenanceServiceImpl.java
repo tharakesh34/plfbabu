@@ -189,7 +189,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 				if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
 
-					HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+					Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
 					for (int i = 0; i < feeScheduleList.size(); i++) {
 						FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
 
@@ -1375,7 +1375,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();

@@ -43,6 +43,7 @@
 package com.pennant.webui.finance.wiffinancemain;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -340,7 +341,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		 * FinanceMain. For handed over these parameter only a Map is accepted. So we put the FinanceMain object in a
 		 * HashMap.
 		 */
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("WIFFinanceMainDialogCtrl", new WIFFinanceMainDialogCtrl());
 		map.put("searchObject", this.searchObj);
 		map.put("financeDetail", aFinanceDetail);
@@ -383,7 +384,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		aFinanceDetail.getFinScheduleData().setFinanceMain(aWIFFinanceMain);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeDetail", aFinanceDetail);
 		/*
 		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the

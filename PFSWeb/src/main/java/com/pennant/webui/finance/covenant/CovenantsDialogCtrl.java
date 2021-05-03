@@ -2011,7 +2011,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 	private void showCovenantDocumentView(CovenantDocument covenantDocument) throws InterruptedException {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("covenantDocument", covenantDocument);
 		map.put("covenantsDialogCtrl", this);
 		map.put("role", getRole());

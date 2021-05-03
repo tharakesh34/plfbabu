@@ -209,7 +209,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 			}
 		}
 		if (fieldValuesMap != null) {
-			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
+			generator.setFieldValueMap((Map<String, Object>) fieldValuesMap);
 		}
 		try {
 			this.seqNo.setValue(getExtendedFieldRender().getSeqNo());
@@ -673,13 +673,13 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		Textbox textbox = (Textbox) list.get(0);
 		ExtendedFieldDetail detail = (ExtendedFieldDetail) list.get(1);
 
-		HashMap<String, Object> selectedValues = new HashMap<String, Object>();
+		Map<String, Object> selectedValues = new HashMap<String, Object>();
 		Object dataObject = ExtendedMultipleSearchListBox.show(this.window_ExtendedFieldCaptureDialog,
 				detail.getFieldList(), selectedValues);
 		if (dataObject instanceof String) {
 			textbox.setValue(dataObject.toString());
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String multivalues = details.keySet().toString();
 				textbox.setValue(multivalues.replace("[", "").replace("]", " "));

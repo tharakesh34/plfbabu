@@ -173,4 +173,5 @@ public interface ReceiptService {
 
 	ErrorDetail receiptCancelValidation(String finReference, Date lastReceivedDate);
 
+	List<ErrorDetail> dedupCheck(FinServiceInstruction fsi);
 }

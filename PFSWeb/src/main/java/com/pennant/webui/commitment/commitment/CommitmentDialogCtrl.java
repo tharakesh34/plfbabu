@@ -407,7 +407,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private List<CommitmentRate> commitmentRateDetailList = new ArrayList<CommitmentRate>();
 	private List<FinFlagsDetail> cmtFlagsDetailList = null;
 	private List<FinanceCheckListReference> collateralChecklists = null;
-	private HashMap<Long, Long> selectedAnsCountMap = null;
+	private Map<Long, Long> selectedAnsCountMap = null;
 
 	// Default Values
 	private Date appDate = DateUtility.getAppDate();
@@ -663,7 +663,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					new String[] { Labels.getLabel("label_CommitmentDialog_CustCIF.value") }));
 		}
 		try {
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("custCIF", this.custCIF.getValue());
 			map.put("custid", this.custID.longValue());
 			map.put("custShrtName", this.custName.getValue());
@@ -694,7 +694,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		List<Filter> filterList = new ArrayList<>();
 		//filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtersList", filterList);
 		map.put("searchObject", this.custCIFSearchObject);
@@ -2130,7 +2130,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 			} else {
 				clearTabpanelChildren(AssetConstants.UNIQUE_ID_CUSTOMERS);
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				String pageName = PennantAppUtil.getCustomerPageName();
 				map.put("customerDetails", getCommitment().getCustomerDetails());
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
@@ -2163,7 +2163,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_AGREEMENT);
 			if (getCommitment().getAggrements() != null && !getCommitment().getAggrements().isEmpty()) {
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("agreementList", getCommitment().getAggrements());
 
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AgreementDetailDialog.zul",
@@ -2209,7 +2209,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 			if (createcheckLsitTab) {
 				clearTabpanelChildren(AssetConstants.UNIQUE_ID_CHECKLIST);
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("checkList", getCommitment().getCheckLists());
 				map.put("finCheckRefList", getCommitment().getCommitmentCheckLists());
 
@@ -2243,7 +2243,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 
 		clearTabpanelChildren(AssetConstants.UNIQUE_ID_COLLATERAL);
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("collateralAssignmentList", getCommitment().getCollateralAssignmentList());
 		map.put("customerId",
 				StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0 : Long.valueOf(this.custCIF.getValue()));
@@ -2267,7 +2267,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
 
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getCommitment().getDocuments());
 
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul",
@@ -2288,7 +2288,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
-			HashMap<String, Object> map = getDefaultArguments();
+			Map<String, Object> map = getDefaultArguments();
 			map.put("isFinanceNotes", true);
 			map.put("isRecommendMand", false);
 			map.put("userRole", getRole());
@@ -3898,7 +3898,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		commitmentRate.setCmtPftRateMin(this.cmtPftRateMin.getValue());
 		commitmentRate.setCmtPftRateMax(this.cmtPftRateMax.getValue());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("commitmentRate", commitmentRate);
 		map.put("commitmentDialogCtrl", this);
@@ -3939,7 +3939,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				commitmentRate.setCmtPftRateMin(this.cmtPftRateMin.getValue());
 				commitmentRate.setCmtPftRateMax(this.cmtPftRateMax.getValue());
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("commitmentRate", commitmentRate);
 				map.put("commitmentDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -4069,8 +4069,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * 
 	 * @return
 	 */
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
@@ -4351,11 +4351,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.notificationService = notificationService;
 	}
 
-	public HashMap<Long, Long> getSelectedAnsCountMap() {
+	public Map<Long, Long> getSelectedAnsCountMap() {
 		return selectedAnsCountMap;
 	}
 
-	public void setSelectedAnsCountMap(HashMap<Long, Long> selectedAnsCountMap) {
+	public void setSelectedAnsCountMap(Map<Long, Long> selectedAnsCountMap) {
 		this.selectedAnsCountMap = selectedAnsCountMap;
 	}
 

@@ -1432,7 +1432,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		logger.debug("Entering " + event.toString());
 
 		this.btnNotes.setSclass("");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
 		map.put("control", this);
 
@@ -1447,7 +1447,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	public void onClick$viewCustInfo(Event event) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", this.custID.longValue());
 			map.put("custCIF", this.custCIF.getValue());
 			map.put("custShrtName", this.custShrtName.getValue());

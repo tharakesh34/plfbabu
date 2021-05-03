@@ -775,7 +775,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void appendFinBasicDetails(Object finHeaderList) {
 		logger.debug(Literal.ENTERING);
 		try {
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
@@ -913,7 +913,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void onCheck$rcuRadioGroup(Event event) {
-		final HashMap<String, Object> map = new HashMap<>();
+		final Map<String, Object> map = new HashMap<>();
 		RiskContainmentUnit riskContainmentUnit = riskContainmentUnitService
 				.getRiskContainmentUnit(Long.parseLong(rcuRadioGroup.getSelectedItem().getValue().toString()));
 		if (rcuInquiry.getChildren().size() >= 2) {

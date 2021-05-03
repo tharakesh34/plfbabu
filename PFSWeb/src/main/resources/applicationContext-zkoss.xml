@@ -93,7 +93,6 @@
 	<bean id="sendMessageDialogCtrl" class="com.pennant.webui.util.SendMessageDialogCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="messagesService" ref="messagesService" />
-		<property name="eventManager" ref="eventManager" />
 	</bean>
 
 	<!-- UserBarController -->
@@ -1874,6 +1873,8 @@
 		<property name="finOCRHeaderService" ref="finOCRHeaderService" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2625,7 +2626,6 @@
 	<bean id="feeReceiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.FeeReceiptDialogCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="feeReceiptService" ref="feeReceiptService" />
-		<property name="eventManager" ref="eventManager" />
 		<property name="accountingSetService" ref="accountingSetService" />
 		<property name="engineExecution" ref="engineExecution" />
 	</bean>
@@ -4811,7 +4811,7 @@
 
 	<bean id="fiInitiationListCtrl" class="com.pennant.webui.verification.fieldinvestigation.FIInitiationListCtrl"
 		parent="basisListCtrl" scope="prototype" />
-		
+
 	<bean id="fieldVerificationDialogCtrl" class="com.pennanttech.webui.verification.FieldVerificationDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
@@ -5271,6 +5271,7 @@
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="securityUserDAO" ref="securityUserDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 	</bean>
 
 	<bean id="selectReceiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.SelectReceiptDialogCtrl"
@@ -5779,7 +5780,6 @@
 	<bean id="finFeeRefundDialogCtrl" class="com.pennant.webui.financemanagement.receipts.FinFeeRefundDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="finFeeRefundService" ref="finFeeRefundService" />
-		<property name="eventManager" ref="eventManager" />
 		<property name="accountingSetService" ref="accountingSetService" />
 		<property name="engineExecution" ref="engineExecution" />
 	</bean>
@@ -6010,6 +6010,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="receiptService" ref="receiptService" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<bean id="restructureDialogCtrl" class="com.pennant.webui.finance.additional.RestructureDialogCtrl" parent="basisCtrl"

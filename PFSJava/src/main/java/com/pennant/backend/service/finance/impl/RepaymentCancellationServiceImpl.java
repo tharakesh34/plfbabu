@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -800,7 +801,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 	private void listSave(FinScheduleData finDetail, String tableType, long logKey) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {

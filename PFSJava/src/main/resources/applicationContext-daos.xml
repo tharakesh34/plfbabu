@@ -3545,6 +3545,7 @@
 		<property name="ocrHeaderService" ref="ocrHeaderService" />
 		<property name="covenantTypeDAO" ref="covenantTypeDAO" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -4537,6 +4538,10 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="documentTypeDAO" ref="documentTypeDAO" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="customerDocumentService" ref="customerDocumentService" />
 	</bean>
 
 	<!--============ Payment Order Issue Details ============== -->

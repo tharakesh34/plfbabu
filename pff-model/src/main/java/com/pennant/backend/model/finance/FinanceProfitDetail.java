@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.pennant.backend.model.eventproperties.EventProperties;
 
@@ -1680,8 +1681,8 @@ public class FinanceProfitDetail implements Serializable {
 		NOAutoIncGrcEnd = nOAutoIncGrcEnd;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> fieldsAndValuesMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> fieldsAndValuesMap = new HashMap<String, Object>();
 
 		getDeclaredFieldValues(fieldsAndValuesMap);
 
@@ -1692,7 +1693,7 @@ public class FinanceProfitDetail implements Serializable {
 	 * 
 	 * @param fieldsAndValuesMap
 	 */
-	public void getDeclaredFieldValues(HashMap<String, Object> map) {
+	public void getDeclaredFieldValues(Map<String, Object> map) {
 		map.put("fpt_finReference", this.finReference);
 		map.put("fpt_custId", this.custId);
 		map.put("fpt_finBranch", this.finBranch);

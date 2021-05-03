@@ -189,7 +189,7 @@ public class ExtendedFieldDetailServiceImpl extends GenericService<ExtendedField
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		ExtendedFieldHeader extendedFieldHeader = (ExtendedFieldHeader) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -1106,8 +1107,8 @@ public class LimitManagement {
 	 * @param financeType
 	 * @return
 	 */
-	private HashMap<String, Object> getDataMap(FinanceMain financeMain, FinanceType financeType) {
-		HashMap<String, Object> dataMap = new HashMap<>();
+	private Map<String, Object> getDataMap(FinanceMain financeMain, FinanceType financeType) {
+		Map<String, Object> dataMap = new HashMap<>();
 		if (financeMain != null) {
 			dataMap.putAll(financeMain.getDeclaredFieldValues());
 		}
@@ -1157,7 +1158,7 @@ public class LimitManagement {
 		LimitReferenceMapping mapping = limitReferenceMappingDAO.getLimitReferencemapping(finRef, headerId);
 
 		if (mapping == null && ORGINATION.equals(requestFrom)) {
-			HashMap<String, Object> dataMap = getDataMap(finMain, financeType);
+			Map<String, Object> dataMap = getDataMap(finMain, financeType);
 			List<LimitDetails> limitDetailsList = null;
 			limitDetailsList = limitDetailDAO.getLimitDetailsByCustID(headerId);
 

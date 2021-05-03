@@ -45,6 +45,7 @@ package com.pennant.webui.verification.tv;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -296,7 +297,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private void showDetailView() {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 
 		map.put("InitType", true);
 		map.put("userRole", getRole());
@@ -346,7 +347,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public HashMap<String, Object> getDefaultArguments(HashMap<String, Object> map) {
+	public Map<String, Object> getDefaultArguments(Map<String, Object> map) {
 
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);

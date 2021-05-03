@@ -1,8 +1,8 @@
 package com.pennanttech.controller;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -109,7 +109,7 @@ public class RelationShipOfficersController {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, relationshipOfficer.getBefImage(), relationshipOfficer);
 		return new AuditHeader(String.valueOf(relationshipOfficer.getROfficerCode()),
 				String.valueOf(relationshipOfficer.getROfficerCode()), null, null, auditDetail,
-				relationshipOfficer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				relationshipOfficer.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

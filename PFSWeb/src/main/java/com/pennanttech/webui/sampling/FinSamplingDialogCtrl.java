@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -198,7 +199,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		BeanUtils.copyProperties(inquiryObject, this.sampling);
 		inquiryObject = samplingService.getSampling(inquiryObject, "_view");
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("sampling", inquiryObject);
 		map.put("LOAN_ORG", true);
@@ -285,7 +286,7 @@ public class FinSamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	private void appendFinBasicDetails(Object finHeaderList) {
 		logger.debug(Literal.ENTERING);
 		try {
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,

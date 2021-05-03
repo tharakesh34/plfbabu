@@ -1216,7 +1216,7 @@ public class NotificationService extends GenericService<Notification> {
 	}
 
 	// New Methods
-	private HashMap<String, Object> getTemplateData(FinanceDetail aFinanceDetail, FinReceiptHeader receiptHeader) {
+	private Map<String, Object> getTemplateData(FinanceDetail aFinanceDetail, FinReceiptHeader receiptHeader) {
 		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
@@ -1231,7 +1231,7 @@ public class NotificationService extends GenericService<Notification> {
 			}
 
 		}
-		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
+		Map<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
 		try {

@@ -620,7 +620,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected transient FinanceSelectCtrl financeSelectCtrl = null; // over handed per parameters
 	protected Customer customer = null;
 
-	protected HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	protected Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	private Window mainWindow = null;
 	private String productCode = null;
@@ -916,8 +916,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());
@@ -988,7 +988,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (!onLoadProcess && getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainDialogCtrl", this);
 			map.put("moduleDefiner", moduleDefiner);
 			map.put("profitDaysBasisList", PennantStaticListUtil.getProfitDaysBasis());
@@ -1116,7 +1116,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (scoringGroupList != null && !scoringGroupList.isEmpty()) {
 
 			//Scoring Detail Tab
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("userRole", getRole());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ScoringDetailDialog.zul", tabpanel, map);
 
@@ -1167,7 +1167,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			ComponentsCtrl.applyForward(tab, "onSelect=onSelectJointGuarantorDetailsTab");
 
 			//Joint Account Detail & Guarantor Detail Tab
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("isFinanceProcess", true);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/JointAccountDetailDialog.zul", tabpanel,
 					map);
@@ -1222,7 +1222,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		if (getFinanceDetail().getAggrementList() != null && getFinanceDetail().getAggrementList().size() > 0) {
 
 			//Agreement Detail Tab
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
 			map.put("finHeaderList", getFinBasicDetails());
@@ -1289,7 +1289,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty()
 						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("isWIF", false);
 			map.put("alwManualSteps", this.alwManualSteps.isChecked());
 			map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
@@ -1340,7 +1340,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
 				tab.setVisible(true);
 
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
 				map.put("moduleDefiner", this.moduleDefiner);
 				map.put("eventCode", eventCode);
@@ -1510,7 +1510,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 
-			HashMap<String, Object> map = getDefaultArguments();
+			Map<String, Object> map = getDefaultArguments();
 			if (!getFinanceDetail().getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ADDDISB)
 					&& !getFinanceDetail().getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_RPYBASICMAINTAIN)) {
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
@@ -1593,7 +1593,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 				tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
 
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("moduleDefiner", moduleDefiner);
 
 				checkListChildWindow = Executions.createComponents(
@@ -1701,7 +1701,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				tabpanel.getChildren().clear();
 			}
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("isFinanceNotes", true);
 			map.put("isRecommendMand", true);
 			map.put("userRole", getRole());
@@ -1817,7 +1817,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
 
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("moduleDefiner", moduleDefiner);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/DocumentDetailDialog.zul", tabpanel, map);
 
@@ -1841,7 +1841,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
 		ComponentsCtrl.applyForward(tab, "onSelect=onSelectCollateralTab");
 
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		if (ImplementationConstants.COLLATERAL_INTERNAL) {
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -7957,11 +7957,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.financeSelectCtrl = financeSelectCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

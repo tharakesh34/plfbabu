@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -259,9 +260,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			logger.error("Exception: ", e);
 			for (JVPostingEntry jVPostingEntry : distinctEntryList) {
 				jVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
-				jVPostingEntry.setValidationStatus(PennantConstants.POSTSTS_FAILED + " : "
-						+ (e instanceof InterfaceException ? ((InterfaceException) e).getErrorMessage()
-								: e.getMessage()));
+				jVPostingEntry
+						.setValidationStatus(PennantConstants.POSTSTS_FAILED + " : " + (e instanceof InterfaceException
+								? ((InterfaceException) e).getErrorMessage() : e.getMessage()));
 			}
 			return false;
 		}
@@ -717,7 +718,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String reference = jVPosting.getReference();
 		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(reference, "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEPOSTING.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_JVPOSTING.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
@@ -742,7 +743,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		JVPosting jvPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 

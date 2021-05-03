@@ -154,7 +154,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 
 	// ServiceDAOs / Domain Classes
 	private transient ScoringGroupService scoringGroupService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private List<ScoringSlab> scoringSlabList = new ArrayList<ScoringSlab>();
 	private PagedListWrapper<ScoringSlab> scoringSlabPagedListWrapper;
 	private List<ScoringMetrics> scoringMetricList = new ArrayList<ScoringMetrics>();
@@ -422,7 +422,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		ScoringSlab scroingSlab = new ScoringSlab();
 		scroingSlab.setNewRecord(true);
 		scroingSlab.setWorkflowId(0);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("scoringGroupDialogCtrl", this);
 		map.put("roleCode", getRole());
 		map.put("scroingSlab", scroingSlab);
@@ -454,7 +454,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 							|| scroingSlab.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
 				MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("scoringGroupDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("scroingSlab", scroingSlab);
@@ -535,7 +535,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		ScoringMetrics scoreMetric = new ScoringMetrics();
 		scoreMetric.setNewRecord(true);
 		scoreMetric.setWorkflowId(0);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("scoringGroupDialogCtrl", this);
 		map.put("roleCode", getRole());
 		map.put("scoringMetrics", scoreMetric);
@@ -571,7 +571,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 							|| scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
 				MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("scoringGroupDialogCtrl", this);
 				map.put("roleCode", getRole());
 				map.put("scoringMetrics", scoringMetrics);
@@ -612,7 +612,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 								|| scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
 					MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 				} else {
-					final HashMap<String, Object> map = new HashMap<String, Object>();
+					final Map<String, Object> map = new HashMap<String, Object>();
 					map.put("scoringGroupDialogCtrl", this);
 					map.put("roleCode", getRole());
 					map.put("scoringMetrics", scoringMetrics);
@@ -654,7 +654,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 								|| scoringMetrics.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN))) {
 					MessageUtil.showError(Labels.getLabel("label_Not_Allowed_to_maintain"));
 				} else {
-					final HashMap<String, Object> map = new HashMap<String, Object>();
+					final Map<String, Object> map = new HashMap<String, Object>();
 					map.put("scoringGroupDialogCtrl", this);
 					map.put("roleCode", getRole());
 					map.put("scoringMetrics", scoringMetrics);
@@ -1599,7 +1599,7 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 				if (code.contains("?")) {
 					String[] fields = code.split("[^a-zA-Z]+");
 
-					HashMap<String, Object> fieldValuesMap = new HashMap<String, Object>();
+					Map<String, Object> fieldValuesMap = new HashMap<String, Object>();
 
 					for (int j = 0; j < fields.length; j++) {
 						if (!StringUtils.isEmpty(fields[j])) {
@@ -1810,11 +1810,11 @@ public class ScoringGroupDialogCtrl extends GFCBaseCtrl<ScoringGroup> {
 		return this.scoringGroupListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

@@ -45,8 +45,8 @@ package com.pennant.backend.model.payment;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -159,7 +159,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 		return excludeFields;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> paymentInstMap) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> paymentInstMap) {
 
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {

@@ -591,7 +591,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			details = processingFeeWaiverdetails(details, tableType);
 			auditDetails.addAll(details);
 		}
-		
+
 		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
 		financeMainDAO.updateMaintainceStatus(feeWaiverHeader.getFinReference(), rcdMaintainSts);
 
@@ -2152,7 +2152,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FeeWaiverHeader feeWaiverHeader = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";

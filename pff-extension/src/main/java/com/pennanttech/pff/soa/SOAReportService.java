@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennanttech.pff.external.model.SOAScheduleReport;
+import com.pennant.backend.model.systemmasters.SOAScheduleReport;
 
 public interface SOAReportService {
 

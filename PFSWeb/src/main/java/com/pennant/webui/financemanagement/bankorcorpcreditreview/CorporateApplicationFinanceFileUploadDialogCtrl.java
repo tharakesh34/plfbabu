@@ -323,7 +323,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	 */
 	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("filtersList", getFilterList());
@@ -511,7 +511,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	// for getting creditApplication review dialog
 	public void getCreditApplicationRevDialog() {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("creditReviewDetails", creditReviewDetail);
 		/*
 		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the

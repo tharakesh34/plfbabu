@@ -873,7 +873,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private void generateAccounting(FinanceDetail financeDetail) {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		HashMap<String, Object> gldataMap = new HashMap<>();
+		Map<String, Object> gldataMap = new HashMap<>();
 
 		gldataMap.put("emptype", financeDetail.getCustomerDetails().getCustomer().getSubCategory());
 		gldataMap.put("fincollateralreq", financeDetail.getFinScheduleData().getFinanceType().isFinCollateralReq());

@@ -357,7 +357,7 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	public void onClick$btn_SearchGroups(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		doSetPanelProperties();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("dialogCtrl", this);
 		map.put("dataMap", tempUnAsgnGroupsMap);
 		map.put("prevFilters", filters);

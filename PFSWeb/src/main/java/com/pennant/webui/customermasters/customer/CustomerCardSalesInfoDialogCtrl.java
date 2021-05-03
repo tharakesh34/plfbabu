@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -627,7 +628,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	public boolean saveCardSalesDetailInfoList(CustCardSales custCardSales) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<Date, CustCardSalesDetails> hashMap = new HashMap<>();
+		Map<Date, CustCardSalesDetails> hashMap = new HashMap<>();
 
 		List<CustCardSalesDetails> infoList = custCardSales.getCustCardMonthSales();
 		ArrayList<WrongValueException> wve = new ArrayList<>();

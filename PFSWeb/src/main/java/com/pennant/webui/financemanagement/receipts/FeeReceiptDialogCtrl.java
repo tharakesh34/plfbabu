@@ -130,7 +130,6 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
-import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -220,8 +219,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private transient FeeReceiptService feeReceiptService;
 	private AccountingSetService accountingSetService;
 	private AccountEngineExecution engineExecution;
-	private EventManager eventManager;
-
 	private Label label_FeeReceiptDialog_FundingAccount;
 
 	protected Groupbox groupbox_Finance;
@@ -1385,32 +1382,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// User Notifications Message/Alert
-				try {
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
-
-						// Send message Notification to Users
-						String nextRoleCodes = aReceiptHeader.getNextRoleCode();
-						if (StringUtils.isNotEmpty(nextRoleCodes)) {
-							Notify notify = Notify.valueOf("ROLE");
-							String[] to = nextRoleCodes.split(",");
-							if (StringUtils.isNotEmpty(aReceiptHeader.getReference())) {
-
-								if (!PennantConstants.RCD_STATUS_CANCELLED
-										.equalsIgnoreCase(aReceiptHeader.getRecordStatus())) {
-									getEventManager().publish(
-											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + ref,
-											notify, to);
-								}
-							} else {
-								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
-							}
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-				}
+				publishNotification(Notify.ROLE, aReceiptHeader.getReference(), aReceiptHeader);
 
 				closeDialog();
 			}
@@ -1572,7 +1544,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_ACCOUNTING);
 		}
 		if (!onLoadProcess) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleCode", getRole());
 			map.put("dialogCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
@@ -2519,14 +2491,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
-	}
-
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-
-	public void setEventManager(EventManager eventManager) {
-		this.eventManager = eventManager;
 	}
 
 	public void setEngineExecution(AccountEngineExecution engineExecution) {

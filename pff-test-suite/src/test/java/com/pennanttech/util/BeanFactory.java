@@ -27,19 +27,19 @@ public class BeanFactory {
 	//INSERT INTO RMTSPLRATECODES (SRTYPE, SRTYPEDESC, SRISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDTYPE, WORKFLOWID) VALUES ('UNITTEST', 'UNIT TEST CASE PURPOSE ONLY', '1', '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '0', '1')
 	//INSERT INTO RMTSPLRATES (SRTYPE, SREFFDATE, SRRATE, DELEXISTINGRATES, LASTMDFDATE, VERSION, LASTMNTBY, LASTMNTON, RECORDTYPE, WORKFLOWID) VALUES ('UNITTEST', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1.5', '0', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '0', '1')
 
-	public static final String	BASE_RATE				= "UNITTEST";
-	public static final String	SPECIAL_RATE			= "UNITTEST";
-	public static BigDecimal	MARGIN_RATE				= new BigDecimal(0.5);
-	public static final String	MNTH_FRQ				= "M0025";
-	public static final String	QTLY_FRQ				= "Q0125";
+	public static final String BASE_RATE = "UNITTEST";
+	public static final String SPECIAL_RATE = "UNITTEST";
+	public static BigDecimal MARGIN_RATE = new BigDecimal(0.5);
+	public static final String MNTH_FRQ = "M0025";
+	public static final String QTLY_FRQ = "Q0125";
 
-	public static final String	BASE_RATE_HIGH			= "MIBORHIGH";
+	public static final String BASE_RATE_HIGH = "MIBORHIGH";
 
-	public static final Date	date_bpi				= DateUtility.getDate("25/01/2017");
-	public static final Date	date_bpi_1month			= DateUtility.getDate("25/02/2017");
-	public static final Date	date_bpi_1quarter		= DateUtility.getDate("25/04/2017");
-	public static final Date	date_bpi_1year			= DateUtility.getDate("25/02/2018");
-	public static final Date	date_bpi_1Year1quarter	= DateUtility.getDate("25/04/2018");
+	public static final Date date_bpi = DateUtility.getDate("25/01/2017");
+	public static final Date date_bpi_1month = DateUtility.getDate("25/02/2017");
+	public static final Date date_bpi_1quarter = DateUtility.getDate("25/04/2017");
+	public static final Date date_bpi_1year = DateUtility.getDate("25/02/2018");
+	public static final Date date_bpi_1Year1quarter = DateUtility.getDate("25/04/2018");
 
 	public static FinScheduleData getSchedule(Cell[] cells, String prodCtg, String testType) {
 		FinScheduleData schedule = new FinScheduleData();

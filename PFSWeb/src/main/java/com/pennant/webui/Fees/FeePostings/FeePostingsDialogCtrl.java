@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -508,7 +509,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		}
 		if (!onLoadProcess) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("feePosting", getFeePostings());
 			if (getFeePostings().getAccountSetId() != null) {
 				map.put("acSetID", Long.valueOf(getFeePostings().getAccountSetId()));
@@ -527,8 +528,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		logger.debug("Leaving");
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("dialogCtrl", this);
 		map.put("isNotFinanceProcess", true);

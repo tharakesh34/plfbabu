@@ -278,7 +278,7 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 			CustomerEligibilityCheck customerEligibilityCheck) {
 		logger.debug("Entering");
 
-		HashMap<String, Object> fieldsandvalues = null;
+		Map<String, Object> fieldsandvalues = null;
 
 		if (customerEligibilityCheck != null) {
 			fieldsandvalues = customerEligibilityCheck.getDeclaredFieldValues();
@@ -394,7 +394,7 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 		List<Long> headerIds = new ArrayList<Long>();
 		if (financeScoreheaders != null && financeScoreheaders.size() > 0) {
 
-			HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
+			Map<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
 			for (FinanceScoreHeader header : financeScoreheaders) {
 				headerIds.add(header.getHeaderId());
 			}

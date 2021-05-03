@@ -889,7 +889,7 @@ public class ExtendedFieldDetailsService {
 			}
 
 			// Add Common Fields
-			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
 					if (!StringUtils.startsWith(reference, "S")) {
@@ -2037,7 +2037,7 @@ public class ExtendedFieldDetailsService {
 	 */
 	public void updateFinExtendedDetails(FinanceDetail financeDetail, String suffix) {
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 		String auditTranType = PennantConstants.TRAN_WF;
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
@@ -2113,7 +2113,7 @@ public class ExtendedFieldDetailsService {
 	private AuditHeader getAuditHeader(FinanceMain finMain, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, finMain.getBefImage(), finMain);
 		return new AuditHeader(finMain.getFinReference(), null, null, null, auditDetail, finMain.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 	}
 
 	// Extended field Extended combobox Description--04-09-2019
@@ -2262,7 +2262,7 @@ public class ExtendedFieldDetailsService {
 		}
 
 		// Audit Details Preparation
-		HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+		Map<String, Object> auditMapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
 		auditMapValues.put("Reference", extendedFieldRender.getReference());
 		auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 		auditMapValues.put("Version", extendedFieldRender.getVersion());

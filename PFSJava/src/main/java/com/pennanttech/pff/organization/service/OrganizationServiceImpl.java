@@ -3,6 +3,7 @@ package com.pennanttech.pff.organization.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -336,7 +337,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		Organization organization = (Organization) auditHeader.getAuditDetail().getModelData();
 

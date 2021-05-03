@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -624,7 +625,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		FieldInvestigation fieldInvestigation = (FieldInvestigation) auditHeader.getAuditDetail().getModelData();
 

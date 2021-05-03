@@ -189,7 +189,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		String url = "/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul";
 
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", headerList);
 			Executions.createComponents(url, this.finBasicdetails, map);

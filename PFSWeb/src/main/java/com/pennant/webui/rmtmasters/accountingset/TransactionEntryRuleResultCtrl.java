@@ -114,7 +114,7 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 		logger.debug("Entering" + event.toString());
 
 		Map<String, Object> dataMap = new HashMap<>();
-		
+
 		try {
 			for (int i = 0; i < variables.size(); i++) {
 				JSONObject variable = (JSONObject) variables.get(i);
@@ -132,9 +132,10 @@ public class TransactionEntryRuleResultCtrl extends GFCBaseCtrl<Object> {
 					dataMap.put(amountValueBox.getId().trim(), compValue);
 				}
 			}
-			
-			Object result = RuleExecutionUtil.executeRule(transactionEntryDialogCtrl.amountRule.getValue(), dataMap, null, RuleReturnType.DECIMAL);
-			
+
+			Object result = RuleExecutionUtil.executeRule(transactionEntryDialogCtrl.amountRule.getValue(), dataMap,
+					null, RuleReturnType.DECIMAL);
+
 			this.rowResult.setVisible(true);
 			BigDecimal tempResult = new BigDecimal(result.toString());
 			tempResult = PennantApplicationUtil.formateAmount(tempResult, PennantConstants.defaultCCYDecPos);

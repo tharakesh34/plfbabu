@@ -3,6 +3,7 @@ package com.pennant.webui.reports.customer;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -194,7 +195,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 	public void onFilterMenuItem(ForwardEvent event) throws InterruptedException {
 		logger.debug("Entering");
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("custId", this.custId);
 		map.put("custCIF", this.custCIF.getValue());
 		map.put("custShrtName", this.custCIF.getDescription());
@@ -444,7 +445,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 
 			final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeEnquiry", aFinanceEnquiry);
 			map.put("enquiryType", "FINENQ");
 

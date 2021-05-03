@@ -44,6 +44,7 @@ package com.pennant.webui.legal.legaldetail;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -187,7 +188,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail> {
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
@@ -302,7 +303,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail> {
 	private void doShowDialogPage(LegalDetail legalDetail) {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, Object> arg = new HashMap<>();
+		Map<String, Object> arg = new HashMap<>();
 		arg.put("legalDetail", legalDetail);
 		arg.put("legalDetailListCtrl", this);
 		arg.put("fromLoan", true);

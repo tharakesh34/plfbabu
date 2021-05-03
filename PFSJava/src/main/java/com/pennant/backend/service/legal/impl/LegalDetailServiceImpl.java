@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -968,7 +969,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		LegalDetail legalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";
@@ -1730,7 +1731,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private AuditHeader getAuditHeader(LegalDetail aLegalDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLegalDetail.getBefImage(), aLegalDetail);
 		return new AuditHeader(aLegalDetail.getLegalReference(), null, null, null, auditDetail,
-				aLegalDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aLegalDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public List<LegalDetail> getLegalDetailsAuditData(List<LegalDetail> detailList, String auditTranType,

@@ -208,7 +208,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		} else {
 			payOrderIssueHeaderDAO.update(payOrderIssueHeader, tableType);
 		}
-		
+
 		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_DISBINST;
 		financeMainDAO.updateMaintainceStatus(payOrderIssueHeader.getFinReference(), rcdMaintainSts);
 

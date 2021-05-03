@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -136,12 +137,12 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	// private variables and service classes
 	private transient SecurityOperationRolesService securityOperationRolesService;
 	private SecurityOperation securityOperation;
-	private HashMap<Long, SecurityOperationRoles> assignedHashMap;
-	private HashMap<Long, SecurityOperationRoles> unAssignedHashMap;
+	private Map<Long, SecurityOperationRoles> assignedHashMap;
+	private Map<Long, SecurityOperationRoles> unAssignedHashMap;
 
-	private HashMap<Long, SecurityOperationRoles> addHashMap = null;
-	private HashMap<Long, SecurityOperationRoles> delHashMap = null;
-	private HashMap<Long, SecurityOperationRoles> cancilHashMap = null;
+	private Map<Long, SecurityOperationRoles> addHashMap = null;
+	private Map<Long, SecurityOperationRoles> delHashMap = null;
+	private Map<Long, SecurityOperationRoles> cancilHashMap = null;
 
 	private PagedListWrapper<SecurityOperationRoles> assigneListWrapper;
 	private PagedListWrapper<SecurityOperationRoles> unAssigneListWrapper;
@@ -762,7 +763,7 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	public void onClick$btn_SearchRoles(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 		doSetPanelProperties();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("SecurityOperationRolesDialogCtrl", this);
 		map.put("FILTERTYPE", "USERROLE");
 		map.put("FILTERCODE", filterCode);

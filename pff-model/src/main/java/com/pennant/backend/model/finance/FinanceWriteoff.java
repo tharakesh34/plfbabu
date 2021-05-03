@@ -284,7 +284,7 @@ public class FinanceWriteoff implements Serializable {
 	}
 
 	public Map<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		getDeclaredFieldValues(map);
 
 		return map;

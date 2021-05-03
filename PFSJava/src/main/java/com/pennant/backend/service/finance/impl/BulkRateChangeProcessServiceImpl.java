@@ -339,7 +339,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, bulkRateChangeHeader.getBefImage(),
 				bulkRateChangeHeader);
 		AuditHeader auditHeader = new AuditHeader(bulkRateChangeHeader.getBulkRateChangeRef(), null, null, null,
-				auditDetail, bulkRateChangeHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, bulkRateChangeHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 		BulkRateChangeHeader aBulkRateChangeHeader = new BulkRateChangeHeader();
 		BeanUtils.copyProperties((BulkRateChangeHeader) auditHeader.getAuditDetail().getModelData(),
@@ -631,7 +631,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1],
 				financeDetail.getBefImage(), financeDetail);
 		AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null,
-				null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 		//Changed Finance Save in Database
 		saveOrUpdate(auditHeader, false);
@@ -722,7 +722,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, fields[0], fields[1],
 					financeMain.getBefImage(), financeMain);
 			auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null, null,
-					auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+					auditDetail, financeDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
@@ -845,7 +845,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 		BulkRateChangeHeader bulkRateChangeHeader = null;
 		FinanceDetail financeDetail = null;
 		FinanceMain financeMain = null;
@@ -1127,7 +1127,7 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 	 */
 	public void listSave(FinScheduleData finDetail, String tableType, boolean isWIF, long logKey) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {

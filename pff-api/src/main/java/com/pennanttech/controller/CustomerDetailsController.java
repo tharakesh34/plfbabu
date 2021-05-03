@@ -2182,7 +2182,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 		int maxSeqNo = 0;
 		CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
 		String tableName = getTableName(ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 		try {
 			// process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
@@ -2293,7 +2293,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 				aCustomerPhonenumber);
 		return new AuditHeader(String.valueOf(aCustomerPhonenumber.getPhoneCustID()),
 				String.valueOf(aCustomerPhonenumber.getPhoneCustID()), null, null, auditDetail,
-				aCustomerPhonenumber.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerPhonenumber.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2307,7 +2307,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerBankInfo.getBefImage(), aCustomerBankInfo);
 		return new AuditHeader(String.valueOf(aCustomerBankInfo.getCustID()),
 				String.valueOf(aCustomerBankInfo.getCustID()), null, null, auditDetail,
-				aCustomerBankInfo.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerBankInfo.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2320,8 +2320,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
 		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()),
-				null, null, auditDetail, aCustCardSales.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2334,7 +2333,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
 		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
-				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2347,8 +2346,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(CustomerAddres aCustomerAddres, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerAddres.getBefImage(), aCustomerAddres);
 		return new AuditHeader(String.valueOf(aCustomerAddres.getCustID()), String.valueOf(aCustomerAddres.getCustID()),
-				null, null, auditDetail, aCustomerAddres.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustomerAddres.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2361,8 +2359,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(CustomerEMail aCustomerEMail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerEMail.getBefImage(), aCustomerEMail);
 		return new AuditHeader(String.valueOf(aCustomerEMail.getCustID()), String.valueOf(aCustomerEMail.getCustID()),
-				null, null, auditDetail, aCustomerEMail.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustomerEMail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2375,8 +2372,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(CustomerIncome aCustomerIncome, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerIncome.getBefImage(), aCustomerIncome);
 		return new AuditHeader(String.valueOf(aCustomerIncome.getCustId()), String.valueOf(aCustomerIncome.getCustId()),
-				null, null, auditDetail, aCustomerIncome.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aCustomerIncome.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2390,7 +2386,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerChequeInfo.getBefImage(), aCustomerChequeInfo);
 		return new AuditHeader(String.valueOf(aCustomerChequeInfo.getCustID()),
 				String.valueOf(aCustomerChequeInfo.getCustID()), null, null, auditDetail,
-				aCustomerChequeInfo.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerChequeInfo.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2403,7 +2399,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(CustomerExtLiability liability, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, liability.getBefImage(), liability);
 		return new AuditHeader(String.valueOf(liability.getCustId()), String.valueOf(liability.getCustId()), null, null,
-				auditDetail, liability.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, liability.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2417,7 +2413,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDocument.getBefImage(), aCustomerDocument);
 		return new AuditHeader(String.valueOf(aCustomerDocument.getCustID()),
 				String.valueOf(aCustomerDocument.getCustID()), null, null, auditDetail,
-				aCustomerDocument.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerDocument.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {

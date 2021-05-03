@@ -146,7 +146,7 @@ public class PTListReportUtils implements Serializable {
 				if (file.exists()) {
 					byte[] buf = null;
 					buf = JasperRunManager.runReportToPdf(reportSrc, parameters, listDetailsDS);
-					final HashMap<String, Object> map = new HashMap<String, Object>();
+					final Map<String, Object> map = new HashMap<String, Object>();
 					map.put("reportBuffer", buf);
 					map.put("reportName", reportList.getReportHeading());
 

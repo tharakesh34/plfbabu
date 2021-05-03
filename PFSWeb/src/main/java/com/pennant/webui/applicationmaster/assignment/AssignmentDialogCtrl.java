@@ -47,6 +47,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -853,7 +854,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 		assignmentRate.setNewRecord(true);
 		assignmentRate.setWorkflowId(0);
 		doClearMessage();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("assignmentHeaderList", getHeaderDetails());
 		map.put("isOpexRateMandatory", isOpexRateMandatory);
 		map.put("assignmentRate", assignmentRate);
@@ -886,7 +887,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("assignmentHeaderList", getHeaderDetails());
 				map.put("isOpexRateMandatory", isOpexRateMandatory);
 				map.put("assignmentRate", assignmentRate);

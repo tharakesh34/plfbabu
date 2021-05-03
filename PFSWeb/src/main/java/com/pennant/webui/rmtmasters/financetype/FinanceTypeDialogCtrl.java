@@ -1932,7 +1932,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_INSURANCES, true);
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_INSURANCES));
 			map.put("roleCode", getRole());
 			map.put("finType", this.finType.getValue());
@@ -1963,7 +1963,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ACCOUNTING));
 			map.put("roleCode", getRole());
 			map.put("finType", this.finType.getValue());
@@ -1995,7 +1995,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_FEES, true);
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEES));
 			map.put("roleCode", getRole());
 			map.put("finType", finType.getValue());
@@ -2027,7 +2027,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_PARTNERBANK, true);
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_PARTNERBANK));
 			map.put("roleCode", getRole());
 			map.put("finType", finType.getValue());
@@ -7983,7 +7983,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			tdsApplicableTo.setTooltiptext(dataObject.toString());
 		} else {
 			@SuppressWarnings("unchecked")
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";
 				List<String> flagKeys = new ArrayList<>(details.keySet());
@@ -8124,7 +8124,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// create a new IncomeExpenseDetail object, We GET it from the backEnd.
 		final FinTypeAccount aFinTypeAccount = getFinanceTypeService().getNewFinTypeAccount();
 		aFinTypeAccount.setFinType(this.finType.getValue());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finTypeAccount", aFinTypeAccount);
 		map.put("financeTypeDialogCtrl", this);
 		map.put("role", getRole());
@@ -8144,7 +8144,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		FinTypeAccount itemdata = (FinTypeAccount) item.getAttribute("data");
 		if (!StringUtils.trimToEmpty(itemdata.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			itemdata.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finTypeAccount", itemdata);
 			map.put("financeTypeDialogCtrl", this);
 			map.put("role", getRole());
@@ -9210,7 +9210,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_EXPENSES, true);
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_EXPENSES));
 			map.put("roleCode", getRole());
 			map.put("finType", finType.getValue());

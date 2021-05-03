@@ -3,6 +3,7 @@ package com.pennant.webui.reports;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -85,7 +86,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		String reportName = "";
 
 		this.fromDate.setConstraint(new PTDateValidator("From Date", true, null, DateUtility.getSysDate(), true));
@@ -156,7 +157,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				byte[] buf = null;
 				auditDataSource = (DataSource) SpringUtil.getBean("auditDataSource");
 				buf = JasperRunManager.runReportToPdf(reportSrc, map, auditDataSource.getConnection());
-				final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+				final Map<String, Object> auditMap = new HashMap<String, Object>();
 				auditMap.put("reportBuffer", buf);
 
 				// call the ZUL-file with the parameters packed in a map

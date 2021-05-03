@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -237,7 +238,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 			LimitDetails details = (LimitDetails) event.getData();
 			List<LimitReferenceMapping> limitReferences = getLimitDetailService().getLimitReferences(details);
 			if (limitReferences != null && limitReferences.size() > 0) {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("limitDetails", details);
 				map.put("limitReference", limitReferences);
 				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitCustomerReferencesDialog.zul", null,

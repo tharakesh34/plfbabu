@@ -8,6 +8,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -67,9 +68,16 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(enquiry.getClosingStatus())) {
 				curFinAmountValue = BigDecimal.ZERO;
 			} else {
-				curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
-						.add(enquiry.getInsuranceAmt()).add(enquiry.getTotalCpz()).subtract(enquiry.getDownPayment())
-						.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+				if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
+					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
+							.add(enquiry.getInsuranceAmt()).add(enquiry.getTotalCpz())
+							.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+				} else {
+					curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
+							.add(enquiry.getInsuranceAmt()).add(enquiry.getTotalCpz())
+							.subtract(enquiry.getDownPayment()).subtract(enquiry.getFinRepaymentAmount())
+							.subtract(enquiry.getSvAmount());
+				}
 			}
 			lc = new Listcell(
 					PennantAppUtil.amountFormate(curFinAmountValue, CurrencyUtil.getFormat(enquiry.getFinCcy())));

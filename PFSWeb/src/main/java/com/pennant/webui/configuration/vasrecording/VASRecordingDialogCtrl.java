@@ -267,7 +267,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private String moduleType = "";
 
 	private List<FinanceCheckListReference> vasChecklists = null;
-	private HashMap<Long, Long> selectedAnsCountMap = null;
+	private Map<Long, Long> selectedAnsCountMap = null;
 	protected Map<String, Object> flagTypeDataMap = new HashMap<String, Object>();
 	private ExtendedFieldsGenerator generator;
 	protected Tabpanel extendedFieldTabPanel;
@@ -1779,7 +1779,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_AGREEMENT);
 			if (getVASRecording().getAggrements() != null && !getVASRecording().getAggrements().isEmpty()) {
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("agreementList", getVASRecording().getAggrements());
 				map.put("financeMainDialogCtrl", this);
 				if (enqiryModule || isCancelProcess) {
@@ -1826,7 +1826,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 			if (createcheckLsitTab) {
 				clearTabpanelChildren(AssetConstants.UNIQUE_ID_CHECKLIST);
-				final HashMap<String, Object> map = getDefaultArguments();
+				final Map<String, Object> map = getDefaultArguments();
 				map.put("checkList", getVASRecording().getCheckLists());
 				map.put("finCheckRefList", getVASRecording().getVasCheckLists());
 				map.put("financeMainDialogCtrl", this);
@@ -1854,7 +1854,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		createTab(AssetConstants.UNIQUE_ID_DOCUMENTDETAIL, true);
 
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getVASRecording().getDocuments());
 		map.put("financeMainDialogCtrl", this);
 		if (isCancelProcess || enqiryModule) {
@@ -1876,7 +1876,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
 		} else {
 			clearTabpanelChildren(AssetConstants.UNIQUE_ID_RECOMMENDATIONS);
-			HashMap<String, Object> map = getDefaultArguments();
+			Map<String, Object> map = getDefaultArguments();
 			map.put("isFinanceNotes", true);
 			map.put("isRecommendMand", false);
 			map.put("control", this);
@@ -1911,7 +1911,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		if (!onLoadProcess) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 			map.put("vASRecording", getVASRecording());
 			map.put("acSetID", vASConfiguration.getFeeAccounting());
 			if (isCancelProcess || enqiryModule) {
@@ -1935,7 +1935,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		createTab(AssetConstants.UNIQUE_ID_POSTINGS, true);
 
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("postingDetails", getVASRecording().getReturnDataSetList());
 		map.put("dialogCtrl", this);
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/PostingDetailDialog.zul",
@@ -2017,7 +2017,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			} else {
 				this.custCIFSearchObject = null;
 			}
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("moduleCode", moduleCode);
 			map.put("enqiryModule", enqiryModule);
 			map.put("DialogCtrl", this);
@@ -2062,7 +2062,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			return;
 		}
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		if (VASConsatnts.VASAGAINST_CUSTOMER.equals(stmtType)) {
 			map.put("custid", getVASRecording().getVasCustomer().getCustomerId());
 			map.put("finReference", this.vasReference.getValue());
@@ -2590,8 +2590,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("dialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
@@ -3636,11 +3636,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.vasChecklists = vasChecklists;
 	}
 
-	public HashMap<Long, Long> getSelectedAnsCountMap() {
+	public Map<Long, Long> getSelectedAnsCountMap() {
 		return selectedAnsCountMap;
 	}
 
-	public void setSelectedAnsCountMap(HashMap<Long, Long> selectedAnsCountMap) {
+	public void setSelectedAnsCountMap(Map<Long, Long> selectedAnsCountMap) {
 		this.selectedAnsCountMap = selectedAnsCountMap;
 	}
 

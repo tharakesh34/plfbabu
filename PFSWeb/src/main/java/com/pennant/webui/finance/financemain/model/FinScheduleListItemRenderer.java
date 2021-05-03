@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -152,7 +151,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 *            (financeScheduleDetail)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void render(HashMap map, FinanceScheduleDetail prvSchDetail, boolean lastRecord, boolean allowRvwRateEdit,
+	public void render(Map map, FinanceScheduleDetail prvSchDetail, boolean lastRecord, boolean allowRvwRateEdit,
 			boolean isRepayEnquiry, List<FinFeeDetail> finFeeDetailList, boolean showRate, boolean displayStepInfo) {
 		/* logger.debug("Entering"); */
 		lastRec = lastRecord;

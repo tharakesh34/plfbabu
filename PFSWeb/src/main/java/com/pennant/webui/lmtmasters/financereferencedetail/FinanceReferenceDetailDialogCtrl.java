@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -132,7 +133,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 
 	// ServiceDAOs / Domain Classes
 	private transient FinanceReferenceDetailService financeReferenceDetailService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	private FinanceReference financeReference;
 
@@ -1389,11 +1390,11 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		logger.debug("Leaving");
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
@@ -1539,7 +1540,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 
 		FinanceReferenceDetail itemdata = (FinanceReferenceDetail) item.getAttribute("data");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCodeList", roles);
 		map.put("financeReferenceDetail", itemdata);
 		map.put("financeReferenceDetailDialogCtrl", this);
@@ -1564,7 +1565,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		financeReferenceDetail.setLovDescNamelov("");
 		financeReferenceDetail.setLovDescRefDesc("");
 		financeReferenceDetail.setFinRefType(type);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCodeList", roles);
 		map.put("financeReferenceDetail", financeReferenceDetail);
 		map.put("financeReferenceDetailDialogCtrl", this);

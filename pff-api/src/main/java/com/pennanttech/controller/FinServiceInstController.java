@@ -2554,7 +2554,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	protected AuditHeader getAuditHeader(FinReceiptData finReceiptData, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, finReceiptData);
 		return new AuditHeader(finReceiptData.getFinReference(), null, null, null, auditDetail,
-				finReceiptData.getReceiptHeader().getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				finReceiptData.getReceiptHeader().getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2563,7 +2563,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	protected AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
 		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-				afinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				afinanceDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -3637,7 +3637,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, financeTaxDetail.getBefImage(), financeTaxDetail);
 		AuditHeader auditHeader = new AuditHeader(String.valueOf(financeTaxDetail.getTaxCustId()),
 				String.valueOf(financeTaxDetail.getTaxCustId()), null, null, auditDetail,
-				financeTaxDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				financeTaxDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
@@ -4073,7 +4073,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	protected AuditHeader getAuditHeader(FinanceMain financeMain, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, financeMain);
 		return new AuditHeader(financeMain.getFinReference(), null, null, null, auditDetail,
-				financeMain.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				financeMain.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private void setDocumentProperties(FinanceMain financeMain, Date appDate, DocumentDetails documentDetails,
@@ -4563,13 +4563,13 @@ public class FinServiceInstController extends SummaryDetailService {
 	protected AuditHeader getAuditHeader(PayOrderIssueHeader payOrderIssueByHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, payOrderIssueByHeader);
 		return new AuditHeader(payOrderIssueByHeader.getFinReference(), null, null, null, auditDetail,
-				payOrderIssueByHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				payOrderIssueByHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	protected AuditHeader getAuditHeader(ChequeHeader chequeHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, chequeHeader);
 		return new AuditHeader(chequeHeader.getFinReference(), null, null, null, auditDetail,
-				chequeHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				chequeHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {

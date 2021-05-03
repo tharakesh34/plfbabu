@@ -94,6 +94,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.financemanagement.receipts.FeeWaiverEnquiryListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -966,6 +967,16 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				crrWaivedAmt.setValue(PennantApplicationUtil.formateAmount(detail.getCurrWaiverAmount(), ccyFormatter));
 				crrWaivedAmt.addForward("onChange", self, "onChangeCurrWaivedAmount");
 				crrWaivedAmt.setAttribute("object", detail);
+				BigDecimal raminingFee = PennantApplicationUtil.formateAmount(
+						detail.getReceivableAmount().subtract(detail.getReceivedAmount()),
+						PennantConstants.defaultCCYDecPos);
+				if (raminingFee.compareTo(BigDecimal.ZERO) > 0) {
+					crrWaivedAmt.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_FeeWaiverHeaderDialog_currWaiverAmountErrorMsg.value"), ccyFormatter,
+							false, false, 0, raminingFee.doubleValue()));
+				} else {
+					crrWaivedAmt.setReadonly(true);
+				}
 				totCurrWaivedAmt = totCurrWaivedAmt.add(detail.getCurrWaiverAmount());
 				lc.appendChild(crrWaivedAmt);
 				lc.setStyle("text-align:right;");
@@ -1387,7 +1398,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 */
 	private void appendFinBasicDetails(FinanceMain aFinanceMain) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", getHeaderBasicDetails(this.financeMain));
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,

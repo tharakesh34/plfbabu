@@ -1916,7 +1916,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			extendedFieldRender.setWorkflowId(0);
 
 			// Add Common Fields
-			HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 
 			Customer aCustomer = customerDetails.getCustomer();
 
@@ -1944,7 +1944,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
 
 			// Audit Details Preparation
-			HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> auditMapValues = extendedFieldRender.getMapValues();
 			auditMapValues.put("Reference", extendedFieldRender.getReference());
 			auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 			auditMapValues.put("Version", extendedFieldRender.getVersion());
@@ -2029,7 +2029,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (postValidationHook != null) {
 				AuditHeader auditHeader = new AuditHeader(String.valueOf(customerDetails.getCustID()),
 						String.valueOf(customerDetails.getCustID()), null, null, auditDetail,
-						customerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+						customerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 				List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
 				if (CollectionUtils.isNotEmpty(errorDetails)) {
 					if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
@@ -2166,7 +2166,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			long workflowId) {
 		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		if (customerDetails.getEmploymentDetailsList() != null
 				&& customerDetails.getEmploymentDetailsList().size() > 0) {
@@ -6145,7 +6145,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 		Customer customer = customerDetails.getCustomer();

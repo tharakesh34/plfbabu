@@ -552,7 +552,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		AccountingSet accountingSet = (AccountingSet) auditHeader.getAuditDetail().getModelData();
 

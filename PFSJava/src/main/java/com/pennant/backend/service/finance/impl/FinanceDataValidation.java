@@ -89,6 +89,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinOCRCapture;
 import com.pennant.backend.model.finance.FinOCRDetail;
@@ -113,6 +114,7 @@ import com.pennant.backend.model.legal.LegalApplicantDetail;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalDocument;
 import com.pennant.backend.model.legal.LegalPropertyDetail;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mandate.Mandate;
@@ -142,6 +144,7 @@ import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
@@ -225,6 +228,7 @@ public class FinanceDataValidation {
 	private CovenantTypeDAO covenantTypeDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
 	private ChequeHeaderService chequeHeaderService;
+	private FinanceWorkFlowService financeWorkFlowService;
 
 	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
 		this.queryCategoryDAO = queryCategoryDAO;
@@ -1763,6 +1767,12 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 
+			errorDetails = doCovenantValidation(financeDetail);
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+
 			errorDetails = documentValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
@@ -1781,6 +1791,14 @@ public class FinanceDataValidation {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
 			}
+
+			if (financeDetail.getChequeHeader() != null)
+				errorDetails = chequeHeaderService.chequeValidation(financeDetail, PennantConstants.VLD_CRT_LOAN, "");
+			if (!errorDetails.isEmpty()) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+
 			errorDetails = gurantorsDetailValidation(financeDetail);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
@@ -3015,6 +3033,192 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
+	private List<ErrorDetail> doCovenantValidation(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+				financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+		String rolesName = financeWorkFlow.getLovDescWorkFlowRolesName();
+
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		Set<String> set = new HashSet<>();
+		List<FinCovenantType> covenantTypeList = financeDetail.getCovenantTypeList();
+		if (CollectionUtils.isNotEmpty(covenantTypeList)) {
+			for (FinCovenantType finCovenantType : covenantTypeList) {
+
+				String covenantType = finCovenantType.getCovenantType();
+				if (StringUtils.isBlank(covenantType)) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "covenantType";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return errorDetails;
+				} else {
+					boolean isExists = false;
+					if (set.contains(covenantType)) {
+						isExists = true;
+					} else {
+						set.add(covenantType);
+					}
+					if (isExists) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "covenantType: " + covenantType;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+						return errorDetails;
+					}
+				}
+				DocumentType documentTypeByCode = documentTypeDAO.getDocumentTypeById(covenantType, "_View");
+				if (documentTypeByCode == null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "covenantType";
+					valueParm[1] = covenantType;
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+					return errorDetails;
+				} else {
+					CustomerDocument custdocuments = customerDocumentService
+							.getApprovedCustomerDocumentById(financeMain.getCustID(), covenantType);
+					if (custdocuments != null) {
+						if (StringUtils.equals(covenantType, custdocuments.getCustDocCategory())) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "CustomerDocument" + covenantType;
+							valueParm[1] = covenantType;
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+							return errorDetails;
+						}
+					}
+				}
+
+				if (StringUtils.isNotBlank(finCovenantType.getMandRole())) {
+					if ((finCovenantType.isAlwPostpone() || finCovenantType.isAlwOtc()
+							|| finCovenantType.isAlwWaiver())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "alwPostpone or alwOtc or alwWaiver";
+						valueParm[1] = "mandRole";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("API002", valueParm)));
+						return errorDetails;
+					}
+				}
+				if (finCovenantType.isAlwWaiver()) {
+					if (StringUtils.isNotBlank(finCovenantType.getMandRole()) || finCovenantType.isAlwPostpone()
+							|| finCovenantType.isAlwOtc()) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "alwPostpone or alwOtc";
+						valueParm[1] = "alwWaiver";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("API002", valueParm)));
+						return errorDetails;
+					}
+				}
+				if (finCovenantType.isAlwPostpone() && finCovenantType.isAlwOtc()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "alwPostpone";
+					valueParm[1] = "alwOtc";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30566", valueParm)));
+					return errorDetails;
+				}
+
+				if ((!finCovenantType.isAlwPostpone() && !finCovenantType.isAlwOtc()
+						&& !finCovenantType.isAlwWaiver())) {
+					if (StringUtils.isBlank(finCovenantType.getMandRole())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "mandRole";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+
+					boolean isRoleExts = false;
+					if (StringUtils.contains(rolesName, ";")) {
+						String[] roles = rolesName.split(";");
+						for (String workFlowRoles : roles) {
+							if (StringUtils.equalsIgnoreCase(workFlowRoles, finCovenantType.getMandRole())) {
+								isRoleExts = true;
+								break;
+							}
+						}
+					}
+					if (!isRoleExts) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "mandRole";
+						valueParm[1] = finCovenantType.getMandRole();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+						return errorDetails;
+					}
+					if (financeDetail.isStp()) {
+						List<DocumentDetails> documentDetailsList = financeDetail.getDocumentDetailsList();
+						boolean documentExist = isCovenantDocumentExist(documentDetailsList, covenantType);
+						if (!documentExist) {
+							String[] valueParm = new String[1];
+							valueParm[0] = covenantType;
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("CVN001", valueParm)));
+							return errorDetails;
+						}
+						for (DocumentDetails detail : documentDetailsList) {
+							if (!StringUtils.equals(covenantType, detail.getDocCategory())) {
+								continue;
+							}
+							if (!(DocumentCategories.CUSTOMER.getKey().equals(covenantType))) {
+								if (StringUtils.isBlank(detail.getDocUri())) {
+									if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
+										String[] valueParm = new String[2];
+										valueParm[0] = "docContent";
+										valueParm[1] = "docRefId";
+										errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+									}
+								}
+								if (StringUtils.isBlank(detail.getDocName())) {
+									String[] valueParm = new String[1];
+									valueParm[0] = "docName";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+								}
+								if (StringUtils.isBlank(detail.getDoctype())) {
+									String[] valueParm = new String[1];
+									valueParm[0] = "docFormat";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+								} else if (!StringUtils.equalsIgnoreCase(detail.getDoctype(), "jpg")
+										&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "png")
+										&& !StringUtils.equalsIgnoreCase(detail.getDoctype(), "pdf")) {
+									String[] valueParm = new String[1];
+									valueParm[0] = "docFormat, Available formats are jpg,png,PDF";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", valueParm)));
+								}
+							}
+						}
+					}
+				} else {
+					finCovenantType.setMandRole("");
+				}
+
+				if (finCovenantType.isAlwPostpone()) {
+					if (finCovenantType.getReceivableDate() == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "receivableDate";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					} else {
+						if (finCovenantType.getReceivableDate() != null) {
+							java.util.Date appDate = SysParamUtil.getAppDate();
+							Date allowedDate = DateUtility.addDays(appDate,
+									+SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
+							if (DateUtility.compare(finCovenantType.getReceivableDate(), appDate) == -1) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "receivableDate";
+								valueParm[1] = String.valueOf(appDate);
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm)));
+							} else if (DateUtility.compare(finCovenantType.getReceivableDate(), allowedDate) == 1) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "receivableDate";
+								valueParm[1] = String.valueOf(allowedDate);
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm)));
+							}
+						}
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetails;
+	}
+
 	private boolean validateBranchCode(Mandate mandate, boolean isValidBranch, BankBranch bankBranch) {
 		if (StringUtils.equals(MandateConstants.TYPE_ECS, mandate.getMandateType())) {
 			if (!bankBranch.isEcs()) {
@@ -3719,7 +3923,7 @@ public class FinanceDataValidation {
 					RuleConstants.EVENT_DOWNPAYRULE);
 			BigDecimal downpayPercentage = BigDecimal.ZERO;
 			if (StringUtils.isNotEmpty(sqlRule)) {
-				HashMap<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
+				Map<String, Object> fieldsAndValues = customerEligibilityCheck.getDeclaredFieldValues();
 				downpayPercentage = (BigDecimal) RuleExecutionUtil.executeRule(sqlRule, fieldsAndValues,
 						finMain.getFinCcy(), RuleReturnType.DECIMAL);
 			}
@@ -3936,13 +4140,13 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		}
-		
-			if ((StringUtils.isBlank(finMain.getRpyAdvBaseRate()) || finMain.getRpyAdvBaseRate() == null)
+
+		if ((StringUtils.isBlank(finMain.getRpyAdvBaseRate()) || finMain.getRpyAdvBaseRate() == null)
 				&& finMain.getRpyAdvMargin() != null) {
-				if (finMain.getRpyAdvMargin().compareTo(BigDecimal.ZERO) > 0) {
-					finMain.setRpyAdvMargin(BigDecimal.ZERO);
-				}
+			if (finMain.getRpyAdvMargin().compareTo(BigDecimal.ZERO) > 0) {
+				finMain.setRpyAdvMargin(BigDecimal.ZERO);
 			}
+		}
 
 		return errorDetails;
 	}
@@ -7117,6 +7321,22 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
+	private boolean isCovenantDocumentExist(List<DocumentDetails> documents, String docType) {
+		if (CollectionUtils.isEmpty(documents)) {
+			return false;
+		}
+
+		for (DocumentDetails document : documents) {
+			if (StringUtils.equals(docType, document.getDocCategory())) {
+				if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, document.getRecordType())) {
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//CovenantValidations
 	public List<ErrorDetail> covenantValidation(FinanceMain financeMain, List<Covenant> covenantsList, String module) {
 		logger.debug(Literal.ENTERING);
@@ -8122,4 +8342,9 @@ public class FinanceDataValidation {
 	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
 		this.finCovenantTypeDAO = finCovenantTypeDAO;
 	}
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
 }

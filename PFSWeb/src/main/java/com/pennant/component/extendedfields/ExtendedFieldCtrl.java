@@ -239,7 +239,7 @@ public class ExtendedFieldCtrl {
 			return;
 		}
 		List<ExtendedFieldDetail> notInputElements = new ArrayList<>();
-		HashMap<ExtendedFieldDetail, WrongValueException> wveMap = new HashMap<>();
+		Map<ExtendedFieldDetail, WrongValueException> wveMap = new HashMap<>();
 		List<Component> compList = new ArrayList<Component>();
 
 		for (ExtendedFieldDetail detail : extendedFieldHeader.getExtendedFieldDetails()) {

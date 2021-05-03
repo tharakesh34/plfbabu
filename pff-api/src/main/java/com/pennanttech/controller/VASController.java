@@ -2,7 +2,6 @@ package com.pennanttech.controller;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -389,7 +388,7 @@ public class VASController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(VASRecording aVASRecording, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aVASRecording.getBefImage(), aVASRecording);
 		return new AuditHeader(String.valueOf(aVASRecording.getId()), String.valueOf(aVASRecording.getId()), null, null,
-				auditDetail, aVASRecording.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, aVASRecording.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setvASRecordingService(VASRecordingService vASRecordingService) {

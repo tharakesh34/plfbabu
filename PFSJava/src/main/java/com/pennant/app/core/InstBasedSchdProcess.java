@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.FactoryConfigurationError;
 
@@ -56,7 +57,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 	private transient BatchProcessStatusDAO batchProcessStatusDAO;
 	private PlatformTransactionManager transactionManager;
 
-	protected HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	protected Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	protected transient WorkflowEngine workFlow = null;
 
 	/**
@@ -373,12 +374,12 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 	}
 
-	private HashMap<String, ArrayList<ErrorDetail>> setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap,
+	private Map<String, List<ErrorDetail>> setOverideMap(Map<String, List<ErrorDetail>> overideMap,
 			ErrorDetail errorDetail) {
 
 		if (StringUtils.isNotBlank(errorDetail.getField())) {
 
-			ArrayList<ErrorDetail> errorDetails = null;
+			List<ErrorDetail> errorDetails = null;
 			if (overideMap.containsKey(errorDetail.getField())) {
 				errorDetails = overideMap.get(errorDetail.getField());
 
@@ -405,10 +406,10 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		return overideMap;
 	}
 
-	private boolean isOverride(HashMap<String, ArrayList<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
+	private boolean isOverride(Map<String, List<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
 
 		if (overideMap.containsKey(errorDetail.getField())) {
-			ArrayList<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
+			List<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
 			for (int i = 0; i < errorDetails.size(); i++) {
 
 				if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
@@ -473,11 +474,11 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		this.workFlow = workFlow;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

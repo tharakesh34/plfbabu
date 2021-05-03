@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -882,7 +883,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 		aSukukBrokerBonds.setNewRecord(true);
 		aSukukBrokerBonds.setBrokerCode(this.brokerCode.getValue());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("sukukBrokerBonds", aSukukBrokerBonds);
 		map.put("sukukBrokerDialogCtrl", this);
@@ -909,7 +910,7 @@ public class SukukBrokerDialogCtrl extends GFCBaseCtrl<SukukBroker> {
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		SukukBrokerBonds itemdata = (SukukBrokerBonds) item.getAttribute("data");
 		itemdata.setNewRecord(false);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("sukukBrokerBonds", itemdata);
 		map.put("sukukBrokerDialogCtrl", this);

@@ -196,7 +196,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private void doUserActivityLog() throws Exception {
 		logger.debug("Entering ");
 		/*
-		 * final HashMap<String, Object> map = new HashMap<String, Object>(); CustomerFinanceDetail
+		 * final Map<String, Object> map = new HashMap<String, Object>(); CustomerFinanceDetail
 		 * customerFinanceDetail=new CustomerFinanceDetail();
 		 * 
 		 * if(finBasic_finReference !=null && finBasic_finReference.getValue()!=null) {
@@ -232,7 +232,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Entering ");
 
 		List<ReasonDetailsLog> list = null;
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		CustomerFinanceDetail customerFinanceDetail = new CustomerFinanceDetail();
 
 		if (finBasic_finReference != null && finBasic_finReference.getValue() != null) {

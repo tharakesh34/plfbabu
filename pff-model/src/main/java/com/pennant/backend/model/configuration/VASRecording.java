@@ -167,7 +167,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "documents")
 	@XmlElement(name = "document")
 	private List<DocumentDetails> documents = null;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<FinanceReferenceDetail> checkLists = null;
 	private VasCustomer vasCustomer = null;
 	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
@@ -496,11 +496,11 @@ public class VASRecording extends AbstractWorkflowEntity {
 		this.extendedFieldRender = extendedFieldRender;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

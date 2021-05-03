@@ -2,6 +2,7 @@ package com.pennant.backend.model.rulefactory;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AECommitment {
 
@@ -253,12 +254,12 @@ public class AECommitment {
 		this.custTypeCode = custTypeCode;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> aeCommitmentMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> aeCommitmentMap = new HashMap<String, Object>();
 		return getDeclaredFieldValues(aeCommitmentMap);
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> aeCommitmentMap) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> aeCommitmentMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				aeCommitmentMap.put(this.getClass().getDeclaredFields()[i].getName(),

@@ -147,7 +147,7 @@ public class ReasonDetailsCtrl extends GFCBaseCtrl<ReasonHeader> {
 			this.reasons.setValue(dataObject.toString());
 			this.reasons.setTooltiptext("");
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempReasons = details.keySet().toString();
 				tempReasons = tempReasons.replace("[", " ").replace("]", "").replace(" ", "");

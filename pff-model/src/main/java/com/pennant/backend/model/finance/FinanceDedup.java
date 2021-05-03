@@ -3,8 +3,8 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -76,7 +76,7 @@ public class FinanceDedup implements Serializable {
 	private String finLimitRef;
 
 	private FinanceDedup befImage;
-	private HashMap<String, String> overridenMap;
+	private Map<String, String> overridenMap;
 	private String dedupFields;
 	private boolean override;
 
@@ -291,11 +291,11 @@ public class FinanceDedup implements Serializable {
 		this.befImage = befImage;
 	}
 
-	public HashMap<String, String> getOverridenMap() {
+	public Map<String, String> getOverridenMap() {
 		return overridenMap;
 	}
 
-	public void setOverridenMap(HashMap<String, String> overridenMap) {
+	public void setOverridenMap(Map<String, String> overridenMap) {
 		this.overridenMap = overridenMap;
 	}
 

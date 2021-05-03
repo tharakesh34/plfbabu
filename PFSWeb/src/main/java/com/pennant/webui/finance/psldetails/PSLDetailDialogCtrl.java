@@ -571,7 +571,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		logger.debug(Literal.ENTERING);
 
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			if (finHeaderList != null) {
 				map.put("finHeaderList", finHeaderList);
@@ -614,7 +614,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 			this.loanPurpose.setValue(dataObject.toString());
 			this.loanPurpose.setTooltiptext("");
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String purposeTypes = details.keySet().toString();
 				purposeTypes = purposeTypes.replace("[", " ").replace("]", "").replace(" ", "");

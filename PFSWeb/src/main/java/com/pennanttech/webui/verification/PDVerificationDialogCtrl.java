@@ -182,7 +182,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void appendFinBasicDetails(Object finHeaderList) {
 		logger.debug(Literal.ENTERING);
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
@@ -321,7 +321,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			pdInquiry.getChildren().remove(1);
 		}
 
-		final HashMap<String, Object> map = new HashMap<>();
+		final Map<String, Object> map = new HashMap<>();
 		personalDiscussion = personalDiscussionService.getPersonalDiscussion(pd.getSelectedItem().getValue(), "_View");
 		if (personalDiscussion != null && StringUtils.isEmpty(personalDiscussion.getNextRoleCode())) {
 			map.put("LOAN_ORG", true);

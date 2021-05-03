@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -748,7 +749,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 				MessageUtil.showError(Labels.getLabel("RECORD_NO_MAINTAIN"));
 			} else {
 				codeMapping.setNewRecord(false);
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("loanTypeKnockOffDialogCtrl", this);
 				map.put("loanTypeKnockOff", getLoanTypeKnockOff());
 				map.put("loanTypeCodeMapping", codeMapping);

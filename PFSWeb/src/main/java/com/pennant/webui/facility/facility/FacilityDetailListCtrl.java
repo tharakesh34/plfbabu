@@ -340,7 +340,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 		this.listBoxFinances.getItems().clear();
 		this.listBoxFinances.setSizedByContent(true);
 		List<FinanceSummary> nonCommitmentList = new ArrayList<FinanceSummary>();
-		HashMap<String, List<FinanceSummary>> commitmentMap = new HashMap<String, List<FinanceSummary>>();
+		Map<String, List<FinanceSummary>> commitmentMap = new HashMap<String, List<FinanceSummary>>();
 		Date oldestDate = existFinances.get(0).getFinStartDate();
 		Date finalDate = existFinances.get(0).getMaturityDate();
 		BigDecimal totCmtAmount = BigDecimal.ZERO;
@@ -429,7 +429,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	}
 
 	private void doFillCommitmentGroups(Listitem item, Listcell cell, Listgroup group,
-			HashMap<String, List<FinanceSummary>> commitmentMap) {
+			Map<String, List<FinanceSummary>> commitmentMap) {
 		for (String key : commitmentMap.keySet()) {
 
 			List<FinanceSummary> list = commitmentMap.get(key);

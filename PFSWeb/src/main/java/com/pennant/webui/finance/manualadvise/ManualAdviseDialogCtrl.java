@@ -1524,7 +1524,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		}
 		if (!onLoadProcess) {
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("manualAdvise", manualAdvise);
 			map.put("acSetID", accountsetId);
 			map.put("enqModule", enqiryModule);

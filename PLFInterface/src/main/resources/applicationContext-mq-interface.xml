@@ -52,19 +52,20 @@
 		class="com.pennant.mq.processutil.CustomerLimitPositionProcess" /> <bean id="customerLimitUtilProcess" class="com.pennant.mq.processutil.CustomerLimitUtilProcess" 
 		/> ====================================================== Accounts Interface Services ====================================================== 
 		<bean id="accountDetailProcess" class="com.pennant.mq.process.impl.AccountDetailServiceImpl" > <property name="fetchAllAccountsProcess" 
-		ref="fetchAllAccountsProcess" /> <property name="fetchAccountDetailProcess" ref="fetchAccountDetailProcess" /> </bean> <bean id="accountDataProcess" 
-		class="com.pennant.mq.process.impl.AccountDataServiceImpl"> <property name="addOrRemoveHoldProcess" ref="addOrRemoveHoldProcess" 
-		/> <property name="createAccountProcess" ref="createAccountProcess" /> <property name="collateralMarkProcess" ref="markCollateralProcess" 
-		/> </bean> ====================================================== Accounts Interface Service Implementations ====================================================== 
-		<bean id="fetchAllAccountsProcess" class="com.pennant.mq.processutil.FetchAllAccountsProcess" /> <bean id="fetchAccountDetailProcess" 
-		class="com.pennant.mq.processutil.FetchAccountDetailProcess" /> <bean id="addOrRemoveHoldProcess" class="com.pennant.mq.processutil.AddOrRemoveHoldProcess" /> <bean id="markCollateralProcess" 
-		class="com.pennant.mq.processutil.CollateralMarkProcess" /> <bean id="createAccountProcess" class="com.pennant.mq.processutil.CreateAccountProcess"> 
-		<property name="mqInterfaceDAO" ref="mqInterfaceDAO" /> </bean> ====================================================== DDA 
-		Interface Services ====================================================== <bean id="ddaProcess" class="com.pennant.mq.process.impl.DDAServiceImpl"> 
-		<property name="ddaRequestProcess" ref="ddaRequestProcess" /> <property name="ddaAmendmentProcess" ref="ddaAmendmentProcess" 
-		/> <property name="ddaUpdateProcess" ref="ddaUpdateProcess" /> <property name="ddaCancelProcess" ref="ddaCancelProcess" /> 
-		</bean> ====================================================== DDA Interface Service Implementations ====================================================== 
-		<bean id="ddaAmendmentProcess" class="com.pennant.mq.processutil.DDAAmendmentProcess" /> <bean id="ddaRequestProcess" class="com.pennant.mq.processutil.DDARequestProcess" 
+		ref="fetchAllAccountsProcess" /> <property name="fetchAccountDetailProcess" ref="fetchAccountDetailProcess" /> </bean> <bean 
+		id="accountDataProcess" class="com.pennant.mq.process.impl.AccountDataServiceImpl"> <property name="addOrRemoveHoldProcess" 
+		ref="addOrRemoveHoldProcess" /> <property name="createAccountProcess" ref="createAccountProcess" /> <property name="collateralMarkProcess" 
+		ref="markCollateralProcess" /> </bean> ====================================================== Accounts Interface Service 
+		Implementations ====================================================== <bean id="fetchAllAccountsProcess" class="com.pennant.mq.processutil.FetchAllAccountsProcess" 
+		/> <bean id="fetchAccountDetailProcess" class="com.pennant.mq.processutil.FetchAccountDetailProcess" /> <bean id="addOrRemoveHoldProcess" 
+		class="com.pennant.mq.processutil.AddOrRemoveHoldProcess" /> <bean id="markCollateralProcess" class="com.pennant.mq.processutil.CollateralMarkProcess" 
+		/> <bean id="createAccountProcess" class="com.pennant.mq.processutil.CreateAccountProcess"> <property name="mqInterfaceDAO" 
+		ref="mqInterfaceDAO" /> </bean> ====================================================== DDA Interface Services ====================================================== 
+		<bean id="ddaProcess" class="com.pennant.mq.process.impl.DDAServiceImpl"> <property name="ddaRequestProcess" ref="ddaRequestProcess" 
+		/> <property name="ddaAmendmentProcess" ref="ddaAmendmentProcess" /> <property name="ddaUpdateProcess" ref="ddaUpdateProcess" 
+		/> <property name="ddaCancelProcess" ref="ddaCancelProcess" /> </bean> ====================================================== 
+		DDA Interface Service Implementations ====================================================== <bean id="ddaAmendmentProcess" 
+		class="com.pennant.mq.processutil.DDAAmendmentProcess" /> <bean id="ddaRequestProcess" class="com.pennant.mq.processutil.DDARequestProcess" 
 		/> <bean id="ddaUpdateProcess" class="com.pennant.mq.processutil.DDAUpdateProcess" /> <bean id="ddaCancelProcess" class="com.pennant.mq.processutil.DDACancelProcess" 
 		/> ====================================================== Deposit Interface Services ====================================================== 
 		<bean id="depositDetailProcess" class="com.pennant.mq.process.impl.DepositDetailServiceImpl"> <property name="fetchDepositsProcess" 
@@ -76,8 +77,8 @@
 		ref="norkamCheckUtilProcess" /> </bean> <bean id="norkamCheckUtilProcess" class="com.pennant.mq.processutil.NorkamCheckUtilProcess"/> 
 		====================================================== ICCS Handling Instruction && Cheque verification Interface Service 
 		====================================================== <bean id="financeMaintenanceProcess" class="com.pennant.mq.process.impl.FinanceMaintenanceProcessImpl"> 
-		<property name="handlingInstructionProcess" ref="handlingInstructionProcess" /> </bean> <bean id="handlingInstructionProcess" class="com.pennant.mq.processutil.HandlingInstructionProcess"/> <bean id="chequeVerifyProcess" 
-		class="com.pennant.mq.processutil.ChequeVerificationDetailProcess"/> -->
+		<property name="handlingInstructionProcess" ref="handlingInstructionProcess" /> </bean> <bean id="handlingInstructionProcess" 
+		class="com.pennant.mq.processutil.HandlingInstructionProcess"/> <bean id="chequeVerifyProcess" class="com.pennant.mq.processutil.ChequeVerificationDetailProcess"/> -->
 
 	<!-- TO BE REMOVED -->
 
@@ -85,8 +86,9 @@
 		ref="interfaceDAO" /> </bean> <bean id="dailyDownloadProcess" class="com.pennant.corebanking.process.impl.DailyDownloadProcessImpl"> 
 		<property name="interfaceDAO" ref="interfaceDAO" /> </bean> <bean id="financeCancellationProcess" class="com.pennant.corebanking.process.impl.FinanceCancellationProcessImpl"> 
 		<property name="interfaceDAO" ref="interfaceDAO" /> </bean> <bean id="uploadProfitDetailProcess" class="com.pennant.corebanking.process.impl.UploadProfitDetailProcessImpl"> 
-		<property name="interfaceDAO" ref="interfaceDAO" /> </bean> <bean id="coreDBDatasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> <property name="driverClassName" 
-		value="${coredbjdbc.driverClassName}" /> <property name="url" value="${coredbjdbc.url}" /> <property name="username" value="${coredbjdbc.username}" 
-		/> <property name="password" value="${coredbjdbc.password}" /> </bean> <bean id="interfaceDAO" class="com.pennant.corebanking.dao.impl.InterfaceDAOImpl"> 
-		<property name="dataSource" ref="coreDBDatasource" /> </bean> -->
+		<property name="interfaceDAO" ref="interfaceDAO" /> </bean> <bean id="coreDBDatasource" class="org.apache.commons.dbcp.BasicDataSource" 
+		destroy-method="close"> <property name="driverClassName" value="${coredbjdbc.driverClassName}" /> <property name="url" value="${coredbjdbc.url}" 
+		/> <property name="username" value="${coredbjdbc.username}" /> <property name="password" value="${coredbjdbc.password}" /> 
+		</bean> <bean id="interfaceDAO" class="com.pennant.corebanking.dao.impl.InterfaceDAOImpl"> <property name="dataSource" ref="coreDBDatasource" 
+		/> </bean> -->
 </beans> 

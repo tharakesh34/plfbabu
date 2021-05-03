@@ -1105,7 +1105,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, headerDetails);
 
 		AuditHeader auditHeader = new AuditHeader(String.valueOf(headerDetails.getHeaderId()), null, null, null,
-				auditDetail, headerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, headerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 		doApprove(auditHeader, false);
 		logger.debug(Literal.LEAVING);
 	}
@@ -1432,7 +1432,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		String totalGrpCode = "";
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		HashMap<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
+		Map<String, List<String>> groupLineMap = new HashMap<String, List<String>>();
 		List<LimitDetails> limitDetails = aLimitHeader.getCustomerLimitDetailsList();
 
 		for (LimitDetails limitDetail : limitDetails) {

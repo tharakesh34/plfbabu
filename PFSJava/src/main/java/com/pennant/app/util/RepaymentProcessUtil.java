@@ -2425,7 +2425,7 @@ public class RepaymentProcessUtil {
 
 	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {

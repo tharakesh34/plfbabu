@@ -1264,7 +1264,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(customerEmploymentDetail.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerEmploymentDetail", customerEmploymentDetail);
 				map.put("customerViewDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -1343,7 +1343,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(customerAddress.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				customerAddress.setLovDescCustCIF(this.custCIF2.getValue());
 				map.put("customerAddres", customerAddress);
 				map.put("customerViewDialogCtrl", this);
@@ -1372,7 +1372,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(customerPhoneNumber.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				customerPhoneNumber.setLovDescCustCIF(this.custCIF2.getValue());
 				map.put("customerPhoneNumber", customerPhoneNumber);
 				map.put("customerViewDialogCtrl", this);
@@ -1402,7 +1402,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(customerEmail.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				customerEmail.setLovDescCustCIF(this.custCIF2.getValue());
 				map.put("customerEMail", customerEmail);
 				map.put("customerViewDialogCtrl", this);
@@ -1431,7 +1431,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(custBankInfo.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				custBankInfo.setLovDescCustCIF(this.custCIF2.getValue());
 				map.put("customerBankInfo", custBankInfo);
 				map.put("customerViewDialogCtrl", this);
@@ -1464,7 +1464,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(custChequeInfo.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				custChequeInfo.setLovDescCustCIF(this.custCIF2.getValue());
 				map.put("customerChequeInfo", custChequeInfo);
 				map.put("finFormatter", ccyFormatter);
@@ -1494,7 +1494,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(externalLiability.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				externalLiability.setCustCif(this.custCIF2.getValue());
 				map.put("externalLiability", externalLiability);
 				map.put("finFormatter", ccyFormatter);
@@ -1525,7 +1525,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(customerIncome.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerIncome", customerIncome);
 				map.put("customerViewDialogCtrl", this);
 				map.put("ccyFormatter", ccyFormatter);
@@ -1553,7 +1553,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (isDeleteRecord(directorDetail.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("directorDetail", directorDetail);
 				map.put("customerViewDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -2714,9 +2714,9 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * 
 	 * json = processJsonForCibilRawReport(json); } } catch (Exception e) { logger.error("Exception", e); } try { if
 	 * (json != null) { result = FreeMarkerTemplateUtils
-	 * .processTemplateIntoString(getTemplate("CIBILRawViewTemplate.FTL"), json); HashMap<String, Object> detailMap =
-	 * new HashMap<String, Object>(); detailMap.put("reportData", result); detailMap.put("reportName",
-	 * "CibilRawReport"); detailMap.put("mediaFormat", "html");
+	 * .processTemplateIntoString(getTemplate("CIBILRawViewTemplate.FTL"), json); Map<String, Object> detailMap = new
+	 * HashMap<String, Object>(); detailMap.put("reportData", result); detailMap.put("reportName", "CibilRawReport");
+	 * detailMap.put("mediaFormat", "html");
 	 * 
 	 * Executions.createComponents( "/WEB-INF/pages/InterfaceDetails/InterfaceReportsDialog.zul",
 	 * window_CustomerDialogg, detailMap); reportExit = true; } } catch (Exception e) { MessageUtil.showError(e); }
@@ -2935,7 +2935,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * bhflCibilRequestService.loadCibilIdTypes(); } if (MapUtils.isEmpty(cibilPhoneTypes)) { cibilPhoneTypes =
 	 * bhflCibilRequestService.loadCibilPhoneTypes(); } if (MapUtils.isEmpty(cibilloanTypes)) { cibilloanTypes =
 	 * bhflCibilRequestService.loadCibilLoanTypes(); } } protected Map<String, Object> getDefaultArguments() {
-	 * HashMap<String, Object> aruments = new HashMap<>();
+	 * Map<String, Object> aruments = new HashMap<>();
 	 * 
 	 * aruments.put("moduleCode", moduleCode); aruments.put("enqiryModule", enqiryModule);
 	 * 
@@ -3096,7 +3096,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerFinanceDetail.setAuditTransactionsList(
 				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, false, false, null));
 		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, "financeMain")));
-		HashMap<String, Object> arg = new HashMap<String, Object>();
+		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("customerFinanceDetail", customerFinanceDetail);
 		arg.put("facility", false);
 		arg.put("userActivityLog", true);
@@ -3112,7 +3112,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	protected Map<String, Object> getDefaultArguments() {
-		HashMap<String, Object> aruments = new HashMap<>();
+		Map<String, Object> aruments = new HashMap<>();
 
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
@@ -3348,7 +3348,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				e.printStackTrace();
 			}
 			if (byteArray != null) {
-				HashMap<String, Object> auditMap = new HashMap<String, Object>(4);
+				Map<String, Object> auditMap = new HashMap<String, Object>(4);
 				auditMap.put("reportBuffer", byteArray);
 				auditMap.put("dialogWindow", window_CustomerDialogg);
 				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);

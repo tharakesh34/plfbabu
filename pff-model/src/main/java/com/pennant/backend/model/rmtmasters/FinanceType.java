@@ -289,10 +289,10 @@ public class FinanceType extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 
-	private HashMap<String, AccountingSet> lovDescAERule = new HashMap<String, AccountingSet>();
+	private Map<String, AccountingSet> lovDescAERule = new HashMap<String, AccountingSet>();
 
 	@XmlTransient
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	//==================Not the Table
 	private String lovDescFinDivisionName;
@@ -1472,11 +1472,11 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.lovDescWorkFlowTypeName = lovDescWorkFlowTypeName;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
@@ -1508,7 +1508,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	}
 
-	public HashMap<String, AccountingSet> getLovDescAERule() {
+	public Map<String, AccountingSet> getLovDescAERule() {
 		return lovDescAERule;
 	}
 
@@ -1616,7 +1616,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		return finDepreciationFrq;
 	}
 
-	public void setLovDescAERule(HashMap<String, AccountingSet> lovDescAERule) {
+	public void setLovDescAERule(Map<String, AccountingSet> lovDescAERule) {
 		this.lovDescAERule = lovDescAERule;
 	}
 
@@ -1964,13 +1964,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.rollOverFrq = rollOverFrq;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> financeTypeMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> financeTypeMap = new HashMap<String, Object>();
 		getDeclaredFieldValues(financeTypeMap);
 		return financeTypeMap;
 	}
 
-	public void getDeclaredFieldValues(HashMap<String, Object> financeTypeMap) {
+	public void getDeclaredFieldValues(Map<String, Object> financeTypeMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ft_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.

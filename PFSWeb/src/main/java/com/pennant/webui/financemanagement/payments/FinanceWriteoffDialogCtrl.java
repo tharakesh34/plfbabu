@@ -1035,7 +1035,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("finSchdData", aFinScheduleData);
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
@@ -1731,7 +1731,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		this.btnNotes.setSclass("");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
 		map.put("control", this);
 

@@ -45,6 +45,8 @@ package com.pennant.webui.finance.financemain;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -142,7 +144,7 @@ public class AgreementFieldsDetailDialogCtrl extends GFCBaseCtrl<AgreementFieldD
 
 	// ServiceDAOs / Domain Classes
 	private transient AgreementFieldsDetailService agreementFieldsDetailService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	//For Dynamically calling of this Controller
 	private Div toolbar;
@@ -1223,7 +1225,7 @@ public class AgreementFieldsDetailDialogCtrl extends GFCBaseCtrl<AgreementFieldD
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
@@ -1257,11 +1259,11 @@ public class AgreementFieldsDetailDialogCtrl extends GFCBaseCtrl<AgreementFieldD
 		this.agreementFieldsDetailService = agreementFieldsDetailService;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

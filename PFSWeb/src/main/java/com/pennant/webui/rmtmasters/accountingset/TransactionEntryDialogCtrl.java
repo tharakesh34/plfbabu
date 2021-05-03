@@ -184,7 +184,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 	// ServiceDAOs / Domain Classes
 	private transient PagedListService pagedListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	private transient AccountingSetService accountingSetService;
 	private transient AccountingSetDialogCtrl accountingSetDialogCtrl;
@@ -1976,7 +1976,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	public void createSimulationWindow(JSONArray jsonArray) throws InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("RuleVariables", jsonArray);
 		map.put("transactionEntryDialogCtrl", this);
 		// call the ZUL-file with the parameters packed in a map
@@ -2253,11 +2253,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.pagedListService = pagedListService;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

@@ -75,7 +75,7 @@ public class ScriptEngine implements AutoCloseable {
 		if (result == null || result.equals("")) {
 			return 0;
 		} else {
-			return converAsInteger(rule);
+			return converAsInteger(result);
 		}
 	}
 
@@ -105,13 +105,12 @@ public class ScriptEngine implements AutoCloseable {
 		Value result = eval(rule, dataMap);
 		return result == null ? new Object() : (Object) result;
 	}
-	
+
 	public Object getResultAsObject(String rule, Map<String, Object> dataMap, String reference) {
 		Value result = eval(rule, dataMap, reference);
 		return result == null ? new Object() : (Object) result;
 	}
-	
-	
+
 	private Value eval(String rule, Map<String, Object> dataMap, String reference) {
 		String scriptRule = getRule(rule);
 
@@ -151,9 +150,9 @@ public class ScriptEngine implements AutoCloseable {
 		Value bindings = null;
 		try {
 			bindings = getBindings(rule, dataMap);
-			
+
 			context.eval("js", scriptRule);
-			
+
 			Value result = bindings.getMember("Result");
 			return result;
 		} catch (Exception e) {
@@ -187,7 +186,7 @@ public class ScriptEngine implements AutoCloseable {
 				}
 			}
 		}
-		
+
 		return bindings;
 	}
 

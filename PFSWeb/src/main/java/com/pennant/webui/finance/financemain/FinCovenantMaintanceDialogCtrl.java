@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -739,7 +740,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		aFinCovenantType.setNewRecord(true);
 		aFinCovenantType.setWorkflowId(0);
 
-		HashMap<String, Object> map = getDefaultArguments();
+		Map<String, Object> map = getDefaultArguments();
 		map.put("finCovenantTypes", aFinCovenantType);
 		map.put("newRecord", "true");
 		map.put("moduleDefiner", moduleDefiner);
@@ -776,7 +777,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 				}
 				aFinCovenantType.setNewRecord(false);
 
-				HashMap<String, Object> map = getDefaultArguments();
+				Map<String, Object> map = getDefaultArguments();
 				map.put("finCovenantTypes", aFinCovenantType);
 
 				// call the ZUL-file with the parameters packed in a map
@@ -824,9 +825,9 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		return false;
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
+	public Map<String, Object> getDefaultArguments() {
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeMain.getFinCcy()));
 		map.put("finCovenantMaintanceDialogCtrl", this);
@@ -881,7 +882,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	 */
 	private void appendFinBasicDetails(FinanceMain aFinanceMain) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", getHeaderBasicDetails(this.financeMain));
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,

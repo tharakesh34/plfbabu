@@ -2080,7 +2080,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		logger.debug("Entering" + event.toString());
 
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
 

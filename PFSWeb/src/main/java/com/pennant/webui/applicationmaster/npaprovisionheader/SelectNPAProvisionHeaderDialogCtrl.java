@@ -3,6 +3,7 @@ package com.pennant.webui.applicationmaster.npaprovisionheader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -233,7 +234,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 	private void showDetailView() {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, Object> arguments = new HashMap<String, Object>();
+		Map<String, Object> arguments = new HashMap<String, Object>();
 		arguments.put("nPAProvisionHeader", this.nPAProvisionHeader);
 		arguments.put("nPAProvisionHeaderListCtrl", this.nPAProvisionHeaderListCtrl);
 		arguments.put("isCopyProcess", isCopyProcess);

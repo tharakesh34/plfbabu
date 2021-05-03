@@ -3067,15 +3067,15 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	}
 
 	@XmlTransient
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> fieldsAndValuesMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> fieldsAndValuesMap = new HashMap<String, Object>();
 
 		getDeclaredFieldValues(fieldsAndValuesMap);
 
 		return fieldsAndValuesMap;
 	}
 
-	public void getDeclaredFieldValues(HashMap<String, Object> fieldsAndValuesMap) {
+	public void getDeclaredFieldValues(Map<String, Object> fieldsAndValuesMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				// "fm_" Should be in small case only, if we want to change the
@@ -4821,16 +4821,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.processAttributes = result.toString();
 	}
 
-	/*
-	 * public HashMap<String, Object> getExtendedFieldValues() { HashMap<String, Object> financeMainmap = new
-	 * HashMap<String, Object>(); for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) { try { if
-	 * ("extendedFields".equals(this.getClass().getDeclaredFields()[i].getName() )) {
-	 * financeMainmap.putAll(extendedFields); } else if
-	 * (!"serialVersionUID".equals(this.getClass().getDeclaredFields()[i]. getName())) {
-	 * financeMainmap.put(this.getClass().getDeclaredFields()[i].getName(),
-	 * this.getClass().getDeclaredFields()[i].get(this)); } } catch (SecurityException | IllegalArgumentException |
-	 * IllegalAccessException e) { e.printStackTrace(); } } return financeMainmap; }
-	 */
 	public String getFinBranchContact() {
 		return finBranchContact;
 	}

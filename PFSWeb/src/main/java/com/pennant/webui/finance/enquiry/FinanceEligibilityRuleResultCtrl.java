@@ -45,6 +45,7 @@ package com.pennant.webui.finance.enquiry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -226,7 +227,7 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 						finEligibility.setLovDescFinPurposeName(productAssetlist.get(0).getAssetDesc());
 						doCreateFinanceWindow(finEligibility);
 					} else {
-						final HashMap<String, Object> map = new HashMap<String, Object>();
+						final Map<String, Object> map = new HashMap<String, Object>();
 						map.put("productAssetlist", productAssetlist);
 						map.put("finEligibility", finEligibility);
 						map.put("finElgRuleResultCtrl", this);
@@ -278,7 +279,7 @@ public class FinanceEligibilityRuleResultCtrl extends GFCBaseCtrl<EligibilityRul
 				tabpanel.setParent(tabpanels);
 				tab.setSelected(true);
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				finEligibility.setFinanceDetail(this.financeDetail);
 				map.put("fromEligibleScreen", true);
 				map.put("finEligibility", finEligibility);

@@ -187,7 +187,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<FeePaymentDetail> feePaymentDetailList;
 	@XmlElementWrapper(name = "covenants")
 	@XmlElement(name = "covenant")
-	private List<FinCovenantType> covenantTypeList;
+	private List<FinCovenantType> covenantTypeList = new ArrayList<>(1);
 	private Covenant covenant;
 	@XmlElement(name = "covenantDetails")
 	private List<Covenant> covenants;

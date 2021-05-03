@@ -881,14 +881,13 @@ public class CustomerController extends GenericService<Object> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
-				aCustomerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	private AuditHeader getAuditHeader(DirectorDetail directorDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, directorDetail.getBefImage(), directorDetail);
 		return new AuditHeader(String.valueOf(directorDetail.getCustID()), String.valueOf(directorDetail.getCustID()),
-				null, null, auditDetail, directorDetail.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, directorDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -902,7 +901,7 @@ public class CustomerController extends GenericService<Object> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerDetails.getBefImage(), aCustomerDetails);
 		return new AuditHeader(String.valueOf(aCustomerDetails.getCustID()),
 				String.valueOf(aCustomerDetails.getCustID()), null, null, auditDetail,
-				aCustomerDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				aCustomerDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2162,7 +2161,7 @@ public class CustomerController extends GenericService<Object> {
 				finCreditReviewDetails);
 		return new AuditHeader(String.valueOf(finCreditReviewDetails.getCustomerId()),
 				String.valueOf(finCreditReviewDetails.getCustomerId()), null, null, auditDetail,
-				finCreditReviewDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				finCreditReviewDetails.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -2175,7 +2174,7 @@ public class CustomerController extends GenericService<Object> {
 	private AuditHeader getAuditHeader(Customer aCustomer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomer.getBefImage(), aCustomer);
 		return new AuditHeader(String.valueOf(aCustomer.getCustID()), String.valueOf(aCustomer.getCustID()), null, null,
-				auditDetail, aCustomer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, aCustomer.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public CustomerService getCustomerService() {

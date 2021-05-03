@@ -122,4 +122,6 @@ public interface FinReceiptHeaderDAO {
 
 	List<FinReceiptHeader> getReceiptHeaderByID(String reference, String receiptPurpose, Date startDate, Date endDate,
 			String type);
+
+	boolean checkPresentmentsInQueue(String finReference);
 }

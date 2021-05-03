@@ -735,7 +735,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aManualAdvise.getBefImage(), aManualAdvise);
 		return new AuditHeader(String.valueOf(aManualAdvise.getAdviseID()), String.valueOf(aManualAdvise.getAdviseID()),
-				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**
@@ -747,7 +747,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, paymentHeader.getBefImage(), paymentHeader);
 		return new AuditHeader(String.valueOf(paymentHeader.getPaymentId()),
 				String.valueOf(paymentHeader.getPaymentId()), null, null, auditDetail, paymentHeader.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {

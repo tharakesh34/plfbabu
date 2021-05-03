@@ -126,7 +126,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 
 	// ServiceDAOs / Domain Classes
 	private transient ProductService productService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	// NEEDED for the ReUse in the SearchWindow
 
@@ -920,7 +920,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			aProductAsset.setNewRecord(true);
 			aProductAsset.setProductCode(getProduct().getProductCode());
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			selectNewProdAssetBtn();
 			aProductAsset.setProductCode(this.productCode.getValue());
 
@@ -956,7 +956,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 			} else {
 				productAsset.setProductCode(this.productCode.getValue());
 				productAsset.setNewRecord(false);
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("productAsset", productAsset);
 				map.put("productDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -1248,11 +1248,11 @@ public class ProductDialogCtrl extends GFCBaseCtrl<ProductAsset> {
 		return this.productListCtrl;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 

@@ -3,6 +3,7 @@ package com.pennant.backend.service.finance.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -389,7 +390,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 		if (financeFlag.getFinFlagDetailList() != null && financeFlag.getFinFlagDetailList().size() > 0) {
 
-			HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+			Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 			List<AuditDetail> auditDetails = setFinFlagsDetailsAuditData(financeFlag, method);
 

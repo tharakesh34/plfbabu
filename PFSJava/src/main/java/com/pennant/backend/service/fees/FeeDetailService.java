@@ -217,7 +217,7 @@ public class FeeDetailService {
 		}
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
-		HashMap<String, Object> declaredFieldValues = getDataMap(financeMain, customer, financeType);
+		Map<String, Object> declaredFieldValues = getDataMap(financeMain, customer, financeType);
 
 		if (insurances != null && !insurances.isEmpty()) {
 			for (FinInsurances insurance : insurances) {
@@ -930,8 +930,8 @@ public class FeeDetailService {
 	 * @param financeType
 	 * @return
 	 */
-	private HashMap<String, Object> getDataMap(FinanceMain financeMain, Customer customer, FinanceType financeType) {
-		HashMap<String, Object> dataMap = new HashMap<String, Object>();
+	private Map<String, Object> getDataMap(FinanceMain financeMain, Customer customer, FinanceType financeType) {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
 		if (financeMain != null) {
 			dataMap.putAll(financeMain.getDeclaredFieldValues());
 		}

@@ -1,6 +1,5 @@
 package com.pennant.webui.financemanagement.insurance;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.script.ScriptException;
@@ -356,7 +355,7 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (fieldValuesMap != null) {
-			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
+			generator.setFieldValueMap((Map<String, Object>) fieldValuesMap);
 		}
 		try {
 			generator.renderWindow(extendedFieldHeader, false);

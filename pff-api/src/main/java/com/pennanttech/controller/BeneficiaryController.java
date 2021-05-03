@@ -1,7 +1,6 @@
 package com.pennanttech.controller;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -246,7 +245,7 @@ public class BeneficiaryController extends ExtendedTestClass {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBeneficiary.getBefImage(), aBeneficiary);
 		return new AuditHeader(String.valueOf(aBeneficiary.getBeneficiaryId()),
 				String.valueOf(aBeneficiary.getBeneficiaryId()), null, null, auditDetail, aBeneficiary.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+				new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

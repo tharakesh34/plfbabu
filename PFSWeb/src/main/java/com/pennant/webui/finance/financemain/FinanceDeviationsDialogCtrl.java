@@ -3,6 +3,7 @@ package com.pennant.webui.finance.financemain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -124,7 +125,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 	private void appendFinBasicDetails(ArrayList<Object> arrayList) {
 		logger.debug(" Entering ");
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			if (arrayList != null) {
 				map.put("finHeaderList", arrayList);
 			}
@@ -143,7 +144,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 		logger.debug(" Entering ");
 		try {
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeDetail", financeDetail);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CreditApprovalDialog.zul",
 					this.creditApprovalTabpanel, map);
@@ -253,7 +254,7 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 		notes.setReference(getReference(deviationDetail));
 		notes.setVersion(0);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", notes);
 		map.put("control", this);
 		if (enquiry) {

@@ -7731,6 +7731,77 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#1717.531" author="Murthy.y">
+		<dropTable tableName="SeqDeviations" />
+	</changeSet>
+
+	<changeSet id="ST#1717.532" author="Murthy.y" dbms="oracle,postgresql">
+		<createSequence sequenceName="SeqDeviations" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#1717.533" author="Murthy.y" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.DeviationId),0)+1 into v_maxval from
+			(select DeviationId
+			from FinanceDeviations union all select DeviationId from FinanceDeviations_Temp) T;
+			EXECUTE IMMEDIATE 'alter sequence SeqDeviations
+			restart
+			start with ' || v_maxval;
+			end;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1717.534" author="Murthy.y" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.DeviationId),0)+1 into v_maxval from
+			(select
+			DeviationId from FinanceDeviations union all select DeviationId from FinanceDeviations_Temp) T;
+			EXECUTE 'alter sequence SeqDeviations restart
+			start
+			with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1717.535" author="Murthy.y" dbms="mssql">
+		<sql splitStatements="false">
+			<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT @MAXNO=COALESCE(max(T.DeviationId),0)+1
+			from
+			(select DeviationId from FinanceDeviations union all select DeviationId from FinanceDeviations_Temp) T;
+
+			SET @SQLCmd = '
+			CREATE SEQUENCE
+			[dbo].[SeqDeviations]
+			AS [bigint]
+			START WITH '
+			+ CAST( @MAXNO AS VARCHAR(30)) +
+			'INCREMENT BY 1
+			MINVALUE
+			-9223372036854775808
+			MAXVALUE 9223372036854775807
+			CACHE ';
+
+
+			EXEC
+			SP_EXECUTESQL @SQLCmd;
+			]]>
+		</sql>
+	</changeSet>
 	<changeSet id="PSD#168993_pre" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[

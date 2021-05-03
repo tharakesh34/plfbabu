@@ -1791,7 +1791,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			int index = 1;
 			ps.setString(index++, status);
 			ps.setString(index++, null);
-			ps.setLong(index++, linkedTranId);
+			ps.setObject(index++, linkedTranId);
 			ps.setString(index++, presentmentRef);
 		});
 	}

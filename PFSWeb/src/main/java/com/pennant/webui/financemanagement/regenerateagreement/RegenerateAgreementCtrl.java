@@ -215,7 +215,7 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					Filedownload.save(detail.getDocImage(), "application/octet-stream", detail.getDocName());
 				} else {
-					HashMap<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("FinDocumentDetail", detail);
 					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 				}
@@ -223,7 +223,7 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				logger.debug(e);
 			}
 		} else if (StringUtils.isNotBlank(detail.getDocUri())) {
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("documentRef", detail);
 			Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 		} else {

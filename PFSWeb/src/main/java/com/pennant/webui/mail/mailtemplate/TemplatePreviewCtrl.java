@@ -96,11 +96,11 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 		// Set the page level components.
 		setPageComponents(window_TemplatePreview);
 
-		HashMap<String, String> fieldsMap = new HashMap<String, String>();
+		Map<String, String> fieldsMap = new HashMap<String, String>();
 		// READ OVERHANDED parameters !
 
 		if (arguments.containsKey("fieldsMap")) {
-			fieldsMap = (HashMap<String, String>) arguments.get("fieldsMap");
+			fieldsMap = (Map<String, String>) arguments.get("fieldsMap");
 		}
 		if (arguments.containsKey("mailContent")) {
 			mailContent = (String) arguments.get("mailContent");

@@ -564,8 +564,8 @@ public class PennantStaticListUtil {
 		return dateTypes;
 	}
 
-	public static final HashMap<String, String> getFilterDescription() {
-		HashMap<String, String> filterDescMap = new HashMap<String, String>(7);
+	public static final Map<String, String> getFilterDescription() {
+		Map<String, String> filterDescMap = new HashMap<String, String>(7);
 		filterDescMap.put("=", "is ");
 		filterDescMap.put("<>", "is not  ");
 		filterDescMap.put(">", "is greater than ");
@@ -640,9 +640,9 @@ public class PennantStaticListUtil {
 	 * 
 	 * @return
 	 */
-	public static final HashMap<String, HashMap<String, String>> getModuleName() {
+	public static final Map<String, Map<String, String>> getModuleName() {
 
-		HashMap<String, HashMap<String, String>> extendedTableMap = new HashMap<String, HashMap<String, String>>();
+		Map<String, Map<String, String>> extendedTableMap = new HashMap<String, Map<String, String>>();
 
 		for (String key : getFinAssets().keySet()) {
 			extendedTableMap.put(key, getFinAssets().get(key));
@@ -657,14 +657,14 @@ public class PennantStaticListUtil {
 	 * 
 	 * @return
 	 */
-	public static final HashMap<String, HashMap<String, String>> getFinAssets() {
-		HashMap<String, HashMap<String, String>> financeAssetMap = new HashMap<String, HashMap<String, String>>(2);
+	public static final Map<String, Map<String, String>> getFinAssets() {
+		Map<String, Map<String, String>> financeAssetMap = new HashMap<String, Map<String, String>>(2);
 
-		HashMap<String, String> financeAsset = new HashMap<String, String>(10);
+		Map<String, String> financeAsset = new HashMap<String, String>(10);
 
 		financeAssetMap.put("Finance", financeAsset);
 
-		HashMap<String, String> customer = new HashMap<String, String>(2);
+		Map<String, String> customer = new HashMap<String, String>(2);
 		customer.put("RETAIL", "CustomerRet_Add");
 		customer.put("CORP", "CustomerCorp_Add");
 		financeAssetMap.put("Customer", customer);
@@ -1299,7 +1299,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("OCRENQ", Labels.getLabel("label_OCREnquiry")));
 			enquiryTypes.add(new ValueLabel("EXCESSENQ", Labels.getLabel("label_ExcessEnquiry")));
 
-			if (ImplementationConstants.ALLOW_RESTRUCTURE) {
+			if (ImplementationConstants.ALLOW_RESTRUCTURING) {
 				enquiryTypes.add(new ValueLabel("RSTENQ", Labels.getLabel("label_RestructureEnquiry")));
 			}
 		}
@@ -2457,9 +2457,9 @@ public class PennantStaticListUtil {
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_LOANDOWNSIZING,
 					Labels.getLabel("label_FinSerEvent_LoanDownSizing"), "LDS"));
 
-			if (ImplementationConstants.ALLOW_RESTRUCTURE) {
+			if (ImplementationConstants.ALLOW_RESTRUCTURING) {
 				events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RESTRUCTURE,
-					Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
+						Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
 			}
 		}
 		return events;

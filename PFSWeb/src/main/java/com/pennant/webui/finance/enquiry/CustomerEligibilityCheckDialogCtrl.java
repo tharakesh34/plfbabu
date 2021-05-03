@@ -477,11 +477,11 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 			List<EligibilityRule> eligibilityRules = new ArrayList<EligibilityRule>();
 			EligibilityRule eligibilityRule = null;
 
-			HashMap<String, Object> fieldsAndValues = new HashMap<>();
+			Map<String, Object> fieldsAndValues = new HashMap<>();
 
 			// Setting Data
 			CustomerEligibilityCheck custElgCheck = setCustomerEligibilityData(getCustomer());
-			HashMap<String, Object> fieldsandvalues = custElgCheck.getDeclaredFieldValues();
+			Map<String, Object> fieldsandvalues = custElgCheck.getDeclaredFieldValues();
 
 			ArrayList<String> keyset = new ArrayList<String>(fieldsandvalues.keySet());
 			for (int i = 0; i < keyset.size(); i++) {
@@ -599,7 +599,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 				eligibilityRules.add(eligibilityRule);
 			}
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("formatter", formatter);
 			map.put("elgRuleList", eligibilityRules);
 			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityRuleResult.zul",
@@ -630,7 +630,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 	 */
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);

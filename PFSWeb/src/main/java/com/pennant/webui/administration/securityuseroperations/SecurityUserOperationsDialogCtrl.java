@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -137,15 +138,15 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	private SecurityUser securityUser;
 	private SecurityUserDialogCtrl securityUserDialogCtrl;
 	private SecurityUserOperations securityUserOperations;
-	private HashMap<Long, SecurityUserOperations> assignedHashMap;
-	private HashMap<Long, SecurityUserOperations> unAssignedHashMap;
+	private Map<Long, SecurityUserOperations> assignedHashMap;
+	private Map<Long, SecurityUserOperations> unAssignedHashMap;
 
-	private HashMap<Long, SecurityUserOperations> addHashMap = null;
-	private HashMap<Long, SecurityUserOperations> delHashMap = null;
-	private HashMap<Long, SecurityUserOperations> cancilHashMap = null;
+	private Map<Long, SecurityUserOperations> addHashMap = null;
+	private Map<Long, SecurityUserOperations> delHashMap = null;
+	private Map<Long, SecurityUserOperations> cancilHashMap = null;
 
-	private HashMap<Long, SecurityUserOperations> newAssignedMap = new HashMap<Long, SecurityUserOperations>();
-	private HashMap<Long, SecurityUserOperations> oldAssignedMap = new HashMap<Long, SecurityUserOperations>();
+	private Map<Long, SecurityUserOperations> newAssignedMap = new HashMap<Long, SecurityUserOperations>();
+	private Map<Long, SecurityUserOperations> oldAssignedMap = new HashMap<Long, SecurityUserOperations>();
 
 	private PagedListWrapper<SecurityUserOperations> assigneListWrapper;
 	private PagedListWrapper<SecurityUserOperations> unAssigneListWrapper;
@@ -800,7 +801,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	public void onClick$btn_SearchOperations(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("SecurityUserOperationsDialogCtrl", this);
 		map.put("FILTERTYPE", "USERROLE");
 		map.put("FILTERCODE", filterCode);
@@ -1490,19 +1491,19 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		this.securityUserOperationsService = securityUserOperationsService;
 	}
 
-	public HashMap<Long, SecurityUserOperations> getNewAssignedMap() {
+	public Map<Long, SecurityUserOperations> getNewAssignedMap() {
 		return newAssignedMap;
 	}
 
-	public void setNewAssignedMap(HashMap<Long, SecurityUserOperations> newAssignedMap) {
+	public void setNewAssignedMap(Map<Long, SecurityUserOperations> newAssignedMap) {
 		this.newAssignedMap = newAssignedMap;
 	}
 
-	public HashMap<Long, SecurityUserOperations> getOldAssignedMap() {
+	public Map<Long, SecurityUserOperations> getOldAssignedMap() {
 		return oldAssignedMap;
 	}
 
-	public void setOldAssignedMap(HashMap<Long, SecurityUserOperations> oldAssignedMap) {
+	public void setOldAssignedMap(Map<Long, SecurityUserOperations> oldAssignedMap) {
 		this.oldAssignedMap = oldAssignedMap;
 	}
 

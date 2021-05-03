@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,7 @@ public class StringReplacement {
 
 			Configuration cfg = new Configuration();
 			// Create a data-model
-			LinkedHashMap<String, String> root = new LinkedHashMap<String, String>();
+			Map<String, String> root = new LinkedHashMap<String, String>();
 
 			if (globalList != null && globalList.size() > 0) {
 				for (int i = 0; i < globalList.size(); i++) {
@@ -68,7 +69,7 @@ public class StringReplacement {
 
 			Configuration cfg = new Configuration();
 			// Create a data-model
-			LinkedHashMap<String, String> root = new LinkedHashMap<String, String>();
+			Map<String, String> root = new LinkedHashMap<String, String>();
 
 			for (int i = 0; i < globalList.size(); i++) {
 				GlobalVariable globalVariable = (GlobalVariable) globalList.get(i);

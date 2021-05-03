@@ -112,7 +112,7 @@ public class ExtendedFieldHeaderListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	protected Listbox sortOperator_numberOfColumns;
 
 	private transient ExtendedFieldHeaderService extendedFieldHeaderService;
-	private final HashMap<String, HashMap<String, String>> moduleMap = PennantStaticListUtil.getModuleName();
+	private final Map<String, Map<String, String>> moduleMap = PennantStaticListUtil.getModuleName();
 	private List<ValueLabel> modulesList = null;
 
 	/**
@@ -297,7 +297,7 @@ public class ExtendedFieldHeaderListCtrl extends GFCBaseListCtrl<ExtendedFieldHe
 	 */
 	private void fillsubModule(Combobox combobox, String moduleName, String value) {
 		if (this.moduleName.getSelectedItem() != null) {
-			HashMap<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName);
+			Map<String, String> hashMap = PennantStaticListUtil.getModuleName().get(moduleName);
 
 			if (hashMap == null) {
 				hashMap = new HashMap<String, String>();

@@ -45,6 +45,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -187,7 +188,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		try {
 			if (customer != null) {
 				CustomerDetails customerDetails = getCustomerDetailsService().getCustomerById(customer.getCustID());
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				String pageName = PennantAppUtil.getCustomerPageName();
 				map.put("customerDetails", customerDetails);
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);

@@ -49,6 +49,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -537,7 +538,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		if (!onLoadProcess) {
 			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSADJ,
 					AccountEventConstants.ACCEVENT_INSADJ);
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", insuranceDetails);
 			map.put("acSetID", accountsetId);
 			map.put("enqModule", enqiryModule);

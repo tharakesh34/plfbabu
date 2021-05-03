@@ -1061,7 +1061,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 				if (code.contains("?")) {
 					String[] fields = code.split("[^a-zA-Z]+");
 
-					HashMap<String, Object> fieldValuesMap = new HashMap<String, Object>();
+					Map<String, Object> fieldValuesMap = new HashMap<String, Object>();
 
 					for (int j = 0; j < fields.length; j++) {
 						if (!StringUtils.isEmpty(fields[j])) {
@@ -1555,7 +1555,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);

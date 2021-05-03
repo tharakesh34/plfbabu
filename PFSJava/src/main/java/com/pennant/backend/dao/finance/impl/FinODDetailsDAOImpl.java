@@ -128,7 +128,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.trace(Literal.SQL + sql);
 
 		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
-			
+
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				getRowMapper(ps, finOdDetails);
@@ -144,7 +144,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	@Override
 	public void updateList(List<FinODDetails> overdues) {
 		StringBuilder sql = updateFODQuery();
-		
+
 		logger.trace(Literal.SQL + sql);
 
 		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
@@ -196,6 +196,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		ps.setString(index++, fd.getFinReference());
 		ps.setDate(index, JdbcUtil.getDate(fd.getFinODSchdDate()));
 	}
+
 	/**
 	 * Method for Updating Overdue Details after Recalculation in Receipts/Payments
 	 * 

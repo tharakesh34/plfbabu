@@ -43,30 +43,46 @@
 
 package com.pennant.backend.service.finance.impl;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> implements FinCovenantTypeService {
 	private static final Logger logger = LogManager.getLogger(FinCovenantTypeServiceImpl.class);
@@ -78,6 +94,10 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private CustomerDetailsService customerDetailsService;
+	private DocumentTypeDAO documentTypeDAO;
+	private FinanceWorkFlowService financeWorkFlowService;
+	private DocumentDetailsDAO documentDetailsDAO;
+	private CustomerDocumentService customerDocumentService;
 
 	public FinCovenantTypeServiceImpl() {
 		super();
@@ -463,6 +483,184 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		return financeDetail;
 	}
 
+	public List<ErrorDetail> doCovenantValidation(FinanceDetail financeDetail, boolean isUpdate) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String finReference = financeMain.getFinReference();
+		boolean referenceExitsinLQ = financeMainDAO.isFinReferenceExists(finReference, "_Temp", false);
+		String finEvent = "";
+		if (referenceExitsinLQ) {
+			finEvent = FinanceConstants.FINSER_EVENT_ORG;
+		} else {
+			finEvent = FinanceConstants.FINSER_EVENT_COVENANTS;
+		}
+		FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+				financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+		String roles = financeWorkFlow.getLovDescWorkFlowRolesName();
+
+		List<FinCovenantType> covenantTypeList = financeDetail.getCovenantTypeList();
+		Set<String> set = new HashSet<>();
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		for (FinCovenantType finCovenantType : covenantTypeList) {
+			String covenantType = finCovenantType.getCovenantType();
+			if (StringUtils.isBlank(covenantType)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "covenantType";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return errorDetails;
+			} else {
+				boolean isExists = false;
+				if (set.contains(covenantType)) {
+					isExists = true;
+				} else {
+					set.add(covenantType);
+				}
+				if (isExists) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "covenantType: " + covenantType;
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+					return errorDetails;
+				}
+			}
+
+			DocumentType documentTypeByCode = documentTypeDAO.getDocumentTypeById(covenantType, "_View");
+			if (documentTypeByCode == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "covenantType";
+				valueParm[1] = covenantType;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+				return errorDetails;
+			} else {
+				CustomerDocument custdocuments = customerDocumentService
+						.getApprovedCustomerDocumentById(financeMain.getCustID(), covenantType);
+
+				if (custdocuments != null) {
+					if (StringUtils.equals(covenantType, custdocuments.getCustDocCategory())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "CustomerDocument" + covenantType;
+						valueParm[1] = covenantType;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+						return errorDetails;
+					}
+				}
+
+				DocumentDetails documentDetails = documentDetailsDAO.getDocumentDetails(finReference, covenantType,
+						DocumentCategories.FINANCE.getKey(), "_View");
+				if (documentDetails != null) {
+					if (StringUtils.equals(covenantType, documentDetails.getDocCategory())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = covenantType;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("CVN002", valueParm)));
+						return errorDetails;
+					}
+				}
+			}
+
+			FinCovenantType fincovenantType = finCovenantTypesDAO.getCovenantTypeById(finReference, covenantType,
+					"_View");
+			if (!isUpdate && fincovenantType != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Loan Reference:" + finReference;
+				valueParm[1] = "covenantType:" + covenantType;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41015", valueParm)));
+				return errorDetails;
+			}
+
+			if (isUpdate && fincovenantType == null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Loan Reference:" + finReference;
+				valueParm[1] = "covenantType:" + finCovenantType.getCovenantType();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+				return errorDetails;
+			}
+
+			if (StringUtils.isNotBlank(finCovenantType.getMandRole())) {
+				if ((finCovenantType.isAlwPostpone() || finCovenantType.isAlwOtc() || finCovenantType.isAlwWaiver())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "alwPostpone or alwOtc or alwWaiver ";
+					valueParm[1] = "mandRole";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("API002", valueParm)));
+					return errorDetails;
+				}
+			}
+			if (finCovenantType.isAlwWaiver()) {
+				if (StringUtils.isNotBlank(finCovenantType.getMandRole()) || finCovenantType.isAlwPostpone()
+						|| finCovenantType.isAlwOtc()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "alwPostpone or alwOtc or mandRole ";
+					valueParm[1] = "alwWaiver";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("API002", valueParm)));
+					return errorDetails;
+				}
+			}
+			if (finCovenantType.isAlwPostpone() && finCovenantType.isAlwOtc()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "alwPostpone";
+				valueParm[1] = "alwOtc";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30566", valueParm)));
+				return errorDetails;
+			}
+
+			if ((!finCovenantType.isAlwPostpone() && !finCovenantType.isAlwOtc() && !finCovenantType.isAlwWaiver())) {
+				if (StringUtils.isBlank(finCovenantType.getMandRole())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "mandRole";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return errorDetails;
+				}
+				boolean isRoleExts = false;
+				if (StringUtils.contains(roles, ";")) {
+					String[] promoIdsList = roles.split(";");
+					for (String workFlowRoles : promoIdsList) {
+						if (StringUtils.equalsIgnoreCase(workFlowRoles, finCovenantType.getMandRole())) {
+							isRoleExts = true;
+							break;
+						}
+					}
+				}
+
+				if (!isRoleExts) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "mandRole";
+					valueParm[1] = finCovenantType.getMandRole();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+					return errorDetails;
+				}
+			} else {
+				finCovenantType.setMandRole("");
+			}
+
+			if (finCovenantType.isAlwPostpone()) {
+				if (finCovenantType.getReceivableDate() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "receivableDate";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return errorDetails;
+				}
+
+				if (finCovenantType.getReceivableDate() != null) {
+					java.util.Date appDate = SysParamUtil.getAppDate();
+					Date allowedDate = DateUtility.addDays(appDate,
+							+SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
+					if (DateUtility.compare(finCovenantType.getReceivableDate(), appDate) == -1) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "receivableDate";
+						valueParm[1] = String.valueOf(appDate);
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm)));
+					} else if (DateUtility.compare(finCovenantType.getReceivableDate(), allowedDate) == 1) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "receivableDate";
+						valueParm[1] = String.valueOf(allowedDate);
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm)));
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetails;
+	}
+
 	@Override
 	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
 		return getFinCovenantTypeDAO().getFinCovenantDocTypeByFinRef(id, type, isEnquiry);
@@ -503,6 +701,46 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	public FinCovenantTypeDAO getFinCovenantTypesDAO() {
+		return finCovenantTypesDAO;
+	}
+
+	public void setFinCovenantTypesDAO(FinCovenantTypeDAO finCovenantTypesDAO) {
+		this.finCovenantTypesDAO = finCovenantTypesDAO;
+	}
+
+	public DocumentTypeDAO getDocumentTypeDAO() {
+		return documentTypeDAO;
+	}
+
+	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
+		this.documentTypeDAO = documentTypeDAO;
+	}
+
+	public FinanceWorkFlowService getFinanceWorkFlowService() {
+		return financeWorkFlowService;
+	}
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	public DocumentDetailsDAO getDocumentDetailsDAO() {
+		return documentDetailsDAO;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public CustomerDocumentService getCustomerDocumentService() {
+		return customerDocumentService;
+	}
+
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+		this.customerDocumentService = customerDocumentService;
 	}
 
 }

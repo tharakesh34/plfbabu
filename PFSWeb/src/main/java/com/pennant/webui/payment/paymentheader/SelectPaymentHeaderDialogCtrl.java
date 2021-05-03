@@ -44,6 +44,7 @@ package com.pennant.webui.payment.paymentheader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -175,7 +176,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(this.finReference.getValue());
 
-		HashMap<String, Object> arg = new HashMap<String, Object>();
+		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("paymentHeader", paymentHeader);
 		arg.put("paymentHeaderListCtrl", paymentHeaderListCtrl);
 		arg.put("financeMain", financeMain);

@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -620,7 +621,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		// HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		// Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 		Promotion promotion = (Promotion) auditHeader.getAuditDetail().getModelData();
 		// String auditTranType = "";
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
@@ -642,7 +643,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		Promotion promotion = (Promotion) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";

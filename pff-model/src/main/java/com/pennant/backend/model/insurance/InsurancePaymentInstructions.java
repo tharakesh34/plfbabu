@@ -42,7 +42,7 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 	private Date approvedDate;
 	private String paymentCCy;
 	private String status;
-	private LinkedHashMap<Long, String> adviseRefMap = new LinkedHashMap<>();
+	private Map<Long, String> adviseRefMap = new LinkedHashMap<>();
 	private List<VASRecording> vasRecordindList = new ArrayList<>();
 	private boolean newRecord;
 	private InsurancePaymentInstructions befImage;
@@ -279,11 +279,11 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 		this.payableAmount = payableAmount;
 	}
 
-	public LinkedHashMap<Long, String> getAdviseRefMap() {
+	public Map<Long, String> getAdviseRefMap() {
 		return adviseRefMap;
 	}
 
-	public void setAdviseRefMap(LinkedHashMap<Long, String> adviseRefMap) {
+	public void setAdviseRefMap(Map<Long, String> adviseRefMap) {
 		this.adviseRefMap = adviseRefMap;
 	}
 

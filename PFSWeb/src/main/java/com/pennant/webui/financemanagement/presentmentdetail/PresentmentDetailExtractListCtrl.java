@@ -45,8 +45,8 @@ package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -406,7 +406,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			this.loanType.setValue(dataObject.toString());
 		} else {
 			@SuppressWarnings("unchecked")
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";
 				List<String> flagKeys = new ArrayList<>(details.keySet());
@@ -435,7 +435,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 			this.branches.setValue(dataObject.toString());
 		} else {
 			@SuppressWarnings("unchecked")
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempflagcode = "";
 				List<String> flagKeys = new ArrayList<>(details.keySet());

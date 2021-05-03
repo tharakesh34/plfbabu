@@ -1581,7 +1581,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	private AuditHeader getAuditHeader(FinReceiptHeader receiptHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, receiptHeader);
 		return new AuditHeader(String.valueOf(receiptHeader.getReceiptID()), null, null, null, auditDetail,
-				receiptHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				receiptHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {

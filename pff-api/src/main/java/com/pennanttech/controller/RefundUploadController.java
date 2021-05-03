@@ -167,7 +167,7 @@ public class RefundUploadController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(UploadHeader aUploadHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aUploadHeader.getBefImage(), aUploadHeader);
 		return new AuditHeader(String.valueOf(aUploadHeader.getUploadId()), String.valueOf(aUploadHeader.getUploadId()),
-				null, null, auditDetail, aUploadHeader.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, aUploadHeader.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setUploadHeaderService(UploadHeaderService uploadHeaderService) {

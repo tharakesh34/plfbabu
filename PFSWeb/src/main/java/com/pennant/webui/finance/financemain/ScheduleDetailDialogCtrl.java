@@ -1158,7 +1158,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				}
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("finSchdData", aFinSchData);
 				map.put("financeScheduleDetail", curSchd);
 				if (StringUtils.isNotEmpty(moduleDefiner)) {
@@ -1928,7 +1928,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceScheduleDetail financeScheduleDetail = (FinanceScheduleDetail) item.getAttribute("data");
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finScheduleData", getFinScheduleData());
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
@@ -1963,7 +1963,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceScheduleDetail financeScheduleDetail = (FinanceScheduleDetail) item.getAttribute("data");
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finScheduleData", getFinScheduleData());
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
@@ -1997,7 +1997,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceScheduleDetail financeScheduleDetail = (FinanceScheduleDetail) item.getAttribute("data");
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finScheduleData", getFinScheduleData());
 			map.put("financeScheduleDetail", financeScheduleDetail);
 			map.put("financeMainDialogCtrl", this);
@@ -2025,7 +2025,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnAddReviewRate(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2051,7 +2051,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnAdvPftRateChange(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2075,7 +2075,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnAddDatedSchedule(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2098,7 +2098,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnChangeRepay(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("repayment", true);
@@ -2124,7 +2124,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	public void onClick$btnChangeProfit(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2148,7 +2148,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnChangeFrq(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("appDateValidationReq", isAppDateValidationReq());
@@ -2172,7 +2172,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnReschedule(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("appDateValidationReq", isAppDateValidationReq());
@@ -2195,7 +2195,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	public void onClick$btnAddDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2221,7 +2221,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	public void onClick$btnCancelDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2247,7 +2247,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnPostponement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2272,7 +2272,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnUnPlanEMIH(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2297,7 +2297,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnReAgeHolidays(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2322,7 +2322,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnAddTerms(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addTerms", true);
@@ -2348,7 +2348,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnRmvTerms(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("addTerms", false);
@@ -2374,7 +2374,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnSubSchedule(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2398,7 +2398,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnReCalcualte(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2424,7 +2424,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnSuplRentIncrCost(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("moduleDefiner", moduleDefiner);
@@ -2446,7 +2446,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	public void onClick$btnHoldEMI(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
@@ -2472,7 +2472,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnSchdChng(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
 		map.put("appDateValidationReq", isAppDateValidationReq());
@@ -2609,7 +2609,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		logger.debug("Entering" + event.toString());
 
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
 
@@ -2921,7 +2921,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void onClick$btnRestructure(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);

@@ -3,6 +3,7 @@ package com.pennant.webui.finance.enquiry;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -70,7 +71,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	private Tabpanel tabPanel_dialogWindow;
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinanceScoreHeader> finScoreHeaderList = null;
-	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
+	private Map<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
 	private String custCtgType = "";
 
 	/**
@@ -109,7 +110,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 			List<Object> scoreObjectList = (List<Object>) arguments.get("scoringList");
 			if (scoreObjectList != null) {
 				finScoreHeaderList = (List<FinanceScoreHeader>) scoreObjectList.get(0);
-				scoreDetailListMap = (HashMap<Long, List<FinanceScoreDetail>>) scoreObjectList.get(1);
+				scoreDetailListMap = (Map<Long, List<FinanceScoreDetail>>) scoreObjectList.get(1);
 			}
 		}
 
@@ -281,7 +282,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * @return
 	 */
 	private void setScoreSummaryStyle(List<FinanceScoreHeader> financeScoreHeaders,
-			HashMap<Long, List<FinanceScoreDetail>> scoreMap) {
+			Map<Long, List<FinanceScoreDetail>> scoreMap) {
 		boolean deviationSuff = false;
 		String deviationVal = "";
 
@@ -499,11 +500,11 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		return finScoreHeaderList;
 	}
 
-	public void setScoreDetailListMap(HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
+	public void setScoreDetailListMap(Map<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
 		this.scoreDetailListMap = scoreDetailListMap;
 	}
 
-	public HashMap<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
+	public Map<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
 		return scoreDetailListMap;
 	}
 

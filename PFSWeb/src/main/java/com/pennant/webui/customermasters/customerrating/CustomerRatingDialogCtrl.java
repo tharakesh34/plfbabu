@@ -47,6 +47,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -1127,7 +1128,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	 */
 	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.newSearchObject);
@@ -1197,7 +1198,7 @@ public class CustomerRatingDialogCtrl extends GFCBaseCtrl<CustomerRating> {
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Serializable> map = new HashMap<String, Serializable>();
+		final Map<String, Serializable> map = new HashMap<String, Serializable>();
 		map.put("notes", getNotes());
 		map.put("control", this);
 

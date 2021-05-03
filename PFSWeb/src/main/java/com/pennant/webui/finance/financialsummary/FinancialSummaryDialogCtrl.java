@@ -52,6 +52,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -1216,7 +1217,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (isDeleteRecord(risksAndMitigants.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 
 				map.put("risksAndMitigants", risksAndMitigants);
 				map.put("financialSummaryDialogCtrl", this);
@@ -1244,7 +1245,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (isDeleteRecord(sanctionConditions.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 
 				map.put("sanctionConditions", sanctionConditions);
 				map.put("financialSummaryDialogCtrl", this);
@@ -1273,7 +1274,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (isDeleteRecord(dealRecommendationMerits.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 
 				map.put("dealRecommendationMerits", dealRecommendationMerits);
 				map.put("financialSummaryDialogCtrl", this);
@@ -1367,7 +1368,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			risksAndMitigants.setSeqNo(1);
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("risksAndMitigants", risksAndMitigants);
 		map.put("financialSummaryDialogCtrl", this);
 		map.put("newRecord", "true");
@@ -1399,7 +1400,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			sanctionConditions.setSeqNo(1);
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("sanctionConditions", sanctionConditions);
 		map.put("financialSummaryDialogCtrl", this);
 		map.put("newRecord", "true");
@@ -1428,7 +1429,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			dealRecommendationMerits.setSeqNo(1);
 		}
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("dealRecommendationMerits", dealRecommendationMerits);
 		map.put("financialSummaryDialogCtrl", this);
 		map.put("newRecord", "true");
@@ -1462,7 +1463,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		String pageName = PennantAppUtil.getCustomerPageName();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("customerDetails", customerDetails);
 		map.put("newRecord", false);
 		map.put("isEnqProcess", true);
@@ -1485,7 +1486,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		GuarantorDetail guarantorDetail = null;
 		guarantorDetail = guarantorDetailService.getGuarantorDetailById(guarantorID);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("guarantorDetail", guarantorDetail);
 		map.put("enqModule", true);
 		map.put("moduleType", "ENQ");

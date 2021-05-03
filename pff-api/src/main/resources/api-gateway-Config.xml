@@ -76,7 +76,7 @@
 	<!-- soap container -->
 	<jaxws:endpoint id="customerSOAPService" implementor="#wsCustomerService" address="/customerSoap"
 		publish="false" />
-	
+
 	<!-- rest container -->
 	<bean id="wsPresentmentService" class="com.pennanttech.service.impl.PresentmentWebServiceImpl" />
 
@@ -104,7 +104,7 @@
 	<!-- soap container -->
 	<jaxws:endpoint id="presentmentSOAPService" implementor="#wsPresentmentService" address="/presentmentSoap"
 		publish="false" />
-	
+
 	<!-- Loan Schedule Service -->
 	<bean id="wsFinanceSchedule" class="com.pennanttech.service.impl.FinanceScheduleWebServiceImpl" />
 	<!-- Rest container -->
@@ -843,7 +843,7 @@
 			<ref bean="restOutHeaderInterceptor" />
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
-	
+
 	<!-- soap container -->
 	<jaxws:endpoint id="disbursementSOAPService" implementor="#wsDisbursementService" address="/disbursementSoap"
 		publish="false" />
@@ -872,5 +872,32 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 	
-	
+	<!-- FinCovenant API gateway -->
+
+	<bean id="wsFinCovenantService" class="com.pennanttech.service.impl.FinCovenantWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="finCovenantRestService" address="/finCovenantRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFinCovenantService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- SOAP Container -->
+	<jaxws:endpoint id="finCovenantSoapService" implementor="#wsFinCovenantService" address="/finCovenantSoap"
+		publish="false" />
+
 </beans>

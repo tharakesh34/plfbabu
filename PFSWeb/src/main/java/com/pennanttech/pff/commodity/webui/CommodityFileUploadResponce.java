@@ -3,8 +3,8 @@ package com.pennanttech.pff.commodity.webui;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -188,7 +188,7 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 	private AuditHeader getAuditHeader(Commodity aCommodities, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCommodities.getBefImage(), aCommodities);
 		return new AuditHeader(String.valueOf(aCommodities.getId()), String.valueOf(aCommodities.getId()), null, null,
-				auditDetail, aCommodities.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, aCommodities.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	@Override

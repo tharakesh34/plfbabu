@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -412,7 +413,7 @@ public class DashboardConfigurationDialogCtrl extends GFCBaseCtrl<DashboardConfi
 			chartDetail.setiFrameHeight("100%");
 			chartDetail.setiFrameWidth("100%");
 			chartDetail.setChartType(chartUtil.getChartType(aDashboardConfiguration));
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 
 			map.put("chartDetail", chartDetail);
 			map.put("dashboardConfigurationDialogCtrl", this);

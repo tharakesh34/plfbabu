@@ -193,7 +193,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 	protected West menuWest;
 	protected Groupbox groupboxMenu;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private String reaOnlyStyle = "#F2F2F2";
 	private String generalStyle = "#FFFFFF";
 
@@ -553,11 +553,11 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
@@ -1290,7 +1290,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 */
 	protected void doShowWorkflow(long workFlowId, String moduleCode, Object keyValue, long fromAuditId,
 			long toAuditId) {
-		HashMap<String, Object> arg = new HashMap<>();
+		Map<String, Object> arg = new HashMap<>();
 
 		arg.put("workFlowId", workFlowId);
 		arg.put("moduleCode", moduleCode);
@@ -1310,7 +1310,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 *            (Map<String, Object>).
 	 **/
 	protected void doShowActivityLog(Object keyValue, Map<String, Object> map) {
-		HashMap<String, Object> arg = new HashMap<>();
+		Map<String, Object> arg = new HashMap<>();
 
 		arg.put("moduleCode", moduleCode);
 		arg.put("keyValue", keyValue);

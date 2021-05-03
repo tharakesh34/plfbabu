@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -909,7 +910,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	private void showPresentmentDetailImportChangesList(List<PresentmentDetail> presentmentDetailImportChangesList,
 			List<Long> includeList, List<Long> excludeList) {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("presentmentDetailImportChangesList", presentmentDetailImportChangesList);
 		map.put("moduleType", moduleType);
 		map.put("presentmentDetailDialogCtrl", this);

@@ -45,6 +45,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -433,7 +434,7 @@ public class CoOwnerDetailDialogCtrl extends GFCBaseCtrl<CoOwnerDetail> {
 					new String[] { Labels.getLabel("label_CoOwnerDetailDialog_CoOwnerCIF/ID.value") }));
 		}
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("custid", customer.getCustID());
 			map.put("custCIF", customer.getCustCIF());
 			map.put("custShrtName", customer.getCustShrtName());

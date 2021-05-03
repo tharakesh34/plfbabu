@@ -49,6 +49,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinCovenantTypeService {
 	List<FinCovenantType> getFinCovenantTypeById(String id, String type, boolean isEnquiry);
@@ -71,4 +72,7 @@ public interface FinCovenantTypeService {
 	List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry);
 
 	List<DocumentType> getPddOtcList();
+
+	public List<ErrorDetail> doCovenantValidation(FinanceDetail financeDetail, boolean isUpdate);
+
 }

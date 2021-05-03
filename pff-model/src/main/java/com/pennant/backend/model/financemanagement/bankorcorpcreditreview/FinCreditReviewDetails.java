@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -54,7 +55,7 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory = new ArrayList<FinCreditRevSubCategory>();
 	private List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>();
 
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private String lovDescCustCIF;
 	private String lovDescCustCtgCode;
 	private String lovDescCustShrtName;
@@ -269,11 +270,11 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 		return lovDescCreditReviewSummaryEntries;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 

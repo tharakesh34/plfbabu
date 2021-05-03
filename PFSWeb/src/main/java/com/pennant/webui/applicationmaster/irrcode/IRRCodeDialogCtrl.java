@@ -404,7 +404,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 			if (StringUtils.equalsIgnoreCase(irrFeeType.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("irrfeetype", irrFeeType);
 				map.put("iRRCodeDialogCtrl", this);
 				map.put("roleCode", getRole());

@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -512,7 +513,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 	private boolean saveCustomerGSTList(CustomerGST aCustomergst) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, CustomerGSTDetails> hashMap = new HashMap<>();
+		Map<String, CustomerGSTDetails> hashMap = new HashMap<>();
 
 		List<CustomerGSTDetails> infoList = aCustomergst.getCustomerGSTDetailslist();
 		ArrayList<WrongValueException> wve = new ArrayList<>();

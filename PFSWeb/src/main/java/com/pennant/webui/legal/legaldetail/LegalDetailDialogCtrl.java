@@ -1518,7 +1518,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		legalApplicantDetail.setWorkflowId(0);
 		legalApplicantDetail.setSeqNum(getAppSeqNum());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("legalApplicantDetail", legalApplicantDetail);
 		map.put("legalDetailDialogCtrl", this);
 		map.put("newRecord", true);
@@ -1566,7 +1566,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (StringUtils.equalsIgnoreCase(applicantDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("legalApplicantDetail", applicantDetail);
 				map.put("legalDetailDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -1704,7 +1704,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		propertyDetail.setNewRecord(true);
 		propertyDetail.setWorkflowId(0);
 		propertyDetail.setSeqNum(getPropDetSeqNum());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("legalPropertyDetail", propertyDetail);
 		map.put("legalDetailDialogCtrl", this);
 		map.put("newRecord", true);
@@ -1747,7 +1747,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (StringUtils.equalsIgnoreCase(legalPropertyDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("legalPropertyDetail", legalPropertyDetail);
 				map.put("legalDetailDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -1876,7 +1876,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		ComponentsCtrl.applyForward(queryModuleTab, ("onSelect=onSelectQueryTab"));
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
@@ -1904,7 +1904,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		legalDocument.setNewRecord(true);
 		legalDocument.setWorkflowId(0);
 		legalDocument.setSeqNum(getDocSeqNum());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("legalDocument", legalDocument);
 		map.put("legalDetailDialogCtrl", this);
 		map.put("newRecord", true);
@@ -1946,7 +1946,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (StringUtils.equalsIgnoreCase(legalDocument.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("legalDocument", legalDocument);
 				map.put("legalDetailDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -2064,7 +2064,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		legalPropertyTitle.setNewRecord(true);
 		legalPropertyTitle.setWorkflowId(0);
 		legalPropertyTitle.setSeqNum(getPropTitSeqNum());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("legalPropertyTitle", legalPropertyTitle);
 		map.put("legalDetailDialogCtrl", this);
 		map.put("newRecord", true);
@@ -2105,7 +2105,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (StringUtils.equalsIgnoreCase(legalPropertyTitle.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("legalPropertyTitle", legalPropertyTitle);
 				map.put("legalDetailDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -2178,7 +2178,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		legalECDetail.setNewRecord(true);
 		legalECDetail.setWorkflowId(0);
 		legalECDetail.setSeqNum(getECSeqNum());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("legalECDetail", legalECDetail);
 		map.put("legalDetailDialogCtrl", this);
 		map.put("newRecord", true);
@@ -2220,7 +2220,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (StringUtils.equalsIgnoreCase(legalECDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("legalECDetail", legalECDetail);
 				map.put("legalDetailDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -2299,7 +2299,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		legalNote.setNewRecord(true);
 		legalNote.setWorkflowId(0);
 		legalNote.setSeqNum(getNotesSeqNum());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("legalNote", legalNote);
 		map.put("legalDetailDialogCtrl", this);
 		map.put("newRecord", true);
@@ -2340,7 +2340,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			if (StringUtils.equalsIgnoreCase(legalNote.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("legalNote", legalNote);
 				map.put("legalDetailDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -2400,7 +2400,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		ComponentsCtrl.applyForward(coventsTab, ("onSelect=onSelectCovTab"));
 
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("covenantTypes", getLegalDetail().getCovenantTypeList());
 		map.put("legalDetail", getLegalDetail());
 		map.put("allowedRoles", getLoanWorkFlowRoles());
@@ -2432,8 +2432,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		return roles;
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getHeaderBasicDetails());
@@ -2528,7 +2528,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				if (StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)) {
 					Filedownload.save(detail.getDocImage(), "application/msword", detail.getDocName());
 				} else {
-					HashMap<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("FinDocumentDetail", detail);
 					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 				}
@@ -2536,7 +2536,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				logger.debug(Literal.EXCEPTION, e);
 			}
 		} else if (StringUtils.isNotBlank(detail.getDocUri())) {
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("documentRef", detail);
 			Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 		} else {

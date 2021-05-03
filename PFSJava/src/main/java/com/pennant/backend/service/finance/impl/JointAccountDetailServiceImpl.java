@@ -44,7 +44,6 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -676,7 +675,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		extendedFieldRender.setWorkflowId(0);
 
 		// Add Common Fields
-		HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+		Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 
 		String custCIF = jointAccountDetail.getCustCIF();
 		Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(custCIF, tableName.toString(), null);
@@ -702,7 +701,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 		mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
 
 		// Audit Details Preparation
-		HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+		Map<String, Object> auditMapValues = extendedFieldRender.getMapValues();
 		auditMapValues.put("Reference", extendedFieldRender.getReference());
 		auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 		auditMapValues.put("Version", extendedFieldRender.getVersion());
@@ -788,7 +787,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 					extendedFieldRender.setWorkflowId(0);
 
 					// Add Common Fields
-					HashMap<String, Object> mapValues = (HashMap<String, Object>) extendedFieldRender.getMapValues();
+					Map<String, Object> mapValues = extendedFieldRender.getMapValues();
 
 					String custCIF = jointAccountDetail.getCustCIF();
 					Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(custCIF,
@@ -815,8 +814,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
 
 					// Audit Details Preparation
-					HashMap<String, Object> auditMapValues = (HashMap<String, Object>) extendedFieldRender
-							.getMapValues();
+					Map<String, Object> auditMapValues = extendedFieldRender.getMapValues();
 					auditMapValues.put("Reference", extendedFieldRender.getReference());
 					auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
 					auditMapValues.put("Version", extendedFieldRender.getVersion());

@@ -942,7 +942,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						new String[] { this.earlyRpyEffectOnSchd.getSelectedItem().getLabel() });
 
 				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-					final HashMap<String, Object> map = new HashMap<String, Object>();
+					final Map<String, Object> map = new HashMap<String, Object>();
 					map.put("manualPaymentDialogCtrl", this);
 					map.put("repayData", repayData);
 					Executions.createComponents(
@@ -1364,7 +1364,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("finSchdData", aFinScheduleData);
 
 				map.put("financeScheduleDetail", aScheduleDetail);
@@ -2167,7 +2167,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			financeDetail = getManualPaymentService().getAccountingDetail(financeDetail, eventCode);
 
 			//Accounting Detail Tab
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", financeDetail);
 			map.put("finHeaderList", getFinBasicDetails());

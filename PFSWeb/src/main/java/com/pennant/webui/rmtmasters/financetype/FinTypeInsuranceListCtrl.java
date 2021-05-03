@@ -46,6 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -307,7 +308,7 @@ public class FinTypeInsuranceListCtrl extends GFCBaseCtrl<FinTypeInsurances> {
 	private void doshowInsuranceDialog(FinTypeInsurances finTypeInsurances) throws InterruptedException {
 		logger.debug("Entering");
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finTypeInsurances", finTypeInsurances);
 		map.put("finTypeInsuranceListCtrl", this);
 		map.put("role", roleCode);

@@ -44,6 +44,7 @@ package com.pennant.webui.reports;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,7 +97,7 @@ public class DealWiseIncomeReportCtrl extends GFCBaseCtrl<ReportConfiguration> {
 			//Saving new Income Account Transaction Details From Core System
 			getDailyDownloadInterfaceService().processIncomeAccTransactions(prvMnthStartDate);
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("MonthEndReportEvent", event);
 			Window child_Window = (Window) Executions
 					.createComponents("/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul", null, map);

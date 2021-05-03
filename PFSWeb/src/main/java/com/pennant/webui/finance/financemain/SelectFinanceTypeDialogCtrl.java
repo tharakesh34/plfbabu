@@ -1204,7 +1204,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			 * if screen code is quick data entry (QDE) navigate to QDE screen otherwise navigate to Detail data entry
 			 * screen
 			 */
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeDetail", financeDetail);
 			map.put("financeMainListCtrl", this.financeMainListCtrl);
 			map.put("menuItemRightName", menuItemRightName);
@@ -1505,7 +1505,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	private void showDetailViewforDedUp(CustomerDetails customerDetails) {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -1963,7 +1963,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 */
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);

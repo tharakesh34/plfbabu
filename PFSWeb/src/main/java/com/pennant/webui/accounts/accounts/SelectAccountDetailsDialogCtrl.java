@@ -226,7 +226,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 */
 	private void onLoad() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.newSearchObject);
@@ -303,7 +303,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			iAccountList.add(newAccount);
 			newAccount = getAccountInterfaceService().fetchExistAccount(iAccountList, "N").get(0);
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			this.accounts.setNewRecord(true);
 			map.put("acounts", this.accounts);
 			map.put("customer", this.aCustomer);

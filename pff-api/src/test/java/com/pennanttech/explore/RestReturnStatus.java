@@ -1,7 +1,6 @@
 package com.pennanttech.explore;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +14,9 @@ public class RestReturnStatus {
 	public static Map<String, Object> convertStringToMap(String payload) {
 		ObjectMapper obj = new ObjectMapper();
 
-		HashMap<String, Object> map = null;
+		Map<String, Object> map = null;
 		try {
-			map = obj.readValue(payload, new TypeReference<HashMap<String, Object>>() {
+			map = obj.readValue(payload, new TypeReference<Map<String, Object>>() {
 			});
 		} catch (JsonParseException e) {
 			e.printStackTrace();

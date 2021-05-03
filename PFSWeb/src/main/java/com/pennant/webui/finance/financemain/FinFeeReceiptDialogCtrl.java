@@ -45,6 +45,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -103,7 +104,7 @@ public class FinFeeReceiptDialogCtrl extends GFCBaseCtrl<FinFeeReceipt> {
 	private FinFeeDetailListCtrl finFeeDetailListCtrl;
 	private FinanceDetail financeDetail;
 
-	private LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<Long, List<FinFeeReceipt>>();
+	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<Long, List<FinFeeReceipt>>();
 
 	/**
 	 * default constructor.<br>

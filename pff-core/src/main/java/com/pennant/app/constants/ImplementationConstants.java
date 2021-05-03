@@ -151,7 +151,7 @@ public class ImplementationConstants {
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
 		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean(extensions, "ALLOW_AUTO_GRACE_EXT", false);
 		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean(extensions, "ALLOW_LOAN_DOWNSIZING", false);
-		ALLOW_RESTRUCTURE = getValueAsBoolean(extensions, "ALLOW_RESTRUCTURE", false);
+		ALLOW_RESTRUCTURING = getValueAsBoolean(extensions, "ALLOW_RESTRUCTURING", false);
 		LOAN_DOWNSIZING_ACCOUNTING_REQ = getValueAsBoolean(extensions, "LOAN_DOWNSIZING_ACCOUNTING_REQ", false);
 
 		// FROM HL
@@ -213,7 +213,7 @@ public class ImplementationConstants {
 		ALLOW_ED_FIELDS_IN_NPA = getValueAsBoolean(extensions, "ALLOW_ED_FIELDS_IN_NPA", false);
 		FRQ_15DAYS_REQ = getValueAsBoolean(extensions, "FRQ_15DAYS_REQ", false);
 		NON_FRQ_CAPITALISATION = getValueAsBoolean(extensions, "NON_FRQ_CAPITALISATION", false);
-		
+		ALW_DOWNPAY_IN_LOANENQ_AND_SOA = getValueAsBoolean(extensions, "ALW_DOWNPAY_IN_LOANENQ_AND_SOA", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -439,7 +439,7 @@ public class ImplementationConstants {
 	public static boolean ALW_VERIFICATION_SYNC;
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;
-	public static boolean ALLOW_RESTRUCTURE;
+	public static boolean ALLOW_RESTRUCTURING;
 	public static boolean LOAN_DOWNSIZING_ACCOUNTING_REQ;
 	public static boolean DEFAULT_VAS_MODE_OF_PAYMENT;
 	public static boolean PRESENTMENT_EXTRACT_DEALER_MAN;
@@ -466,6 +466,7 @@ public class ImplementationConstants {
 	public static boolean PRESENTMENT_STAGE_ACCOUNTING_REQ;
 	public static boolean FRQ_15DAYS_REQ;
 	public static boolean NON_FRQ_CAPITALISATION;
+	public static boolean ALW_DOWNPAY_IN_LOANENQ_AND_SOA;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;

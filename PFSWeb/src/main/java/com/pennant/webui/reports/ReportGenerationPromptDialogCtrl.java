@@ -180,7 +180,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 																											// Fields
 																											// storing
 	private Map<Object, List<ReportSearchTemplate>> templateLibraryMap;// templates Library
-	static final HashMap<String, String> filterDescMap = PennantStaticListUtil.getFilterDescription();
+	static final Map<String, String> filterDescMap = PennantStaticListUtil.getFilterDescription();
 
 	private List<ReportSearchTemplate> reportSearchTemplateFieldsList;
 	private ReportConfigurationService reportConfigurationService;
@@ -1815,7 +1815,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						|| (this.rows_formatType.isVisible() && this.pdfFormat.isChecked())) {
 
 					buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, con);
-					HashMap<String, Object> auditMap = new HashMap<String, Object>(4);
+					Map<String, Object> auditMap = new HashMap<String, Object>(4);
 					auditMap.put("reportBuffer", buf);
 					auditMap.put("parentWindow", this.window_ReportPromptFilterCtrl);
 					auditMap.put("reportName", reportConfiguration.getReportName().replace(EXCEL_TYPE, ""));
@@ -1894,7 +1894,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		reportSearchTemplateFieldsList = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false, false);
 		if (reportSearchTemplateFieldsList.size() > 0) {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("reportGenerationPromptDialogCtrl", this);
 			map.put("reportId", reportConfiguration.getReportID());
 			// call the ZUL-file with the parameters packed in a map
@@ -2334,7 +2334,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		searchClick = true;
 
 		// ++ create the searchObject and initialize sorting ++//
-		HashMap<String, Object> argMap = null;
+		Map<String, Object> argMap = null;
 		if (StringUtils.equals(reportMenuCode, "menu_Item_AccountStmt")) {
 			String fromDate = null;
 			String toDate = null;

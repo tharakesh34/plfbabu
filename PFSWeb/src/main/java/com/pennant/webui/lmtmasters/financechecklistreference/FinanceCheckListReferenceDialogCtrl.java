@@ -144,10 +144,10 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
 
-	private HashMap<String, Boolean> screenLevelModification = new HashMap<String, Boolean>();
-	private HashMap<String, String> screenLevelRemarks = new HashMap<String, String>();
-	private HashMap<Long, String> deviationCombovalues = new HashMap<Long, String>();
-	private HashMap<Long, Integer> deviationInboxValues = new HashMap<Long, Integer>();
+	private Map<String, Boolean> screenLevelModification = new HashMap<String, Boolean>();
+	private Map<String, String> screenLevelRemarks = new HashMap<String, String>();
+	private Map<Long, String> deviationCombovalues = new HashMap<Long, String>();
+	private Map<Long, Integer> deviationInboxValues = new HashMap<Long, Integer>();
 	private DeviationExecutionCtrl deviationExecutionCtrl;
 
 	private boolean isNotFinanceProcess = false;
@@ -314,7 +314,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 					notAllowedToShowMap.put(Long.valueOf(finRefDetail.getFinRefId()), finRefDetail);
 				}
 
-				HashMap<String, Object> fieldsAndValues = null;
+				Map<String, Object> fieldsAndValues = null;
 				String finCcy = null;
 
 				if (!isNotFinanceProcess) {
@@ -1004,13 +1004,13 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 								.invoke(getFinanceDialogCtrl(), (List<FinanceCheckListReference>) returnedList.get(1));
 					}
 					getFinanceDialogCtrl().getClass().getMethod("setSelectedAnsCountMap", HashMap.class)
-							.invoke(getFinanceDialogCtrl(), (HashMap<Long, Long>) returnedList.get(0));
+							.invoke(getFinanceDialogCtrl(), (Map<Long, Long>) returnedList.get(0));
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 					throw e;
 				}
 			} else {
-				getFinanceDetail().setLovDescSelAnsCountMap((HashMap<Long, Long>) returnedList.get(0));
+				getFinanceDetail().setLovDescSelAnsCountMap((Map<Long, Long>) returnedList.get(0));
 				getFinanceDetail().setFinanceCheckList((List<FinanceCheckListReference>) returnedList.get(1));
 				// Setting must be done for Beans
 				try {
@@ -1208,7 +1208,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			map.put("moduleName", moduleName);

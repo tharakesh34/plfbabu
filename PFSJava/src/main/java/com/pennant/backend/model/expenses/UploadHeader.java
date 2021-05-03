@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -95,7 +96,7 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 	private List<UploadManualAdvise> uploadManualAdvises = new ArrayList<UploadManualAdvise>();
 
 	@XmlTransient
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private Long makerId;
 	private Long approverId;
 	private Date approvedDate = null;
@@ -241,11 +242,11 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		this.refundUploads = refundUploads;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

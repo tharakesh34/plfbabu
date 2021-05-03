@@ -2521,7 +2521,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 */
 	private void listSave(FinScheduleData scheduleData, String tableType, long logKey, boolean saveDisb) {
 		logger.debug("Entering ");
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
 		if (StringUtils.isEmpty(tableType)) {
@@ -2877,7 +2877,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
@@ -3905,30 +3905,30 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			String panNumber = fsi.getPanNumber();
 			if (StringUtils.isEmpty(panNumber)) {
-			if (recAmount.compareTo(cashLimit) > 0
-					&& StringUtils.equals(fsi.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
-				String valueParm = "PanNumber";
-				finScheduleData = setErrorToFSD(finScheduleData, "30561", valueParm);
-				return receiptData;
-			}
-		} else {
-			Pattern pattern = Pattern
-					.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
-			Matcher matcher = pattern.matcher(panNumber);
-			if (!matcher.matches()) {
-				finScheduleData = setErrorToFSD(finScheduleData, "90251", panNumber);
-				return receiptData;
+				if (recAmount.compareTo(cashLimit) > 0
+						&& StringUtils.equals(fsi.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
+					String valueParm = "PanNumber";
+					finScheduleData = setErrorToFSD(finScheduleData, "30561", valueParm);
+					return receiptData;
+				}
+			} else {
+				Pattern pattern = Pattern
+						.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER));
+				Matcher matcher = pattern.matcher(panNumber);
+				if (!matcher.matches()) {
+					finScheduleData = setErrorToFSD(finScheduleData, "90251", panNumber);
+					return receiptData;
+				}
 			}
 		}
 		
 		if (finScheduleData.getFinanceMain() != null) {
-			if (fsi.getTdsAmount().compareTo(BigDecimal.ZERO) > 0 && !StringUtils
-					.equalsIgnoreCase(finScheduleData.getFinanceMain().getTdsType(), PennantConstants.TDS_MANUAL)) {
+			if (fsi.getTdsAmount().compareTo(BigDecimal.ZERO) > 0
+					&& !PennantConstants.TDS_MANUAL.equalsIgnoreCase(finScheduleData.getFinanceMain().getTdsType())) {
 				finScheduleData = setErrorToFSD(finScheduleData, "RU00060", null);
 				return receiptData;
 			}
 		}
-	}
 
 		receiptData = validateDual(receiptData, methodCtg);
 
@@ -4643,6 +4643,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		rch.setValueDate(rcd.getValueDate());
 		rch.setPartnerBankId(rcd.getFundingAc());
+		// fetch partner bank details
+		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc(), "");
+		if (partnerBank != null) {
+			rcd.setPartnerBankAc(partnerBank.getAccountNo());
+			rcd.setPartnerBankAcType(partnerBank.getAcType());
+		}
 
 		if (rch.getReceiptMode() != null && rch.getSubReceiptMode() == null) {
 			rch.setSubReceiptMode(rch.getSubReceiptMode());
@@ -6941,16 +6947,30 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @param fsi
 	 * @return errors
 	 */
+	@Override
 	public List<ErrorDetail> dedupCheck(FinServiceInstruction fsi) {
+		Date finValueDate = financeRepaymentsDAO.getMaxValueDate(fsi.getFinReference());
+
+		List<ErrorDetail> errors = new ArrayList<>();
+		StringBuilder message = new StringBuilder();
+		message.append("Receipt already available with the Value Date {0},");
+		message.append(" so the next Receipt Value Date should be greater than or equal to {1}");
+
+		if (DateUtil.compare(finValueDate, fsi.getValueDate()) > 0) {
+			String[] valueParm = new String[4];
+			valueParm[0] = String.valueOf(finValueDate);
+			valueParm[1] = String.valueOf(finValueDate);
+			errors.add(new ErrorDetail("30550", message.toString(), valueParm));
+			return errors;
+		}
+
 		List<Long> receiptIdList = finReceiptHeaderDAO.isDedupReceiptExists(fsi);
 
 		if (receiptIdList.isEmpty()) {
 			return new ArrayList<>();
 		}
 
-		List<ErrorDetail> errors = new ArrayList<>();
-
-		StringBuilder message = new StringBuilder();
+		message = new StringBuilder();
 		message.append("Receipt for the Fin Reference {0} , Value Date {1}, Receipt Amount {2}");
 		message.append(" and Transaction Reference {3} already exists with Receipt Id {4} .");
 
@@ -7382,7 +7402,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptQueueLog finReceiptQueue = new FinReceiptQueueLog();
 		finReceiptQueue.setStartTime(LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":"
 				+ LocalDateTime.now().getSecond()); // Thread Processing Start
-																																								// Time
+																																						// Time
 
 		Map<String, String> valueMap = new HashMap<>();
 		FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();

@@ -638,8 +638,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving ");
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("guarantorDetailDialogCtrl", this);
 		map.put("moduleCode", moduleCode);
@@ -792,7 +792,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					new String[] { Labels.getLabel("label_JountAccountDetailDialog_CustCIF.value") }));
 		}
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			if (ImplementationConstants.CO_APP_ENQ_SAME_AS_CUST_ENQ) {
 				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(this.custID.longValue(),
 						true, "_AView");

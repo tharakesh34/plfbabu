@@ -221,7 +221,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private List<ValueLabel> listUsrDftAppId = PennantStaticListUtil.getAppCodes();
 	private List<ValueLabel> authTypesList = PennantStaticListUtil.getAuthnticationTypes();
 	protected transient Map<String, Object> divBranchs = new HashMap<>();
-	protected transient Map<String, HashMap<String, Object>> dynamicDivBranchs = new HashMap<>();
+	protected transient Map<String, Map<String, Object>> dynamicDivBranchs = new HashMap<>();
 	private SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
 	private List<SecurityUserDivBranch> befImgUsrDivBranchsList = new ArrayList<>();
 	protected Listbox listBoxReportingManager;
@@ -1920,7 +1920,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		final HashMap<String, Serializable> map = new HashMap<String, Serializable>();
+		final Map<String, Serializable> map = new HashMap<String, Serializable>();
 		map.put("notes", getNotes());
 		map.put("control", this);
 
@@ -1999,7 +1999,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if (getSecurityUser().isNew()) {
 					dynamicDivBranchs.put(userDivision, new HashMap<String, Object>());
 				} else {
-					HashMap<String, Object> tempSecDivBrMap = new HashMap<String, Object>();
+					Map<String, Object> tempSecDivBrMap = new HashMap<String, Object>();
 					String branchs = "";
 					String toolTipDesc = "";
 					for (SecurityUserDivBranch branch : aSecurityUser.getSecurityUserDivBranchList()) {
@@ -2143,7 +2143,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		if (dataObject instanceof String) {
 			txtbx.setValue(dataObject.toString());
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String multivalues = details.keySet().toString();
 				txtbx.setValue(multivalues.replace("[", "").replace("]", "").replace(" ", ""));
@@ -3118,7 +3118,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			// CAST AND STORE THE SELECTED OBJECT
 			final ReportingManager areportingManager = (ReportingManager) item.getAttribute("data");
 
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("reportingManager", areportingManager);
 			map.put("SecurityUserDialogCtrl", this);
 			map.put("roleCode", getRole());

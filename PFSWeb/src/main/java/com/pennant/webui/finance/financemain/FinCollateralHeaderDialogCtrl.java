@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -233,7 +234,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 		map.put("finCollateralHeaderDialogCtrl", this);
 		FinanceMain financeMain = updateFinanceMain();
@@ -319,7 +320,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 							.equalsIgnoreCase(StringUtils.trimToEmpty(finCollateral.getRecordType()))) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 				map.put("finCollateralHeaderDialogCtrl", this);
 				FinanceMain financeMain = updateFinanceMain();
@@ -363,7 +364,7 @@ public class FinCollateralHeaderDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);

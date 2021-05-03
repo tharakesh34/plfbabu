@@ -541,7 +541,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 */
 	public void createSimulationWindow(JSONArray jsonArray, String scriptRule) throws InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("variables", jsonArray);
 		map.put("scriptRule", scriptRule);
 

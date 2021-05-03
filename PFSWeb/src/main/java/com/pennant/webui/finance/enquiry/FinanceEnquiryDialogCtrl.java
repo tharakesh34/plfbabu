@@ -100,7 +100,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.commitment.Commitment;
@@ -986,10 +985,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			// amounts from current asset value.
 			BigDecimal curFinAmountValue = BigDecimal.ZERO;
 
-			curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
-					.add(aFinanceMain.getTotalCpz()).add(aFinanceMain.getInsuranceAmt())
-					.subtract(aFinanceMain.getDownPayment()).subtract(aFinanceMain.getFinRepaymentAmount())
-					.subtract(aFinanceMain.getSvAmount());
+			if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
+				curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
+						.add(aFinanceMain.getTotalCpz()).add(aFinanceMain.getInsuranceAmt())
+						.subtract(aFinanceMain.getFinRepaymentAmount()).subtract(aFinanceMain.getSvAmount());
+			} else {
+				curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
+						.add(aFinanceMain.getTotalCpz()).add(aFinanceMain.getInsuranceAmt())
+						.subtract(aFinanceMain.getDownPayment()).subtract(aFinanceMain.getFinRepaymentAmount())
+						.subtract(aFinanceMain.getSvAmount());
+			}
 			this.curFinAmountValue.setValue(PennantApplicationUtil.formateAmount(curFinAmountValue, formatter));
 
 			this.finType.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
@@ -1231,10 +1236,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
-			} else if (aFinanceMain.isWriteoffLoan()) {
-				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
 			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Settled"));
+			}
+			if (aFinanceMain.isWriteoffLoan()) {
+				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
 			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
@@ -1814,7 +1820,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList);
 
-		final HashMap<String, Object> map = getDefaultArguments();
+		final Map<String, Object> map = getDefaultArguments();
 		map.put("financeDetail", this.financeDetail);
 		map.put("enquiryModule", true);
 		map.put("isWIF", false);
@@ -1848,7 +1854,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_COLLATERAL));
 			map.put("enquiry", true);
 			map.put("finHeaderList", getFinBasicDetails(getFinScheduleData().getFinanceMain()));
@@ -1959,8 +1965,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_JOINTGUARANTOR));
 		map.put("enquiry", enquiry);
 		map.put("financeMain", getFinScheduleData().getFinanceMain());
@@ -2278,7 +2284,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				int formatter = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("finContributorDetail", finContributorDetail);
 				map.put("formatter", formatter);
 				map.put("moduleType", "");
@@ -2670,7 +2676,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						break;
 					}
 				}
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("financeDisbursement", disbursement);
 				map.put("currency", getFinScheduleData().getFinanceMain().getFinCcy());
 				map.put("formatter", CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy()));
@@ -2695,7 +2701,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			final ContractorAssetDetail acoContractorAssetDetail = (ContractorAssetDetail) listitem
 					.getAttribute("data");
 			acoContractorAssetDetail.setNewRecord(false);
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("contractorAssetDetail", acoContractorAssetDetail);
 			map.put("enqModule", true);
 			// call the ZUL-file with the parameters packed in a map

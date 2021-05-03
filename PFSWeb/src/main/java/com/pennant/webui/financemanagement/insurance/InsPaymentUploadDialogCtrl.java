@@ -3,8 +3,8 @@ package com.pennant.webui.financemanagement.insurance;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -517,7 +517,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		InsurancePaymentInstructions instructions = getPaymentInstructionsFromFile();
 		if (instructions != null) {
 
-			LinkedHashMap<Long, String> adviseRefMap = instructions.getAdviseRefMap();
+			Map<Long, String> adviseRefMap = instructions.getAdviseRefMap();
 			if (adviseRefMap.size() > 0) {
 				instructions = getInsuranceFileImportService().getManualAdvises(instructions);
 			}

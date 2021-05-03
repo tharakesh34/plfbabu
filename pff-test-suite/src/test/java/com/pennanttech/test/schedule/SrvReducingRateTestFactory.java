@@ -2,10 +2,6 @@ package com.pennanttech.test.schedule;
 
 import java.io.IOException;
 
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.read.biff.BiffException;
-
 import org.testng.annotations.Factory;
 
 import com.pennant.app.util.DateUtility;
@@ -14,9 +10,13 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.util.BeanFactory;
 import com.pennanttech.util.Dataset;
 
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.read.biff.BiffException;
+
 public class SrvReducingRateTestFactory {
-	final String	SHEET_NAME	= "SRV_ReduceRate";
-	final int		DATA_OFFSET	= 1;
+	final String SHEET_NAME = "SRV_ReduceRate";
+	final int DATA_OFFSET = 1;
 
 	@Factory
 	public Object[] createObjects() throws BiffException, IOException {

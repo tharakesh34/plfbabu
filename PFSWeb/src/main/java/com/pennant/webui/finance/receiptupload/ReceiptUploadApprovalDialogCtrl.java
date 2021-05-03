@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -297,7 +298,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
 
-			HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
+			Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
 			reportArgumentsMap.put("userName", userName);
 			reportArgumentsMap.put("reportHeading", reportName);
 			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));

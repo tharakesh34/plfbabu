@@ -2,8 +2,8 @@ package com.pennant.backend.service.insurance.impl;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -533,7 +533,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		BigDecimal payableAmt = instructions.getPayableAmount();
 		BigDecimal receivableAmount = BigDecimal.ZERO;
 
-		LinkedHashMap<Long, String> adviseRefMap = instructions.getAdviseRefMap();
+		Map<Long, String> adviseRefMap = instructions.getAdviseRefMap();
 		for (Long feeTypeId : adviseRefMap.keySet()) {
 			boolean completed = false;
 			List<ManualAdvise> manualAdvises = getManualAdviseDAO()

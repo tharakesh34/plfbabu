@@ -1211,7 +1211,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 	}
 
 	protected Map<String, Object> getDefaultArguments() {
-		HashMap<String, Object> aruments = new HashMap<String, Object>();
+		Map<String, Object> aruments = new HashMap<String, Object>();
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
 		return aruments;

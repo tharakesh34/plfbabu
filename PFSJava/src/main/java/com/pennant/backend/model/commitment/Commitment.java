@@ -128,7 +128,7 @@ public class Commitment extends AbstractWorkflowEntity {
 	private String externalRef1;
 	private int tenor;
 
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>(1);
 
 	private CustomerDetails customerDetails;
@@ -553,11 +553,11 @@ public class Commitment extends AbstractWorkflowEntity {
 		this.commitmentRateList = commitmentRateList;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
@@ -649,13 +649,13 @@ public class Commitment extends AbstractWorkflowEntity {
 		this.limitLineCodeDesc = limitLineCodeDesc;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> commitmentMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> commitmentMap = new HashMap<>();
 
 		return getDeclaredFieldValues(commitmentMap);
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> commitmentMap) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> commitmentMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				commitmentMap.put("cmt_" + this.getClass().getDeclaredFields()[i].getName(),

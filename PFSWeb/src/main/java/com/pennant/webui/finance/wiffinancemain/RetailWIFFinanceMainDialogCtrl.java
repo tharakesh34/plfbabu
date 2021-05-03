@@ -545,7 +545,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private List<ValueLabel> profitDaysBasisList = PennantStaticListUtil.getProfitDaysBasis();
 	private List<ValueLabel> schMethodList = PennantStaticListUtil.getScheduleMethods();
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	Date appStartDate = DateUtility.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	Date endDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
@@ -1598,7 +1598,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (elgRuleList != null && !elgRuleList.isEmpty()) {
 
 			//Eligibility Detail Tab
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
 			map.put("profitDaysBasisList", profitDaysBasisList);
@@ -1663,7 +1663,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					.setLovDescCustCtgCode(PennantConstants.PFF_CUSTCTG_INDIV);
 
 			//Scoring Detail Tab
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
 			map.put("profitDaysBasisList", profitDaysBasisList);
@@ -2956,7 +2956,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!onLoadProcess || (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0)) {
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleCode", getRole());
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
@@ -3008,7 +3008,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& (!getFinanceDetail().getFinScheduleData().getStepPolicyDetails().isEmpty()
 						|| getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()))) {
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("roleCode", getRole());
 			map.put("financeMainDialogCtrl", this);
 			map.put("financeDetail", getFinanceDetail());
@@ -3057,7 +3057,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			tabpanel.setHeight("100%");
 			ComponentsCtrl.applyForward(tab, ("onSelect=onSelectFeeTab"));
 			if (feeTabVisible) {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("roleCode", getRole());
 				map.put("financeMainDialogCtrl", this);
 				map.put("financeDetail", getFinanceDetail());
@@ -8200,11 +8200,11 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.wifFinanceMainListCtrl = wifFinanceMainListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

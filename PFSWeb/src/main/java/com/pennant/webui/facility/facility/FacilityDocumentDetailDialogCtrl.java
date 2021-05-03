@@ -199,7 +199,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 	public void onClick$btnNew_DocumentDetails(Event event) throws InterruptedException, SecurityException,
 			IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", getCtrlObject());
 		map.put("documentDetailDialogCtrl", this);
 		if (getCtrlObject().getClass().getMethod("getFacility") != null) {
@@ -233,7 +233,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			throws InterruptedException, SecurityException, IllegalArgumentException, NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DocumentDetailDialogCtrl", this);
 		map.put("newRecord", "true");
 		map.put("roleCode", getRole());
@@ -349,7 +349,7 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 	public void updateExistingDocument(DocumentDetails finDocumentDetail, boolean isCheckList, boolean viewProcess)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finDocumentDetail", finDocumentDetail);
 		map.put("DocumentDetailDialogCtrl", this);
 		map.put("roleCode", getRole());

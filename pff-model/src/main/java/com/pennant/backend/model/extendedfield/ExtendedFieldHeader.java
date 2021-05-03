@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -95,7 +96,7 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 	@XmlElement(name = "extendedField")
 	private List<ExtendedFieldDetail> extendedFieldDetailList = new ArrayList<ExtendedFieldDetail>(1);
 	private List<ExtendedFieldDetail> technicalValuationDetailList;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
@@ -217,11 +218,11 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity implements Entit
 		this.technicalValuationDetailList = technicalValuationDetailList;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

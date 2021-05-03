@@ -230,7 +230,7 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 	protected AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
 		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-				afinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				afinanceDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	/**

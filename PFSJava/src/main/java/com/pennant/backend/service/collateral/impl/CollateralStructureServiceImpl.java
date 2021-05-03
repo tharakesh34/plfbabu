@@ -45,6 +45,7 @@ package com.pennant.backend.service.collateral.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -580,7 +581,7 @@ public class CollateralStructureServiceImpl extends GenericService<CollateralStr
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		CollateralStructure collateralStructure = (CollateralStructure) auditHeader.getAuditDetail().getModelData();
 		ExtendedFieldHeader extendedFieldHeader = collateralStructure.getExtendedFieldHeader();

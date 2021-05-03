@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -75,7 +76,7 @@ public class AssetClassificationHeader extends AbstractWorkflowEntity {
 	private String npaTemplateDesc;
 
 	private List<AssetClassificationDetail> assetClassificationDetailList = new ArrayList<AssetClassificationDetail>();
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -182,11 +183,11 @@ public class AssetClassificationHeader extends AbstractWorkflowEntity {
 		this.assetClassificationDetailList = assetClassificationDetailList;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

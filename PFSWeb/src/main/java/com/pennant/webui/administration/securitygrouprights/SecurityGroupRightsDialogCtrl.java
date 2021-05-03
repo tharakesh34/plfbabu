@@ -194,7 +194,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 		logger.debug("Entering " + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("dialogCtrl", this);
 		map.put("dataMap", tempUnAsgnRightsMap);
 		map.put("prevFilters", filters);

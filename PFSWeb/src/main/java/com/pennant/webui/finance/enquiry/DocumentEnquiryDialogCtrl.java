@@ -44,6 +44,7 @@ package com.pennant.webui.finance.enquiry;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -236,12 +237,6 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			return;
 		}
 
-		//Display the Message for the Not Available Doc Image.
-		if (detail == null) {
-			MessageUtil.showMessage(" Document not Avaialble / Generated Yet.");
-			return;
-		}
-
 		String custCif = detail.getLovDescCustCIF();
 		String docName = detail.getDocName();
 		String docUri = detail.getDocUri();
@@ -268,7 +263,7 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					Filedownload.save(detail.getDocImage(), "application/octet-stream", detail.getDocName());
 				} else {
-					HashMap<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("FinDocumentDetail", detail);
 					Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);
 				}
@@ -276,7 +271,7 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				logger.debug(e);
 			}
 		} else if (StringUtils.isNotBlank(detail.getDocUri())) {
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("documentRef", dd);
 			map.put("docType", detail);
 			Executions.createComponents("/WEB-INF/pages/util/ImageView.zul", null, map);

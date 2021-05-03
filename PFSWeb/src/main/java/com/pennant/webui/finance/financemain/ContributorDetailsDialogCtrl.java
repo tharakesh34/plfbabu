@@ -49,6 +49,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -160,7 +161,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 	protected Groupbox finBasicdetails;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 
 	/**
 	 * default constructor.<br>
@@ -905,7 +906,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		finContributorDetail.setWorkflowId(0);
 		finContributorDetail.setCustID(Long.MIN_VALUE);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finContributorDetail", finContributorDetail);
 		map.put("contributorDetailsDialogCtrl", this);
 		map.put("newRecord", "true");
@@ -1017,7 +1018,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 			if (finContributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("finContributorDetail", finContributorDetail);
 				map.put("contributorDetailsDialogCtrl", this);
 				map.put("roleCode", roleCode);
@@ -1236,7 +1237,7 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
@@ -1284,11 +1285,11 @@ public class ContributorDetailsDialogCtrl extends GFCBaseCtrl<FinContributorDeta
 		return oldVar_ContributorList;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

@@ -45,6 +45,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -256,7 +257,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		VASRecording recording = new VASRecording();
 		recording.setNewRecord(true);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finVasRecordingDialogCtrl", this);
 		map.put("vASRecording", recording);
 		map.put("newRecord", true);
@@ -360,7 +361,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					recording.setVasConfiguration(vasConfiguration);
 				}
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 
 				if (StringUtils.isEmpty(recording.getVasReference())) {
 					map.put("feeEditable", true);
@@ -388,7 +389,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);

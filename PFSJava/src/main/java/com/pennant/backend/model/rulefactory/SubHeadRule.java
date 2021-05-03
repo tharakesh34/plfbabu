@@ -3,6 +3,7 @@ package com.pennant.backend.model.rulefactory;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SubHeadRule implements Serializable {
 
@@ -218,8 +219,8 @@ public class SubHeadRule implements Serializable {
 	}
 
 	//Set values into Map
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> subHeadRuleMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> subHeadRuleMap = new HashMap<String, Object>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				subHeadRuleMap.put(this.getClass().getDeclaredFields()[i].getName(),

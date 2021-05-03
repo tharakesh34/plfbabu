@@ -690,7 +690,7 @@ public class CollateralController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(CollateralSetup collateralSetup, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, collateralSetup.getBefImage(), collateralSetup);
 		return new AuditHeader(collateralSetup.getCollateralRef(), collateralSetup.getCollateralRef(), null, null,
-				auditDetail, collateralSetup.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				auditDetail, collateralSetup.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {

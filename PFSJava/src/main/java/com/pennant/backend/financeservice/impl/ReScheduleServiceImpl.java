@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -101,7 +102,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		}
 
 		// Removing Schedule Details from Selected Recalculation From Date
-		HashMap<Date, FinanceScheduleDetail> mapList = new HashMap<Date, FinanceScheduleDetail>();
+		Map<Date, FinanceScheduleDetail> mapList = new HashMap<>();
 		BigDecimal schPriDue = BigDecimal.ZERO;
 		BigDecimal schPftDue = BigDecimal.ZERO;
 		BigDecimal unModifiedPft = BigDecimal.ZERO;

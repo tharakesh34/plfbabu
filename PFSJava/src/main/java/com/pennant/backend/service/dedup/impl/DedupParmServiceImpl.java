@@ -399,7 +399,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		logger.debug(Literal.ENTERING);
 
 		// Check Override Condition based on Rule definitions on Process Editor
-		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
+		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
 		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}
@@ -627,14 +627,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		logger.debug(Literal.ENTERING);
 
 		// Check Override Condition based on Rule definitions on Process Editor
-		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
-		HashMap<String, String> overrideRuleDesc = new HashMap<String, String>();
+		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
+		Map<String, String> overrideRuleDesc = new HashMap<String, String>();
 		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}
 		// To check which rule not allow Override Condition based on Query Code
 		// Executions.
-		HashMap<String, Boolean> matchedOverMap = new HashMap<String, Boolean>();
+		Map<String, Boolean> matchedOverMap = new HashMap<String, Boolean>();
 		for (FinanceDedup financeDedup : newFinDedupList) {
 			String[] rulesList = financeDedup.getDedupeRule().split(",");
 			for (int i = 0; i < rulesList.length; i++) {
@@ -1270,7 +1270,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		logger.debug(Literal.ENTERING);
 
 		// Check Override Condition based on Rule definitions on Process Editor
-		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
+		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
 		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}
@@ -1517,7 +1517,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	 */
 	private List<PoliceCaseDetail> resetPoliceCaseList(List<PoliceCaseDetail> policeCase,
 			List<FinanceReferenceDetail> queryCodeList) {
-		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
+		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
 		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}

@@ -44,6 +44,7 @@ package com.pennant.webui.financemanagement.insurance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -340,7 +341,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	private void showDetailView() {
 		logger.debug(Literal.ENTERING);
 
-		HashMap<String, Object> arguments = new HashMap<String, Object>();
+		Map<String, Object> arguments = new HashMap<String, Object>();
 		arguments.put("vASRecording", this.vasRecording);
 		arguments.put("listCtrl", this.insuranceRebookingListCtrl);
 		if (CollectionUtils.isNotEmpty(userRoleCodeList)) {

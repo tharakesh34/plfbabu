@@ -230,7 +230,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String moduleDefiner = "";
 	private String eventCode = "";
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
-	private LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
+	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
 
 	private Map<String, BigDecimal> taxPercentages;
 	private FeeDetailService feeDetailService;
@@ -607,7 +607,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving ");
 	}
 
-	public void doFillFinFeeReceipts(LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap) {
+	public void doFillFinFeeReceipts(Map<Long, List<FinFeeReceipt>> finFeeReceiptMap) {
 		logger.debug("Entering");
 
 		if (finFeeReceiptMap.size() > 0) {
@@ -856,9 +856,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), true);
-		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMapTemp = new LinkedHashMap<>();
-		LinkedHashMap<String, FinFeeDetail> finFeeDetailsMap = new LinkedHashMap<>();
-		LinkedHashMap<String, BigDecimal> availableFeeAmount = new LinkedHashMap<>();
+		Map<String, FinFeeDetail> finFeeDetailsMapTemp = new LinkedHashMap<>();
+		Map<String, FinFeeDetail> finFeeDetailsMap = new LinkedHashMap<>();
+		Map<String, BigDecimal> availableFeeAmount = new LinkedHashMap<>();
 		List<FinReceiptDetail> finReceiptdetailList = financeDetail.getFinScheduleData().getFinReceiptDetails();
 
 		BigDecimal totFeesPaidAmount = BigDecimal.ZERO;
@@ -891,7 +891,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			long receiptid = 0;
 			boolean receiptFound = false;
 			BigDecimal receiptAmount = BigDecimal.ZERO;
-			LinkedHashMap<Long, List<FinFeeReceipt>> curFeeReceiptMap = new LinkedHashMap<>();
+			Map<Long, List<FinFeeReceipt>> curFeeReceiptMap = new LinkedHashMap<>();
 
 			for (FinReceiptDetail finReceiptDetail : finReceiptdetailList) {
 				String reference = "";
@@ -981,7 +981,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		aFeePaymentDetail.setNewRecord(true);
 		aFeePaymentDetail.setWorkflowId(0);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("feePaymentDetail", aFeePaymentDetail);
 		map.put("ccyFormatter", ccyFormat);
 		map.put("finFeeDetailListCtrl", this);
@@ -1014,7 +1014,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			} else {
 				aFeePaymentDetail.setNewRecord(false);
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("feePaymentDetail", aFeePaymentDetail);
 				map.put("ccyFormatter", ccyFormat);
 				map.put("finFeeDetailListCtrl", this);
@@ -2148,7 +2148,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		FeeType feeType = feeTypeService.getFeeTypeById(details.getFeeTypeID());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("feeType", feeType);
 		map.put("feeTypeEnquiry", true);
 
@@ -2533,7 +2533,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		BigDecimal paidAmount = PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()),
 				formatter);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("FeeAmount", feeAmount);
 		map.put("PaidAmount", paidAmount);
 		map.put("PaidAmountValue", BigDecimal.valueOf(paidBox.doubleValue()));
@@ -2568,7 +2568,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		FinFeeDetail finFeeDetail = (FinFeeDetail) event.getData();
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finFeeDetail", finFeeDetail);
 		map.put("financeDetail", getFinanceDetail());
 
@@ -2604,7 +2604,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	private void appendFinBasicDetails() {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
@@ -2838,7 +2838,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
-		HashMap<String, Object> declaredFieldValues = getDataMap(financeMain, customer, financeType);
+		Map<String, Object> declaredFieldValues = getDataMap(financeMain, customer, financeType);
 
 		if (insurances != null && !insurances.isEmpty()) {
 			for (FinInsurances insurance : insurances) {
@@ -2995,7 +2995,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			return;
 		}
 
-		HashMap<String, Object> executionMap = new HashMap<>();
+		Map<String, Object> executionMap = new HashMap<>();
 		Map<String, String> ruleSqlMap = new HashMap<>();
 		List<Object> objectList = new ArrayList<>();
 
@@ -3374,8 +3374,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 * @param financeType
 	 * @return
 	 */
-	private HashMap<String, Object> getDataMap(FinanceMain financeMain, Customer customer, FinanceType financeType) {
-		HashMap<String, Object> dataMap = new HashMap<String, Object>();
+	private Map<String, Object> getDataMap(FinanceMain financeMain, Customer customer, FinanceType financeType) {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
 		if (financeMain != null) {
 			dataMap.putAll(financeMain.getDeclaredFieldValues());
 		}

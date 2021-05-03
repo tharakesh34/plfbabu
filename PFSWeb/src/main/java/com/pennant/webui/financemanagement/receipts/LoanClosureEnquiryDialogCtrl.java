@@ -306,7 +306,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected boolean recSave = false;
 	protected Component checkListChildWindow = null;
 	protected boolean isEnquiry = false;
-	protected HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	protected Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private List<FinanceScheduleDetail> orgScheduleList = new ArrayList<>();
 	private boolean isForeClosure = true;
 	private boolean isEarlySettle = true;
@@ -417,7 +417,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
 		String pageName = PennantAppUtil.getCustomerPageName();
@@ -1000,7 +1000,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 			}
 
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finSchdData", aFinScheduleData);
 
 			map.put("financeScheduleDetail", aScheduleDetail);
@@ -1349,7 +1349,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug(Literal.ENTERING);
 
 		String buttonId = (String) event.getData();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("data", receiptData);
 		map.put("buttonId", buttonId);
 		map.put("loanClosureEnquiryDialogCtrl", this);
@@ -1369,7 +1369,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug(Literal.ENTERING);
 
 		String buttonId = (String) event.getData();
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("details",
 				receiptData.getReceiptHeader().getAllocationsSummary().get(Integer.parseInt(buttonId)).getSubList());
 		map.put("buttonId", buttonId);
@@ -2462,7 +2462,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			if (movements != null && !movements.isEmpty()) {
 
 				// Summing Same Type of Fee Types to Single Field
-				HashMap<String, BigDecimal> movementMap = new HashMap<>();
+				Map<String, BigDecimal> movementMap = new HashMap<>();
 				for (int i = 0; i < movements.size(); i++) {
 					ManualAdviseMovements movement = movements.get(i);
 
@@ -2852,7 +2852,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				moduleID);
 
 		// Accounting Detail Tab
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
 		map.put("financeDetail", receiptData.getFinanceDetail());
 		map.put("finHeaderList", getFinBasicDetails());
@@ -3549,7 +3549,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
 		}
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMains", financeMains);
 		map.put("finpftDetails", finpftDetails);
 
@@ -4483,7 +4483,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (onLoadProcess && getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 
 			map.put("financeMainDialogCtrl", this);
 			map.put("moduleDefiner", module);
@@ -4563,7 +4563,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (!onLoadProcess && getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() > 0) {
 
-			final HashMap<String, Object> map = getDefaultArguments();
+			final Map<String, Object> map = getDefaultArguments();
 
 			map.put("financeMainDialogCtrl", this);
 			map.put("moduleDefiner", module);
@@ -4585,8 +4585,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving");
 	}
 
-	public HashMap<String, Object> getDefaultArguments() {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDefaultArguments() {
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
 		map.put("financeMainDialogCtrl", this);
 		map.put("finHeaderList", getFinBasicDetails());

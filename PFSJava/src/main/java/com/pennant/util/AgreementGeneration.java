@@ -5070,7 +5070,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (list != null && !list.isEmpty()) {
 				agreement.setGroupRecommendations(new ArrayList<AgreementDetail.GroupRecommendation>());
 				// prepare Grouping
-				HashMap<String, ArrayList<Notes>> hashMap = new HashMap<String, ArrayList<Notes>>();
+				Map<String, List<Notes>> hashMap = new HashMap<>();
 				for (Notes notes : list) {
 					if (StringUtils.isNotEmpty(notes.getRoleCode())) {
 						if (hashMap.containsKey(notes.getRoleCode())) {
@@ -5084,7 +5084,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				for (String roleCode : hashMap.keySet()) {
 					GroupRecommendation groupRecommendation = agreement.new GroupRecommendation();
-					ArrayList<Notes> templist = hashMap.get(roleCode);
+					List<Notes> templist = hashMap.get(roleCode);
 					groupRecommendation.setRecommendations(new ArrayList<AgreementDetail.Recommendation>());
 					for (Notes notes : templist) {
 						groupRecommendation.setUserRole(notes.getRoleDesc());

@@ -539,7 +539,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					}
 				}
 
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("finSchdData", finScheduleData);
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);

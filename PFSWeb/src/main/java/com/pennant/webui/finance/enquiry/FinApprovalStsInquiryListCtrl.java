@@ -440,7 +440,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 			List<ReasonDetailsLog> reasonDetailsList) {
 		logger.debug("Entering");
 
-		HashMap<String, Object> arg = new HashMap<String, Object>();
+		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("customerFinanceDetail", aCustomerFinanceDetail);
 		arg.put("FinApprovalStsInquiryListCtrl", this);
 		arg.put("facility", this.facility);

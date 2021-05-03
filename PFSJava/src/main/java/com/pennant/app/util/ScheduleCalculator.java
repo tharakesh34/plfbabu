@@ -4859,7 +4859,7 @@ public class ScheduleCalculator {
 		}
 
 		/* Balance unpaid interest */
-		curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, finMain.getScheduleMethod(), cpzPOSIntact));
+		curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, cpzPOSIntact));
 
 		/*
 		 * If grace period end date and allow grace period is true but capitalize on schedule date is false OR
@@ -5082,6 +5082,10 @@ public class ScheduleCalculator {
 			// LAST REPAYMENT DATE
 			if ((DateUtility.compare(curSchDate, derivedMDT) == 0) && !isRolloverDate) {
 				finScheduleData = procMDTRecord(finScheduleData, i, isRepayComplete, cpzPOSIntact);
+				//common issue 22:if earlysettlement doing on bpi schedule date.
+				if (FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())) {
+					curSchd.setBpiOrHoliday(null);
+				}
 				isRepayComplete = true;
 			}
 
@@ -5198,10 +5202,10 @@ public class ScheduleCalculator {
 											FinanceConstants.BPI_DISBURSMENT)) {
 								curSchd.setProfitSchd(curSchd.getSchdPftPaid());
 							} else {
-								curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain));
+								curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false));
 							}
 						} else {
-							curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain));
+							curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false));
 						}
 						curSchd.setRepayAmount(curSchd.getProfitSchd());
 						curSchd.setPrincipalSchd(BigDecimal.ZERO);
@@ -5251,7 +5255,7 @@ public class ScheduleCalculator {
 					}
 				}
 
-				curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, finMain.getScheduleMethod(), cpzPOSIntact));
+				curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, cpzPOSIntact));
 
 				// In the Process of Rate Change, for Future Review Period method, schedule should not modify for Past
 				// Due schedules
@@ -5440,7 +5444,7 @@ public class ScheduleCalculator {
 		} else if (CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())) {
 
 			if (!protectPftSchd) {
-				BigDecimal pftToSchd = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain);
+				BigDecimal pftToSchd = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false);
 
 				if (pftToSchd.compareTo(curSchd.getRepayAmount()) > 0
 						&& !finScheduleData.getFinanceType().isAllowPftBal()) {
@@ -5489,7 +5493,7 @@ public class ScheduleCalculator {
 			}
 
 			if (!protectPftSchd) {
-				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain);
+				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false);
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
 				// testing
@@ -5546,7 +5550,7 @@ public class ScheduleCalculator {
 			}
 
 			if (!protectPftSchd) {
-				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain);
+				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false);
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
 				// testing
@@ -5611,7 +5615,7 @@ public class ScheduleCalculator {
 				}
 
 			} else if (!protectPftSchd) {
-				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain);
+				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false);
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
 				// testing
@@ -5696,11 +5700,11 @@ public class ScheduleCalculator {
 			curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
 
 			if (curSchd.getSchDate().compareTo(finMain.getGrcPeriodEndDate()) == 0) {
-				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain));
+				curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false));
 			}
 		} else if (CalculationConstants.SCHMTHD_PFTCAP.equals(curSchd.getSchdMethod())) {
 			if (!protectPftSchd) {
-				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain);
+				schdInterest = calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finMain, false);
 
 				if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 						&& finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
@@ -5746,7 +5750,7 @@ public class ScheduleCalculator {
 	 * ********************************************** ******************************************************************
 	 */
 
-	private BigDecimal getProfitBalance(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd, String schdMethod,
+	private BigDecimal getProfitBalance(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd,
 			boolean cpzPOSIntact) {
 
 		BigDecimal profitBalance = BigDecimal.ZERO;
@@ -5790,7 +5794,7 @@ public class ScheduleCalculator {
 	 * ************************************************************************* **************************************
 	 */
 	private BigDecimal calProfitToSchd(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd,
-			boolean cpzPOSIntact, FinanceMain finMain) {
+			boolean cpzPOSIntact, FinanceMain finMain, boolean isMDTDate) {
 		BigDecimal newProfit = BigDecimal.ZERO;
 
 		boolean protectPftSchd = finMain.isProtectSchdPft();
@@ -5809,9 +5813,13 @@ public class ScheduleCalculator {
 		// If profit already paid do not touch the schedule profit.
 		if (curSchd.isSchPftPaid()) {
 			newProfit = curSchd.getSchdPftPaid();
-			if (prvSchd.getClosingBalance().compareTo(curSchd.getPrincipalSchd()) <= 0) {
+			if (prvSchd.getClosingBalance().compareTo(curSchd.getPrincipalSchd()) <= 0 || isMDTDate) {
 				newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
 				newProfit = newProfit.subtract(prvSchd.getCpzAmount());
+
+				if (prvSchd.isCpzOnSchDate()) {
+					newProfit = newProfit.add(prvSchd.getCpzBalance());
+				}
 			}
 		} else if (curSchd.getPresentmentId() > 0) {
 
@@ -5819,7 +5827,10 @@ public class ScheduleCalculator {
 				newProfit = curSchd.getProfitSchd();
 			} else {
 				newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
-				newProfit = newProfit.subtract(prvSchd.getCpzAmount()).add(prvSchd.getCpzBalance());
+				newProfit = newProfit.subtract(prvSchd.getCpzAmount());
+				if (prvSchd.isCpzOnSchDate()) {
+					newProfit = newProfit.add(prvSchd.getCpzBalance());
+				}
 
 				if (curSchd.getProfitSchd().compareTo(newProfit) > 0) {
 					curSchd.setPrincipalSchd(
@@ -5833,7 +5844,7 @@ public class ScheduleCalculator {
 				newProfit = curSchd.getProfitSchd();
 			} else {
 				newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
-				newProfit = newProfit.subtract(prvSchd.getCpzAmount()).add(prvSchd.getCpzBalance());
+				newProfit = newProfit.subtract(prvSchd.getCpzAmount());
 
 				if (prvSchd.isCpzOnSchDate()) {
 					newProfit = newProfit.add(prvSchd.getCpzBalance());
@@ -6617,7 +6628,17 @@ public class ScheduleCalculator {
 
 		String repayRateBasis = finScheduleData.getFinanceMain().getRepayRateBasis();
 
-		curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finScheduleData.getFinanceMain()));
+		curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd, cpzPOSIntact, finScheduleData.getFinanceMain(), true));
+
+		/*
+		 * PSD#171829 START Loan have capitalized schedule while perform early settlement on exact schedule date loan
+		 * status showing as matured but in the loan basic details screen getting OS amount that is equal to due date
+		 * capitalized amount
+		 */
+		curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, cpzPOSIntact));
+		setCpzAmounts(prvSchd, curSchd, cpzPOSIntact, true);
+
+		/* PSD#171829 END */
 
 		if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_D)) {
 			curSchd.setRepayAmount(prvSchd.getClosingBalance());
@@ -9217,7 +9238,7 @@ public class ScheduleCalculator {
 				}
 			}
 			curSchd.setProfitSchd(profitSchd);
-			curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, finMain.getScheduleMethod(), cpzPOSIntact));
+			curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, cpzPOSIntact));
 
 			// 3. Repay Amount : RepayAmount Calculation
 			curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));

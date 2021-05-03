@@ -186,7 +186,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	private transient FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 	private transient CustomerDetailsService customerDetailsService;
 	private transient CustomerDocumentService customerDocumentService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private List<FinCreditReviewSummary> creditReviewSummaryList = new ArrayList<FinCreditReviewSummary>();
 	private List<FinCreditRevCategory> listOfFinCreditRevCategory = null;
 	private Map<String, BigDecimal> curYearValuesMap = new HashMap<String, BigDecimal>();
@@ -432,7 +432,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	}
 
 	public void addDetails(FinCreditRevSubCategory aFinCreditRevSubCategory) throws InterruptedException {
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finCreditRevSubCategory", aFinCreditRevSubCategory);
 		map.put("listOfFinCreditRevCategory", listOfFinCreditRevCategory);
 		map.put("creditApplicationReviewDialogCtrl", this);
@@ -1425,11 +1425,11 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return this.creditApplicationReviewListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 
@@ -1791,7 +1791,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError("Not Allowed to maintain This Record");
 			} else {
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("customerDocument", customerDocument);
 				map.put("creditApplicationReviewDialogCtrl", this);
 				map.put("roleCode", getRole());
@@ -1815,7 +1815,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		customerDocument.setCustID(this.customer.getCustID());
 		customerDocument.setLovDescCustCIF(this.customer.getCustCIF());
 		customerDocument.setLovDescCustShrtName(this.customer.getCustShrtName());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("customerDocument", customerDocument);
 		map.put("creditApplicationReviewDialogCtrl", this);
 		map.put("newRecord", "true");
@@ -1841,7 +1841,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		tabpanel.setStyle("overflow:auto");
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isFinanceNotes", true);
 		map.put("notes", getNotes(this.creditReviewDetails));
 		map.put("notesList", notesList);
@@ -2164,7 +2164,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	 */
 	private void onload() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");

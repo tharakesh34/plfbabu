@@ -1013,7 +1013,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			if (list != null && !list.isEmpty()) {
 				agreement.setGroupRecommendations(new ArrayList<FacilityAgreementDetail.GroupRecommendation>());
 				// prepare Grouping
-				HashMap<String, ArrayList<Notes>> hashMap = new HashMap<String, ArrayList<Notes>>();
+				Map<String, ArrayList<Notes>> hashMap = new HashMap<String, ArrayList<Notes>>();
 				for (Notes notes : list) {
 					if (StringUtils.isNotEmpty(notes.getRoleCode())) {
 						if (hashMap.containsKey(notes.getRoleCode())) {

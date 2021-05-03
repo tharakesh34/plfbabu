@@ -45,6 +45,7 @@ package com.pennant.backend.model.bmtmasters;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
@@ -71,7 +72,7 @@ public class Product extends AbstractWorkflowEntity {
 
 	private List<ProductAsset> productAssetList;
 	private List<ProductDeviation> productDeviationDetails;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -160,11 +161,11 @@ public class Product extends AbstractWorkflowEntity {
 		return productAssetList;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 

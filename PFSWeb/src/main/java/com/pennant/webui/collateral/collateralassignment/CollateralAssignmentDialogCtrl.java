@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -283,7 +284,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		}
 		try {
 			//Collateral Details
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			CollateralSetup collateralSetup = getCollateralSetup(this.collateralRef.getValue());
 			if (collateralSetup == null) {
 				collateralSetup = getCollateralSetupService().getCollateralSetupByRef(this.collateralRef.getValue(), "",
@@ -351,7 +352,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		collateralSetup.setNewRecord(true);
 
 		// Display the dialog page.
-		final HashMap<String, Object> arg = new HashMap<String, Object>();
+		final Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("collateralSetup", collateralSetup);
 		arg.put("role", getUserWorkspace().getUserRoles());
 		arg.put("roleCode", getRole());
@@ -378,7 +379,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		// Create a new entity.
 		CollateralSetup collateralSetup = getCollateralSetup(this.collateralRef.getValue());
 		// Display the dialog page.
-		final HashMap<String, Object> arg = new HashMap<String, Object>();
+		final Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("collateralSetup", collateralSetup);
 		arg.put("role", getUserWorkspace().getUserRoles());
 		arg.put("roleCode", getRole());

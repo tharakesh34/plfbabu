@@ -473,7 +473,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		AccountMapping accountMapping = (AccountMapping) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";
@@ -575,7 +575,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		// HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		// Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 		AccountMapping accountMapping = (AccountMapping) auditHeader.getAuditDetail().getModelData();
 		// String auditTranType = "";
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {

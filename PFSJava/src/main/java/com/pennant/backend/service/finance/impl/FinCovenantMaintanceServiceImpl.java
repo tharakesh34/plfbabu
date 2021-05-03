@@ -45,6 +45,7 @@ package com.pennant.backend.service.finance.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -310,10 +311,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		if (CollectionUtils.isNotEmpty(covenants)) {
 			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB, "", true, 0));
 		}
-		
+
 		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
 
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		if (auditHeader.getApiHeader() == null) {
+			getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(
@@ -696,7 +699,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
 				.getModelData();
@@ -933,5 +936,5 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-	
+
 }

@@ -143,12 +143,12 @@ public class Facility extends AbstractWorkflowEntity {
 	private boolean sufficientScore;
 	private List<ScoringMetrics> finScoringMetricList = new ArrayList<ScoringMetrics>();
 	private List<ScoringMetrics> nonFinScoringMetricList = new ArrayList<ScoringMetrics>();
-	private HashMap<Long, List<ScoringSlab>> scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
-	private HashMap<Long, List<ScoringMetrics>> scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
+	private Map<Long, List<ScoringSlab>> scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
+	private Map<Long, List<ScoringMetrics>> scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
 	private List<FinanceScoreHeader> finScoreHeaderList = new ArrayList<FinanceScoreHeader>();
-	private HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
+	private Map<Long, List<FinanceScoreDetail>> scoreDetailListMap = new HashMap<Long, List<FinanceScoreDetail>>();
 
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -590,22 +590,22 @@ public class Facility extends AbstractWorkflowEntity {
 		this.scoringMetrics.put(id, scoringMetrics);
 	}
 
-	public void setScoringMetrics(HashMap<Long, List<ScoringMetrics>> scoringMetrics) {
+	public void setScoringMetrics(Map<Long, List<ScoringMetrics>> scoringMetrics) {
 		if (this.scoringMetrics == null) {
 			this.scoringMetrics = new HashMap<Long, List<ScoringMetrics>>();
 		}
 		this.scoringMetrics = scoringMetrics;
 	}
 
-	public HashMap<Long, List<ScoringMetrics>> getScoringMetrics() {
+	public Map<Long, List<ScoringMetrics>> getScoringMetrics() {
 		return scoringMetrics;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
@@ -620,22 +620,22 @@ public class Facility extends AbstractWorkflowEntity {
 		this.scoringSlabs.put(id, scoringSlabs);
 	}
 
-	public void setScoringSlabs(HashMap<Long, List<ScoringSlab>> scoringSlabs) {
+	public void setScoringSlabs(Map<Long, List<ScoringSlab>> scoringSlabs) {
 		if (this.scoringSlabs == null) {
 			this.scoringSlabs = new HashMap<Long, List<ScoringSlab>>();
 		}
 		this.scoringSlabs = scoringSlabs;
 	}
 
-	public HashMap<Long, List<ScoringSlab>> getScoringSlabs() {
+	public Map<Long, List<ScoringSlab>> getScoringSlabs() {
 		return scoringSlabs;
 	}
 
-	public void setScoreDetailListMap(HashMap<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
+	public void setScoreDetailListMap(Map<Long, List<FinanceScoreDetail>> scoreDetailListMap) {
 		this.scoreDetailListMap = scoreDetailListMap;
 	}
 
-	public HashMap<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
+	public Map<Long, List<FinanceScoreDetail>> getScoreDetailListMap() {
 		return scoreDetailListMap;
 	}
 

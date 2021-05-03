@@ -46,6 +46,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -67,7 +68,7 @@ public class ErrorUtil implements Serializable {
 		this.errorDetails = new ArrayList<>();
 
 		if (errorDetails != null && !errorDetails.isEmpty()) {
-			HashMap<String, ErrorDetail> hashMap = getErrorsByErrorCodes(errorLanguage, errorDetails);
+			Map<String, ErrorDetail> hashMap = getErrorsByErrorCodes(errorLanguage, errorDetails);
 
 			for (ErrorDetail errorDetail : errorDetails) {
 				this.errorDetails.add(copyErrorDetails(errorDetail, hashMap.get(errorDetail.getCode())));
@@ -97,8 +98,8 @@ public class ErrorUtil implements Serializable {
 		return errorDetailService.getErrorDetail(errorCode);
 	}
 
-	private HashMap<String, ErrorDetail> getErrorsByErrorCodes(String errorLanguage, List<ErrorDetail> errorDetails) {
-		HashMap<String, ErrorDetail> hashMap = new HashMap<String, ErrorDetail>();
+	private Map<String, ErrorDetail> getErrorsByErrorCodes(String errorLanguage, List<ErrorDetail> errorDetails) {
+		Map<String, ErrorDetail> hashMap = new HashMap<String, ErrorDetail>();
 
 		for (ErrorDetail errorDetail : errorDetails) {
 			//errorDetail = getError(errorDetail.getErrorCode());

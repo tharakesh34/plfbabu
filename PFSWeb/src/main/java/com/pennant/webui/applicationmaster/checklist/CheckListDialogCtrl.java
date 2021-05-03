@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
@@ -140,7 +141,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 
 	// ServiceDAOs / Domain Classes
 	private transient CheckListService checkListService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private List<CheckListDetail> chekListDetailsList = new ArrayList<CheckListDetail>();
 	private PagedListWrapper<CheckListDetail> chkListDetailPagedListWrapper;
 	int listRows;
@@ -1057,7 +1058,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		CheckListDetail checkListDetail = new CheckListDetail();
 		checkListDetail.setNewRecord(true);
 		checkListDetail.setDocRequired(this.docRequired.isChecked());
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("checkListDialogCtrl", this);
 		map.put("checkList", getCheckList());
 		map.put("checkListDetail", checkListDetail);
@@ -1092,7 +1093,7 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 				MessageUtil.showError(Labels.getLabel("RECORD_NO_MAINTAIN"));
 			} else {
 				checkListDetail.setNewRecord(false);
-				final HashMap<String, Object> map = new HashMap<String, Object>();
+				final Map<String, Object> map = new HashMap<String, Object>();
 				map.put("checkListDialogCtrl", this);
 				map.put("checkList", getCheckList());
 				map.put("checkListDetail", checkListDetail);
@@ -1227,11 +1228,11 @@ public class CheckListDialogCtrl extends GFCBaseCtrl<CheckList> {
 		return this.checkListListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

@@ -1,8 +1,8 @@
 package com.pennanttech.controller;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
@@ -117,7 +117,7 @@ public class DealerController extends ExtendedTestClass {
 	private AuditHeader getAuditHeader(VehicleDealer vehicleDealer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, vehicleDealer.getBefImage(), vehicleDealer);
 		return new AuditHeader(String.valueOf(vehicleDealer.getDealerId()), String.valueOf(vehicleDealer.getDealerId()),
-				null, null, auditDetail, vehicleDealer.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+				null, null, auditDetail, vehicleDealer.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
 	// Setter and Getter

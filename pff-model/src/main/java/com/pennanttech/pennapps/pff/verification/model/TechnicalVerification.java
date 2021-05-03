@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -88,7 +89,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 
 	private ExtendedFieldHeader onePagerExtHeader;
 	private ExtendedFieldRender onePagerExtRender;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 	@XmlTransient
 	private boolean newRecord = false;
@@ -384,7 +385,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		this.extendedFieldRender = extendedFieldRender;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
@@ -472,7 +473,7 @@ public class TechnicalVerification extends AbstractWorkflowEntity {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 

@@ -9,8 +9,8 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 
 public class PrintFactory {
-	static final String		TAB			= "\t";
-	public static String	folderPath	= "";
+	static final String TAB = "\t";
+	public static String folderPath = "";
 
 	public static void toConsole(String name) {
 		System.out.print("- Executing ");

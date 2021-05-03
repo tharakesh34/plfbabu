@@ -192,7 +192,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			map.put("moduleName", moduleName);
@@ -228,7 +228,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			if (StringUtils.equalsIgnoreCase(fieldRender.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
-				HashMap<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("extendedFieldRenderDialogCtrl", this);
 				map.put("extendedFieldHeader", extendedFieldHeader);
 				map.put("extendedFieldRender", fieldRender);
@@ -306,7 +306,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		}
 
 		extendedFieldRender.setSeqNo(seqNo + 1);
-		HashMap<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("extendedFieldRenderDialogCtrl", this);
 		map.put("extendedFieldHeader", extendedFieldHeader);
 		map.put("extendedFieldRender", extendedFieldRender);

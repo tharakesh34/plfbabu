@@ -3,6 +3,7 @@ package com.pennant.backend.model.rulefactory;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -213,8 +214,8 @@ public class CommitmentRuleData {
 		this.custTypeCode = custTypeCode;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldsAndValue() {
-		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldsAndValue() {
+		Map<String, Object> hashMap = new HashMap<String, Object>();
 		try {
 			Field[] fields = this.getClass().getDeclaredFields();
 			for (Field field : fields) {

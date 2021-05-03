@@ -1,6 +1,6 @@
 package com.pennant.backend.service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -82,7 +82,7 @@ public abstract class GenericService<T> {
 		return auditHeader;
 	}
 
-	private boolean checkDetails(ErrorDetail errorDetail, ArrayList<ErrorDetail> errorDetails) {
+	private boolean checkDetails(ErrorDetail errorDetail, List<ErrorDetail> errorDetails) {
 
 		for (int i = 0; i < errorDetails.size(); i++) {
 			if (errorDetails.get(i).getCode().equals(errorDetail.getCode()) && errorDetails.get(i).isOveride()) {

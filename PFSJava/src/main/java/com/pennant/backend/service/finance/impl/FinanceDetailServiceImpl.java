@@ -676,7 +676,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				if (finSchFrqInsurances != null && !finSchFrqInsurances.isEmpty()) {
 
-					HashMap<Long, List<FinSchFrqInsurance>> schInsMap = new HashMap<>();
+					Map<Long, List<FinSchFrqInsurance>> schInsMap = new HashMap<>();
 					for (int i = 0; i < finSchFrqInsurances.size(); i++) {
 						FinSchFrqInsurance finSchFrqInsurance = finSchFrqInsurances.get(i);
 
@@ -2009,7 +2009,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							.getFeeScheduleByFinID(feeIDList, false, "");
 
 					if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
-						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+						Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
 						for (int i = 0; i < feeScheduleList.size(); i++) {
 							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
 
@@ -2054,7 +2054,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (scheduleData.getFinInsuranceList() != null && !scheduleData.getFinInsuranceList().isEmpty()) {
 				List<FinSchFrqInsurance> finSchFrqInsurances = getFinInsurancesDAO()
 						.getFinSchFrqInsuranceFinRef(finReference, isWIF, "_View");
-				HashMap<Long, List<FinSchFrqInsurance>> schInsMap = new HashMap<>();
+				Map<Long, List<FinSchFrqInsurance>> schInsMap = new HashMap<>();
 
 				for (int i = 0; i < finSchFrqInsurances.size(); i++) {
 					FinSchFrqInsurance finSchFrqInsurance = finSchFrqInsurances.get(i);
@@ -7216,7 +7216,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							headerFields[1], null, headerList.get(i)));
 				}
 
-				HashMap<Long, List<FinanceScoreDetail>> scoreMap = (HashMap<Long, List<FinanceScoreDetail>>) scoreObjectList
+				Map<Long, List<FinanceScoreDetail>> scoreMap = (Map<Long, List<FinanceScoreDetail>>) scoreObjectList
 						.get(1);
 				List<FinanceScoreDetail> detailList = new ArrayList<FinanceScoreDetail>();
 				for (int i = 0; i < headerList.size(); i++) {
@@ -7619,7 +7619,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		if (!isWIF) {
 			auditHeader = getAuditDetails(auditHeader, method);
-			if (!isAutoReject) {
+			if (!isAutoReject && (auditHeader.getApiHeader() == null || !financeDetail.isStp())) {
 				errorDetails = covValidations(auditHeader);
 			}
 		}
@@ -8485,7 +8485,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -8842,7 +8842,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, financeDetail.getBefImage(),
 					financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null,
-					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 			// Changed Finance Save in Database
 			saveOrUpdate(auditHeader, false);
@@ -8895,7 +8895,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_UPD, 1, financeDetail.getBefImage(),
 					financeDetail);
 			AuditHeader auditHeader = new AuditHeader(financeDetail.getFinScheduleData().getFinReference(), null, null,
-					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+					null, auditDetail, financeDetail.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 
 			// Changed Finance Save in Database
 			saveOrUpdate(auditHeader, false);
@@ -9230,7 +9230,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				scheduleFees = finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList, false, "");
 
 				if (CollectionUtils.isNotEmpty(scheduleFees)) {
-					HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+					Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
 					for (FinFeeScheduleDetail scheduleFee : scheduleFees) {
 						List<FinFeeScheduleDetail> schList = new ArrayList<>();
 						if (schFeeMap.containsKey(scheduleFee.getFeeID())) {
@@ -9518,7 +9518,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				feeSchedules = finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList, false, "");
 
 				if (CollectionUtils.isNotEmpty(feeSchedules)) {
-					HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+					Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
 					for (FinFeeScheduleDetail schdFee : feeSchedules) {
 						List<FinFeeScheduleDetail> schList = new ArrayList<>();
 						if (schFeeMap.containsKey(schdFee.getFeeID())) {
@@ -9553,7 +9553,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				if (finSchFrqInsurances != null && !finSchFrqInsurances.isEmpty()) {
 
-					HashMap<Long, List<FinSchFrqInsurance>> schInsMap = new HashMap<>();
+					Map<Long, List<FinSchFrqInsurance>> schInsMap = new HashMap<>();
 					for (int i = 0; i < finSchFrqInsurances.size(); i++) {
 						FinSchFrqInsurance finSchFrqInsurance = finSchFrqInsurances.get(i);
 
@@ -11309,7 +11309,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceMainDAO().getFinanceMainByRcdMaintenance(reference, type);
 	}
 
-	@Override 
+	@Override
 	public FinanceMain getRcdMaintenanceByRef(String reference, String type) {
 		return financeMainDAO.getRcdMaintenanceByRef(reference, type);
 	}

@@ -51,6 +51,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1205,7 +1206,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 */
 	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
 		try {
-			final HashMap<String, Object> map = new HashMap<String, Object>();
+			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			if (finHeaderList != null) {
 				map.put("finHeaderList", finHeaderList);
@@ -2296,7 +2297,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		List<Object> list = (List<Object>) event.getData();
 		ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ChequeDetailDialogCtrl", this);
 		map.put("chequeDetail", chequeDetail);
 
@@ -2311,7 +2312,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		@SuppressWarnings("unchecked")
 		List<Object> list = (List<Object>) event.getData();
 		ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ChequeDetailDialogCtrl", this);
 		map.put("chequeDetail", chequeDetail);
 		map.put("enqModule", enqiryModule);

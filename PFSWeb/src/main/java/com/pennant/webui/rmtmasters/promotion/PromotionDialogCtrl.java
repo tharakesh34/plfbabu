@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -837,7 +838,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_FEES, true);
 			boolean isMaintenance = true;
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", consumerDurable ? tab_fees : getTab(AssetConstants.UNIQUE_ID_FEES));
 			map.put("roleCode", getRole());
 			map.put("finType", this.promotionCode.getValue());
@@ -875,7 +876,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_INSURANCES, true);
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_INSURANCES));
 			map.put("roleCode", getRole());
 			map.put("finType", this.promotionCode.getValue());
@@ -906,7 +907,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		try {
 			createTab(AssetConstants.UNIQUE_ID_ACCOUNTING, true);
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_ACCOUNTING));
 			map.put("roleCode", getRole());
 			map.put("finType", this.promotionCode.getValue());

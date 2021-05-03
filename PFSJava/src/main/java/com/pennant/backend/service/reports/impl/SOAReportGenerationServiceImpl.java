@@ -346,7 +346,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//BFSD Related
 			statementOfAccount.setFinPurpose(financeProfitDetail.getFinPurpose());
-			statementOfAccount.setCurrentDate(DateUtility.getAppDate());
+			statementOfAccount.setCurrentDate(SysParamUtil.getAppDate());
 			statementOfAccount.setMaturityDate(financeProfitDetail.getMaturityDate());
 			statementOfAccount.setNoPaidInst(financeProfitDetail.getNOPaidInst());
 			statementOfAccount.setTotalPriPaid(
@@ -521,9 +521,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			// Including advance and moratorium EMI terms
 			int tenure = statementOfAccount.getTenure();
+			statementOfAccount.setTenure(tenure);
 			if (sOAExtensionService != null) {
 				tenure = tenure + sOAExtensionService.getMortoriumTerms(finReference);
 				tenure = tenure + finMain.getAdvTerms();
+				sOAExtensionService.setRequiredFields(statementOfAccount);
 			}
 
 			// Based on Repay Frequency codes it will set
@@ -533,7 +535,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
 				statementOfAccount.setTenure(tenure + finMain.getGraceTerms());
 			} else {
-				statementOfAccount.setTenure(tenure);
+				if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
+					statementOfAccount.setDownPayment(new BigDecimal(statementOfAccount.getAdvInstAmt()));
+				}
 			}
 
 			//FinExcess Amount
@@ -680,12 +684,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			startDate = financeProfitDetail.getFinStartDate();
 		}
 		if (endDate == null) {
-			endDate = DateUtility.getAppDate();
+			endDate = SysParamUtil.getAppDate();
 		} else { //endDate should be grater than app date then set to the Application date
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
 				// nothing to do
-			} else if (DateUtility.compare(endDate, DateUtility.getAppDate()) > 0) {
-				endDate = DateUtility.getAppDate();
+			} else if (DateUtility.compare(endDate, SysParamUtil.getAppDate()) > 0) {
+				endDate = SysParamUtil.getAppDate();
 			}
 		}
 		statementOfAccount.setStartDate(startDate);
@@ -706,7 +710,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				e.printStackTrace();
 			}
 		} else {
-			statementOfAccount.setLoanAmount(PennantApplicationUtil.formateAmount(loanAmount, ccyEditField));
+			if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
+				BigDecimal amount = statementOfAccount.getLoanAmount().add(statementOfAccount.getDownPayment());
+				statementOfAccount.setLoanAmount(PennantApplicationUtil.formateAmount(amount, ccyEditField));
+			} else {
+				statementOfAccount.setLoanAmount(
+						PennantApplicationUtil.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
+			}
 			try {
 				statementOfAccount
 						.setLoanAmountInWords(loanAmount == BigDecimal.ZERO ? ""
@@ -1522,7 +1532,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//AdvanceEMI Details
 		String advEmiDebitEntry = "Total Disbursement, Advance EMI"; //25
 		String advEmiCreditEntry = "Advance EMI with maturity date"; //26
-		String downPaymentEntry = "Advance EMI"; //26
+		String downPaymentEntry = "";
+		if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
+			downPaymentEntry = "DownPayment Amount"; // 26
+		} else {
+			downPaymentEntry = "Advance EMI";
+		}
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
 
@@ -2057,7 +2072,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								rHEventExcess = "Amount Adjusted " + finRef;
 							} else if (StringUtils.equals("CASH", rpaymentType)) {
 								rHEventExcess = "Cash Received Vide Receipt No ";
-								if (StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())) {
+								rHEventExcess = "Cash Received Vide Receipt No ";
+								if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())
+										&& ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE) {
+									rHEventExcess = rHEventExcess.concat(finReceiptDetail.getTransactionRef());
+								} else if (StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())) {
 									rHEventExcess = rHEventExcess.concat(finReceiptDetail.getPaymentRef() + finRef);
 								} else {
 									if (StringUtils.equalsIgnoreCase("Y",
@@ -2472,7 +2491,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			// Advance EMI
-			if (finMain != null && FinanceConstants.PRODUCT_CD.equals(finMain.getFinCategory())) {
+			if (finMain != null && (FinanceConstants.PRODUCT_CD.equals(finMain.getFinCategory())
+					|| ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA)) {
 				if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
 					for (FinanceScheduleDetail financeScheduleDetail : finSchdDetList) {
 						if (financeScheduleDetail.getDisbAmount() != null

@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -148,7 +149,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 
 	// ServiceDAOs / Domain Classes
 	private transient AgreementDefinitionService agreementDefinitionService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
+	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	static final List<ValueLabel> agreementDetailsList = PennantStaticListUtil.getAggDetails();
 
 	/**
@@ -1345,7 +1346,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	public void onClick$btnNotes(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes(this.agreementDefinition));
 		map.put("control", this);
 
@@ -1454,11 +1455,11 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		return this.agreementDefinitionListCtrl;
 	}
 
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
+	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
 		this.overideMap = overideMap;
 	}
 
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
+	public Map<String, List<ErrorDetail>> getOverideMap() {
 		return overideMap;
 	}
 

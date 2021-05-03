@@ -3,6 +3,7 @@ package com.pennant.backend.service.finance.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -81,7 +82,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 			auditDetails.addAll(finOptionService.processFinOptions(finOptions, TableType.TEMP_TAB,
 					auditHeader.getAuditTranType(), false));
 		}
-		
+
 		String rcdMaintainSts = FinanceConstants.FINSER_EVENT_PUTCALL;
 		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), rcdMaintainSts);
 
@@ -340,7 +341,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		}
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
-		
+
 		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -483,7 +484,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
 				.getModelData();

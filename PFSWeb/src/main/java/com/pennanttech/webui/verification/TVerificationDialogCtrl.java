@@ -602,7 +602,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void appendFinBasicDetails(Object finHeaderList) {
 		logger.debug(Literal.ENTERING);
 		try {
-			final HashMap<String, Object> map = new HashMap<>();
+			final Map<String, Object> map = new HashMap<>();
 			map.put("parentCtrl", this);
 			map.put("finHeaderList", finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
@@ -800,7 +800,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	public void onCheck$tv(Event event) {
-		final HashMap<String, Object> map = new HashMap<>();
+		final Map<String, Object> map = new HashMap<>();
 		TechnicalVerification technicalVerification = technicalVerificationService
 				.getTechnicalVerification(tv.getSelectedItem().getValue(), "_View");
 

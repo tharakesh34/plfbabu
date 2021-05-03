@@ -109,7 +109,7 @@ public class LimitRuleManagement {
 		logger.debug("Entering");
 
 		for (LimitDetails details : itemsListByrulecode.values()) {
-			HashMap<String, Object> fieldsandvalues = new HashMap<String, Object>();
+			Map<String, Object> fieldsandvalues = new HashMap<String, Object>();
 			Object ruleResult = null;
 
 			if (financeMain != null) {

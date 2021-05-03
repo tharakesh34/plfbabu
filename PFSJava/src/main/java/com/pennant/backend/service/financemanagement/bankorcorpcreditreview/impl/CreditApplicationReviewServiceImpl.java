@@ -611,7 +611,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		FinCreditReviewDetails creditReviewDetails = (FinCreditReviewDetails) auditHeader.getAuditDetail()
 				.getModelData();
