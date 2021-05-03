@@ -3465,12 +3465,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
-				if (StringUtils.isBlank(customer.getCustResidentialSts())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "residentialSts";
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-					return auditDetail;
-				} else {
+				if (!StringUtils.isBlank(customer.getCustResidentialSts())) {
 					boolean isResExists = false;
 					List<ValueLabel> fieldType = PennantStaticListUtil.getResidentialStsList();
 
