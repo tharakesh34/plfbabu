@@ -32275,8 +32275,8 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			    T1.CUSTNATIONALITY,
 			    COALESCE(CASE WHEN T1.PHONENUMBER = '' THEN NULL
 		            ELSE T1.PHONENUMBER END, T7.PHONENUMBER) MOBILENUMBER,
-	            T1.CUSTMOTHERMAIDEN,
-	            T1.CUSTSHRTNAMELCLLNG,
+	            T1.CUSTMOTHERMAIDEN FATHERNAME,
+	            T1.CUSTSHRTNAMELCLLNG MOTHERNAME,
 			    T1.CUSTCTGCODE,
 			    T1.CUSTDFTBRANCH,
 			    T1.CUSTTYPECODE,
@@ -32336,8 +32336,8 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			    T1.CUSTNATIONALITY,
 			    COALESCE(CASE WHEN T1.PHONENUMBER = '' THEN NULL
 			       ELSE T1.PHONENUMBER END, T7.PHONENUMBER) MOBILENUMBER,
-	            T1.CUSTMOTHERMAIDEN,
-	            T1.CUSTSHRTNAMELCLLNG,
+	            T1.CUSTMOTHERMAIDEN FATHERNAME,
+	            T1.CUSTSHRTNAMELCLLNG MOTHERNAME,
 			    T1.CUSTCTGCODE,
 			    T1.CUSTDFTBRANCH,
 			    T1.CUSTTYPECODE,
@@ -32402,7 +32402,9 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 	<changeSet id="PSD#172188.1" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				UPDATE DEDUPFIELDS SET FIELDNAME = 'AADHARNUMBER' WHERE FIELDDESC = 'Aadhar Number' AND QUERYMODULE = 'RETAILCustomer';
+				UPDATE DEDUPFIELDS SET FIELDNAME = 'aadharNumber' WHERE FIELDDESC = 'Aadhar Number' AND QUERYMODULE = 'RETAILCustomer';
+				UPDATE DEDUPFIELDS SET FIELDNAME = 'fatherName' WHERE FIELDDESC = 'Fathers Name' AND QUERYMODULE = 'RETAILCustomer';
+				UPDATE DEDUPFIELDS SET FIELDNAME = 'motherName' WHERE FIELDDESC = 'Mothers Name' AND QUERYMODULE = 'RETAILCustomer';
 			]]>
 		</sql>
 	</changeSet>
