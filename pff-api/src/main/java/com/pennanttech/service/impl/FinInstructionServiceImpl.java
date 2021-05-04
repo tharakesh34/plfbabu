@@ -2055,7 +2055,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		// validation
 		returnStatus = validateDisbursementResponse(disbRequest);
-		returnStatus = isWriteoffLoan(disbRequest.getFinReference());
+
+		if (StringUtils.isNotBlank(isWriteoffLoan(disbRequest.getFinReference()).getReturnCode())) {
+			return returnStatus;
+		}
 		if (returnStatus != null) {
 			return returnStatus;
 		}
@@ -3010,7 +3013,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			valueParam[0] = "";
 			return APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
 		}
-		return null;
+		return new WSReturnStatus();
 	}
 
 	@Autowired
