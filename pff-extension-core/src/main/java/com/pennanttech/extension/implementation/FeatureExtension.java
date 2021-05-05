@@ -82,6 +82,7 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);
 		customConstants.put("CHEQUE_ALLOW_CO_APP", true);
 
+		customConstants.put("CUST_ADDR_AUTO_FILL", false);
 	}
 
 	@Override
