@@ -1410,8 +1410,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocationsSummary()) {
 			String allocationType = allocate.getAllocationType();
 			if (RepayConstants.ALLOCATION_EMI.equals(allocationType)
-					|| RepayConstants.ALLOCATION_FUT_PFT.equals(allocationType)
-					|| RepayConstants.ALLOCATION_PFT.equals(allocationType)) {
+					|| RepayConstants.ALLOCATION_FUT_PFT.equals(allocationType)) {
 				allocate.setEditable(true);
 			}
 			if (allocate.isEditable()) {
@@ -1422,6 +1421,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				waived = waived.add(allocate.getWaivedAmount());
 				tdsDue = tdsDue.add(allocate.getTdsDue());
 				tdsPaid = tdsPaid.add(allocate.getTdsPaid());
+			} else {
+				if (RepayConstants.ALLOCATION_PFT.equals(allocationType)) {
+					tdsDue = tdsDue.add(allocate.getTdsDue());
+					tdsPaid = tdsPaid.add(allocate.getTdsPaid());
+				}
+
 			}
 
 		}
