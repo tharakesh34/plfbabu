@@ -44,6 +44,7 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
@@ -51,6 +52,8 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -273,6 +276,9 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 		final Listhead listhead = new Listhead();
 		listhead.setParent(this.listbox);
 		String headerList = Labels.getLabel("listHeader_BlackListCustomer_label");
+		if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
+			headerList = Labels.getLabel("listHeader_BlackListCustomer_Similarity_label");
+		}
 		this.listHeaders = headerList.split(",");
 		for (int i = 0; i < this.listHeaders.length; i++) {
 			final Listheader listheader = new Listheader();

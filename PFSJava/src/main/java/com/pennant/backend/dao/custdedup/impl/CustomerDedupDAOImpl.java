@@ -72,29 +72,39 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 
 	@Override
 	public List<CustomerDedup> fetchOverrideCustDedupData(String finReference, String queryCode, String module) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, CustCIF, CustFName, CustLName, CustShrtName");
+		sql.append(", CustDOB, CustCRCPR, CustPassportNo, MobileNumber, CustNationality");
+		sql.append(", DedupRule , Override , OverrideUser,Module");
+		sql.append(" From CustomerDedupDetail");
+		sql.append(" Where FinReference = ? and DedupRule like(?) and Module= ?");
 
-		CustomerDedup dedup = new CustomerDedup();
-		dedup.setFinReference(finReference);
-		dedup.setDedupRule(queryCode);
-		dedup.setModule(module);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinReference , CustCIF , CustFName , CustLName , ");
-		selectSql.append(" CustShrtName , CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ");
-		selectSql.append(" DedupRule , Override , OverrideUser,Module ");
-		selectSql.append(" From CustomerDedupDetail ");
-		selectSql.append(" Where FinReference =:FinReference AND DedupRule LIKE('%");
-		selectSql.append(queryCode);
-		selectSql.append("%') and Module=:Module ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setString(2, "%" + queryCode + "%");
+			ps.setString(3, module);
+		}, (rs, i) -> {
+			CustomerDedup cd = new CustomerDedup();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		RowMapper<CustomerDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDedup.class);
+			cd.setFinReference(rs.getString("FinReference"));
+			cd.setCustCIF(rs.getString("CustCIF"));
+			cd.setCustFName(rs.getString("CustFName"));
+			cd.setCustLName(rs.getString("CustLName"));
+			cd.setCustShrtName(rs.getString("CustShrtName"));
+			cd.setCustDOB(rs.getTimestamp("CustDOB"));
+			cd.setCustCRCPR(rs.getString("CustCRCPR"));
+			cd.setCustPassportNo(rs.getString("CustPassportNo"));
+			cd.setMobileNumber(rs.getString("MobileNumber"));
+			cd.setCustNationality(rs.getString("CustNationality"));
+			cd.setDedupRule(rs.getString("DedupRule"));
+			cd.setOverride(rs.getBoolean("Override"));
+			cd.setOverrideUser(rs.getString("OverrideUser"));
+			cd.setModule(rs.getString("Module"));
 
-		logger.debug("Leaving");
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return cd;
+		});
 	}
 
 	/**
@@ -109,7 +119,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		/* Below columns are not available in Bean */
 		sql.append(", CustTypeCode, SubCategory, CasteId, ReligionId, CasteCode");
 		sql.append(", CasteDesc, ReligionCode, ReligionDesc, lovdescCustCtgType");
-		sql.append(" from  CustomersDedup_View ");
+		sql.append(" from CustomersDedup_View ");
 
 		if (!StringUtils.isBlank(sqlQuery)) {
 			sql.append(StringUtils.trimToEmpty(sqlQuery));
@@ -119,7 +129,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 		}
 		sql.append(" CustId != :CustId");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 

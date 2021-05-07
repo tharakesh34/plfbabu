@@ -168,6 +168,7 @@ public class ImplementationConstants {
 		CUST_ADDR_AUTO_FILL = getValueAsBoolean(extensions, "CUST_ADDR_AUTO_FILL", true);
 		SHOW_CUST_EMP_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_EMP_DETAILS", true);
 		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_SHARE_HOLDER_DETAILS", true);
+		ALLOW_SIMILARITY = getValueAsBoolean(extensions, "ALLOW_SIMILARITY", false);
 
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
@@ -411,6 +412,8 @@ public class ImplementationConstants {
 	public static boolean FEE_CAL_ON_RULE;
 	public static boolean SHOW_CUST_EMP_DETAILS;
 	public static boolean SHOW_CUST_SHARE_HOLDER_DETAILS;
+	/* Flag to allow similarity to check the % patch match of given string values */
+	public static boolean ALLOW_SIMILARITY;
 
 	//FIXME>>HL >>
 
@@ -591,9 +594,6 @@ public class ImplementationConstants {
 	public static final boolean OLD_EMAILS_REQUIRED = false;
 
 	public static final boolean CUST_ADDR_AUTO_FILL;
-
-	// Flag to allow similarity to check the % patch match of given string values
-	public static final boolean ALLOW_SIMILARITY = true;
 
 	public static final boolean LEAD_ID_IS_MANDATORY = true;
 	public static final boolean LIST_RENDER_ON_LOAD;

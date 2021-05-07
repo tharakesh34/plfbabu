@@ -219,38 +219,32 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 	@Override
 	public List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers blCustData, String watchRule) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder selectSql = new StringBuilder("");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustCIF,");
+
 		if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
-			selectSql = new StringBuilder(" Select CustCIF ,");
+			sql.append(" (ROUND(SIMILARITY (Address, :Address )*100)  ||'%') Address");
 			if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, blCustData.getCustCtgCode())) {
-				selectSql.append(
-						" (CustFName ||'  '|| ROUND(SIMILARITY (CustShrtName, :CustShrtName )*100) ||'%') as CustFName , ");
+				sql.append(", (CustFName ||'  '|| ROUND(SIMILARITY (CustShrtName, :CustShrtName )*100) ||'%')");
 			} else {
-				selectSql.append(
-						" (CustCompName ||'  '|| ROUND(SIMILARITY (CustShrtName, :CustShrtName )*100) ||'%') as CustFName , ");
+				sql.append(", (CustCompName ||'  '|| ROUND(SIMILARITY (CustShrtName, :CustShrtName )*100) ||'%')");
 			}
-			selectSql.append(
-					" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ReasonCode, Source, custaadhaar, ");
-			selectSql.append(" (ROUND(SIMILARITY (Address, :Address )*100)  ||'%')  as Address");
-			selectSql.append(" From BlackListCustomer_AView ");
-		} else {
-			selectSql = new StringBuilder(" Select CustCIF , CustFName , CustLName , ");
-			selectSql.append(
-					" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , Employer, CustIsActive, ReasonCode, Source, CustCompName ");
-			selectSql.append(" From BlackListCustomer_AView ");
-		}
-		selectSql.append(watchRule);
-		if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
-			selectSql.append(" AND CustCtgCode=:CustCtgCode");
 		}
 
-		logger.debug("selectSql: " + selectSql.toString());
+		sql.append(" CustFName, CustLName, CustDOB, CustCRCPR, CustPassportNo, MobileNumber");
+		sql.append(", CustNationality, Employer, CustIsActive, ReasonCode, Source, custaadhaar, CustCompName");
+		sql.append(" From BlackListCustomer_AView ");
+		sql.append(watchRule);
+		if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
+			sql.append(" and CustCtgCode = :CustCtgCode");
+		}
+
+		logger.trace(Literal.SQL + sql);
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(blCustData);
 		RowMapper<BlackListCustomers> typeRowMapper = BeanPropertyRowMapper.newInstance(BlackListCustomers.class);
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

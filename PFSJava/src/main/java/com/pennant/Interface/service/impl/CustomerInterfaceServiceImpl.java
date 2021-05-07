@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -984,25 +985,28 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 	 */
 	@Override
 	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup customerDedup) throws InterfaceException {
+		if (customerCreationProcess == null) {
+			return new ArrayList<>();
+		}
 
-		CoreCustomerDedup coreCustomerDedup = new CoreCustomerDedup();
-		BeanUtils.copyProperties(customerDedup, coreCustomerDedup);
-		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
-		if (customerCreationProcess != null) {
-			List<CoreCustomerDedup> custDedupList = customerCreationProcess
-					.fetchCustomerDedupDetails(coreCustomerDedup);
+		CoreCustomerDedup ccd = new CoreCustomerDedup();
+		BeanUtils.copyProperties(customerDedup, ccd);
 
-			if (custDedupList != null) {
-				for (CoreCustomerDedup coreCustDedup : custDedupList) {
-					CustomerDedup custDedup = new CustomerDedup();
-					BeanUtils.copyProperties(coreCustDedup, custDedup);
-					custDedup.setFinReference(customerDedup.getFinReference());
-					custDedup.setQueryField(InterfaceConstants.DEDUP_CORE);
-					custDedup.setDedupRule(custDedup.getQueryField());
-					custDedup.setOverride(true);
-					customerDedupList.add(custDedup);
-				}
-			}
+		List<CustomerDedup> customerDedupList = new ArrayList<>();
+		List<CoreCustomerDedup> custDedupList = customerCreationProcess.fetchCustomerDedupDetails(ccd);
+
+		if (CollectionUtils.isEmpty(custDedupList)) {
+			return customerDedupList;
+		}
+
+		for (CoreCustomerDedup coreCustDedup : custDedupList) {
+			CustomerDedup custDedup = new CustomerDedup();
+			BeanUtils.copyProperties(coreCustDedup, custDedup);
+			custDedup.setFinReference(customerDedup.getFinReference());
+			custDedup.setQueryField(InterfaceConstants.DEDUP_CORE);
+			custDedup.setDedupRule(custDedup.getQueryField());
+			custDedup.setOverride(true);
+			customerDedupList.add(custDedup);
 		}
 		return customerDedupList;
 	}

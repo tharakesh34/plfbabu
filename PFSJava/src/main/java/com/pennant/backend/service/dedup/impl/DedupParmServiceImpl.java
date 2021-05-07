@@ -120,84 +120,6 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public DedupParmDAO getDedupParmDAO() {
-		return dedupParmDAO;
-	}
-
-	public void setDedupParmDAO(DedupParmDAO dedupParmDAO) {
-		this.dedupParmDAO = dedupParmDAO;
-	}
-
-	public FinanceDedupeDAO getFinanceDedupeDAO() {
-		return financeDedupeDAO;
-	}
-
-	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
-		this.financeDedupeDAO = financeDedupeDAO;
-	}
-
-	public BlackListCustomerDAO getBlacklistCustomerDAO() {
-		return blacklistCustomerDAO;
-	}
-
-	public void setBlacklistCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
-		this.blacklistCustomerDAO = blacklistCustomerDAO;
-	}
-
-	public PoliceCaseDAO getPoliceCaseDAO() {
-		return policeCaseDAO;
-	}
-
-	public void setPoliceCaseDAO(PoliceCaseDAO policeCaseDAO) {
-		this.policeCaseDAO = policeCaseDAO;
-	}
-
-	public CustomerDedupDAO getCustomerDedupDAO() {
-		return customerDedupDAO;
-	}
-
-	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {
-		this.customerDedupDAO = customerDedupDAO;
-	}
-
-	public CustomerInterfaceService getCustomerInterfaceService() {
-		return customerInterfaceService;
-	}
-
-	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
-		this.customerInterfaceService = customerInterfaceService;
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public List validate(String resultQuery, CustomerDedup customerDedup) {
-		return getDedupParmDAO().validate(resultQuery, customerDedup);
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table DedupParams/DedupParams_Temp by
-	 * using DedupParmDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using DedupParmDAO's update method 3) Audit the record in to AuditHeader and AdtDedupParams by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -215,26 +137,17 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		}
 
 		if (dedupParm.isNew()) {
-			getDedupParmDAO().save(dedupParm, tableType);
+			dedupParmDAO.save(dedupParm, tableType);
 		} else {
-			getDedupParmDAO().update(dedupParm, tableType);
+			dedupParmDAO.update(dedupParm, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * DedupParams by using DedupParmDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -246,149 +159,116 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		}
 
 		DedupParm dedupParm = (DedupParm) auditHeader.getAuditDetail().getModelData();
-		getDedupParmDAO().delete(dedupParm, "");
+		dedupParmDAO.delete(dedupParm, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getDedupParmById fetch the details by using DedupParmDAO's getDedupParmById method.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return DedupParm
-	 */
 	@Override
 	public DedupParm getDedupParmById(String id, String queryModule, String querySubCode) {
-		return getDedupParmDAO().getDedupParmByID(id, queryModule, querySubCode, "_View");
+		return dedupParmDAO.getDedupParmByID(id, queryModule, querySubCode, "_View");
 	}
 
-	/**
-	 * getApprovedDedupParmById fetch the details by using DedupParmDAO's getDedupParmById method . with parameter id
-	 * and type as blank. it fetches the approved records from the DedupParams.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @return DedupParm
-	 */
 	@Override
 	public DedupParm getApprovedDedupParmById(String id, String queryModule, String querySubCode) {
-		return getDedupParmDAO().getDedupParmByID(id, queryModule, querySubCode, "");
+		return dedupParmDAO.getDedupParmByID(id, queryModule, querySubCode, "");
 	}
 
 	@Override
-	public List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup customerDedup,
-			String curLoginUser, String finType) throws InterfaceException {
+	public List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDedup cd, String curLoginUser,
+			String finType) throws InterfaceException {
 
-		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
-		List<CustomerDedup> overridedCustDedupList = new ArrayList<CustomerDedup>();
-		boolean newUser = false;
+		FinanceReferenceDetail rd = new FinanceReferenceDetail();
+		rd.setMandInputInStage(userRole + ",");
+		rd.setFinType(finType);
 
-		// Fetch List of Query Details Existing to check Finance Dedupe based on
-		// Finance Type & Stage
-		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
-		referenceDetail.setMandInputInStage(userRole + ",");
-		referenceDetail.setFinType(finType);
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(referenceDetail, "_ACDView");
+		List<FinanceReferenceDetail> queryCodeList = dedupParmDAO.getQueryCodeList(rd, "_ACDView");
 
-		if (queryCodeList != null) {
+		if (CollectionUtils.isEmpty(queryCodeList)) {
+			return new ArrayList<>();
+		}
 
-			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
-			// Fetch Builded SQL Query based on Query Code
+		List<DedupParm> dedupParmList = new ArrayList<>();
+		List<CustomerDedup> overridedCustDedupList = new ArrayList<>();
 
-			for (FinanceReferenceDetail queryCode : queryCodeList) {
+		String finReference = cd.getFinReference();
+		String custCtgCode = cd.getCustCtgCode();
 
-				// get override Customers Dedup
-				List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
-						customerDedup.getFinReference(), queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_FINANCE);
+		for (FinanceReferenceDetail queryCode : queryCodeList) {
+			String lovName = queryCode.getLovDescNamelov();
 
-				DedupParm dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(),
-						FinanceConstants.DEDUP_CUSTOMER, customerDedup.getCustCtgCode());
+			List<CustomerDedup> custDedupList = customerDedupDAO.fetchOverrideCustDedupData(finReference, lovName,
+					FinanceConstants.DEDUP_FINANCE);
 
-				if (dedupParm != null) {
-					dedupParmList.add(dedupParm);
-				}
-				if (!custDedupList.isEmpty()) {
-					for (CustomerDedup custDedup : custDedupList) {
-						custDedup.setOverridenby(custDedup.getOverrideUser());
-						overridedCustDedupList.add(custDedup);
-					}
-				}
-				custDedupList = null;
-				dedupParm = null;
+			DedupParm dedupParm = getApprovedDedupParmById(lovName, FinanceConstants.DEDUP_CUSTOMER, custCtgCode);
+
+			if (dedupParm != null) {
+				dedupParmList.add(dedupParm);
 			}
 
-			// Using Queries Fetch dedup Customer Data either from Interface or
-			// Existing Black Listed Table(Daily Download) Data
-			if (!dedupParmList.isEmpty()) {
-				customerDedupList.addAll(getCustomerDedup(customerDedup, dedupParmList));
-				if (!customerDedupList.isEmpty()) {
-					customerDedupList = resetDedupCustData(customerDedupList, queryCodeList);
-				} else {
-					return customerDedupList;
-				}
-			} else {
-				for (CustomerDedup custDedup : overridedCustDedupList) {
-					if (!custDedup.getOverrideUser().contains(curLoginUser)) {
-						custDedup.setOverridenby(custDedup.getOverrideUser());
-						custDedup.setOverrideUser(custDedup.getOverrideUser() + "," + curLoginUser);
-						newUser = false;
-					}
-				}
+			custDedupList.forEach(l1 -> l1.setOverridenby(l1.getOverrideUser()));
+			overridedCustDedupList.addAll(custDedupList);
+		}
 
+		List<CustomerDedup> customerDedupList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(dedupParmList)) {
+			customerDedupList.addAll(getCustomerDedup(cd, dedupParmList));
+			if (!customerDedupList.isEmpty()) {
+				customerDedupList = resetDedupCustData(customerDedupList, queryCodeList);
+			} else {
+				return customerDedupList;
 			}
 		} else {
+			for (CustomerDedup custDedup : overridedCustDedupList) {
+				String overrideUser = custDedup.getOverrideUser();
+				if (!overrideUser.contains(curLoginUser)) {
+					custDedup.setOverridenby(overrideUser);
+					custDedup.setOverrideUser(overrideUser + "," + curLoginUser);
+				}
+			}
+		}
+
+		customerDedupList = doSetCustomerDeDupGrouping(customerDedupList);
+
+		if (CollectionUtils.isNotEmpty(overridedCustDedupList) && CollectionUtils.isEmpty(customerDedupList)) {
+			customerDedupList.addAll(overridedCustDedupList);
+			return customerDedupList;
+		}
+		if (CollectionUtils.isEmpty(overridedCustDedupList) || CollectionUtils.isEmpty(customerDedupList)) {
 			return customerDedupList;
 		}
 
-		// Grouping Black List Customer which are having same result of Data
-		customerDedupList = doSetCustomerDeDupGrouping(customerDedupList);
+		for (CustomerDedup previousDedup : overridedCustDedupList) {
+			for (CustomerDedup currentDedup : customerDedupList) {
+				if (previousDedup.getCustCIF().equals(currentDedup.getCustCIF())) {
+					String overrideUser = previousDedup.getOverrideUser();
+					currentDedup.setOverridenby(overrideUser);
 
-		// Checking for duplicate records in overrideBlacklistCustomers and
-		// currentBlacklistCustomers
-		try {
-			if (!overridedCustDedupList.isEmpty() && !customerDedupList.isEmpty()) {
-
-				for (CustomerDedup previousDedup : overridedCustDedupList) {
-					for (CustomerDedup currentDedup : customerDedupList) {
-						if (previousDedup.getCustCIF().equals(currentDedup.getCustCIF())) {
-							currentDedup.setOverridenby(previousDedup.getOverrideUser());
-							if (previousDedup.getOverrideUser().contains(curLoginUser)) {
-								currentDedup.setOverrideUser(previousDedup.getOverrideUser());
-								newUser = false;
-							} else {
-								currentDedup.setOverrideUser(previousDedup.getOverrideUser() + "," + curLoginUser);
-							}
-							// Checking for New Rule
-							if (isRuleChanged(previousDedup.getDedupRule(), currentDedup.getDedupRule())) {
-								currentDedup.setNewRule(true);
-								if (previousDedup.getCustCIF().equals(currentDedup.getCustCIF())) {
-									currentDedup.setNewCustDedupRecord(false);
-								} else {
-									currentDedup.setNewCustDedupRecord(true);
-									currentDedup.setOverride(false);
-								}
-							} else {
-								currentDedup.setNewCustDedupRecord(false);
-							}
-
-							if (newUser) {
-								currentDedup.setOverride(previousDedup.isOverride());
-							}
-						}
+					if (overrideUser.contains(curLoginUser)) {
+						currentDedup.setOverrideUser(overrideUser);
+					} else {
+						currentDedup.setOverrideUser(overrideUser + "," + curLoginUser);
 					}
-				}
-			} else if (!overridedCustDedupList.isEmpty() && customerDedupList.isEmpty()) {
-				customerDedupList.addAll(overridedCustDedupList);
-			}
 
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+					if (isRuleChanged(previousDedup.getDedupRule(), currentDedup.getDedupRule())) {
+						currentDedup.setNewRule(true);
+						if (previousDedup.getCustCIF().equals(currentDedup.getCustCIF())) {
+							currentDedup.setNewCustDedupRecord(false);
+						} else {
+							currentDedup.setNewCustDedupRecord(true);
+							currentDedup.setOverride(false);
+						}
+					} else {
+						currentDedup.setNewCustDedupRecord(false);
+					}
+
+				}
+			}
 		}
+
 		logger.debug(Literal.LEAVING);
 		return customerDedupList;
 
@@ -396,40 +276,39 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 	private List<CustomerDedup> resetDedupCustData(List<CustomerDedup> customerDedupList,
 			List<FinanceReferenceDetail> queryCodeList) {
-		logger.debug(Literal.ENTERING);
+		Map<String, Boolean> queryOverrideMap = new HashMap<>();
 
-		// Check Override Condition based on Rule definitions on Process Editor
-		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
-		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
-			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
-		}
+		queryCodeList.forEach(l1 -> queryOverrideMap.put(l1.getLovDescNamelov(), l1.isOverRide()));
 
-		// Reset Override COndition based on Query Code Executions
 		for (CustomerDedup custDedup : customerDedupList) {
-			if (custDedup.getDedupRule() != null) {
-				String[] dedupRuleList = custDedup.getDedupRule().split(",");
-				for (int i = 0; i < dedupRuleList.length; i++) {
-					if (queryOverrideMap.containsKey(dedupRuleList[i])) {
-						custDedup.setOverride(queryOverrideMap.get(dedupRuleList[i]));
-						if (custDedup.isOverride()) {
-							custDedup.setOverride(queryOverrideMap.get(dedupRuleList[i]));
-						} else {
-							custDedup.setOverride(false);
-							break;
-						}
+			if (custDedup.getDedupRule() == null) {
+				continue;
+			}
+
+			String[] dedupRuleList = custDedup.getDedupRule().split(",");
+
+			for (String dedupRule : dedupRuleList) {
+				if (queryOverrideMap.containsKey(dedupRule)) {
+					Boolean override = queryOverrideMap.get(dedupRule);
+					custDedup.setOverride(override);
+					if (custDedup.isOverride()) {
+						custDedup.setOverride(override);
+					} else {
+						custDedup.setOverride(false);
+						break;
 					}
 				}
-				if (queryOverrideMap.containsKey(custDedup.getDedupRule())) {
-					custDedup.setOverride(queryOverrideMap.get(custDedup.getDedupRule()));
-				}
 			}
+
+			if (queryOverrideMap.containsKey(custDedup.getDedupRule())) {
+				custDedup.setOverride(queryOverrideMap.get(custDedup.getDedupRule()));
+			}
+
 		}
-		logger.debug(Literal.LEAVING);
 		return customerDedupList;
 	}
 
 	private List<CustomerDedup> doSetCustomerDeDupGrouping(List<CustomerDedup> customerDedupList) {
-		logger.debug(Literal.ENTERING);
 		try {
 			for (int i = 0; i < customerDedupList.size(); i++) {
 				CustomerDedup icustDedupList = customerDedupList.get(i);
@@ -451,45 +330,41 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
 		return customerDedupList;
 	}
 
 	@Override
-	public List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList)
+	public List<CustomerDedup> getCustomerDedup(CustomerDedup cd, List<DedupParm> dedupParmList)
 			throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
+		if (CollectionUtils.isEmpty(dedupParmList)) {
+			return new ArrayList<>();
+		}
 
-		if (dedupParmList != null && !dedupParmList.isEmpty()) {
+		List<CustomerDedup> customerDedupList = new ArrayList<>();
 
-			List<String> fieldNameList = getDedupParmDAO()
-					.getRuleFieldNames(customerDedup.getCustCtgCode() + FinanceConstants.DEDUP_CUSTOMER);
+		List<String> fieldNames = dedupParmDAO.getRuleFieldNames(cd.getCustCtgCode() + FinanceConstants.DEDUP_CUSTOMER);
 
-			// To Check duplicate customer in core banking
-			List<CustomerDedup> coreCustDedupList = getCustomerInterfaceService()
-					.fetchCustomerDedupDetails(customerDedup);
+		// To Check duplicate customer in core banking
+		customerDedupList.addAll(customerInterfaceService.fetchCustomerDedupDetails(cd));
 
-			if (!coreCustDedupList.isEmpty()) {
-				customerDedupList.addAll(coreCustDedupList);
-			}
+		// TO Check duplicate customer in Local database
+		for (DedupParm dedupParm : dedupParmList) {
+			String sqlQuery = dedupParm.getSQLQuery();
+			List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(cd, sqlQuery);
 
-			// TO Check duplicate customer in Local database
-			for (DedupParm dedupParm : dedupParmList) {
-				List<CustomerDedup> list = getCustomerDedupDAO().fetchCustomerDedupDetails(customerDedup,
-						dedupParm.getSQLQuery());
+			String queryCode = dedupParm.getQueryCode();
+			String finReference = cd.getFinReference();
 
-				for (int i = 0; i < list.size(); i++) {
-					CustomerDedup custDedup = list.get(i);
-					custDedup.setDedupRule(dedupParm.getQueryCode());
-					custDedup.setFinReference(customerDedup.getFinReference());
-					custDedup.setQueryField(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
-					custDedup.setModule(FinanceConstants.DEDUP_FINANCE);
-					customerDedupList.add(custDedup);
-				}
+			for (CustomerDedup custDedup : list) {
+				custDedup.setDedupRule(queryCode);
+				custDedup.setFinReference(finReference);
+				custDedup.setQueryField(getQueryFields(sqlQuery, fieldNames));
+				custDedup.setModule(FinanceConstants.DEDUP_FINANCE);
+				customerDedupList.add(custDedup);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -498,182 +373,145 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 	@Override
 	public List<CustomerDedup> fetchCustomerDedupDetails(String userRole, CustomerDetails aCustomerDetails) {
-		DedupParm dedupParm = getApprovedDedupParmById(userRole, "Customer",
-				aCustomerDetails.getCustomer().getCustCtgCode());
-		if (dedupParm != null) {
-			String replaceString = "";
-			if (StringUtils.trimToEmpty(dedupParm.getSQLQuery())
-					.contains(PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL)) {
-				replaceString = PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL;
-			} else if (StringUtils.trimToEmpty(dedupParm.getSQLQuery())
-					.contains(PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE)) {
-				replaceString = PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE;
-			}
-			if (StringUtils.isNotEmpty(replaceString)) {
-				StringBuilder rule = new StringBuilder();
-				// CustDocType = :CustDocType AND CustDocTitle = :CustDocTitle
-				if (aCustomerDetails.getCustomerDocumentsList() != null
-						&& aCustomerDetails.getCustomerDocumentsList().size() > 0) {
-					for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
-						if (StringUtils.isNotEmpty(rule.toString())) {
-							rule.append("or");
-						}
-						rule.append("(" + PennantConstants.CUST_DEDUP_LISTFILED2 + " = '");
-						rule.append(customerDocument.getCustDocType());
-						rule.append("' AND " + PennantConstants.CUST_DEDUP_LISTFILED3 + " = '");
-						rule.append(customerDocument.getCustDocTitle());
-						rule.append("')");
-					}
-				} else {
-					rule.append(PennantConstants.CUST_DEDUP_LISTFILED2 + " IN (");
-				}
-				dedupParm.setSQLQuery(dedupParm.getSQLQuery().replace(replaceString, rule.toString()));
-			}
-			logger.debug(dedupParm.getSQLQuery());
+		Customer customer = aCustomerDetails.getCustomer();
+		DedupParm dedupParm = getApprovedDedupParmById(userRole, "Customer", customer.getCustCtgCode());
 
+		if (dedupParm == null) {
+			return new ArrayList<>();
 		}
-		if (dedupParm != null) {
-			return getDedupParmDAO().fetchCustomerDedupDetails(aCustomerDetails.getCustDedup(),
-					dedupParm.getSQLQuery());
+		String replaceString = "";
+
+		String sqlQuery = StringUtils.trimToEmpty(dedupParm.getSQLQuery());
+		if (sqlQuery.contains(PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL)) {
+			replaceString = PennantConstants.CUST_DEDUP_LIST_BUILD_EQUAL;
+		} else if (sqlQuery.contains(PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE)) {
+			replaceString = PennantConstants.CUST_DEDUP_LIST_BUILD_LIKE;
 		}
-		return new ArrayList<CustomerDedup>();
+
+		if (StringUtils.isEmpty(replaceString)) {
+			return dedupParmDAO.fetchCustomerDedupDetails(aCustomerDetails.getCustDedup(), dedupParm.getSQLQuery());
+		}
+
+		StringBuilder rule = new StringBuilder();
+
+		List<CustomerDocument> custDocuments = aCustomerDetails.getCustomerDocumentsList();
+		if (CollectionUtils.isNotEmpty(custDocuments)) {
+			for (CustomerDocument customerDocument : custDocuments) {
+				if (StringUtils.isNotEmpty(rule.toString())) {
+					rule.append("or");
+				}
+				rule.append("(" + PennantConstants.CUST_DEDUP_LISTFILED2 + " = '");
+				rule.append(customerDocument.getCustDocType());
+				rule.append("' AND " + PennantConstants.CUST_DEDUP_LISTFILED3 + " = '");
+				rule.append(customerDocument.getCustDocTitle());
+				rule.append("')");
+			}
+		} else {
+			rule.append(PennantConstants.CUST_DEDUP_LISTFILED2 + " IN (");
+		}
+
+		dedupParm.setSQLQuery(dedupParm.getSQLQuery().replace(replaceString, rule.toString()));
+
+		logger.debug(dedupParm.getSQLQuery());
+
+		return dedupParmDAO.fetchCustomerDedupDetails(aCustomerDetails.getCustDedup(), dedupParm.getSQLQuery());
 	}
 
-	/**
-	 * Method for Fetching Dedup Finance List using Customer Dedup Details
-	 */
 	@Override
-	public List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup aFinanceDedup, String curLoginUser,
+	public List<FinanceDedup> fetchFinDedupDetails(String userRole, FinanceDedup fd, String curLoginUser,
 			String finType) {
+		FinanceReferenceDetail frd = new FinanceReferenceDetail();
+		frd.setMandInputInStage(userRole + ",");
+		frd.setFinType(finType);
+		List<FinanceReferenceDetail> queryCodeList = dedupParmDAO.getQueryCodeList(frd, "_AFDView");
 
-		DedupParm dedupParm = null;
-		List<FinanceDedup> newFinDedupList = new ArrayList<FinanceDedup>();
-
-		// Fetch List of Query Details Existing to check Finance De-dupe based
-		// on Finance Type & Stage
-		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
-		referenceDetail.setMandInputInStage(userRole + ",");
-		referenceDetail.setFinType(finType);
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(referenceDetail, "_AFDView");
-
-		if (queryCodeList == null || queryCodeList.isEmpty()) {
-
-			referenceDetail = null;
-			queryCodeList = null;
-			return newFinDedupList;
+		if (CollectionUtils.isEmpty(queryCodeList)) {
+			return new ArrayList<>();
 		}
 
-		// Fetch Rule parameters for Rebuilding Data
-		List<FinanceDedup> excdFinDedupList = new ArrayList<FinanceDedup>();
-		List<String> fieldNameList = getDedupParmDAO().getRuleFieldNames(FinanceConstants.DEDUP_FINANCE);
+		List<FinanceDedup> excdFinDedupList = new ArrayList<>();
+		List<FinanceDedup> newFinDedupList = new ArrayList<>();
+
+		List<String> fieldNameList = dedupParmDAO.getRuleFieldNames(FinanceConstants.DEDUP_FINANCE);
 		for (FinanceReferenceDetail queryCode : queryCodeList) {
+			String finReference = fd.getFinReference();
+			String lovDescName = queryCode.getLovDescNamelov();
+			List<FinanceDedup> excdList = financeDedupeDAO.fetchOverrideDedupData(finReference, lovDescName);
 
-			// First to fetch Overridden/executed list
-			List<FinanceDedup> tempExcdFinDedupList = getFinanceDedupeDAO()
-					.fetchOverrideDedupData(aFinanceDedup.getFinReference(), queryCode.getLovDescNamelov());
-
-			// Query Code From Query Builder
-			dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_FINANCE, "L");
+			DedupParm dedupParm = getApprovedDedupParmById(lovDescName, FinanceConstants.DEDUP_FINANCE, "L");
 
 			if (dedupParm != null) {
+				String sqlQuery = dedupParm.getSQLQuery();
 
-				// Finance de-dupe New list with Query
-				List<FinanceDedup> tempNewFinDedupList = getDedupParmDAO().fetchFinDedupDetails(aFinanceDedup,
-						dedupParm.getSQLQuery());
+				List<FinanceDedup> newTempList = dedupParmDAO.fetchFinDedupDetails(fd, sqlQuery);
 
-				if (!tempNewFinDedupList.isEmpty() && dedupParm.getSQLQuery() != null) {
-					for (FinanceDedup newDedup : tempNewFinDedupList) {
+				if (CollectionUtils.isNotEmpty(newTempList) && sqlQuery != null) {
+					for (FinanceDedup newDedup : newTempList) {
 						newDedup.setDedupeRule("," + dedupParm.getQueryCode() + ",");
-						newDedup.setFinReference(aFinanceDedup.getFinReference());
-						newDedup.setRules(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
+						newDedup.setFinReference(finReference);
+						newDedup.setRules(getQueryFields(sqlQuery, fieldNameList));
 					}
-					newFinDedupList.addAll(tempNewFinDedupList);
+					newFinDedupList.addAll(newTempList);
 				}
 
-				// Setting Rule Fields for HighLighting Colors
-				if (tempExcdFinDedupList != null && dedupParm.getSQLQuery() != null) {
-					for (FinanceDedup excdDedup : tempExcdFinDedupList) {
-						excdDedup.setRules(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
+				if (CollectionUtils.isNotEmpty(excdList) && sqlQuery != null) {
+					for (FinanceDedup excdDedup : excdList) {
+						excdDedup.setRules(getQueryFields(sqlQuery, fieldNameList));
 						excdDedup.setDedupeRule("," + dedupParm.getQueryCode() + ",");
 						excdDedup.setOverrideUser(excdDedup.getOverrideUser());
 					}
-					excdFinDedupList.addAll(tempExcdFinDedupList);
+					excdFinDedupList.addAll(excdList);
 				}
 			}
 		}
 
-		// Checking for New Rule
 		doSetIsNewRecord(excdFinDedupList, newFinDedupList);
 		excdFinDedupList = doSetFinDeDupGrouping(excdFinDedupList, newFinDedupList);
 		dosetOverrideOrNot(excdFinDedupList, queryCodeList);
-		dedupParm = null;
-		queryCodeList = null;
-		newFinDedupList = null;
 
-		logger.debug(Literal.LEAVING);
 		return excdFinDedupList;
 	}
 
-	/**
-	 * To Check weather Override checked or not in finance Processor Editor.
-	 * 
-	 * @param FinanceDedup
-	 * @param newFinDedupList
-	 * @param queryCodeList
-	 * @return
-	 */
-	private List<FinanceDedup> dosetOverrideOrNot(List<FinanceDedup> newFinDedupList,
-			List<FinanceReferenceDetail> queryCodeList) {
-		logger.debug(Literal.ENTERING);
+	private List<FinanceDedup> dosetOverrideOrNot(List<FinanceDedup> fdList, List<FinanceReferenceDetail> frdList) {
+		Map<String, Boolean> queryOverrideMap = new HashMap<>();
+		Map<String, String> overrideRuleDesc = new HashMap<>();
 
-		// Check Override Condition based on Rule definitions on Process Editor
-		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
-		Map<String, String> overrideRuleDesc = new HashMap<String, String>();
-		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
-			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
-		}
-		// To check which rule not allow Override Condition based on Query Code
-		// Executions.
-		Map<String, Boolean> matchedOverMap = new HashMap<String, Boolean>();
-		for (FinanceDedup financeDedup : newFinDedupList) {
+		frdList.forEach(l1 -> queryOverrideMap.put(l1.getLovDescNamelov(), l1.isOverRide()));
+
+		Map<String, Boolean> matchedOverMap = new HashMap<>();
+
+		for (FinanceDedup financeDedup : fdList) {
 			String[] rulesList = financeDedup.getDedupeRule().split(",");
-			for (int i = 0; i < rulesList.length; i++) {
-				if (queryOverrideMap.containsKey(rulesList[i])) {
-					financeDedup.setOverride(queryOverrideMap.get(rulesList[i]));
+			for (String rule : rulesList) {
+				if (queryOverrideMap.containsKey(rule)) {
+					Boolean queryOveride = queryOverrideMap.get(rule);
+					financeDedup.setOverride(queryOveride);
 					if (financeDedup.isOverride()) {
-						financeDedup.setOverride(queryOverrideMap.get(rulesList[i]));
+						financeDedup.setOverride(queryOveride);
 					} else {
 						financeDedup.setOverride(false);
-						matchedOverMap.put(rulesList[i], queryOverrideMap.get(rulesList[i]));
+						matchedOverMap.put(rule, queryOveride);
 					}
 				}
 			}
 
-			for (FinanceReferenceDetail referenceDetail : queryCodeList) {
-				if (matchedOverMap.containsKey(referenceDetail.getLovDescNamelov())) {
-					overrideRuleDesc.put(referenceDetail.getLovDescNamelov(), referenceDetail.getLovDescRefDesc());
+			for (FinanceReferenceDetail referenceDetail : frdList) {
+				String lovDescName = referenceDetail.getLovDescNamelov();
+				if (matchedOverMap.containsKey(lovDescName)) {
+					overrideRuleDesc.put(lovDescName, referenceDetail.getLovDescRefDesc());
 				}
 			}
 			financeDedup.setOverridenMap(overrideRuleDesc);
 		}
-		logger.debug(Literal.LEAVING);
-		return newFinDedupList;
+
+		return fdList;
 	}
 
-	/**
-	 * This doSetIsNewrecord is used to set new record or not if is new record insert otherwise updated.
-	 */
 	private void doSetIsNewRecord(List<FinanceDedup> excdFinDedupList, List<FinanceDedup> newFinDedupList) {
-
-		if (excdFinDedupList.isEmpty() && !newFinDedupList.isEmpty()) {
-			for (FinanceDedup financeDedupNewList : newFinDedupList) {
-				financeDedupNewList.setNewRecord(true);
-			}
-
-		} else if (!excdFinDedupList.isEmpty() && newFinDedupList.isEmpty()) {
-			for (FinanceDedup fetchDedupOldList : excdFinDedupList) {
-				fetchDedupOldList.setNewRecord(false);
-			}
+		if (CollectionUtils.isEmpty(excdFinDedupList) && CollectionUtils.isNotEmpty(newFinDedupList)) {
+			newFinDedupList.forEach(l1 -> l1.setNewRecord(true));
+		} else if (CollectionUtils.isNotEmpty(excdFinDedupList) && CollectionUtils.isEmpty(newFinDedupList)) {
+			excdFinDedupList.forEach(l1 -> l1.setNewRecord(false));
 		} else {
 			for (FinanceDedup oldDedup : excdFinDedupList) {
 				for (FinanceDedup newdedup : newFinDedupList) {
@@ -690,31 +528,22 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		}
 	}
 
-	/**
-	 * Grouping the FinanceDedup list based on the Rule
-	 * 
-	 * @param financeDedupList
-	 * @return
-	 */
 	public List<FinanceDedup> doSetFinDeDupGrouping(List<FinanceDedup> excdDedupList, List<FinanceDedup> newDedupList) {
-
-		List<FinanceDedup> groupFinDedupList = new ArrayList<FinanceDedup>();
+		List<FinanceDedup> groupFinDedupList = new ArrayList<>();
 
 		groupFinDedupList.addAll(excdDedupList);
 		groupFinDedupList.addAll(newDedupList);
 
-		// For Easy Identification Prepare Map List for
-		Map<String, FinanceDedup> excdDedupMap = new HashMap<String, FinanceDedup>();
+		Map<String, FinanceDedup> excdDedupMap = new HashMap<>();
+
 		for (FinanceDedup financeDedup : groupFinDedupList) {
 			if (!excdDedupMap.containsKey(financeDedup.getDupReference())) {
 				excdDedupMap.put(financeDedup.getDupReference(), financeDedup);
 			}
 		}
 
-		// Do set Grouping New Dedup List with Existing Data
 		for (FinanceDedup newDedup : groupFinDedupList) {
 			if (excdDedupMap.containsKey(newDedup.getDupReference())) {
-
 				FinanceDedup excdDedup = excdDedupMap.get(newDedup.getDupReference());
 
 				if (!excdDedup.getDedupeRule().contains(newDedup.getDedupeRule())) {
@@ -731,27 +560,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 		}
 
-		excdDedupList = new ArrayList<FinanceDedup>(excdDedupMap.values());
-		excdDedupMap = null;
+		excdDedupList = new ArrayList<>(excdDedupMap.values());
 
 		return excdDedupList;
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getDedupParmDAO().delete with
-	 * parameters dedupParm,"" b) NEW Add new record in to main table by using getDedupParmDAO().save with parameters
-	 * dedupParm,"" c) EDIT Update record in the main table by using getDedupParmDAO().update with parameters
-	 * dedupParm,"" 3) Delete the record from the workFlow table by using getDedupParmDAO().delete with parameters
-	 * dedupParm,"_Temp" 4) Audit the record in to AuditHeader and AdtDedupParams by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDedupParams by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
@@ -768,7 +581,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		if (dedupParm.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getDedupParmDAO().delete(dedupParm, "");
+			dedupParmDAO.delete(dedupParm, "");
 
 		} else {
 			dedupParm.setRoleCode("");
@@ -780,38 +593,28 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			if (dedupParm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				dedupParm.setRecordType("");
-				getDedupParmDAO().save(dedupParm, "");
+				dedupParmDAO.save(dedupParm, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				dedupParm.setRecordType("");
-				getDedupParmDAO().update(dedupParm, "");
+				dedupParmDAO.update(dedupParm, "");
 			}
 		}
 
-		getDedupParmDAO().delete(dedupParm, "_Temp");
+		dedupParmDAO.delete(dedupParm, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(dedupParm);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getDedupParmDAO().delete with parameters dedupParm,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
@@ -824,47 +627,36 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		DedupParm dedupParm = (DedupParm) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getDedupParmDAO().delete(dedupParm, "_Temp");
+		dedupParmDAO.delete(dedupParm, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getDedupParmDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug(Literal.LEAVING);
+
 		return auditHeader;
 	}
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug(Literal.ENTERING);
-
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		auditDetail.setErrorDetails(new ArrayList<>());
 		DedupParm dedupParm = (DedupParm) auditDetail.getModelData();
 
 		DedupParm tempDedupParm = null;
 		if (dedupParm.isWorkflow()) {
-			tempDedupParm = getDedupParmDAO().getDedupParmByID(dedupParm.getQueryCode(), dedupParm.getQueryModule(),
+			tempDedupParm = dedupParmDAO.getDedupParmByID(dedupParm.getQueryCode(), dedupParm.getQueryModule(),
 					dedupParm.getQuerySubCode(), "_Temp");
 		}
-		DedupParm befDedupParm = getDedupParmDAO().getDedupParmByID(dedupParm.getQueryCode(),
-				dedupParm.getQueryModule(), dedupParm.getQuerySubCode(), "");
+
+		DedupParm befDedupParm = dedupParmDAO.getDedupParmByID(dedupParm.getQueryCode(), dedupParm.getQueryModule(),
+				dedupParm.getQuerySubCode(), "");
 
 		DedupParm oldDedupParm = dedupParm.getBefImage();
 
@@ -883,11 +675,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			} else { // with work flow
 				if (dedupParm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																							// records
 																							// type
 																							// is new
 					if (befDedupParm != null || tempDedupParm != null) { // if
-																				// records
+																			// records
 																			// already
 																			// exists
 																			// in
@@ -924,7 +716,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			} else {
 
 				if (tempDedupParm == null) { // if records not exists in the
-													// Work flow table
+												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -943,28 +735,26 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		return auditDetail;
 	}
 
-	/**
-	 * Method for Fetch Black List Customer Details based on Rule conditions
-	 */
 	@Override
 	public List<BlackListCustomers> fetchBlackListCustomers(String userRole, String finType,
 			BlackListCustomers blCustData, String curUser) {
 		logger.debug(Literal.ENTERING);
 
-		List<BlackListCustomers> blackListCustomers = new ArrayList<BlackListCustomers>();
-		List<FinBlacklistCustomer> overrideBlackList = new ArrayList<FinBlacklistCustomer>();
+		List<BlackListCustomers> blackListCustomers = new ArrayList<>();
+		List<FinBlacklistCustomer> overrideBlackList = new ArrayList<>();
 		boolean newUser = false;
 
-		// Get QueryCode and override values from DB
-		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
-		financeRefDetail.setMandInputInStage(userRole + ",");
-		financeRefDetail.setFinType(finType);
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(financeRefDetail, "_ABDView");
+		FinanceReferenceDetail frd = new FinanceReferenceDetail();
+		frd.setMandInputInStage(userRole + ",");
+		frd.setFinType(finType);
+		List<FinanceReferenceDetail> queryCodeList = dedupParmDAO.getQueryCodeList(frd, "_ABDView");
 
-		if (CollectionUtils.isEmpty(queryCodeList) && StringUtils.equals(finType, "")) {
+		String blackList = FinanceConstants.DEDUP_BLACKLIST;
+		String custCtgCode = blCustData.getCustCtgCode();
+
+		if (CollectionUtils.isEmpty(queryCodeList) && "".equals(finType)) {
 			queryCodeList = new ArrayList<>();
-			List<DedupParm> dedupList = getDedupParmDAO().getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST,
-					blCustData.getCustCtgCode(), "");
+			List<DedupParm> dedupList = dedupParmDAO.getDedupParmByModule(blackList, custCtgCode, "");
 			for (DedupParm dedupParm : dedupList) {
 				FinanceReferenceDetail detail = new FinanceReferenceDetail();
 				detail.setLovDescNamelov(dedupParm.getQueryCode());
@@ -973,120 +763,95 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 		}
 
-		if (queryCodeList != null) {
-
-			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
-
-			// Fetch Builded SQL Query based on Query Code
-			DedupParm dedupParm = null;
-			for (FinanceReferenceDetail queryCode : queryCodeList) {
-
-				// get override Blacklist Customers
-				List<FinBlacklistCustomer> exeBlackList = getBlacklistCustomerDAO().fetchOverrideBlackListData(
-						blCustData.getFinReference(), queryCode.getLovDescNamelov(), blCustData.getCustCIF());
-				dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_BLACKLIST,
-						blCustData.getCustCtgCode());
-				if (dedupParm != null) {
-					dedupParmList.add(dedupParm);
-				}
-				if (!exeBlackList.isEmpty()) {
-					for (FinBlacklistCustomer blackListedCust : exeBlackList) {
-						blackListedCust.setOverridenby(blackListedCust.getOverrideUser());
-						overrideBlackList.add(blackListedCust);
-					}
-				}
-				exeBlackList = null;
-				dedupParm = null;
-			}
-
-			// Using Queries Fetch Black Listed Customer Data either from
-			// Interface or
-			// Existing Black Listed Table(Daily Download) Data
-			if (!dedupParmList.isEmpty()) {
-				blackListCustomers.addAll(getBlackListCustomer(blCustData, dedupParmList));
-				if (!blackListCustomers.isEmpty()) {
-					blackListCustomers = resetBlackListedCustData(blackListCustomers, queryCodeList);
-				} else {
-					return blackListCustomers;
-				}
-			} else {
-				for (int i = 0; i < overrideBlackList.size(); i++) {
-					if (!overrideBlackList.get(i).getOverrideUser().contains(curUser)) {
-						overrideBlackList.get(i).setOverridenby(overrideBlackList.get(i).getOverrideUser());
-						overrideBlackList.get(i)
-								.setOverrideUser(overrideBlackList.get(i).getOverrideUser() + "," + curUser);
-						newUser = false;
-					}
-				}
-			}
-		} else {
+		if (queryCodeList == null) {
 			return blackListCustomers;
 		}
 
-		// Grouping Black List Customer which are having same result of Data
+		List<DedupParm> dedupParmList = new ArrayList<>();
+
+		for (FinanceReferenceDetail queryCode : queryCodeList) {
+			String descName = queryCode.getLovDescNamelov();
+			String reference = blCustData.getFinReference();
+			String cif = blCustData.getCustCIF();
+			List<FinBlacklistCustomer> list = blacklistCustomerDAO.fetchOverrideBlackListData(reference, descName, cif);
+
+			DedupParm dedupParm = getApprovedDedupParmById(descName, blackList, custCtgCode);
+
+			if (dedupParm != null) {
+				dedupParmList.add(dedupParm);
+			}
+
+			list.forEach(l1 -> l1.setOverridenby(l1.getOverrideUser()));
+			overrideBlackList.addAll(list);
+		}
+
+		if (CollectionUtils.isNotEmpty(dedupParmList)) {
+			blackListCustomers.addAll(getBlackListCustomer(blCustData, dedupParmList));
+			if (CollectionUtils.isEmpty(dedupParmList)) {
+				return blackListCustomers;
+			}
+			blackListCustomers = resetBlackListedCustData(blackListCustomers, queryCodeList);
+		} else {
+			for (FinBlacklistCustomer blackListCust : overrideBlackList) {
+				if (!blackListCust.getOverrideUser().contains(curUser)) {
+					blackListCust.setOverridenby(blackListCust.getOverrideUser());
+					blackListCust.setOverrideUser(blackListCust.getOverrideUser() + "," + curUser);
+					newUser = false;
+				}
+			}
+		}
+
 		blackListCustomers = doSetDeDupGrouping(blackListCustomers);
 
-		// Checking for duplicate records in overrideBlacklistCustomers and
-		// currentBlacklistCustomers
-		try {
-			if (!overrideBlackList.isEmpty() && !blackListCustomers.isEmpty()) {
-				for (FinBlacklistCustomer previousBlacklist : overrideBlackList) {
-					for (BlackListCustomers currentBlacklist : blackListCustomers) {
-						if (previousBlacklist.getFinReference().equals(currentBlacklist.getFinReference())) {
+		if (CollectionUtils.isNotEmpty(overrideBlackList) && CollectionUtils.isEmpty(blackListCustomers)) {
+			blackListCustomers = doSetFinBlacklistCustomers(overrideBlackList);
+			return blackListCustomers;
+		} else if (CollectionUtils.isEmpty(overrideBlackList) || CollectionUtils.isEmpty(blackListCustomers)) {
+			return blackListCustomers;
+		}
+
+		for (FinBlacklistCustomer previousBlacklist : overrideBlackList) {
+			for (BlackListCustomers currentBlacklist : blackListCustomers) {
+				if (previousBlacklist.getFinReference().equals(currentBlacklist.getFinReference())) {
+					if (previousBlacklist.getCustCIF().equals(currentBlacklist.getCustCIF())) {
+						String prvOverrideUser = previousBlacklist.getOverrideUser();
+						currentBlacklist.setOverridenby(prvOverrideUser);
+
+						if (prvOverrideUser.contains(curUser)) {
+							currentBlacklist.setOverrideUser(prvOverrideUser);
+							newUser = false;
+						} else {
+							currentBlacklist.setOverrideUser(prvOverrideUser + "," + curUser);
+						}
+
+						if (isRuleChanged(previousBlacklist.getWatchListRule(), currentBlacklist.getWatchListRule())) {
+							currentBlacklist.setNewRule(true);
 							if (previousBlacklist.getCustCIF().equals(currentBlacklist.getCustCIF())) {
-								currentBlacklist.setOverridenby(previousBlacklist.getOverrideUser());
-
-								if (previousBlacklist.getOverrideUser().contains(curUser)) {
-									currentBlacklist.setOverrideUser(previousBlacklist.getOverrideUser());
-									newUser = false;
-								} else {
-									currentBlacklist
-											.setOverrideUser(previousBlacklist.getOverrideUser() + "," + curUser);
-								}
-
-								// Checking for New Rule
-								if (isRuleChanged(previousBlacklist.getWatchListRule(),
-										currentBlacklist.getWatchListRule())) {
-									currentBlacklist.setNewRule(true);
-									if (previousBlacklist.getCustCIF().equals(currentBlacklist.getCustCIF())) {
-										currentBlacklist.setNewBlacklistRecord(false);
-									} else {
-										currentBlacklist.setNewBlacklistRecord(true);
-										currentBlacklist.setOverride(false);
-									}
-								} else {
-									currentBlacklist.setNewBlacklistRecord(false);
-								}
-
-								if (newUser) {
-									currentBlacklist.setOverride(previousBlacklist.isOverride());
-								}
+								currentBlacklist.setNewBlacklistRecord(false);
+							} else {
+								currentBlacklist.setNewBlacklistRecord(true);
+								currentBlacklist.setOverride(false);
 							}
+						} else {
+							currentBlacklist.setNewBlacklistRecord(false);
+						}
+
+						if (newUser) {
+							currentBlacklist.setOverride(previousBlacklist.isOverride());
 						}
 					}
 				}
-			} else if (!overrideBlackList.isEmpty() && blackListCustomers.isEmpty()) {
-				blackListCustomers = doSetFinBlacklistCustomers(overrideBlackList);
 			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
 		}
-		logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.ENTERING);
 		return blackListCustomers;
 	}
 
-	/**
-	 * Checking for Rule weather it is added or removed
-	 * 
-	 * @param overrideListRule
-	 * @param newListRule
-	 * @return
-	 */
 	private boolean isRuleChanged(String overrideListRule, String newListRule) {
-		logger.debug(Literal.ENTERING);
-
 		String[] exeRuleList = StringUtils.trimToEmpty(overrideListRule).split(",");
 		String[] newRuleList = StringUtils.trimToEmpty(newListRule).split(",");
+
 		if (exeRuleList.length != newRuleList.length) {
 			return true;
 		} else {
@@ -1096,21 +861,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			}
 		}
-		logger.debug(Literal.LEAVING);
 
 		return false;
 	}
 
-	/**
-	 * Method for Preparation of BlackList Customers Data from Already overridden Data in case of rules Deletion from
-	 * Process editor
-	 * 
-	 * @param overrideBlackList
-	 * @return
-	 */
 	private List<BlackListCustomers> doSetFinBlacklistCustomers(List<FinBlacklistCustomer> overrideBlackList) {
-		logger.debug(Literal.ENTERING);
-		List<BlackListCustomers> list = new ArrayList<BlackListCustomers>();
+		List<BlackListCustomers> list = new ArrayList<>();
+
 		for (FinBlacklistCustomer finBlacklist : overrideBlackList) {
 			BlackListCustomers blacklistCustomer = new BlackListCustomers();
 			blacklistCustomer.setCustCIF(finBlacklist.getCustCIF());
@@ -1130,56 +887,45 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			blacklistCustomer.setNewBlacklistRecord(finBlacklist.isNewBlacklistRecord());
 			list.add(blacklistCustomer);
 		}
-		logger.debug(Literal.LEAVING);
 
 		return list;
 	}
 
 	private List<BlackListCustomers> getBlackListCustomer(BlackListCustomers blCustData,
 			List<DedupParm> dedupParmList) {
-		logger.debug(Literal.ENTERING);
 
-		List<BlackListCustomers> blackListCustomerList = new ArrayList<BlackListCustomers>();
+		if (CollectionUtils.isEmpty(dedupParmList)) {
+			return new ArrayList<>();
+		}
 
-		if (dedupParmList != null && !dedupParmList.isEmpty()) {
+		List<BlackListCustomers> blackListCustomerList = new ArrayList<>();
 
-			List<String> fieldNameList = getDedupParmDAO()
-					.getRuleFieldNames(blCustData.getCustCtgCode() + FinanceConstants.DEDUP_BLACKLIST);
+		String custCtgCode = blCustData.getCustCtgCode();
+		List<String> fieldNameList = dedupParmDAO.getRuleFieldNames(custCtgCode + FinanceConstants.DEDUP_BLACKLIST);
 
-			for (DedupParm dedupParm : dedupParmList) {
-				List<BlackListCustomers> list = getBlacklistCustomerDAO().fetchBlackListedCustomers(blCustData,
-						dedupParm.getSQLQuery());
+		for (DedupParm dedupParm : dedupParmList) {
+			String sqlQuery = dedupParm.getSQLQuery();
+			List<BlackListCustomers> list = blacklistCustomerDAO.fetchBlackListedCustomers(blCustData, sqlQuery);
 
-				for (int i = 0; i < list.size(); i++) {
-					BlackListCustomers blkList = list.get(i);
-					blkList.setWatchListRule(dedupParm.getQueryCode());
-					blkList.setFinReference(blCustData.getFinReference());
-					blkList.setQueryField(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
-					blkList.setSourceCIF(blCustData.getCustCIF());
-					blackListCustomerList.add(blkList);
-				}
+			for (BlackListCustomers blkList : list) {
+				blkList.setWatchListRule(dedupParm.getQueryCode());
+				blkList.setFinReference(blCustData.getFinReference());
+				blkList.setQueryField(getQueryFields(sqlQuery, fieldNameList));
+				blkList.setSourceCIF(blCustData.getCustCIF());
+				blackListCustomerList.add(blkList);
 			}
 		}
 
-		logger.debug(Literal.LEAVING);
 		return blackListCustomerList;
 	}
 
-	/**
-	 * getQuery fields from Sql Query
-	 * 
-	 * @param sqlQuery
-	 * @param fieldNameList
-	 * @return
-	 */
 	private String getQueryFields(String sqlQuery, List<String> fieldNameList) {
-		logger.debug(Literal.ENTERING);
-
 		String ruleSplitRegex = "[^a-zA-Z0-9_]+";
 
 		if (StringUtils.isBlank(sqlQuery) || fieldNameList == null) {
 			return "";
 		}
+
 		String queryFieldArray[] = sqlQuery.split(ruleSplitRegex);
 		String value = "";
 		String ruleString = "";
@@ -1206,31 +952,25 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 					}
 				}
 			}
+
 			String ruleCode[] = value.split(PennantConstants.DELIMITER_COMMA);
 			for (String finalValue : ruleCode) {
 				if (!ruleString.contains(finalValue)) {
 					ruleString = ruleString + finalValue + PennantConstants.DELIMITER_COMMA;
 				}
 			}
+
 			if (StringUtils.isNotEmpty(ruleString)) {
 				return ruleString.substring(0, ruleString.length() - 1);
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return "";
 	}
 
-	/**
-	 * Group the BlackList Customers based on the Rule
-	 * 
-	 * @param blackListCustomerList
-	 * @return
-	 */
 	private List<BlackListCustomers> doSetDeDupGrouping(List<BlackListCustomers> blackListCustomerList) {
-		logger.debug(Literal.ENTERING);
-
 		try {
 			for (int i = 0; i < blackListCustomerList.size(); i++) {
 				BlackListCustomers iBlackList = blackListCustomerList.get(i);
@@ -1251,38 +991,25 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return blackListCustomerList;
 	}
 
-	/**
-	 * Method for Resetting Override condition data
-	 * 
-	 * @param blackListCustomers
-	 * @param queryCodeList
-	 * @param dedupParmList
-	 * @return
-	 */
 	private List<BlackListCustomers> resetBlackListedCustData(List<BlackListCustomers> blackListCustomers,
 			List<FinanceReferenceDetail> queryCodeList) {
-		logger.debug(Literal.ENTERING);
+		Map<String, Boolean> queryOverrideMap = new HashMap<>();
 
-		// Check Override Condition based on Rule definitions on Process Editor
-		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
-		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
-			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
-		}
+		queryCodeList.forEach(l1 -> queryOverrideMap.put(l1.getLovDescNamelov(), l1.isOverRide()));
 
-		// Reset Override COndition based on Query Code Executions
 		for (BlackListCustomers blackListCust : blackListCustomers) {
 			String[] watchList = blackListCust.getWatchListRule().split(",");
-			for (int i = 0; i < watchList.length; i++) {
-				if (queryOverrideMap.containsKey(watchList[i])) {
-					blackListCust.setOverride(queryOverrideMap.get(watchList[i]));
+			for (String key : watchList) {
+				if (queryOverrideMap.containsKey(key)) {
+					blackListCust.setOverride(queryOverrideMap.get(key));
 					if (blackListCust.isOverride()) {
-						blackListCust.setOverride(queryOverrideMap.get(watchList[i]));
+						blackListCust.setOverride(queryOverrideMap.get(key));
 					} else {
 						blackListCust.setOverride(false);
 						break;
@@ -1293,262 +1020,224 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				blackListCust.setOverride(queryOverrideMap.get(blackListCust.getWatchListRule()));
 			}
 		}
-		logger.debug(Literal.LEAVING);
+
 		return blackListCustomers;
 	}
 
 	@Override
 	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType) {
-		return getDedupParmDAO().getQueryCodeList(financeRefDetail, tableType);
+		return dedupParmDAO.getQueryCodeList(financeRefDetail, tableType);
 	}
 
-	/**
-	 * Method for Fetching Police Case Details on Creation of Finance
-	 */
 	@Override
-	public List<PoliceCaseDetail> fetchPoliceCaseCustomers(String userRole, String finType,
-			PoliceCaseDetail policeCaseData, String curUser) {
+	public List<PoliceCaseDetail> fetchPoliceCaseCustomers(String userRole, String finType, PoliceCaseDetail pcd,
+			String curUser) {
 		logger.debug(Literal.ENTERING);
 
-		List<PoliceCaseDetail> policeCase = new ArrayList<PoliceCaseDetail>();
-		List<PoliceCase> exePoliceCase = new ArrayList<PoliceCase>();
-		List<PoliceCase> overridePoliceCaseList = new ArrayList<PoliceCase>();
+		FinanceReferenceDetail frd = new FinanceReferenceDetail();
+		frd.setMandInputInStage(userRole + ",");
+		frd.setFinType(finType);
+
+		List<FinanceReferenceDetail> queryCodeList = dedupParmDAO.getQueryCodeList(frd, "_APCView");
+
+		if (CollectionUtils.isEmpty(queryCodeList)) {
+			return new ArrayList<>();
+		}
+
+		List<PoliceCaseDetail> policeCase = new ArrayList<>();
+		List<PoliceCase> exePoliceCase = new ArrayList<>();
+		List<PoliceCase> overridePoliceCaseList = new ArrayList<>();
+		List<DedupParm> dedupParmList = new ArrayList<>();
 		boolean newUser = false;
 
-		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
-		financeRefDetail.setMandInputInStage(userRole + ",");
-		financeRefDetail.setFinType(finType);
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmDAO().getQueryCodeList(financeRefDetail, "_APCView");
+		String finReference = pcd.getFinReference();
 
-		if (queryCodeList != null) {
-			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
-			DedupParm dedupParm = null;
-			for (FinanceReferenceDetail queryCode : queryCodeList) {
-				exePoliceCase = getPoliceCaseDAO().fetchPoliceCase(policeCaseData.getFinReference(),
-						queryCode.getLovDescNamelov());
-				dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_POLICE,
-						policeCaseData.getCustCtgCode());
-				if (dedupParm != null) {
-					dedupParmList.add(dedupParm);
-				}
-				if (!exePoliceCase.isEmpty()) {
-					for (PoliceCase policecheck : exePoliceCase) {
-						policecheck.setOverridenby(policecheck.getOverrideUser());
-						overridePoliceCaseList.add(policecheck);
-					}
-					overridePoliceCaseList.addAll(exePoliceCase);
-				}
-				exePoliceCase = null;
-				dedupParm = null;
+		for (FinanceReferenceDetail queryCode : queryCodeList) {
+			String descLovName = queryCode.getLovDescNamelov();
+			exePoliceCase = policeCaseDAO.fetchPoliceCase(finReference, descLovName);
+			String custCtgCode = pcd.getCustCtgCode();
+			DedupParm dedupParm = getApprovedDedupParmById(descLovName, FinanceConstants.DEDUP_POLICE, custCtgCode);
+
+			if (dedupParm != null) {
+				dedupParmList.add(dedupParm);
 			}
 
-			// Using Queries Fetch PoliceCase Listed Customer Data either from
-			// Interface or
-			// Existing PoliceCase Listed Table(Daily Download) Data
-			if (!dedupParmList.isEmpty()) {
-				policeCase.addAll(getPoliceCaseListCustomer(policeCaseData, dedupParmList));
-				if (!policeCase.isEmpty()) {
-					policeCase = resetPoliceCaseList(policeCase, queryCodeList);
-				} else {
-					return policeCase;
-				}
-			} else {
-				for (int i = 0; i < overridePoliceCaseList.size(); i++) {
-					if (!overridePoliceCaseList.get(i).getOverrideUser().contains(curUser)) {
-						overridePoliceCaseList.get(i).setOverridenby(overridePoliceCaseList.get(i).getOverrideUser());
-						overridePoliceCaseList.get(i)
-								.setOverrideUser(overridePoliceCaseList.get(i).getOverrideUser() + "," + curUser);
-						newUser = false;
-					}
-				}
-			}
+			exePoliceCase.forEach(l1 -> l1.setOverridenby(l1.getOverrideUser()));
+			overridePoliceCaseList.addAll(exePoliceCase);
+		}
 
+		if (CollectionUtils.isNotEmpty(dedupParmList)) {
+			policeCase.addAll(getPoliceCaseListCustomer(pcd, dedupParmList));
+			if (CollectionUtils.isEmpty(policeCase)) {
+				return policeCase;
+			}
+			policeCase = resetPoliceCaseList(policeCase, queryCodeList);
 		} else {
+			for (PoliceCase pc : overridePoliceCaseList) {
+				if (!pc.getOverrideUser().contains(curUser)) {
+					pc.setOverridenby(pc.getOverrideUser());
+					pc.setOverrideUser(pc.getOverrideUser() + "," + curUser);
+					newUser = false;
+				}
+			}
+		}
+
+		policeCase = dosetPoliceCaseGrouping(policeCase);
+
+		if (CollectionUtils.isNotEmpty(overridePoliceCaseList) && CollectionUtils.isEmpty(policeCase)) {
+			policeCase = doSetFinPoliceCaseCustomers(overridePoliceCaseList);
+			return policeCase;
+		} else if (CollectionUtils.isEmpty(overridePoliceCaseList) && CollectionUtils.isNotEmpty(policeCase)) {
 			return policeCase;
 		}
 
-		// Grouping PoliceCase List Customer which are having same result of
-		// Data
-		policeCase = dosetPoliceCaseGrouping(policeCase);
-		// Checking for duplicate records in overridePoliceCaseCustomers and
-		// currentPoliceCaseCustomers
+		for (PoliceCase pc : overridePoliceCaseList) {
+			for (PoliceCaseDetail pcDtls : policeCase) {
+				if (pc.getFinReference().equals(pcDtls.getFinReference())) {
+					if (pc.getCustCIF().equals(pcDtls.getCustCIF())) {
+						pcDtls.setOverridenby(pc.getOverrideUser());
+						if (pc.getOverrideUser().contains(curUser)) {
+							pcDtls.setOverrideUser(pc.getOverrideUser());
+							newUser = false;
+						} else {
+							pcDtls.setOverrideUser(pc.getOverrideUser() + "," + curUser);
+						}
 
-		try {
-			if (!overridePoliceCaseList.isEmpty() && !policeCase.isEmpty()) {
-
-				for (int i = 0; i < overridePoliceCaseList.size(); i++) {
-					for (int j = 0; j < policeCase.size(); j++) {
-						if (overridePoliceCaseList.get(i).getFinReference()
-								.equals(policeCase.get(j).getFinReference())) {
-							if (overridePoliceCaseList.get(i).getCustCIF().equals(policeCase.get(j).getCustCIF())) {
-								policeCase.get(j).setOverridenby(overridePoliceCaseList.get(i).getOverrideUser());
-								if (overridePoliceCaseList.get(i).getOverrideUser().contains(curUser)) {
-									policeCase.get(j).setOverrideUser(overridePoliceCaseList.get(i).getOverrideUser());
-									newUser = false;
-								} else {
-									policeCase.get(j).setOverrideUser(
-											overridePoliceCaseList.get(i).getOverrideUser() + "," + curUser);
-								}
-
-								if (isRuleChanged(overridePoliceCaseList.get(i).getPoliceCaseRule(),
-										policeCase.get(j).getPoliceCaseRule())) {
-									policeCase.get(j).setNewRule(true);
-									if (overridePoliceCaseList.get(i).getCustCIF()
-											.equals(policeCase.get(j).getCustCIF())) {
-										policeCase.get(j).setNewPolicecaseRecord(false);
-									} else {
-										policeCase.get(j).setNewPolicecaseRecord(true);
-										policeCase.get(j).setOverride(false);
-									}
-								} else {
-									policeCase.get(j).setNewPolicecaseRecord(false);
-								}
-								if (newUser) {
-									policeCase.get(j).setOverride(overridePoliceCaseList.get(i).isOverride());
-								}
+						if (isRuleChanged(pc.getPoliceCaseRule(), pcDtls.getPoliceCaseRule())) {
+							pcDtls.setNewRule(true);
+							if (pc.getCustCIF().equals(pcDtls.getCustCIF())) {
+								pcDtls.setNewPolicecaseRecord(false);
+							} else {
+								pcDtls.setNewPolicecaseRecord(true);
+								pcDtls.setOverride(false);
 							}
+						} else {
+							pcDtls.setNewPolicecaseRecord(false);
+						}
+						if (newUser) {
+							pcDtls.setOverride(pc.isOverride());
 						}
 					}
 				}
-			} else if (!overridePoliceCaseList.isEmpty() && policeCase.isEmpty()) {
-				policeCase = doSetFinPoliceCaseCustomers(overridePoliceCaseList);
 			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return policeCase;
 	}
 
-	/**
-	 * Method for Preparation of PoliceCase Customers Data from Already overridden Data in case of rules Deletion from
-	 * Process editor
-	 * 
-	 * @param overridePoliceCaseList
-	 * @return
-	 */
-	private List<PoliceCaseDetail> doSetFinPoliceCaseCustomers(List<PoliceCase> overridePoliceCaseList) {
-		logger.debug(Literal.ENTERING);
-		List<PoliceCaseDetail> list = new ArrayList<PoliceCaseDetail>();
-		for (PoliceCase finPoliceCaselist : overridePoliceCaseList) {
-			PoliceCaseDetail policecaseCustomerList = new PoliceCaseDetail();
-			policecaseCustomerList.setCustCIF(finPoliceCaselist.getCustCIF());
-			policecaseCustomerList.setFinReference(finPoliceCaselist.getFinReference());
-			policecaseCustomerList.setCustFName(finPoliceCaselist.getCustFName());
-			policecaseCustomerList.setCustLName(finPoliceCaselist.getCustLName());
-			policecaseCustomerList.setCustDOB(finPoliceCaselist.getCustDOB());
-			policecaseCustomerList.setCustCRCPR(finPoliceCaselist.getCustCRCPR());
-			policecaseCustomerList.setCustPassportNo(finPoliceCaselist.getCustPassportNo());
-			policecaseCustomerList.setCustNationality(finPoliceCaselist.getCustNationality());
-			policecaseCustomerList.setPoliceCaseRule(finPoliceCaselist.getPoliceCaseRule());
-			policecaseCustomerList.setOverride(finPoliceCaselist.isOverride());
-			policecaseCustomerList.setOverrideUser(finPoliceCaselist.getOverrideUser());
-			policecaseCustomerList.setMobileNumber(finPoliceCaselist.getMobileNumber());
-			policecaseCustomerList.setNewPolicecaseRecord(finPoliceCaselist.isNewPolicecaseRecord());
-			policecaseCustomerList.setRules(finPoliceCaselist.getRules());
-			list.add(policecaseCustomerList);
+	private List<PoliceCaseDetail> doSetFinPoliceCaseCustomers(List<PoliceCase> pcList) {
+		List<PoliceCaseDetail> list = new ArrayList<>();
+		for (PoliceCase pc : pcList) {
+			PoliceCaseDetail pcd = new PoliceCaseDetail();
+			pcd.setCustCIF(pc.getCustCIF());
+			pcd.setFinReference(pc.getFinReference());
+			pcd.setCustFName(pc.getCustFName());
+			pcd.setCustLName(pc.getCustLName());
+			pcd.setCustDOB(pc.getCustDOB());
+			pcd.setCustCRCPR(pc.getCustCRCPR());
+			pcd.setCustPassportNo(pc.getCustPassportNo());
+			pcd.setCustNationality(pc.getCustNationality());
+			pcd.setPoliceCaseRule(pc.getPoliceCaseRule());
+			pcd.setOverride(pc.isOverride());
+			pcd.setOverrideUser(pc.getOverrideUser());
+			pcd.setMobileNumber(pc.getMobileNumber());
+			pcd.setNewPolicecaseRecord(pc.isNewPolicecaseRecord());
+			pcd.setRules(pc.getRules());
+			list.add(pcd);
 		}
-		logger.debug(Literal.LEAVING);
 
 		return list;
 	}
 
-	private List<PoliceCaseDetail> getPoliceCaseListCustomer(PoliceCaseDetail policeCaseData,
-			List<DedupParm> dedupParmList) {
-		logger.debug(Literal.ENTERING);
-		List<PoliceCaseDetail> policeCaseCustomerList = new ArrayList<PoliceCaseDetail>();
+	private List<PoliceCaseDetail> getPoliceCaseListCustomer(PoliceCaseDetail pcd, List<DedupParm> dedupParmList) {
+		if (CollectionUtils.isEmpty(dedupParmList)) {
+			return new ArrayList<>();
+		}
 
-		if (dedupParmList != null && !dedupParmList.isEmpty()) {
+		List<PoliceCaseDetail> pcdList = new ArrayList<>();
 
-			List<String> fieldNameList = getDedupParmDAO()
-					.getRuleFieldNames(policeCaseData.getCustCtgCode() + FinanceConstants.DEDUP_POLICE);
+		String custCtgCode = pcd.getCustCtgCode();
+		List<String> fieldNameList = dedupParmDAO.getRuleFieldNames(custCtgCode + FinanceConstants.DEDUP_POLICE);
 
-			for (DedupParm dedupParm : dedupParmList) {
-				List<PoliceCaseDetail> list = getPoliceCaseDAO().fetchCorePolice(policeCaseData,
-						dedupParm.getSQLQuery());
+		for (DedupParm dedupParm : dedupParmList) {
+			List<PoliceCaseDetail> list = policeCaseDAO.fetchCorePolice(pcd, dedupParm.getSQLQuery());
 
-				for (int i = 0; i < list.size(); i++) {
-					PoliceCaseDetail policeCaseList = list.get(i);
-					policeCaseList.setPoliceCaseRule(dedupParm.getQueryCode());
-					policeCaseList.setFinReference(policeCaseData.getFinReference());
-					policeCaseList.setRules(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
-					policeCaseCustomerList.add(policeCaseList);
-				}
+			for (PoliceCaseDetail policeCaseList : list) {
+				policeCaseList.setPoliceCaseRule(dedupParm.getQueryCode());
+				policeCaseList.setFinReference(pcd.getFinReference());
+				policeCaseList.setRules(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
+				pcdList.add(policeCaseList);
 			}
 		}
-		logger.debug(Literal.LEAVING);
-		return policeCaseCustomerList;
+
+		return pcdList;
 	}
 
 	private List<PoliceCaseDetail> dosetPoliceCaseGrouping(List<PoliceCaseDetail> policeCaseList) {
-		List<PoliceCaseDetail> policecase = new ArrayList<PoliceCaseDetail>();
+		List<PoliceCaseDetail> policecase = new ArrayList<>();
 		policecase.addAll(policeCaseList);
 
 		for (int i = 0; i < policecase.size() - 1; i++) {
 			for (int j = i + 1; j < policecase.size(); j++) {
-				if (policecase.get(i).getCustCIF().equals(policecase.get(j).getCustCIF())) {
-					if (policecase.get(i).getPoliceCaseRule().contains(policecase.get(j).getPoliceCaseRule())) {
-						policecase.get(i).setPoliceCaseRule(policecase.get(i).getPoliceCaseRule());
+				PoliceCaseDetail pcd = policecase.get(i);
+				PoliceCaseDetail pc = policecase.get(j);
+				if (pcd.getCustCIF().equals(pc.getCustCIF())) {
+					if (pcd.getPoliceCaseRule().contains(pc.getPoliceCaseRule())) {
+						pcd.setPoliceCaseRule(pcd.getPoliceCaseRule());
 					} else {
-						policecase.get(i).setPoliceCaseRule(
-								policecase.get(i).getPoliceCaseRule() + ',' + policecase.get(j).getPoliceCaseRule());
-						if (policecase.get(i).isNewRule() != policecase.get(j).isNewRule()) {
-							policecase.get(i).setNewRule(true);
-							policecase.get(i).setOverride(false);
+						pcd.setPoliceCaseRule(pcd.getPoliceCaseRule() + ',' + pc.getPoliceCaseRule());
+						if (pcd.isNewRule() != pc.isNewRule()) {
+							pcd.setNewRule(true);
+							pcd.setOverride(false);
 						}
 					}
-					policecase.get(i).setRules(policecase.get(i).getRules() + ',' + policecase.get(j).getRules());
+					pcd.setRules(pcd.getRules() + ',' + pc.getRules());
 					policecase.remove(j);
 					j--;
 
 				}
 			}
 		}
-		return policecase;
 
+		return policecase;
 	}
 
-	/**
-	 * Method for Resetting Override condition based on Process Editor Configuration
-	 * 
-	 * @param policeCase
-	 * @param queryCodeList
-	 * @return
-	 */
-	private List<PoliceCaseDetail> resetPoliceCaseList(List<PoliceCaseDetail> policeCase,
-			List<FinanceReferenceDetail> queryCodeList) {
-		Map<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
-		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
-			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
-		}
+	private List<PoliceCaseDetail> resetPoliceCaseList(List<PoliceCaseDetail> pcdList,
+			List<FinanceReferenceDetail> frdList) {
+		Map<String, Boolean> queryOverrideMap = new HashMap<>();
 
-		// Reset Override COndition based on Query Code Executions
-		for (PoliceCaseDetail policeCaseList : policeCase) {
+		frdList.forEach(l1 -> queryOverrideMap.put(l1.getLovDescNamelov(), l1.isOverRide()));
+
+		for (PoliceCaseDetail policeCaseList : pcdList) {
 			String[] policecaserule = policeCaseList.getPoliceCaseRule().split(",");
-			for (int i = 0; i < policecaserule.length; i++) {
-				if (queryOverrideMap.containsKey(policecaserule[i])) {
-					policeCaseList.setOverride(queryOverrideMap.get(policecaserule[i]));
+			for (String key : policecaserule) {
+				if (queryOverrideMap.containsKey(key)) {
+					policeCaseList.setOverride(queryOverrideMap.get(key));
 					if (policeCaseList.isOverride()) {
-						policeCaseList.setOverride(queryOverrideMap.get(policecaserule[i]));
+						policeCaseList.setOverride(queryOverrideMap.get(key));
 					} else {
 						policeCaseList.setOverride(false);
 						break;
 					}
 				}
 			}
+
 			if (queryOverrideMap.containsKey(policeCaseList.getPoliceCaseRule())) {
 				policeCaseList.setOverride(queryOverrideMap.get(policeCaseList.getPoliceCaseRule()));
 			}
 
 		}
-		logger.debug(Literal.LEAVING);
-		return policeCase;
+
+		return pcdList;
 	}
 
 	@Override
 	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details, String finType, String ref) {
 		logger.debug(Literal.ENTERING);
+
 		if (customerDedupService == null) {
+			logger.debug(Literal.LEAVING);
 			return null;
 		}
 
@@ -1574,98 +1263,135 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		}
 
 		List<CustomerDedup> customerDedup = getDedupData(response, details);
-		//incase of No match we need to show the same to user to proceed further.
-		if (StringUtils.equalsIgnoreCase(response.getErrorDesc(), "No Match")) {
+		if ("No Match".equalsIgnoreCase(response.getErrorDesc())) {
 			WSReturnStatus status = new WSReturnStatus();
 			status.setReturnText("No Match");
 			details.setReturnStatus(status);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return customerDedup;
 	}
 
 	private List<CustomerDedup> getDedupData(DedupCustomerResponse response, CustomerDetails details) {
-		logger.debug(Literal.ENTERING);
-
-		List<CustomerDedup> custDedupList = new ArrayList<>();
-		if (response != null && response.getDedupCustomerDetails() != null) {
-			logger.debug("Response dedup list :" + response.getDedupCustomerDetails().size());
-			for (DedupCustomerDetail dedupDetail : response.getDedupCustomerDetails()) {
-				CustomerDedup customerDedup = new CustomerDedup();
-				customerDedup.setCustCIF(details.getCustomer().getCustCIF());
-				customerDedup.setCustShrtName(dedupDetail.getCustomer().getCustShrtName());
-				customerDedup.setCustDOB(dedupDetail.getCustomer().getCustDOB());
-				customerDedup.setCustFName(dedupDetail.getCustomer().getCustFName());
-				customerDedup.setCustCRCPR(dedupDetail.getCustomer().getCustCRCPR());
-				customerDedup.setCustCoreBank(dedupDetail.getCustomer().getCustCoreBank());
-				customerDedup.setSourceSystem(dedupDetail.getCustomer().getSourceSystem());
-				customerDedup.setSourceSystem(dedupDetail.getCustomer().getSourceSystem());
-				customerDedup.setCustCoreBank(dedupDetail.getCustomer().getCustCoreBank());
-
-				for (CustomerPhoneNumber phonenumber : dedupDetail.getCustomerPhoneNumList()) {
-					if (StringUtils.equals(phonenumber.getPhoneTypeCode(), "MOBILE")) {
-						customerDedup.setPhoneNumber(phonenumber.getPhoneNumber());
-						break;
-					}
-				}
-				for (CustomerAddres addresstype : dedupDetail.getAddressList()) {
-					if (StringUtils.equals(addresstype.getCustAddrType(), "OFFICE")) {
-						customerDedup.setAddress(StringUtils.trimToEmpty(addresstype.getCustAddrLine1() + ","
-								+ addresstype.getCustAddrCity() + "," + addresstype.getCustAddrZIP()));
-						break;
-					}
-					if (StringUtils.equals(addresstype.getCustAddrType(), "HOME")) {
-						customerDedup.setAddress(StringUtils.trimToEmpty(addresstype.getCustAddrLine1() + ","
-								+ addresstype.getCustAddrCity() + "," + addresstype.getCustAddrZIP()));
-						break;
-					}
-				}
-				custDedupList.add(customerDedup);
-			}
+		if (response == null) {
+			return new ArrayList<>();
 		}
-		logger.debug(Literal.LEAVING);
-		return custDedupList;
+
+		List<DedupCustomerDetail> dcdList = response.getDedupCustomerDetails();
+		if (CollectionUtils.isEmpty(dcdList)) {
+			return new ArrayList<>();
+		}
+
+		List<CustomerDedup> cdList = new ArrayList<>();
+		logger.debug("Response dedup list :" + dcdList.size());
+
+		for (DedupCustomerDetail dedupDetail : dcdList) {
+			CustomerDedup cd = new CustomerDedup();
+			cd.setCustCIF(details.getCustomer().getCustCIF());
+			Customer customer = dedupDetail.getCustomer();
+			cd.setCustShrtName(customer.getCustShrtName());
+			cd.setCustDOB(customer.getCustDOB());
+			cd.setCustFName(customer.getCustFName());
+			cd.setCustCRCPR(customer.getCustCRCPR());
+			cd.setCustCoreBank(customer.getCustCoreBank());
+			cd.setSourceSystem(customer.getSourceSystem());
+			cd.setSourceSystem(customer.getSourceSystem());
+			cd.setCustCoreBank(customer.getCustCoreBank());
+
+			for (CustomerPhoneNumber phonenumber : dedupDetail.getCustomerPhoneNumList()) {
+				if ("MOBILE".equals(phonenumber.getPhoneTypeCode())) {
+					cd.setPhoneNumber(phonenumber.getPhoneNumber());
+					break;
+				}
+			}
+
+			for (CustomerAddres addresstype : dedupDetail.getAddressList()) {
+				if ("OFFICE".equals(addresstype.getCustAddrType()) || "HOME".equals(addresstype.getCustAddrType())) {
+					cd.setAddress(StringUtils.trimToEmpty(addresstype.getCustAddrLine1() + ","
+							+ addresstype.getCustAddrCity() + "," + addresstype.getCustAddrZIP()));
+					break;
+				}
+			}
+
+			cdList.add(cd);
+		}
+
+		return cdList;
 	}
 
 	private DedupCustomerDetail preparededupRequest(CustomerDetails customerDetails, String finType, String ref) {
+		DedupCustomerDetail dcd = new DedupCustomerDetail();
 
-		DedupCustomerDetail dedupCustomerDetail = new DedupCustomerDetail();
-		Customer customer = customerDetails.getCustomer();
-		if (customerDetails != null && customer != null) {
-			dedupCustomerDetail.setFinReference(ref);
-			dedupCustomerDetail.setCustID(customer.getCustID());
-			dedupCustomerDetail.setCustCIF(customer.getCustCIF());
-
-			dedupCustomerDetail.setCustomer(customer);
-			dedupCustomerDetail.setFinType(finType);
-			// customer documents
-			if (customerDetails.getCustomerDocumentsList() != null) {
-				dedupCustomerDetail.setCustomerDocumentsList(customerDetails.getCustomerDocumentsList());
-			}
-			// customer Address
-			if (customerDetails.getAddressList() != null) {
-				dedupCustomerDetail.setAddressList(customerDetails.getAddressList());
-			}
-			// customer phone numbers
-			if (customerDetails.getCustomerPhoneNumList() != null) {
-				dedupCustomerDetail.setCustomerPhoneNumList(customerDetails.getCustomerPhoneNumList());
-			}
-			// customer emails
-			if (customerDetails.getCustomerEMailList() != null) {
-				dedupCustomerDetail.setCustomerEMailList(customerDetails.getCustomerEMailList());
-			}
+		if (customerDetails == null) {
+			return new DedupCustomerDetail();
 		}
 
-		return dedupCustomerDetail;
+		Customer customer = customerDetails.getCustomer();
+
+		if (customer == null) {
+			return new DedupCustomerDetail();
+		}
+
+		dcd.setFinReference(ref);
+		dcd.setCustID(customer.getCustID());
+		dcd.setCustCIF(customer.getCustCIF());
+		dcd.setCustomer(customer);
+		dcd.setFinType(finType);
+		dcd.setCustomerDocumentsList(customerDetails.getCustomerDocumentsList());
+		dcd.setAddressList(customerDetails.getAddressList());
+		dcd.setCustomerPhoneNumList(customerDetails.getCustomerPhoneNumList());
+		dcd.setCustomerEMailList(customerDetails.getCustomerEMailList());
+
+		return dcd;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List validate(String resultQuery, CustomerDedup customerDedup) {
+		return dedupParmDAO.validate(resultQuery, customerDedup);
 	}
 
 	@Override
 	public List<DedupParm> getDedupParmByModule(String queryModule, String querySubCode, String type) {
-		return getDedupParmDAO().getDedupParmByModule(queryModule, querySubCode, type);
+		return dedupParmDAO.getDedupParmByModule(queryModule, querySubCode, type);
 	}
 
 	@Override
 	public List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap) {
-		return getDedupParmDAO().queryExecution(query, fielValueMap);
+		return dedupParmDAO.queryExecution(query, fielValueMap);
 	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setDedupParmDAO(DedupParmDAO dedupParmDAO) {
+		this.dedupParmDAO = dedupParmDAO;
+	}
+
+	public FinanceDedupeDAO getFinanceDedupeDAO() {
+		return financeDedupeDAO;
+	}
+
+	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
+		this.financeDedupeDAO = financeDedupeDAO;
+	}
+
+	public void setBlacklistCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
+		this.blacklistCustomerDAO = blacklistCustomerDAO;
+	}
+
+	public void setPoliceCaseDAO(PoliceCaseDAO policeCaseDAO) {
+		this.policeCaseDAO = policeCaseDAO;
+	}
+
+	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {
+		this.customerDedupDAO = customerDedupDAO;
+	}
+
+	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
+		this.customerInterfaceService = customerInterfaceService;
+	}
+
 }

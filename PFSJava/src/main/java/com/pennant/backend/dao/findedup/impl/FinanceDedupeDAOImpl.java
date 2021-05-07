@@ -59,6 +59,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -115,26 +116,41 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 
 	@Override
 	public List<FinanceDedup> fetchOverrideDedupData(String finReference, String queryCode) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" D.FinReference, D.DupReference, D.CustCIF, D.CustCRCPR, D.CustShrtName");
+		sql.append(", D.MobileNumber, D.StartDate, D.FinanceAmount, D.FinanceType, D.ProfitAmount");
+		sql.append(", D.Stage, D.DedupeRule, D.OverrideUser, S.RoleDesc StageDesc, D.FinLimitRef");
+		sql.append(" From FinDedupDetail D");
+		sql.append(" LEFT OUTER JOIN SecRoles S ON S.RoleCd = D.Stage");
+		sql.append(" Where D.FinReference = ? and D.DedupeRule LIKE  ?");
 
-		FinanceDedup dedup = new FinanceDedup();
-		dedup.setFinReference(finReference);
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder(
-				" Select D.FinReference ,D.DupReference, D.CustCIF , D.CustCRCPR , D.CustShrtName , ");
-		selectSql.append(" D.MobileNumber , D.StartDate , D.FinanceAmount ,D.FinanceType , ");
-		selectSql.append(" D.ProfitAmount , D.Stage ,D.DedupeRule, D.OverrideUser, S.RoleDesc StageDesc,D.FinLimitRef");
-		selectSql.append(" From FinDedupDetail D LEFT OUTER JOIN SecRoles S ON S.RoleCd = D.Stage ");
-		selectSql.append(" Where D.FinReference = :FinReference AND D.DedupeRule LIKE  '%,");
-		selectSql.append(queryCode.trim());
-		selectSql.append(",%' ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setString(1, "%,"+queryCode.trim()+",%");
+		}, (rs, i) -> {
+			FinanceDedup fd = new FinanceDedup();
+			
+			fd.setFinReference(rs.getString("FinReference"));
+			fd.setDupReference(rs.getString("DupReference"));
+			fd.setCustCIF(rs.getString("CustCIF"));
+			fd.setCustCRCPR(rs.getString("CustCRCPR"));
+			fd.setCustShrtName(rs.getString("CustShrtName"));
+			fd.setMobileNumber(rs.getString("MobileNumber"));
+			fd.setStartDate(JdbcUtil.getDate(rs.getDate("StartDate")));
+			fd.setFinanceAmount(rs.getBigDecimal("FinanceAmount"));
+			fd.setFinanceType(rs.getString("FinanceType"));
+			fd.setProfitAmount(rs.getBigDecimal("ProfitAmount"));
+			fd.setStage(rs.getString("Stage"));
+			fd.setDedupeRule(rs.getString("DedupeRule"));
+			fd.setOverrideUser(rs.getString("OverrideUser"));
+			fd.setStageDesc(rs.getString("StageDesc"));
+			fd.setFinLimitRef(rs.getString("FinLimitRef"));
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
-		RowMapper<FinanceDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceDedup.class);
+			return fd;
+		});
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

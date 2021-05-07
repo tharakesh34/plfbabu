@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.policecase.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,24 +56,37 @@ public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements Pol
 
 	@Override
 	public List<PoliceCase> fetchPoliceCase(String finReference, String queryCode) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, CustCIF, CustFName, CustLName, CustDOB, CustCRCPR");
+		sql.append(", CustPassportNo, MobileNumber, CustNationality");
+		sql.append(", CustProduct, PoliceCaseRule, Override, OverrideUser");
+		sql.append(" From FinPoliceCaseDetail");
+		sql.append(" Where FinReference = ? and PoliceCaseRule LIKE (?)");
 
-		PoliceCaseDetail policeCase = new PoliceCaseDetail();
-		policeCase.setFinReference(finReference);
-		policeCase.setPoliceCaseRule(queryCode);
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference , CustCIF , CustFName , CustLName , ");
-		selectSql.append(" CustDOB , CustCRCPR ,CustPassportNo , MobileNumber , CustNationality , ");
-		selectSql.append(" CustProduct , PoliceCaseRule , Override , OverrideUser ");
-		selectSql.append(" From FinPoliceCaseDetail");
-		selectSql.append(" Where FinReference =:FinReference AND PoliceCaseRule LIKE('%" + queryCode + "%')");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setString(2, "%" + queryCode + "%");
+		}, (rs, i) -> {
+			PoliceCase pc = new PoliceCase();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policeCase);
-		RowMapper<PoliceCase> typeRowMapper = BeanPropertyRowMapper.newInstance(PoliceCase.class);
+			pc.setFinReference(rs.getString("FinReference"));
+			pc.setCustCIF(rs.getString("CustCIF"));
+			pc.setCustFName(rs.getString("CustFName"));
+			pc.setCustLName(rs.getString("CustLName"));
+			pc.setCustDOB(rs.getTimestamp("CustDOB"));
+			pc.setCustCRCPR(rs.getString("CustCRCPR"));
+			pc.setCustPassportNo(rs.getString("CustPassportNo"));
+			pc.setMobileNumber(rs.getString("MobileNumber"));
+			pc.setCustNationality(rs.getString("CustNationality"));
+			pc.setCustProduct(rs.getString("CustProduct"));
+			pc.setPoliceCaseRule(rs.getString("PoliceCaseRule"));
+			pc.setOverride(rs.getBoolean("Override"));
+			pc.setOverrideUser(rs.getString("OverrideUser"));
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return pc;
+		});
 
 	}
 
@@ -99,26 +113,23 @@ public class PoliceCaseDAOImpl extends BasicDao<PoliceCaseDetail> implements Pol
 
 	@Override
 	public List<PoliceCaseDetail> fetchCorePolice(PoliceCaseDetail policecase, String sqlQuery) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select * FROM PoliceCaseCustomers ");
+		sql.append(StringUtils.trimToEmpty(sqlQuery));
 
-		List<PoliceCaseDetail> policeCases = null;
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT * FROM PoliceCaseCustomers ");
-		selectSql.append(StringUtils.trimToEmpty(sqlQuery));
+		logger.trace(Literal.SQL + sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(policecase);
 		BeanPropertyRowMapper<PoliceCaseDetail> typeRowMapper = BeanPropertyRowMapper
 				.newInstance(PoliceCaseDetail.class);
 
 		try {
-			policeCases = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			policecase = null;
+			logger.warn("Record is not found in PoliceCaseCustomers for the specified Rule >> {}", sqlQuery);
 		}
-		logger.debug("Leaving");
-		return policeCases;
+
+		return new ArrayList<>();
 	}
 
 	@Override

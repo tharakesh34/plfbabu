@@ -42,7 +42,8 @@
  */
 package com.pennant.backend.dao.dedup.impl;
 
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -65,6 +65,7 @@ import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -90,36 +91,57 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 */
 	@Override
 	public DedupParm getDedupParmByID(final String id, String queryModule, String querySubCode, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where QueryCode = ? and QuerySubCode = ? and QueryModule = ?");
 
-		DedupParm dedupParm = new DedupParm();
-		dedupParm.setQueryCode(id);
-		dedupParm.setQuerySubCode(querySubCode);
-		dedupParm.setQueryModule(queryModule);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select QueryId, QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" From DedupParams");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where QueryCode = :QueryCode AND QuerySubCode=:QuerySubCode ");
-		selectSql.append(" AND QueryModule=:QueryModule");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<DedupParm> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupParm.class);
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			dedupParm = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, querySubCode, queryModule },
+					(rs, i) -> {
+						return getTypeRowMapper(rs);
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"DedupParams not found in DedupParams{} for the specified QueryCode >> {} and QuerySubCode >> {} and QueryModule >> {}",
 					type, id, querySubCode, queryModule);
-			dedupParm = null;
 		}
-		logger.debug("Leaving");
-		return dedupParm;
+
+		return null;
+	}
+
+	private DedupParm getTypeRowMapper(ResultSet rs) throws SQLException {
+		DedupParm dp = new DedupParm();
+
+		dp.setQueryId(rs.getLong("QueryId"));
+		dp.setQueryCode(rs.getString("QueryCode"));
+		dp.setQueryModule(rs.getString("QueryModule"));
+		dp.setQuerySubCode(rs.getString("QuerySubCode"));
+		dp.setQueryDesc(rs.getString("QueryDesc"));
+		dp.setSQLQuery(rs.getString("SQLQuery"));
+		dp.setActualBlock(rs.getString("ActualBlock"));
+		dp.setVersion(rs.getInt("Version"));
+		dp.setLastMntBy(rs.getLong("LastMntBy"));
+		dp.setLastMntOn(rs.getTimestamp("LastMntOn"));
+		dp.setRecordStatus(rs.getString("RecordStatus"));
+		dp.setRoleCode(rs.getString("RoleCode"));
+		dp.setNextRoleCode(rs.getString("NextRoleCode"));
+		dp.setTaskId(rs.getString("TaskId"));
+		dp.setNextTaskId(rs.getString("NextTaskId"));
+		dp.setRecordType(rs.getString("RecordType"));
+		dp.setWorkflowId(rs.getLong("WorkflowId"));
+
+		return dp;
+	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" QueryId, QueryCode, QueryModule, QuerySubCode, QueryDesc, SQLQuery, ActualBlock");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From DedupParams");
+		sql.append(StringUtils.trimToEmpty(type));
+		return sql;
 	}
 
 	/**
@@ -133,32 +155,17 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 */
 	@Override
 	public List<DedupParm> getDedupParmByModule(String queryModule, String querySubCode, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where QueryModule = ? and QuerySubCode = ?");
 
-		DedupParm dedupParm = new DedupParm();
-		dedupParm.setQueryModule(queryModule);
-		dedupParm.setQuerySubCode(querySubCode);
+		logger.trace(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select QueryId, QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" From DedupParams");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where QueryModule=:QueryModule ");
-		selectSql.append(" AND QuerySubCode=:QuerySubCode ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		RowMapper<DedupParm> typeRowMapper = BeanPropertyRowMapper.newInstance(DedupParm.class);
-
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-		logger.debug("Leaving");
-		return null;
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, queryModule);
+			ps.setString(2, querySubCode);
+		}, (rs, i) -> {
+			return getTypeRowMapper(rs);
+		});
 	}
 
 	/**
@@ -185,18 +192,16 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 */
 	@Override
 	public void delete(DedupParm dedupParm, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+		StringBuilder sql = new StringBuilder("Delete From DedupParams");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where QueryCode = ?");
 
-		StringBuilder deleteSql = new StringBuilder(" Delete From DedupParams");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where QueryCode =:QueryCode");
+		logger.trace(Literal.SQL + sql);
 
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				ps.setString(1, dedupParm.getQueryCode());
+			});
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -204,7 +209,6 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -221,30 +225,43 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 * 
 	 */
 	@Override
-	public long save(DedupParm dedupParm, String type) {
-		logger.debug("Entering");
-
-		if (dedupParm.getQueryId() == Long.MIN_VALUE) {
-			dedupParm.setQueryId(getNextValue("SeqDedupParams"));
-			logger.debug("get NextValue:" + dedupParm.getQueryId());
+	public long save(DedupParm dp, String type) {
+		if (dp.getQueryId() == Long.MIN_VALUE) {
+			dp.setQueryId(getNextValue("SeqDedupParams"));
 		}
 
-		StringBuilder insertSql = new StringBuilder(" Insert Into DedupParams");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (QueryId , QueryCode, QueryModule,QueryDesc, SQLQuery, ActualBlock, QuerySubCode ,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
-		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(
-				" Values(:QueryId , :QueryCode, :QueryModule,:QueryDesc, :SQLQuery, :ActualBlock, :QuerySubCode,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
-		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		StringBuilder sql = new StringBuilder("Insert Into DedupParams");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (QueryId, QueryCode, QueryModule, QueryDesc, SQLQuery, ActualBlock");
+		sql.append(", QuerySubCode, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.trace(Literal.SQL + sql);
 
-		logger.debug("Leaving");
-		return dedupParm.getQueryId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, dp.getQueryId());
+			ps.setString(index++, dp.getQueryCode());
+			ps.setString(index++, dp.getQueryModule());
+			ps.setString(index++, dp.getQueryDesc());
+			ps.setString(index++, dp.getSQLQuery());
+			ps.setString(index++, dp.getActualBlock());
+			ps.setString(index++, dp.getQuerySubCode());
+			ps.setInt(index++, dp.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(dp.getLastMntBy()));
+			ps.setTimestamp(index++, dp.getLastMntOn());
+			ps.setString(index++, dp.getRecordStatus());
+			ps.setString(index++, dp.getRoleCode());
+			ps.setString(index++, dp.getNextRoleCode());
+			ps.setString(index++, dp.getTaskId());
+			ps.setString(index++, dp.getNextTaskId());
+			ps.setString(index++, dp.getRecordType());
+			ps.setLong(index, JdbcUtil.setLong(dp.getWorkflowId()));
+		});
+
+		return dp.getQueryId();
 	}
 
 	/**
@@ -260,34 +277,52 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 * 
 	 */
 	@Override
-	public void update(DedupParm dedupParm, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder(" Update DedupParams");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set QueryId = :QueryId ,");
-		updateSql.append(" QueryDesc=:QueryDesc,SQLQuery = :SQLQuery,");
-		updateSql.append(" ActualBlock = :ActualBlock, ");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where QueryCode =:QueryCode AND QueryModule=:QueryModule");
-		updateSql.append(" AND QuerySubCode=:QuerySubCode");
+	public void update(DedupParm dp, String type) {
+		StringBuilder sql = new StringBuilder(" Update DedupParams");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set QueryId =  ?,QueryDesc = ?, SQLQuery = ?");
+		sql.append(", ActualBlock = ?, Version = ?, LastMntBy = ?, LastMntOn = ?");
+		sql.append(", RecordStatus= ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where QueryCode = ? and QueryModule = ? and QuerySubCode = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
+			sql.append(" and Version= ?-1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.trace(Literal.SQL + sql);
+
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, dp.getQueryId());
+			ps.setString(index++, dp.getQueryDesc());
+			ps.setString(index++, dp.getSQLQuery());
+			ps.setString(index++, dp.getActualBlock());
+			ps.setInt(index++, dp.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(dp.getLastMntBy()));
+			ps.setTimestamp(index++, dp.getLastMntOn());
+			ps.setString(index++, dp.getRecordStatus());
+			ps.setString(index++, dp.getRoleCode());
+			ps.setString(index++, dp.getNextRoleCode());
+			ps.setString(index++, dp.getTaskId());
+			ps.setString(index++, dp.getNextTaskId());
+			ps.setString(index++, dp.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(dp.getWorkflowId()));
+
+			ps.setString(index++, dp.getQueryCode());
+			ps.setString(index++, dp.getQueryModule());
+			ps.setString(index++, dp.getQuerySubCode());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index, dp.getVersion());
+			}
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -295,26 +330,24 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 *
 	 */
 	public List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup dedup, String sqlQuery) {
-		logger.debug("Entering");
-		List<CustomerDedup> rowTypes = null;
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" * FROM CustomersDedup_View ");
+		sql.append(StringUtils.trimToEmpty(sqlQuery));
+		sql.append(" AND custId != :custId");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT * FROM CustomersDedup_View ");
-		selectSql.append(StringUtils.trimToEmpty(sqlQuery));
-		selectSql.append(" AND custId != :custId ");
+		logger.trace(Literal.SQL + sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 		BeanPropertyRowMapper<CustomerDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerDedup.class);
 
 		try {
-			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			dedup = null;
+			logger.warn("Record is not found in CustomersDedup_View for the speficied Custid and Rule",
+					dedup.getCustId(), sqlQuery);
 		}
-		logger.debug("Leaving");
-		return rowTypes;
+
+		return null;
 	}
 
 	/**
@@ -322,26 +355,24 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 *
 	 */
 	public List<FinanceDedup> fetchFinDedupDetails(FinanceDedup dedup, String sqlQuery) {
-		logger.debug("Entering");
-		List<FinanceDedup> rowTypes = null;
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select * FROM FinanceDedup_View ");
+		sql.append(StringUtils.trimToEmpty(sqlQuery));
+		sql.append(" AND FinReference != :FinReference ");
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT * FROM FinanceDedup_View ");
-		selectSql.append(StringUtils.trimToEmpty(sqlQuery));
-		selectSql.append(" AND FinReference != :FinReference ");
+		logger.trace(Literal.SQL + sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedup);
 		BeanPropertyRowMapper<FinanceDedup> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceDedup.class);
 
 		try {
-			rowTypes = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			dedup = null;
+			logger.warn("Record is not found in FinanceDedup_View for the specified FinReference >> {} and Rule >> {}",
+					dedup.getFinReference(), sqlQuery);
 		}
-		logger.debug("Leaving");
-		return rowTypes;
+
+		return null;
 	}
 
 	/**
@@ -355,7 +386,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		sql.append(StringUtils.trimToEmpty(tableType));
 		sql.append(" Where MandInputInStage like ? and FinType = ? and IsActive = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -376,46 +407,37 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 
 	@Override
 	public List<String> getRuleFieldNames(String moduleType) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FieldName");
+		sql.append(" From DedupFields");
+		sql.append(" Where QueryModule = ?");
 
-		List<String> fieldNames = null;
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("QueryModule", moduleType);
-		StringBuilder selectSql = new StringBuilder(
-				" Select FieldName From DedupFields where QueryModule =:QueryModule");
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql);
 
-		try {
-			fieldNames = this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			fieldNames = new ArrayList<String>();
-		}
-		logger.debug("Leaving");
-		return fieldNames;
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, moduleType);
+		}, (rs, i) -> {
+			return rs.getString(1);
+		});
 	}
 
 	@Override
 	public List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		// mapSqlParameterSource.addValues(fielValueMap);
+		BeanPropertyRowMapper<CollateralSetup> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralSetup.class);
 
 		for (String key : fielValueMap.keySet()) {
 			mapSqlParameterSource.addValue(key.toUpperCase(), fielValueMap.get(key));
 		}
 
-		List<CollateralSetup> collateralSetups = null;
-		logger.debug("selectSql: " + query);
+		logger.trace(Literal.SQL + query);
 
 		try {
-			collateralSetups = this.jdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource,
-					BeanPropertyRowMapper.newInstance(CollateralSetup.class));
+			return this.jdbcTemplate.query(query.toUpperCase(), mapSqlParameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn("Exception: ", e);
 		}
-		logger.debug("Leaving");
-		return collateralSetups;
+
+		return null;
 	}
 }
