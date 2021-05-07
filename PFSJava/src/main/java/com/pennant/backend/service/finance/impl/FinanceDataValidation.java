@@ -5733,7 +5733,8 @@ public class FinanceDataValidation {
 			finEvent = PennantApplicationUtil.getEventCode(finSchdData.getFinanceMain().getFinStartDate());
 		} else {
 			for (FinFeeDetail finFeeDetail : finSchdData.getFinFeeDetailList()) {
-				if (StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())) {
+				if (StringUtils.isNotBlank(finFeeDetail.getFeeScheduleMethod())
+						&& !AccountEventConstants.ACCEVENT_ADDDBSN.equals(eventCode)){
 					String[] valueParm = new String[2];
 					valueParm[0] = "Fee Schedule Method";
 					valueParm[1] = finFeeDetail.getFeeTypeCode();
