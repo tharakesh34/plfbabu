@@ -2591,7 +2591,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	//Setting Customer filtersu
-	private void doSetCustomerFilters() {
+	public void doSetCustomerFilters() {
 		Filter[] filters = new Filter[1];
 		List<String> custCIFs = new ArrayList<>();
 		if (financeMainDialogCtrl != null && financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {

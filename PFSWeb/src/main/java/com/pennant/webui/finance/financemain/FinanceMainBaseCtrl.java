@@ -3377,6 +3377,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_CHEQUE:
 			chequeDetailDialogCtrl.doSetLabels(getFinBasicDetails());
+			if (ImplementationConstants.CHEQUE_ALLOW_CO_APP) {
+				chequeDetailDialogCtrl.doSetCustomerFilters();
+			}
 			break;
 		case AssetConstants.UNIQUE_ID_COVENANTTYPE:
 			if (ImplementationConstants.COVENANT_MODULE_NEW) {
