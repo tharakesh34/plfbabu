@@ -7234,8 +7234,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrcRepay"), this.allowGrcRepay);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_grcSchdMthd"), this.cbGrcSchdMthd);
-			readOnlyComponent(isReadOnly("FinanceMainDialog_AlwPlannedEmiHolidayInGrace"),
-					this.alwPlannedEmiHolidayInGrace);
+
+			if (finType.isalwPlannedEmiInGrc()) {
+				readOnlyComponent(isReadOnly("FinanceMainDialog_AlwPlannedEmiHolidayInGrace"),
+						this.alwPlannedEmiHolidayInGrace);
+			}
+
 		} else {
 			this.gb_gracePeriodDetails.setVisible(false);
 			readOnlyComponent(true, this.gracePeriodEndDate);
