@@ -32,79 +32,79 @@
 			<column name="OtherCaste" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="1.2" author="saiDurga.v">
 		<addColumn tableName="customers">
 			<column name="OtherReligion" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
- 
+
 	<changeSet id="1.3" author="saiDurga.v">
 		<addColumn tableName="customers">
 			<column name="NatureOfBusiness" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="1.4" author="saiDurga.v">
 		<addColumn tableName="customers">
 			<column name="EntityType" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="1.5" author="saiDurga.v">
 		<addColumn tableName="customers">
 			<column name="CustResidentialSts" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="1.6" author="saiDurga.v">
 		<addColumn tableName="customers">
 			<column name="Qualification" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="1.7" author="saiDurga.v">
 		<addColumn tableName="customers">
 			<column name="CustFlag" type="varchar(6)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.1" author="saiDurga.v">
 		<addColumn tableName="customers_temp">
 			<column name="OtherCaste" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.2" author="saiDurga.v">
 		<addColumn tableName="customers_temp">
 			<column name="OtherReligion" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
- 
+
 	<changeSet id="2.3" author="saiDurga.v">
 		<addColumn tableName="customers_temp">
 			<column name="NatureOfBusiness" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.4" author="saiDurga.v">
 		<addColumn tableName="customers_temp">
 			<column name="EntityType" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.5" author="saiDurga.v">
 		<addColumn tableName="customers_temp">
 			<column name="CustResidentialSts" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.6" author="saiDurga.v">
 		<addColumn tableName="customers_temp">
 			<column name="Qualification" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="2.7" author="saiDurga.v">
 		<addColumn tableName="customers_temp">
 			<column name="CustFlag" type="varchar(6)" />
@@ -869,7 +869,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="140" author="SaiDurga.V">
 		<createTable tableName="qualification">
 			<column name="code" type="varchar(8)">
@@ -1036,7 +1036,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="163" author="Lakshmin.N" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -1124,7 +1124,7 @@
 			<column name="VERIFICATION" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="180_pre" author="Lakshmin.N">
 		<sql>
 			<![CDATA[
@@ -1220,7 +1220,7 @@
 			<column name="VERIFICATION" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="200_pre" author="Lakshmin.N">
 		<sql>
 			<![CDATA[
@@ -1398,7 +1398,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="235.2" author="satish.s" dbms="mssql">
 		<comment>ST#12_TK#11</comment>
 		<sql>
@@ -1424,7 +1424,7 @@
 			<column name="LOCKINGPERIOD" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="236.3_pre" author="satish.s">
 		<comment>ST#12_TK#11</comment>
 		<sql>
@@ -1433,7 +1433,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="236.2" author="satish.s" dbms="mssql">
 		<comment>ST#12_TK#11</comment>
 		<sql>
@@ -1533,7 +1533,7 @@
 			<column name="vip" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="248.3_pre" author="saidurge.v">
 		<sql>
 			<![CDATA[
@@ -2853,21 +2853,21 @@
 	</changeSet>
 
 	<changeSet id="397" author="Venkatesh.ch">
-		<comment>TK#63  ST#10 </comment>
+		<comment>TK#63 ST#10 </comment>
 		<addColumn tableName="FinanceMain">
 			<column name="OfferId" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="398" author="Venkatesh.ch">
-		<comment>TK#63  ST#10 </comment>
+		<comment>TK#63 ST#10 </comment>
 		<addColumn tableName="FinanceMain_temp">
 			<column name="OfferId" type="varchar(20)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="399" author="Venkatesh.ch">
-		<comment>TK#63  ST#10 </comment>
+		<comment>TK#63 ST#10 </comment>
 		<addColumn tableName="RejectFinancemain">
 			<column name="OfferId" type="varchar(20)" />
 		</addColumn>
@@ -4020,14 +4020,14 @@
 	</changeSet>
 
 	<changeSet id="510" author="SaiDurga.V">
-		<comment> ST#4  TK#156?</comment>
+		<comment> ST#4 TK#156?</comment>
 		<addColumn tableName="blacklistcustomer">
 			<column name="address" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="511" author="SaiDurga.V">
-		<comment> ST#4  TK#156?</comment>
+		<comment> ST#4 TK#156?</comment>
 		<addColumn tableName="blacklistcustomer_temp">
 			<column name="address" type="varchar(2000)" />
 		</addColumn>
@@ -7225,7 +7225,7 @@
 					t1.recordtype,
 					t1.workflowid
 						FROM VasMovement t1	
-				]]>		
+				]]>
 		</createView>
 	</changeSet>
 
@@ -7478,7 +7478,7 @@
 			WHERE NOT (t1.finreference IN ( SELECT vasmovement_temp.finreference
            FROM vasmovement_temp)) AND NOT (t1.finreference IN ( SELECT vasmovement.finreference
            FROM vasmovement))
-			]]>		
+			]]>
 		</createView>
 	</changeSet>
 
@@ -7530,7 +7530,7 @@
 			WHERE NOT (EXISTS ( SELECT 1
 			FROM vasmovementdetails_temp
 				WHERE vasmovementdetails_temp.vasmovementid = t1.vasmovementid AND vasmovementdetails_temp.vasmovementdetailid = t1.vasmovementdetailid))
-			]]>		
+			]]>
 		</createView>
 	</changeSet>
 
@@ -7571,7 +7571,7 @@
 				
 				WHERE NOT (t1.finreference IN ( SELECT vasmovement_temp.finreference FROM vasmovement_temp))
 				AND NOT (t1.finreference IN ( SELECT vasmovement.finreference FROM vasmovement))
-				]]>		
+				]]>
 		</createView>
 	</changeSet>
 
@@ -7590,7 +7590,7 @@
 			FROM vasmovementdetails t1
 			WHERE NOT (EXISTS ( SELECT 1 FROM vasmovementdetails_temp WHERE vasmovementdetails_temp.vasmovementid = t1.vasmovementid AND vasmovementdetails_temp.vasmovementdetailid = t1.vasmovementdetailid
 			AND vasmovementdetails_temp.vasreference = t1.vasreference))
-			]]>		
+			]]>
 		</createView>
 	</changeSet>
 
@@ -15298,7 +15298,7 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="520" author="Lakshmi">
-		<comment>PSD#154437  TK#182</comment>
+		<comment>PSD#154437 TK#182</comment>
 		<sql>
 				<![CDATA[
 					DELETE from SMTparameters WHERE SYSPARMCODE='COAPP_BLACKLIST_DEDUP_REQ';
@@ -17085,41 +17085,43 @@ UNION ALL
 	<changeSet id="09" author="Ganesh.P">
 		<createView viewName="VASPROVIDERACCDETAIL_AVIEW" replaceIfExists="true">
 			SELECT T1.ID,
-			    T1.PROVIDERID,
-			    T5.DEALERNAME AS PROVIDERDESC,
-			    T1.ENTITYCODE,
-			    T2.ENTITYDESC,	
-			    T1.PAYMENTMODE,
-			    T3.BANKCODE,
-			    T4.BANKNAME,
-			    T1.BANKBRANCHID,
-			    T3.BRANCHDESC,
-			    T1.ACCOUNTNUMBER,
-			    T3.MICR AS MICRCODE,
-			    T3.IFSC AS IFSCCODE,
-				T3.BRANCHCODE,
-			    T1.RECEIVABLEADJUSTMENT,
-			    T1.RECONCILIATIONAMOUNT,
-			    T1.ACTIVE,
-			    T1.PARTNERBANKID,
-			    PB.PARTNERBANKCODE,
-    			PB.PARTNERBANKNAME,
-    			PB.BRANCHCITY,
-			    T1.VERSION,
-			    T1.LASTMNTBY,
-			    T1.LASTMNTON,
-			    T1.RECORDSTATUS,
-			    T1.ROLECODE,
-			    T1.NEXTROLECODE,
-			    T1.TASKID,
-			    T1.NEXTTASKID,
-			    T1.RECORDTYPE,
-			    T1.WORKFLOWID
+			T1.PROVIDERID,
+			T5.DEALERNAME AS PROVIDERDESC,
+			T1.ENTITYCODE,
+			T2.ENTITYDESC,
+			T1.PAYMENTMODE,
+			T3.BANKCODE,
+			T4.BANKNAME,
+			T1.BANKBRANCHID,
+			T3.BRANCHDESC,
+			T1.ACCOUNTNUMBER,
+			T3.MICR AS MICRCODE,
+			T3.IFSC AS IFSCCODE,
+			T3.BRANCHCODE,
+			T1.RECEIVABLEADJUSTMENT,
+			T1.RECONCILIATIONAMOUNT,
+			T1.ACTIVE,
+			T1.PARTNERBANKID,
+			PB.PARTNERBANKCODE,
+			PB.PARTNERBANKNAME,
+			PB.BRANCHCITY,
+			T1.VERSION,
+			T1.LASTMNTBY,
+			T1.LASTMNTON,
+			T1.RECORDSTATUS,
+			T1.ROLECODE,
+			T1.NEXTROLECODE,
+			T1.TASKID,
+			T1.NEXTTASKID,
+			T1.RECORDTYPE,
+			T1.WORKFLOWID
 			FROM VASPROVIDERACCDETAIL T1
 			JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
-			JOIN BANKBRANCHES T3 ON T3.BANKBRANCHID = T1.BANKBRANCHID
+			JOIN BANKBRANCHES T3 ON T3.BANKBRANCHID =
+			T1.BANKBRANCHID
 			LEFT JOIN BMTBANKDETAIL T4 ON T4.BANKCODE = T3.BANKCODE
-			JOIN AMTVEHICLEDEALER T5 ON T5.DEALERID = T1.PROVIDERID
+			JOIN AMTVEHICLEDEALER T5 ON T5.DEALERID =
+			T1.PROVIDERID
 			JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = T1.PARTNERBANKID
 		</createView>
 	</changeSet>
@@ -17143,82 +17145,87 @@ UNION ALL
 	<changeSet id="10" author="Ganesh.P">
 		<createView viewName="VASPROVIDERACCDETAIL_VIEW" replaceIfExists="true">
 			SELECT T1.ID,
-    			T1.PROVIDERID,
-    			T5.DEALERNAME AS PROVIDERDESC,
-    			T1.ENTITYCODE,
-    			T2.ENTITYDESC,
-    			T1.PAYMENTMODE,
-    			T3.BANKCODE,
-    			T4.BANKNAME,
-    			T1.BANKBRANCHID,
-			    T3.BRANCHDESC,
-			    T1.ACCOUNTNUMBER,
-			    T3.MICR AS MICRCODE,
-			    T3.IFSC AS IFSCCODE,
-				T3.BRANCHCODE,
-			    T1.RECEIVABLEADJUSTMENT,
-			    T1.RECONCILIATIONAMOUNT,
-			    T1.ACTIVE,
-			    T1.PARTNERBANKID,
-			    PB.PARTNERBANKCODE,
-    			PB.PARTNERBANKNAME,
-    			PB.BRANCHCITY,
-			    T1.VERSION,
-			    T1.LASTMNTBY,
-			    T1.LASTMNTON,
-			    T1.RECORDSTATUS,
-			    T1.ROLECODE,
-			    T1.NEXTROLECODE,
-			    T1.TASKID,
-			    T1.NEXTTASKID,
-			    T1.RECORDTYPE,
-			    T1.WORKFLOWID
+			T1.PROVIDERID,
+			T5.DEALERNAME AS PROVIDERDESC,
+			T1.ENTITYCODE,
+			T2.ENTITYDESC,
+			T1.PAYMENTMODE,
+			T3.BANKCODE,
+			T4.BANKNAME,
+			T1.BANKBRANCHID,
+			T3.BRANCHDESC,
+			T1.ACCOUNTNUMBER,
+			T3.MICR AS MICRCODE,
+			T3.IFSC AS IFSCCODE,
+			T3.BRANCHCODE,
+			T1.RECEIVABLEADJUSTMENT,
+			T1.RECONCILIATIONAMOUNT,
+			T1.ACTIVE,
+			T1.PARTNERBANKID,
+			PB.PARTNERBANKCODE,
+			PB.PARTNERBANKNAME,
+			PB.BRANCHCITY,
+			T1.VERSION,
+			T1.LASTMNTBY,
+			T1.LASTMNTON,
+			T1.RECORDSTATUS,
+			T1.ROLECODE,
+			T1.NEXTROLECODE,
+			T1.TASKID,
+			T1.NEXTTASKID,
+			T1.RECORDTYPE,
+			T1.WORKFLOWID
 			FROM VASPROVIDERACCDETAIL_TEMP T1
-			JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
-		    JOIN BANKBRANCHES T3 ON T3.BANKBRANCHID = T1.BANKBRANCHID
-			LEFT JOIN BMTBANKDETAIL T4 ON T4.BANKCODE = T3.BANKCODE
-			JOIN AMTVEHICLEDEALER T5 ON T5.DEALERID = T1.PROVIDERID
-			JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = T1.PARTNERBANKID
-			UNION ALL
-			SELECT T1.ID,
-			    T1.PROVIDERID,
-			    T5.DEALERNAME AS PROVIDERDESC,
-			    T1.ENTITYCODE,
-			    T2.ENTITYDESC,
-			    T1.PAYMENTMODE,
-			    T3.BANKCODE,
-			    T4.BANKNAME,
-			    T1.BANKBRANCHID,
-			    T3.BRANCHDESC,
-			    T1.ACCOUNTNUMBER,
-			    T3.MICR AS MICRCODE,
-			    T3.IFSC AS IFSCCODE,
-				T3.BRANCHCODE,
-			    T1.RECEIVABLEADJUSTMENT,
-			    T1.RECONCILIATIONAMOUNT,
-			    T1.ACTIVE,
-			    T1.PARTNERBANKID,
-			    PB.PARTNERBANKCODE,
-    			PB.PARTNERBANKNAME,
-    			PB.BRANCHCITY,
-			    T1.VERSION,
-			    T1.LASTMNTBY,
-			    T1.LASTMNTON,
-			    T1.RECORDSTATUS,
-			    T1.ROLECODE,
-			    T1.NEXTROLECODE,
-			    T1.TASKID,
-			    T1.NEXTTASKID,
-			    T1.RECORDTYPE,
-			    T1.WORKFLOWID
-			FROM VASPROVIDERACCDETAIL T1
 			JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
 			JOIN BANKBRANCHES T3 ON T3.BANKBRANCHID = T1.BANKBRANCHID
 			LEFT JOIN BMTBANKDETAIL T4 ON T4.BANKCODE = T3.BANKCODE
-			JOIN AMTVEHICLEDEALER T5 ON T5.DEALERID = T1.PROVIDERID
+			JOIN
+			AMTVEHICLEDEALER T5 ON T5.DEALERID = T1.PROVIDERID
 			JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = T1.PARTNERBANKID
-			WHERE NOT (EXISTS ( SELECT 1 FROM VASPROVIDERACCDETAIL_TEMP
-				WHERE VASPROVIDERACCDETAIL_TEMP.ID = T1.ID))
+			UNION
+			ALL
+			SELECT T1.ID,
+			T1.PROVIDERID,
+			T5.DEALERNAME AS PROVIDERDESC,
+			T1.ENTITYCODE,
+			T2.ENTITYDESC,
+			T1.PAYMENTMODE,
+			T3.BANKCODE,
+			T4.BANKNAME,
+			T1.BANKBRANCHID,
+			T3.BRANCHDESC,
+			T1.ACCOUNTNUMBER,
+			T3.MICR AS MICRCODE,
+			T3.IFSC AS IFSCCODE,
+			T3.BRANCHCODE,
+			T1.RECEIVABLEADJUSTMENT,
+			T1.RECONCILIATIONAMOUNT,
+			T1.ACTIVE,
+			T1.PARTNERBANKID,
+			PB.PARTNERBANKCODE,
+			PB.PARTNERBANKNAME,
+			PB.BRANCHCITY,
+			T1.VERSION,
+			T1.LASTMNTBY,
+			T1.LASTMNTON,
+			T1.RECORDSTATUS,
+			T1.ROLECODE,
+			T1.NEXTROLECODE,
+			T1.TASKID,
+			T1.NEXTTASKID,
+			T1.RECORDTYPE,
+			T1.WORKFLOWID
+			FROM VASPROVIDERACCDETAIL T1
+			JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+			JOIN BANKBRANCHES T3 ON T3.BANKBRANCHID =
+			T1.BANKBRANCHID
+			LEFT JOIN BMTBANKDETAIL T4 ON T4.BANKCODE = T3.BANKCODE
+			JOIN AMTVEHICLEDEALER T5 ON T5.DEALERID =
+			T1.PROVIDERID
+			JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = T1.PARTNERBANKID
+			WHERE NOT (EXISTS ( SELECT 1 FROM
+			VASPROVIDERACCDETAIL_TEMP
+			WHERE VASPROVIDERACCDETAIL_TEMP.ID = T1.ID))
 		</createView>
 	</changeSet>
 
@@ -17244,11 +17251,8 @@ UNION ALL
 		<dropUniqueConstraint constraintName="UO_vasmovementdetails_temp" tableName="vasmovementdetails_temp" />
 	</changeSet>
 
-	<!-- <changeSet id="21.0" author="rajesh.n">
-		<addNotNullConstraint tableName="VasMovementDetails_temp" columnName="vasMovementDetailId"
-			columnDataType="varchar(20)" />
-	</changeSet>
- -->
+	<!-- <changeSet id="21.0" author="rajesh.n"> <addNotNullConstraint tableName="VasMovementDetails_temp" columnName="vasMovementDetailId" 
+		columnDataType="varchar(20)" /> </changeSet> -->
 	<changeSet id="21.0.1" author="rajesh.n">
 		<addNotNullConstraint tableName="VasMovementDetails_temp" columnName="vasReference"
 			columnDataType="varchar(20)" />
@@ -17263,11 +17267,8 @@ UNION ALL
 		<dropUniqueConstraint constraintName="UK_vasmovementdetails" tableName="VasMovementDetails" />
 	</changeSet>
 
-	<!-- <changeSet id="22.0" author="rajesh.n">
-		<addNotNullConstraint tableName="VasMovementDetails" columnName="vasMovementDetailId"
-			columnDataType="varchar(20)" />
-	</changeSet>
- -->
+	<!-- <changeSet id="22.0" author="rajesh.n"> <addNotNullConstraint tableName="VasMovementDetails" columnName="vasMovementDetailId" 
+		columnDataType="varchar(20)" /> </changeSet> -->
 	<changeSet id="22.0.1" author="rajesh.n">
 		<addNotNullConstraint tableName="VasMovementDetails" columnName="vasReference" columnDataType="varchar(20)" />
 	</changeSet>
@@ -19354,7 +19355,7 @@ UNION ALL
 				LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE = T8.CUSTTYPECODE
 				LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
 			]]>
-	   </createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#1211.100.29_post" author="Gopal.p" dbms="postgresql">
@@ -20750,7 +20751,7 @@ UNION ALL
 				JOIN financemain t4 ON t3.reference = t4.finreference
 				WHERE t1.finevent = 'MANFEE'
 
-			]]>		
+			]]>
 		</createView>
 	</changeSet>
 
@@ -22462,7 +22463,7 @@ UNION ALL
 				FROM SUBVENTIONDETAILS T1 
 				WHERE NOT EXISTS (SELECT 1 FROM SUBVENTIONDETAILS_TEMP WHERE FINREFERENCE = T1.FINREFERENCE)
 			]]>
-	  	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="56" author="rajesh.n">
@@ -22477,7 +22478,7 @@ UNION ALL
 					T1.FUTUREVALUE, 
 					T1.CLOSINGBAL
 				FROM SUBVENTIONSCHEDULEDETAIL T1	
-			]]>			
+			]]>
 		</createView>
 	</changeSet>
 
@@ -22520,7 +22521,7 @@ UNION ALL
 					T1.CLOSINGBAL
 				FROM SUBVENTIONSCHEDULEDETAIL T1
 				WHERE NOT EXISTS (SELECT 1 FROM SUBVENTIONSCHEDULEDETAIL_TEMP WHERE FINREFERENCE = T1.FINREFERENCE AND DISBSEQID = T1.DISBSEQID)
-			]]>			
+			]]>
 		</createView>
 	</changeSet>
 
@@ -23115,17 +23116,17 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="525" author="lakshmi.n">
 		<comment>PSD # 156906 </comment>
-			<sql>
+		<sql>
 				<![CDATA[
 					DELETE FROM ERRORDETAILS WHERE CODE = '60214';
 					INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('60214', 'EN', 'W', 'All the VAS instructions of the loan are not cancelled. Do you want proceed to cancel the loan ?','', 'Approved', '', '', '', '', '', 0, current_timestamp, 1000, 1);
 				]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="PSD#158198" author="venkatesh.ch">
 		<sql>
 			<![CDATA[
@@ -23144,7 +23145,7 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="528" author="Mangapathi">
-	<comment> TK#332 </comment>
+		<comment> TK#332 </comment>
 		<sql>
 			<![CDATA[
 			INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(rightid)+1  from Secrights), 0, 'menuItem_RulesFactory_BRERules', 'MENU', 1, 1000, current_timestamp, null, null, null, null, null, null, 0);
@@ -23153,7 +23154,7 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="529" author="Venkatesh.ch">
-	<comment> TK#158845 </comment>
+		<comment> TK#158845 </comment>
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'FORECLOSURE_VALIDITY_DAYS';
@@ -23169,7 +23170,7 @@ UNION ALL
 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((select max(RIGHTID)+1 from SecRights), 3, 'VehicleDealerDialog_RCUVAGENCY_branch', 'VehicleDealerDialog', 0, 1000, current_timestamp, 'Approved', null, null, null, null, '', 0);
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPRIGHTID)+1 from SECGROUPRIGHTS), (select grpid from secgroups where grpcode = 'DEALER_MAKER'), (select RightID from SecRights WHERE RightName = 'VehicleDealerDialog_RCUVAGENCY_branch'), 1, 0, 10000, current_timestamp, 'Approved', null, null, null, null, '', 0);
 			]]>
-		</sql> 	
+		</sql>
 	</changeSet>
 
 	<changeSet id="532" author="mangapathi.s">
@@ -23318,6 +23319,7 @@ UNION ALL
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'COVENANT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CovenantDialog_AdditionalRemarks'), 1, 0,1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
 			]]>
 		</sql>
+
 	</changeSet>
 
 	<changeSet id="546" author="praveena.v">
@@ -23368,23 +23370,22 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="706_pre" author="Lakshmi.N" dbms="mssql">
-    	<dropPrimaryKey constraintName="pk_finblacklistdetail" tableName="finblacklistdetail"/>
+		<dropPrimaryKey constraintName="pk_finblacklistdetail" tableName="finblacklistdetail" />
 	</changeSet>
 
 	<changeSet id="706" author="Lakshmi.N">
 		<modifyDataType tableName="finblacklistdetail" columnName="sourcecif" newDataType="nvarchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="707" author="Lakshmi.N" dbms="mssql">
 		<addNotNullConstraint tableName="finblacklistdetail" columnName="sourcecif" columnDataType="nvarchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="706_post" author="Lakshmi.N" dbms="mssql">
-    	<addPrimaryKey columnNames="FinReference, CustCIF, sourcecif"
-            constraintName="pk_finblacklistdetail"
-            tableName="finblacklistdetail"/>
+		<addPrimaryKey columnNames="FinReference, CustCIF, sourcecif" constraintName="pk_finblacklistdetail"
+			tableName="finblacklistdetail" />
 	</changeSet>
 
 	<changeSet id="707.0" author="Lakshmi.N">
@@ -23394,9 +23395,9 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="710_pre" author="Lakshmi.N" dbms="mssql">
-    	<dropPrimaryKey constraintName="pk_rejectfinblacklistdetail" tableName="RejectFinBlackListDetail"/>
+		<dropPrimaryKey constraintName="pk_rejectfinblacklistdetail" tableName="RejectFinBlackListDetail" />
 	</changeSet>
 
 	<changeSet id="710" author="Lakshmi.N">
@@ -23732,7 +23733,7 @@ UNION ALL
 	<changeSet id="925" author="praveena.v">
 		<dropPrimaryKey constraintName="pk_financesteppolicydetail" tableName="finsteppolicydetail" />
 	</changeSet>
-	
+
 	<changeSet id="926_pre" author="Sai">
 		<addNotNullConstraint tableName="finsteppolicydetail" columnName="stepSpecifier" columnDataType="varchar(5)" />
 	</changeSet>
@@ -23745,9 +23746,10 @@ UNION ALL
 	<changeSet id="927" author="praveena.v">
 		<dropPrimaryKey constraintName="pk_finsteppolicydetail_temp" tableName="finsteppolicydetail_temp" />
 	</changeSet>
-	
+
 	<changeSet id="928_pre" author="Sai">
-		<addNotNullConstraint tableName="finsteppolicydetail_temp" columnName="stepSpecifier" columnDataType="varchar(5)" />
+		<addNotNullConstraint tableName="finsteppolicydetail_temp" columnName="stepSpecifier"
+			columnDataType="varchar(5)" />
 	</changeSet>
 
 	<changeSet id="928" author="praveena.v">
@@ -24117,9 +24119,9 @@ UNION ALL
 		<addForeignKeyConstraint constraintName="FK_RCAL_FRH_RID" referencedTableName="FinReceiptHeader"
 			baseColumnNames="Receipt_Id" baseTableName="COLLECTION_MOB_AGENCY_LIMITS" referencedColumnNames="ReceiptID" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.17.6.1_pre" author="kavya.n" dbms="mssql">
-    	<addPrimaryKey columnNames="SeqId" constraintName="pk_interfacelogdetails"  tableName="INTERFACELOGDETAILS"/>
+		<addPrimaryKey columnNames="SeqId" constraintName="pk_interfacelogdetails" tableName="INTERFACELOGDETAILS" />
 	</changeSet>
 
 	<changeSet id="ST#1627.17.6.1" author="kavya.n">
@@ -24174,7 +24176,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1627.25.3_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -24451,7 +24453,7 @@ UNION ALL
 				LEFT JOIN CUSTOMERS T14 ON CAST(T14.CUSTID AS VARCHAR(20)) = T1.REFERENCE
 				WHERE T1.RECEIPTTYPE = 'N'
 			]]>
-    	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#1627.26.4_post" author="kavya.n" dbms="postgresql">
@@ -24587,7 +24589,7 @@ UNION ALL
 				LEFT JOIN BMTBANKDETAIL T7 ON T2.BANKCODE = T7.BANKCODE 
 				WHERE T1.RECEIPTTYPE = 'N' AND NOT EXISTS(SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
 			]]>
-    	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#1627.27.1_post" author="kavya.n" dbms="postgresql">
@@ -24716,7 +24718,7 @@ UNION ALL
 		        LEFT JOIN PARTNERBANKMODES T1 ON T.PARTNERBANKID = T1.PARTNERBANKID
 		        WHERE Purpose='R'
 		    ]]>
-	    </createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#1627.29_post" author="kavya.n" dbms="postgresql">
@@ -28850,7 +28852,7 @@ UNION ALL
 					T1.INSTBASEDSCHD,
 					T1.TDSTYPE
 				FROM RMTFINANCETYPES T1
-			]]>	
+			]]>
 		</createView>
 	</changeSet>
 
@@ -30690,9 +30692,9 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	<!-- HL- Loan type workflow configuring into Core  -->
-	
+
+	<!-- HL- Loan type workflow configuring into Core -->
+
 	<changeSet id="1" author="Gopal">
 		<sql>
 			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='HL_LOAN';
@@ -30706,7 +30708,8 @@ UNION ALL
 			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
-			<column name="WorkFlowRoles">HL_QDE;HL_DDE;HL_CO;HL_CREDIT;CREDIT_CHIEF_RISK_OFFICER;HL_COLLATERAL;HL_TVAPPROVAL;HL_CREDIT_FINAL;HL_CREDIT_ZCM_FINAL;HL_CREDIT_COMMITTEE_FINAL;HL_PSV;HL_BRANCHOPS_MAKER;HL_OPSMAKER2;HL_CRM;HL_BRANCHOPS_APPROVER;CREDIT_CHIEF_RISK_OFFICER_FINAL;CREDIT_LOCATION_HEAD_FINAL;CREDIT_HEAD_POLICY_FINAL;HL_LVAPPROVAL;HL_CREDIT_ZCM;CREDIT_HEAD_POLICY;CREDIT_LOCATION_HEAD;HL_COMMITTEE;HL_BREAPR;HL_DEVIATION_BREAPP</column>
+			<column name="WorkFlowRoles">HL_QDE;HL_DDE;HL_CO;HL_CREDIT;CREDIT_CHIEF_RISK_OFFICER;HL_COLLATERAL;HL_TVAPPROVAL;HL_CREDIT_FINAL;HL_CREDIT_ZCM_FINAL;HL_CREDIT_COMMITTEE_FINAL;HL_PSV;HL_BRANCHOPS_MAKER;HL_OPSMAKER2;HL_CRM;HL_BRANCHOPS_APPROVER;CREDIT_CHIEF_RISK_OFFICER_FINAL;CREDIT_LOCATION_HEAD_FINAL;CREDIT_HEAD_POLICY_FINAL;HL_LVAPPROVAL;HL_CREDIT_ZCM;CREDIT_HEAD_POLICY;CREDIT_LOCATION_HEAD;HL_COMMITTEE;HL_BREAPR;HL_DEVIATION_BREAPP
+			</column>
 			<column name="FirstTaskOwner">HL_QDE</column>
 			<column name="WorkFlowActive">1</column>
 			<column name="Version">5</column>
@@ -32179,9 +32182,9 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 </definitions>]]></column>
 			<where>workflowtype='HL_LOAN' and workflowactive=1
 			</where>
-			</update>
-		</changeSet>
-		
+		</update>
+	</changeSet>
+
 	<changeSet id="PSD#171308.1_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -32241,7 +32244,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#171309.1" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -32250,7 +32253,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#168759.1" author="bhaskar.m">
 		<dropForeignKeyConstraint baseTableName="secusr_reporting_managers_temp" constraintName="fk_reportmng_usrid_t" />
 	</changeSet>
@@ -32265,7 +32268,8 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 
 	<changeSet id="PSD#172188" author="Gopal.p">
 		<createView viewName="CUSTOMERSDEDUP_VIEW" replaceIfExists="true">
-       		SELECT T1.CUSTID,
+			<![CDATA[
+				SELECT T1.CUSTID,
 			    T1.CUSTCIF,
 			    T1.CUSTFNAME,
 			    T1.CUSTLNAME,
@@ -32302,25 +32306,26 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		    LEFT JOIN RMTCUSTTYPES T2 ON T1.CUSTTYPECODE = T2.CUSTTYPECODE
 		    LEFT JOIN CASTE T3 ON T1.CASTEID = T3.CASTEID
 		    LEFT JOIN RELIGION T4 ON T1.RELIGIONID = T4.RELIGIONID
-		    LEFT JOIN CUSTOMERDOCUMENTS CDA ON CDA.CUSTID = T1.CUSTID AND CDA.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+		    LEFT JOIN CUSTOMERDOCUMENTS CDA ON CDA.CUSTID = T1.CUSTID AND CDA.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'AADHAAR')))
-		    LEFT JOIN CUSTOMERDOCUMENTS CDP ON CDP.CUSTID = T1.CUSTID AND CDP.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+		    LEFT JOIN CUSTOMERDOCUMENTS CDP ON CDP.CUSTID = T1.CUSTID AND CDP.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'PAN')))
-		    LEFT JOIN CUSTOMERDOCUMENTS CDPP ON CDPP.CUSTID = T1.CUSTID AND CDPP.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+		    LEFT JOIN CUSTOMERDOCUMENTS CDPP ON CDPP.CUSTID = T1.CUSTID AND CDPP.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'PASSPORT')))
-                    LEFT JOIN CUSTOMERDOCUMENTS CDVI ON CDVI.CUSTID = T1.CUSTID AND CDVI.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+                    LEFT JOIN CUSTOMERDOCUMENTS CDVI ON CDVI.CUSTID = T1.CUSTID AND CDVI.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'VOTER_ID')))
-                    LEFT JOIN CUSTOMERDOCUMENTS CDRC ON CDRC.CUSTID = T1.CUSTID AND CDRC.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+                    LEFT JOIN CUSTOMERDOCUMENTS CDRC ON CDRC.CUSTID = T1.CUSTID AND CDRC.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
+
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'RATION_CARD')))
-                    LEFT JOIN CUSTOMERDOCUMENTS CDLPG ON CDLPG.CUSTID = T1.CUSTID AND CDLPG.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+                    LEFT JOIN CUSTOMERDOCUMENTS CDLPG ON CDLPG.CUSTID = T1.CUSTID AND CDLPG.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'LPG_NUMBER')))
-                    LEFT JOIN CUSTOMERDOCUMENTS CDDL ON CDDL.CUSTID = T1.CUSTID AND CDDL.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+                    LEFT JOIN CUSTOMERDOCUMENTS CDDL ON CDDL.CUSTID = T1.CUSTID AND CDDL.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'DRIVING_LICENCE')))
 		    LEFT JOIN CUSTOMEREMAILS T6 ON T1.CUSTID = T6.CUSTID AND T6.CUSTEMAILPRIORITY = 5
@@ -32363,34 +32368,35 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		   LEFT JOIN RMTCUSTTYPES T2 ON T1.CUSTTYPECODE = T2.CUSTTYPECODE
 		   LEFT JOIN CASTE T3 ON T1.CASTEID = T3.CASTEID
 		   LEFT JOIN RELIGION T4 ON T1.RELIGIONID = T4.RELIGIONID
-		   LEFT JOIN CUSTOMERDOCUMENTS CDA ON CDA.CUSTID = T1.CUSTID AND CDA.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+		   LEFT JOIN CUSTOMERDOCUMENTS CDA ON CDA.CUSTID = T1.CUSTID AND CDA.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'AADHAAR')))
-		   LEFT JOIN CUSTOMERDOCUMENTS CDP ON CDP.CUSTID = T1.CUSTID AND CDP.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+		   LEFT JOIN CUSTOMERDOCUMENTS CDP ON CDP.CUSTID = T1.CUSTID AND CDP.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'PAN')))
-		   LEFT JOIN CUSTOMERDOCUMENTS CDPP ON CDPP.CUSTID = T1.CUSTID AND CDPP.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+		   LEFT JOIN CUSTOMERDOCUMENTS CDPP ON CDPP.CUSTID = T1.CUSTID AND CDPP.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'PASSPORT')))
-           LEFT JOIN CUSTOMERDOCUMENTS CDVI ON CDVI.CUSTID = T1.CUSTID AND CDVI.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+           LEFT JOIN CUSTOMERDOCUMENTS CDVI ON CDVI.CUSTID = T1.CUSTID AND CDVI.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'VOTER_ID')))
-           LEFT JOIN CUSTOMERDOCUMENTS CDRC ON CDRC.CUSTID = T1.CUSTID AND CDRC.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+           LEFT JOIN CUSTOMERDOCUMENTS CDRC ON CDRC.CUSTID = T1.CUSTID AND CDRC.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'RATION_CARD')))
-           LEFT JOIN CUSTOMERDOCUMENTS CDLPG ON CDLPG.CUSTID = T1.CUSTID AND CDLPG.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+           LEFT JOIN CUSTOMERDOCUMENTS CDLPG ON CDLPG.CUSTID = T1.CUSTID AND CDLPG.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'LPG_NUMBER')))
-           LEFT JOIN CUSTOMERDOCUMENTS CDDL ON CDDL.CUSTID = T1.CUSTID AND CDDL.CUSTDOCCATEGORY = ((( SELECT MASTER_DEF.KEY_CODE
+           LEFT JOIN CUSTOMERDOCUMENTS CDDL ON CDDL.CUSTID = T1.CUSTID AND CDDL.CUSTDOCCATEGORY in ((( SELECT MASTER_DEF.KEY_CODE
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'DRIVING_LICENCE')))
 		   LEFT JOIN CUSTOMEREMAILS T6 ON T1.CUSTID = T6.CUSTID AND T6.CUSTEMAILPRIORITY = 5
 		   LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID
 		   WHERE NOT (EXISTS ( SELECT 1 FROM CUSTOMERS_TEMP
 				WHERE CUSTOMERS_TEMP.CUSTID = T1.CUSTID))
+			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#172188_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -32398,7 +32404,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#172188.1" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -32408,7 +32414,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="PSD#171806.1" author="naveenkumar.a">
 		<sql>
 			<![CDATA[
@@ -32417,5 +32423,5 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
