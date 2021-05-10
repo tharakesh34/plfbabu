@@ -508,9 +508,13 @@ public class PostingsPreparationUtil implements Serializable {
 
 		validateCreditandDebitAmounts(aeEvent);
 
-		String entityCode = aeEvent.getEventProperties().getEntityCode();
-
-		returnDatasetList.stream().forEach(r -> r.setEntityCode(entityCode));
+		returnDatasetList.stream().forEach(r -> {
+			String entityCode = aeEvent.getEntityCode();
+			if (entityCode == null) {
+				entityCode = aeEvent.getEventProperties().getEntityCode();
+			}
+			r.setEntityCode(entityCode);
+		});
 
 		postingsDAO.saveBatch(returnDatasetList, isNewTranID);
 

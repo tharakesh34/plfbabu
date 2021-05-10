@@ -42,6 +42,8 @@
  */
 package com.pennant.app.constants;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class AccountEventConstants {
 
 	public AccountEventConstants() {
@@ -141,5 +143,15 @@ public class AccountEventConstants {
 	public static final String EVENTCTG_OVERDRAFT = "O";
 	public static final String EVENTCTG_GOLD = "G";
 	public static final String EVENTCTG_CD = "C";
+	
+	public static boolean isDisbursementEvent(String eventCode) {
+		if (StringUtils.isEmpty(eventCode)) {
+			return false;
+		}
+		return eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBS)
+				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSF)
+				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSN)
+				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP);
+	}
 
 }

@@ -123,19 +123,16 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 		boolean disbursements = false;
 		boolean payments = false;
-		boolean insurances = false;
-
+		
 		for (DataEngineStatus dataEngineStatus : list) {
 			if (!"S".equals(dataEngineStatus.getStatus())) {
 				long btachId = dataEngineStatus.getId();
 				String disbursementType = dataEngineStatus.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
 				for (DisbursementRequest request : disbursementRequest.getDisbursementRequests()) {
-					if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
-						disbursements = true;
-					} else if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
+					if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
 						payments = true;
-					} else if (PaymentChannel.Insurance.getValue().equals(request.getChannel())) {
-						insurances = true;
+					} else {
+						disbursements = true;
 					}
 				}
 
@@ -145,7 +142,6 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 				req.setDisbursementType(disbursementType);
 				req.setDisbursements(disbursements);
 				req.setPayments(payments);
-				req.setInsurances(insurances);
 				req.setUserId(disbursementRequest.getUserId());
 				req.setStatus("APPROVED");
 
@@ -176,12 +172,10 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 				Long btachId = ds.getId();
 				String disbursementType = ds.getKeyAttributes().get("DISBURSEMENT_TYPE").toString();
 				for (DisbursementRequest request : disbursementRequest.getDisbursementRequests()) {
-					if (PaymentChannel.Disbursement.getValue().equals(request.getChannel())) {
-						disbursements = true;
-					} else if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
+					if (PaymentChannel.Payment.getValue().equals(request.getChannel())) {
 						payments = true;
-					} else if (PaymentChannel.Insurance.getValue().equals(request.getChannel())) {
-						insurances = true;
+					} else {
+						disbursements = true;
 					}
 				}
 
@@ -191,7 +185,6 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 				req.setDisbursementType(disbursementType);
 				req.setDisbursements(disbursements);
 				req.setPayments(payments);
-				req.setInsurances(insurances);
 				req.setUserId(disbursementRequest.getUserId());
 
 				if (ds.getFileName() != null) {

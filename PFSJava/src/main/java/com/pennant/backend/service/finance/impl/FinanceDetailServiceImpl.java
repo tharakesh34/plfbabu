@@ -4787,10 +4787,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					exdDetails = extendedFieldDetailsService.processingExtendedFieldDetailList(exdDetails,
 							VASConsatnts.MODULE_NAME, null, "", serviceUID);
 					auditDetails.addAll(exdDetails);
-
-					insuranceDetailService.doApproveVASInsurance(finScheduleData.getVasRecordingList(),
-							financeMain.getUserDetails(), financeDetail);
-
 				}
 
 				saveFinExpenseDetails(financeMain);
@@ -11390,11 +11386,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceScheduleDetailDAO().getFinSchduleDetails(finReference, schdDate, false);
 	}
 
-	@Override
-	public List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
-		return processVasAccounting(aeEvent, vasRecordings, false);
-	}
-
 	// ******************************************************//
 	// *************** EOD PROCESS Details ******************//
 	// ******************************************************//
@@ -11509,11 +11500,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		return txnAmount;
-	}
-
-	@Override
-	public List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings) {
-		return processInsPayAccounting(aeEvent, vasRecordings, false);
 	}
 
 	// ******************************************************//
@@ -13143,12 +13129,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				.multiply(childLoanAmt.divide(totalLoanAmt, MathContext.DECIMAL64));
 		return collateralAssignmentPerc;
 
-	}
-
-	@Override
-	public List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings,
-			FinanceDetail financeDetail) {
-		return processInsPayAccounting(aeEvent, vasRecordings, false, financeDetail);
 	}
 
 	public ReasonDetailDAO getReasonDetailDAO() {

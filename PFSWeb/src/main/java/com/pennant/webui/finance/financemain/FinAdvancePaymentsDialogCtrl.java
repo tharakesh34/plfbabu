@@ -998,7 +998,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					auditHeader = ErrorControl.showErrorDetails(this.window_FinAdvancePaymentsDialog, auditHeader);
 					int retValue = auditHeader.getProcessStatus();
 					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-						if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+						if (!ImplementationConstants.VAS_INST_ON_DISB) {
 							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
 									null);
 						} else {
@@ -1263,8 +1263,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				aFinAdvnancePayments.getAmtToBeReleased());
 		fillComboBox(this.vasReference, aFinAdvnancePayments.getVasReference(), vasReferenceList, "");
 		doChangePaymentDetails(aFinAdvnancePayments.getPaymentDetail());
-		if (StringUtils.equalsIgnoreCase(aFinAdvnancePayments.getPaymentDetail(),
-				DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+		if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(aFinAdvnancePayments.getPaymentDetail())) {
 			this.vasAmount.setValue(PennantAppUtil
 					.formateAmount(vasAmountsMAP.get(aFinAdvnancePayments.getVasReference()), ccyFormatter));
 		}
@@ -1978,7 +1977,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 							getFinAdvancePaymentsListCtrl()
 									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, vasRecordingList);
 						} else {
-							if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+							if (!ImplementationConstants.VAS_INST_ON_DISB) {
 								getPayOrderIssueDialogCtrl()
 										.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
 							} else {
@@ -2122,7 +2121,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						getFinAdvancePaymentsListCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
 								vasRecordingList);
 					} else {
-						if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+						if (!ImplementationConstants.VAS_INST_ON_DISB) {
 							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
 									null);
 						} else {
@@ -2685,7 +2684,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		for (FinAdvancePayments finAdvPayments : list) {
-			if (StringUtils.equals(finAdvPayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+			if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(finAdvPayments.getPaymentDetail())) {
 				continue;
 			}
 			if (finAdvPayments.getDisbSeq() == disbursement.getDisbSeq()) {
@@ -2788,7 +2787,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 */
 	private void doChangePaymentDetails(String paymentFor) {
 		logger.debug(Literal.ENTERING);
-		if (StringUtils.equals(paymentFor, DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+		if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(paymentFor)) {
 			this.row_DisbDate.setVisible(false);
 			this.row_vasReference.setVisible(true);
 			this.row_disbdetails.setVisible(false);
@@ -2856,7 +2855,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (CollectionUtils.isNotEmpty(finAdvancePaymentsDetails)) {
 			int count = 0;
 			for (FinAdvancePayments finAdvPayments : finAdvancePaymentsDetails) {
-				if (!StringUtils.equals(finAdvPayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
+				if (!DisbursementConstants.PAYMENT_DETAIL_VAS.equals(finAdvPayments.getPaymentDetail())) {
 					continue;
 				}
 				if (DisbursementInstCtrl.isDeleteRecord(finAdvPayments)) {

@@ -1,7 +1,5 @@
 package com.pennant.backend.dao.payment.impl;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,10 +15,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
-import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -35,18 +29,17 @@ public class PaymentProcessImpl implements PaymentProcess {
 	private BeneficiaryDAO beneficiaryDAO;
 	private PaymentDetailService paymentDetailService;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	private InsuranceDetailService insuranceDetailService;
 	private PlatformTransactionManager transactionManager;
 	private static String PAID_STATUS = "E";
 	private static String REALIZED_STATUS = "P";
 
 	@Override
-	public int processPayment(PaymentInstruction paymentInstruction) {
+	public int processPayment(PaymentInstruction pi) {
 		int count = 0;
 
 		try {
 			String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
-			String finReference = paymentInstruction.getFinReference();
+			String finReference = pi.getFinReference();
 			FinanceMain fm = financeMainDAO.getDisbursmentFinMainById(finReference, TableType.MAIN_TAB);
 
 			if (StringUtils.isNotBlank(disbStatus)) {
@@ -54,36 +47,32 @@ public class PaymentProcessImpl implements PaymentProcess {
 			}
 			//In case of IMD or excess amount processing there is a chance of LAN in temp queue.
 			if (fm == null) {
-				fm = financeMainDAO.getDisbursmentFinMainById(paymentInstruction.getFinReference(), TableType.TEMP_TAB);
+				fm = financeMainDAO.getDisbursmentFinMainById(pi.getFinReference(), TableType.TEMP_TAB);
 			}
 
-			String paymentType = paymentInstruction.getPaymentType();
+			String paymentType = pi.getPaymentType();
 
 			//E -> PAID 
-			if (StringUtils.equals(PAID_STATUS, paymentInstruction.getStatus())
-					|| DisbursementConstants.STATUS_PAID.equals(paymentInstruction.getStatus())) {
-				paymentInstruction.setStatus(DisbursementConstants.STATUS_PAID);
-			} else if (StringUtils.equals("P", paymentInstruction.getStatus())//P->REALIZED
-					|| DisbursementConstants.STATUS_REALIZED.equals(paymentInstruction.getStatus())) {
-				paymentInstruction.setStatus(DisbursementConstants.STATUS_REALIZED);
+			String status = pi.getStatus();
+			if (PAID_STATUS.equals(status) || DisbursementConstants.STATUS_PAID.equals(status)) {
+				pi.setStatus(DisbursementConstants.STATUS_PAID);
+			} else if (REALIZED_STATUS.equals(status) || DisbursementConstants.STATUS_REALIZED.equals(status)) {
+				pi.setStatus(DisbursementConstants.STATUS_REALIZED);
 			} else {
-				paymentDetailService.paymentReversal(paymentInstruction);
-				AEEvent aeEvent = new AEEvent();
-				aeEvent.setLinkedTranId(paymentInstruction.getLinkedTranId());
-				postingsPreparationUtil.postReversalsByLinkedTranID(paymentInstruction.getLinkedTranId());
-
-				paymentInstruction.setStatus(DisbursementConstants.STATUS_REJECTED);
+				paymentDetailService.paymentReversal(pi);
+				postingsPreparationUtil.postReversalsByLinkedTranID(pi.getLinkedTranId());
+				pi.setStatus(DisbursementConstants.STATUS_REJECTED);
 			}
 
 			if (DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
 					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
-				addToCustomerBeneficiary(paymentInstruction, fm.getCustID());
+				addToCustomerBeneficiary(pi, fm.getCustID());
 			}
 
 			// update paid or rejected
-			count = paymentDetailService.updatePaymentStatus(paymentInstruction);
+			count = paymentDetailService.updatePaymentStatus(pi);
 
 		} catch (Exception e) {
 			throw e;
@@ -113,57 +102,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	//Processing the Insurance payments 
-	@Override
-	public int processInsPayment(InsurancePaymentInstructions instruction) {
-		logger.debug(Literal.ENTERING);
-		int count = 0;
-		try {
-
-			String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
-			if (StringUtils.isNotBlank(disbStatus)) {
-				PAID_STATUS = disbStatus;
-			}
-
-			String paymentType = instruction.getPaymentType();
-
-			String status = instruction.getStatus();
-			if (PAID_STATUS.equals(status)) {
-				instruction.setStatus(DisbursementConstants.STATUS_PAID);
-				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
-				}
-			} else if (REALIZED_STATUS.equals(status)) {
-				instruction.setStatus(DisbursementConstants.STATUS_REALIZED);
-				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
-				}
-			} else {
-				if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-					AEEvent aeEvent = new AEEvent();
-					aeEvent.setLinkedTranId(instruction.getLinkedTranId());
-					List<ReturnDataSet> list = postingsPreparationUtil
-							.postReversalsByLinkedTranID(instruction.getLinkedTranId());
-					aeEvent.setReturnDataSet(list);
-					aeEvent = postingsPreparationUtil.processPostings(aeEvent);
-				}
-				instruction.setStatus(DisbursementConstants.STATUS_REJECTED);
-			}
-			// addToCustomerBeneficiary(instruction, financeMain.getCustID()); FIXME to check the benficiary  adding required
-			if (DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentType)
-					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
-					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
-					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
-			}
-			// update paid or rejected
-			count = insuranceDetailService.updatePaymentStatus(instruction);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return count;
 	}
 
 	public void addToCustomerBeneficiary(PaymentInstruction instruction, long cusID) {
@@ -213,17 +151,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 		logger.debug(Literal.LEAVING);
 	}
 
-	@Override
-	public PaymentInstruction getPaymentInstruction(long paymentId) {
-		PaymentInstruction paymentInstruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
-
-		if (paymentInstruction == null) {
-			paymentInstruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");
-		}
-
-		return paymentInstruction;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -238,10 +165,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
-		this.insuranceDetailService = insuranceDetailService;
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {

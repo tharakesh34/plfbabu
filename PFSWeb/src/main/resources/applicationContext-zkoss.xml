@@ -1641,7 +1641,6 @@
 		<property name="dedupValidation" ref="dedupValidation" />
 		<property name="reScheduleService" ref="reScheduleService" />
 		<property name="accrualService" ref="accrualService" />
-		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="installmentDueService" ref="installmentDueService" />
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="pdfParserCaller" ref="pdfParserCaller" />
@@ -2422,7 +2421,6 @@
 		scope="prototype">
 		<property name="payOrderIssueService" ref="payOrderIssueService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
 		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
 		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
@@ -5550,7 +5548,6 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
-		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="cashBackProcessService" ref="cashBackProcessService" />
 		<property name="promotionDAO" ref="promotionDAO" />

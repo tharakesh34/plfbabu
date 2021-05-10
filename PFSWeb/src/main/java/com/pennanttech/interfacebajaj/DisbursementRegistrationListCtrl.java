@@ -65,6 +65,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Cell;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -75,7 +76,6 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
@@ -138,6 +138,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listheader listheader_Disbursement_BenAcctno;
 	protected Listheader listheader_Disbursement_Branch;
 	protected Listheader listheader_Disbursement_Channel;
+	protected Listheader listheader_Disbursement_Party;
 	protected Listheader listheader_Disbursement_Entity;
 
 	protected Combobox disbTypes;
@@ -151,8 +152,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Combobox channelTypes;
 	protected Textbox finRef;
 	protected ExtendedCombobox entity;
+	protected Combobox disbParty;
 	protected ExtendedCombobox vasManufacturer;
-	protected Row row_VasManufacturer;
+	protected Cell cellVMFC1;
+	protected Cell cellVMFC2;
+	protected Cell cellVMFC3;
 
 	protected Listbox sortOperator_DisbType;
 	protected Listbox sortOperator_PartnerBank;
@@ -163,6 +167,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listbox sortOperator_Channel;
 	protected Listbox sortOperator_FinRef;
 	protected Listbox sortOperator_Entity;
+	protected Listbox sortOperator_DisbParty;
 	protected Listbox sortOperator_VasManufacturer;
 
 	protected Listheader listHeader_CheckBox_Name;
@@ -178,6 +183,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	private Map<Long, FinAdvancePayments> disbursementMap = new HashMap<Long, FinAdvancePayments>();
 	private List<ValueLabel> channelTypesList = PennantStaticListUtil.getChannelTypes();
+	private List<ValueLabel> paymentDetails = PennantStaticListUtil.getPaymentDetails();
 	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<>();
 
 	private int futureDays = 0;
@@ -266,8 +272,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				Operators.STRING);
 		registerField("entityCode", listheader_Disbursement_Entity, SortOrder.NONE, entity, sortOperator_Entity,
 				Operators.STRING);
+		registerField("PaymentDetail", listheader_Disbursement_Party, SortOrder.NONE, disbParty, sortOperator_DisbParty,
+				Operators.STRING);
 		registerField("providerId", vasManufacturer, SortOrder.NONE, sortOperator_VasManufacturer, Operators.STRING);
-		// Render the page and display the data.
 		doRenderPage();
 		this.disbursementMap.clear();
 		doSetFieldProperties();
@@ -356,6 +363,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getDisbRegistrationTypes(), "");
 		fillComboBox(this.channelTypes, "", channelTypesList, "");
+		fillComboBox(this.disbParty, "", paymentDetails, "");
 
 		this.partnerBank.setModuleName("PartnerBank");
 		this.partnerBank.setDisplayStyle(2);
@@ -476,7 +484,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			lc = new Listcell(PennantApplicationUtil.amountFormate(payments.getAmtToBeReleased(),
 					CurrencyUtil.getFormat(payments.getDisbCCy())));
 			lc.setParent(item);
-
+			
+			lc = new Listcell(PennantStaticListUtil.getlabelDesc(payments.getPaymentDetail(), paymentDetails));
+			lc.setParent(item);
+			
 			lc = new Listcell(payments.getCustShrtName());
 			lc.setParent(item);
 
@@ -490,7 +501,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			lc.setParent(item);
 
 			lc = new Listcell(PennantStaticListUtil.getlabelDesc(payments.getChannel(), channelTypesList));
-
 			lc.setParent(item);
 
 			item.setAttribute("finAdvancePayments", payments);
@@ -542,17 +552,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("paymentType");
 		searchObject.addField("channel");
 		searchObject.addField("providerId");
+		searchObject.addField("PaymentDetail");
 		searchObject.addTabelName(this.tableName);
-
-		// If channel is Insurance then only we will allow to download Insurance
-		// details
-		if (DisbursementConstants.CHANNEL_INSURANCE.equals(this.channelTypes.getSelectedItem().getValue())) {
-			searchObject.addFilterEqual("channel", DisbursementConstants.CHANNEL_INSURANCE);
-		} else {
-			// If then channel is not selected we will allow to download
-			// Disbursements and Payments only. Not Insurance details
-			searchObject.addFilterNotEqual("channel", DisbursementConstants.CHANNEL_INSURANCE);
-		}
 
 		// Internal Settlements Payment Type details not allowed to Download
 		searchObject.addFilterNotEqual("paymentType", DisbursementConstants.PAYMENT_TYPE_IST);
@@ -617,7 +618,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		try {
-			if (!this.finType.isReadonly() && !this.row_VasManufacturer.isVisible())
+			if (!this.finType.isReadonly())
 				this.finType
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbursementList_LoanType.value"),
 								PennantRegularExpressions.REGEX_DESCRIPTION, true));
@@ -753,18 +754,6 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		try {
 			btnDownload.setDisabled(true);
 			button_Search.setDisabled(true);
-			PartnerBank partnerBanks = (PartnerBank) partnerBank.getObject();
-
-			/*
-			 * DisbursementData disbursementData = new DisbursementData();
-			 * disbursementData.setFinType(this.finType.getValue()); disbursementData.setDisbursements(disbushmentList);
-			 * disbursementData.setUserId(getUserWorkspace().getLoggedInUser(). getUserId());
-			 * disbursementData.setFileNamePrefix(partnerBanks.getFileName());
-			 * disbursementData.setDataEngineConfigName(partnerBanks. getDataEngineConfigName());
-			 * disbursementData.setUserDetails(getUserWorkspace(). getLoggedInUser());
-			 * 
-			 * disbursementRequest.sendReqest(disbursementData);
-			 */
 
 			com.pennanttech.pff.core.disbursement.model.DisbursementRequest request = new com.pennanttech.pff.core.disbursement.model.DisbursementRequest();
 			PartnerBank partBank = (PartnerBank) partnerBank.getObject();
@@ -869,22 +858,14 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		logger.debug("Leaving");
 	}
 
-	public void onChange$channelTypes(Event event) {
+	public void onChange$disbParty(Event event) {
 		this.vasManufacturer.setValue("");
-		this.finType.setErrorMessage("");
-		Clients.clearWrongValue(this.finType);
-		this.finType.setConstraint("");
-		String channelType = this.channelTypes.getSelectedItem().getValue();
-		if (DisbursementConstants.CHANNEL_INSURANCE.equals(channelType)) {
-			this.row_VasManufacturer.setVisible(true);
-			this.finType.setValue("");
-			this.finType.setReadonly(true);
-			this.btnFinType.setDisabled(true);
-		} else {
-			this.row_VasManufacturer.setVisible(false);
-			this.finType.setReadonly(false);
-			this.btnFinType.setDisabled(false);
-		}
+		String disbParty = this.disbParty.getSelectedItem().getValue();
+		
+		boolean vasParty = DisbursementConstants.PAYMENT_DETAIL_VAS.equals(disbParty);
+		this.cellVMFC1.setVisible(vasParty);
+		this.cellVMFC2.setVisible(vasParty);
+		this.cellVMFC3.setVisible(vasParty);
 	}
 
 	public List<FinAdvancePayments> getFinAdvancePaymentsList() {

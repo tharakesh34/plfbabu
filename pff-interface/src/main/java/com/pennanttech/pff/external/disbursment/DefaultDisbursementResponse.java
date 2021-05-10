@@ -32,7 +32,6 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAutoApprovalDetails;
 import com.pennant.backend.model.finance.InstBasedSchdDetails;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -444,40 +443,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
-		// Insurance payments..
-		List<InsurancePaymentInstructions> insPaymentInstructions = null;
-		RowMapper<InsurancePaymentInstructions> insPaymentInstructionRowMapper = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT PI.LINKEDTRANID, PI.ID, VPA.BANKBRANCHID, VPA.ACCOUNTNUMBER, ");
-			sql.append(" AVD.DEALERNAME, PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS,");
-			sql.append(" DR.REJECT_REASON REJECTREASON, PI.PROVIDERID,");
-			sql.append(" DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF, DR.FINREFERENCE FROM DISBURSEMENT_REQUESTS DR");
-			sql.append(" INNER JOIN INSURANCEPAYMENTINSTRUCTIONS PI ON PI.ID = DR.DISBURSEMENT_ID");
-			sql.append(" INNER JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID");
-			sql.append(" INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID");
-			sql.append(" INNER JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID  AND CHANNEL = :CHANNEL");
-			paramMap = new MapSqlParameterSource();
-			paramMap.addValue("RESP_BATCH_ID", batchId);
-			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_INSURANCE);
-
-			insPaymentInstructionRowMapper = BeanPropertyRowMapper.newInstance(InsurancePaymentInstructions.class);
-			insPaymentInstructions = namedJdbcTemplate.query(sql.toString(), paramMap, insPaymentInstructionRowMapper);
-
-			for (InsurancePaymentInstructions instruction : insPaymentInstructions) {
-				try {
-					// For VAS Account postings
-					instruction.setUserDetails(loggedInUser);
-					paymentProcess.processInsPayment(instruction);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -499,7 +465,6 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		StringBuilder sql = null;
 		List<String> channelList = new ArrayList<>();
 		channelList.add(DisbursementConstants.CHANNEL_DISBURSEMENT);
-		//for VAS
 		channelList.add(DisbursementConstants.CHANNEL_VAS);
 
 		// Disbursements
@@ -645,42 +610,6 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		// Insurance payments..
-		//TODO:Ganesh Need to remove once backup done for existing cases
-		List<InsurancePaymentInstructions> insPaymentInstructions = null;
-		RowMapper<InsurancePaymentInstructions> insPaymentInstructionRowMapper = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT PI.LINKEDTRANID, PI.ID, VPA.BANKBRANCHID, VPA.ACCOUNTNUMBER, ");
-			sql.append(" AVD.DEALERNAME, AVD.DEALERTELEPHONE, PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS,");
-			sql.append(" DR.REJECT_REASON REJECTREASON,DR.REALIZATION_DATE REALIZATIONDATE,");
-			sql.append(" DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF,");
-			sql.append(" PI.PROVIDERID, DR.FINREFERENCE");
-			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
-			sql.append(" INNER JOIN INSURANCEPAYMENTINSTRUCTIONS PI ON PI.ID = DR.DISBURSEMENT_ID");
-			sql.append(" INNER JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID");
-			sql.append(" INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID");
-			sql.append(" INNER JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL = :CHANNEL");
-			paramMap = new MapSqlParameterSource();
-			paramMap.addValue("RESP_BATCH_ID", params[0]);
-			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_INSURANCE);
-
-			insPaymentInstructionRowMapper = BeanPropertyRowMapper.newInstance(InsurancePaymentInstructions.class);
-			insPaymentInstructions = namedJdbcTemplate.query(sql.toString(), paramMap, insPaymentInstructionRowMapper);
-
-			for (InsurancePaymentInstructions instruction : insPaymentInstructions) {
-				try {
-					// For VAS Account postings
-					instruction.setUserDetails(loggedInUser);
-					paymentProcess.processInsPayment(instruction);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
 		logger.debug(Literal.LEAVING);
 	}
 

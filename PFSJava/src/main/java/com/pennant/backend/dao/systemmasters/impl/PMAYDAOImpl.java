@@ -35,10 +35,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 
 	@Override
 	public PMAY getPMAY(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
+		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference ,NotifiedTown ,CentralAssistance ,OwnedHouse, TownCode,");
 		sql.append(" CarpetArea ,HouseholdAnnIncome ,BalanceTransfer ,PrimaryApplicant ,PrprtyOwnedByWomen ,");
 		sql.append(" TransactionFinType ,Product ,WaterSupply ,Drinage ,Electricity ,PmayCategory,");
@@ -49,26 +46,18 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 		sql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PMAY");
 		sql.append(type);
-		sql.append(" Where FINREFERENCE = :finReference");
+		sql.append(" Where FinReference = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		PMAY pmay = new PMAY();
-		pmay.setFinReference(finReference);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pmay);
 		RowMapper<PMAY> rowMapper = BeanPropertyRowMapper.newInstance(PMAY.class);
-
 		try {
-			pmay = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			pmay = null;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return pmay;
+		return null;
 	}
 
 	@Override

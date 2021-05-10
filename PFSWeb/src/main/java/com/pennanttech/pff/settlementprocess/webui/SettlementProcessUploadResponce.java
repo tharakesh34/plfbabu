@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -18,6 +17,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.CashBackDetailDAO;
@@ -35,10 +35,9 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CashBackProcessService;
-import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
@@ -54,13 +53,14 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.settlement.dao.SettlementProcessDAO;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 
+import AccountEventConstants.AccountingEvent;
+
 public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess> implements ProcessRecord {
 	private SettlementProcessDAO settlementProcessDAO;
 	private DataSource dataSource;
 	private FinanceMainDAO financeMainDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
-	private DisbursementPostings disbursementPostings;
 	private PlatformTransactionManager transactionManager;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private PromotionDAO promotionDAO;
@@ -82,10 +82,6 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
-	}
-
-	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
-		this.disbursementPostings = disbursementPostings;
 	}
 
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
@@ -218,68 +214,22 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 
-			// DBD Amount Accounting Process
-			/*
-			 * Promotion promotion = promotionDAO.getPromotionByReferenceId(finMain.getPromotionSeqId(), "");
-			 * 
-			 * if (promotion.isDbd() && !promotion.isDbdRtnd()) {
-			 * 
-			 * Date appDate = SysParamUtil.getAppDate(); Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(),
-			 * promotion.getDlrCbToCust());
-			 * 
-			 * if (DateUtility.compare(appDate, cbDate) >= 0) {
-			 * 
-			 * FeeType feeType = setFeeTypeData(promotion.getDbdFeeTypId()); CashBackDetail cashBackDetail =
-			 * cashBackDetailDAO .getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
-			 * finMain.setLastMntBy(1000); finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			 * finMain.setFinCcy(SysParamUtil.getAppCurrency());
-			 * 
-			 * if (cashBackDetail != null) { BigDecimal balAmount = cashBackDetail.getAmount(); // Cash Back amount
-			 * adjustments if (promotion.isKnckOffDueAmt()) { try { balAmount =
-			 * cashBackProcessService.createReceiptOnCashBack(cashBackDetail); } catch (Exception e) {
-			 * logger.error("Exception", e); } } if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
-			 * cashBackProcessService.createPaymentInstruction(finMain, feeType.getFeeTypeCode(),
-			 * cashBackDetail.getAdviseId(), balAmount); } else {
-			 * cashBackDetailDAO.updateCashBackDetail(cashBackDetail.getAdviseId()); } }
-			 * 
-			 * }
-			 * 
-			 * }
-			 */
+			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
+				List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
+						.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
+				finMain.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
 
-			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
-					.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
+				FinanceDetail fd = new FinanceDetail();
+				fd.setAdvancePaymentsList(advPayments);
 
-			for (FinAdvancePayments finAdvancePayment : advPayments) {
+				AccountingEngine.post(AccountingEvent.DISBINS, fd, finMain.getFinBranch());
 
-				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-
-					finAdvancePayment.setStatus("AC");
-					finMain.setLovDescEntityCode(
-							financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
-					FinanceDetail financeDetail = new FinanceDetail();
-
-					List<FinAdvancePayments> finAdvancePayments = new ArrayList<FinAdvancePayments>();
-					finAdvancePayments.add(finAdvancePayment);
-					financeDetail.setAdvancePaymentsList(finAdvancePayments);
-
-					Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
-							financeDetail.getAdvancePaymentsList(), finMain, finMain.getFinBranch());
-
-					List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
-
-					// loop through the disbursements.
-					if (CollectionUtils.isNotEmpty(advPayList)) {
-						for (int i = 0; i < advPayList.size(); i++) {
-							FinAdvancePayments advPayment = advPayList.get(i);
-							if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
-								advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
-								finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
-							}
-						}
-					}
+				for (FinAdvancePayments finAdvancePayment : advPayments) {
+					finAdvancePaymentsDAO.updateLinkedTranId(finAdvancePayment);
 				}
+
 			}
+
 			this.transactionManager.commit(txStatus);
 		} catch (Exception e) {
 			this.transactionManager.rollback(txStatus);

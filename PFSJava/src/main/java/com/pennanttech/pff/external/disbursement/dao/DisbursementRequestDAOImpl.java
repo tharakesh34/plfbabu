@@ -329,22 +329,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 						});
 			}
-
-			if (req.isInsurances()) {
-				insurancesCount = jdbcTemplate.getJdbcOperations().update(
-						"UPDATE INSURANCEPAYMENTINSTRUCTIONS SET STATUS = ? WHERE ID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE HEADER_ID = ? AND BATCH_ID = ?)",
-						new PreparedStatementSetter() {
-
-							@Override
-							public void setValues(PreparedStatement ps) throws SQLException {
-								ps.setString(1, req.getStatus());
-								ps.setLong(2, req.getHeaderId());
-								ps.setLong(3, req.getBatchId());
-							}
-
-						});
-			}
-
+			
 			if (batchCount == (disbursementsCount + paymentsCount + insurancesCount)) {
 				return batchCount;
 			} else {
@@ -749,7 +734,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 						fp.setAmtToBeReleased(rs.getBigDecimal("AMTTOBERELEASED"));
 						fp.setPaymentType(rs.getString("DISBURSEMENT_TYPE"));
 						fp.setChannel(rs.getString("CHANNEL"));
-						fp.setProviderId(rs.getLong("PROVIDERID"));
+						fp.setProviderId(JdbcUtil.getLong(rs.getObject("PROVIDERID")));
 						fp.setStatus(rs.getString("STATUS"));
 
 						return fp;

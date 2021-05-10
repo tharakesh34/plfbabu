@@ -15,7 +15,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.controller.ExtendedTestClass;
@@ -340,58 +339,6 @@ public class DisbursementController extends ExtendedTestClass {
 						txStatus = transactionManager.getTransaction(txDef);
 
 						count = paymentProcess.processPayment(pi);
-
-						if (count == 1) {
-							count = updateRequest(request);
-							if (count == 0 || count > 1) {
-								transactionManager.rollback(txStatus);
-							} else {
-								this.transactionManager.commit(txStatus);
-							}
-						} else {
-							transactionManager.rollback(txStatus);
-						}
-
-					} catch (Exception e) {
-						transactionManager.rollback(txStatus);
-						logger.error(Literal.EXCEPTION, e);
-						throw e;
-					}
-
-					break;
-				case DisbursementConstants.CHANNEL_INSURANCE:
-					InsurancePaymentInstructions ipi = disbursementDAO.getInsuranceInstruction(disbReqId);
-
-					if (ipi == null) {
-						String valueParm[] = new String[4];
-						valueParm[0] = "Disbursement details with disbReqId :" + disbReqId;
-						valueParm[1] = "and channel :" + channel;
-						valueParm[2] = "not exists or Already ";
-						valueParm[3] = "Processed";
-						return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-
-					}
-
-					if (!DisbursementConstants.STATUS_AWAITCON.equals(ipi.getStatus())) {
-						String valueParm[] = new String[4];
-						valueParm[0] = "Disbursement details with disbReqId :" + disbReqId;
-						valueParm[1] = "and channel :" + channel;
-						valueParm[2] = " Are not at the Stage of ";
-						valueParm[3] = "AC";
-						return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-					}
-
-					ipi.setFinReference(request.getFinReference());
-					ipi.setPaymentType(request.getPaymentType());
-					ipi.setStatus(request.getStatus());
-					ipi.setTransactionRef(request.getTransactionref());
-
-					try {
-						DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-						txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-						txStatus = transactionManager.getTransaction(txDef);
-
-						count = paymentProcess.processInsPayment(ipi);
 
 						if (count == 1) {
 							count = updateRequest(request);

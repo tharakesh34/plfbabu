@@ -134,14 +134,12 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -149,7 +147,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FeeType;
-import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
@@ -203,7 +200,6 @@ import com.pennant.backend.service.finance.impl.FinInsuranceValidation;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
-import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
@@ -216,11 +212,11 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.subvention.service.SubventionService;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -228,6 +224,8 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
+
+import AccountEventConstants.AccountingEvent;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private static final Logger logger = LogManager.getLogger(GenericFinanceDetailService.class);
@@ -303,7 +301,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected FinInsuranceValidation finInsuranceValidation;
 	protected FinAssetTypesValidation finAssetTypesValidation;
 	protected FinAssetTypeDAO finAssetTypeDAO;
-	protected DisbursementPostings disbursementPostings;
 	protected InstallmentDueService installmentDueService;
 	protected AdvancePaymentService advancePaymentService;
 	protected FinIRRDetailsDAO finIRRDetailsDAO;
@@ -1015,7 +1012,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						if (covenantsService != null) {
 							covenantsService.deleteDocumentByDocumentId(documentDetails.getDocId(), type);
 						} else {
-							getDocumentDetailsDAO().deleteDocumentByDocumentId(documentDetails, type);
+							documentDetailsDAO.deleteDocumentByDocumentId(documentDetails, type);
 						}
 					}
 				}
@@ -1497,7 +1494,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
 		if (StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
-			if (TDSCalculator.isTDSApplicable(finMain, SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG))) {
+			if (TDSCalculator.isTDSApplicable(finMain,
+					SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG))) {
 				for (int i = 0; i < finSchdDetails.size(); i++) {
 					FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 					if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
@@ -1545,40 +1543,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			aeEvent.setNewRecord(true);
 		}
 		return aeEvent;
-	}
-
-	/**
-	 * TODO:GANESH make this method as common for both Financemainbase ctrl and this <br>
-	 * Method for set the Accounting data, which is required on VAS accounting.
-	 * 
-	 * @param advancePaymentsList
-	 * @param vasRecordingList
-	 */
-	private void prepareVasAccountingData(List<FinAdvancePayments> advancePaymentsList,
-			List<VASRecording> vasRecordingList) {
-		logger.debug(Literal.ENTERING);
-		if (CollectionUtils.isEmpty(advancePaymentsList) || CollectionUtils.isEmpty(vasRecordingList)) {
-			logger.debug(Literal.LEAVING);
-			return;
-		}
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
-			logger.debug(Literal.LEAVING);
-			return;
-		}
-		for (VASRecording recording : vasRecordingList) {
-			VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
-			if (vehicleDealer == null) {
-				continue;
-			}
-			for (FinAdvancePayments finAdvancePayment : advancePaymentsList) {
-				if (StringUtils.equalsIgnoreCase(recording.getVasReference(), finAdvancePayment.getVasReference())) {
-					finAdvancePayment.setProductShortCode(vehicleDealer.getProductShortCode());
-					finAdvancePayment.setDealerShortCode(vehicleDealer.getDealerShortCode());
-					break;
-				}
-			}
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	protected Map<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap,
@@ -1814,7 +1778,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), financeDetail);
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = schdData.getFinanceMain();
 		String eventCode = financeDetail.getAccountingEventCode();
 		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
 		AEEvent aeEvent = new AEEvent();
@@ -1890,8 +1855,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 
 			// Advance payment Details Resetting
-			AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(
-					financeDetail.getFinScheduleData(), null, FinanceConstants.FINSER_EVENT_ORG);
+			AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(schdData, null,
+					FinanceConstants.FINSER_EVENT_ORG);
 			if (curAdvpay != null) {
 				amountCodes.setIntAdjusted(curAdvpay.getAdvInt());
 				amountCodes.setEmiAdjusted(curAdvpay.getAdvEMI());
@@ -1922,7 +1887,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
 			// Update Linked Transaction ID
-			List<FinServiceInstruction> serviceInsts = financeDetail.getFinScheduleData().getFinServiceInstructions();
+			List<FinServiceInstruction> serviceInsts = schdData.getFinServiceInstructions();
 			if (serviceInsts != null && !serviceInsts.isEmpty() && aeEvent != null && aeEvent.getLinkedTranId() > 0) {
 				for (FinServiceInstruction inst : serviceInsts) {
 					inst.setLinkedTranID(aeEvent.getLinkedTranId());
@@ -1931,7 +1896,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		} else {
 
-			List<FinServiceInstruction> serviceInsts = financeDetail.getFinScheduleData().getFinServiceInstructions();
+			List<FinServiceInstruction> serviceInsts = schdData.getFinServiceInstructions();
 
 			Cloner cloner = new Cloner();
 			int instruction = 0;
@@ -2004,7 +1969,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// GST Invoice Preparation
 		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0
-				&& CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
+				&& CollectionUtils.isNotEmpty(schdData.getFinFeeDetailList())) {
 			boolean orgination = false;
 			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 				orgination = true;
@@ -2015,7 +1980,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
 			invoiceDetail.setFinanceDetail(financeDetail);
-			invoiceDetail.setFinFeeDetailsList(financeDetail.getFinScheduleData().getFinFeeDetailList());
+			invoiceDetail.setFinFeeDetailsList(schdData.getFinFeeDetailList());
 			invoiceDetail.setOrigination(orgination);
 			invoiceDetail.setWaiver(false);
 			invoiceDetail.setDbInvSetReq(false);
@@ -2023,16 +1988,16 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			//Normal Fees invoice preparation
 			//In Case of Loan Approval GST Invoice is happen only for remaining fee after IMD.
-			if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
-				for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+			if (CollectionUtils.isNotEmpty(schdData.getFinFeeDetailList())) {
+				for (FinFeeDetail fee : schdData.getFinFeeDetailList()) {
 					fee.setPaidFromLoanApproval(true);
 				}
 			}
 
 			Long dueInvoiceID = this.gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
 
-			for (int i = 0; i < financeDetail.getFinScheduleData().getFinFeeDetailList().size(); i++) {
-				FinFeeDetail finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList().get(i);
+			for (int i = 0; i < schdData.getFinFeeDetailList().size(); i++) {
+				FinFeeDetail finFeeDetail = schdData.getFinFeeDetailList().get(i);
 				if (finFeeDetail.getTaxHeader() != null && finFeeDetail.getNetAmount().compareTo(BigDecimal.ZERO) > 0) {
 					if (dueInvoiceID == null) {
 						dueInvoiceID = finFeeDetail.getTaxHeader().getInvoiceID();
@@ -2044,7 +2009,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			// Waiver Fees Invoice Preparation
 			if (ImplementationConstants.TAX_DFT_CR_INV_REQ) {
 				List<FinFeeDetail> waiverFees = new ArrayList<>();
-				for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				for (FinFeeDetail fee : schdData.getFinFeeDetailList()) {
 					if (fee.isTaxApplicable() && fee.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 						waiverFees.add(fee);
 					}
@@ -2061,8 +2026,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 					dueInvoiceID = gstInvoiceTxnService.feeTaxInvoicePreparation(invoiceDetail);
 
-					for (int i = 0; i < financeDetail.getFinScheduleData().getFinFeeDetailList().size(); i++) {
-						FinFeeDetail finFeeDetail = financeDetail.getFinScheduleData().getFinFeeDetailList().get(i);
+					for (int i = 0; i < schdData.getFinFeeDetailList().size(); i++) {
+						FinFeeDetail finFeeDetail = schdData.getFinFeeDetailList().get(i);
 						if (finFeeDetail.getTaxHeader() != null
 								&& finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 							finFeeDetail.getTaxHeader().setInvoiceID(dueInvoiceID);
@@ -2073,109 +2038,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		// Disbursement Instruction Posting
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-			if (StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBS)
-					|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSF)
-					|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSN)
-					|| StringUtils.equals(eventCode, AccountEventConstants.ACCEVENT_ADDDBSP)) {
-
-				if (isNew) {
-					prepareVasAccountingData(financeDetail.getAdvancePaymentsList(),
-							financeDetail.getFinScheduleData().getVasRecordingList());
-				}
-
-				Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
-						financeDetail.getAdvancePaymentsList(), financeDetail.getFinScheduleData().getFinanceMain(),
-						auditHeader.getAuditBranchCode());
-
-				List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
-
-				// loop through the disbursements.
-				if (advPayList != null && !advPayList.isEmpty()) {
-
-					for (int i = 0; i < advPayList.size(); i++) {
-						FinAdvancePayments advPayment = advPayList.get(i);
-						if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
-							advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
-						}
-					}
-				}
-			}
+		if (AccountEventConstants.isDisbursementEvent(eventCode) && !ImplementationConstants.HOLD_DISB_INST_POST) {
+			AccountingEngine.post(AccountingEvent.DISBINS, financeDetail, auditHeader.getAuditBranchCode());
 		}
 
-		// VAS Recording Accounting Entries
+		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+			AccountingEngine.post(AccountingEvent.VASFEE, financeDetail, auditHeader.getAuditBranchCode());
+		}
+
 		if (isNew) {
-			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
-					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
-				processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
-				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
-					processInsPayAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
-				}
-			}
 			installmentDueService.processbackDateInstallmentDues(financeDetail, pftDetail, SysParamUtil.getAppDate(),
 					true, auditHeader.getAuditBranchCode());
-			/*
-			 * advancePaymentService.processBackDatedAdvansePayments(financeDetail, pftDetail, DateUtility.getAppDate(),
-			 * auditHeader.getAuditBranchCode(), true);
-			 */
 		}
 
 		doSave_PftDetails(pftDetail, isNew);
 		logger.debug("Leaving");
 		return auditHeader;
-	}
-
-	/**
-	 * Method for Preparing List of Entries based on recordings for Insurance Payment
-	 * 
-	 * @param aeEvent
-	 * @param vasRecordingList
-	 * @return
-	 */
-	public List<ReturnDataSet> processInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
-			boolean doPostings, FinanceDetail financeDetails) throws InterfaceException {
-
-		if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-			return new ArrayList<>();
-		}
-		String accEvent = AccountEventConstants.ACCEVENT_INSPAY;
-		String finType = financeDetails.getFinScheduleData().getFinanceMain().getFinType();
-
-		long accountsetId = AccountingConfigCache.getAccountSetID(finType, accEvent, FinanceConstants.MODULEID_FINTYPE);
-
-		if (CollectionUtils.isEmpty(vasRecordingList) && accountsetId <= 0) {
-			return new ArrayList<>();
-		}
-
-		List<ReturnDataSet> datasetList = new ArrayList<>();
-
-		aeEvent.setAccountingEvent(accEvent);
-
-		for (VASRecording recording : vasRecordingList) {
-			recording.getDeclaredFieldValues(aeEvent.getDataMap());
-			aeEvent.setFinReference(recording.getVasReference());
-
-			//For GL Code
-			VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(recording.getProductCode());
-
-			aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
-			aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
-			aeEvent.getDataMap().put("id_totPayAmount", recording.getFee());
-
-			aeEvent.setLinkedTranId(0);
-			aeEvent.getAcSetIDList().clear();
-			aeEvent.getAcSetIDList().add(accountsetId);
-
-			if (doPostings) {
-				aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
-			} else {
-				engineExecution.getAccEngineExecResults(aeEvent);
-			}
-
-			datasetList.addAll(aeEvent.getReturnDataSet());
-		}
-
-		return datasetList;
 	}
 
 	/**
@@ -3242,82 +3120,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.manualAdviseDAO.saveDueTaxDetail(detail);
 	}
 
-	/**
-	 * Method for Preparing List of Entries based on recordings for Insurance Payment
-	 * 
-	 * @param aeEvent
-	 * @param vasRecordingList
-	 * @return
-	 */
-	protected List<ReturnDataSet> processInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
-			boolean doPostings) throws InterfaceException {
-
-		List<ReturnDataSet> datasetList = new ArrayList<>();
-		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
-			long accountsetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_INSPAY,
-					AccountEventConstants.ACCEVENT_INSPAY);
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
-			for (VASRecording recording : vasRecordingList) {
-				recording.getDeclaredFieldValues(aeEvent.getDataMap());
-				aeEvent.setFinReference(recording.getVasReference());
-
-				//For GL Code
-				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
-				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
-				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
-				aeEvent.getDataMap().put("id_totPayAmount", recording.getFee());
-
-				aeEvent.setLinkedTranId(0);
-				aeEvent.getAcSetIDList().clear();
-				aeEvent.getAcSetIDList().add(accountsetId);
-				if (doPostings) {
-					getPostingsPreparationUtil().postAccounting(aeEvent);
-				} else {
-					engineExecution.getAccEngineExecResults(aeEvent);
-				}
-				datasetList.addAll(aeEvent.getReturnDataSet());
-			}
-		}
-		return datasetList;
-	}
-
-	/**
-	 * Method for Preparing List of Entries based on recordings for VAS
-	 * 
-	 * @param aeEvent
-	 * @param vasRecordingList
-	 * @return
-	 */
-	protected List<ReturnDataSet> processVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
-			boolean doPostings) throws InterfaceException {
-
-		List<ReturnDataSet> datasetList = new ArrayList<>();
-		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
-
-			aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
-			for (VASRecording recording : vasRecordingList) {
-				recording.getDeclaredFieldValues(aeEvent.getDataMap());
-				aeEvent.getAcSetIDList().clear();
-				aeEvent.getAcSetIDList().add(recording.getFeeAccounting());
-				aeEvent.setFinReference(recording.getVasReference());
-
-				// For GL Code
-				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
-				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
-				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
-
-				aeEvent.setLinkedTranId(0);
-				if (doPostings) {
-					getPostingsPreparationUtil().postAccounting(aeEvent);
-				} else {
-					engineExecution.getAccEngineExecResults(aeEvent);
-				}
-				datasetList.addAll(aeEvent.getReturnDataSet());
-			}
-		}
-		return datasetList;
-	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -3870,14 +3672,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
-	}
-
-	public DisbursementPostings getDisbursementPostings() {
-		return disbursementPostings;
-	}
-
-	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
-		this.disbursementPostings = disbursementPostings;
 	}
 
 	public FinFeeDetailDAO getFinFeeDetailDAO() {

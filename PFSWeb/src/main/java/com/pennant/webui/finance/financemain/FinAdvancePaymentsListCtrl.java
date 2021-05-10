@@ -307,12 +307,8 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	 * 
 	 */
 	public void doWriteBeanToComponents() {
-		logger.debug("Entering ");
-
 		doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList(),
 				getFinancedetail().getFinScheduleData().getVasRecordingList());
-
-		logger.debug("Leaving ");
 	}
 
 	private void doCheckEnquiry() {
@@ -444,7 +440,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 					List<ErrorDetail> valid = disbursementInstCtrl
 							.validateOrgFinAdvancePayment(getFinAdvancePaymentsList(), validate);
 					//VAS FrontEndFunctionality Validations
-					if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
+					if (ImplementationConstants.VAS_INST_ON_DISB
 							&& !StringUtils.equalsIgnoreCase(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
 						List<ErrorDetail> vasErrList = null;
 						disbursementInstCtrl.setVasRecordingList(vasRecordingList);
@@ -547,8 +543,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		logger.debug("Entering");
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		setVasRecordingList(vasRecordingList);
-		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
-				&& StringUtils.isEmpty(moduleDefiner)) {//added empty check skip the below VAS process in LMS) {
+		if (ImplementationConstants.VAS_INST_ON_DISB && StringUtils.isEmpty(moduleDefiner)) {//added empty check skip the below VAS process in LMS) {
 			String entityCode = getFinancedetail().getFinScheduleData().getFinanceMain().getLovDescEntityCode();
 			finAdvancePaymentsService.processVasInstructions(vasRecordingList, getFinAdvancePaymentsList(), entityCode);
 		}

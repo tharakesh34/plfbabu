@@ -151,7 +151,6 @@ import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
-import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -162,6 +161,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -174,6 +174,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.rits.cloning.Cloner;
+import AccountEventConstants.AccountingEvent;
 
 public class FinServiceInstController extends SummaryDetailService {
 	private static final Logger logger = LogManager.getLogger(FinServiceInstController.class);
@@ -218,7 +219,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private ManualAdviseDAO manualAdviseDAO;
 	private BankDetailDAO bankDetailDAO;
-	private DisbursementPostings disbursementPostings;
 	private BankDetailService bankDetailService;
 	private CovenantsService covenantsService;
 	private CovenantsDAO covenantsDAO;
@@ -3759,7 +3759,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				return APIErrorHandlerService.getFailedStatus("21005", valueParam);
 			}
 
-			if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+			if (ImplementationConstants.HOLD_DISB_INST_POST) {
 				FinanceMain fm = financeMainDAO.getFinanceMainById(finReference, "", false);
 				if (DisbursementConstants.STATUS_AWAITCON.equals(status)) {
 					finAdv.setStatus(DisbursementConstants.STATUS_APPROVED);
@@ -3774,18 +3774,14 @@ public class FinServiceInstController extends SummaryDetailService {
 				financeDetail.setAdvancePaymentsList(finAdvList);
 
 				List<FinAdvancePayments> advancePaymentsList = financeDetail.getAdvancePaymentsList();
-				Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(advancePaymentsList,
-						fm, fm.getFinBranch());
+				AccountingEngine.post(AccountingEvent.DISBINS, financeDetail, fm.getFinBranch());
 
 				List<FinAdvancePayments> advPayList = advancePaymentsList;
 
 				// loop through the disbursements.
 				if (CollectionUtils.isNotEmpty(advPayList)) {
 					for (FinAdvancePayments advPayment : advPayList) {
-						if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
-							advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
-							finAdvancePaymensDAO.updateLinkedTranId(advPayment);
-						}
+						finAdvancePaymensDAO.updateLinkedTranId(advPayment);
 					}
 				}
 			}
@@ -3802,8 +3798,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
 			finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
 
-			if (REJECTED_STATUS.equals(disbRequest.getStatus())
-					&& !PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+			if (REJECTED_STATUS.equals(disbRequest.getStatus()) && !ImplementationConstants.HOLD_DISB_INST_POST) {
 				postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
 				finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
 			} else {
@@ -4745,10 +4740,6 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
-		this.disbursementPostings = disbursementPostings;
 	}
 
 	public void setBankDetailService(BankDetailService bankDetailService) {

@@ -71,6 +71,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -378,6 +379,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw e;
 		}
 
 	}
@@ -892,11 +894,11 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	@Override
 	public List<ReturnDataSet> getPostings(String postRef, String finEvent) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode, ");
-		sql.append(" RevTranCode, TranDesc, DrOrCr, Account, PostAmount, ");
-		sql.append(" FinEvent, AcCcy, PostBranch, UserBranch, PostStatus, TranOrderId ");
+		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode");
+		sql.append(", RevTranCode, TranDesc, DrOrCr, Account, PostAmount");
+		sql.append(", FinEvent, AcCcy, PostBranch, UserBranch, PostStatus, TranOrderId");
 		sql.append(" From Postings");
-		sql.append(" Where Postref = ? AND FinEvent IN (?) ");
+		sql.append(" Where Postref = ? AND FinEvent = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 		List<ReturnDataSet> list = null;
@@ -904,6 +906,58 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		list = this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, postRef);
 			ps.setString(2, finEvent);
+		}, (rs, i) -> {
+			ReturnDataSet rds = new ReturnDataSet();
+
+			rds.setValueDate(rs.getTimestamp("ValueDate"));
+			rds.setPostDate(rs.getTimestamp("PostDate"));
+			rds.setAppDate(rs.getTimestamp("AppDate"));
+			rds.setAppValueDate(rs.getTimestamp("AppValueDate"));
+			rds.setTranCode(rs.getString("TranCode"));
+			rds.setRevTranCode(rs.getString("RevTranCode"));
+			rds.setTranDesc(rs.getString("TranDesc"));
+			rds.setDrOrCr(rs.getString("DrOrCr"));
+			rds.setAccount(rs.getString("Account"));
+			rds.setPostAmount(rs.getBigDecimal("PostAmount"));
+			rds.setFinEvent(rs.getString("FinEvent"));
+			rds.setAcCcy(rs.getString("AcCcy"));
+			rds.setPostBranch(rs.getString("PostBranch"));
+			rds.setUserBranch(rs.getString("UserBranch"));
+			rds.setPostStatus(rs.getString("PostStatus"));
+			rds.setTranOrderId(rs.getString("TranOrderId"));
+			rds.setValueDate(rs.getTimestamp("ValueDate"));
+
+			return rds;
+		});
+
+		if (CollectionUtils.isEmpty(list)) {
+			logger.info(Literal.LEAVING);
+			return list;
+		}
+
+		sortPostingsByDate(list);
+		sortPostingsByLinkedTranId(list);
+		sortPostingsByTransOrder(list);
+
+		return list;
+	}
+
+	@Override
+	public List<ReturnDataSet> getDisbursementPostings(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode");
+		sql.append(", RevTranCode, TranDesc, DrOrCr, Account, PostAmount");
+		sql.append(", FinEvent, AcCcy, PostBranch, UserBranch, PostStatus, TranOrderId");
+		sql.append(" From Postings");
+		sql.append(" Where FinReference = ? AND FinEvent in (?, ?)");
+
+		logger.trace(Literal.SQL + sql.toString());
+		List<ReturnDataSet> list = null;
+
+		list = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setString(2, AccountEventConstants.ACCEVENT_DISBINS);
+			ps.setString(3, AccountEventConstants.ACCEVENT_INSPAY);
 		}, (rs, i) -> {
 			ReturnDataSet rds = new ReturnDataSet();
 

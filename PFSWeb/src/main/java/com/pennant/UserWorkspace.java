@@ -69,6 +69,8 @@ import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.lic.exception.LicenseException;
 
@@ -200,7 +202,7 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	@Override
 	public void destroy() {
 		userService.logLogOut(loggedInUser.getLoginLogId());
-		logger.debug(loggedInUser.getUserName() + " logged out.");
+		logger.info("{} logged out at {}.", loggedInUser.getUserName(), DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 	}
 
 	public void allocateAuthorities(String page) {

@@ -100,4 +100,6 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> linkedTranId, boolean reversal);
 
 	List<ReturnDataSet> getPostings(String postRef, String finEvent);
+	
+	List<ReturnDataSet> getDisbursementPostings(String FinReference);
 }

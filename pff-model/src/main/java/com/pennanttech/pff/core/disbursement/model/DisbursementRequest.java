@@ -117,7 +117,6 @@ public class DisbursementRequest implements Serializable {
 	private String failureReason;
 	private boolean disbursements;
 	private boolean payments;
-	private boolean insurances;
 	private String bankCode;
 	private LoggedInUser loggedInUser;
 	private String partnerBankAccount;
@@ -770,14 +769,6 @@ public class DisbursementRequest implements Serializable {
 
 	public void setPayments(boolean payments) {
 		this.payments = payments;
-	}
-
-	public boolean isInsurances() {
-		return insurances;
-	}
-
-	public void setInsurances(boolean insurances) {
-		this.insurances = insurances;
 	}
 
 	public String getBankCode() {

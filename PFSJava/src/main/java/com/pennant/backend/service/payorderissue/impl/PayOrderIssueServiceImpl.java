@@ -97,11 +97,13 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
+
+import AccountEventConstants.AccountingEvent;
 
 /**
  * Service implementation for methods that depends on <b>PayOrderIssueHeader</b>.<br>
@@ -117,7 +119,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceMainDAO financeMainDAO;
-	private DisbursementPostings disbursementPostings;
 	private FinAdvancePaymentsService finAdvancePaymentsService; // ##PSD:
 																	// 128172-Auto
 																	// move the
@@ -338,7 +339,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				"", AccountEventConstants.ACCEVENT_VAS_FEE);
 		issueHeader.setFinFeeDetailList(finFeeDetailList);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+		if (ImplementationConstants.VAS_INST_ON_DISB) {
 			finMian.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finMian.getFinReference(), "_View"));
 			issueHeader.setvASRecordings(vasRecordingDAO.getVASRecordingsByLinkRef(finMian.getFinReference(), ""));
 		}
@@ -407,26 +408,25 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		boolean posted = true;
 		Map<Integer, Long> data = null;
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-			try {
-				data = disbursementPostings.prepareDisbPostingApproval(payOrderIssueHeader.getFinAdvancePaymentsList(),
-						payOrderIssueHeader.getFinanceMain(), auditHeader.getAuditBranchCode());
-				for (Long linkedID : data.values()) {
-					if (linkedID == Long.MIN_VALUE) {
-						posted = false;
-					}
+		FinanceDetail fd = new FinanceDetail();
+		fd.setAdvancePaymentsList(payOrderIssueHeader.getFinAdvancePaymentsList());
+		fd.getFinScheduleData().setFinanceMain(payOrderIssueHeader.getFinanceMain());
+
+		if (!ImplementationConstants.HOLD_DISB_INST_POST) {
+			AccountingEngine.post(AccountingEvent.DISBINS, fd, auditHeader.getAuditBranchCode());
+			for (FinAdvancePayments fap : payOrderIssueHeader.getFinAdvancePaymentsList()) {
+				if (fap.getLinkedTranId() == Long.MIN_VALUE) {
+					posted = false;
 				}
-			} catch (Exception e) {
-				posted = false;
 			}
 			if (!posted) {
 				auditHeader.setErrorDetails(new ErrorDetail("0000", "Postigs Failed", null));
 				return auditHeader;
 			}
-		}
-		if (!posted) {
-			auditHeader.setErrorDetails(new ErrorDetail("0000", "Postigs Failed", null));
-			return auditHeader;
+			if (!posted) {
+				auditHeader.setErrorDetails(new ErrorDetail("0000", "Postigs Failed", null));
+				return auditHeader;
+			}
 		}
 
 		if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -1046,10 +1046,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
-		this.disbursementPostings = disbursementPostings;
-	}
-
 	public void setPartnerBankService(PartnerBankService partnerBankService) {
 		this.partnerBankService = partnerBankService;
 	}
@@ -1069,8 +1065,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	}
 
 	@Override
-	public List<ReturnDataSet> getDisbursementPostings(String finReference, String event) {
-		return postingsDAO.getPostingsByFinRefAndEvent(finReference, event);
+	public List<ReturnDataSet> getDisbursementPostings(String finReference) {
+		return postingsDAO.getDisbursementPostings(finReference);
 	}
 
 	public PostingsDAO getPostingsDAO() {

@@ -2499,15 +2499,13 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentDetail_Customer")));
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_VENDOR,
 					Labels.getLabel("label_PaymentDetail_Vendor")));
+			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_VAS,
+					Labels.getLabel("label_PaymentDetail_Vas")));
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_THIRDPARTY,
 					Labels.getLabel("label_PaymentDetail_ThirdParty")));
 			if (ImplementationConstants.BUILDER_INST_ON_DISB) {
 				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_BUILDER,
 						Labels.getLabel("label_PaymentDetail_Builder")));
-			}
-			if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
-				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_VAS,
-						Labels.getLabel("label_PaymentDetail_Vas")));
 			}
 		}
 		return paymentDetails;
@@ -3881,12 +3879,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_Disbursement_Payment.label")));
 			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_DISBURSEMENT,
 					Labels.getLabel("label_Disbursement_Disbursement.label")));
-			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_INSURANCE,
-					Labels.getLabel("label_Disbursement_Insurance.label")));
-			if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
-				channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_VAS,
-						Labels.getLabel("label_Disbursement_VAS.label")));
-			}
 		}
 		return channelTypes;
 	}
@@ -5923,6 +5915,7 @@ public class PennantStaticListUtil {
 		}
 		return receiptClearanceStatus;
 	}
+
 	public static List<ValueLabel> getNonLoanReceivedFrom() {
 		if (nonLANReceivedFroms == null) {
 			nonLANReceivedFroms = new ArrayList<>(2);
@@ -5941,16 +5934,14 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getCalcOfStepsList() {
 		if (calcOfstepsList == null) {
 			calcOfstepsList = new ArrayList<ValueLabel>();
-			calcOfstepsList
-					.add(new ValueLabel(PennantConstants.STEPPING_CALC_AMT,
-							Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps_Amount.value")));
-			calcOfstepsList
-					.add(new ValueLabel(PennantConstants.STEPPING_CALC_PERC,
-							Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps_Percentage.value")));
+			calcOfstepsList.add(new ValueLabel(PennantConstants.STEPPING_CALC_AMT,
+					Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps_Amount.value")));
+			calcOfstepsList.add(new ValueLabel(PennantConstants.STEPPING_CALC_PERC,
+					Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps_Percentage.value")));
 		}
 		return calcOfstepsList;
 	}
-	
+
 	public static List<ValueLabel> getStepsAppliedFor() {
 		if (stepsAppliedFor == null) {
 			stepsAppliedFor = new ArrayList<ValueLabel>();

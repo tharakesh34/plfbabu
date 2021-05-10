@@ -606,17 +606,81 @@ public class VASRecording extends AbstractWorkflowEntity {
 		return getDeclaredFieldValues(vasRecordingMap);
 	}
 
-	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> vasRecordingMap) {
-		// feeMap.put(String.valueOf(fee), getFee());
-		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
-			try {
-				vasRecordingMap.put("vr_" + this.getClass().getDeclaredFields()[i].getName(),
-						this.getClass().getDeclaredFields()[i].get(this));
-			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				// Nothing TO DO
-			}
-		}
-		return vasRecordingMap;
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> map) {
+		map.put("vr_productCode", this.productCode);
+		map.put("vr_productDesc", this.productDesc);
+		map.put("vr_postingAgainst", this.postingAgainst);
+		map.put("vr_primaryLinkRef", this.primaryLinkRef);
+		map.put("vr_vasReference", this.vasReference);
+		map.put("vr_fee", this.fee);
+		map.put("vr_renewalFee", this.renewalFee);
+		map.put("vr_feePaymentMode", this.feePaymentMode);
+		map.put("vr_valueDate", this.valueDate);
+		map.put("vr_accrualTillDate", this.accrualTillDate);
+		map.put("vr_recurringDate", this.recurringDate);
+		map.put("vr_dsaId", this.dsaId);
+		map.put("vr_dsaIdDesc", this.dsaIdDesc);
+		map.put("vr_dmaId", this.dmaId);
+		map.put("vr_dmaIdDesc", this.dmaIdDesc);
+		map.put("vr_fulfilOfficerId", this.fulfilOfficerId);
+		map.put("vr_fulfilOfficerIdDesc", this.fulfilOfficerIdDesc);
+		map.put("vr_referralId", this.referralId);
+		map.put("vr_referralIdDesc", this.referralIdDesc);
+		map.put("vr_sourceId", this.sourceId);
+		map.put("vr_productType", this.productType);
+		map.put("vr_productTypeDesc", this.productTypeDesc);
+		map.put("vr_productCtg", this.productCtg);
+		map.put("vr_productCtgDesc", this.productCtgDesc);
+		map.put("vr_manufacturerDesc", this.manufacturerDesc);
+		map.put("vr_vasStatus", this.vasStatus);
+		map.put("vr_financeProcess", this.financeProcess);
+		map.put("vr_feeAccounting", this.feeAccounting);
+		map.put("vr_status", this.status);
+		map.put("vr_entityCode", this.entityCode);
+		map.put("vr_entityDesc", this.entityDesc);
+		map.put("vr_oldVasReference", this.oldVasReference);
+		map.put("vr_remarks", this.remarks);
+		map.put("vr_reason", this.reason);
+		map.put("vr_cancelAmt", this.cancelAmt);
+		map.put("vr_cancelAfterFLP", this.cancelAfterFLP);
+		map.put("vr_finType", this.finType);
+		map.put("vr_flpDays", this.flpDays);
+		map.put("vr_serviceReqNumber", this.serviceReqNumber);
+		map.put("vr_insuranceCancel", this.insuranceCancel);
+		map.put("vr_termInsuranceLien", this.termInsuranceLien);
+		map.put("vr_providerName", this.providerName);
+		map.put("vr_policyNumber", this.policyNumber);
+		map.put("vr_medicalApplicable", this.medicalApplicable);
+		map.put("vr_medicalStatus", this.medicalStatus);
+		map.put("vr_newRecord", this.newRecord);
+		map.put("vr_lovValue", this.lovValue);
+		map.put("vr_befImage", this.befImage);
+		map.put("vr_userDetails", this.userDetails);
+		map.put("vr_insStatus", this.insStatus);
+		map.put("vr_extendedFieldRender", this.extendedFieldRender);
+		map.put("vr_vasConfiguration", this.vasConfiguration);
+		map.put("vr_aggrements", this.aggrements);
+		map.put("vr_vasCheckLists", this.vasCheckLists);
+		map.put("vr_selAnsCountMap", this.selAnsCountMap);
+		map.put("vr_documents", this.documents);
+		map.put("vr_auditDetailMap", this.auditDetailMap);
+		map.put("vr_checkLists", this.checkLists);
+		map.put("vr_vasCustomer", this.vasCustomer);
+		map.put("vr_returnDataSetList", this.returnDataSetList);
+		map.put("vr_finFeeDetailsList", this.finFeeDetailsList);
+		map.put("vr_extendedDetails", this.extendedDetails);
+		map.put("vr_cif", this.cif);
+		map.put("vr_finReference", this.finReference);
+		map.put("vr_collateralRef", this.collateralRef);
+		map.put("vr_returnStatus", this.returnStatus);
+		map.put("vr_paidAmt", this.paidAmt);
+		map.put("vr_waivedAmt", this.waivedAmt);
+		map.put("vr_partnerPremiumAmt", this.partnerPremiumAmt);
+		map.put("vr_manualAdviseId", this.manualAdviseId);
+		map.put("vr_paymentInsId", this.paymentInsId);
+		map.put("vr_receivableAdviseId", this.receivableAdviseId);
+
+		return map;
 	}
 
 	public List<FinFeeDetail> getFinFeeDetailsList() {

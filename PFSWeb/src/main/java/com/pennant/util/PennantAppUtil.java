@@ -2348,6 +2348,8 @@ public class PennantAppUtil {
 			property = new Property(role.getName(), role.getName());
 			configNames.add(property);
 		}
+		
+		configNames.add(new Property("DISB_EXPORT_CUSTOM", "DISB_EXPORT_CUSTOM"));
 
 		return configNames;
 	}

@@ -157,7 +157,6 @@ public class SMTParameterConstants {
 	// The below variable is set for Branch screen in Entity Masters for Masters
 	// menu.
 	public static final String ALLOW_ORGANISATIONAL_STRUCTURE = "ALLOW_ORGANISATIONAL_STRUCTURE";
-	public static final String HOLD_DISB_INST_POST = "HOLD_DISB_INST_POST";
 	public static final String ALLOW_DIVISION_BASED_CLUSTER = "ALLOW_DIVISION_BASED_CLUSTER";
 	public static final String DOC_SPLIT_SCREEN_REQ = "DOC_SPLIT_SCREEN_REQ";
 	public static final String BR_INRST_RVW_FRQ_FRQDAYVAL_REQ = "BR_INRST_RVW_FRQ_FRQDAYVAL_REQ";
@@ -193,7 +192,6 @@ public class SMTParameterConstants {
 																			// Fee
 																			// Waivers
 
-	public static final String INSURANCE_INST_ON_DISB = "INSURANCE_INST_ON_DISB";
 
 	// Put-call Default value need or not
 	public static final String PUTCALL_DEFAULT_ALERTDAYS_REQUIRED = "PUTCALL_DEFAULT_ALERTDAYS_REQUIRED";

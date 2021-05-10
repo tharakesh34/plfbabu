@@ -72,8 +72,10 @@ public class AEEvent implements Serializable {
 	//Cash Management
 	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
 
-	public AEEvent() {
+	private long paymentId;
 
+	public AEEvent() {
+		super();
 	}
 
 	// ******************************************************//
@@ -430,6 +432,14 @@ public class AEEvent implements Serializable {
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public long getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(long paymentId) {
+		this.paymentId = paymentId;
 	}
 
 }

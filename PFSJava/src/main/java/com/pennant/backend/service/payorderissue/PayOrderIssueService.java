@@ -69,6 +69,6 @@ public interface PayOrderIssueService {
 
 	List<ReturnDataSet> getInsurancePostings(String finReference);
 
-	List<ReturnDataSet> getDisbursementPostings(String finReference, String event);
+	List<ReturnDataSet> getDisbursementPostings(String finReference);
 
 }

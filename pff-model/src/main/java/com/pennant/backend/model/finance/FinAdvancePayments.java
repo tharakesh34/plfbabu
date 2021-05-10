@@ -182,7 +182,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	@XmlElement
 	private String entityCode;
 	private String vasReference;
-	private long providerId;
+	private Long providerId;
 	private boolean paymentProcReq;
 	private int tempSeq = 0;
 	private String tempReference = null;
@@ -873,11 +873,11 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.reEnterBeneficiaryAccNo = reEnterBeneficiaryAccNo;
 	}
 
-	public long getProviderId() {
+	public Long getProviderId() {
 		return providerId;
 	}
 
-	public void setProviderId(long providerId) {
+	public void setProviderId(Long providerId) {
 		this.providerId = providerId;
 	}
 

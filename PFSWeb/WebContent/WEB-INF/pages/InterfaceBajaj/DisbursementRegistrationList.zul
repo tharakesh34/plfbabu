@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_DisbursementRegistrationList" apply="${disbursementRegistrationListCtrl}" border="none"
@@ -12,14 +13,15 @@
 					<label value="" />
 					<!-- SEARCH AREA -->
 					<toolbar align="center" style="border-style: none;">
-						<button id="button_Search" label="${c:l('label_Filter')}" autodisable="button_Search,btnDownload,print,btnRefresh,help"
-							tooltiptext="${c:l('button_Search.tooltiptext')}" />
-						<button id="btnDownload" label="${c:l('label_DisbursementList_btndownload.value')}" autodisable="button_Search,btnDownload,print,btnRefresh,help" />
+						<button id="button_Search" label="${c:l('label_Filter')}"
+							autodisable="button_Search,btnDownload,print,btnRefresh,help" tooltiptext="${c:l('button_Search.tooltiptext')}" />
+						<button id="btnDownload" label="${c:l('label_DisbursementList_btndownload.value')}"
+							autodisable="button_Search,btnDownload,print,btnRefresh,help" />
 					</toolbar>
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="btnRefresh" height="24px" label="${c:l('label_Refresh')}" autodisable="button_Search,btnDownload,print,btnRefresh,help"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
+						<button id="btnRefresh" height="24px" label="${c:l('label_Refresh')}"
+							autodisable="button_Search,btnDownload,print,btnRefresh,help" tooltiptext="${c:l('btnRefresh.tooltiptext')}" />
 					</toolbar>
 				</hbox>
 			</div>
@@ -53,8 +55,7 @@
 									<listbox id="sortOperator_FinType" width="43px" mold="select" rows="1" />
 									<hbox>
 										<hlayout>
-											<space id="space_finType" spacing="1px">
-											</space>
+											<space id="space_finType" spacing="1px"></space>
 											<cell colspan="1">
 												<uppercasebox id="finType" width="132px" />
 												<button id="btnFinType" image="/images/icons/LOVSearch.png" />
@@ -81,13 +82,15 @@
 								</row>
 								<row>
 									<label value="${c:l('label_Disbursement_FromDate.value')}" />
-									<listbox id="sortOperator_FromDate" width="43px" mold="select" visible="false" rows="1" />
+									<listbox id="sortOperator_FromDate" width="43px" mold="select" visible="false"
+										rows="1" />
 									<hbox>
 										<space spacing="3px"></space>
 										<datebox id="fromDate" format="dd/MM/yyyy" width="171px" />
 									</hbox>
 									<label value="${c:l('label_Disbursement_ToDate.value')}" />
-									<listbox id="sortOperator_ToDate" width="43px" mold="select" visible="false" rows="1" />
+									<listbox id="sortOperator_ToDate" width="43px" mold="select" visible="false"
+										rows="1" />
 									<hbox>
 										<space spacing="2px"></space>
 										<datebox id="toDate" format="dd/MM/yyyy" width="171px" />
@@ -104,37 +107,57 @@
 										<checkbox id="qdp" width="171px" />
 									</hbox>
 								</row>
-								<row id="row_VasManufacturer" visible="false">
-									<label value="${c:l('label_DisbursementList_VasManufacturer.value')}" />
-									<listbox id="sortOperator_VasManufacturer" width="43px" mold="select" rows="1" />
-									<extendedcombobox id="vasManufacturer" width="125px" />
+								<row>
+									<cell>
+										<label value="${c:l('listheader_Disbursement_Party.label')}" />
+									</cell>
+									<cell>
+										<listbox id="sortOperator_DisbParty" width="43px" mold="select" rows="1" />
+									</cell>
+									<cell>
+										<hbox>
+											<space spacing="2px" />
+											<combobox id="disbParty" width="171px" />
+										</hbox>
+									</cell>
+									<cell id="cellVMFC1" visible="false">
+										<label value="${c:l('label_DisbursementList_VasManufacturer.value')}" />
+									</cell>
+									<cell id="cellVMFC2" visible="false">
+										<listbox id="sortOperator_VasManufacturer" width="43px" mold="select" rows="1" />
+									</cell>
+									<cell id ="cellVMFC3" visible="false">
+										<extendedcombobox id="vasManufacturer" width="125px" />
+									</cell>
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxDisbursementRegistration" fixedLayout="true" span="true" width="100%" height="100%"
-							multiple="false" sizedByContent="true">
+						<listbox id="listBoxDisbursementRegistration" fixedLayout="true" span="true" width="100%"
+							height="100%" multiple="false" sizedByContent="true">
 							<listhead sizable="true">
 								<listheader id="listHeader_CheckBox_Name" hflex="min" align="center" />
-								<listheader id="listheader_Disbursement_Entity" label="${c:l('listheader_Disbursement_Entity.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_DisbTypes" label="${c:l('listheader_Disbursement_DisbType.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_FinRef" label="${c:l('listheader_Disbursement_FinRef.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_FinType" label="${c:l('listheader_Disbursement_LoanType.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_AmountToBeReleased" label="${c:l('listheader_Disbursement_AmountToBeReleased.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_Custname" label="${c:l('listheader_Disbursement_CustName.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_BenName" label="${c:l('listheader_Disbursement_BenName.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_BenAcctno" label="${c:l('listheader_Disbursement_BenAcctNo.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_Branch" label="${c:l('listheader_Disbursement_Branch.label')}"
-									hflex="min" />
-								<listheader id="listheader_Disbursement_Channel" label="${c:l('listheader_Disbursement_Channel.label')}"
-									hflex="min" />
+								<listheader id="listheader_Disbursement_Entity"
+									label="${c:l('listheader_Disbursement_Entity.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_DisbTypes"
+									label="${c:l('listheader_Disbursement_DisbType.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_FinRef"
+									label="${c:l('listheader_Disbursement_FinRef.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_FinType"
+									label="${c:l('listheader_Disbursement_LoanType.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_AmountToBeReleased"
+									label="${c:l('listheader_Disbursement_AmountToBeReleased.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_Party"
+									label="${c:l('listheader_Disbursement_Party.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_Custname"
+									label="${c:l('listheader_Disbursement_CustName.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_BenName"
+									label="${c:l('listheader_Disbursement_BenName.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_BenAcctno"
+									label="${c:l('listheader_Disbursement_BenAcctNo.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_Branch"
+									label="${c:l('listheader_Disbursement_Branch.label')}" hflex="min" />
+								<listheader id="listheader_Disbursement_Channel"
+									label="${c:l('listheader_Disbursement_Channel.label')}" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

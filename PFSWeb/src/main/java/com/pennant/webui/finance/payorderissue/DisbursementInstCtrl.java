@@ -153,15 +153,15 @@ public class DisbursementInstCtrl {
 				for (FinAdvancePayments finAdvancePayments : list) {
 					if (finAdvancePayments.ispOIssued()) {
 						if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
-							if(!(StringUtils
-										.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_CANCEL)
-										|| StringUtils.equals(finAdvancePayments.getStatus(),
-												DisbursementConstants.STATUS_REJECTED)
-										|| StringUtils.equals(finAdvancePayments.getStatus(),
+							if (!(StringUtils.equals(finAdvancePayments.getStatus(),
+									DisbursementConstants.STATUS_CANCEL)
+									|| StringUtils.equals(finAdvancePayments.getStatus(),
+											DisbursementConstants.STATUS_REJECTED)
+									|| StringUtils.equals(finAdvancePayments.getStatus(),
 											DisbursementConstants.STATUS_PRINT))) {
 								return false;
 							}
-						}else{
+						} else {
 							if (!StringUtils.equals(finAdvancePayments.getStatus(),
 									DisbursementConstants.STATUS_CANCEL)) {
 								return false;
@@ -232,207 +232,140 @@ public class DisbursementInstCtrl {
 		logger.debug("Entering");
 		listbox.getItems().clear();
 
-		if (CollectionUtils.isNotEmpty(finAdvancePayDetails)) {
+		if (CollectionUtils.isEmpty(finAdvancePayDetails)) {
+			return;
+		}
 
-			Map<Integer, List<FinAdvancePayments>> map = groupPayments(finAdvancePayDetails);
+		Map<Integer, List<FinAdvancePayments>> map = groupPayments(finAdvancePayDetails);
 
-			boolean subtotalRequired = true;
-			if (map.size() == 1) {
-				subtotalRequired = false;
-			}
+		boolean subtotalRequired = true;
+		if (map.size() == 1) {
+			subtotalRequired = false;
+		}
 
-			BigDecimal grandTotal = BigDecimal.ZERO;
+		BigDecimal grandTotal = BigDecimal.ZERO;
 
-			for (Entry<Integer, List<FinAdvancePayments>> entrySet : map.entrySet()) {
+		for (Entry<Integer, List<FinAdvancePayments>> entrySet : map.entrySet()) {
 
-				BigDecimal subTotal = BigDecimal.ZERO;
-				Integer key = entrySet.getKey();
-				FinanceDisbursement groupFinDisbursement = getTotal(financeDisbursements, financeMain, key, true);
-				BigDecimal groupDisbAmount = groupFinDisbursement.getDisbAmount();
-				Date groupDate = groupFinDisbursement.getDisbDate();
-
-				//condition to not allow under servicing record to be displayed in disbursement queue.
-				if (groupDate == null) {
-					continue;
-				}
-
-				Listgroup listgroup = new Listgroup();
-				Listcell lc;
-				String label = DateUtility.formatToLongDate(groupDate);
-				label = label.concat(" , ") + key;
-				lc = new Listcell(label);
-				lc.setStyle("font-weight:bold");
-				lc.setParent(listgroup);
-
-				lc = new Listcell("");
-				lc.setSpan(5);
-				lc.setParent(listgroup);
-
-				lc = new Listcell(PennantApplicationUtil.amountFormate(groupDisbAmount, ccyFormat));
-				lc.setStyle("text-align:right;padding-right:10px;font-weight:bold");
-				lc.setParent(listgroup);
-
-				lc = new Listcell("");
-				lc.setSpan(3);
-				lc.setParent(listgroup);
-				listbox.appendChild(listgroup);
-
-				List<FinAdvancePayments> list = entrySet.getValue();
-				Comparator<FinAdvancePayments> comp = new BeanComparator<FinAdvancePayments>("paymentSeq");
-				Collections.sort(list, comp);
-
-				for (FinAdvancePayments detail : list) {
-
-					if (!DisbursementInstCtrl.isDeleteRecord(detail)
-							&& !DisbursementConstants.PAYMENT_DETAIL_VAS.equals(detail.getPaymentDetail())) {
-						grandTotal = grandTotal.add(detail.getAmtToBeReleased());
-						subTotal = subTotal.add(detail.getAmtToBeReleased());
-					}
-					Listitem item = new Listitem();
-					lc = new Listcell(Integer.toString(detail.getPaymentSeq()));
-					lc.setParent(item);
-					lc = new Listcell(
-							PennantApplicationUtil.getLabelDesc(detail.getPaymentDetail(), paymentDetailList));
-					lc.setParent(item);
-					lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentType(), paymentTypeList));
-					lc.setParent(item);
-
-					String bankName = "";
-					String custName = "";
-					String accoountNum = "";
-
-					String paytype = detail.getPaymentType();
-
-					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paytype)
-							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paytype)) {
-						bankName = detail.getBankName();
-						custName = detail.getLiabilityHoldName();
-						accoountNum = detail.getLlReferenceNo();
-					} else {
-						bankName = detail.getBranchBankName();
-						custName = detail.getBeneficiaryName();
-						accoountNum = detail.getBeneficiaryAccNo();
-					}
-
-					lc = new Listcell(bankName);
-					lc.setParent(item);
-					lc = new Listcell(custName);
-					lc.setParent(item);
-
-					if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING) && !isMaskingAccNo) {
-						lc = new Listcell("**********");
-					} else {
-						lc = new Listcell(accoountNum);
-					}
-					lc.setParent(item);
-
-					lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));
-					lc.setParent(item);
-
-					if (StringUtils.equals(detail.getStatus(), DisbursementConstants.STATUS_REJECTED)) {
-						lc = new Listcell(detail.getStatus().concat(StringUtils.isNotEmpty(detail.getRejectReason())
-								? "-" + StringUtils.trimToEmpty(detail.getRejectReason()) : ""));
-					} else {
-						lc = new Listcell(detail.getStatus());
-					}
-					lc.setParent(item);
-
-					lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordStatus()));
-					lc.setParent(item);
-
-					lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));
-					lc.setParent(item);
-
-					item.setAttribute("data", detail);
-					ComponentsCtrl.applyForward(item, "onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
-					listbox.appendChild(item);
-				}
-
-				if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB) && key == 1) {
-					if (vasRecordingList != null && vasRecordingList.size() > 0) {
-						for (VASRecording vasDetail : vasRecordingList) {
-
-							VASConfiguration configuration = vasDetail.getVasConfiguration();
-
-							if (configuration == null) {
-								configuration = this.vASConfigurationDAO
-										.getVASConfigurationByCode(vasDetail.getProductCode(), "");
-							}
-
-							VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
-									.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(),
-											vasDetail.getEntityCode(), "_view");
-							if (vasProviderAccDetail != null) {
-								Listitem item = new Listitem();
-								lc = new Listcell("");
-								lc.setParent(item);
-								lc = new Listcell(vasProviderAccDetail.getProviderDesc());
-								lc.setParent(item);
-								lc = new Listcell(vasProviderAccDetail.getPaymentMode());
-								lc.setParent(item);
-
-								lc = new Listcell(vasProviderAccDetail.getBankName());
-								lc.setParent(item);
-								lc = new Listcell(vasProviderAccDetail.getProviderDesc());
-								lc.setParent(item);
-
-								lc = new Listcell(vasProviderAccDetail.getAccountNumber());
-								lc.setParent(item);
-
-								if (!DisbursementConstants.STATUS_REJECTED.equals(vasDetail.getInsStatus())) {
-									grandTotal = grandTotal.add(vasDetail.getFee());
-									subTotal = subTotal.add(vasDetail.getFee());
-								}
-
-								lc = new Listcell(PennantApplicationUtil.amountFormate(vasDetail.getFee(), ccyFormat));
-								lc.setParent(item);
-
-								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell(vasDetail.getInsStatus());
-								} else {
-									lc = new Listcell(PennantConstants.RECORD_TYPE_NEW);
-
-								}
-								lc.setParent(item);
-
-								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
-
-								} else {
-									lc = new Listcell("");
-								}
-								lc.setParent(item);
-
-								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell("");
-
-								} else {
-									lc = new Listcell(PennantConstants.RCD_ADD);
-								}
-
-								lc.setParent(item);
-
-								item.setAttribute("data", vasProviderAccDetail);
-								ComponentsCtrl.applyForward(item,
-										"onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
-								listbox.appendChild(item);
-							}
-
-						}
-					}
-				}
-
-				if (subtotalRequired) {
-					//sub total Display Totals On Footer
-					addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal, true);
+			BigDecimal subTotal = BigDecimal.ZERO;
+			Integer key = entrySet.getKey();
+			FinanceDisbursement groupFinDisbursement = getTotal(financeDisbursements, financeMain, key, true);
+			BigDecimal groupDisbAmount = groupFinDisbursement.getDisbAmount();
+			
+			for (FinAdvancePayments fad : entrySet.getValue()) {
+				if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(fad.getPaymentDetail())) {
+					groupDisbAmount = groupDisbAmount.add(fad.getAmtToBeReleased());
 				}
 			}
+			
+			Date groupDate = groupFinDisbursement.getDisbDate();
 
-			//group total
-			if (listbox != null && listbox.getItems().size() > 0) {
-				// Display Totals On Footer
-				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal, false);
+			//condition to not allow under servicing record to be displayed in disbursement queue.
+			if (groupDate == null) {
+				continue;
 			}
+
+			Listgroup listgroup = new Listgroup();
+			Listcell lc;
+			String label = DateUtility.formatToLongDate(groupDate);
+			label = label.concat(" , ") + key;
+			lc = new Listcell(label);
+			lc.setStyle("font-weight:bold");
+			lc.setParent(listgroup);
+
+			lc = new Listcell("");
+			lc.setSpan(5);
+			lc.setParent(listgroup);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(groupDisbAmount, ccyFormat));
+			lc.setStyle("text-align:right;padding-right:10px;font-weight:bold");
+			lc.setParent(listgroup);
+
+			lc = new Listcell("");
+			lc.setSpan(3);
+			lc.setParent(listgroup);
+			listbox.appendChild(listgroup);
+
+			List<FinAdvancePayments> list = entrySet.getValue();
+			Comparator<FinAdvancePayments> comp = new BeanComparator<FinAdvancePayments>("paymentSeq");
+			Collections.sort(list, comp);
+
+			for (FinAdvancePayments detail : list) {
+
+				if (!DisbursementInstCtrl.isDeleteRecord(detail)) {
+					grandTotal = grandTotal.add(detail.getAmtToBeReleased());
+					subTotal = subTotal.add(detail.getAmtToBeReleased());
+				}
+				
+				Listitem item = new Listitem();
+				lc = new Listcell(Integer.toString(detail.getPaymentSeq()));
+				lc.setParent(item);
+				lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentDetail(), paymentDetailList));
+				lc.setParent(item);
+				lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentType(), paymentTypeList));
+				lc.setParent(item);
+
+				String bankName = "";
+				String custName = "";
+				String accoountNum = "";
+
+				String paytype = detail.getPaymentType();
+
+				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paytype)
+						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paytype)) {
+					bankName = detail.getBankName();
+					custName = detail.getLiabilityHoldName();
+					accoountNum = detail.getLlReferenceNo();
+				} else {
+					bankName = detail.getBranchBankName();
+					custName = detail.getBeneficiaryName();
+					accoountNum = detail.getBeneficiaryAccNo();
+				}
+
+				lc = new Listcell(bankName);
+				lc.setParent(item);
+				lc = new Listcell(custName);
+				lc.setParent(item);
+
+				if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING) && !isMaskingAccNo) {
+					lc = new Listcell("**********");
+				} else {
+					lc = new Listcell(accoountNum);
+				}
+				lc.setParent(item);
+
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));
+				lc.setParent(item);
+
+				if (StringUtils.equals(detail.getStatus(), DisbursementConstants.STATUS_REJECTED)) {
+					lc = new Listcell(detail.getStatus().concat(StringUtils.isNotEmpty(detail.getRejectReason())
+							? "-" + StringUtils.trimToEmpty(detail.getRejectReason()) : ""));
+				} else {
+					lc = new Listcell(detail.getStatus());
+				}
+				lc.setParent(item);
+
+				lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordStatus()));
+				lc.setParent(item);
+
+				lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));
+				lc.setParent(item);
+
+				item.setAttribute("data", detail);
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
+				listbox.appendChild(item);
+			}
+
+			if (subtotalRequired) {
+				//sub total Display Totals On Footer
+				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal, true);
+			}
+		}
+
+		//group total
+		if (listbox != null && listbox.getItems().size() > 0) {
+			// Display Totals On Footer
+			addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal, false);
 		}
 		logger.debug("Leaving");
 	}

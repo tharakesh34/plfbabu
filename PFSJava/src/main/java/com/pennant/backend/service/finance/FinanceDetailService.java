@@ -62,6 +62,7 @@ import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCustomerDetails;
@@ -355,12 +356,5 @@ public interface FinanceDetailService {
 
 	List<RepayInstruction> getRepayInstructions(String finReference, String string, boolean b);
 
-	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordingList,
-			FinanceDetail financeDetail);
-
 	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail financeDetail);
-
-	List<ReturnDataSet> prepareInsPayAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
-
-	List<ReturnDataSet> prepareVasAccounting(AEEvent aeEvent, List<VASRecording> vasRecordings);
 }

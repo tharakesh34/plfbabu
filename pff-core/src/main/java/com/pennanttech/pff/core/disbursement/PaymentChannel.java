@@ -1,7 +1,7 @@
 package com.pennanttech.pff.core.disbursement;
 
 public enum PaymentChannel {
-	Disbursement("D"), Payment("P"), Insurance("I");
+	Disbursement("D"), Payment("P");
 
 	private final String value;
 

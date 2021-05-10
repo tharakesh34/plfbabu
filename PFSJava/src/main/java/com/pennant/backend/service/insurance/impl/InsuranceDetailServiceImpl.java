@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -58,7 +57,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -323,7 +321,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setEntityCode(details.getEntityCode());
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSADJ);
 		aeEvent.setFinReference(details.getReference());
-		aeEvent.setValueDate(DateUtility.getAppDate());
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
@@ -421,7 +419,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setPostingUserBranch(vASRecording.getUserDetails().getBranchCode());
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
 		aeEvent.setFinReference(vASRecording.getVasReference());
-		aeEvent.setValueDate(DateUtility.getAppDate());
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
@@ -578,7 +576,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		movement.setAdviseID(manualAdvise.getAdviseID());
 		movement.setReceiptID(instructions.getId());
 		movement.setReceiptSeqID(0);
-		movement.setMovementDate(DateUtility.getAppDate());
+		movement.setMovementDate(SysParamUtil.getAppDate());
 		movement.setMovementAmount(manualAdvise.getBalanceAmt());
 		movement.setPaidAmount(manualAdvise.getBalanceAmt());
 		getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
@@ -601,53 +599,47 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		//TODO:GANESH
-		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)
-				&& SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_INSPAYINST)) {
-			for (VASRecording vasDetail : vasRecording) {
+		for (VASRecording vr : vasRecording) {
+			VASConfiguration vc = vr.getVasConfiguration();
 
-				VASConfiguration configuration = vasDetail.getVasConfiguration();
+			if (vc == null) {
+				vc = this.vASConfigurationDAO.getVASConfigurationByCode(vr.getProductCode(), "_view");
+			}
 
-				if (configuration == null) {
-					configuration = this.vASConfigurationDAO.getVASConfigurationByCode(vasDetail.getProductCode(),
-							"_view");
+			VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
+					.getVASProviderAccDetByPRoviderId(vc.getManufacturerId(), "");
+
+			if (vasProviderAccDetail != null) {
+				InsurancePaymentInstructions payments = new InsurancePaymentInstructions();
+
+				payments.setEntityCode(vasProviderAccDetail.getEntityCode());
+				payments.setProviderId(vasProviderAccDetail.getProviderId());
+				payments.setPaymentAmount(vr.getFee());
+				payments.setPaymentDate(SysParamUtil.getAppDate());
+				payments.setPaymentType(vasProviderAccDetail.getPaymentMode());
+				payments.setApprovedDate(SysParamUtil.getAppDate());
+				payments.setDataEngineStatusId(0);
+				payments.setPayableAmount(vr.getFee());
+				payments.setPartnerBankId(vasProviderAccDetail.getPartnerBankId());
+				payments.setNoOfInsurances(0);
+				payments.setNoOfReceivables(0);
+				payments.setLinkedTranId(0);
+				payments.setReceivableAmount(BigDecimal.ZERO);
+				payments.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				payments.setPaymentCCy(SysParamUtil.getAppCurrency());
+				payments.setLastMntBy(loginUser.getUserId());
+				payments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				payments.setUserDetails(loginUser);
+				
+				FinAdvancePayments fap = financeDetail.getAdvancePaymentsList().get(0);
+				if (financeDetail.isDisbStp() || DisbursementConstants.STATUS_AWAITCON.equals(fap.getStatus())) {
+					payments.setStatus(DisbursementConstants.STATUS_AWAITCON);
+				} else {
+					payments.setStatus(DisbursementConstants.STATUS_APPROVED);
 				}
 
-				VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
-						.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), "");
-
-				if (vasProviderAccDetail != null) {
-					InsurancePaymentInstructions payments = new InsurancePaymentInstructions();
-
-					payments.setEntityCode(vasProviderAccDetail.getEntityCode());
-					payments.setProviderId(vasProviderAccDetail.getProviderId());
-					payments.setPaymentAmount(vasDetail.getFee());
-					payments.setPaymentDate(SysParamUtil.getAppDate());
-					payments.setPaymentType(vasProviderAccDetail.getPaymentMode());
-					payments.setApprovedDate(SysParamUtil.getAppDate());
-					payments.setDataEngineStatusId(0);
-					payments.setPayableAmount(vasDetail.getFee());
-					payments.setPartnerBankId(vasProviderAccDetail.getPartnerBankId());
-					payments.setNoOfInsurances(0);
-					payments.setNoOfReceivables(0);
-					payments.setLinkedTranId(0);
-					payments.setReceivableAmount(BigDecimal.ZERO);
-					payments.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					payments.setPaymentCCy(SysParamUtil.getAppCurrency());
-					payments.setLastMntBy(loginUser.getUserId());
-					payments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					payments.setUserDetails(loginUser);
-					FinAdvancePayments advancePayments = financeDetail.getAdvancePaymentsList().get(0);
-					if (financeDetail.isDisbStp()
-							|| DisbursementConstants.STATUS_AWAITCON.equals(advancePayments.getStatus())) {
-						payments.setStatus(DisbursementConstants.STATUS_AWAITCON);
-					} else {
-						payments.setStatus(DisbursementConstants.STATUS_APPROVED);
-					}
-
-					long id = this.insuranceDetailDAO.saveInsurancePayments(payments, TableType.MAIN_TAB);
-					vASRecordingDAO.updateVasStatus(vasDetail.getVasReference(), id);
-				}
+				long id = this.insuranceDetailDAO.saveInsurancePayments(payments, TableType.MAIN_TAB);
+				vASRecordingDAO.updateVasStatus(vr.getVasReference(), id);
 			}
 		}
 		logger.debug(Literal.LEAVING);

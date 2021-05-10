@@ -278,6 +278,8 @@ public class ImplementationConstants {
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true);
 		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
 		PRESEMENT_STOP_RECEIPTS_ON_EOD = getValueAsBoolean(extensions, "PRESEMENT_STOP_RECEIPTS_ON_EOD", false);
+		HOLD_DISB_INST_POST = getValueAsBoolean(extensions, "HOLD_DISB_INST_POST", false);
+		VAS_INST_ON_DISB = getValueAsBoolean(extensions, "VAS_INST_ON_DISB", false);
 
 	}
 
@@ -516,6 +518,8 @@ public class ImplementationConstants {
 	public static boolean ALLOW_BUILDER_BENEFICIARY_DETAILS;
 	public static boolean COVENANT_ADTNL_REMARKS;
 	public static boolean PRESEMENT_STOP_RECEIPTS_ON_EOD;
+	public static boolean HOLD_DISB_INST_POST;
+	public static boolean VAS_INST_ON_DISB;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

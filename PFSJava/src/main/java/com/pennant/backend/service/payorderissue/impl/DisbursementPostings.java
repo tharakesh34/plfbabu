@@ -28,6 +28,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
+@Deprecated
 public class DisbursementPostings {
 	private Logger logger = LogManager.getLogger(DisbursementPostings.class);
 

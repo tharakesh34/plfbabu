@@ -179,36 +179,37 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	/*
 	 * Processing the CMS payments
 	 */
-	private void processPayments(PaymentInstruction paymentInstruction) {
+	private void processPayments(PaymentInstruction pi) {
 
 		List<FinAdvancePayments> advancePaymentList = new ArrayList<>();
 
 		FinanceDetail financeDetail = new FinanceDetail();
 		financeDetail.setFinScheduleData(new FinScheduleData());
 		financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain());
-		financeDetail.getFinScheduleData().getFinanceMain().setFinReference(paymentInstruction.getFinReference());
+		financeDetail.getFinScheduleData().getFinanceMain().setFinReference(pi.getFinReference());
 
-		FinAdvancePayments advancePayments = new FinAdvancePayments();
-		advancePayments.setPaymentId(paymentInstruction.getPaymentInstructionId());
-		advancePayments.setFinReference(paymentInstruction.getFinReference());
-		advancePayments.setPaymentType(paymentInstruction.getPaymentType());
-		advancePayments.setAmtToBeReleased(paymentInstruction.getPaymentAmount());
-		advancePayments.setLLDate(paymentInstruction.getPostDate());
-		advancePayments.setPayableLoc(paymentInstruction.getPayableLoc());
-		advancePayments.setPrintingLoc(paymentInstruction.getPrintingLoc());
-		advancePayments.setBankName(paymentInstruction.getBankName());
-		advancePayments.setBranchDesc(paymentInstruction.getBranchDesc());
-		advancePayments.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
-		advancePayments.setBeneficiaryAccNo(paymentInstruction.getAccountNo());
-		advancePayments.setBeneficiaryName(paymentInstruction.getAcctHolderName());
-		advancePayments.setPhoneCountryCode(paymentInstruction.getPhoneCountryCode());
-		advancePayments.setPhoneNumber(paymentInstruction.getPhoneNumber());
-		advancePayments.setStatus(paymentInstruction.getStatus());
-		advancePayments.setRemarks(paymentInstruction.getRemarks());
-		advancePayments.setPaymentType(paymentInstruction.getPaymentType());
-		advancePayments.setInputDate(paymentInstruction.getPostDate());
-		advancePayments.setiFSC(paymentInstruction.getBankBranchIFSC());
-		advancePaymentList.add(advancePayments);
+		FinAdvancePayments fap = new FinAdvancePayments();
+		fap.setPaymentId(pi.getPaymentInstructionId());
+		fap.setFinReference(pi.getFinReference());
+		fap.setPaymentType(pi.getPaymentType());
+		fap.setAmtToBeReleased(pi.getPaymentAmount());
+		fap.setLLDate(pi.getPostDate());
+		fap.setPayableLoc(pi.getPayableLoc());
+		fap.setPrintingLoc(pi.getPrintingLoc());
+		fap.setBankName(pi.getBankName());
+		fap.setBranchDesc(pi.getBranchDesc());
+		fap.setPartnerBankAc(pi.getPartnerBankAc());
+		fap.setBeneficiaryAccNo(pi.getAccountNo());
+		fap.setBeneficiaryName(pi.getAcctHolderName());
+		fap.setLiabilityHoldName(pi.getAcctHolderName());
+		fap.setPhoneCountryCode(pi.getPhoneCountryCode());
+		fap.setPhoneNumber(pi.getPhoneNumber());
+		fap.setStatus(pi.getStatus());
+		fap.setRemarks(pi.getRemarks());
+		fap.setPaymentType(pi.getPaymentType());
+		fap.setInputDate(pi.getPostDate());
+		fap.setiFSC(pi.getBankBranchIFSC());
+		advancePaymentList.add(fap);
 
 		financeDetail.setAdvancePaymentsList(advancePaymentList);
 		this.paymentsProcessService.process(financeDetail, DisbursementConstants.CHANNEL_PAYMENT);
