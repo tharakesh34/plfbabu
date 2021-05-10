@@ -579,13 +579,13 @@
 												</row>
 												<row id="row_AllowLoanTypes" visible="true">
 													<label
-														id="label_FinanceMainDialog_AllowLoanSplit"
+														id="label_FinanceMainDialog_AllowLoanSplit" visible = "false"
 														value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />
 													<hbox>
 														<space
 															spacing="2px" />
 														<checkbox
-															id="alwLoanSplit" checked="false" />
+															id="alwLoanSplit" checked="false" visible = "false"/>
 													</hbox>
 													<label
 														id="label_FinanceMainDialog_ParentLoanReference"

@@ -745,6 +745,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Label label_FinanceMainDialog_PlanDeferCount;
 	private Label label_FinanceMainDialog_AlwGrace;
 	private Label label_FinanceMainDialog_PromoProduct;
+	private Label label_FinanceMainDialog_AllowLoanSplit;
 
 	protected Label label_FinanceMainDialog_CustPayAccId;
 	protected Label label_FinanceMainDialog_DisbAcctId;
@@ -4923,7 +4924,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_underConstruction.setVisible(true);
 		}
 
-		this.alwLoanSplit.setChecked(aFinanceMain.isAlwLoanSplit());
+		if (financeType.isAlwLoanSplit()) {
+			this.alwLoanSplit.setVisible(true);
+			this.label_FinanceMainDialog_AllowLoanSplit.setVisible(true);
+			this.alwLoanSplit.setChecked(aFinanceMain.isAlwLoanSplit());
+		}
 		if (aFinanceMain.isAlwLoanSplit()) {
 			pricingTabAppend(true);
 		}
