@@ -283,7 +283,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * @throws Exception
 	 **/
 	public void doFillAccountDetail(long custId) {
-		if (custId != Long.MIN_VALUE || custId != 0) {
+		if (custId != Long.MIN_VALUE && custId != 0) {
 			pagingEnquiryList.setDetailed(true);
 			this.searchObjAc = new JdbcSearchObject<Accounts>(Accounts.class);
 			//this.searchObjAc.addFilter(new Filter("acCustId", custId, Filter.OP_EQUAL));
