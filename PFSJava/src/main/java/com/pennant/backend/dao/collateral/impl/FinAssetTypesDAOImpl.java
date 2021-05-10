@@ -192,7 +192,7 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 		logger.debug("Entering");
 		int recordCount = 0;
 
-		StringBuilder deleteSql = new StringBuilder("Delete FinAssetTypes");
+		StringBuilder deleteSql = new StringBuilder("Delete From FinAssetTypes");
 		deleteSql.append(StringUtils.trimToEmpty(type));
 		deleteSql.append(" Where Reference = :Reference AND AssetType=:AssetType AND SeqNo=:SeqNo ");
 		logger.debug("deleteSql: " + deleteSql.toString());
