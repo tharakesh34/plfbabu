@@ -1900,6 +1900,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.printingLoc.setConstraint("");
 		this.valueDate.setConstraint("");
 		this.bankBranchID.setConstraint("");
+		this.partnerBankID.setConstraint("");
 		this.phoneNumber.setConstraint("");
 		this.transactionRef.setConstraint("");
 		logger.debug("Leaving");
@@ -1928,6 +1929,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.printingLoc.setErrorMessage("");
 		this.valueDate.setErrorMessage("");
 		this.bankBranchID.setErrorMessage("");
+		this.partnerBankID.setErrorMessage("");
 		this.phoneNumber.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 		this.transactionRef.setErrorMessage("");
