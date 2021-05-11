@@ -2989,6 +2989,16 @@ public class ScheduleCalculator {
 		finScheduleData = cloner.deepClone(orgFinScheduleData);
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceType ft = finScheduleData.getFinanceType();
+
+		int totalTerms = finMain.getNumberOfTerms() + noOfTerms;
+
+		if (totalTerms > ft.getFinMaxTerm()) {
+			orgFinScheduleData.setErrorDetail(new ErrorDetail("SCH30",
+					"ADD/ADJ TERMS REACHED MAXIMUM TERMS IN CONFIGURATION. NOT ALLOWED TO ADD MORE TERMS.",
+					new String[] { " " }));
+			return orgFinScheduleData;
+		}
 
 		// Set the limits based on system values table
 		int maxFinYears = SysParamUtil.getValueAsInt("MAX_FIN_YEARS");
