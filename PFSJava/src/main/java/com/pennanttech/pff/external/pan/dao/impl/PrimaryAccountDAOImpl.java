@@ -99,7 +99,6 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 
 	@Override
 	public PrimaryAccount getPrimaryAccountDetails(String primaryID) {
-
 		logger.debug(Literal.ENTERING);
 		PrimaryAccount primaryAccount = new PrimaryAccount();
 		primaryAccount.setDocumentNumber(primaryID);

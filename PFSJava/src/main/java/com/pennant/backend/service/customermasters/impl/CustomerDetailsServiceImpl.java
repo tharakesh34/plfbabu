@@ -764,6 +764,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
 		customerDetails.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
 		customerDetails.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
+		
 		if (ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS) {
 			customerDetails.setCustomerDirectorList(directorDetailDAO.getCustomerDirectorByCustomer(id, type));
 		}

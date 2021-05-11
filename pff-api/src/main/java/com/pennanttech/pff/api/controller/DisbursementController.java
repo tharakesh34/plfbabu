@@ -44,10 +44,10 @@ public class DisbursementController extends ExtendedTestClass {
 
 		DisbursementRequest dr = new DisbursementRequest();
 		dr.setPartnerBankCode(fap.getPartnerbankCode());
-		if (!DisbursementConstants.CHANNEL_INSURANCE.equals(fap.getChannel())) {
-			dr.setFinType(fap.getFinType());
-		}
+		dr.setFinType(fap.getFinType());
 		dr.setEntityCode(fap.getEntityCode());
+		dr.setFinReference(fap.getFinReference());
+		dr.setFinReference(fap.getFinReference());
 
 		if (fap.getPaymentType() != null) {
 			dr.setPaymentType(fap.getPaymentType());
@@ -57,8 +57,11 @@ public class DisbursementController extends ExtendedTestClass {
 			dr.setChannel(fap.getChannel());
 		}
 
-		if (fap.getToDate() != null) {
+		if (fap.getPaymentDetail() != null) {
+			dr.setDisbParty(fap.getPaymentDetail());
+		}
 
+		if (fap.getToDate() != null) {
 			dr.setToDate(fap.getToDate());
 		}
 
@@ -80,10 +83,11 @@ public class DisbursementController extends ExtendedTestClass {
 
 		DisbursementRequestDetail disbDetail = new DisbursementRequestDetail();
 
-		for (FinAdvancePayments finAdvancePayments : disbInstructions) {
-
-			long paymentId = finAdvancePayments.getPaymentId();
-			String channel = finAdvancePayments.getChannel();
+		for (FinAdvancePayments fap : disbInstructions) {
+			long paymentId = fap.getPaymentId();
+			String channel = fap.getChannel();
+			String disbParty = fap.getPaymentDetail();
+			String finReference = fap.getFinReference();
 
 			FinAdvancePayments disb = disbursementDAO.getDisbursementInstruction(paymentId, channel);
 
@@ -110,21 +114,9 @@ public class DisbursementController extends ExtendedTestClass {
 				return disbDetail;
 			}
 
-			String dbchannel = disb.getChannel();
-			if (!dbchannel.equals(finAdvancePayments.getChannel())) {
+			if (!finReference.equals(disb.getFinReference())) {
 				String valueParm[] = new String[4];
-				valueParm[0] = "Current Channel is Not Matched :" + channel;
-				valueParm[1] = "";
-				valueParm[2] = "with Finreference:" + finAdvancePayments.getFinReference();
-				valueParm[3] = "";
-				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-				disbDetail.setReturnStatus(returnStatus);
-				return disbDetail;
-			}
-
-			if (!finAdvancePayments.getFinReference().equals(disb.getFinReference())) {
-				String valueParm[] = new String[4];
-				valueParm[0] = "Finreference: " + finAdvancePayments.getFinReference();
+				valueParm[0] = "Finreference: " + finReference;
 				valueParm[1] = "is Not Matched with";
 				valueParm[2] = "the Existing";
 				valueParm[3] = "disbInstId";
@@ -173,12 +165,12 @@ public class DisbursementController extends ExtendedTestClass {
 		logger.info(Literal.ENTERING);
 		try {
 			for (DisbursementRequest request : disbRequests) {
-
 				request.setId(request.getDisbReqId());
 
 				long disbReqId = request.getId();
 				String channel = request.getChannel();
 				long disbInstId = request.getDisbInstId();
+				String disbParty = request.getDisbParty();
 
 				DisbursementRequest disb = disbursementDAO.getDisbRequest(disbReqId);
 				if (disb == null) {
@@ -188,7 +180,6 @@ public class DisbursementController extends ExtendedTestClass {
 					valueParm[2] = "not exists or Already ";
 					valueParm[3] = "Processed";
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-
 				}
 
 				if (!DisbursementConstants.STATUS_AWAITCON.equals(disb.getStatus())) {
@@ -198,27 +189,15 @@ public class DisbursementController extends ExtendedTestClass {
 					valueParm[2] = " Are not at the Stage of ";
 					valueParm[3] = "AC";
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-
 				}
 
-				if (!disb.getChannel().equals(channel)) {
-					String valueParm[] = new String[4];
-					valueParm[0] = "Given Channel" + channel;
-					valueParm[1] = "is not Matched with the Existing Channel:" + disb.getChannel();
-					valueParm[2] = "";
-					valueParm[3] = "";
-					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-
-				}
-
-				if (!disb.getPaymentId().equals(disbInstId)) {
+				if (disb.getPaymentId() != disbInstId) {
 					String valueParm[] = new String[4];
 					valueParm[0] = "Given DisbInstId: " + disbInstId;
 					valueParm[1] = "is not Matched with the DisbInstId: " + disb.getPaymentId();
 					valueParm[2] = "";
 					valueParm[3] = "";
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
-
 				}
 
 				/* validations for the DisbType Cheque and DD verifying from the DB */

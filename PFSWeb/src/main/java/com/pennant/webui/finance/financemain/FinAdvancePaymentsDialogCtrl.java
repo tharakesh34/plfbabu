@@ -1695,7 +1695,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 		} else {
-			aFinAdvancePayments.setVasReference(PennantConstants.List_Select);
+			aFinAdvancePayments.setVasReference(null);
 		}
 
 		// DocumentName

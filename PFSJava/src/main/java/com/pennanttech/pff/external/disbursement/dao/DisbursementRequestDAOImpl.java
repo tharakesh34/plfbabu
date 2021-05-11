@@ -329,7 +329,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 						});
 			}
-			
+
 			if (batchCount == (disbursementsCount + paymentsCount + insurancesCount)) {
 				return batchCount;
 			} else {
@@ -614,23 +614,28 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	@Override
 	public List<DisbursementRequest> getDisbursementInstructions(DisbursementRequest req) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT PAYMENTID , CUSTCIF, FINREFERENCE, FINTYPE");
+		sql.append("SELECT PAYMENTID, CUSTCIF, FINREFERENCE, FINTYPE");
 		sql.append(", AMTTOBERELEASED, DISBURSEMENT_TYPE, PAYABLELOC, PRINTINGLOC");
 		sql.append(", BANKNAME, MICR_CODE, IFSC_CODE, DISBDATE");
-		sql.append(", BENEFICIARYACCNO , BENEFICIARYNAME, BENFICIRY_EMAIL, PAYMENTTYPE, PARTNERBANK_CODE, CHANNEL");
+		sql.append(", BENEFICIARYACCNO, BENEFICIARYNAME, BENFICIRY_EMAIL, PAYMENTTYPE");
+		sql.append(", PARTNERBANK_CODE, CHANNEL, PAYMENTDETAIL");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW WHERE");
-
-		if (!DisbursementConstants.CHANNEL_INSURANCE.equals(req.getChannel())) {
-			sql.append(" FINTYPE = ? AND");
-		}
-		sql.append(" ENTITYCODE = ? AND PARTNERBANK_CODE = ?");
+		sql.append(" FINTYPE = ? AND ENTITYCODE = ? AND PARTNERBANK_CODE = ?");
 
 		if (StringUtils.isNotBlank(req.getPaymentType())) {
 			sql.append(" AND PAYMENTTYPE = ?");
 		}
 
+		if (StringUtils.isNotBlank(req.getFinReference())) {
+			sql.append(" AND FinReference = ?");
+		}
+
 		if (StringUtils.isNotBlank(req.getChannel())) {
 			sql.append(" AND channel= ?");
+		}
+
+		if (StringUtils.isNotBlank(req.getDisbParty())) {
+			sql.append(" AND PaymentDetail = ?");
 		}
 
 		if (req.getFromDate() != null) {
@@ -647,15 +652,16 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-
-			if (!DisbursementConstants.CHANNEL_INSURANCE.equals(req.getChannel())) {
-				ps.setString(index++, req.getFinType());
-			}
+			ps.setString(index++, req.getFinType());
 			ps.setString(index++, req.getEntityCode());
 			ps.setString(index++, req.getPartnerBankCode());
 
 			if (StringUtils.isNotBlank(req.getPaymentType())) {
 				ps.setString(index++, req.getPaymentType());
+			}
+
+			if (StringUtils.isNotBlank(req.getFinReference())) {
+				ps.setString(index++, req.getFinReference());
 			}
 
 			if (StringUtils.isNotBlank(req.getChannel())) {
@@ -694,6 +700,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			dr.setDisbursementType(rs.getString("DISBURSEMENT_TYPE"));
 			dr.setBenficiaryBank(rs.getString("BANKNAME"));
 			dr.setChannel(rs.getString("CHANNEL"));
+			dr.setDisbParty(rs.getString("PAYMENTDETAIL"));
 
 			dr.setDisbCCy(ccy);
 			return dr;
@@ -707,7 +714,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", BRANCHDESC, PARTNERBANK_CODE, ALWFILEDOWNLOAD, FINREFERENCE");
 		sql.append(", PAYMENTTYPE, ENTITYCODE, CUSTSHRTNAME, BENEFICIARYNAME");
 		sql.append(", BENEFICIARYACCNO, AMTTOBERELEASED, DISBURSEMENT_TYPE");
-		sql.append(", CHANNEL, PROVIDERID, STATUS");
+		sql.append(", CHANNEL, PROVIDERID, STATUS, PAYMENTDETAIL");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW");
 		sql.append(" WHERE PAYMENTID = ? AND  CHANNEL = ?");
 
@@ -736,6 +743,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 						fp.setChannel(rs.getString("CHANNEL"));
 						fp.setProviderId(JdbcUtil.getLong(rs.getObject("PROVIDERID")));
 						fp.setStatus(rs.getString("STATUS"));
+						fp.setPaymentDetail(rs.getString("PAYMENTDETAIL"));
 
 						return fp;
 					});

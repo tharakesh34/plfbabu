@@ -4788,7 +4788,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							VASConsatnts.MODULE_NAME, null, "", serviceUID);
 					auditDetails.addAll(exdDetails);
 				}
-
+				
 				saveFinExpenseDetails(financeMain);
 
 			} else {

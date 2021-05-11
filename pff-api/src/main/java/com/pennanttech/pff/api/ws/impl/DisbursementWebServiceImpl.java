@@ -93,22 +93,20 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 		}
 
 		/* Validate Loan Type */
-		String channel = finAdvancePayments.getChannel();
 		String finType = finAdvancePayments.getFinType();
-		if (!DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
-			if (StringUtils.isBlank(finType)) {
-				String valueParm[] = new String[1];
-				valueParm[0] = "FinType";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			}
-
-			FinanceType fiananceType = financeTypeDAO.getFinanceTypeByFinType(finType);
-			if (fiananceType == null) {
-				String valueParm[] = new String[1];
-				valueParm[0] = "FinType";
-				return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
-			}
+		if (StringUtils.isBlank(finType)) {
+			String valueParm[] = new String[1];
+			valueParm[0] = "FinType";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
+
+		FinanceType fiananceType = financeTypeDAO.getFinanceTypeByFinType(finType);
+		if (fiananceType == null) {
+			String valueParm[] = new String[1];
+			valueParm[0] = "FinType";
+			return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
+		}
+
 		/* Validate Partner Bank */
 		String partnerbankCode = finAdvancePayments.getPartnerbankCode();
 		if (StringUtils.isBlank(partnerbankCode)) {
@@ -140,6 +138,7 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 		}
 
 		/* Validate Channel */
+		String channel = finAdvancePayments.getChannel();
 		if (StringUtils.isNotBlank(channel)) {
 			List<ValueLabel> channelList = PennantStaticListUtil.getChannelTypes();
 			List<String> channelTypeList = new ArrayList<>();
@@ -150,6 +149,22 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 			if (!(channelTypeList.contains(channel))) {
 				String valueParm[] = new String[1];
 				valueParm[0] = "Channel";
+				return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
+			}
+		}
+
+		/* Validate Disbursement Party */
+		String disbParty = finAdvancePayments.getPaymentDetail();
+		if (StringUtils.isNotBlank(disbParty)) {
+			List<ValueLabel> paymentDetails = PennantStaticListUtil.getPaymentDetails();
+			List<String> disbParties = new ArrayList<>();
+			for (ValueLabel pd : paymentDetails) {
+				disbParties.add(pd.getValue());
+			}
+
+			if (!(disbParties.contains(disbParty))) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "Disbursement Party";
 				return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
 			}
 		}
@@ -172,21 +187,21 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = null;
-		DisbursementRequestDetail disbRequestDetail = new DisbursementRequestDetail();
+		DisbursementRequestDetail drd = new DisbursementRequestDetail();
 
-		for (FinAdvancePayments finAdvancePayments : list) {
-			String finReference = finAdvancePayments.getFinReference();
+		for (FinAdvancePayments fap : list) {
+			String finReference = fap.getFinReference();
 			if (StringUtils.isBlank(finReference)) {
 				String valueParm[] = new String[2];
 				valueParm[0] = "Finreference";
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-				disbRequestDetail.setReturnStatus(returnStatus);
-				return disbRequestDetail;
+				drd.setReturnStatus(returnStatus);
+				return drd;
 			}
 
 			int count = 0;
 
-			if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel())) {
+			if (DisbursementConstants.CHANNEL_PAYMENT.equals(fap.getChannel())) {
 				count = financeMainDAO.isFinReferenceExists(finReference, "", false) == true ? 1 : 0;
 			} else {
 				count = financeMainDAO.getFinanceCountById(finReference, "", false);
@@ -196,28 +211,27 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				String valueParm[] = new String[2];
 				valueParm[0] = finReference;
 				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-				disbRequestDetail.setReturnStatus(returnStatus);
-				return disbRequestDetail;
+				drd.setReturnStatus(returnStatus);
+				return drd;
 			}
 
-			long paymentId = finAdvancePayments.getPaymentId();
+			long paymentId = fap.getPaymentId();
 
 			if (paymentId <= 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = "disbInstId";
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-				disbRequestDetail.setReturnStatus(returnStatus);
-				return disbRequestDetail;
+				drd.setReturnStatus(returnStatus);
+				return drd;
 			}
 
-			String channel = finAdvancePayments.getChannel();
-
+			String channel = fap.getChannel();
 			if (StringUtils.isBlank(channel)) {
 				String valueParm[] = new String[2];
 				valueParm[0] = "Channel";
 				returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-				disbRequestDetail.setReturnStatus(returnStatus);
-				return disbRequestDetail;
+				drd.setReturnStatus(returnStatus);
+				return drd;
 			}
 
 			List<ValueLabel> channelList = PennantStaticListUtil.getChannelTypes();
@@ -229,23 +243,40 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				String valueParm[] = new String[1];
 				valueParm[0] = "Channel";
 				returnStatus = APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
-				disbRequestDetail.setReturnStatus(returnStatus);
-				return disbRequestDetail;
+				drd.setReturnStatus(returnStatus);
+				return drd;
+			}
+
+			/* Validate Disbursement Party */
+			String disbParty = fap.getPaymentDetail();
+			if (StringUtils.isNotBlank(disbParty)) {
+				List<ValueLabel> paymentDetails = PennantStaticListUtil.getPaymentDetails();
+				List<String> disbParties = new ArrayList<>();
+				for (ValueLabel pd : paymentDetails) {
+					disbParties.add(pd.getValue());
+				}
+
+				if (!(disbParties.contains(disbParty))) {
+					String valueParm[] = new String[1];
+					valueParm[0] = "Disbursement Party";
+					returnStatus = APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
+					drd.setReturnStatus(returnStatus);
+					return drd;
+				}
 			}
 		}
+
 		try {
-
-			disbRequestDetail = disbursementController.updateDisbursementStatus(list);
-
+			drd = disbursementController.updateDisbursementStatus(list);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			returnStatus = APIErrorHandlerService.getFailedStatus();
-			disbRequestDetail.setReturnStatus(returnStatus);
-			return disbRequestDetail;
+			drd.setReturnStatus(returnStatus);
+			return drd;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return disbRequestDetail;
+		return drd;
 	}
 
 	@Override
@@ -319,26 +350,27 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				}
 			}
-			if (StringUtils.isBlank(disbRequest.getStatus())) {
+			
+			String status = disbRequest.getStatus();
+			if (StringUtils.isBlank(status)) {
 				String[] valueParam = new String[1];
 				valueParam[0] = "Status";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
 
-			if (!(StringUtils.equals("R", disbRequest.getStatus())
-					|| StringUtils.equals("E", disbRequest.getStatus()))) {
+			if (!("R".equals(status) || "E".equals(status))) {
 				String[] valueParam = new String[2];
 				valueParam[0] = "Status";
 				valueParam[1] = "E," + "R";
 				return APIErrorHandlerService.getFailedStatus("90337", valueParam);
 			}
 
-			if (StringUtils.equals("R", disbRequest.getStatus())
-					&& StringUtils.isBlank(disbRequest.getRejectReason())) {
+			if ("R".equals(status) && StringUtils.isBlank(disbRequest.getRejectReason())) {
 				String[] valueParam = new String[1];
 				valueParam[0] = "RejectReason for Status R";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
+			
 			disbRequest.setPaymentType(disbRequest.getDisbType());
 			if (StringUtils.isBlank(disbRequest.getPaymentType())) {
 				String[] valueParam = new String[1];
@@ -421,7 +453,6 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 			}
 
 			String channel = disbRequest.getChannel();
-
 			if (StringUtils.isBlank(channel)) {
 				String valueParm[] = new String[2];
 				valueParm[0] = "Channel";
@@ -439,6 +470,9 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
 			}
 		}
+		
+		
+		
 		logger.info(Literal.LEAVING);
 		return null;
 	}

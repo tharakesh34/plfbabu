@@ -15,7 +15,9 @@ import com.pennanttech.ws.model.disbursement.DisbursementRequestDetail;
 
 @Produces(MediaType.APPLICATION_JSON)
 public interface DisbursementRESTService {
-
+	
+	//FIXME <<disbParty>> the field needs to be included in API Specification
+	
 	@POST
 	@Path("/disbursementService/getDisbursementInstructions")
 	public DisbursementRequestDetail getDisbursementInstructions(FinAdvancePayments finAdvancePayments)

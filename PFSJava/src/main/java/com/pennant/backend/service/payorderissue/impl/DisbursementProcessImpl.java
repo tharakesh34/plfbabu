@@ -60,6 +60,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				if (ImplementationConstants.HOLD_DISB_INST_POST) {
 					fm.setLovDescEntityCode(financeMainDAO.getLovDescEntityCode(finReference, "_View"));
 					FinanceDetail financeDetail = new FinanceDetail();
+					financeDetail.getFinScheduleData().setFinanceMain(fm);
 
 					List<FinAdvancePayments> list = new ArrayList<>();
 					list.add(disbursement);

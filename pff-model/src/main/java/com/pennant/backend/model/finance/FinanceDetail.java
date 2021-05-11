@@ -183,7 +183,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<PoliceCase> dedupPoliceCaseDetails;
 	private List<CustomerDedup> customerDedupList;
 	@XmlElement(name = "disbursement")
-	private List<FinAdvancePayments> advancePaymentsList;
+	private List<FinAdvancePayments> advancePaymentsList = new ArrayList<>();
 	private List<FeePaymentDetail> feePaymentDetailList;
 	@XmlElementWrapper(name = "covenants")
 	@XmlElement(name = "covenant")
