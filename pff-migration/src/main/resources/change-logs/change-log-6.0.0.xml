@@ -32659,6 +32659,32 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#1212" author="murthy.y">
+		<sql>
+			<![CDATA[
+				insert into FinAdvancePayments
+				select vr.PrimaryLinkRef, row_number() over( order by vr.PrimaryLinkRef)+fa.PaymentSeq, 'VAS', pi.paymentamount, vpa.ProviderDesc, avd.dealername
+				, vpa.accountnumber, null, Pi.PaymentType, null, pi.paymentdate, 0, 0, null, 1, pi.lastmntBy
+				, pi.lastmntOn, 'Approved', '', '', '', '', '', 0, bb.bankcode, '', '', null, null, null, avd.dealertelephone
+				, null, pi.status, 0, null, pi.PaymentCCY, vpa.bankbranchid, 1, null, 1, pi.id, pi.partnerbankid, pi.linkedTranId, null
+				, null, null, null, 0, vr.VasReference
+				from insurancepaymentinstructions pi
+				inner join vasRecording vr on vr.PaymentInsId = pi.id
+				JOIN vasprovideraccdetail_aview vpa ON vpa.providerid = pi.providerid
+				JOIN amtvehicledealer avd ON avd.dealerid = vpa.providerid
+				LEFT JOIN bankbranches bb ON bb.bankbranchid = vpa.bankbranchid
+				inner join (select FinReference, Max(PaymentSeq)+1 PaymentSeq from FinAdvancePayments group by FinReference) fa on fa.FinReference = vr.PrimaryLinkRef
+				WHERE vr.VasReference not in (select VasReference from FinAdvancePayments where VasReference is not null and VasReference <> '#')
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="ST#1212.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update FinAdvancePayments set VasReference = null where VasReference = '#';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
