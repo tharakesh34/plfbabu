@@ -214,7 +214,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					if (ma.getBounceID() != 0) {
 						receivableAmt = receivableAmt.add(recAmount);
 						adviseAmt = receivableAmt;
-						receivedAmt = receivedAmt.add(totPaidGst);
+						receivedAmt = receivedAmt.add(ma.getPaidAmount());
 						gstAmt = gstAmt.add(totPaidGst);
 						waivedAmt = waivedAmt.add(ma.getWaivedAmount());
 
@@ -277,11 +277,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 
 				taxComponent = fwd.getTaxComponent();
-				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-					receivedAmt = receivedAmt.add(gstAmt);
-					gstAmt = BigDecimal.ZERO;
-				}
-				fwd.setReceivedAmount(receivedAmt);
 				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 					receivedAmt = receivedAmt.add(gstAmt);
 					gstAmt = BigDecimal.ZERO;

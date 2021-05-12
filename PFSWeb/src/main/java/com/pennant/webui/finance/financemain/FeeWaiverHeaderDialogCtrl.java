@@ -937,7 +937,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 					totReceivedAmt = totReceivedAmt.add(BigDecimal.ZERO);
 				} else {
 					receivedAmt = detail.getReceivedAmount();
-					lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivedAmt, ccyFormatter));
+					lc = new Listcell(PennantApplicationUtil.amountFormate(receivedAmt, ccyFormatter));
 					totReceivedAmt = receivedAmt.add(totReceivedAmt);
 				}
 				lc.setStyle("text-align:right;");
