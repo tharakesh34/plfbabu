@@ -250,7 +250,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 					setFinOCRHeader(getFinanceDetail().getFinOCRHeader());
 				}
 
-				if (isFinanceProcess && financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
+				if (isFinanceProcess && financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())
+						&& financeMain.isFinOcrRequired()) {
 					FinOCRHeader finOCRHeader = finOCRHeaderService
 							.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(), TableType.VIEW.getSuffix());
 					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(finOCRHeader.getOcrID(),
