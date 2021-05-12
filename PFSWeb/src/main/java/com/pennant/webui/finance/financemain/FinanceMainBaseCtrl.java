@@ -9093,13 +9093,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					aFinanceMain.setNextRoleCode("");
 				}
 
+				// Split Loans Notification message
+				Set<String> splitRef = new HashSet<>();
+				if (pricingDetailListCtrl != null && pricingDetailListCtrl.hbox_Split != null
+						&& pricingDetailListCtrl.split != null && pricingDetailListCtrl.hbox_Split.isVisible()
+						&& pricingDetailListCtrl.split.isChecked()) {
+					List<FinanceMain> financeMains = pricingDetailListCtrl.getPricingDetail().getFinanceMains();
+					if (CollectionUtils.isNotEmpty(financeMains)) {
+						financeMains.forEach(l1 -> splitRef.add(l1.getFinReference()));
+					}
+				}
+				String splitMsg = "";
+				if (splitRef.size() > 0) {
+					splitMsg = " and Splitted Loans are: " + splitRef;
+				}
+
 				if (aFinanceMain.isDeviationApproval()) {
 					String msg = Labels.getLabel("SENT_DELEGATION_APPROVALS",
 							new String[] { aFinanceMain.getFinReference() });
 					Clients.showNotification(msg, "info", null, null, -1);
 				} else {
 					String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),
-							aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Loan ",
+							aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference() + splitMsg, " Loan ",
 							aFinanceMain.getRecordStatus(), getNextUserId());
 					Clients.showNotification(msg, "info", null, null, -1);
 				}
