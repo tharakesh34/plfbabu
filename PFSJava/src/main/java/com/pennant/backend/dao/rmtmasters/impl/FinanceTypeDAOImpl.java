@@ -437,9 +437,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate, RollOverFinance");
 		sql.append(", RollOverFrq, DownPayRule, AlwMultiPartyDisb, CollateralType, TdsApplicable, ApplyGrcPricing");
 		sql.append(", ApplyRpyPricing, DroplineOD, DroppingMethod, RateChgAnyDay, ManualSchedule, AlwBPI");
-		sql.append(
-				", BpiTreatment, PftDueSchOn, PlanEMIHAlw, AlwPlannedEmiInGrc, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax");
-		sql.append(", PlanEMIHLockPeriod, PlanEMICpz, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz");
+		sql.append(", BpiTreatment, PftDueSchOn, PlanEMIHAlw, AlwPlannedEmiInGrc, PlanEMIHMethod, PlanEMIHMaxPerYear");
+		sql.append(", PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz");
 		sql.append(", FddLockPeriod, AlwdRpyMethods, MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode");
 		sql.append(", RoundingTarget, FrequencyDays, AlwReage, AlwUnPlanEmiHoliday, AlwMaxDisbCheckReq");
 		sql.append(", QuickDisb, AutoApprove, ProductCategory, DeveloperFinance, CostOfFunds, ChequeCaptureReq");
@@ -452,7 +451,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes"); //HL- merging
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed");
-		sql.append(", ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType, InstBasedSchd, TdsType");
+		sql.append(", ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType");
+		sql.append(", InstBasedSchd, TdsType");
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
 			sql.append(", LovDescDftStepPolicyName, GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType");
@@ -463,7 +463,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType },

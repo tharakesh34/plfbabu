@@ -100,21 +100,22 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		StringBuilder sql = getSelectQuery(isWIF, type);
 		sql.append(" where FeeID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper(type, isWIF);
 
+		long feeID = finFeeDetail.getFeeID();
+		
+		if(feeID == Long.MIN_VALUE) {
+			logger.warn("Record not found with the below parameters.\nFeeID: {}", feeID);
+			return null;
+		}
+		
+		
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finFeeDetail.getFeeID() },
-					rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeID }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			String table = "FINFEEDETAIL";
-			if (isWIF) {
-				table = "WIFFINFEEDETAIL";
-			}
-
-			logger.warn("Record not found in {}{} table for the specified FeeID >> {}", table, type,
-					finFeeDetail.getFeeID());
+			logger.warn("Record not found with the below parameters.\nFeeID: {}", feeID);
 		}
 
 		return null;

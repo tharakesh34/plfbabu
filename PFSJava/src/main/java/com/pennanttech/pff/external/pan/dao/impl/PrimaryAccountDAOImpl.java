@@ -99,22 +99,24 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 
 	@Override
 	public PrimaryAccount getPrimaryAccountDetails(String primaryID) {
-		logger.debug(Literal.ENTERING);
-		PrimaryAccount primaryAccount = new PrimaryAccount();
-		primaryAccount.setDocumentNumber(primaryID);
-		StringBuilder sql = new StringBuilder("select Document_Number, Document_Name");
+		StringBuilder sql = new StringBuilder("Select Document_Number, Document_Name");
 		sql.append(" from CUST_KYC_VALIDATION");
-		sql.append(" Where Document_Number =:DocumentNumber");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(primaryAccount);
-		RowMapper<PrimaryAccount> typeRowMapper = BeanPropertyRowMapper.newInstance(PrimaryAccount.class);
+		sql.append(" Where Document_Number = ?");
+		
+		logger.debug(Literal.SQL + sql.toString());
+		
 		try {
-			primaryAccount = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[]{primaryID}, (rs, rowNum)->{
+				PrimaryAccount pa = new PrimaryAccount();
+				pa.setDocumentNumber(rs.getString("Document_Number"));
+				pa.setDocumentName(rs.getString("Document_Name"));
+				
+				return pa;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			primaryAccount = null;
+			logger.warn("Record not exists with the below parameters \n");
 		}
-		logger.debug(Literal.LEAVING);
-		return primaryAccount;
-
+		
+		return null;
 	}
 }

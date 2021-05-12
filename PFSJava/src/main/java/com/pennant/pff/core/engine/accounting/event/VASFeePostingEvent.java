@@ -51,7 +51,7 @@ public class VASFeePostingEvent extends PostingEvent {
 			events.add(aeEvent);
 		}
 
-		logger.info(LITERAL3, AccountingEvent.VASFEE);
+		logger.info(LITERAL4, AccountingEvent.VASFEE);
 		return events;
 
 	}

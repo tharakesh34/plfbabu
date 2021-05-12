@@ -3093,9 +3093,13 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		CustomerFinanceDetail customerFinanceDetail = (CustomerFinanceDetail) selectedItem.getAttribute("data");
 
 		String finReference = customerFinanceDetail.getFinReference();
+		
+		List<String> finReferences = new ArrayList<>();
+		finReferences.add(finReference);
+		
 		customerFinanceDetail.setAuditTransactionsList(
-				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, false, false, null));
-		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, "financeMain")));
+				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, false, false, null));
+		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, "financeMain"));
 		Map<String, Object> arg = new HashMap<String, Object>();
 		arg.put("customerFinanceDetail", customerFinanceDetail);
 		arg.put("facility", false);

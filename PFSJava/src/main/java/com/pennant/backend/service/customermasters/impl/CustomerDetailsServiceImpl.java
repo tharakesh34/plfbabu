@@ -132,7 +132,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.RatingCode;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CoreCustomer;
@@ -736,53 +735,51 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	private CustomerDetails getCustomerById(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		List<VASRecording> vasRecordingList = null;
 		List<FinanceEnquiry> financeEnquiryList = null;
 		CustomerDetails customerDetails = new CustomerDetails();
-		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustomer(customerDAO.getCustomerByID(id, type));
 		customerDetails.setCustID(id);
 
-		PrimaryAccount primaryAccount = getPrimaryAccountDAO()
-				.getPrimaryAccountDetails(customerDetails.getCustomer().getCustCRCPR());
+		Customer customer = customerDetails.getCustomer();
+		PrimaryAccount primaryAccount = primaryAccountDAO.getPrimaryAccountDetails(customer.getCustCRCPR());
 		if (primaryAccount != null) {
-			customerDetails.getCustomer().setPrimaryIdName(primaryAccount.getDocumentName());
+			customer.setPrimaryIdName(primaryAccount.getDocumentName());
 		}
 
 		if (ImplementationConstants.ALLOW_CUSTOMER_RATINGS) {
 			customerDetails.setRatingsList(customerRatingDAO.getCustomerRatingByCustomer(id, type));
 		}
+
 		if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
-			customerDetails.setEmploymentDetailsList(
-					getCustomerEmploymentDetailDAO().getCustomerEmploymentDetailsByID(id, type));
+			customerDetails
+					.setEmploymentDetailsList(customerEmploymentDetailDAO.getCustomerEmploymentDetailsByID(id, type));
 		} else {
-			customerDetails.setCustEmployeeDetail(getCustEmployeeDetailDAO().getCustEmployeeDetailById(id, type));
+			customerDetails.setCustEmployeeDetail(custEmployeeDetailDAO.getCustEmployeeDetailById(id, type));
 		}
+
 		if (ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
 			customerDetails.setCustomerIncomeList(incomeDetailDAO.getIncomesByCustomer(id, type));
 		}
+
 		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
 		customerDetails.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
 		customerDetails.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
 		customerDetails.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
-		
+
 		if (ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS) {
 			customerDetails.setCustomerDirectorList(directorDetailDAO.getCustomerDirectorByCustomer(id, type));
 		}
 		customerDetails.setCustomerBankInfoList(customerBankInfoDAO.getBankInfoByCustomer(id, type));
-		if (customerDetails.getCustomerBankInfoList() != null && customerDetails.getCustomerBankInfoList().size() > 0) {
-			for (CustomerBankInfo customerBankInfo : customerDetails.getCustomerBankInfoList()) {
-				customerBankInfo.setBankInfoDetails(
-						customerBankInfoDAO.getBankInfoDetailById(customerBankInfo.getBankId(), type));
-				if (customerBankInfo.getBankInfoDetails() != null && customerBankInfo.getBankInfoDetails().size() > 0) {
-					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
-						bankInfoDetail.setBankInfoSubDetails(customerBankInfoDAO.getBankInfoSubDetailById(
-								bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear(), type));
-					}
-				}
-				customerBankInfo.setExternalDocuments(
-						customerDocumentDAO.getExternalDocuments(customerBankInfo.getBankId(), ""));
 
+		for (CustomerBankInfo custBnkInfo : customerDetails.getCustomerBankInfoList()) {
+			long bankId = custBnkInfo.getBankId();
+			custBnkInfo.setBankInfoDetails(customerBankInfoDAO.getBankInfoDetailById(bankId, type));
+			for (BankInfoDetail bankInfoDetail : custBnkInfo.getBankInfoDetails()) {
+				bankInfoDetail.setBankInfoSubDetails(customerBankInfoDAO
+						.getBankInfoSubDetailById(bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear(), type));
 			}
+			custBnkInfo.setExternalDocuments(customerDocumentDAO.getExternalDocuments(bankId, ""));
+
 		}
 		customerDetails.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
 
@@ -815,28 +812,39 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id, ""));
 		customerDetails.setCollateraldetailList(getCollateralSetupDAO().getApprovedCollateralByCustId(id, type));
 
+		List<String> finReferences = new ArrayList<>();
 		for (FinanceMain financemain : customerDetails.getFinanceMainList()) {
-			if (vasRecordingList == null) {
-				vasRecordingList = new ArrayList<VASRecording>();
-			}
-			vasRecordingList
-					.addAll(getvASRecordingDAO().getVASRecordingsByLinkRef(financemain.getFinReference(), type));
-			customerDetails.setVasRecordingList(vasRecordingList);
+			finReferences.add(financemain.getFinReference());
 		}
+
+		customerDetails.setVasRecordingList(vASRecordingDAO.getVASRecordingsByLinkRef(finReferences, type));
 
 		customerDetails.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
 		List<CustomerGST> customerGstList = customerDetails.getCustomerGstList();
-		if (CollectionUtils.isNotEmpty(customerGstList)) {
-			for (CustomerGST customerGST : customerGstList) {
-				customerGST.setCustomerGSTDetailslist(
-						customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
+
+		List<Long> headerIdList = new ArrayList<>();
+
+		for (CustomerGST customerGST : customerGstList) {
+			headerIdList.add(customerGST.getId());
+		}
+
+		List<CustomerGSTDetails> gstDetails = new ArrayList<>();
+		
+		if (CollectionUtils.isNotEmpty(headerIdList)) {
+			gstDetails = customerGstDetailDAO.getCustomerGSTDetailsByCustomer(headerIdList, type);
+		}
+		
+		for (CustomerGST customerGST : customerGstList) {
+			for (CustomerGSTDetails cgst : gstDetails) {
+				if (customerGST.getId() == cgst.getHeaderId()) {
+					customerGST.getCustomerGSTDetailslist().add(cgst);
+				}
 			}
 		}
-		if (financeEnquiryList == null) {
-			financeEnquiryList = new ArrayList<FinanceEnquiry>();
+		
+		if (CollectionUtils.isNotEmpty(headerIdList)) {
+			customerDetails.getCustomerFinances().addAll(financeMainDAO.getAllFinanceDetailsByCustId(id));
 		}
-		financeEnquiryList.addAll(getFinanceMainDAO().getAllFinanceDetailsByCustId(id));
-		customerDetails.setCustomerFinances(financeEnquiryList);
 
 		if (approvalStatusEnquiryService != null) {
 			customerDetails

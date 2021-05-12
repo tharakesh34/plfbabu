@@ -43,7 +43,10 @@
 package com.pennant.backend.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,11 +58,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.NotesDAO;
-import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	private static Logger logger = LogManager.getLogger(NotesDAOImpl.class);
@@ -142,47 +145,65 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 		return tempRoleCodes;
 	}
 
-	// PSD - Ticket: 126490 LMS > Notes of the rejected or resubmitted disbursed tranche is not visible.
+	private String commaJoin(List<String> moduleNames) {
+		return moduleNames.stream().map(moduleName -> "?").collect(Collectors.joining(","));
+	}
+	
+	public static List<Notes> sortNotes(List<Notes> notes) {
+			Collections.sort(notes, new Comparator<Notes>() {
+				@Override
+				public int compare(Notes detail1, Notes detail2) {
+					return DateUtil.compare(detail1.getInputDate(), detail2.getInputDate());
+				}
+			});
+
+		return notes;
+	}
+
+	
 	@Override
-	public List<Notes> getNotesListAsc(Notes notes) {
-		logger.trace(Literal.ENTERING);
-
-		// Set the servicing events as modules. 
+	public List<Notes> getNotesListAsc(List<String> finReferences, String moduleName) {
 		List<String> modules = new ArrayList<>();
-		if ("financeMain".equals(notes.getModuleName())) {
-			modules.add(notes.getModuleName());
+		modules.add(moduleName);
 
-			for (FinServicingEvent event : PennantStaticListUtil.getFinServiceEvents(true)) {
-				modules.add(event.getValue());
-			}
+		if ("financeMain".equals(moduleName)) {
+			PennantStaticListUtil.getFinServiceEvents(true).forEach(event -> modules.add(event.getValue()));
 		}
 
-		StringBuilder sql = new StringBuilder(" Select NoteId, ModuleName, Reference, RemarkType, ");
-		sql.append(" AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin From Notes T1 ");
-		sql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy ");
-		sql.append(" Where Reference = :Reference ");
-		if ("financeMain".equals(notes.getModuleName())) {
-			sql.append(" and ModuleName in (:ModuleNames)");
-		} else {
-			sql.append(" and ModuleName = :ModuleName");
-		}
-		sql.append(" and RemarkType = :RemarkType");
-		sql.append(" ORDER BY InputDate Asc ");
+		StringBuilder sql = new StringBuilder(" Select NoteId, ModuleName, Reference, RemarkType");
+		sql.append(", AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, T2.UsrLogin");
+		sql.append(" From Notes T1 ");
+		sql.append(" INNER JOIN SecUsers T2 on T2.UsrID = T1.InputBy");
+		sql.append(" Where Reference In (");
+		sql.append(commaJoin(finReferences));
+		sql.append(")");
+		sql.append(" and ModuleName In (");
+		sql.append(commaJoin(modules));
+		sql.append(")");
+		sql.append(" and RemarkType = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("Reference", notes.getReference());
-		if ("financeMain".equals(notes.getModuleName())) {
-			paramSource.addValue("ModuleNames", modules);
-		} else {
-			paramSource.addValue("ModuleName", notes.getModuleName());
-		}
-		paramSource.addValue("RemarkType", "N");
+		List<Notes> list = jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			for (String finReference : finReferences) {
+				ps.setString(index++, finReference);
+			}
 
-		RowMapper<Notes> typeRowMapper = BeanPropertyRowMapper.newInstance(Notes.class);
+			for (String module : modules) {
+				ps.setString(index++, module);
+			}
 
-		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.query(sql.toString(), paramSource, typeRowMapper);
+			ps.setString(index++, "N");
+		}, (rs, rowNum) -> {
+			Notes item = new Notes();
+			return item;
+		});
+
+		sortNotes(list);
+
+		return list;
+
 	}
 
 	public List<Notes> getNotesListAsc(String reference, List<String> moduleNames) {

@@ -216,7 +216,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		sql.append(" from Task_Owners");
 		sql.append(" where Reference = ? and RoleCode = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, roleCode },

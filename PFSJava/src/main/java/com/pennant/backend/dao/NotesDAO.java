@@ -58,7 +58,7 @@ public interface NotesDAO {
 	 *            The notes object with required parameters.
 	 * @return The list of notes for the specified record in ascending order.
 	 */
-	List<Notes> getNotesListAsc(Notes notes);
+	List<Notes> getNotesListAsc(List<String> finReferences, String moduleName);
 
 	List<Notes> getNotesListByRole(Notes notes, boolean isNotes, String[] roleCodes);
 

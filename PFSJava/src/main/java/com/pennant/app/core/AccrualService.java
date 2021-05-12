@@ -76,6 +76,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AccrualService extends ServiceHelper {
@@ -198,9 +199,7 @@ public class AccrualService extends ServiceHelper {
 		//FIXME: How schdDetails will be empty? OD loans before disbursement?
 		if (CollectionUtils.isEmpty(schedules)) {
 		} else {
-			logger.info("Calculating Accurals is started for the Fin Reference >> {}", finReference);
 			calAccruals(fm, schedules, pfd, valueDate, dateSusp);
-			logger.info("Calculating Accurals is completed for this Fin Reference >> {}", finReference);
 			if (ImplementationConstants.GAP_INTEREST_REQUIRED
 					&& FinanceConstants.PRODUCT_CD.equals(fm.getProductCategory())) {
 				calGapInterest(fm, pfd, valueDate);
@@ -208,9 +207,7 @@ public class AccrualService extends ServiceHelper {
 
 		}
 
-		logger.info("Calculating Gross Total is started for the Fin Reference >> {}", finReference);
 		calculateTotals(fm, pfd, dateSusp, valueDate);
-		logger.info("Calculating Gross Total is completed for this Fin Reference >> {}", finReference);
 		return pfd;
 
 	}
@@ -337,6 +334,7 @@ public class AccrualService extends ServiceHelper {
 
 	private void calAccruals(FinanceMain fm, List<FinanceScheduleDetail> schedules, FinanceProfitDetail pfd,
 			Date valueDate, Date dateSusp) {
+		logger.info(Literal.ENTERING);
 		String finState = CalculationConstants.FIN_STATE_NORMAL;
 		FinanceScheduleDetail prvSchd = null;
 		FinanceScheduleDetail curSchd = null;
@@ -492,7 +490,8 @@ public class AccrualService extends ServiceHelper {
 			}
 			pfd.setMaxRpyAmount(maxRepayAmount);
 		}
-
+		
+		logger.info(Literal.LEAVING);
 	}
 
 	private static void calCumulativeTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd, FinanceMain fm) {

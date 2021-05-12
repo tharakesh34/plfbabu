@@ -9,7 +9,7 @@ public interface ApprovalStatusEnquiryDAO {
 
 	CustomerFinanceDetail getCustomerFinanceMainById(String id, String type, boolean facility);
 
-	List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance, boolean facility,
+	List<AuditTransaction> getFinTransactionsList(List<String> finReferences, boolean approvedFinance, boolean facility,
 			String moduleDefiner);
 
 	List<CustomerFinanceDetail> getListOfCustomerFinanceDetailById(long custID, String type, boolean facility);

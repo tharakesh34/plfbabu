@@ -198,17 +198,19 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 				}
 
 				if (saveRecord) {
-					taxDetail.setId(getTaxHeaderDetailsDAO().save(taxDetail, tableType));
+					List<Taxes> list = new ArrayList<>();
+					list.add(taxDetail);
+					taxHeaderDetailsDAO.saveTaxes(list, tableType);
 				}
 
 				if (updateRecord) {
 					if (taxDetail.getId() > 0) {
-						getTaxHeaderDetailsDAO().update(taxDetail, tableType);
+						taxHeaderDetailsDAO.update(taxDetail, tableType);
 					}
 				}
 
 				if (deleteRecord) {
-					getTaxHeaderDetailsDAO().delete(taxDetail.getId(), tableType);
+					taxHeaderDetailsDAO.delete(taxDetail.getId(), tableType);
 				}
 
 				if (approveRec) {

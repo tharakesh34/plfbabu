@@ -47,6 +47,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -121,21 +122,19 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	 */
 	@Override
 	public VASRecording getVASRecordingByReference(String vasReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where VasReference = ?");
 
 		VASRecordingRowMapper rowMapper = new VASRecordingRowMapper(type);
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { vasReference }, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found with the below parameters. \n VASReference: {}", vasReference);
 		}
-		logger.debug(Literal.LEAVING);
+		
 		return null;
 	}
 
@@ -191,11 +190,25 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}
+	
+	private String commaJoin(List<String> finReferences) {
+		return finReferences.stream().map(e -> "?").collect(Collectors.joining(","));
+	}
+	
+	@Override
+	public List<VASRecording> getVASRecordingsByLinkRef(String finReference, String type) {
+		List<String> finReferences = new ArrayList<>();
+		finReferences.add(finReference);
+
+		return getVASRecordingsByLinkRef(finReferences, type);
+	}
 
 	@Override
-	public List<VASRecording> getVASRecordingsByLinkRef(String primaryLinkRef, String type) {
+	public List<VASRecording> getVASRecordingsByLinkRef(List<String> finReferences, String type) {
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where PrimaryLinkRef = ?");
+		sql.append(" Where PrimaryLinkRef In(");
+		sql.append(commaJoin(finReferences));
+		sql.append(")");
 
 		VASRecordingRowMapper rowMapper = new VASRecordingRowMapper(type);
 
@@ -203,7 +216,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, primaryLinkRef);
+			for(String finReference: finReferences)
+			ps.setString(index++, finReference);
 		}, rowMapper);
 	}
 
@@ -285,32 +299,30 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	 */
 	@Override
 	public String save(VASRecording vASRecording, String type) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into VASRecording");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert Into VASRecording");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(
 				" (ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode, ValueDate, AccrualTillDate, RecurringDate, EntityCode,");
-		insertSql.append(" TermInsuranceLien, ProviderName, PolicyNumber, MedicalApplicable, MedicalStatus,");
-		insertSql.append(
+		sql.append(" TermInsuranceLien, ProviderName, PolicyNumber, MedicalApplicable, MedicalStatus,");
+		sql.append(
 				"  DsaId, DmaId, FulfilOfficerId, ReferralId, Status, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt,");
-		insertSql.append(
+		sql.append("	TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt,");
+		sql.append(
 				"  Remarks  , Reason  , CancelAmt , ServiceReqNumber  , CancelAfterFLP, OldVasReference, ManualAdviseId, ReceivableAdviseId )");
-		insertSql.append(
+		sql.append(
 				"  Values(:ProductCode, :PostingAgainst, :PrimaryLinkRef, :VasReference, :Fee, :RenewalFee, :FeePaymentMode, :ValueDate, :AccrualTillDate, :RecurringDate, :EntityCode,");
-		insertSql.append(" :TermInsuranceLien, :ProviderName, :PolicyNumber, :MedicalApplicable, :MedicalStatus,");
-		insertSql.append("   :DsaId, :DmaId, :FulfilOfficerId, :ReferralId, :Status,");
-		insertSql.append(
+		sql.append(" :TermInsuranceLien, :ProviderName, :PolicyNumber, :MedicalApplicable, :MedicalStatus,");
+		sql.append("   :DsaId, :DmaId, :FulfilOfficerId, :ReferralId, :Status,");
+		sql.append(
 				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:VasStatus,:FinanceProcess, :PaidAmt, :WaivedAmt");
-		insertSql.append(
+		sql.append(
 				", :Remarks ,  :Reason ,  :CancelAmt , :ServiceReqNumber , :CancelAfterFLP, :OldVasReference, :ManualAdviseId, :ReceivableAdviseId )");
-		logger.debug("insertSql: " + insertSql.toString());
+		
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASRecording);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		return vASRecording.getVasReference();
 	}
 

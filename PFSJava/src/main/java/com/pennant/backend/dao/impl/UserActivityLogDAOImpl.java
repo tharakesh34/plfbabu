@@ -122,18 +122,17 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 
 	@Override
 	public void updateFinStatus(String reference, String module) {
-		logger.debug("Entering");
-		UserActivityLog userAcitvity = new UserActivityLog();
-		userAcitvity.setReference(reference);
-		userAcitvity.setModule(module);
-		userAcitvity.setProcessed(true);
-		StringBuilder updateSql = new StringBuilder("Update Task_Log set Processed=:Processed");
-		updateSql.append(" Where Reference = :Reference and Module = :Module");
-		logger.debug("updateSql: " + updateSql.toString());
+		StringBuilder sql = new StringBuilder("Update Task_Log set Processed = ?");
+		sql.append(" Where Reference = ? and Module = ?");
+		
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userAcitvity);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps->{
+			ps.setBoolean(1, true);
+			ps.setString(2, reference);
+			ps.setString(3, module);
+		});
+		
 	}
 
 	@Override

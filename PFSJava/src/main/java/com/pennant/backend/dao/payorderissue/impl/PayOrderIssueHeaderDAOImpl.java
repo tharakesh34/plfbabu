@@ -121,7 +121,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
@@ -163,7 +163,7 @@ public class PayOrderIssueHeaderDAOImpl extends BasicDao<PayOrderIssueHeader> im
 						}
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.warn("Record not found for the below parameters. \nFinReference: {}", finReference);
 		}
 
 		return null;

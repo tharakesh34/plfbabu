@@ -43,6 +43,7 @@
 
 package com.pennant.backend.model.customermasters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +138,7 @@ public class CustomerDetails implements java.io.Serializable {
 
 	@XmlElementWrapper(name = "customerGstLists")
 	@XmlElement(name = "customerGstList")
-	private List<CustomerGST> customerGstList;
+	private List<CustomerGST> customerGstList = new ArrayList<>();
 	@XmlElementWrapper(name = "phones")
 	@XmlElement(name = "phone")
 	private List<CustomerPhoneNumber> customerPhoneNumList;
@@ -177,10 +178,10 @@ public class CustomerDetails implements java.io.Serializable {
 	private CustomerDedup custDedup;
 	private String coreReferenceNum;
 
-	private List<FinanceEnquiry> customerFinances;
+	private List<FinanceEnquiry> customerFinances = new ArrayList<>();
 	private FinanceEnquiry customerFinance;
 	private List<FinanceMain> financeMainList;
-	private List<VASRecording> vasRecordingList;
+	private List<VASRecording> vasRecordingList = new ArrayList<>();
 	private List<CollateralSetup> collateraldetailList;
 	@XmlElementWrapper(name = "custCardSales")
 	@XmlElement(name = "custCardSales")

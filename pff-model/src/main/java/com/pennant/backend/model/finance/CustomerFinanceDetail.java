@@ -1,6 +1,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -65,8 +66,8 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private String prvRoleDesc = "";
 	private String nextRoleDesc = "";
 
-	private List<AuditTransaction> auditTransactionsList;
-	private List<Notes> notesList;
+	private List<AuditTransaction> auditTransactionsList = new ArrayList<>();
+	private List<Notes> notesList = new ArrayList<>();
 	@XmlElement
 	private String stage;
 	@XmlElement

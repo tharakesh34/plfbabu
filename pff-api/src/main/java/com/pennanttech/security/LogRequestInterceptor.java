@@ -50,7 +50,7 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 	}
 
 	protected void logging(Message message) throws Fault {
-		final LoggingMessage buffer = new LoggingMessage("============= IN Message ==============\n", "1");
+		final LoggingMessage buffer = new LoggingMessage("\n============= IN Message ==============\n", "1");
 
 		Integer responseCode = (Integer) message.get(Message.RESPONSE_CODE);
 		if (responseCode != null) {
@@ -176,14 +176,75 @@ public class LogRequestInterceptor extends LoggingInInterceptor {
 			default:
 				break;
 			}
-
 		}
 		apiLogDetail.setResponseGiven(new Timestamp(System.currentTimeMillis()));
+		
+		
+		String serviceName = StringUtils.trimToEmpty(apiLogDetail.getServiceName());
+		int serviceVersion = apiLogDetail.getServiceVersion();
+		String reference = StringUtils.trimToEmpty(apiLogDetail.getReference());
+		String keyFields = StringUtils.trimToEmpty(apiLogDetail.getKeyFields());
+		String messageId = StringUtils.trimToEmpty(apiLogDetail.getMessageId());
+		String entityId = StringUtils.trimToEmpty(apiLogDetail.getEntityId());
+		
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("\n");
+		logMsg.append("=======================================================\n");
+		logMsg.append("Service-Name:").append(serviceName).append("\n");
+		logMsg.append("Service-Version:").append(serviceVersion).append("\n");
+		logMsg.append("Message-Id:").append(messageId).append("\n");
+		logMsg.append("Entity-Id:").append(entityId).append("\n");
+		logMsg.append("Reference:").append(reference).append("\n");
+		logMsg.append("KeyFields:").append(keyFields).append("\n");
+		logMsg.append("=======================================================");
+		
+		log.info(logMsg);
+		log.info(buffer.toString());
+		
+		truncateExcessParameters(apiLogDetail);
 		long seqId = apiLogDetailDAO.saveLogDetails(apiLogDetail);
+		log.info("Log request details into PLFAPILOGDETAILS table with ID {}", seqId);
+		
 		apiLogDetail.setSeqId(seqId);
 		message.getExchange().put(APIHeader.API_LOG_KEY, apiLogDetail);
-		log.info(buffer.toString());
+		
 
+	}
+	
+	private void truncateExcessParameters(APILogDetail apiLogDetail) {
+		if (apiLogDetail == null) {
+			return;
+		}
+
+		String reference = StringUtils.trimToEmpty(apiLogDetail.getReference());
+		String keyFields = StringUtils.trimToEmpty(apiLogDetail.getKeyFields());
+		String messageId = StringUtils.trimToEmpty(apiLogDetail.getMessageId());
+		String entityId = StringUtils.trimToEmpty(apiLogDetail.getEntityId());
+		String language = StringUtils.trimToEmpty(apiLogDetail.getLanguage());
+		String error = StringUtils.trimToEmpty(apiLogDetail.getError());
+		
+		
+		if (reference.length() > 20) {
+			apiLogDetail.setReference(reference.substring(0, 20));
+		}
+		if (keyFields.length() > 100) {
+			apiLogDetail.setReference(reference.substring(0, 100));
+		}
+
+		if (messageId.length() > 20) {
+			apiLogDetail.setMessageId(messageId.substring(0, 20));
+		}
+		if (entityId.length() > 20) {
+			apiLogDetail.setEntityId(entityId.substring(0, 20));
+		}
+		if (language.length() > 5) {
+			apiLogDetail.setLanguage(language.substring(0, 5));
+		}
+
+		if (error.length() > 2000) {
+			apiLogDetail.setLanguage(error.substring(0, 2000));
+		}
+		
 	}
 
 	/**

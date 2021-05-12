@@ -2,18 +2,12 @@ package com.pennanttech.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -28,21 +22,8 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 		super();
 	}
 
-	/**
-	 * This method insert new Records into PLFAPILOGDETAILS save APILogDetail
-	 * 
-	 * @param APILogDetail
-	 *            (apiLogDetail)
-	 *
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
 	public long saveLogDetails(APILogDetail log) {
-		logger.debug(Literal.ENTERING);
-
-		validateApiLogDetails(log);
-
 		StringBuilder sql = new StringBuilder("insert into");
 		sql.append(" PLFAPILOGDETAILS");
 		sql.append("(RestClientId, ServiceName, Reference, EndPoint, Method, AuthKey, ClientIP, Request");
@@ -52,9 +33,10 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
+		logger.debug(Literal.SQL + sql.toString());
+
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcOperations.update(new PreparedStatementCreator() {
-
 			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 				int index = 1;
 				PreparedStatement ps = connection.prepareStatement(sql.toString(), new String[] { "id" });
@@ -85,101 +67,57 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 		return keyHolder.getKey().longValue();
 	}
 
-	/**
-	 * Method for fetch the record from PLFAPILOGDETAILS based on the given MessageId and Processed id true.
-	 * 
-	 * @param messageId
-	 * @return
-	 */
 	@Override
-	public APILogDetail getLogByMessageId(String messageId, String entityCode) {
-		logger.debug(Literal.ENTERING);
-
+	public APILogDetail getAPILog(String messageId, String entityCode) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Response, Reference, KeyFields, StatusCode, Error");
+		sql.append(" Id, Response, Reference, KeyFields, StatusCode, Error");
 		sql.append(" from PLFAPILOGDETAILS");
-		sql.append(" Where messageId= ? and processed = ? and entityId= ?");
+		sql.append(" Where MessageId= ? and Processed = ? and EntityId= ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { messageId, true, entityCode },
-					new RowMapper<APILogDetail>() {
-						@Override
-						public APILogDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							APILogDetail ld = new APILogDetail();
+					(rs, rowNum) -> {
+						APILogDetail ld = new APILogDetail();
 
-							ld.setResponse(rs.getString("Response"));
-							ld.setReference(rs.getString("Reference"));
-							ld.setKeyFields(rs.getString("KeyFields"));
-							ld.setStatusCode(rs.getString("StatusCode"));
-							ld.setError(rs.getString("Error"));
+						ld.setSeqId(rs.getLong("Id"));
+						ld.setResponse(rs.getString("Response"));
+						ld.setReference(rs.getString("Reference"));
+						ld.setKeyFields(rs.getString("KeyFields"));
+						ld.setStatusCode(rs.getString("StatusCode"));
+						ld.setError(rs.getString("Error"));
 
-							return ld;
-						}
+						return ld;
 					});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-
-		logger.debug(Literal.LEAVING);
+		
 		return null;
 	}
 
-	/**
-	 * Method for validate the ApiLogdetails according to the table length.
-	 * 
-	 * @param aPILogDetail
-	 */
-	private void validateApiLogDetails(APILogDetail apiLogDetail) {
-		logger.debug(Literal.ENTERING);
-		if (apiLogDetail != null) {
-			if (StringUtils.isNotBlank(apiLogDetail.getReference()) && apiLogDetail.getReference().length() > 20) {
-				String reference = apiLogDetail.getReference();
-				apiLogDetail.setReference(reference.substring(0, 20));
-			}
-			if (StringUtils.isNotBlank(apiLogDetail.getKeyFields()) && apiLogDetail.getKeyFields().length() > 100) {
-				String reference = apiLogDetail.getReference();
-				apiLogDetail.setReference(reference.substring(0, 100));
-			}
-
-			if (StringUtils.isNotBlank(apiLogDetail.getMessageId()) && apiLogDetail.getMessageId().length() > 20) {
-				String messageId = apiLogDetail.getMessageId();
-				apiLogDetail.setMessageId(messageId.substring(0, 20));
-			}
-			if (StringUtils.isNotBlank(apiLogDetail.getEntityId()) && apiLogDetail.getEntityId().length() > 20) {
-				String entityId = apiLogDetail.getEntityId();
-				apiLogDetail.setEntityId(entityId.substring(0, 20));
-			}
-			if (StringUtils.isNotBlank(apiLogDetail.getLanguage()) && apiLogDetail.getLanguage().length() > 5) {
-				String language = apiLogDetail.getLanguage();
-				apiLogDetail.setLanguage(language.substring(0, 5));
-			}
-			if (StringUtils.isNotBlank(apiLogDetail.getError()) && apiLogDetail.getError().length() > 2000) {
-				String error = apiLogDetail.getError();
-				apiLogDetail.setLanguage(error.substring(0, 2000));
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	@Override
-	public void updateLogDetails(APILogDetail aPILogDetail) {
-		logger.debug(Literal.ENTERING);
+	public void updateLogDetails(APILogDetail apiLog) {
+		StringBuilder sql = new StringBuilder("Update PLFAPILOGDETAILS set");
+		sql.append(" Reference = ?, Response = ?, ReceivedOn = ?, ResponseGiven = ?");
+		sql.append(", Processed = ?, StatusCode = ?, Error = ?, ClientIP = ?, KeyFields = ?");
+		sql.append(" where Id = ?");
 
-		StringBuilder upadateSql = new StringBuilder("Update PLFAPILOGDETAILS set ");
-		upadateSql.append(
-				" reference = :reference, response = :response, receivedOn = :receivedOn, responseGiven = :responseGiven");
-		upadateSql.append(", statusCode = :statusCode, error = :error, clientIP = :clientIP, keyFields = :keyFields");
-		upadateSql.append(" where Id = :SeqId");
-		logger.trace(Literal.SQL + upadateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aPILogDetail);
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			this.jdbcTemplate.update(upadateSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception", e);
-		}
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, apiLog.getReference());
+			ps.setString(index++, apiLog.getResponse());
+			ps.setTimestamp(index++, apiLog.getReceivedOn());
+			ps.setTimestamp(index++, apiLog.getResponseGiven());
+			ps.setBoolean(index++, apiLog.isProcessed());
+			ps.setString(index++, apiLog.getStatusCode());
+			ps.setString(index++, apiLog.getError());
+			ps.setString(index++, apiLog.getClientIP());
+			ps.setString(index++, apiLog.getKeyFields());
+			ps.setLong(index++, apiLog.getSeqId());
+		});
 	}
 }

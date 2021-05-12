@@ -1,8 +1,9 @@
 package com.pennant.backend.service.approvalstatusenquiry.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,6 +11,7 @@ import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
@@ -31,14 +33,24 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 	 * Get approved Customer Finance Details By ID
 	 */
 	public CustomerFinanceDetail getApprovedCustomerFinanceById(String finReference, String moduleDefiner) {
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
-				.getCustomerFinanceMainById(finReference, "_AView", false);
-		if (customerFinanceDetail != null) {
-			customerFinanceDetail.setAuditTransactionsList(
-					getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, true, false, moduleDefiner));
-			customerFinanceDetail
-					.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
+		CustomerFinanceDetail customerFinanceDetail = approvalStatusEnquiryDAO.getCustomerFinanceMainById(finReference,
+				"_AView", false);
+
+		if (customerFinanceDetail == null) {
+			return null;
 		}
+
+		List<String> finReferences = new ArrayList<>();
+		finReferences.add(finReference);
+		
+		
+		if (CollectionUtils.isEmpty(finReferences)) {
+			return customerFinanceDetail;
+		}
+		
+		customerFinanceDetail.setAuditTransactionsList(
+				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, true, false, moduleDefiner));
+		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, MODULE_FINANCEMAIN));
 		return customerFinanceDetail;
 	}
 
@@ -46,71 +58,110 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 	 * Get Customer Finance Details By ID
 	 */
 	public CustomerFinanceDetail getCustomerFinanceById(String finReference, String moduleDefiner) {
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
-				.getCustomerFinanceMainById(finReference, "_View", false);
-		if (customerFinanceDetail != null) {
-			customerFinanceDetail.setAuditTransactionsList(
-					getApprovalStatusEnquiryDAO().getFinTransactionsList(finReference, false, false, moduleDefiner));
-			customerFinanceDetail
-					.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
+		CustomerFinanceDetail customerFinanceDetail = approvalStatusEnquiryDAO.getCustomerFinanceMainById(finReference,
+				"_View", false);
+
+		if (customerFinanceDetail == null) {
+			return null;
 		}
+
+		List<String> finReferences = new ArrayList<>();
+		finReferences.add(finReference);
+		
+		if (CollectionUtils.isEmpty(finReferences)) {
+			return customerFinanceDetail;
+		}
+		
+		customerFinanceDetail.setAuditTransactionsList(
+				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, false, false, moduleDefiner));
+		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, MODULE_FINANCEMAIN));
 		return customerFinanceDetail;
 	}
 
 	@Override
 	public CustomerFinanceDetail getApprovedCustomerFacilityById(String facilityReference) {
-
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
+		CustomerFinanceDetail customerFinanceDetail = approvalStatusEnquiryDAO
 				.getCustomerFinanceMainById(facilityReference, "_AView", true);
+
+		if (customerFinanceDetail == null) {
+			return null;
+		}
+
+		List<String> finReferences = new ArrayList<>();
+		finReferences.add(facilityReference);
+		
+		if (CollectionUtils.isEmpty(finReferences)) {
+			return customerFinanceDetail;
+		}
+
 		customerFinanceDetail.setAuditTransactionsList(
-				getApprovalStatusEnquiryDAO().getFinTransactionsList(facilityReference, true, true, null));
-		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(facilityReference, MODULE_FACILITY)));
+				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, true, true, null));
+		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, MODULE_FACILITY));
 		return customerFinanceDetail;
 	}
 
 	@Override
 	public CustomerFinanceDetail getCustomerFacilityById(String facilityReference) {
-		CustomerFinanceDetail customerFinanceDetail = getApprovalStatusEnquiryDAO()
+		CustomerFinanceDetail customerFinanceDetail = approvalStatusEnquiryDAO
 				.getCustomerFinanceMainById(facilityReference, "_View", true);
-		customerFinanceDetail.setAuditTransactionsList(
-				getApprovalStatusEnquiryDAO().getFinTransactionsList(facilityReference, false, true, null));
-		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(getNotes(facilityReference, MODULE_FACILITY)));
-		return customerFinanceDetail;
-	}
 
-	/**
-	 * Method for retrieving Notes Details
-	 */
-	private Notes getNotes(String finReference, String moduleName) {
-		logger.debug("Entering ");
-		Notes notes = new Notes();
-		notes.setModuleName(moduleName);
-		notes.setReference(finReference);
-		notes.setVersion(0);
-		logger.debug("Leaving ");
-		return notes;
+		if (customerFinanceDetail == null) {
+			return null;
+		}
+
+		List<String> finReferences = new ArrayList<>();
+		finReferences.add(facilityReference);
+		
+		if (CollectionUtils.isEmpty(finReferences)) {
+			return customerFinanceDetail;
+		}
+		customerFinanceDetail.setAuditTransactionsList(
+				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, false, true, null));
+		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, MODULE_FACILITY));
+		return customerFinanceDetail;
 	}
 
 	@Override
 	public List<ReasonDetailsLog> getResonDetailsLog(String reference) {
 		return this.reasonDetailDAO.getReasonDetailsLog(reference);
-
 	}
 
 	@Override
 	public List<CustomerFinanceDetail> getListOfCustomerFinanceById(long custID, String moduleDefiner) {
-		List<CustomerFinanceDetail> customerFinanceDetail = getApprovalStatusEnquiryDAO()
-				.getListOfCustomerFinanceDetailById(custID, "_View", false);
-		if (CollectionUtils.isNotEmpty(customerFinanceDetail)) {
-			for (CustomerFinanceDetail customerFinanceDetail2 : customerFinanceDetail) {
-				String finReference = customerFinanceDetail2.getFinReference();
-				customerFinanceDetail2.setAuditTransactionsList(getApprovalStatusEnquiryDAO()
-						.getFinTransactionsList(finReference, false, false, moduleDefiner));
-				customerFinanceDetail2
-						.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
+		List<CustomerFinanceDetail> existingLoans = approvalStatusEnquiryDAO.getListOfCustomerFinanceDetailById(custID,
+				"_View", false);
+
+		List<String> finReferences = new ArrayList<>();
+
+		existingLoans.forEach(el -> {
+			finReferences.add(el.getFinReference());
+		});
+
+		if (CollectionUtils.isEmpty(finReferences)) {
+			return existingLoans;
+		}
+
+		List<AuditTransaction> auditTxnList = approvalStatusEnquiryDAO.getFinTransactionsList(finReferences, false,
+				false, moduleDefiner);
+
+		List<Notes> notes = notesDAO.getNotesListAsc(finReferences, MODULE_FINANCEMAIN);
+
+		for (CustomerFinanceDetail cfd : existingLoans) {
+			String finReference = cfd.getFinReference();
+
+			for (AuditTransaction auditTransaction : auditTxnList) {
+				if (auditTransaction.getAuditReference().equals(finReference)) {
+					cfd.getAuditTransactionsList().add(auditTransaction);
+				}
+			}
+
+			for (Notes item : notes) {
+				if (item.getReference().equals(finReference)) {
+					cfd.getNotesList().add(item);
+				}
 			}
 		}
-		return customerFinanceDetail;
+		return existingLoans;
 	}
 
 	public ApprovalStatusEnquiryDAO getApprovalStatusEnquiryDAO() {

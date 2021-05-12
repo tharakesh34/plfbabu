@@ -132,9 +132,6 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		return customerBankInfo;
 	}
 
-	/**
-	 * Method to return the customer email based on given customer id
-	 */
 	public List<CustomerBankInfo> getBankInfoByCustomer(final long id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BankId, CustID, BankName, AccountNumber, AccountType, SalaryAccount, CreditTranNo");
@@ -625,8 +622,6 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 	@Override
 	public List<BankInfoDetail> getBankInfoDetailById(long bankId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where BankId = ?");
 
@@ -634,20 +629,13 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		CustomerBankRowMapper rowMapper = new CustomerBankRowMapper();
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, bankId);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
+				ps.setLong(index++, bankId);
+			}
+		}, rowMapper);
 	}
 
 	@Override

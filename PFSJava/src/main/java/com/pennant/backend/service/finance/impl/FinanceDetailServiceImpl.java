@@ -10352,35 +10352,34 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	/**
 	 * Method to update Task_log table
 	 * 
-	 * @param financeMain
+	 * @param fm
 	 */
-	private void updateTaskLog(FinanceMain financeMain, boolean isSaveorUpdate) {
+	private void updateTaskLog(FinanceMain fm, boolean isSaveorUpdate) {
 		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
-			if (!PennantConstants.RCD_STATUS_SAVED.equals(financeMain.getRecordStatus())) {
+			if (!PennantConstants.RCD_STATUS_SAVED.equals(fm.getRecordStatus())) {
 				Map<String, String> roleUsers = new HashMap<>();
-				roleUsers.put(financeMain.getRoleCode(), String.valueOf(financeMain.getLastMntBy()));
+				roleUsers.put(fm.getRoleCode(), String.valueOf(fm.getLastMntBy()));
 
-				String[] nextRoles = StringUtils.split(financeMain.getNextRoleCode(), ",");
+				String[] nextRoles = StringUtils.split(fm.getNextRoleCode(), ",");
 
 				for (String nextRole : nextRoles) {
-					if (!financeMain.getNextRoleCode().contains(financeMain.getRoleCode())) {
-						roleUsers.remove(financeMain.getRoleCode());
+					if (!fm.getNextRoleCode().contains(fm.getRoleCode())) {
+						roleUsers.remove(fm.getRoleCode());
 						roleUsers.put(nextRole, String.valueOf("0"));
 					}
 				}
 
-				financeMain.setLovDescNextUsersRolesMap(roleUsers);
+				fm.setLovDescNextUsersRolesMap(roleUsers);
 
-				if (financeMain.getLovDescNextUsersRolesMap() != null) {
-					saveUserActivityDetails(financeMain);
+				if (fm.getLovDescNextUsersRolesMap() != null) {
+					saveUserActivityDetails(fm);
 				}
 
-				getUserActivityLogDAO().updateFinStatus(financeMain.getFinReference(),
-						PennantConstants.WORFLOW_MODULE_FINANCE);
+				userActivityLogDAO.updateFinStatus(fm.getFinReference(), PennantConstants.WORFLOW_MODULE_FINANCE);
 
-				financeMain.setNextUserId(null);
+				fm.setNextUserId(null);
 			}
 
 			return;
@@ -10393,35 +10392,35 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String roleCode = null;
 		String userId = "";
 
-		if (PennantConstants.RCD_STATUS_RESUBMITTED.equals(financeMain.getRecordStatus())
-				&& !financeMain.isNewRecord()) {
-			TaskOwners owner = fetchTaskOwner(financeMain.getFinReference(), financeMain.getRoleCode());
+		if (PennantConstants.RCD_STATUS_RESUBMITTED.equals(fm.getRecordStatus())
+				&& !fm.isNewRecord()) {
+			TaskOwners owner = fetchTaskOwner(fm.getFinReference(), fm.getRoleCode());
 			if (owner.getCurrentOwner() == 0) {
-				owner.setCurrentOwner(financeMain.getLastMntBy());
-				owner.setActualOwner(financeMain.getLastMntBy());
+				owner.setCurrentOwner(fm.getLastMntBy());
+				owner.setActualOwner(fm.getLastMntBy());
 			}
 			owner.setNewRecord(false);
 			owner.setProcessed(true);
 			taskOwnerList.add(owner);
 
 			// Update resubmitting task owner in queue assignment
-			queueAssignList = getResubmitQueueDetails(financeMain, owner.isProcessed());
+			queueAssignList = getResubmitQueueDetails(fm, owner.isProcessed());
 
-			roleCode = financeMain.getNextRoleCode();
+			roleCode = fm.getNextRoleCode();
 		} else {
-			roleCode = financeMain.getRoleCode();
-			userId = String.valueOf(financeMain.getLastMntBy());
+			roleCode = fm.getRoleCode();
+			userId = String.valueOf(fm.getLastMntBy());
 		}
 
-		List<TaskOwners> existingTaskOwners = getTaskOwnersDAO().getTaskOwnerList(financeMain.getFinReference(),
+		List<TaskOwners> existingTaskOwners = getTaskOwnersDAO().getTaskOwnerList(fm.getFinReference(),
 				roleCode);
 		if (existingTaskOwners.size() == 0) {
 			taskOwner = new TaskOwners();
-			taskOwner.setReference(financeMain.getFinReference());
-			taskOwner.setRoleCode(financeMain.getRoleCode());
-			taskOwner.setActualOwner(financeMain.getLastMntBy());
-			taskOwner.setCurrentOwner(financeMain.getLastMntBy());
-			if (!PennantConstants.RCD_STATUS_SAVED.equals(financeMain.getRecordStatus())) {
+			taskOwner.setReference(fm.getFinReference());
+			taskOwner.setRoleCode(fm.getRoleCode());
+			taskOwner.setActualOwner(fm.getLastMntBy());
+			taskOwner.setCurrentOwner(fm.getLastMntBy());
+			if (!PennantConstants.RCD_STATUS_SAVED.equals(fm.getRecordStatus())) {
 				taskOwner.setProcessed(true);
 			}
 			taskOwner.setNewRecord(true);
@@ -10432,17 +10431,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				taskOwner = existingTaskOwners.get(i);
 				taskOwner.setNewRecord(false);
 
-				if (PennantConstants.RCD_STATUS_SAVED.equals(financeMain.getRecordStatus())
+				if (PennantConstants.RCD_STATUS_SAVED.equals(fm.getRecordStatus())
 						|| (taskOwner.getCurrentOwner() != 0
-								&& PennantConstants.RCD_STATUS_RESUBMITTED.equals(financeMain.getRecordStatus()))) {
+								&& PennantConstants.RCD_STATUS_RESUBMITTED.equals(fm.getRecordStatus()))) {
 					taskOwner.setProcessed(false);
 				} else {
 					taskOwner.setProcessed(true);
 				}
 
-				if (taskOwner.getCurrentOwner() == 0 && taskOwner.getRoleCode().equals(financeMain.getRoleCode())) {
-					taskOwner.setActualOwner(financeMain.getLastMntBy());
-					taskOwner.setCurrentOwner(financeMain.getLastMntBy());
+				if (taskOwner.getCurrentOwner() == 0 && taskOwner.getRoleCode().equals(fm.getRoleCode())) {
+					taskOwner.setActualOwner(fm.getLastMntBy());
+					taskOwner.setCurrentOwner(fm.getLastMntBy());
 					addRecord = true;
 				} else {
 					if (StringUtils.isEmpty(userId)) {
@@ -10455,32 +10454,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		if (financeMain.isNewRecord() || !PennantConstants.RCD_STATUS_SAVED.equals(financeMain.getRecordStatus())
+		if (fm.isNewRecord() || !PennantConstants.RCD_STATUS_SAVED.equals(fm.getRecordStatus())
 				|| addRecord) {
-			queueAssignList.addAll(addQueueAssignmentDetails(existingTaskOwners, financeMain, userId, roleCode,
+			queueAssignList.addAll(addQueueAssignmentDetails(existingTaskOwners, fm, userId, roleCode,
 					taskOwner.isProcessed()));
 			taskOwnerList.addAll(existingTaskOwners);
 		}
 
 		String nextUsers = null;
-		if (isSaveorUpdate && StringUtils.isNotEmpty(financeMain.getNextTaskId())) {
-			addTaskQueueDetails(financeMain, queueAssignList, taskOwnerList);
-			nextUsers = financeMain.getNextUserId();
+		if (isSaveorUpdate && StringUtils.isNotEmpty(fm.getNextTaskId())) {
+			addTaskQueueDetails(fm, queueAssignList, taskOwnerList);
+			nextUsers = fm.getNextUserId();
 		}
 
-		if (financeMain.getLovDescNextUsersRolesMap() != null) {
-			saveUserActivityDetails(financeMain);
+		if (fm.getLovDescNextUsersRolesMap() != null) {
+			saveUserActivityDetails(fm);
 			getTaskOwnersDAO().saveOrUpdateList(taskOwnerList);
-			if (queueAssignList.size() > 0 && StringUtils.isNotBlank(financeMain.getLovDescAssignMthd())
-					&& (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
-							|| (financeMain.isQuickDisb()))) {
+			if (queueAssignList.size() > 0 && StringUtils.isNotBlank(fm.getLovDescAssignMthd())
+					&& (!StringUtils.equals(fm.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+							|| (fm.isQuickDisb()))) {
 				getQueueAssignmentDAO().saveOrUpdate(queueAssignList);
 			}
 		}
 
 		if (isSaveorUpdate) {
 			List<String> refList = new ArrayList<String>();
-			refList.add(financeMain.getFinReference());
+			refList.add(fm.getFinReference());
 			getFinanceMainDAO().updateNextUserId(refList, "", nextUsers, true); // Update
 																				// nextuserid
 																				// value
@@ -10488,7 +10487,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 																				// finance
 																				// table
 		} else {
-			getUserActivityLogDAO().updateFinStatus(financeMain.getFinReference(),
+			getUserActivityLogDAO().updateFinStatus(fm.getFinReference(),
 					PennantConstants.WORFLOW_MODULE_FINANCE);
 		}
 		logger.debug(Literal.LEAVING);
@@ -10738,7 +10737,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	private TaskOwners fetchTaskOwner(String finRef, String roleCode) {
-		return getTaskOwnersDAO().getTaskOwner(finRef, roleCode);
+		return taskOwnersDAO.getTaskOwner(finRef, roleCode);
 	}
 
 	@Override

@@ -180,7 +180,7 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 			// if given messageId is notBlank then check the messageId is
 			// already processed or not.
 			if (StringUtils.isNotBlank(apiLogDetail.getMessageId())) {
-				validateMessageId(message, header, apiLogDetail);
+				checkDuplicate(message, header, apiLogDetail);
 			}
 
 			logger.debug(Literal.ENTERING);
@@ -382,37 +382,37 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for validate the given messageID weather it is already processed or not. if it is already processed then
-	 * sets the previous response as current response in message.
-	 * 
-	 * @param message
-	 * @param header
-	 * @param apiLogDetail
-	 */
-	private void validateMessageId(Message message, APIHeader header, APILogDetail apiLogDetail) {
-		logger.debug(Literal.ENTERING);
-		APILogDetail previousApiLogDetail = getLogMessageById(header.getMessageId(), header.getEntityId());
-		if (previousApiLogDetail != null) {
-			//if the given messageId is already processed then sets the previous response as current response.
-			//conflict response code is 409.
-			Response response = null;
-			response = Response.status(Response.Status.CONFLICT).entity(previousApiLogDetail.getResponse()).build();
-			//put the previous response in message and set the header return code and desc.
-			message.getExchange().put(Response.class, response);
-			header.setReturnCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
-			header.setReturnDesc(APIConstants.RES_DUPLICATE_MSDID);
-			//for logging purpose.
-			apiLogDetail.setReference(previousApiLogDetail.getReference());
-			apiLogDetail.setKeyFields(previousApiLogDetail.getKeyFields());
-			apiLogDetail.setStatusCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
-			apiLogDetail.setError(previousApiLogDetail.getError());
-			apiLogDetail.setKeyFields(previousApiLogDetail.getKeyFields());
-			apiLogDetail.setProcessed(false);
-		} else {
+	private void checkDuplicate(Message message, APIHeader header, APILogDetail apiLogDetail) {
+		logger.info(Literal.ENTERING);
+
+		String messageId = header.getMessageId();
+		String entityId = header.getEntityId();
+
+		logger.info("Checking for duplicate meaasge with MessageId: {} and EntityId: {}", messageId, entityId);
+		APILogDetail apiLog = apiLogDetailDAO.getAPILog(messageId, entityId);
+
+		if (apiLog == null) {
 			apiLogDetail.setProcessed(true);
+			logger.debug(Literal.LEAVING);
+			return;
 		}
-		logger.debug(Literal.LEAVING);
+
+		logger.info("Message already processed with ID:{}", apiLog.getSeqId());
+
+		Response response = Response.status(Response.Status.CONFLICT).entity(apiLog.getResponse()).build();
+
+		message.getExchange().put(Response.class, response);
+		header.setReturnCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
+		header.setReturnDesc(APIConstants.RES_DUPLICATE_MSDID);
+
+		apiLogDetail.setReference(apiLog.getReference());
+		apiLogDetail.setKeyFields(apiLog.getKeyFields());
+		apiLogDetail.setStatusCode(APIConstants.RES_DUPLICATE_MSDID_CODE);
+		apiLogDetail.setError(apiLog.getError());
+		apiLogDetail.setKeyFields(apiLog.getKeyFields());
+		apiLogDetail.setProcessed(false);
+
+		logger.info(Literal.LEAVING);
 	}
 
 	/*
@@ -590,16 +590,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 		currentUser.setDetails(authDetails);
 
 		SecurityContextHolder.getContext().setAuthentication(currentUser);
-	}
-
-	/**
-	 * Method for check the API log table, based on the given messageId if record found return the latest record
-	 * response otherwise return null.
-	 * 
-	 * @return apiLogDetail
-	 */
-	private APILogDetail getLogMessageById(String messageId, String entityCode) {
-		return apiLogDetailDAO.getLogByMessageId(messageId, entityCode);
 	}
 
 	/**** SETTER/GETTERS ****/

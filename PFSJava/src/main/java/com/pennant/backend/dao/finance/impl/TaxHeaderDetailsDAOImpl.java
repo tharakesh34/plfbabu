@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -221,40 +220,6 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 			}
 		});
 
-	}
-
-	@Override
-	public long save(Taxes taxes, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("Insert Into TAX_DETAILS");
-		sql.append(type);
-		sql.append(" (Id, ReferenceId, TaxType, TaxPerc, ActualTax, PaidTax, NetTax, RemFeeTax, WaivedTax,");
-		sql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		sql.append(" RecordType, WorkflowId)");
-		sql.append(
-				" Values(:Id, :ReferenceId, :TaxType, :TaxPerc, :ActualTax, :PaidTax, :NetTax, :RemFeeTax, :WaivedTax,");
-		sql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
-		sql.append(" :RecordType, :WorkflowId)");
-
-		// Get the identity sequence number.
-		if (taxes.getId() == Long.MIN_VALUE) {
-			taxes.setId(getNextValue("SeqTax_Details"));
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxes);
-
-		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return taxes.getId();
 	}
 
 	@Override

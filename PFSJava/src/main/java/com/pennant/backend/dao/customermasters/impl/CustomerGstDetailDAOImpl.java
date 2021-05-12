@@ -1,6 +1,8 @@
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -64,21 +66,39 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 			return custGst;
 		});
 	}
-
+	
+	
+	private String commaJoin(List<Long> headerIdList) {
+		return headerIdList.stream().map(e -> "?").collect(Collectors.joining(","));
+	}
+	
 	@Override
 	public List<CustomerGSTDetails> getCustomerGSTDetailsByCustomer(long headerId, String type) {
+		List<Long> headerIdList = new ArrayList<>();
+		headerIdList.add(headerId);
+
+		return getCustomerGSTDetailsByCustomer(headerIdList, type);
+	}
+
+	@Override
+	public List<CustomerGSTDetails> getCustomerGSTDetailsByCustomer(List<Long> headerIdList, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, HeaderId, Frequancy, FinancialYear, SalAmount, Version, LastMntOn, LastMntBy");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" from CustomerGSTDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId In (");
+		sql.append(commaJoin(headerIdList));
+		sql.append(")");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, headerId);
+			for (Long headerId : headerIdList) {
+				ps.setLong(index++, headerId);
+			}
+
 		}, (rs, rowNum) -> {
 			CustomerGSTDetails gst = new CustomerGSTDetails();
 
