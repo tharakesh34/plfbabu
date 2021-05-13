@@ -2526,6 +2526,20 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
+		
+		if (CollectionUtils.isNotEmpty(getFinanceSchedules())) {
+			for (FinanceScheduleDetail scheduleDetail : getFinanceSchedules()) {
+				if (scheduleDetail.isRepayOnSchDate() || scheduleDetail.isPftOnSchDate()) {
+					BigDecimal repayAmount = scheduleDetail.getRepayAmount();
+					if (scheduleDetail.getTDSAmount() != null
+							&& scheduleDetail.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
+						repayAmount = repayAmount.subtract(scheduleDetail.getTDSAmount());
+					}
+					this.amount.setValue(PennantApplicationUtil.formateAmount(repayAmount, ccyEditField));
+					break;
+				}
+			}
+		}
 	}
 
 	/**
