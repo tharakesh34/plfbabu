@@ -128,7 +128,7 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			ps.setString(1, finReference);
-			ps.setString(1, "%,"+queryCode.trim()+",%");
+			ps.setString(2, "%,"+queryCode.trim()+",%");
 		}, (rs, i) -> {
 			FinanceDedup fd = new FinanceDedup();
 			
