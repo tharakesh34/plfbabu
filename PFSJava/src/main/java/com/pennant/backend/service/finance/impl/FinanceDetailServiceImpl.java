@@ -2852,24 +2852,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Payment Order Issue Details
 			// =======================================
 			// Quick disbursement
-			if (financeMain.isQuickDisb()) {
-				if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
-						|| auditHeader.getApiHeader() == null) {
-					auditDetails.addAll(getFinAdvancePaymentsService().processQuickDisbursment(financeDetail,
-							tableType.getSuffix(), auditTranType));
-				} else {
-					auditDetails.addAll(getFinAdvancePaymentsService().processAPIQuickDisbursment(financeDetail,
-							tableType.getSuffix(), auditTranType));
-				}
-
-			} else {
-				if (financeDetail.getAdvancePaymentsList() != null
-						&& !financeDetail.getAdvancePaymentsList().isEmpty()) {
-					auditDetails
-							.addAll(getFinAdvancePaymentsService().saveOrUpdate(financeDetail.getAdvancePaymentsList(),
-									tableType.getSuffix(), auditTranType, financeDetail.isDisbStp()));
-				}
-			}
+			boolean apiProcess = isAPIProcess(financeMain.getFinSourceID(), auditHeader);
+			auditDetails.addAll(processAdvancePayments(financeDetail, financeMain, auditTranType, apiProcess));
 
 			// Covenant Type Details
 			// =======================================
@@ -3288,6 +3272,58 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
+	}
+
+	private List<AuditDetail> processAdvancePayments(FinanceDetail fd, FinanceMain financeMain, String tranType,
+			boolean apiProcess) {
+		List<FinAdvancePayments> advList = fd.getAdvancePaymentsList();
+
+		if (CollectionUtils.isEmpty(advList)) {
+			return new ArrayList<>();
+		}
+
+		List<AuditDetail> payments = new ArrayList<>();
+
+		if (FinanceConstants.FINSER_EVENT_ORG.equals(fd.getModuleDefiner())) {
+			if (financeMain.isQuickDisb()) {
+				if (apiProcess) {
+					payments.addAll(finAdvancePaymentsService.processAPIQuickDisbursment(fd, "", tranType));
+				} else {
+					payments.addAll(finAdvancePaymentsService.processQuickDisbursment(fd, "", tranType));
+				}
+			} else {
+				if (CollectionUtils.isNotEmpty(advList)) {
+					payments.addAll(finAdvancePaymentsService.saveOrUpdate(advList, "", tranType, fd.isDisbStp()));
+				}
+			}
+		} else {
+			if (PennantConstants.RCD_STATUS_SUBMITTED.equals(financeMain.getRecordStatus())) {
+				List<FinServiceInstruction> fsi = fd.getFinScheduleData().getFinServiceInstructions();
+				if (CollectionUtils.isNotEmpty(fsi)
+						&& FinanceConstants.FINSER_EVENT_ADDDISB.equals(fsi.get(0).getFinEvent())) {
+
+					List<FinanceDisbursement> dd = fd.getFinScheduleData().getDisbursementDetails();
+					for (FinanceDisbursement disbursements : dd) {
+						for (FinAdvancePayments fap : advList) {
+							if (fap.getLlDate().compareTo(disbursements.getDisbDate()) == 0) {
+								String status = fap.getStatus();
+								if (disbursements.isQuickDisb() && PennantConstants.RECORD_TYPE_NEW.equals(status)) {
+									payments.addAll(
+											finAdvancePaymentsService.processQuickDisbursment(fd, "", tranType));
+								}
+							}
+						}
+					}
+				}
+			}
+			payments.addAll(finAdvancePaymentsService.saveOrUpdate(advList, "", tranType, fd.isDisbStp()));
+		}
+
+		return payments;
+	}
+
+	private boolean isAPIProcess(String finSourceID, AuditHeader apiHeader) {
+		return PennantConstants.FINSOURCE_ID_API.equals(finSourceID) && apiHeader.getApiHeader() != null;
 	}
 
 	private List<AuditDetail> processLowerTaxDeductionDetails(List<AuditDetail> auditDetails, TableType tableType,
@@ -5587,96 +5623,95 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// =======================================
 					getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 				}
+			}
 
-				// tasks # >>Start Advance EMI and DSF
-				String grcAdvType = financeMain.getGrcAdvType();
-				String repayAdvType = financeMain.getAdvType();
+			// tasks # >>Start Advance EMI and DSF
+			String grcAdvType = financeMain.getGrcAdvType();
+			String repayAdvType = financeMain.getAdvType();
 
-				AdvancePaymentDetail advPay = financeDetail.getAdvancePaymentDetail();
-				if ((grcAdvType != null || repayAdvType != null) && advPay != null) {
-					advPay.setInstructionUID(serviceUID);
+			AdvancePaymentDetail advPay = financeDetail.getAdvancePaymentDetail();
+			if ((grcAdvType != null || repayAdvType != null) && advPay != null) {
+				advPay.setInstructionUID(serviceUID);
 
-					// If Advance Payment updation Required
-					if (AdvancePaymentUtil.advPayUpdateReq(moduleDefiner)) {
-						advancePaymentService.processAdvancePayment(advPay, moduleDefiner, financeMain.getLastMntBy());
+				// If Advance Payment updation Required
+				if (AdvancePaymentUtil.advPayUpdateReq(moduleDefiner)) {
+					advancePaymentService.processAdvancePayment(advPay, moduleDefiner, financeMain.getLastMntBy());
+				}
+
+				// Saving of Advance Payment Detail
+				advancePaymentService.save(financeDetail.getAdvancePaymentDetail());
+
+			}
+
+			if ((grcAdvType != null || repayAdvType != null)) {
+				if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
+						|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
+					processAdvancePayment(finFeeDetails, finScheduleData);
+				} else if (ImplementationConstants.ALW_ADV_INTEMI_ADVICE_CREATION) {
+					if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
+							|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CANCELFIN.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
+						processAdvancePayment(finScheduleData);
 					}
+				}
+			}
+			// tasks # >>End Advance EMI and DSF
 
-					// Saving of Advance Payment Detail
-					advancePaymentService.save(financeDetail.getAdvancePaymentDetail());
+			// Mail Alert Notification for Customer/Dealer/Provider...etc
+			Notification notification = new Notification();
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
+			notification.setModule("LOAN_ORG");
+			String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner;
+			notification.setSubModule(finEvent);
+			notification.setKeyReference(financeMain.getFinReference());
+			notification.setStage(PennantConstants.REC_ON_APPR);
+			notification.setReceivedBy(financeMain.getLastMntBy());
+			financeMain.setWorkflowId(tempWorkflowId);
+			try {
 
+				if (notificationService != null) {
+					notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
+							financeDetail.getDocumentDetailsList());
 				}
 
-				if ((grcAdvType != null || repayAdvType != null)) {
-					if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
-							|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
-						processAdvancePayment(finFeeDetails, finScheduleData);
-					} else if (ImplementationConstants.ALW_ADV_INTEMI_ADVICE_CREATION) {
-						if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
-								|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_CANCELFIN.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
-								|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
-							processAdvancePayment(finScheduleData);
-						}
-					}
-				}
-				// tasks # >>End Advance EMI and DSF
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+			if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
+				financeMain.setWorkflowId(0);
+			}
 
-				// Mail Alert Notification for Customer/Dealer/Provider...etc
-				Notification notification = new Notification();
-				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
-				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
-				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
-				notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
-				notification.setModule("LOAN_ORG");
-				String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
-						: moduleDefiner;
-				notification.setSubModule(finEvent);
-				notification.setKeyReference(financeMain.getFinReference());
-				notification.setStage(PennantConstants.REC_ON_APPR);
-				notification.setReceivedBy(financeMain.getLastMntBy());
-				financeMain.setWorkflowId(tempWorkflowId);
-				try {
+			// Saving the reasons
+			saveReasonDetails(financeDetail);
 
-					if (notificationService != null) {
-						notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
-								financeDetail.getDocumentDetailsList());
-					}
+			// Calling External CMS API system.
+			processPayments(financeDetail);
 
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-				if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
-					financeMain.setWorkflowId(0);
-				}
+			// Auto Payable creation for Cash back process (DBD/MBD)
+			cashBackProcessService.createCashBackAdvice(financeMain, financeDetail.getPromotion(), curBDay);
 
-				// Saving the reasons
-				saveReasonDetails(financeDetail);
+			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
+			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
+			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+					tempfinanceMain.getBefImage(), tempfinanceMain));
+			auditHeader.setAuditDetails(auditDetailList);
 
-				// Calling External CMS API system.
-				processPayments(financeDetail);
-
-				// Auto Payable creation for Cash back process (DBD/MBD)
-				cashBackProcessService.createCashBackAdvice(financeMain, financeDetail.getPromotion(), curBDay);
-
-				FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
-				FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
-				auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
-						tempfinanceMain.getBefImage(), tempfinanceMain));
-				auditHeader.setAuditDetails(auditDetailList);
-
-				// Adding audit as deleted from Temp table
-				if (!isWIF) {
-					getAuditHeaderDAO().addAudit(auditHeader);
-				}
+			// Adding audit as deleted from Temp table
+			if (!isWIF) {
+				getAuditHeaderDAO().addAudit(auditHeader);
 			}
 		}
 

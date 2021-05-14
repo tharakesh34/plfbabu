@@ -79,7 +79,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -347,33 +346,34 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			recSave = true;
 		}
 
-		//QDP Change: Once realized the disbursement it should not allow to reject or resubmit the loan
-		if (finDetail.getFinScheduleData().getFinanceMain().isQuickDisb()
-				&& CollectionUtils.isNotEmpty(finDetail.getAdvancePaymentsList())
-				&& (StringUtils.isBlank(finDetail.getModuleDefiner())
-						|| FinanceConstants.FINSER_EVENT_ORG.equals(finDetail.getModuleDefiner()))) {
+		// QDP Change: Once realized the disbursement it should not allow to reject or resubmit the loan
+		FinanceMain fm = finDetail.getFinScheduleData().getFinanceMain();
+		List<FinAdvancePayments> advPayments = finDetail.getAdvancePaymentsList();
+		String moduleDef = finDetail.getModuleDefiner();
+
+		if (fm.isQuickDisb() && CollectionUtils.isNotEmpty(advPayments)
+				&& (StringUtils.isBlank(moduleDef) || FinanceConstants.FINSER_EVENT_ORG.equals(moduleDef))) {
 			boolean realized = false;
 			boolean disbDownload = false;
-			for (FinAdvancePayments advancePayments : finDetail.getAdvancePaymentsList()) {
+			for (FinAdvancePayments advancePayments : advPayments) {
+				String disbStatus = advancePayments.getStatus();
+				String paymentType = advancePayments.getPaymentType();
+
 				if (ImplementationConstants.CHEQUENO_MANDATORY_DISB_INS
-						&& (DisbursementConstants.STATUS_PAID.equals(advancePayments.getStatus())
-								|| DisbursementConstants.STATUS_PRINT.equals(advancePayments.getStatus()))
-						&& (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE,
-								advancePayments.getPaymentType())
-								|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
-										advancePayments.getPaymentType()))) {
+						&& (DisbursementConstants.STATUS_PAID.equals(disbStatus)
+								|| DisbursementConstants.STATUS_PRINT.equals(disbStatus))
+						&& (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+								|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType))) {
 					realized = true;
-				} else if (DisbursementConstants.STATUS_REALIZED.equals(advancePayments.getStatus()) && (StringUtils
-						.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, advancePayments.getPaymentType())
-						|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD,
-								advancePayments.getPaymentType()))) {
+				} else if (DisbursementConstants.STATUS_REALIZED.equals(disbStatus)
+						&& (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+								|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType))) {
 					realized = true;
-				} else if (DisbursementConstants.STATUS_PAID.equals(advancePayments.getStatus()) && (StringUtils
-						.equals(DisbursementConstants.PAYMENT_TYPE_NEFT, advancePayments.getPaymentType())
-						|| StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_RTGS,
-								advancePayments.getPaymentType()))) {
+				} else if (DisbursementConstants.STATUS_PAID.equals(disbStatus)
+						&& (DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
+								|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType))) {
 					realized = true;
-				} else if (DisbursementConstants.STATUS_AWAITCON.equals(advancePayments.getStatus())) {
+				} else if (DisbursementConstants.STATUS_AWAITCON.equals(disbStatus)) {
 					disbDownload = true;
 				}
 			}
@@ -402,7 +402,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 			}
 
 			// if Disbursement Status as Approved and Record status as Resubmitted then we are not allowing to resubmit
-			FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
+			FinanceMain financeMain = fm;
 			int count = finAdvancePaymentsService.getFinAdvCountByRef(financeMain.getFinReference(), "");
 			if (count > 0 && userAction.contains("Resubmit")) {
 				MessageUtil.showError(

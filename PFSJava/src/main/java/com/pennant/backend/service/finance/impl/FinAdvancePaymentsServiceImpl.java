@@ -191,13 +191,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	@Override
-	public List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePayments, String tableType,
-			String auditTranType, boolean disbStp) {
-		logger.debug("Entering");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+	public List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> advPayments, String tableType, String auditTranType,
+			boolean disbStp) {
+		logger.debug(Literal.ENTERING);
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		auditDetails
-				.addAll(processFinAdvancePaymentDetails(finAdvancePayments, tableType, auditTranType, false, disbStp));
+		auditDetails.addAll(processFinAdvancePaymentDetails(advPayments, tableType, auditTranType, false, disbStp));
 
 		logger.debug("Leaving");
 		return auditDetails;
@@ -205,133 +204,135 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	private List<AuditDetail> processFinAdvancePaymentDetails(List<FinAdvancePayments> finAdvancePayments,
 			String tableType, String auditTranType, boolean isApproveRcd, boolean disbStp) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		if (finAdvancePayments != null && !finAdvancePayments.isEmpty()) {
-			int i = 0;
-			boolean saveRecord = false;
-			boolean updateRecord = false;
-			boolean deleteRecord = false;
-			boolean approveRec = false;
-
-			for (FinAdvancePayments finPayment : finAdvancePayments) {
-				saveRecord = false;
-				updateRecord = false;
-				deleteRecord = false;
-				approveRec = isApproveRcd;
-				String rcdType = "";
-				String recordStatus = "";
-				if (finPayment.ispOIssued() || StringUtils.isEmpty(finPayment.getRecordType())) {
-					continue;
-				}
-
-				if (StringUtils.isEmpty(tableType)
-						|| StringUtils.equals(tableType, PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
-					approveRec = true;
-					finPayment.setRoleCode("");
-					finPayment.setNextRoleCode("");
-					finPayment.setTaskId("");
-					finPayment.setNextTaskId("");
-				}
-
-				finPayment.setWorkflowId(0);
-				if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					deleteRecord = true;
-				} else if (finPayment.isNewRecord()) {
-					saveRecord = true;
-					if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-						finPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-						finPayment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-						finPayment.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					}
-
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					if (approveRec) {
-						saveRecord = true;
-					} else {
-						updateRecord = true;
-					}
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-					updateRecord = true;
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					if (approveRec) {
-						deleteRecord = true;
-					} else if (finPayment.isNew()) {
-						saveRecord = true;
-					} else {
-						updateRecord = true;
-					}
-				}
-
-				if (approveRec) {
-					rcdType = finPayment.getRecordType();
-					recordStatus = finPayment.getRecordStatus();
-					finPayment.setRecordType("");
-					finPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					if (!StringUtils.equals(finPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
-						finPayment.setStatus(DisbursementConstants.STATUS_APPROVED);
-					}
-					finPayment.setpOIssued(true);
-				}
-
-				if (finPayment.isHoldDisbursement()) {
-					finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
-				}
-
-				if (disbStp) {
-					finPayment.setStatus(DisbursementConstants.STATUS_AWAITCON);
-				}
-
-				if (saveRecord) {
-					if (approveRec) {
-						finPayment.setOnlineProcReq(true);
-					}
-					getFinAdvancePaymentsDAO().save(finPayment, tableType);
-					if (finPayment.getDocImage() != null) {
-						saveDocumentDetails(finPayment);
-					}
-				}
-
-				if (updateRecord) {
-					getFinAdvancePaymentsDAO().update(finPayment, tableType);
-					if (finPayment.getDocImage() != null) {
-						saveDocumentDetails(finPayment);
-					}
-				}
-
-				if (deleteRecord) {
-					getFinAdvancePaymentsDAO().delete(finPayment, tableType);
-				}
-
-				if (approveRec) {
-					finPayment.setRecordType(rcdType);
-					finPayment.setRecordStatus(recordStatus);
-				}
-
-				String[] fields = PennantJavaUtil.getFieldDetails(finPayment, finPayment.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finPayment.getBefImage(),
-						finPayment));
-				i++;
-			}
+		if (CollectionUtils.isEmpty(finAdvancePayments)) {
+			return auditDetails;
 		}
-		logger.debug("Leaving");
+
+		int i = 0;
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (FinAdvancePayments finPayment : finAdvancePayments) {
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = isApproveRcd;
+			String rcdType = "";
+			String recordStatus = "";
+			if (finPayment.ispOIssued() || StringUtils.isEmpty(finPayment.getRecordType())) {
+				continue;
+			}
+
+			if (StringUtils.isEmpty(tableType)
+					|| StringUtils.equals(tableType, PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+				approveRec = true;
+				finPayment.setRoleCode("");
+				finPayment.setNextRoleCode("");
+				finPayment.setTaskId("");
+				finPayment.setNextTaskId("");
+			}
+
+			finPayment.setWorkflowId(0);
+			if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (finPayment.isNewRecord()) {
+				saveRecord = true;
+				if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					finPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					finPayment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					finPayment.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (finPayment.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+
+			if (approveRec) {
+				rcdType = finPayment.getRecordType();
+				recordStatus = finPayment.getRecordStatus();
+				finPayment.setRecordType("");
+				finPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if (!StringUtils.equals(finPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+					finPayment.setStatus(DisbursementConstants.STATUS_APPROVED);
+				}
+				finPayment.setpOIssued(true);
+			}
+
+			if (finPayment.isHoldDisbursement()) {
+				finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
+			}
+
+			if (disbStp) {
+				finPayment.setStatus(DisbursementConstants.STATUS_AWAITCON);
+			}
+
+			if (saveRecord) {
+				if (approveRec) {
+					finPayment.setOnlineProcReq(true);
+				}
+				finAdvancePaymentsDAO.save(finPayment, tableType);
+				if (finPayment.getDocImage() != null) {
+					saveDocumentDetails(finPayment);
+				}
+			}
+
+			if (updateRecord) {
+				finAdvancePaymentsDAO.update(finPayment, tableType);
+				if (finPayment.getDocImage() != null) {
+					saveDocumentDetails(finPayment);
+				}
+			}
+
+			if (deleteRecord) {
+				finAdvancePaymentsDAO.delete(finPayment, tableType);
+			}
+
+			if (approveRec) {
+				finPayment.setRecordType(rcdType);
+				finPayment.setRecordStatus(recordStatus);
+			}
+
+			String[] fields = PennantJavaUtil.getFieldDetails(finPayment, finPayment.getExcludeFields());
+			auditDetails.add(
+					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finPayment.getBefImage(), finPayment));
+			i++;
+		}
+
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
 	@Override
-	public List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePayments, String tableType,
-			String auditTranType, boolean disbStp) {
-		logger.debug("Entering");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+	public List<AuditDetail> doApprove(List<FinAdvancePayments> paymentsList, String tableType, String auditTranType,
+			boolean disbStp) {
+		logger.debug(Literal.ENTERING);
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		auditDetails
-				.addAll(processFinAdvancePaymentDetails(finAdvancePayments, tableType, auditTranType, true, disbStp));
+		auditDetails.addAll(processFinAdvancePaymentDetails(paymentsList, tableType, auditTranType, true, disbStp));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -712,31 +713,33 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	@Override
 	public void processDisbursments(FinanceDetail financeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<FinAdvancePayments> finAdvancePayList = financeDetail.getAdvancePaymentsList();
 
-		if (finAdvancePayList == null || finAdvancePayList.isEmpty()) {
+		if (CollectionUtils.isEmpty(finAdvancePayList)) {
 			return;
 		}
 
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 		boolean save = false;
-		PayOrderIssueHeader payOrderIssueHeader = getPayOrderIssueHeaderDAO()
-				.getPayOrderIssueByHeaderRef(finMain.getFinReference(), "");
-		if (payOrderIssueHeader == null) {
+		String finReference = fm.getFinReference();
+
+		PayOrderIssueHeader poiHeader = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(finReference, "");
+
+		if (poiHeader == null) {
 			save = true;
-			payOrderIssueHeader = new PayOrderIssueHeader();
-			payOrderIssueHeader.setFinReference(finMain.getFinReference());
-			payOrderIssueHeader.setVersion(1);
-			payOrderIssueHeader.setLastMntBy(finMain.getLastMntBy());
-			payOrderIssueHeader.setLastMntOn(finMain.getLastMntOn());
-			payOrderIssueHeader.setRoleCode("");
-			payOrderIssueHeader.setNextRoleCode("");
-			payOrderIssueHeader.setTaskId("");
-			payOrderIssueHeader.setNextTaskId("");
-			payOrderIssueHeader.setRecordType("");
-			payOrderIssueHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			poiHeader = new PayOrderIssueHeader();
+			poiHeader.setFinReference(finReference);
+			poiHeader.setVersion(1);
+			poiHeader.setLastMntBy(fm.getLastMntBy());
+			poiHeader.setLastMntOn(fm.getLastMntOn());
+			poiHeader.setRoleCode("");
+			poiHeader.setNextRoleCode("");
+			poiHeader.setTaskId("");
+			poiHeader.setNextTaskId("");
+			poiHeader.setRecordType("");
+			poiHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		}
 		//get total amount from disbursement details
 		BigDecimal totPOAmount = BigDecimal.ZERO;
@@ -754,90 +757,93 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		int totpoCount = 0;
 		int totdueCount = 0;
 
-		for (FinAdvancePayments finAdvancePayment : finAdvancePayList) {
-			if (!finAdvancePayment.ispOIssued()) {
-				totPOdueAmt = totPOdueAmt.add(finAdvancePayment.getAmtToBeReleased());
+		for (FinAdvancePayments fap : finAdvancePayList) {
+			if (!fap.ispOIssued()) {
+				totPOdueAmt = totPOdueAmt.add(fap.getAmtToBeReleased());
 				totdueCount++;
 			}
 
 			totpoCount++;
 		}
 
-		payOrderIssueHeader.setTotalPOCount(totpoCount);
-		payOrderIssueHeader.setpODueCount(totdueCount);
-		payOrderIssueHeader.setTotalPOAmount(totPOAmount);
-		payOrderIssueHeader.setpODueAmount(totPOdueAmt);
+		poiHeader.setTotalPOCount(totpoCount);
+		poiHeader.setpODueCount(totdueCount);
+		poiHeader.setTotalPOAmount(totPOAmount);
+		poiHeader.setpODueAmount(totPOdueAmt);
 		if (save) {
-			getPayOrderIssueHeaderDAO().save(payOrderIssueHeader, "");
+			payOrderIssueHeaderDAO.save(poiHeader, "");
 		} else {
-			payOrderIssueHeader.setVersion(payOrderIssueHeader.getVersion() + 1);
-			getPayOrderIssueHeaderDAO().update(payOrderIssueHeader, "");
+			poiHeader.setVersion(poiHeader.getVersion() + 1);
+			payOrderIssueHeaderDAO.update(poiHeader, "");
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public List<AuditDetail> processQuickDisbursment(FinanceDetail financeDetail, String tableType,
-			String auditTranType) {
+	public List<AuditDetail> processQuickDisbursment(FinanceDetail fd, String tableType, String tranType) {
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		List<FinAdvancePayments> finAdvancePayList = fd.getAdvancePaymentsList();
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		List<FinAdvancePayments> finAdvancePayList = financeDetail.getAdvancePaymentsList();
-		if (finAdvancePayList == null || finAdvancePayList.isEmpty()) {
+		if (CollectionUtils.isEmpty(finAdvancePayList)) {
 			return auditDetails;
 		}
 
-		if (isQDPProcess(financeDetail)
-				&& FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())) {
-			processDisbursments(financeDetail);
-			// Postings preparation
-			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
-				generateAccounting(financeDetail);
-			}
-			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, financeDetail.isDisbStp()));
-			delete(financeDetail.getAdvancePaymentsList(), "_Temp", "");
-			return auditDetails;
-		} else if (ImplementationConstants.ALW_QDP_CUSTOMIZATION
-				&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
-				&& StringUtils.equals(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
-						PennantConstants.RCD_STATUS_APPROVED)
-				&& financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
-			int i = 0;
-			for (FinAdvancePayments finAdPayment : finAdvancePayList) {
-				if (finAdPayment.getStatus().equalsIgnoreCase(DisbursementConstants.STATUS_PRINT)) {
-					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(finAdPayment.getPaymentType())
-							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(finAdPayment.getPaymentType())) {
-						finAdPayment.setStatus(DisbursementConstants.STATUS_PAID);
-						++i;
-						finAdvancePaymentsDAO.updateLLDate(finAdPayment, "");
-						String[] fields = PennantJavaUtil.getFieldDetails(finAdPayment,
-								finAdPayment.getExcludeFields());
-						auditDetails.add(new AuditDetail(auditTranType, i, fields[0], fields[1],
-								finAdPayment.getBefImage(), finAdPayment));
-					}
-				}
-			}
-			return auditDetails;
-		} else if (ImplementationConstants.ALW_QDP_CUSTOMIZATION
-				&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
-				&& StringUtils.contains(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus(),
-						"Resubmit")
-				&& financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
-			int i = 0;
-			for (FinAdvancePayments finAdPayment : finAdvancePayList) {
-				if (finAdPayment.getStatus().equalsIgnoreCase(DisbursementConstants.STATUS_PRINT)) {
+		String moduleDefiner = fd.getModuleDefiner();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		String recordStatus = fm.getRecordStatus();
 
-					finAdPayment.setStatus(DisbursementConstants.STATUS_REJECTED);
-					++i;
-					finAdvancePaymentsDAO.updateLLDate(finAdPayment, "");
-					String[] fields = PennantJavaUtil.getFieldDetails(finAdPayment, finAdPayment.getExcludeFields());
-					auditDetails.add(new AuditDetail(auditTranType, i, fields[0], fields[1], finAdPayment.getBefImage(),
-							finAdPayment));
-				}
+		if (isQDPProcess(fd) && FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
+			processDisbursments(fd);
+			// Postings preparation
+
+			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
+				generateAccounting(fd);
 			}
+
+			auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, fd.isDisbStp()));
+			delete(fd.getAdvancePaymentsList(), "_Temp", "");
 			return auditDetails;
 		} else {
-			auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, auditTranType, financeDetail.isDisbStp()));
+			if (ImplementationConstants.ALW_QDP_CUSTOMIZATION && fm.isQuickDisb()
+					&& FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)) {
+				if (PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
+					int i = 0;
+					for (FinAdvancePayments fap : finAdvancePayList) {
+						if (DisbursementConstants.STATUS_PRINT.equalsIgnoreCase(fap.getStatus())) {
+							String paymentType = fap.getPaymentType();
+							if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+									|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+								fap.setStatus(DisbursementConstants.STATUS_PAID);
+								++i;
+								finAdvancePaymentsDAO.updateLLDate(fap, "");
+								String[] fields = PennantJavaUtil.getFieldDetails(fap, fap.getExcludeFields());
+								auditDetails.add(
+										new AuditDetail(tranType, i, fields[0], fields[1], fap.getBefImage(), fap));
+							}
+						}
+					}
+					return auditDetails;
+				} else if (PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)) {
+					int i = 0;
+					for (FinAdvancePayments fap : finAdvancePayList) {
+						if (DisbursementConstants.STATUS_PRINT.equalsIgnoreCase(fap.getStatus())) {
+							fap.setStatus(DisbursementConstants.STATUS_REJECTED);
+							++i;
+							finAdvancePaymentsDAO.updateLLDate(fap, "");
+							String[] fields = PennantJavaUtil.getFieldDetails(fap, fap.getExcludeFields());
+							auditDetails
+									.add(new AuditDetail(tranType, i, fields[0], fields[1], fap.getBefImage(), fap));
+						}
+					}
+					return auditDetails;
+				} else {
+					auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, tranType, fd.isDisbStp()));
+				}
+			} else {
+				auditDetails.addAll(saveOrUpdate(finAdvancePayList, tableType, tranType, fd.isDisbStp()));
+			}
+
 		}
 
 		return auditDetails;
@@ -875,10 +881,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	@Override
 	public List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType,
 			String auditTranType) {
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		List<FinAdvancePayments> finAdvancePayList = financeDetail.getAdvancePaymentsList();
-		if (finAdvancePayList == null || finAdvancePayList.isEmpty()) {
+
+		if (CollectionUtils.isEmpty(finAdvancePayList)) {
 			return auditDetails;
 		}
 		processDisbursments(financeDetail);
