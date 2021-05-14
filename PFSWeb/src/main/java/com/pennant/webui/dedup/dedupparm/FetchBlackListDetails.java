@@ -135,6 +135,11 @@ public class FetchBlackListDetails {
 				}
 			}
 		}
+		for (CustomerDocument cd : customerDetails.getCustomerDocumentsList()) {
+			if (cd.getCustDocCategory().equals("01")) {
+				customer.setAadhaarNo(cd.getCustDocTitle());
+			}
+		}
 
 		String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();
 		String finReference = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference();
@@ -222,6 +227,7 @@ public class FetchBlackListDetails {
 			blackListCustomer.setCustDOB(customer.getCustDOB());
 			blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
 			blackListCustomer.setFinReference(finReference);
+			blackListCustomer.setCustAadhaar(customer.getAadhaarNo());
 
 			blackListCustomer.setLikeCustFName(
 					blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
