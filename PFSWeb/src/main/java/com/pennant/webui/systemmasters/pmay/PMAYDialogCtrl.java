@@ -70,6 +70,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -405,27 +406,25 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 	public void onClick$btnPMAYElgbty(Event event) {
 		logger.debug(Literal.ENTERING);
 		if (fromLoan) {
-			CustomerDialogCtrl customerDialogCtrl = this.financeMainBaseCtrl.getCustomerDialogCtrl();
+			CustomerDialogCtrl cdc = this.financeMainBaseCtrl.getCustomerDialogCtrl();
 			try {
-				ExtendedFieldRender extendedDetails = customerDialogCtrl.getExtendedDetails();
-				if (extendedDetails == null) {
+				ExtendedFieldRender efr = cdc.getExtendedDetails();
+				if (efr == null) {
 					return;
 				}
-				Map<String, Object> mapValues = extendedDetails.getMapValues();
+
+				Map<String, Object> mapValues = efr.getMapValues();
 				String object = (String) mapValues.get("APPLICANTID");
 				if (StringUtils.isNotEmpty(object)) {
 					MessageUtil.showError("PMAY Benefits Already Used.");
 					return;
 				}
 			} catch (WrongValueException e) {
-				Window window = customerDialogCtrl.getExtendedFieldCtrl().getWindow();
-				if (window != null && customerDialogCtrl.getExtendedFieldCtrl() != null
-						&& customerDialogCtrl.getExtendedFieldCtrl().getExtendedFieldHeader() != null) {
-
-					ExtendedFieldHeader extendedFieldHeader = customerDialogCtrl.getExtendedFieldCtrl()
-							.getExtendedFieldHeader();
-					Component fellowIfAny = window.getFellowIfAny(
-							extendedFieldHeader.getModuleName() + extendedFieldHeader.getSubModuleName());
+				ExtendedFieldCtrl efc = cdc.getExtendedFieldCtrl();
+				Window window = efc.getWindow();
+				if (window != null && efc != null && efc.getExtendedFieldHeader() != null) {
+					ExtendedFieldHeader efh = efc.getExtendedFieldHeader();
+					Component fellowIfAny = window.getFellowIfAny(efh.getModuleName() + efh.getSubModuleName());
 					if (fellowIfAny != null && fellowIfAny instanceof Tab) {
 						Tab parTab = (Tab) fellowIfAny;
 						parTab.setSelected(true);
@@ -449,17 +448,19 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 			throw new WrongValuesException(wvea);
 		}
 
+		String finCcy = this.financeMain.getFinCcy();
 		aPMAY.setProduct(this.product.getValue());
 		aPMAY.setTransactionFinType(this.product.getValue());
 
-		Map<String, Object> fieldsandvalues = new HashMap<String, Object>();
+		Map<String, Object> fieldsandvalues = new HashMap<>();
 
 		fieldsandvalues.put("NOTIFIEDTOWN", aPMAY.isNotifiedTown() ? "YES" : "NO");
 		fieldsandvalues.put("HOUSINGSCHEME", aPMAY.isCentralAssistance() ? "YES" : "NO");
 		fieldsandvalues.put("PUCCAHOUSE", aPMAY.isOwnedHouse() ? "YES" : "NO");
 		fieldsandvalues.put("CARPETAREA", aPMAY.getCarpetArea());
-		fieldsandvalues.put("HOUSEHOLDINCOME", PennantApplicationUtil.formateAmount(aPMAY.getHouseholdAnnIncome(),
-				CurrencyUtil.getFormat(this.financeMain.getFinCcy())));
+		BigDecimal annualIncome = PennantApplicationUtil.formateAmount(aPMAY.getHouseholdAnnIncome(),
+				CurrencyUtil.getFormat(finCcy));
+		fieldsandvalues.put("HOUSEHOLDINCOME", annualIncome);
 		fieldsandvalues.put("BALTRANSFER", aPMAY.isBalanceTransfer() ? "YES" : "NO");
 		fieldsandvalues.put("ISAPPISINDIVIDUAL", aPMAY.isPrimaryApplicant() ? "YES" : "NO");
 		fieldsandvalues.put("TRANTYPEOFLOAN", aPMAY.getTransactionFinType());
@@ -470,68 +471,78 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		fieldsandvalues.put("ELECTRICITY", aPMAY.isElectricity() ? "YES" : "NO");
 		fieldsandvalues.put("PMAYCATEGORY", aPMAY.getPmayCategory());
 
-		Map<String, Object> fieldsandvaluesResult = new HashMap<String, Object>();
+		Map<String, Object> fieldsandvaluesResult = new HashMap<>();
+
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 
 		for (String key : fieldsandvalues.keySet()) {
 			Object val = fieldsandvalues.get(key);
-			fieldsandvaluesResult.put(
-					"LOAN" + "_" + financeDetail.getFinScheduleData().getFinanceMain().getFinCategory() + "_" + key,
-					val);
+			fieldsandvaluesResult.put("LOAN" + "_" + fm.getFinCategory() + "_" + key, val);
 		}
 
-		Rule pmayEligibilityRule = getRuleService().getApprovedRuleById("SMPL", RuleConstants.MODULE_ELGRULE,
-				RuleConstants.MODULE_ELGRULE);
+		String ruleModule = RuleConstants.MODULE_ELGRULE;
+		Rule pmayEligibilityRule = ruleService.getApprovedRuleById("SMPL", ruleModule, ruleModule);
 
-		if (pmayEligibilityRule != null) {
-			Integer pmayResult = (Integer) getRuleExecutionUtil().executeRule(pmayEligibilityRule.getSQLRule(),
-					fieldsandvaluesResult, this.financeMain.getFinCcy(), RuleReturnType.INTEGER);
-
-			String pmayCategory = "";
-			String applicableLoanAmount = "";
-			boolean pMay = false;
-			if (pmayResult == 6) {
-				pmayCategory = "EWS";
-				applicableLoanAmount = pmayResult + "00000";
-				pMay = true;
-			} else if (pmayResult == 7) {
-				pmayCategory = "LIG";
-				applicableLoanAmount = 6 + "00000";
-				pMay = true;
-			} else if (pmayResult == 9) {
-				pmayCategory = "MIG1";
-				applicableLoanAmount = pmayResult + "00000";
-				pMay = true;
-			} else if (pmayResult == 12) {
-				pmayCategory = "MIG2";
-				applicableLoanAmount = pmayResult + "00000";
-				pMay = true;
-			} else {
-				MessageUtil.showMessage("PMAY Not Applicable");
-			}
-			if (applicableLoanAmount.isEmpty()) {
-				applicableLoanAmount = "0";
-			}
-
-			Map<String, Object> fieldsandvaluesSubsidyResult = new HashMap<String, Object>();
-			financeDetail.getFinScheduleData().getFinanceMain().setPmay(pMay);
-			if (pmayResult != 0) {
-				fieldsandvaluesSubsidyResult.put("SUBSIDYAPPLICABLE", applicableLoanAmount);
-				financeDetail.getFinScheduleData().getFinanceMain().setPmay(pMay);
-				this.btnFinalElgbty.setDisabled(!getUserWorkspace().isAllowed("button_PmayDialog_btnFinalElgbty"));
-			} else {
-				pmayCategory = "NA";
-				fieldsandvaluesSubsidyResult.put("PMAYCATEGORY", pmayCategory);
-				fieldsandvaluesSubsidyResult.put("SUBSIDYAPPLICABLE", 0.00);
-				btnFinalElgbty.setDisabled(true);
-			}
-
-			Object pmayCategoryVal = (fieldsandvaluesSubsidyResult.get("PMAYCATEGORY"));
-			Object subSidyApplicableVal = (fieldsandvaluesSubsidyResult.get("PMAYCATEGORY"));
-
-			this.pmayCategory.setValue(pmayCategory);
-			fieldsandvalues.put("PMAYCATEGORY", pmayCategoryVal);
-			fieldsandvalues.put("SUBSIDYAPPLICABLE", subSidyApplicableVal);
+		if (pmayEligibilityRule == null) {
+			MessageUtil.showMessage("PMAY Rule is Not available with RuleCode >> SMPL");
+			return;
 		}
+
+		Integer pmayResult = (Integer) RuleExecutionUtil.executeRule(pmayEligibilityRule.getSQLRule(),
+				fieldsandvaluesResult, finCcy, RuleReturnType.INTEGER);
+
+		String pmayCategory = "";
+		String applicableLoanAmount = "";
+		boolean pMay = false;
+
+		switch (pmayResult) {
+		case 6:
+			pmayCategory = "EWS";
+			applicableLoanAmount = pmayResult + "00000";
+			pMay = true;
+			break;
+		case 7:
+			pmayCategory = "LIG";
+			applicableLoanAmount = 6 + "00000";
+			pMay = true;
+			break;
+		case 9:
+			pmayCategory = "MIG1";
+			applicableLoanAmount = pmayResult + "00000";
+			pMay = true;
+			break;
+		case 12:
+			pmayCategory = "MIG2";
+			applicableLoanAmount = pmayResult + "00000";
+			pMay = true;
+			break;
+		default:
+			MessageUtil.showMessage("PMAY Not Applicable");
+			break;
+		}
+
+		if (applicableLoanAmount.isEmpty()) {
+			applicableLoanAmount = "0";
+		}
+
+		Map<String, Object> subSidyResultMap = new HashMap<>();
+		fm.setPmay(pMay);
+
+		if (pmayResult != 0) {
+			subSidyResultMap.put("SUBSIDYAPPLICABLE", applicableLoanAmount);
+			fm.setPmay(pMay);
+			this.btnFinalElgbty.setDisabled(!getUserWorkspace().isAllowed("button_PmayDialog_btnFinalElgbty"));
+		} else {
+			pmayCategory = "NA";
+			subSidyResultMap.put("PMAYCATEGORY", pmayCategory);
+			subSidyResultMap.put("SUBSIDYAPPLICABLE", 0.00);
+			btnFinalElgbty.setDisabled(true);
+		}
+
+		this.pmayCategory.setValue(pmayCategory);
+		fieldsandvalues.put("PMAYCATEGORY", subSidyResultMap.get("PMAYCATEGORY"));
+		fieldsandvalues.put("SUBSIDYAPPLICABLE", subSidyResultMap.get("PMAYCATEGORY"));
+
 		logger.debug(Literal.LEAVING);
 	}
 
