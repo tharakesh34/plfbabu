@@ -2549,7 +2549,7 @@
 	<changeSet id="141" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				create index ix_ldt_finref on NLSSORTtaxdeduction(NLSSORT(finreference,'nls_sort=''BINARY_CI'''));
+				create index ix_ldt_finref on lowertaxdeduction(NLSSORT(finreference,'nls_sort=''BINARY_CI'''));
 		    ]]>
 		</sql>
 	</changeSet>
