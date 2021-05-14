@@ -32694,4 +32694,8 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="68" author="Lakshmi.N">
+		<modifyDataType tableName="EXTERNALDOCUMENTS" columnName="PasswordProtected" newDataType="varchar(5)" />
+	</changeSet>
+	
 </databaseChangeLog>
