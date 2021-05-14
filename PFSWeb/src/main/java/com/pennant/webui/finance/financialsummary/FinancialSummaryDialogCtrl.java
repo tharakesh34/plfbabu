@@ -377,6 +377,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				getUserWorkspace().allocateRoleAuthorities(getRole(), pageRightName);
 			}
+
+			if (customerEligibiltyService != null) {
+				this.button_FinancialSummaryDailog_DelphiCheck.setVisible(true);
+			}
+			
 			/*
 			 * int divKycHeight = this.borderLayoutHeight - 80; int semiBorderlayoutHeights = divKycHeight / 2;
 			 * this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights - 108 + "px");

@@ -117,7 +117,8 @@
 								<toolbar align="start" style="border:none;"></toolbar>
 								<toolbar align="end" style="float:right; border-style: none; padding:0px;">
 									<button id="button_FinancialSummaryDailog_DelphiCheck" label="${c:l('label_Delphi_Check')}"
-										tooltiptext="${c:l('button_FinancialSummaryDailog_DelphiCheck.tooltiptext')}" autodisable="button_FinancialSummaryDailog_DelphiCheck" />
+										tooltiptext="${c:l('button_FinancialSummaryDailog_DelphiCheck.tooltiptext')}" autodisable="button_FinancialSummaryDailog_DelphiCheck" 
+										visible="false"/>
 								</toolbar>
 							</hbox>
 						</div>
