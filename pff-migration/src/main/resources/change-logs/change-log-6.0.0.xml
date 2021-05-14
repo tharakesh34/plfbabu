@@ -32686,5 +32686,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="PSD#172253" author="gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM DEDUPFIELDS WHERE QUERYMODULE = 'RETAILBlackList' AND FIELDNAME = 'custAadhaar';
+				INSERT INTO DEDUPFIELDS (FIELDNAME, FIELDDESC, FIELDCONTROL, QUERYMODULE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES('custAadhaar', 'Aadhar Number', 'varchar', 'RETAILBlackList', 1, '1000', CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
