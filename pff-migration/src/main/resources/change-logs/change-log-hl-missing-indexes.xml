@@ -6269,7 +6269,7 @@
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="147" author="suman babu.t" dbms="oracle">
+	<!-- <changeSet id="147" author="suman babu.t" dbms="oracle">
 		<sql>
 		<![CDATA[
 		create index IXN_FJS_FREF on FINJOINTACCOUNTDETAILS(NLSSORT("FINREFERENCE",'nls_sort=''BINARY_CI'''));
@@ -6291,7 +6291,7 @@
 				create	index	IX_FJS_FREF	on	FINJOINTACCOUNTDETAILS (FINREFERENCE);    
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="905" author="suman babu.t" dbms="oracle">
 		<createIndex tableName="FinJointAccountDetails_PA" indexName="FK_FinJointAcctDtl_PA_FinRef">
@@ -10637,12 +10637,12 @@
 		</createIndex>
 	</changeSet> -->
 
-	<changeSet id="913" author="kiran.p">
+	<!-- <changeSet id="913" author="kiran.p">
 		<createIndex tableName="customerqueuing" indexName="ix_cque_cuid_prg">
 			<column name="custid" />
 			<column name="progress" />
 		</createIndex>
-	</changeSet>
+	</changeSet> -->
 
 	<!-- <changeSet id="914" author="kiran.p">
 		<createIndex tableName="finguarantorsdetails" indexName="ix_fgd_grcif">

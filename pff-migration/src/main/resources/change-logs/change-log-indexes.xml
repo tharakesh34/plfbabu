@@ -35,7 +35,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="2" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -43,7 +43,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="3" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -51,7 +51,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="4" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -59,7 +59,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="5" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -67,7 +67,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="6" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -75,7 +75,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="7" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -83,7 +83,7 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="8" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -91,7 +91,7 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="9" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -99,7 +99,7 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="10" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -107,7 +107,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="11" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -115,7 +115,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="12" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -123,23 +123,23 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="13" author="murthy.y" dbms="postgresql">
+	
+	 <changeSet id="13" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_fshdt_finref on finscheduledetails_temp(lower(finreference));
    			 ]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="14" author="murthy.y" dbms="postgresql">
+	</changeSet> 
+	
+	 <changeSet id="14" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_scb_usd_usb on securityuserdivbranch(lower(userdivision),lower(userbranch));
    			 ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="15" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -147,15 +147,15 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="16" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_cced_seq_ref on customer_corp_ed(seqno,lower(reference));
   		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="17" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -163,39 +163,39 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="18" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_fadpy_paymentid on finadvancepayments(paymentid);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="19" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_icd_linkid on income_details(linkid);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="20" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_cue_ref on customer_retail_ed(lower(reference));
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="21" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_cuet_ref on customer_retail_ed_temp(lower(reference));
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="22" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -203,7 +203,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="23" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -211,23 +211,23 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="24" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_cur_seq on customer_retail_ed(seqno);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="25" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_cur_ref_seq on customer_retail_ed(lower(reference),seqno);
    			]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="26" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -235,7 +235,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="27" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -243,7 +243,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="28" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -251,7 +251,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="29" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -259,7 +259,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="30" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -267,7 +267,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="31" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -275,7 +275,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="32" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -283,7 +283,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="33" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -291,7 +291,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="34" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -299,7 +299,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="35" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -307,7 +307,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="36" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -315,7 +315,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="37" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -323,7 +323,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="38" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -331,7 +331,7 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="39" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -339,7 +339,7 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="40" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -347,7 +347,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="41" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -355,7 +355,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="42" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -363,7 +363,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="43" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -371,7 +371,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="44" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -379,7 +379,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="45" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -387,15 +387,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="46" author="murthy.y" dbms="postgresql">
+	
+	<!-- <changeSet id="46" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_fodd_finref on finoddetails(lower(finreference));
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="47" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -403,7 +403,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="48" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -411,7 +411,7 @@
    	 		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="49" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -419,7 +419,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="50" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -427,7 +427,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="51" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -435,7 +435,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="52" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -443,7 +443,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="53" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -451,7 +451,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="54" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -459,7 +459,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="55" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -467,7 +467,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="56" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -475,7 +475,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="57" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -483,7 +483,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="58" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -491,7 +491,7 @@
    	 		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="59" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -499,7 +499,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="60" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -507,7 +507,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="61" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -515,7 +515,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="62" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -523,7 +523,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="63" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -531,7 +531,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="64" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -539,7 +539,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="65" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -547,7 +547,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="66" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -555,7 +555,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="67" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -563,7 +563,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="68" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -571,7 +571,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="69" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -579,7 +579,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="70" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -587,7 +587,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="71" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -595,7 +595,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="72" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -603,7 +603,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="73" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -611,7 +611,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="74" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -619,7 +619,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="75" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -627,7 +627,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="76" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -635,7 +635,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="77" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -643,7 +643,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="78" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -651,7 +651,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="79" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -659,7 +659,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="80" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -667,7 +667,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="81" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -675,7 +675,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="82" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -683,7 +683,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="83" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -691,7 +691,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="84" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -699,7 +699,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="85" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -707,7 +707,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="86" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -715,7 +715,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="87" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -723,7 +723,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="88" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -731,7 +731,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="89" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -747,7 +747,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="91" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -755,7 +755,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="92" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -763,7 +763,7 @@
    			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="93" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -771,7 +771,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="94" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -779,7 +779,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="95" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -787,7 +787,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="96" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -795,7 +795,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="97" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -803,7 +803,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="98" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -811,15 +811,20 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="99" author="murthy.y" dbms="postgresql">
+	
+	<changeSet id="99_pre" author="murthy.y"  dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+		<not>
+			<indexExists indexName="IX_PRTHEADER_TEMP_ID_PID" tableName="PRESENTMENTHEADER_TEMP"/>
+		</not> 
+		</preConditions>
 		<sql>
 			<![CDATA[
 				create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
    			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="100" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -827,7 +832,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="101" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -835,7 +840,7 @@
    			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="102" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -843,7 +848,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="103" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -851,7 +856,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="104" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -859,7 +864,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="105" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -867,7 +872,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="106" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -875,7 +880,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="107" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -883,7 +888,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="108" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -891,7 +896,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="109" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -899,7 +904,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="110" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -907,7 +912,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="111" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -915,7 +920,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="112" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -923,7 +928,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="113" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -931,7 +936,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="114" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -939,7 +944,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="115" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -947,7 +952,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="116" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -955,7 +960,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="117" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -963,7 +968,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="118" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -971,7 +976,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="119" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -979,7 +984,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="120" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -987,7 +992,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="121" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -995,7 +1000,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="122" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1003,7 +1008,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="123" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1011,7 +1016,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="124" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1019,7 +1024,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="125" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1027,7 +1032,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="126" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1035,7 +1040,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="127" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1043,7 +1048,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="128" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1051,7 +1056,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="129" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1059,7 +1064,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="130" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1067,7 +1072,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="131" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1075,7 +1080,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="132" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1083,7 +1088,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="133" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1091,7 +1096,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="134" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1099,7 +1104,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="135" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1107,7 +1112,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="136" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1115,7 +1120,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="137" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1123,7 +1128,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="138" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1131,7 +1136,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="139" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1139,7 +1144,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="140" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1147,7 +1152,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="141" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1155,7 +1160,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="142" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1163,7 +1168,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="143" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1171,7 +1176,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="144" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1179,7 +1184,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="145" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1187,7 +1192,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="146" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1195,7 +1200,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="147" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1203,7 +1208,7 @@
    			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="148" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1211,7 +1216,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="149" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1219,7 +1224,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="150" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1292,9 +1297,6 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="159" author="murthy.y" dbms="postgresql"> <sql> <![CDATA[ create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId); 
-		]]> </sql> </changeSet> -->
-
 	<changeSet id="160" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1303,8 +1305,13 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="161" author="murthy.y" dbms="postgresql"> <sql> <![CDATA[ create index ix_fodd_finref on finoddetails(lower(finreference),FinODSchdDate); 
-		]]> </sql> </changeSet> -->
+	<changeSet id="161" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+     			create index ix_fodd_finref on finoddetails(lower(finreference),FinODSchdDate);
+    		]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="162" author="murthy.y" dbms="postgresql">
 		<sql>
@@ -1425,7 +1432,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="1" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1433,7 +1440,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="2" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1441,7 +1448,15 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="3_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IX_SMTPARM_SYSPRMCOD;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="3" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1449,7 +1464,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="4" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1457,7 +1472,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="5" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1465,7 +1480,15 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="6_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IX_RMTCCY_CCYCD;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="6" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1473,7 +1496,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="7" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1481,7 +1504,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="8_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IX_SECROLES_ROLECD;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="8" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1489,7 +1520,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="9" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1497,7 +1528,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="10" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1505,7 +1536,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="11_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IX_RMTCTRYPROV_CPCTY_CPPROV;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="11" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1513,7 +1552,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="12_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IDX_FIN_SCHDL_DETAIL_FINREF;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="12" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1521,23 +1568,39 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="13" author="murthy.y" dbms="oracle">
+	
+	<changeSet id="13_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IDX_FINSCHDDTL_T_FINREF;
+			]]>
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="13" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_fshdt_finref on finscheduledetails_temp(NLSSORT(finreference,'nls_sort=''BINARY_CI'''));
     		]]>
 		</sql>
+	</changeSet> 
+	
+	<changeSet id="14_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IX_SECUSRDIVBRNCH_DIV_BRNCH;
+			]]>
+		</sql>
 	</changeSet>
-
-	<changeSet id="14" author="murthy.y" dbms="oracle">
+	
+	 <changeSet id="14" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_scb_usd_usb on securityuserdivbranch(NLSSORT(userdivision,'nls_sort=''BINARY_CI'''),NLSSORT(userbranch,'nls_sort=''BINARY_CI'''));
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="15" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1545,15 +1608,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="16" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="16" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_cced_seq_ref on customer_corp_ed(seqno,NLSSORT(reference,'nls_sort=''BINARY_CI'''));
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="17" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1561,39 +1624,39 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="18" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_fadpy_paymentid on finadvancepayments(paymentid);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="19" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_icd_linkid on income_details(linkid);
     		]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="20" author="murthy.y" dbms="oracle">
+	</changeSet> 
+	
+	<!-- <changeSet id="20" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_cue_ref on customer_retail_ed(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
     		]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="21" author="murthy.y" dbms="oracle">
+	</changeSet> -->
+	
+	<!-- <changeSet id="21" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_cuet_ref on customer_retail_ed_temp(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="22" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1601,7 +1664,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="23" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1609,23 +1672,23 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="24" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="24" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_cur_seq on customer_retail_ed(seqno);
     		]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="25" author="murthy.y" dbms="oracle">
+	</changeSet> -->
+	
+	<!-- <changeSet id="25" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_cur_ref_seq on customer_retail_ed(NLSSORT(reference,'nls_sort=''BINARY_CI'''),seqno);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="26" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1633,7 +1696,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="27" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1641,7 +1704,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="28" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1649,7 +1712,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="29" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1657,7 +1720,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="30" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1665,7 +1728,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="31" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1673,7 +1736,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="32" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1681,7 +1744,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="33" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1689,7 +1752,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="34" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1697,7 +1760,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="35" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1705,7 +1768,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="36" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1713,7 +1776,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="37" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1721,7 +1784,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="38_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IX_TAXDETAIL_BV;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="38" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1729,7 +1800,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="39_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index TSKOWN_REF_RC_IDX;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="39" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1737,7 +1816,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="40" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1745,7 +1824,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="41" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1753,7 +1832,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="42" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1761,7 +1840,7 @@
 	    	]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="43" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1769,7 +1848,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="44" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1777,7 +1856,7 @@
    			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="45" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1785,15 +1864,23 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="46" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="46" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_fodd_finref on finoddetails(NLSSORT(finreference,'nls_sort=''BINARY_CI'''));
 		    ]]>
 		</sql>
+	</changeSet> -->
+	
+	<changeSet id="47_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+			        drop index IX_FIN_MAIN_ACTIVE;
+			]]>
+		</sql>
 	</changeSet>
-
+	
 	<changeSet id="47" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1801,7 +1888,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="48" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1809,7 +1896,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="49" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1817,7 +1904,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="50" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1825,7 +1912,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="51" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1833,7 +1920,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="52" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1841,7 +1928,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="53" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1849,7 +1936,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="54" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1857,7 +1944,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="55" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1865,15 +1952,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="56" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="56" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_cse_ref_sen on customer_sme_ed(seqno,NLSSORT(reference,'nls_sort=''BINARY_CI'''));
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="57" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1881,7 +1968,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="58" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1889,7 +1976,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="59" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1897,7 +1984,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="60" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1905,7 +1992,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="61" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1913,7 +2000,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="62" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1921,7 +2008,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="63" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1929,7 +2016,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="64" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1937,7 +2024,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="65" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1945,7 +2032,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="66" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1953,7 +2040,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="67" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1961,15 +2048,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="68" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="68" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_ccet_reference on customer_corp_ed_temp(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="69" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1977,7 +2064,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="70" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1985,23 +2072,23 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="71" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="71" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_lhoe_ref on loan_hfl_org_ed(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
 		    ]]>
 		</sql>
-	</changeSet>
-
-	<changeSet id="72" author="murthy.y" dbms="oracle">
+	</changeSet> -->
+	
+	<!-- <changeSet id="72" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_lhoet_ref on loan_hfl_org_ed_temp(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="73" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2009,7 +2096,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="74" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2017,7 +2104,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="75" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2025,7 +2112,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="76" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2033,7 +2120,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="77" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2041,7 +2128,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="78" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2049,7 +2136,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="79" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2057,7 +2144,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="80" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2065,7 +2152,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="81" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2073,7 +2160,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="82" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2081,7 +2168,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="83" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2089,7 +2176,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="84" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2097,7 +2184,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="85" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2105,7 +2192,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="86" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2113,7 +2200,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="87" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2121,7 +2208,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="88_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				drop index IX_PRESENTMNTDTLS_RECEIPTID;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="88" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2129,7 +2224,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="89" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2137,7 +2232,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="90" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2145,7 +2240,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="91" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2153,7 +2248,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="92" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2161,7 +2256,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="93" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2169,7 +2264,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="94" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2177,7 +2272,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="95" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2185,7 +2280,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="96" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2193,7 +2288,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="97" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2201,7 +2296,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="98" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2209,15 +2304,23 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="99_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				drop index IX_PRTHEADER_TEMP_ID_PID;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="99" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
-				create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
+				create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);  
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="100" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2225,7 +2328,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+		
 	<changeSet id="101" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2233,7 +2336,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="102" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2241,7 +2344,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="103" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2249,7 +2352,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="104" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2257,7 +2360,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="105" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2265,7 +2368,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="106" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2273,7 +2376,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="107" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2281,7 +2384,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="108" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2289,7 +2392,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="109" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2297,7 +2400,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="110_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				drop index IX_FINDIBDTL_FINREF;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="110" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2305,15 +2416,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="111" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="111" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				CREATE INDEX IX_RMT_ACCSETID on RMTTransactionEntry(AccountSetid,TransOrder);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="112" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2321,7 +2432,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="113" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2329,7 +2440,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="114" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2337,7 +2448,7 @@
 	    	]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="115" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2345,7 +2456,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="116" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2353,7 +2464,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="117" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2361,7 +2472,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="118" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2369,7 +2480,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="119" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2377,7 +2488,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="120" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2385,7 +2496,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="121" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2393,15 +2504,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="122" author="murthy.y" dbms="oracle">
+	
+	<!-- <changeSet id="122" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_rcd_chid_ans on rmtchecklistdetails(checklistid,ansseqno);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> -->
+	
 	<changeSet id="123" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2409,7 +2520,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="124" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2417,7 +2528,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="125" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2425,7 +2536,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="126" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2433,7 +2544,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="127" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2441,7 +2552,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="128" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2449,7 +2560,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="129" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2457,7 +2568,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="130" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2465,7 +2576,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="131" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2473,7 +2584,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="132" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2481,7 +2592,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="133" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2489,7 +2600,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="134_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IX_SCR_RLCD;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="134" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2497,7 +2616,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="135" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2505,7 +2624,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="136" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2513,7 +2632,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="137" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2521,7 +2640,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="138" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2529,7 +2648,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="139" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2537,7 +2656,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="140" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2545,7 +2664,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="141" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2553,7 +2672,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="142" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2561,7 +2680,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="143" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2569,7 +2688,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="144" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2577,7 +2696,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="145" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2585,15 +2704,23 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="146" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_nc_tmty on notifications(NLSSORT(templatetype,'nls_sort=''BINARY_CI'''));
-	    	]]>
+	    	]]>	
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="147_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IX_DE_EP_CID;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="147" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2601,7 +2728,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="148" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2609,7 +2736,7 @@
    			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="149" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2617,7 +2744,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="150" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2690,14 +2817,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="159" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
-    		]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="160" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2729,6 +2848,14 @@
     		]]>
 		</sql>
 	</changeSet>
+	
+<!-- 	<changeSet id="164_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IX_FM_CUST_ID;
+			]]>
+		</sql>
+	</changeSet> -->
 
 	<changeSet id="164" author="murthy.y" dbms="oracle">
 		<sql>
@@ -2769,12 +2896,28 @@
     		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="169_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IDX_FINPFTDTL_FINREF;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="169" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				CREATE INDEX IX_fipftd_FINREF ON FinPftDetails(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
     		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="170_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IDX_FINODPTRT_FINREF;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2785,12 +2928,28 @@
     		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="171_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IX_FINRPYINS_FINREF;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="171" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
 				CREATE INDEX IX_finrpyinst_FINREF ON FinRepayInstruction(NLSSORT(FINREFERENCE,'nls_sort=''BINARY_CI'''));
     		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="172_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IX_FM_T_FINREF;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -2825,6 +2984,14 @@
     		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="176_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+	               drop index IX_CUST_CIF;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="176" author="murthy.y" dbms="oracle">
 		<sql>
@@ -2833,15 +3000,15 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="1" author="murthy.y" dbms="mssql">
+	
+	 <changeSet id="1" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				CREATE nonclustered INDEX    IX_PS_STGFLG ON postings_stage (StageFlag);
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="2" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2849,7 +3016,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="3" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2857,7 +3024,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="4" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2865,7 +3032,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="5" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2873,7 +3040,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="6" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2881,7 +3048,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="7" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2889,7 +3056,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="8" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2913,7 +3080,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="11" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2921,7 +3088,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="12" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2929,23 +3096,23 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="13" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_fshdt_finref on finscheduledetails_temp(finreference);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="14" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_scb_usd_usb on securityuserdivbranch(userdivision,userbranch);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="15" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2953,15 +3120,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="16" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_cced_seq_ref on customer_corp_ed(seqno,reference);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="17" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2969,23 +3136,23 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="18" author="murthy.y" dbms="mssql">
+	
+	 <changeSet id="18" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_fadpy_paymentid on finadvancepayments(paymentid);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="19" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_icd_linkid on income_details(linkid);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="20" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2993,15 +3160,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="21" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_cuet_ref on customer_retail_ed_temp(reference);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="22" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3009,7 +3176,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="23" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3017,7 +3184,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="24" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3025,15 +3192,15 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="25" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_cur_ref_seq on customer_retail_ed(reference,seqno);
     		]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="26" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3041,7 +3208,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="27" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3049,7 +3216,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="28" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3057,7 +3224,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="29" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3065,7 +3232,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="30" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3073,7 +3240,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="31" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3081,7 +3248,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="32" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3089,7 +3256,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="33" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3097,7 +3264,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="34" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3105,7 +3272,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="35" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3113,7 +3280,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="36" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3121,7 +3288,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="37" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3129,7 +3296,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="38" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3137,7 +3304,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="39" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3145,7 +3312,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="40" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3153,7 +3320,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="41" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3161,7 +3328,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="42" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3169,7 +3336,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="43" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3177,7 +3344,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="44" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3185,7 +3352,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="45" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3193,15 +3360,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	<!-- 
 	<changeSet id="46" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_fodd_finref on finoddetails(finreference);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet>  -->
+	
 	<changeSet id="47" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3209,7 +3376,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="48" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3217,7 +3384,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="49" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3225,7 +3392,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="50" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3233,7 +3400,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="51" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3241,7 +3408,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="52" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3249,7 +3416,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="53" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3257,7 +3424,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="54" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3265,7 +3432,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="55" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3273,15 +3440,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="56" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_cse_ref_sen on customer_sme_ed(seqno,reference);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="57" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3289,7 +3456,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="58" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3297,7 +3464,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="59" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3305,7 +3472,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="60" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3313,7 +3480,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="61" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3321,7 +3488,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="62" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3329,7 +3496,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="63" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3337,7 +3504,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="64" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3345,7 +3512,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="65" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3353,7 +3520,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="66" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3361,7 +3528,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="67" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3369,15 +3536,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="68" author="murthy.y" dbms="mssql">
+	
+	 <changeSet id="68" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_ccet_reference on customer_corp_ed_temp(reference);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="69" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3385,7 +3552,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="70" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3393,23 +3560,23 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="71" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_lhoe_ref on loan_hfl_org_ed(reference);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="72" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_lhoet_ref on loan_hfl_org_ed_temp(reference);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="73" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3417,7 +3584,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="74" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3425,7 +3592,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="75" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3433,7 +3600,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="76" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3441,7 +3608,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="77" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3449,7 +3616,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="78" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3457,7 +3624,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="79" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3465,7 +3632,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="80" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3473,7 +3640,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="81" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3481,7 +3648,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="82" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3489,7 +3656,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="83" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3497,7 +3664,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="84" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3505,7 +3672,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="85" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3513,7 +3680,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="86" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3521,7 +3688,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="87" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3529,7 +3696,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="88" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3537,7 +3704,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="89" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3545,7 +3712,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="90" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3553,7 +3720,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="91" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3561,7 +3728,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="92" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3569,7 +3736,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="93" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3577,7 +3744,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="94" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3585,7 +3752,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="95" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3593,7 +3760,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="96" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3601,7 +3768,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="97" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3609,7 +3776,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="98" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3617,15 +3784,20 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="99" author="murthy.y" dbms="mssql">
+	
+	<changeSet id="99_pre" author="murthy.y" dbms="mssql">
+		<preConditions onFail="MARK_RAN">
+		<not>
+			<indexExists indexName="IX_PRTHEADER_TEMP_ID_PID" tableName="PRESENTMENTHEADER_TEMP"/>
+		</not> 
+		</preConditions>
 		<sql>
 			<![CDATA[
 				create nonclustered index    IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
-		    ]]>
+   			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="100" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3633,7 +3805,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="101" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3641,7 +3813,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="102" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3649,7 +3821,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="103" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3657,7 +3829,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="104" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3665,7 +3837,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="105" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3673,7 +3845,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="106" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3681,7 +3853,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="107" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3689,7 +3861,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="108" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3697,7 +3869,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="109" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3705,7 +3877,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="110" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3713,7 +3885,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="111" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3721,7 +3893,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="112" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3729,7 +3901,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="113" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3737,7 +3909,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="114" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3745,7 +3917,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="115" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3753,7 +3925,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="116" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3761,7 +3933,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="117" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3769,7 +3941,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="118" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3777,7 +3949,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="119" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3785,7 +3957,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="120" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3793,7 +3965,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="121" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3801,7 +3973,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="122" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3809,15 +3981,23 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="123.1_pre" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table lmtfinrefdetail alter column MandInputInStage varchar(max);
+			]]>
+		</sql>
+	</changeSet> 
+	
 	<changeSet id="123" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index    ix_lmtd_adr on lmtfinrefdetail(finrefid,fintype,mandinputinstage,finreftype,isactive,finevent);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="124" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3825,7 +4005,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="125" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3833,7 +4013,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="126" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3841,7 +4021,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="127" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3849,7 +4029,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="128" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3857,7 +4037,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="129" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3865,7 +4045,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="130" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3873,7 +4053,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="131" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3881,7 +4061,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="132" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3889,7 +4069,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="133" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3897,7 +4077,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="134" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3905,7 +4085,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="135" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3913,7 +4093,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="136" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3921,7 +4101,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="137" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3929,7 +4109,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="138" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3937,7 +4117,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="139" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3945,7 +4125,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="140" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3953,15 +4133,15 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="141" author="murthy.y" dbms="mssql">
+	
+	 <changeSet id="141" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				create nonclustered index    ix_ldt_finref on taxdeduction(finreference);
+				create nonclustered index    ix_ldt_finref on lowertaxdeduction(finreference);
 		    ]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="142" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3969,7 +4149,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="143" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3977,7 +4157,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="144" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3985,7 +4165,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="145" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3993,7 +4173,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="146" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4001,7 +4181,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="147" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4009,7 +4189,7 @@
     		]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="148" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4017,16 +4197,21 @@
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="149" author="murthy.y" dbms="mssql">
+	
+	<changeSet id="149_pre" author="murthy.y" dbms="mssql">
+		<preConditions onFail="MARK_RAN">
+		<not>
+			<indexExists indexName="ix_fin_ref" tableName="finreceiptheader"/>
+		</not> 
+		</preConditions>
 		<sql>
 			<![CDATA[
 				create nonclustered index ix_fin_ref on finreceiptheader(reference);
     		]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="150" author="murthy.y" dbms="mssql">
+	
+    <changeSet id="150" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create  nonclustered  index ix_ftad_finref on fintaxdetail (finreference);
@@ -4094,14 +4279,6 @@
 		<sql>
 			<![CDATA[
 				create  nonclustered  index ix_fintypaccg_typ_evt_mdid on fintypeaccounting (fintype,event,moduleid);
-    		]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="159" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create  nonclustered  index ix_prtheader_temp_id_pid on presentmentheader_temp (id,partnerbankid);
     		]]>
 		</sql>
 	</changeSet>
@@ -4241,7 +4418,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4249,7 +4426,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923.1" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4257,7 +4434,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923.2" author="sudheer.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4265,7 +4442,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923" author="sudheer.t" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -4273,7 +4450,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923.1" author="sudheer.t" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -4281,7 +4458,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923.2" author="sudheer.t" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -4297,7 +4474,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923.1" author="sudheer.t" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4305,7 +4482,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1923.2" author="sudheer.t" dbms="mssql">
 		<sql>
 			<![CDATA[

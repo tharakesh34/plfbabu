@@ -4700,6 +4700,7 @@
 	<changeSet id="542" author="srihari.m">
 		<comment>psd # 150541 </comment>
 		<addUniqueConstraint tableName="PerfiosInstitutions" columnNames="plfbankcode,perfiosbankcode" />
+
 	</changeSet>
 
 	<changeSet id="543" author="madhuri.n">
@@ -5493,6 +5494,7 @@
 		</addColumn>
 	</changeSet>
 
+
 	<changeSet id="628" author="lakshmi">
 		<addColumn tableName="FinTypeFees_TEMP">
 			<column name="finTypeFeeId" type="bigint" />
@@ -5726,6 +5728,7 @@
 			<column name="alwLoanSplit" type="smallint" />
 		</addColumn>
 	</changeSet>
+
 
 	<changeSet id="660" author="venkatesh.ch">
 		<comment>ST#363 TK#773</comment>
@@ -32421,6 +32424,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1211.101_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'int_disbursement_request_view');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1211.101" author="Gopal.p">
 		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
@@ -32694,8 +32705,28 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="68_pre" author="Lakshmi.N" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'externaldocuments');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="68.0" author="Lakshmi.N" >
+    	<dropDefaultValue columnDataType="smallint" columnName="PasswordProtected" tableName="EXTERNALDOCUMENTS"/>
+	</changeSet>	
+	
 	<changeSet id="68" author="Lakshmi.N">
 		<modifyDataType tableName="EXTERNALDOCUMENTS" columnName="PasswordProtected" newDataType="varchar(5)" />
+	</changeSet>
+	
+	<changeSet id="68_post" author="Lakshmi.N" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'externaldocuments');
+			]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>
