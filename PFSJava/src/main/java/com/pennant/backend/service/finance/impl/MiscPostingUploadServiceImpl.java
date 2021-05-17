@@ -43,8 +43,8 @@ import com.pennant.backend.service.finance.MiscPostingUploadService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUpload>
 		implements MiscPostingUploadService {

@@ -5,7 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.services.PosidexResponseService;
 
 public class TestPosidexResponseService {

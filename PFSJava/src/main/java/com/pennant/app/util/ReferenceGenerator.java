@@ -55,9 +55,9 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.ReferenceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ReferenceGenerator implements Serializable {
 	private static final long serialVersionUID = -4965488291173350445L;

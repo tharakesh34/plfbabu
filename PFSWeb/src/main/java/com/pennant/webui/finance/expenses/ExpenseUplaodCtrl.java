@@ -3,7 +3,6 @@ package com.pennant.webui.finance.expenses;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -54,12 +53,12 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -519,7 +518,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 						fromDate = fromDate.replace("/", "-");
 					}
 					financeStartDate = DateUtil.parse(fromDate, DateFormat.LONG_DATE.getPattern());
-				} catch (ParseException e) {
+				} catch (IllegalArgumentException e) {
 					reason = "Invalid Approval Start Date, it should be in " + DateFormat.LONG_DATE.getPattern()
 							+ " format.";
 					valid = false;
@@ -536,7 +535,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 						toDate = toDate.replace("/", "-");
 					}
 					financeEndDate = DateUtil.parse(toDate, DateFormat.LONG_DATE.getPattern());
-				} catch (ParseException e) {
+				} catch (IllegalArgumentException e) {
 					reason = "Invalid Approval Start Date, it should be in " + DateFormat.LONG_DATE.getPattern()
 							+ " format.";
 					valid = false;
