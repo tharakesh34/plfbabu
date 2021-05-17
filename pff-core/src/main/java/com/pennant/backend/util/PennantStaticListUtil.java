@@ -2494,7 +2494,7 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getPaymentDetails() {
 		if (paymentDetails == null) {
-			paymentDetails = new ArrayList<ValueLabel>(3);
+			paymentDetails = new ArrayList<ValueLabel>(5);
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_CUSTOMER,
 					Labels.getLabel("label_PaymentDetail_Customer")));
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_VENDOR,
@@ -2503,10 +2503,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentDetail_Vas")));
 			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_THIRDPARTY,
 					Labels.getLabel("label_PaymentDetail_ThirdParty")));
-			if (ImplementationConstants.BUILDER_INST_ON_DISB) {
-				paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_BUILDER,
-						Labels.getLabel("label_PaymentDetail_Builder")));
-			}
+			paymentDetails.add(new ValueLabel(DisbursementConstants.PAYMENT_DETAIL_BUILDER,
+					Labels.getLabel("label_PaymentDetail_Builder")));
 		}
 		return paymentDetails;
 	}

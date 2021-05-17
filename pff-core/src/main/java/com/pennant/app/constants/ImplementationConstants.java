@@ -185,7 +185,6 @@ public class ImplementationConstants {
 		COLLATERAL_DEDUP_WARNING = getValueAsBoolean(extensions, "COLLATERAL_DEDUP_WARNING", false);
 
 		CUSTOMIZED_TEMPLATES = getValueAsBoolean(extensions, "CUSTOMIZED_TEMPLATES", false);
-		BUILDER_INST_ON_DISB = getValueAsBoolean(extensions, "BUILDER_INST_ON_DISB", false);
 		DERIVED_EMI_REQ = getValueAsBoolean(extensions, "DERIVED_EMI_REQ", false);
 		IS_DATA_SYNC_REQ_BY_APP_DATE = getValueAsBoolean(extensions, "IS_DATA_SYNC_REQ_BY_APP_DATE", false);
 		CUSTOM_BLACKLIST_PARAMS = getValueAsBoolean(extensions, "CUSTOM_BLACKLIST_PARAMS", false);
@@ -433,7 +432,6 @@ public class ImplementationConstants {
 	public static boolean COLLATERAL_DEDUP_WARNING;
 	public static boolean NOC_GENERATION_MULTIPLE;
 	public static boolean CUSTOMIZED_TEMPLATES;
-	public static boolean BUILDER_INST_ON_DISB;
 	public static boolean DERIVED_EMI_REQ;
 	public static boolean IS_DATA_SYNC_REQ_BY_APP_DATE;
 	public static boolean CUSTOM_BLACKLIST_PARAMS;
