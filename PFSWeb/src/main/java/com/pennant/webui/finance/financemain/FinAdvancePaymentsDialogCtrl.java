@@ -2558,9 +2558,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void onClick$btnGetCustBeneficiary(Event event) {
 		logger.debug("Entering");
-		Filter filter[] = new Filter[1];
+		Filter filter[] = new Filter[2];
 		if (!ImplementationConstants.DISBURSEMENT_ALLOW_CO_APP) {
 			filter[0] = new Filter("CustId", custID, Filter.OP_EQUAL);
+			filter[1] = new Filter("BeneficiaryActive", 1, Filter.OP_EQUAL);
 			Object dataObject = ExtendedSearchListBox.show(this.window_FinAdvancePaymentsDialog, "BeneficiaryEnquiry",
 					filter, "");
 			doFillBeneficiaryDetails(dataObject);
@@ -2575,6 +2576,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			//preparing filters to render only primary beneficiary while loading 
 			filter[0] = new Filter("CustCIF", custCIF, Filter.OP_EQUAL);
+			filter[1] = new Filter("BeneficiaryActive", 1, Filter.OP_EQUAL);
+			
 			aruments.put("filtersList", Arrays.asList(filter));
 
 			aruments.put("DialogCtrl", this);
