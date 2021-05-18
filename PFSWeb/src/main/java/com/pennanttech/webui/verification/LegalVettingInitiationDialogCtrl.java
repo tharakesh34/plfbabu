@@ -640,6 +640,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 				if (object != null) {
 					CollateralSetup collateralSetup = (CollateralSetup) object;
 					aVerification.setReferenceFor(collateralSetup.getCollateralRef());
+					aVerification.setReferenceType(collateralSetup.getCollateralType());
 					if (initiation) {
 						aVerification.setReferenceType(collateralSetup.getCollateralType());
 					}

@@ -1716,6 +1716,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			// LV Documents
 			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.STAGE_TAB);
 		}
+		if (verification.getId() != 0) {
+			verification.setId(verification.getId());
+			verificationDAO.update(verification, TableType.MAIN_TAB);
+		} else {
+			verificationDAO.save(verification, TableType.MAIN_TAB);
+		}
+		// Legal Vetting
+		legalVettingService.save(verification, TableType.MAIN_TAB);
 	}
 
 	/**
