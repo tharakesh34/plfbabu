@@ -75,18 +75,20 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.verification.fieldinvestigation.FIInitiationListCtrl;
 import com.pennant.webui.verification.legalverification.LVInitiationListCtrl;
+import com.pennant.webui.verification.legalvetting.LegalVettingInitiationListCtrl;
 import com.pennant.webui.verification.rcu.RCUInitiationListCtrl;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
-	private static final long serialVersionUID = 1L;
-
 	private static final Logger logger = LogManager.getLogger(SelectTVInitiationDialogCtrl.class);
+	private static final long serialVersionUID = 1L;
 
 	protected Window window_SelectTechnicalVerificationInitiationDialog;
 	protected Button btnProceed;
@@ -96,10 +98,12 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private FIInitiationListCtrl fiInitiationListCtrl;
 	private LVInitiationListCtrl lvInitiationListCtrl;
 	private RCUInitiationListCtrl rcuInitiationListCtrl;
+	private LegalVettingInitiationListCtrl legalVettingInitiationListCtrl;
 	private FinanceDetail financeDetail;
 
 	private transient FinanceDetailService financeDetailService;
 	private transient FinanceReferenceDetailDAO financeReferenceDetailDAO;
+	private transient VerificationService verificationService;
 
 	private String module = null;
 
@@ -127,6 +131,9 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				this.lvInitiationListCtrl = (LVInitiationListCtrl) arguments.get("lvInitiationListCtrl");
 			} else if (arguments.containsKey("rcuInitiationListCtrl")) {
 				this.rcuInitiationListCtrl = (RCUInitiationListCtrl) arguments.get("rcuInitiationListCtrl");
+			} else if (arguments.containsKey("legalVettingInitiationListCtrl")) {
+				this.legalVettingInitiationListCtrl = (LegalVettingInitiationListCtrl) arguments
+						.get("legalVettingInitiationListCtrl");
 			}
 
 			if (arguments.containsKey("roleCode")) {
@@ -180,9 +187,17 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("FINISACTIVE", 1, Filter.OP_EQUAL);
-		this.finReference.setFilters(filter);
+		if (StringUtils.equals(VerificationType.VETTING.getValue(), module)) {
+			List<String> finRefs = verificationService.getApprovedLVVerifications(Decision.APPROVE.getKey(),
+					VerificationType.LV.getKey());
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("FINREFERENCE", finRefs, Filter.OP_IN);
+			this.finReference.setFilters(filter);
+		} else {
+			Filter[] filter = new Filter[1];
+			filter[0] = new Filter("FINISACTIVE", 1, Filter.OP_EQUAL);
+			this.finReference.setFilters(filter);
+		}
 
 		//FIXME for reference selection
 		logger.debug(Literal.LEAVING);
@@ -214,6 +229,9 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		} else if (StringUtils.equals(VerificationType.RCU.getValue(), module)) {
 			initTab = FinanceConstants.PROCEDT_VERIFICATION_RCU_INIT;
 			apprTab = FinanceConstants.PROCEDT_VERIFICATION_RCU_APPR;
+		} else if (StringUtils.equals(VerificationType.VETTING.getValue(), module)) {
+			initTab = FinanceConstants.PROCEDT_VERIFICATION_LVETTING_INIT;
+			apprTab = FinanceConstants.PROCEDT_VERIFICATION_LVETTING_APPR;
 		}
 
 		Object dataObject = this.finReference.getObject();
@@ -341,6 +359,16 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			map.put("rcuInitiationListCtrl", rcuInitiationListCtrl);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul", window,
 					map);
+		} else if (StringUtils.equals(VerificationType.VETTING.getValue(), module)) {
+			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
+					VerificationType.VETTING, "_View"));
+			map = getDefaultArguments(map);
+			map.put("verification", getFinanceDetail().getLegalVetting());
+			map.put("financeDetail", getFinanceDetail());
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("legalVettingInitiationListCtrl", legalVettingInitiationListCtrl);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LegalVettingInitiation.zul",
+					window, map);
 		}
 		this.window_SelectTechnicalVerificationInitiationDialog.onClose();
 
@@ -487,6 +515,10 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	public void setVerificationService(VerificationService verificationService) {
+		this.verificationService = verificationService;
 	}
 
 }
