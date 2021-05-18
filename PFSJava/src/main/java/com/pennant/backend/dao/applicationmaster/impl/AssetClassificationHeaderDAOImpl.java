@@ -211,11 +211,6 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 	}
 
 	@Override
-	public long getSeqNumber(String tableName) {
-		return getNextValue(tableName);
-	}
-
-	@Override
 	public String save(AssetClassificationHeader assetClassificationHeader, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 

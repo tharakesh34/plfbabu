@@ -165,7 +165,7 @@ public class VasMovementDAOImpl extends SequenceDao<VasMovement> implements VasM
 	public long save(VasMovement vasMovement, String type) {
 		logger.debug("Entering");
 		if (vasMovement.getId() <= 0) {
-			vasMovement.setId(getNextId("SeqBMTCheckList"));
+			vasMovement.setId(getNextValue("SeqBMTCheckList"));
 			logger.debug("get NextID:" + vasMovement.getId());
 		}
 

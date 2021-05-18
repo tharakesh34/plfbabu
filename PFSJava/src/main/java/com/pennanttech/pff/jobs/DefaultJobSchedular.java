@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+/*package com.pennanttech.pff.jobs;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -135,9 +135,9 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 	}
 
-	/**
+	*//**
 	 * Invoice number Auto Generation
-	 */
+	 *//*
 	private void registerGstInvoiceJob() {
 		if (GENERATE_GST_INVOICE_NO) {
 			Job job = new Job();
@@ -326,9 +326,9 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 	}
 
-	/**
+	*//**
 	 * Lock the user accounts when the user is not logging into the application from the specified number of days.
-	 */
+	 *//*
 	private void registerUserAccountLockingJob() {
 		logger.debug(Literal.ENTERING);
 
@@ -778,4 +778,4 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
 		this.nonLanReceiptService = nonLanReceiptService;
 	}
-}
+}*/

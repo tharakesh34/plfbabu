@@ -10327,10 +10327,10 @@
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
-	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular">
+	<!-- <bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular">
 		<property name="dMSService" ref="dMSService" />
 		<property name="disbursementRequestService" ref="disbursementRequestService" />
-	</bean>
+	</bean> -->
 
 	<bean id="systemNotificationsDAO" class="com.pennanttech.pff.notifications.dao.SystemNotificationsDAOImpl" parent="sequenceDao">
 		<property name="dataSource" ref="dataSource" />

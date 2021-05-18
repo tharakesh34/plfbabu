@@ -222,7 +222,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	 */
 	public long getReferenceSequence() {
 		// Fetching the sequence number for reference.
-		return getNextId("SeqMscPostRef");
+		return getNextValue("SeqMscPostRef");
 	}
 
 	@Override
