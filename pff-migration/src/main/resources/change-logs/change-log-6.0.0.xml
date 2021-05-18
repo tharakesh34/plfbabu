@@ -32729,4 +32729,12 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#172253.1" author="naveenkumar.a">
+		<sql>
+			<![CDATA[
+				UPDATE MASTER_DEF SET KEY_CODE ='PASS' WHERE KEY_CODE='PASSPORT' AND MASTER_TYPE='DOC_TYPE';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
