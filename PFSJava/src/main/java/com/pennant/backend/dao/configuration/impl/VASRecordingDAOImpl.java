@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -190,11 +191,11 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}
-	
+
 	private String commaJoin(List<String> finReferences) {
 		return finReferences.stream().map(e -> "?").collect(Collectors.joining(","));
 	}
-	
+
 	@Override
 	public List<VASRecording> getVASRecordingsByLinkRef(String finReference, String type) {
 		List<String> finReferences = new ArrayList<>();
@@ -205,6 +206,10 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 	@Override
 	public List<VASRecording> getVASRecordingsByLinkRef(List<String> finReferences, String type) {
+		if (CollectionUtils.isEmpty(finReferences)) {
+			return new ArrayList<>();
+		}
+
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where PrimaryLinkRef In(");
 		sql.append(commaJoin(finReferences));
@@ -216,8 +221,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			for(String finReference: finReferences)
-			ps.setString(index++, finReference);
+			for (String finReference : finReferences)
+				ps.setString(index++, finReference);
 		}, rowMapper);
 	}
 
@@ -318,7 +323,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:VasStatus,:FinanceProcess, :PaidAmt, :WaivedAmt");
 		sql.append(
 				", :Remarks ,  :Reason ,  :CancelAmt , :ServiceReqNumber , :CancelAfterFLP, :OldVasReference, :ManualAdviseId, :ReceivableAdviseId )");
-		
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASRecording);
