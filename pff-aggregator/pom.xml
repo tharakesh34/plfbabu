@@ -13,17 +13,17 @@
 		<pff.version>6.0.0-SNAPSHOT</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.8</jdk.version>
-		<spring.version>5.3.7</spring.version>
-		<spring.security.version>5.4.6</spring.security.version>
-		<spring.batch.version>4.3.2</spring.batch.version>
-		<spring.ws.version>3.0.10</spring.ws.version>
-		<spring.web.version>5.3.7</spring.web.version>
+		<spring.version>5.2.1.RELEASE</spring.version>
+		<spring.security.version>3.2.10.RELEASE</spring.security.version>
+		<spring.batch.version>4.2.0.RELEASE</spring.batch.version>
+		<spring.ws.version>2.1.0.RELEASE</spring.ws.version>
+		<spring.web.version>5.2.1.RELEASE</spring.web.version>
 		<zk.version>8.6.2</zk.version>
 		<atlantic.version>8.0.1</atlantic.version>
 		<jasperreports.version>6.6.0</jasperreports.version>
 		<jackson.version>1.9.13</jackson.version>
 		<cxf.version>3.1.8</cxf.version>
-		<log4j.version>2.14.1</log4j.version>
+		<log4j.version>2.12.1</log4j.version>
 	</properties>
 
 	<repositories>
