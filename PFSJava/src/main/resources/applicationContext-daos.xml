@@ -85,9 +85,9 @@
 		<constructor-arg ref="outgoingMailProperties" />
 	</bean>
 
-	<bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.notification.email.EmailEngineJobScheduler">
+	<!-- <bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.notification.email.EmailEngineJobScheduler">
 		<constructor-arg ref="outgoingMailProperties" />
-	</bean>
+	</bean> -->
 
 	<bean id="presentmentDetailExtract" class="com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract">
 		<constructor-arg ref="dataSource" />
@@ -102,10 +102,10 @@
 		<constructor-arg ref="dataSource" />
 		<constructor-arg value="${notification.sms.retrycount}" />
 	</bean>
-	<bean id="smsEngineJobScheduler" class="com.pennanttech.pennapps.notification.sms.SmsEngineJobScheduler">
+	<!-- <bean id="smsEngineJobScheduler" class="com.pennanttech.pennapps.notification.sms.SmsEngineJobScheduler">
 		<constructor-arg value="${notification.sms.cronExpression}" />
 		<constructor-arg ref="smsEngine" />
-	</bean>
+	</bean> -->
 
 	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />

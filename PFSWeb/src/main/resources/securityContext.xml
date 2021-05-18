@@ -38,8 +38,9 @@
 		<session-management session-authentication-strategy-ref="sas" />
 	</http>
 
-	<beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
-		p:loginFormUrl="/loginDialog.zul" />
+	<beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:constructor-arg value="/loginDialog.zul" />
+	</beans:bean>
 
 	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 	<!-- <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/> -->
@@ -97,9 +98,8 @@
 	</beans:bean>
 
 	<beans:bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
-		<beans:property name="sessionRegistry" ref="sessionRegistry" />
-		<beans:property name="redirectStrategy" ref="redirectStrategy" />
-		<beans:property name="expiredUrl" value="/timeout.zul" />
+		<beans:constructor-arg ref="sessionRegistry"/>
+		<beans:constructor-arg ref="sessionInformationExpiredStrategy"/>
 		<beans:property name="logoutHandlers">
 			<beans:list>
 				<beans:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
@@ -145,4 +145,10 @@
 			<beans:bean class="org.springframework.security.web.DefaultRedirectStrategy" />
 		</beans:constructor-arg>
 	</beans:bean>
+	
+	<beans:bean id="sessionInformationExpiredStrategy" class="org.springframework.security.web.session.SimpleRedirectSessionInformationExpiredStrategy">
+		<beans:constructor-arg value="/timeout.zul"/>
+		<beans:constructor-arg ref="redirectStrategy"/>
+	</beans:bean>
+	
 </beans:beans>
