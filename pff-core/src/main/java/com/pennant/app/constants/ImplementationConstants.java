@@ -642,7 +642,7 @@ public class ImplementationConstants {
 	private static void setVerificationConstants(Map<String, Object> extensions) {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean(extensions, "VER_INIT_FROM_OUTSIDE", false);
 		VER_INIT_AGENT_MANDATORY = getValueAsBoolean(extensions, "VER_INIT_AGENT_MANDATORY", false);
-		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", false);
+		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", true);
 
 		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); // HL>>FIXME "CITY" for HL
 		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_VAL_COLUMN",
