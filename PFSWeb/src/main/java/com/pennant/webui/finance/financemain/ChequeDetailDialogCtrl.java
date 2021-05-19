@@ -1470,6 +1470,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		for (FinanceScheduleDetail fsd : getFinanceSchedules()) {
 			if (fsd.getSchDate().compareTo(schdDate) == 0) {
 				emiAmount = fsd.getRepayAmount();
+				if (fsd.getTDSAmount() != null && fsd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
+					emiAmount = emiAmount.subtract(fsd.getTDSAmount());
+				}
 				break;
 			}
 		}
