@@ -129,7 +129,9 @@
 	<bean id="manualAdviseDAO" class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl" parent="sequenceDao" />
 
 	<!-- Postings -->
-	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao"/>
+	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao">
+		<property name="stagePostingDAO" ref="stagePostingDAO" />
+	</bean>
 
 	<!-- Postings Preparation Util -->
 	<bean name="postingsPreparationUtil" class="com.pennant.app.util.PostingsPreparationUtil">
@@ -150,9 +152,9 @@
 
 	<bean id="customerDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDAOImpl" parent="sequenceDao" />
 
-	<!-- <bean id="stagePostingDAO" class="com.pennanttech.pff.core.account.dao.StagePostingDAOImpl">
+	<bean id="stagePostingDAO" class="com.pennanttech.pff.core.account.dao.StagePostingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
-	</bean> -->
+	</bean>
 
 	<bean id="expenseTypeDAO" class="com.pennant.backend.dao.amtmasters.impl.ExpenseTypeDAOImpl" parent="sequenceDao" />
 	<bean id="feeTypeDAO" class="com.pennant.backend.dao.feetype.impl.FeeTypeDAOImpl" parent="sequenceDao" />

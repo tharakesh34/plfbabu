@@ -58,6 +58,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -80,12 +81,15 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.account.dao.StagePostingDAO;
 
 /**
  * DAO methods implementation for the <b>ReturnDataSet model</b> class.<br>
  */
 public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements PostingsDAO {
 	private static Logger logger = LogManager.getLogger(PostingsDAOImpl.class);
+
+	private StagePostingDAO stagePostingDAO;
 
 	public PostingsDAOImpl() {
 		super();
@@ -368,9 +372,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 					linkedTransactions.add(dataSet.getLinkedTranId());
 				}
 
-				/*
-				 * if (!linkedTransactions.isEmpty()) { stagePostingDAO.saveLinkedTrnasactions(linkedTransactions); }
-				 */
+				if (!linkedTransactions.isEmpty()) {
+					stagePostingDAO.saveLinkedTrnasactions(linkedTransactions);
+				}
+
 			}
 
 		} catch (Exception e) {
@@ -1024,4 +1029,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		return postings;
 	}
 
+	@Autowired
+	public void setStagePostingDAO(StagePostingDAO stagePostingDAO) {
+		this.stagePostingDAO = stagePostingDAO;
+	}
 }
