@@ -1,58 +1,130 @@
 package com.pennant.app.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.AMedia;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.BulkProcessHeader;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 
 public class ReportCreationUtil {
 	private static final Logger logger = LogManager.getLogger(ReportCreationUtil.class);
 
-	public static byte[] reportGeneration(String reportName, Object object, List<Object> listData, String reportSrc,
-			String userName, boolean createExcel) throws JRException {
-		logger.debug("Entering");
+	private ReportCreationUtil() {
+		//
+	}
 
-		JRBeanCollectionDataSource subListDS;
-		Map<String, Object> parameters = new HashMap<String, Object>();
+	public static void showPDF(String reportName, Object object, List<Object> listData, String userName) {
+		byte[] buf = generatePDF(reportName, object, listData, userName);
 
-		// Generate the main report data source
-		List<Object> mainList = new ArrayList<Object>();
-		mainList.add(object);
+		Map<String, Object> dataMap = getDataMap(reportName, listData, buf, null);
+		Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, dataMap);
+	}
 
-		JRBeanCollectionDataSource mainDS = new JRBeanCollectionDataSource(mainList);
-		for (int i = 0; i < listData.size(); i++) {
+	public static void showPDF(String reportName, Object object, List<Object> listData, String userName,
+			Window window) {
+		byte[] buf = generatePDF(reportName, object, listData, userName);
 
-			Object obj = listData.get(i);
-			if (obj instanceof List) {
-				subListDS = new JRBeanCollectionDataSource((List<?>) obj);
-			} else {
-				List<Object> subList = new ArrayList<Object>();
-				subList.add(obj);
-				subListDS = new JRBeanCollectionDataSource(subList);
-			}
+		Map<String, Object> dataMap = getDataMap(reportName, listData, buf, window);
+		Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, dataMap);
+	}
 
-			parameters.put("subDataSource" + (i + 1), subListDS);
+	public static byte[] generatePDF(String reportName, Object object, List<Object> listData, String userName) {
+		logger.info(Literal.ENTERING);
+
+		byte[] buf = null;
+
+		String template = getTemplate(reportName);
+
+		Map<String, Object> parameters = getParameters(userName, reportName, object);
+
+		JRBeanCollectionDataSource mainDS = getDataSource(object, listData, parameters);
+
+		try {
+			buf = JasperRunManager.runReportToPdf(template, parameters, mainDS);
+		} catch (JRException e) {
+
+		}
+		logger.info(Literal.LEAVING);
+		return buf;
+	}
+
+	public static void downloadExcel(String reportName, Object object, List<Object> listData, String userName) {
+		logger.info(Literal.ENTERING);
+
+		String template = getTemplate(reportName);
+
+		Map<String, Object> parameters = getParameters(userName, reportName, object);
+
+		JRBeanCollectionDataSource mainDS = getDataSource(object, listData, parameters);
+
+		String printfileName = null;
+		try {
+			printfileName = JasperFillManager.fillReportToFile(template, parameters, mainDS);
+		} catch (JRException e1) {
 		}
 
-		// Set the parameters
+		SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
+		configuration.setDetectCellType(true);
+		configuration.setWhitePageBackground(false);
+		configuration.setRemoveEmptySpaceBetweenRows(true);
+		configuration.setRemoveEmptySpaceBetweenColumns(true);
+		configuration.setIgnoreGraphics(false);
+		configuration.setIgnoreCellBorder(false);
+		configuration.setCollapseRowSpan(true);
+		configuration.setImageBorderFixEnabled(false);
+
+		JRXlsExporter excelExporter = new JRXlsExporter();
+		excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
+		excelExporter.setConfiguration(configuration);
+
+		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+			excelExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
+			excelExporter.exportReport();
+			Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+
+		} catch (Exception e) {
+		}
+
+		logger.info(Literal.LEAVING);
+	}
+
+	private static String getTemplate(String reportName) {
+		String path = PathUtil.getPath(PathUtil.REPORTS_FINANCE);
+		String reportSrc = path + "/" + reportName + ".jasper";
+
+		if (!new File(reportSrc).exists()) {
+			throw new AppException(reportName + " report not cofigured in " + path + " location.");
+		}
+		return reportSrc;
+	}
+
+	private static Map<String, Object> getParameters(String userName, String reportName, Object object) {
+		Map<String, Object> parameters = new HashMap<>();
+
 		parameters.put("userName", userName);
 		parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 		parameters.put("client", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT_DIGITAL));
@@ -66,36 +138,61 @@ public class ReportCreationUtil {
 				parameters.put("recalTypeSubParm", "T");
 			}
 		}
-		logger.debug(String.format("Source File Name %s Excel Report? %s", reportSrc, createExcel));
-		try {
-			if (createExcel) {
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				String printfileName = JasperFillManager.fillReportToFile(reportSrc, parameters, mainDS);
-				JRXlsExporter excelExporter = new JRXlsExporter();
 
-				excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME, printfileName);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.FALSE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER, Boolean.FALSE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
-				excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.FALSE);
-				excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
-				excelExporter.exportReport();
-				Filedownload
-						.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+		return parameters;
+	}
+
+	private static JRBeanCollectionDataSource getDataSource(Object object, List<Object> listData,
+			Map<String, Object> parameters) {
+		List<Object> mainList = new ArrayList<Object>();
+		mainList.add(object);
+
+		JRBeanCollectionDataSource subListDS;
+
+		JRBeanCollectionDataSource mainDS = new JRBeanCollectionDataSource(mainList);
+		for (int i = 0; i < listData.size(); i++) {
+			Object obj = listData.get(i);
+			if (obj instanceof List) {
+				subListDS = new JRBeanCollectionDataSource((List<?>) obj);
 			} else {
-				byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, mainDS);
-				logger.debug("Leaving");
-				return buf;
+				List<Object> subList = new ArrayList<Object>();
+				subList.add(obj);
+				subListDS = new JRBeanCollectionDataSource(subList);
 			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
 
+			parameters.put("subDataSource" + (i + 1), subListDS);
+		}
+
+		return mainDS;
+	}
+
+	private static Map<String, Object> getDataMap(String reportName, List<Object> listData, byte[] buf, Window window) {
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String genReportName = Labels.getLabel(reportName);
+		dataMap.put("reportBuffer", buf);
+		dataMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
+		dataMap.put("isModelWindow", isModelWindow(listData));
+		if (window != null) {
+			dataMap.put("dialogWindow", window);
+		}
+
+		return dataMap;
+	}
+
+	private static boolean isModelWindow(List<Object> listData) {
+		for (int i = 0; i < listData.size(); i++) {
+			Object obj = listData.get(i);
+			if (obj instanceof Map) {
+
+				@SuppressWarnings("unchecked")
+				Map<Object, Object> map = (Map<Object, Object>) obj;
+				if (map.containsKey("isModelWindow")) {
+
+					return (boolean) map.get("isModelWindow");
+				}
+
+			}
+		}
+		return false;
 	}
 }

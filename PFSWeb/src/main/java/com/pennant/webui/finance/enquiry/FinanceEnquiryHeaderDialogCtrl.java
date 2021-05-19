@@ -795,10 +795,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("OCRENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OCREnquiry.value"));
 			FinanceDetail financeDetail = new FinanceDetail();
-			FinanceMain financeMain = financeMainDAO.getFinanceMain(finReference,
-					new String[] { "FinType", "FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue",
-							"FinOcrRequired" },
-					"");
+			FinanceMain financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinType",
+					"FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue", "FinOcrRequired" }, "");
 			FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View");
 			if (finOcrHeader != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
 				FinOCRHeader parentFinOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(financeMain.getParentRef(),
@@ -1019,12 +1017,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	@SuppressWarnings("rawtypes")
 	public boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate, int reportType,
-			String userName, Window window, boolean createExcel) throws InterruptedException {
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
+			String userName, Window window) throws InterruptedException {
 
 		if (isRegenerate) {
 			try {
-				createReport(reportName, object, listData, reportSrc, userName, window, createExcel);
+				createReport(reportName, object, listData, userName, window);
 			} catch (JRException e) {
 				logger.error("Exception: ", e);
 				MessageUtil.showError("Template does not exist.");
@@ -1035,13 +1032,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
-			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
+	private void createReport(String reportName, Object object, List listData, String userName, Window dialogWindow)
+			throws JRException, InterruptedException {
 		logger.debug("Entering");
 		try {
-			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
-					createExcel);
+			byte[] buf = ReportCreationUtil.generatePDF(reportName, object, listData, userName);
 
 			boolean reportView = true;
 			//Assignments
@@ -1091,7 +1086,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				reportData = reportData.getFinMainReportData(finScheduleData, financeSummary);
 				if (customer360) {
 					generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
-							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog, false);
+							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
 				} else {
 					ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
 							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);

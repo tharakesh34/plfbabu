@@ -32,7 +32,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -71,7 +70,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import net.sf.jasperreports.engine.JRException;
 
 public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	private static final Logger logger = LogManager.getLogger(ProcessSystemNotifications.class);
@@ -283,18 +281,15 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 				list.add(account.getOtherFinanceDetails());
 				list.add(account.getInterestRateDetails());
 
-				String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_StatementOfAccount"
-						+ ".jasper";
 				byte[] buf = null;
 				try {
-					buf = ReportCreationUtil.reportGeneration("FINENQ_StatementOfAccount", account, list, reportSrc,
-							App.CODE, false);
+					buf = ReportCreationUtil.generatePDF("FINENQ_StatementOfAccount", account, list, App.CODE);
 
 					attachment.setAttachment(buf);
 					attachment.setAttachmentType(AttachmentType.PDF.getKey());
 					attachment.setFileName(detail.getAttachmentFileNames());
 					notification.getAttachmentList().add(attachment);
-				} catch (JRException e) {
+				} catch (Exception e) {
 					logger.debug(Literal.EXCEPTION, e);
 				}
 			}
@@ -366,10 +361,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			list.add(schdList);
 
 			try {
-				String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_ScheduleDetail"
-						+ ".jasper";
-				byte[] buf = ReportCreationUtil.reportGeneration("FINENQ_ScheduleDetail", financeMain, list, reportSrc,
-						App.CODE, false);
+				byte[] buf = ReportCreationUtil.generatePDF("FINENQ_ScheduleDetail", financeMain, list, App.CODE);
 				attachment.setAttachment(buf);
 				attachment.setAttachmentType(AttachmentType.PDF.getKey());
 				attachment.setFileName(detail.getAttachmentFileNames());

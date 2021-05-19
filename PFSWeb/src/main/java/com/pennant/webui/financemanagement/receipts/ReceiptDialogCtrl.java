@@ -7772,10 +7772,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		list.add(soa.getSheduleReports());
 		list.add(soa.getInterestRateDetails());
 
-		String reportName = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_StatementOfAccount" + ".jasper";
-
-		byte[] buf = ReportCreationUtil.reportGeneration("FINENQ_StatementOfAccount", soa, list, reportName,
-				getUserWorkspace().getLoggedInUser().getFullName(), false);
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		byte[] buf = ReportCreationUtil.generatePDF("FINENQ_StatementOfAccount", soa, list,	userName);
 
 		Filedownload.save(new AMedia("StatementOfAccount", "pdf", "application/pdf", buf));
 

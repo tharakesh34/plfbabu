@@ -1188,12 +1188,10 @@ public class FinStatementController extends SummaryDetailService {
 					list.add(soa.getSheduleReports());
 					list.add(soa.getInterestRateDetails());
 
-					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
 					LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 					String userName = userDetails.getUserName();
 
-					byte[] document = ReportCreationUtil.reportGeneration(reportName, soa, list, reportSrc, userName,
-							false);
+					byte[] document = ReportCreationUtil.generatePDF(reportName, soa, list, userName);
 					if (document != null) {
 						String location = null;
 						if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)) {

@@ -222,21 +222,14 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			try {
 
 				if (finTypes != null && finTypes.contains(finType)) {
-					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/"
-							+ "FINENQ_StatementOfAccount_FinType" + ".jasper";
-					createReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount, list, reportSrc,
-							getUserWorkspace().getLoggedInUser().getFullName(), window, false);
+					createReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount, list,
+							getUserWorkspace().getLoggedInUser().getFullName(), window);
 				} else if (isAlwFlexi) {
-					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/"
-							+ "FINENQ_StatementOfAccount_FinType_Hybrid" + ".jasper";
-					createReport("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount, list, reportSrc,
-							getUserWorkspace().getLoggedInUser().getFullName(), window, false);
+					createReport("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount, list,
+							getUserWorkspace().getLoggedInUser().getFullName(), window);
 				} else {
-
-					String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_StatementOfAccount"
-							+ ".jasper";
-					createReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, reportSrc,
-							getUserWorkspace().getLoggedInUser().getFullName(), window, false);
+					createReport("FINENQ_StatementOfAccount", this.statementOfAccount, list,
+							getUserWorkspace().getLoggedInUser().getFullName(), window);
 				}
 			} catch (InterruptedException e) {
 				MessageUtil.showError(e);
@@ -246,7 +239,6 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		} else {
 			try {
 				if (finTypes != null && finTypes.contains(finType)) {
-
 					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount,
 							list, true, 1, getUserWorkspace().getLoggedInUser().getFullName(), null);
 
@@ -410,12 +402,11 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		logger.debug("Leaving");
 	}
 
-	private void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
-			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
+	private void createReport(String reportName, Object object, List listData, String userName, Window dialogWindow)
+			throws JRException, InterruptedException {
 		logger.debug("Entering");
 		try {
-			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
-					createExcel);
+			byte[] buf = ReportCreationUtil.generatePDF(reportName, object, listData, userName);
 
 			boolean reportView = true;
 			//Assignments

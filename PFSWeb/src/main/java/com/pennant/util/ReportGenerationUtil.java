@@ -55,7 +55,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
@@ -91,7 +90,6 @@ public class ReportGenerationUtil implements Serializable {
 		super();
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
 			int reportType, String userName, Window window) throws InterruptedException {
 		logger.info(Literal.ENTERING + reportName);
@@ -99,7 +97,6 @@ public class ReportGenerationUtil implements Serializable {
 		return generateReport(reportName, object, listData, isRegenerate, reportType, userName, window, false);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
 			int reportType, String userName, Window window, boolean createExcel) throws InterruptedException {
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
@@ -108,8 +105,19 @@ public class ReportGenerationUtil implements Serializable {
 
 		if (isRegenerate) {
 			try {
-				createReport(reportName, object, listData, reportSrc, userName, window, createExcel);
-			} catch (JRException e) {
+
+				if (createExcel) {
+					ReportCreationUtil.downloadExcel(reportName, object, listData, userName);
+					return true;
+				}
+
+				if (window != null) {
+					ReportCreationUtil.showPDF(reportName, object, listData, userName, window);
+				} else {
+					ReportCreationUtil.showPDF(reportName, object, listData, userName);
+				}
+
+			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				MessageUtil.showError("Template does not exist.");
 				ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
@@ -119,72 +127,6 @@ public class ReportGenerationUtil implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Method For generating Report based upon passing Data Structure
-	 * 
-	 * @param reportName
-	 * @param object
-	 * @param listData
-	 * @param reportSrc
-	 * @param userName
-	 * @param dialogWindow
-	 * @throws JRException
-	 * @throws InterruptedException
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void createReport(String reportName, Object object, List listData, String reportSrc, String userName,
-			Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
-		logger.info(Literal.ENTERING);
-
-		try {
-			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
-					createExcel);
-
-			final Map<String, Object> auditMap = new HashMap<String, Object>();
-			auditMap.put("reportBuffer", buf);
-			String genReportName = Labels.getLabel(reportName);
-			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
-			auditMap.put("isModelWindow", isModelWindow(listData));
-			if (dialogWindow != null) {
-				auditMap.put("dialogWindow", dialogWindow);
-			}
-			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
-		} catch (JRException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showError("Template does not exist.");
-			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
-		}
-		logger.debug("Leaving");
-	}
-
-	private static boolean isModelWindow(List<Object> listData) {
-		for (int i = 0; i < listData.size(); i++) {
-			Object obj = listData.get(i);
-			if (obj instanceof Map) {
-
-				@SuppressWarnings("unchecked")
-				Map<Object, Object> map = (Map<Object, Object>) obj;
-				if (map.containsKey("isModelWindow")) {
-
-					return (boolean) map.get("isModelWindow");
-				}
-
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Method for Printing Checks
-	 * 
-	 * @param listData
-	 * @param reportName
-	 * @param userName
-	 * @param dialogWindow
-	 * @throws JRException
-	 * @throws FileNotFoundException
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void print(List listData, String reportName, String userName, Window dialogWindow)
 			throws JRException, FileNotFoundException {
 		logger.debug("Entering");
@@ -228,46 +170,19 @@ public class ReportGenerationUtil implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Generate report
-	 * 
-	 * @param reportName
-	 * @param object
-	 * @param listData
-	 * @param userName
-	 * @param isExcel
-	 */
 	public static void generateReport(String reportName, Object object, List<Object> listData, String userName,
 			boolean isExcel) {
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
-		createReport(reportName, object, listData, reportSrc, userName, isExcel);
-	}
-
-	/**
-	 * Creating the report
-	 * 
-	 * @param reportName
-	 * @param object
-	 * @param listData
-	 * @param reportSrc
-	 * @param userName
-	 * @param isExcel
-	 */
-	private static void createReport(String reportName, Object object, List<Object> listData, String reportSrc,
-			String userName, boolean isExcel) {
 		logger.debug(Literal.ENTERING);
 		try {
-			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
-					isExcel);
+
 			if (isExcel) {
+				ReportCreationUtil.downloadExcel(reportName, object, listData, userName);
 				return;
 			}
-			Map<String, Object> auditMap = new HashMap<String, Object>();
-			auditMap.put("reportBuffer", buf);
-			String genReportName = Labels.getLabel(reportName);
-			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
-			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
-		} catch (JRException e) {
+
+			ReportCreationUtil.showPDF(reportName, object, listData, userName);
+
+		} catch (Exception e) {
 			logger.trace(Literal.EXCEPTION, e);
 			MessageUtil.showError("Template does not exist.");
 			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
@@ -275,18 +190,6 @@ public class ReportGenerationUtil implements Serializable {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method For generating Report based upon passing Data
-	 * 
-	 * @param reportName
-	 * @param userName
-	 * @param whereCond
-	 * @param searchCriteriaDesc
-	 * @param dialogWindow
-	 * @param createExcel
-	 * @throws JRException
-	 * @throws InterruptedException
-	 */
 	public static void generateReport(String userName, String reportName, String whereCond,
 			StringBuilder searchCriteriaDesc, Window window, boolean createExcel) {
 		logger.debug("Entering");
@@ -365,7 +268,7 @@ public class ReportGenerationUtil implements Serializable {
 
 		logger.debug("Leaving");
 	}
-	
+
 	// #PSD:152141 UAT2: Users:Report: Indaas accounting report not available --END
 	public static void generateReport(String userName, String reportName, String whereCond,
 			StringBuilder searchCriteriaDesc, Window window, boolean createExcel, String fromDate) {
