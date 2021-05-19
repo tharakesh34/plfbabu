@@ -805,7 +805,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 				searchCriteriaDesc.append("File Name is " + uploadHeader.getFileName());
 
 				ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-						"ManualAdviseUploadReport", whereCond, searchCriteriaDesc, this.window_UploadList, true);
+						"ManualAdviseUploadReport", whereCond, searchCriteriaDesc);
 
 				uploadHeaderService.updateFileDownload(uploadHeader.getUploadId(), true, "_Temp");
 			}

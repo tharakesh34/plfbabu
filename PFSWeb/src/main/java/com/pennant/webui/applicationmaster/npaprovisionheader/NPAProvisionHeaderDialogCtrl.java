@@ -1179,7 +1179,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 		try {
 			ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "NPA_Provision", "",
-					searchCriteriaDesc, this.window_NPAProvisionHeaderDialog, true);
+					searchCriteriaDesc);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}

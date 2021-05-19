@@ -67,6 +67,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -191,8 +192,15 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 		list.add(header.getRateReports());
 
 		try {
-			ReportGenerationUtil.generateReport("FINENQ_ScheduleRateReport", header, list,
-					getUserWorkspace().getLoggedInUser().getFullName(), this.excel.isChecked());
+			boolean isExcel = this.excel.isChecked();
+			String userName = getUserWorkspace().getLoggedInUser().getFullName();
+			if (isExcel) {
+				ReportCreationUtil.downloadExcel("FINENQ_ScheduleRateReport", header, list, userName);
+				return;
+			}
+
+			ReportCreationUtil.showPDF("FINENQ_ScheduleRateReport", header, list, userName);
+			
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

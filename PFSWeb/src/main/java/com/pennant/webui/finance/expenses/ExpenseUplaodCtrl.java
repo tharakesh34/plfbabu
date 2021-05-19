@@ -350,7 +350,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 
 		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName, whereCond,
-				searchCriteria, this.window_ExpenseUpload, true);
+				searchCriteria);
 
 		logger.debug(Literal.LEAVING);
 	}

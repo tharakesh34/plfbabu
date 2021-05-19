@@ -201,7 +201,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		searchCriteriaDesc.append("User ID is" + userId);
 		searchCriteriaDesc.append("Upload Date is" + transcationDate);
 		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "MandateUploadReport",
-				whereCond, searchCriteriaDesc, window_SecondaryMandateList, true);
+				whereCond, searchCriteriaDesc);
 		logger.debug(Literal.LEAVING);
 	}
 

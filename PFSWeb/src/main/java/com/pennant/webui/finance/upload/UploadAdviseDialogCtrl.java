@@ -409,7 +409,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// Excel file downloading automatically using Jasper Report
 		try {
 			ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-					"ManualAdviseUploadReport", whereCond, searchCriteriaDesc, this.window_AdviseUploadDialog, true);
+					"ManualAdviseUploadReport", whereCond, searchCriteriaDesc);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}

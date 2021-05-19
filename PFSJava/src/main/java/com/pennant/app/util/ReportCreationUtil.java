@@ -61,7 +61,9 @@ public class ReportCreationUtil {
 
 		Map<String, Object> parameters = getParameters(userName, reportName, object);
 
-		JRBeanCollectionDataSource mainDS = getDataSource(object, listData, parameters);
+		JRBeanCollectionDataSource mainDS = getDataSource(object);
+		
+		setDataSource(parameters, listData);
 
 		try {
 			buf = JasperRunManager.runReportToPdf(template, parameters, mainDS);
@@ -79,7 +81,9 @@ public class ReportCreationUtil {
 
 		Map<String, Object> parameters = getParameters(userName, reportName, object);
 
-		JRBeanCollectionDataSource mainDS = getDataSource(object, listData, parameters);
+		JRBeanCollectionDataSource mainDS = getDataSource(object);
+		
+		setDataSource(parameters, listData);
 
 		String printfileName = null;
 		try {
@@ -142,14 +146,17 @@ public class ReportCreationUtil {
 		return parameters;
 	}
 
-	private static JRBeanCollectionDataSource getDataSource(Object object, List<Object> listData,
-			Map<String, Object> parameters) {
-		List<Object> mainList = new ArrayList<Object>();
-		mainList.add(object);
+	private static JRBeanCollectionDataSource getDataSource(Object object) {
+		List<Object> list = new ArrayList<Object>();
+		list.add(object);
+		JRBeanCollectionDataSource mainDS = new JRBeanCollectionDataSource(list);
 
+		return mainDS;
+	}
+	
+	private static void setDataSource(Map<String, Object> parameters, List<Object> listData) {
 		JRBeanCollectionDataSource subListDS;
 
-		JRBeanCollectionDataSource mainDS = new JRBeanCollectionDataSource(mainList);
 		for (int i = 0; i < listData.size(); i++) {
 			Object obj = listData.get(i);
 			if (obj instanceof List) {
@@ -163,7 +170,6 @@ public class ReportCreationUtil {
 			parameters.put("subDataSource" + (i + 1), subListDS);
 		}
 
-		return mainDS;
 	}
 
 	private static Map<String, Object> getDataMap(String reportName, List<Object> listData, byte[] buf, Window window) {

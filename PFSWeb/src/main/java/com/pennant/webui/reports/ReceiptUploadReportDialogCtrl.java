@@ -192,7 +192,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		reportName = "ReceiptUploadDetails";
 
 		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName, whereCond,
-				searchCriteria, this.window_ReceiptUploadReportDialogCtrl, true);
+				searchCriteria);
 
 		doClose();
 		logger.debug(Literal.LEAVING);

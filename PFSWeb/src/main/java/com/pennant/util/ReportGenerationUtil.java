@@ -170,28 +170,8 @@ public class ReportGenerationUtil implements Serializable {
 		logger.debug("Leaving");
 	}
 
-	public static void generateReport(String reportName, Object object, List<Object> listData, String userName,
-			boolean isExcel) {
-		logger.debug(Literal.ENTERING);
-		try {
-
-			if (isExcel) {
-				ReportCreationUtil.downloadExcel(reportName, object, listData, userName);
-				return;
-			}
-
-			ReportCreationUtil.showPDF(reportName, object, listData, userName);
-
-		} catch (Exception e) {
-			logger.trace(Literal.EXCEPTION, e);
-			MessageUtil.showError("Template does not exist.");
-			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	public static void generateReport(String userName, String reportName, String whereCond,
-			StringBuilder searchCriteriaDesc, Window window, boolean createExcel) {
+			StringBuilder searchCriteriaDesc) {
 		logger.debug("Entering");
 
 		Connection connection = null;

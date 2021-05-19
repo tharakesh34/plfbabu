@@ -267,7 +267,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		searchCriteriaDesc.append("File Name is " + this.txtFileName.getValue());
 
 		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "LoanTypeExpenseMaster",
-				whereCond, searchCriteriaDesc, this.window_FinTypeExpenseUpload, true);
+				whereCond, searchCriteriaDesc);
 		logger.debug(Literal.LEAVING);
 	}
 
