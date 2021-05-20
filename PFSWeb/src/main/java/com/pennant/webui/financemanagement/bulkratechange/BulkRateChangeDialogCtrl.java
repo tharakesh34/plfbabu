@@ -86,6 +86,7 @@ import com.pennant.QueryBuilder;
 import com.pennant.app.bulkratechange.BulkRateChangeProcess;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Query;
@@ -101,7 +102,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.enquiry.model.BulkRateChangeDialogModelItemRenderer;
@@ -1313,8 +1313,9 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		list.add(bulkRateChangeDetailsRptData);
 		String reportName = "FINENQ_BulkDifferemmentDetails";
 
-		ReportGenerationUtil.generateReport(reportName, getBulkRateChangeHeader(), list, 1,
-				getUserWorkspace().getLoggedInUser().getFullName(), this.window_BulkRateChangeDialog);
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		ReportsUtil.generatePDF(reportName, getBulkRateChangeHeader(), list, userName,
+				this.window_BulkRateChangeDialog);
 
 		logger.debug("Leaving" + event.toString());
 	}

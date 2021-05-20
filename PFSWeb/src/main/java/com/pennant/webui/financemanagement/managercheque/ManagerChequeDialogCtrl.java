@@ -97,6 +97,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -122,7 +123,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -826,7 +826,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			acManagerCheque.setLovDescFinTypeName(financeMain.getLovDescFinTypeName());
 		}
 
-		ReportGenerationUtil.generateReport("MGRCHQ_PostingDetail", acManagerCheque, list, 1, usrName,
+		ReportsUtil.generatePDF("MGRCHQ_PostingDetail", acManagerCheque, list, usrName,
 				this.window_ManagerChequeDialog);
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1447,7 +1447,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				PennantAppUtil.formateAmount(printManagerCheque.getAmtInLocalCcy(), ccyEditField),
 				SysParamUtil.getAppCurrency()));// AHB
 
-		ReportGenerationUtil.generateReport(reportName, printManagerCheque, new ArrayList<Object>(), 1, usrName,
+		ReportsUtil.generatePDF(reportName, printManagerCheque, new ArrayList<Object>(), usrName,
 				this.window_ManagerChequeDialog);
 
 		logger.debug("Leaving");

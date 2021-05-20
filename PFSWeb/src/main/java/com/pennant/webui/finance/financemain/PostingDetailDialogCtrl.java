@@ -58,12 +58,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -237,7 +237,7 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			list.add(accountingDetails);
 		}
 
-		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", true, list, 1, usrName, window);
+		ReportsUtil.generatePDF("FINENQ_AccountingDetail", true, list, usrName, window);
 		logger.debug("Leaving" + event.toString());
 	}
 

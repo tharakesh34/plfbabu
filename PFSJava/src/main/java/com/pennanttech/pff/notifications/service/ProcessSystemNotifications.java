@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -283,7 +283,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 				byte[] buf = null;
 				try {
-					buf = ReportCreationUtil.generatePDF("FINENQ_StatementOfAccount", account, list, App.CODE);
+					buf = ReportsUtil.generatePDF("FINENQ_StatementOfAccount", account, list, App.CODE);
 
 					attachment.setAttachment(buf);
 					attachment.setAttachmentType(AttachmentType.PDF.getKey());
@@ -361,7 +361,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			list.add(schdList);
 
 			try {
-				byte[] buf = ReportCreationUtil.generatePDF("FINENQ_ScheduleDetail", financeMain, list, App.CODE);
+				byte[] buf = ReportsUtil.generatePDF("FINENQ_ScheduleDetail", financeMain, list, App.CODE);
 				attachment.setAttachment(buf);
 				attachment.setAttachmentType(AttachmentType.PDF.getKey());
 				attachment.setFileName(detail.getAttachmentFileNames());

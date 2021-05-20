@@ -137,7 +137,7 @@ import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
-import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.ScheduleCalculator;
@@ -228,7 +228,6 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -7197,7 +7196,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),
 					securityUser.getUsrLName());
 
-			ReportGenerationUtil.generateReport(reportName, financeMain, list, 1, usrName, window);
+			ReportsUtil.generatePDF(reportName, financeMain, list, usrName, window);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -7773,7 +7772,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		list.add(soa.getInterestRateDetails());
 
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
-		byte[] buf = ReportCreationUtil.generatePDF("FINENQ_StatementOfAccount", soa, list,	userName);
+		byte[] buf = ReportsUtil.generatePDF("FINENQ_StatementOfAccount", soa, list,	userName);
 
 		Filedownload.save(new AMedia("StatementOfAccount", "pdf", "application/pdf", buf));
 

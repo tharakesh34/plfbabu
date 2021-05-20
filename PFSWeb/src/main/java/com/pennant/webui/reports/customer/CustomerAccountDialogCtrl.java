@@ -30,11 +30,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.reports.customer.model.CustomerAccountListModelItemRender;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -245,8 +245,8 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	public void onClick$button_Print(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		if (getAccounts() != null && getAccounts().size() > 0) {
-			ReportGenerationUtil.generateReport("Sample", customer, getAccounts(), 1,
-					getUserWorkspace().getLoggedInUser().getUserName(), null);
+			String userName = getUserWorkspace().getLoggedInUser().getUserName();
+			ReportsUtil.generatePDF("Sample", customer, getAccounts(), userName, null);
 		}
 		logger.debug("Leaving ");
 	}

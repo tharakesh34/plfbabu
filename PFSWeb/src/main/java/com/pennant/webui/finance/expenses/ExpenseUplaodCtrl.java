@@ -41,6 +41,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
@@ -51,7 +52,6 @@ import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.App;
@@ -352,7 +352,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		
 		try {
-			ReportGenerationUtil.generateReport(userName, reportName, whereCond, searchCriteria);
+			ReportsUtil.generateReport(userName, reportName, whereCond, searchCriteria);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

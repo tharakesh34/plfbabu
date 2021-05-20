@@ -71,6 +71,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
@@ -82,7 +83,6 @@ import com.pennant.backend.util.JvPostingConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.upload.model.UploadListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -804,7 +804,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 				searchCriteriaDesc.append("File Name is " + uploadHeader.getFileName());
 
-				ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
+				ReportsUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
 						"ManualAdviseUploadReport", whereCond, searchCriteriaDesc);
 
 				uploadHeaderService.updateFileDownload(uploadHeader.getUploadId(), true, "_Temp");

@@ -83,6 +83,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -103,7 +104,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -470,12 +470,11 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 		availCustomer.setTotalCustBal(PennantApplicationUtil.amountFormate(detail.getTotalCustBal(), 2));
 		availCustomer.setTotalCustBlockedBal(PennantApplicationUtil.amountFormate(detail.getTotalCustBlockedBal(), 2));
 
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		if (isfinance) {
-			ReportGenerationUtil.generateReport("AvailmentTicket", availCustomer, list, 1,
-					getUserWorkspace().getLoggedInUser().getFullName(), parentWindow);
+			ReportsUtil.generatePDF("AvailmentTicket", availCustomer, list, userName, parentWindow);
 		} else {
-			ReportGenerationUtil.generateReport("AvailmentTicket", availCustomer, list, 1,
-					getUserWorkspace().getLoggedInUser().getFullName(), this.window_AvailmentTicket);
+			ReportsUtil.generatePDF("AvailmentTicket", availCustomer, list, userName, this.window_AvailmentTicket);
 		}
 
 		detail = null;

@@ -68,6 +68,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -97,7 +98,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -3681,8 +3681,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 			list.add(creditReviewSubCtgDetailsList);
 
-			ReportGenerationUtil.generateReport("CreditApplication_Review", creditReviewMainCtgDetails, list, 1,
-					getUserWorkspace().getLoggedInUser().getFullName(), this.window_CreditApplicationReviewDialog);
+			String userName = getUserWorkspace().getLoggedInUser().getFullName();
+			ReportsUtil.generatePDF("CreditApplication_Review", creditReviewMainCtgDetails, list, userName,
+					this.window_CreditApplicationReviewDialog);
 		}
 
 		logger.debug("Leaving");

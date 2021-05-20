@@ -108,6 +108,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RepayCalculator;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -160,7 +161,6 @@ import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl;
@@ -3292,20 +3292,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 									formatter));
 		}
 
-		//Word Format
-		/*
-		 * if (isRetail) { try {
-		 * 
-		 * TemplateEngine engine = new TemplateEngine(reportName); //reportName = earlySettlement.getFinReference() +
-		 * "_" + "Memorandum.docx"; engine.setTemplate(""); //engine.loadTemplateWithFontSize(11);
-		 * engine.mergeFields(earlySettlement); engine.showDocument(this.window_ManualPaymentDialog, reportName,
-		 * SaveFormat.DOCX); engine.close(); engine = null;
-		 * 
-		 * } catch (Exception e) { logger.error("Exception: ", e); } } else {
-		 */
-		// PDF Format
-		ReportGenerationUtil.generateReport(reportName, earlySettlement, new ArrayList<Object>(), 1,
-				getUserWorkspace().getLoggedInUser().getFullName(), this.window_ManualPaymentDialog);
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		ReportsUtil.generatePDF(reportName, earlySettlement, new ArrayList<Object>(), userName,
+				this.window_ManualPaymentDialog);
 		//}
 
 		logger.debug("Leaving");

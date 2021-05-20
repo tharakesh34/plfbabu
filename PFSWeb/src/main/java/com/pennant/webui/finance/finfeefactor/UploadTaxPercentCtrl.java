@@ -35,12 +35,12 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -259,7 +259,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		try {
-			ReportGenerationUtil.generateReport(userName, "FeeFactoringExceptionReport", whereCond, searchCriteriaDesc);
+			ReportsUtil.generateReport(userName, "FeeFactoringExceptionReport", whereCond, searchCriteriaDesc);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

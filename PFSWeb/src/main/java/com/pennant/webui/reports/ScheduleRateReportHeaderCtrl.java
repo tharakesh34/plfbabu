@@ -67,7 +67,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -76,7 +76,6 @@ import com.pennant.backend.model.finance.ScheduleRateReportHeader;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -195,11 +194,11 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 			boolean isExcel = this.excel.isChecked();
 			String userName = getUserWorkspace().getLoggedInUser().getFullName();
 			if (isExcel) {
-				ReportCreationUtil.downloadExcel("FINENQ_ScheduleRateReport", header, list, userName);
+				ReportsUtil.downloadExcel("FINENQ_ScheduleRateReport", header, list, userName);
 				return;
 			}
 
-			ReportCreationUtil.showPDF("FINENQ_ScheduleRateReport", header, list, userName);
+			ReportsUtil.showPDF("FINENQ_ScheduleRateReport", header, list, userName);
 			
 		} catch (Exception e) {
 			MessageUtil.showError(e);

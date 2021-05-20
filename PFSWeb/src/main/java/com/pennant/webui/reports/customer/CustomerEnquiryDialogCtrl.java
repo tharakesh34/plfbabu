@@ -38,11 +38,11 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -425,8 +425,8 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		logger.debug("Entering " + event.toString());
 
 		if (getFinanceEnqList() != null && getFinanceEnqList().size() > 0) {
-			ReportGenerationUtil.generateReport("Sample", getFinanceEnqList(), getFinanceEnqList(), 1,
-					getUserWorkspace().getLoggedInUser().getUserName(), null);
+			String userName = getUserWorkspace().getLoggedInUser().getUserName();
+			ReportsUtil.generatePDF("Sample", getFinanceEnqList(), getFinanceEnqList(), userName, null);
 		}
 		logger.debug("Leaving " + event.toString());
 	}

@@ -72,6 +72,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -86,7 +87,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -971,11 +971,9 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			}
 
 			if (vASRecordingdialogCtrl != null) {
-				ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", vasRecording, list, 1, usrName,
-						window);
+				ReportsUtil.generatePDF("FINENQ_AccountingDetail", vasRecording, list, usrName, window);
 			} else {
-				ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, 1, usrName,
-						window);
+				ReportsUtil.generatePDF("FINENQ_AccountingDetail", financeMain, list, usrName, window);
 			}
 		} else {
 			MessageUtil.showError(Labels.getLabel("btnPrintAccounting.Error_Message"));

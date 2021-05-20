@@ -127,8 +127,6 @@
 		<property name="documentTypeDAO" ref="documentTypeDAO" />
 	</bean>
 
-	<bean id="reportUtil" class="com.pennant.app.util.ReportUtil" scope="prototype" />
-
 	<bean id="freemarkerMailConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />
 
 	<!-- ====================================================== -->

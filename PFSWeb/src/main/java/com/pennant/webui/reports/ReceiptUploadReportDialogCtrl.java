@@ -58,12 +58,12 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -189,7 +189,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		try {
-			ReportGenerationUtil.generateReport(userName, "ReceiptUploadDetails", whereCond, searchCriteria);
+			ReportsUtil.generateReport(userName, "ReceiptUploadDetails", whereCond, searchCriteria);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

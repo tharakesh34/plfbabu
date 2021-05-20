@@ -81,8 +81,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.PathUtil;
-import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -152,7 +151,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.financemanagement.insurance.InsuranceRebookingDialogCtrl;
@@ -1036,7 +1034,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			throws JRException, InterruptedException {
 		logger.debug("Entering");
 		try {
-			byte[] buf = ReportCreationUtil.generatePDF(reportName, object, listData, userName);
+			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
 
 			boolean reportView = true;
 			//Assignments
@@ -1073,6 +1071,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onClick$btnPrint(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		if ("FINENQ".equals(this.enquiryType)) {
 
 			List<Object> list = new ArrayList<Object>();
@@ -1085,11 +1084,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				FinMainReportData reportData = new FinMainReportData();
 				reportData = reportData.getFinMainReportData(finScheduleData, financeSummary);
 				if (customer360) {
-					generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
-							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
+					generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1, userName,
+							window_FinEnqHeaderDialog);
 				} else {
-					ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, 1,
-							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
+					ReportsUtil.generatePDF("FINENQ_FinanceBasicDetail", reportData, list, userName,
+							window_FinEnqHeaderDialog);
 				}
 			}
 
@@ -1188,8 +1187,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 					reportName = "ODFINENQ_ScheduleDetail";
 				}
-				ReportGenerationUtil.generateReport(reportName, financeMain, list, 1,
-						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
+				ReportsUtil.generatePDF(reportName, financeMain, list, userName, window_FinEnqHeaderDialog);
 				if (financeMain.getFinCategory() != null) {
 					if (financeMain.getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
 						financeMain.setEffectiveRateOfReturn(effectiveRateOfReturn);

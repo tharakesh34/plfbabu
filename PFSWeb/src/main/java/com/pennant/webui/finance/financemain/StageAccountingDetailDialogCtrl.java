@@ -74,6 +74,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -90,7 +91,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -448,7 +448,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				list.add(accountingDetails);
 			}
 
-			ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, 1, usrName, window);
+			ReportsUtil.generatePDF("FINENQ_AccountingDetail", financeMain, list, usrName, window);
 		} else {
 			MessageUtil.showError(Labels.getLabel("btnPrintStageAccounting.Error_Message"));
 		}

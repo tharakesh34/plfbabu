@@ -77,6 +77,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.NPAProvisionDetail;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
@@ -87,7 +88,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1179,7 +1179,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 		try {
 			String userName = getUserWorkspace().getLoggedInUser().getFullName();
-			ReportGenerationUtil.generateReport(userName, "NPA_Provision", "", searchCriteriaDesc);
+			ReportsUtil.generateReport(userName, "NPA_Provision", "", searchCriteriaDesc);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

@@ -36,7 +36,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
-import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
@@ -1191,7 +1191,7 @@ public class FinStatementController extends SummaryDetailService {
 					LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 					String userName = userDetails.getUserName();
 
-					byte[] document = ReportCreationUtil.generatePDF(reportName, soa, list, userName);
+					byte[] document = ReportsUtil.generatePDF(reportName, soa, list, userName);
 					if (document != null) {
 						String location = null;
 						if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)) {

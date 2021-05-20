@@ -48,6 +48,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
@@ -57,7 +58,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRenderer;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
@@ -323,7 +323,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			list.add(accountingDetails);
 		}
 
-		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", enquiry, list, 1, usrName, window);
+		ReportsUtil.generatePDF("FINENQ_AccountingDetail", enquiry, list, usrName, window);
 		logger.info(Literal.LEAVING);
 	}
 

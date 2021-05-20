@@ -84,6 +84,7 @@ import org.zkoss.zul.Window;
 
 import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
@@ -100,7 +101,6 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -220,7 +220,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		try {
-			ReportGenerationUtil.generateReport(userName, "LenderDataUpload", whereCond, searchCriteriaDesc);
+			ReportsUtil.generateReport(userName, "LenderDataUpload", whereCond, searchCriteriaDesc);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

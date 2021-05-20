@@ -46,6 +46,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.AssignmentPartner;
 import com.pennant.backend.model.applicationmaster.Entity;
@@ -57,7 +58,6 @@ import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
@@ -387,8 +387,8 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		reportList.add(uploadHeader.getAssignmentUploads());
 
 		//Excel file downloading automatically using Jasper Report
-		ReportGenerationUtil.generateReport(this.REPORT_NAME, null, reportList,
-				getUserWorkspace().getLoggedInUser().getFullName(), null);
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		ReportsUtil.generateExcel(this.REPORT_NAME, null, reportList, userName);
 
 		if (!this.uploadHeader.isFileDownload()) {
 			this.uploadHeaderService.updateFileDownload(this.uploadHeader.getUploadId(), true, "_Temp");
@@ -543,8 +543,8 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 						reportList.add(uploadHeader.getAssignmentUploads());
 
 						//Excel file downloading automatically using Jasper Report
-						ReportGenerationUtil.generateReport(this.REPORT_NAME, null, reportList,
-								getUserWorkspace().getLoggedInUser().getFullName(), null);
+						String userName = getUserWorkspace().getLoggedInUser().getFullName();
+						ReportsUtil.generateExcel(this.REPORT_NAME, null, reportList, userName);
 						MessageUtil.showError("Some of the records failed, Please check the downloaded file.");
 						throw new WrongValueException();
 					}

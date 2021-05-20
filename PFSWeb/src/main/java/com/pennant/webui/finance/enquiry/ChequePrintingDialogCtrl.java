@@ -33,6 +33,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.ChequeDetails;
@@ -41,7 +42,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -271,7 +271,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		ArrayList<Object> list = new ArrayList<Object>();
 		list.add(chequeDetailsList);
-		ReportGenerationUtil.print(list, CHEQUE_PRINTING_CHEQUES, getUserWorkspace().getLoggedInUser().getUserName(),
+		String userName = getUserWorkspace().getLoggedInUser().getUserName();
+		ReportsUtil.print(list, CHEQUE_PRINTING_CHEQUES, userName,
 				this.financeEnquiryHeaderDialogCtrl.window_FinEnqHeaderDialog);
 
 		doRemoveValidation();

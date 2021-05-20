@@ -42,7 +42,6 @@
  */
 package com.pennant.webui.reports;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -56,13 +55,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.spring.SpringUtil;
-import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -80,7 +75,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
-import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
@@ -105,6 +99,7 @@ import org.zkoss.zul.impl.NumberInputElement;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -133,19 +128,15 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.export.AbstractXlsReportConfiguration;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 /**
  * This is the controller class for the /WEB-INF/pages/reports/ReportGenerationPromptDialog.zul file.
@@ -1700,10 +1691,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 */
 	private void doShowReport(String whereCond, String whereCond2, String fromDate, String toDate, String whereCond1)
 			throws Exception {
-		logger.debug("Entering");
+		logger.info(Literal.ENTERING);
 
 		Map<String, Object> argsMap = new HashMap<String, Object>(10);
-		argsMap.put("userName", getUserWorkspace().getLoggedInUser().getFullName());
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		argsMap.put("userName", userName);
 		argsMap.put("reportHeading", reportConfiguration.getReportHeading());
 		argsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
 		argsMap.put("appDate", SysParamUtil.getAppDate());
@@ -1798,8 +1790,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 
 		byte[] buf = null;
-		Connection con = null;
-		DataSource reportDataSourceObj = null;
 
 		File file = new File(reportSrc);
 		if (!file.exists()) {
@@ -1807,16 +1797,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			closeDialog();
 		}
 
-		try {
+		Connection connection = ReportsUtil.getConnection(reportConfiguration.getDataSourceName());
 
-			// This will come dynamically
-			reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());
-			con = reportDataSourceObj.getConnection();
+		try {
 
 			if ((!isExcel && !this.rows_formatType.isVisible())
 					|| (this.rows_formatType.isVisible() && this.pdfFormat.isChecked())) {
 
-				buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, con);
+				buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, connection);
 				Map<String, Object> auditMap = new HashMap<String, Object>(4);
 				auditMap.put("reportBuffer", buf);
 				auditMap.put("parentWindow", this.window_ReportPromptFilterCtrl);
@@ -1831,34 +1819,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				// call the ZUL-file with the parameters packed in a map
 				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 			} else {
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				String printfileName = JasperFillManager.fillReportToFile(reportSrc, argsMap, con);
-				reportName = reportConfiguration.getReportHeading();
-
-				JRXlsExporter excelExporter = new JRXlsExporter();
-				excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
-				AbstractXlsReportConfiguration configuration = new AbstractXlsReportConfiguration();
-				configuration.setDetectCellType(true);
-				configuration.setWhitePageBackground(false);
-				configuration.setRemoveEmptySpaceBetweenColumns(true);
-				configuration.setRemoveEmptySpaceBetweenRows(true);
-				configuration.setIgnoreGraphics(false);
-				configuration.setIgnoreCellBorder(false);
-				configuration.setCollapseRowSpan(true);
-				configuration.setImageBorderFixEnabled(false);
-				SimpleOutputStreamExporterOutput outputStreamExporterOutput = new SimpleOutputStreamExporterOutput(
-						outputStream);
-				excelExporter.setExporterOutput(outputStreamExporterOutput);
-				excelExporter.setConfiguration(configuration);
-				excelExporter.exportReport();
-				Filedownload
-						.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+				ReportsUtil.downloadExcel(PathUtil.REPORTS_ORGANIZATION, reportName, userName, reportConfiguration.getDataSourceName());
 
 				if (selectTab != null) {
-					// selectTab.setSelected(true);
-					// if(!reportConfiguration.isPromptRequired()){//ReOpen the Comment after Auto Refresh Fix
 					selectTab.onClose();
-					// }
 				}
 			}
 
@@ -1867,14 +1831,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			MessageUtil.showError("Error in Configuring the " + reportName + " report");
 			closeDialog();
 		} finally {
-			if (con != null) {
-				con.close();
+			if (connection != null) {
+				connection.close();
 			}
-			con = null;
-			reportDataSourceObj = null;
+			connection = null;
 			buf = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// COMPONENT EVENTS
@@ -2327,7 +2290,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 */
 	@SuppressWarnings("unchecked")
 	public void onClick$btnSearch(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.info(Literal.ENTERING);
 		searchClick = true;
 
 		// ++ create the searchObject and initialize sorting ++//
@@ -2571,7 +2534,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					null, null);
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.info(Literal.LEAVING);
 	}
 
 	private StringBuilder getWhereClauseForAMZ(StringBuilder whereCond, Date fromDate, Date toDate) {

@@ -66,6 +66,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
 import com.pennant.backend.model.Notes;
@@ -101,7 +102,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
@@ -1943,8 +1943,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			List<Object> list = new ArrayList<Object>();
 			list.add(creditReviewSubtgDetailsList);
 
-			ReportGenerationUtil.generateReport("CreditApplication_Review_Enquiry", creditReviewMainCtgDetails, list,
-					getUserWorkspace().getLoggedInUser().getUserName(), this.window_CreditApplicationReviewDialog);
+			String userName = getUserWorkspace().getLoggedInUser().getUserName();
+			ReportsUtil.generateExcel("CreditApplication_Review_Enquiry", creditReviewMainCtgDetails, list, userName);
 
 		}
 

@@ -113,6 +113,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SysParamUtil;
@@ -158,7 +159,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -985,8 +985,8 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				reportName = "FINENQ_FinanceCalculationDetails_bank";
 			}
 
-			ReportGenerationUtil.generateReport(reportName, reportData, list, 1,
-					getUserWorkspace().getLoggedInUser().getFullName(), this.window_RetailWIFFinanceMainDialog);
+			String userName = getUserWorkspace().getLoggedInUser().getFullName();
+			ReportsUtil.generatePDF(reportName, reportData, list, userName, this.window_RetailWIFFinanceMainDialog);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

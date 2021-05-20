@@ -83,6 +83,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -101,7 +102,6 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -203,7 +203,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		try {
-			ReportGenerationUtil.generateReport(userName, "MandateUploadReport", whereCond, searchCriteriaDesc);
+			ReportsUtil.generateReport(userName, "MandateUploadReport", whereCond, searchCriteriaDesc);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

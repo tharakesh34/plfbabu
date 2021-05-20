@@ -67,13 +67,12 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -217,18 +216,17 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		list.add(this.statementOfAccount.getInterestRateDetails());
 
 		List<String> finTypes = this.soaReportGenerationService.getSOAFinTypes();
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		if (isCustomer360) {
 			try {
 
 				if (finTypes != null && finTypes.contains(finType)) {
-					createReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount, list,
-							getUserWorkspace().getLoggedInUser().getFullName(), window);
+					createReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount, list, userName, window);
 				} else if (isAlwFlexi) {
-					createReport("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount, list,
-							getUserWorkspace().getLoggedInUser().getFullName(), window);
+					createReport("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount, list, userName,
+							window);
 				} else {
-					createReport("FINENQ_StatementOfAccount", this.statementOfAccount, list,
-							getUserWorkspace().getLoggedInUser().getFullName(), window);
+					createReport("FINENQ_StatementOfAccount", this.statementOfAccount, list, userName, window);
 				}
 			} catch (InterruptedException e) {
 				MessageUtil.showError(e);
@@ -238,17 +236,16 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		} else {
 			try {
 				if (finTypes != null && finTypes.contains(finType)) {
-					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount,
-							list, 1, getUserWorkspace().getLoggedInUser().getFullName(), null);
+					ReportsUtil.generatePDF("FINENQ_StatementOfAccount_FinType", this.statementOfAccount, list,
+							userName, null);
 
 				} else if (isAlwFlexi) {
 
-					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount_FinType_Hybrid",
-							this.statementOfAccount, list, 1, getUserWorkspace().getLoggedInUser().getFullName(),
-							null);
+					ReportsUtil.generatePDF("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount,
+							list, userName, null);
 				} else {
-					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list,
-							1, getUserWorkspace().getLoggedInUser().getFullName(), null);
+					ReportsUtil.generatePDF("FINENQ_StatementOfAccount", this.statementOfAccount, list, userName,
+							null);
 
 				}
 			} catch (Exception e) {
@@ -405,7 +402,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			throws JRException, InterruptedException {
 		logger.debug("Entering");
 		try {
-			byte[] buf = ReportCreationUtil.generatePDF(reportName, object, listData, userName);
+			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
 
 			boolean reportView = true;
 			//Assignments

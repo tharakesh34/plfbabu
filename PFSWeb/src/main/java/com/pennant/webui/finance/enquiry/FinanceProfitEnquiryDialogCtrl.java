@@ -20,10 +20,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -214,8 +214,9 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 		if (this.financeSummary != null) {
 
 			list.add(financeSummary);
-			ReportGenerationUtil.generateReport("FinanceDetail", financeSummary, list, 1,
-					getUserWorkspace().getLoggedInUser().getUserName(), window_FinProfitEnquiryDialog);
+			String userName = getUserWorkspace().getLoggedInUser().getUserName();
+			ReportsUtil.generatePDF("FinanceDetail", financeSummary, list, userName,
+					window_FinProfitEnquiryDialog);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

@@ -2,6 +2,7 @@ package com.pennant.app.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,7 +26,9 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.BulkProcessHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -39,13 +42,13 @@ import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 
-public class ReportCreationUtil {
-	private static final Logger logger = LogManager.getLogger(ReportCreationUtil.class);
+public class ReportsUtil {
+	private static final Logger logger = LogManager.getLogger(ReportsUtil.class);
 
 	private static final String RPT_NOT_FOUND = "%s report not found in %s location. Please contact the system administrator.";
 	private static final String RPT_EXCEPTION = "Unable to generate the %s report. Please contact the system administrator.";
 
-	private ReportCreationUtil() {
+	private ReportsUtil() {
 		//
 	}
 
@@ -105,13 +108,25 @@ public class ReportCreationUtil {
 		logger.info(Literal.LEAVING);
 	}
 
+	public static void downloadExcel(String reportPath, String reportName, String userName, String dataSourceName) {
+		logger.info(Literal.ENTERING);
+
+		Map<String, Object> parameters = getParameters(userName, reportName);
+
+		String jasperPrint = fillReportToFile(reportPath, reportName, parameters, dataSourceName);
+
+		dowloadExcel(reportName, jasperPrint);
+
+		logger.info(Literal.LEAVING);
+	}
+
 	public static void downloadExcel(String reportPath, String reportName, String userName, String whereCond,
-			StringBuilder searchCriteriaDesc, Connection connection) {
+			StringBuilder searchCriteriaDesc, String dataSourceName) {
 		logger.info(Literal.ENTERING);
 
 		Map<String, Object> parameters = getParameters(userName, reportName, whereCond, searchCriteriaDesc);
 
-		String jasperPrint = fillReportToFile(reportPath, reportName, parameters, connection);
+		String jasperPrint = fillReportToFile(reportPath, reportName, parameters, dataSourceName);
 
 		dowloadExcel(reportName, jasperPrint);
 
@@ -145,7 +160,7 @@ public class ReportCreationUtil {
 	}
 
 	public static String fillReportToFile(String reportPath, String reportName, Map<String, Object> parameters,
-			Connection connection) {
+			String dataSourceName) {
 
 		String template = getTemplate(reportPath, reportName);
 
@@ -155,12 +170,14 @@ public class ReportCreationUtil {
 		parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
 
 		String printfileName = null;
-		try {
+		try (Connection connection = getConnection(dataSourceName)) {
 			printfileName = JasperFillManager.fillReportToFile(template, parameters, connection);
 			virtualizer.setReadOnly(true);
 		} catch (JRException e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException(String.format(RPT_EXCEPTION, reportName));
+		} catch (SQLException e1) {
+			throw new AppException(e1.getMessage());
 		} finally {
 			if (virtualizer != null) {
 				virtualizer.cleanup();
@@ -326,9 +343,8 @@ public class ReportCreationUtil {
 		}
 		return false;
 	}
-	
-	private static final String RPT_ERROR_1 = "Unable to get the connection from %s. Please contact the system administrator.";
 
+	private static final String RPT_ERROR_1 = "Unable to get the connection from %s. Please contact the system administrator.";
 
 	public static Connection getConnection() {
 		return getConnection("dataSource");
@@ -341,5 +357,90 @@ public class ReportCreationUtil {
 		} catch (SQLException e) {
 			throw new AppException(String.format(RPT_ERROR_1, dataSourceName));
 		}
+	}
+
+	public static void generatePDF(String reportName, Object object, List listData, String userName, Window window) {
+		logger.info(Literal.ENTERING + reportName);
+
+		try {
+
+			if (window != null) {
+				ReportsUtil.showPDF(reportName, object, listData, userName, window);
+			} else {
+				ReportsUtil.showPDF(reportName, object, listData, userName);
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError("Template does not exist.");
+			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+		}
+
+	}
+
+	public static void generateExcel(String reportName, Object object, List listData, String userName) {
+		try {
+
+			ReportsUtil.downloadExcel(reportName, object, listData, userName);
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showError("Template does not exist.");
+			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public static void print(List listData, String reportName, String userName, Window dialogWindow)
+			throws JRException, FileNotFoundException {
+		logger.debug("Entering");
+
+		try {
+			JRBeanCollectionDataSource subListDS = null;
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_CHECKS) + "/ChecksMain.jasper";
+
+			for (int i = 0; i < listData.size(); i++) {
+
+				Object obj = listData.get(i);
+				if (obj instanceof List) {
+					subListDS = new JRBeanCollectionDataSource((List) obj);
+				} else {
+					List subList = new ArrayList();
+					subList.add(obj);
+					subListDS = new JRBeanCollectionDataSource(subList);
+				}
+				parameters.put("subDataSource" + (i + 1), subListDS);
+			}
+
+			// Set the parameters
+			parameters.put("userName", userName);
+			parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
+			parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+
+			byte[] buf = JasperRunManager.runReportToPdf(reportSrc, parameters, subListDS);
+
+			final Map<String, Object> auditMap = new HashMap<String, Object>();
+			auditMap.put("reportBuffer", buf);
+			if (dialogWindow != null) {
+				auditMap.put("dialogWindow", dialogWindow);
+			}
+
+			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+		} catch (JRException e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving");
+	}
+
+	public static void generateReport(String userName, String reportName, String whereCond,
+			StringBuilder searchCriteriaDesc) {
+		logger.info(Literal.ENTERING);
+
+		ReportsUtil.downloadExcel(PathUtil.REPORTS_ORGANIZATION, reportName, userName, whereCond, searchCriteriaDesc,
+				"dataSource");
+
+		logger.info(Literal.LEAVING);
 	}
 }

@@ -46,6 +46,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -61,7 +62,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
@@ -408,7 +408,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		// Excel file downloading automatically using Jasper Report
 		try {
-			ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
+			ReportsUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
 					"ManualAdviseUploadReport", whereCond, searchCriteriaDesc);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
