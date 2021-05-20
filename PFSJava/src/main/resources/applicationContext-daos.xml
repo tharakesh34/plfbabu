@@ -127,12 +127,6 @@
 		<property name="documentTypeDAO" ref="documentTypeDAO" />
 	</bean>
 
-	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData" scope="prototype">
-		<property name="notificationsService" ref="notificationsService" />
-		<property name="dataSource" ref="dataSource" />
-		<property name="reportUtil" ref="reportUtil" />
-	</bean>
-
 	<bean id="reportUtil" class="com.pennant.app.util.ReportUtil" scope="prototype" />
 
 	<bean id="freemarkerMailConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />
