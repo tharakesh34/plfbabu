@@ -9109,7 +9109,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Set<String> splitRef = new HashSet<>();
 				if (pricingDetailListCtrl != null && pricingDetailListCtrl.hbox_Split != null
 						&& pricingDetailListCtrl.split != null && pricingDetailListCtrl.hbox_Split.isVisible()
-						&& pricingDetailListCtrl.split.isChecked()) {
+						&& pricingDetailListCtrl.split.isChecked()
+						&& pricingDetailListCtrl.getPricingDetail().isNewRecord()) {
 					List<FinanceMain> financeMains = pricingDetailListCtrl.getPricingDetail().getFinanceMains();
 					if (CollectionUtils.isNotEmpty(financeMains)) {
 						financeMains.forEach(l1 -> splitRef.add(l1.getFinReference()));
