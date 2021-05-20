@@ -323,7 +323,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			list.add(accountingDetails);
 		}
 
-		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", enquiry, list, true, 1, usrName, window);
+		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", enquiry, list, 1, usrName, window);
 		logger.info(Literal.LEAVING);
 	}
 

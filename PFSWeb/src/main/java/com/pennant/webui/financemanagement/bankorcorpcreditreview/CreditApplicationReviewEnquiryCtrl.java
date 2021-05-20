@@ -1944,8 +1944,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			list.add(creditReviewSubtgDetailsList);
 
 			ReportGenerationUtil.generateReport("CreditApplication_Review_Enquiry", creditReviewMainCtgDetails, list,
-					true, 1, getUserWorkspace().getLoggedInUser().getUserName(),
-					this.window_CreditApplicationReviewDialog, true);
+					getUserWorkspace().getLoggedInUser().getUserName(), this.window_CreditApplicationReviewDialog);
 
 		}
 

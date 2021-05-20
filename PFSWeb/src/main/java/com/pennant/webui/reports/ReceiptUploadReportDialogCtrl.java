@@ -187,12 +187,12 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		StringBuilder searchCriteria = new StringBuilder(" ");
 		searchCriteria.append("File Name is " + this.fileName.getValue());
 
-		String reportName = "";
-
-		reportName = "ReceiptUploadDetails";
-
-		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName, whereCond,
-				searchCriteria);
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		try {
+			ReportGenerationUtil.generateReport(userName, "ReceiptUploadDetails", whereCond, searchCriteria);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 
 		doClose();
 		logger.debug(Literal.LEAVING);

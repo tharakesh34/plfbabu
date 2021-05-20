@@ -826,7 +826,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 			acManagerCheque.setLovDescFinTypeName(financeMain.getLovDescFinTypeName());
 		}
 
-		ReportGenerationUtil.generateReport("MGRCHQ_PostingDetail", acManagerCheque, list, true, 1, usrName,
+		ReportGenerationUtil.generateReport("MGRCHQ_PostingDetail", acManagerCheque, list, 1, usrName,
 				this.window_ManagerChequeDialog);
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1447,7 +1447,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 				PennantAppUtil.formateAmount(printManagerCheque.getAmtInLocalCcy(), ccyEditField),
 				SysParamUtil.getAppCurrency()));// AHB
 
-		ReportGenerationUtil.generateReport(reportName, printManagerCheque, new ArrayList<Object>(), true, 1, usrName,
+		ReportGenerationUtil.generateReport(reportName, printManagerCheque, new ArrayList<Object>(), 1, usrName,
 				this.window_ManagerChequeDialog);
 
 		logger.debug("Leaving");

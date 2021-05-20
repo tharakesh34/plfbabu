@@ -33,6 +33,9 @@ import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 public class ReportCreationUtil {
 	private static final Logger logger = LogManager.getLogger(ReportCreationUtil.class);
 
+	private static final String RPT_NOT_FOUND = "%s report not found in %s location. Please contact the system administrator.";
+	private static final String RPT_EXCEPTION = "Unable to generate the %s report. Please contact the system administrator.";
+
 	private ReportCreationUtil() {
 		//
 	}
@@ -62,13 +65,14 @@ public class ReportCreationUtil {
 		Map<String, Object> parameters = getParameters(userName, reportName, object);
 
 		JRBeanCollectionDataSource mainDS = getDataSource(object);
-		
+
 		setDataSource(parameters, listData);
 
 		try {
 			buf = JasperRunManager.runReportToPdf(template, parameters, mainDS);
 		} catch (JRException e) {
-
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(String.format(RPT_EXCEPTION, reportName));
 		}
 		logger.info(Literal.LEAVING);
 		return buf;
@@ -82,13 +86,15 @@ public class ReportCreationUtil {
 		Map<String, Object> parameters = getParameters(userName, reportName, object);
 
 		JRBeanCollectionDataSource mainDS = getDataSource(object);
-		
+
 		setDataSource(parameters, listData);
 
 		String printfileName = null;
 		try {
 			printfileName = JasperFillManager.fillReportToFile(template, parameters, mainDS);
-		} catch (JRException e1) {
+		} catch (JRException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(String.format(RPT_EXCEPTION, reportName));
 		}
 
 		SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
@@ -111,18 +117,26 @@ public class ReportCreationUtil {
 			Filedownload.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
 
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(String.format(RPT_EXCEPTION, reportName));
 		}
 
 		logger.info(Literal.LEAVING);
 	}
 
-	private static String getTemplate(String reportName) {
+	public static String getTemplate(String reportName) {
 		String path = PathUtil.getPath(PathUtil.REPORTS_FINANCE);
-		String reportSrc = path + "/" + reportName + ".jasper";
+		return getTemplate(path, reportName);
+	}
+
+	public static String getTemplate(String reportPath, String reportName) {
+		String reportSrc = reportPath + "/" + reportName + ".jasper";
+		logger.info("Report Template: {}", reportSrc);
 
 		if (!new File(reportSrc).exists()) {
-			throw new AppException(reportName + " report not cofigured in " + path + " location.");
+			throw new AppException(String.format(RPT_NOT_FOUND, reportName, reportPath));
 		}
+
 		return reportSrc;
 	}
 
@@ -153,7 +167,7 @@ public class ReportCreationUtil {
 
 		return mainDS;
 	}
-	
+
 	private static void setDataSource(Map<String, Object> parameters, List<Object> listData) {
 		JRBeanCollectionDataSource subListDS;
 

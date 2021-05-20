@@ -1178,10 +1178,10 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		// Excel file downloading automatically using Jasper Report
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 		try {
-			ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "NPA_Provision", "",
-					searchCriteriaDesc);
+			String userName = getUserWorkspace().getLoggedInUser().getFullName();
+			ReportGenerationUtil.generateReport(userName, "NPA_Provision", "", searchCriteriaDesc);
 		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);

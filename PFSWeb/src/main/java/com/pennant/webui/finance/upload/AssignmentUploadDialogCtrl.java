@@ -387,12 +387,8 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		reportList.add(uploadHeader.getAssignmentUploads());
 
 		//Excel file downloading automatically using Jasper Report
-		try {
-			ReportGenerationUtil.generateReport(this.REPORT_NAME, null, reportList, true, 1,
-					getUserWorkspace().getLoggedInUser().getFullName(), null, true);
-		} catch (InterruptedException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
+		ReportGenerationUtil.generateReport(this.REPORT_NAME, null, reportList,
+				getUserWorkspace().getLoggedInUser().getFullName(), null);
 
 		if (!this.uploadHeader.isFileDownload()) {
 			this.uploadHeaderService.updateFileDownload(this.uploadHeader.getUploadId(), true, "_Temp");
@@ -547,8 +543,8 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 						reportList.add(uploadHeader.getAssignmentUploads());
 
 						//Excel file downloading automatically using Jasper Report
-						ReportGenerationUtil.generateReport(this.REPORT_NAME, null, reportList, true, 1,
-								getUserWorkspace().getLoggedInUser().getFullName(), null, true);
+						ReportGenerationUtil.generateReport(this.REPORT_NAME, null, reportList,
+								getUserWorkspace().getLoggedInUser().getFullName(), null);
 						MessageUtil.showError("Some of the records failed, Please check the downloaded file.");
 						throw new WrongValueException();
 					}

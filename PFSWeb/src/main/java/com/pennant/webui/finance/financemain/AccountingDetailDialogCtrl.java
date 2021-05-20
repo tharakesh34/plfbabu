@@ -971,10 +971,10 @@ public class AccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			}
 
 			if (vASRecordingdialogCtrl != null) {
-				ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", vasRecording, list, true, 1, usrName,
+				ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", vasRecording, list, 1, usrName,
 						window);
 			} else {
-				ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, true, 1, usrName,
+				ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, 1, usrName,
 						window);
 			}
 		} else {

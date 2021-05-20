@@ -67,7 +67,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -240,19 +239,19 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			try {
 				if (finTypes != null && finTypes.contains(finType)) {
 					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount_FinType", this.statementOfAccount,
-							list, true, 1, getUserWorkspace().getLoggedInUser().getFullName(), null);
+							list, 1, getUserWorkspace().getLoggedInUser().getFullName(), null);
 
 				} else if (isAlwFlexi) {
 
 					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount_FinType_Hybrid",
-							this.statementOfAccount, list, true, 1, getUserWorkspace().getLoggedInUser().getFullName(),
+							this.statementOfAccount, list, 1, getUserWorkspace().getLoggedInUser().getFullName(),
 							null);
 				} else {
 					ReportGenerationUtil.generateReport("FINENQ_StatementOfAccount", this.statementOfAccount, list,
-							true, 1, getUserWorkspace().getLoggedInUser().getFullName(), null);
+							1, getUserWorkspace().getLoggedInUser().getFullName(), null);
 
 				}
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
 		}

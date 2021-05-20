@@ -425,7 +425,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		logger.debug("Entering " + event.toString());
 
 		if (getFinanceEnqList() != null && getFinanceEnqList().size() > 0) {
-			ReportGenerationUtil.generateReport("Sample", getFinanceEnqList(), getFinanceEnqList(), true, 1,
+			ReportGenerationUtil.generateReport("Sample", getFinanceEnqList(), getFinanceEnqList(), 1,
 					getUserWorkspace().getLoggedInUser().getUserName(), null);
 		}
 		logger.debug("Leaving " + event.toString());

@@ -90,41 +90,37 @@ public class ReportGenerationUtil implements Serializable {
 		super();
 	}
 
-	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
-			int reportType, String userName, Window window) throws InterruptedException {
+	public static void generateReport(String reportName, Object object, List listData, int reportType, String userName,
+			Window window) {
 		logger.info(Literal.ENTERING + reportName);
 
-		return generateReport(reportName, object, listData, isRegenerate, reportType, userName, window, false);
+		try {
+
+			if (window != null) {
+				ReportCreationUtil.showPDF(reportName, object, listData, userName, window);
+			} else {
+				ReportCreationUtil.showPDF(reportName, object, listData, userName);
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError("Template does not exist.");
+			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+		}
+
 	}
 
-	public static boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate,
-			int reportType, String userName, Window window, boolean createExcel) throws InterruptedException {
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
+	public static void generateReport(String reportName, Object object, List listData, String userName, Window window) {
+		try {
 
-		logger.info(reportSrc);
+			ReportCreationUtil.downloadExcel(reportName, object, listData, userName);
 
-		if (isRegenerate) {
-			try {
-
-				if (createExcel) {
-					ReportCreationUtil.downloadExcel(reportName, object, listData, userName);
-					return true;
-				}
-
-				if (window != null) {
-					ReportCreationUtil.showPDF(reportName, object, listData, userName, window);
-				} else {
-					ReportCreationUtil.showPDF(reportName, object, listData, userName);
-				}
-
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showError("Template does not exist.");
-				ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
-			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			MessageUtil.showError("Template does not exist.");
+			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
 		}
 		logger.debug(Literal.LEAVING);
-		return false;
 	}
 
 	public static void print(List listData, String reportName, String userName, Window dialogWindow)
@@ -173,6 +169,10 @@ public class ReportGenerationUtil implements Serializable {
 	public static void generateReport(String userName, String reportName, String whereCond,
 			StringBuilder searchCriteriaDesc) {
 		logger.debug("Entering");
+		
+		
+		String reportSrc = ReportCreationUtil.getTemplate(PathUtil.REPORTS_ORGANIZATION, reportName);
+		
 
 		Connection connection = null;
 		DataSource dataSourceObj = null;
@@ -195,20 +195,11 @@ public class ReportGenerationUtil implements Serializable {
 			reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 			reportArgumentsMap.put("bankName", Labels.getLabel("label_ClientName"));
 			reportArgumentsMap.put("searchCriteria", searchCriteriaDesc.toString());
-			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
 
 			Connection con = null;
 			DataSource reportDataSourceObj = null;
 
 			try {
-				File file = new File(reportSrc);
-				if (!file.exists()) {
-					MessageUtil.showError(
-							String.format("%s report not configured, please contact system administrator", reportName));
-					return;
-				}
-
-				logger.debug("Buffer started");
 
 				reportDataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 				con = reportDataSourceObj.getConnection();

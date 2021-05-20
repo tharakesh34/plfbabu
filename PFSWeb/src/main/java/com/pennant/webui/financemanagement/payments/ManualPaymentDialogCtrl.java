@@ -3304,7 +3304,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		 * } catch (Exception e) { logger.error("Exception: ", e); } } else {
 		 */
 		// PDF Format
-		ReportGenerationUtil.generateReport(reportName, earlySettlement, new ArrayList<Object>(), true, 1,
+		ReportGenerationUtil.generateReport(reportName, earlySettlement, new ArrayList<Object>(), 1,
 				getUserWorkspace().getLoggedInUser().getFullName(), this.window_ManualPaymentDialog);
 		//}
 

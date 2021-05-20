@@ -1380,7 +1380,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		list.add(bulkProcessDetailsRptData);
 		String reportName = "FINENQ_BulkDifferemmentDetails";
 
-		ReportGenerationUtil.generateReport(reportName, getBulkProcessHeader(), list, true, 1,
+		ReportGenerationUtil.generateReport(reportName, getBulkProcessHeader(), list, 1,
 				getUserWorkspace().getLoggedInUser().getFullName(), this.window_BulkRateChangeDialog);
 
 		logger.debug("Leaving" + event.toString());

@@ -257,8 +257,13 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 		searchCriteriaDesc.append("File Name is " + this.txtFileName.getValue());
 
-		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-				"FeeFactoringExceptionReport", whereCond, searchCriteriaDesc);
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		try {
+			ReportGenerationUtil.generateReport(userName, "FeeFactoringExceptionReport", whereCond, searchCriteriaDesc);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -217,8 +217,14 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		String whereCond = "and FILENAME in (" + "'" + fileName.getValue() + "'" + ")";
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 		searchCriteriaDesc.append("File Name is " + fileName.getValue());
-		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "LenderDataUpload",
-				whereCond, searchCriteriaDesc);
+
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		try {
+			ReportGenerationUtil.generateReport(userName, "LenderDataUpload", whereCond, searchCriteriaDesc);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 

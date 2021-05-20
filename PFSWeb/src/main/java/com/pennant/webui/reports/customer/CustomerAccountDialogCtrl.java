@@ -245,7 +245,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 	public void onClick$button_Print(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		if (getAccounts() != null && getAccounts().size() > 0) {
-			ReportGenerationUtil.generateReport("Sample", customer, getAccounts(), true, 1,
+			ReportGenerationUtil.generateReport("Sample", customer, getAccounts(), 1,
 					getUserWorkspace().getLoggedInUser().getUserName(), null);
 		}
 		logger.debug("Leaving ");

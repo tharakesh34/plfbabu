@@ -1313,7 +1313,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		list.add(bulkRateChangeDetailsRptData);
 		String reportName = "FINENQ_BulkDifferemmentDetails";
 
-		ReportGenerationUtil.generateReport(reportName, getBulkRateChangeHeader(), list, true, 1,
+		ReportGenerationUtil.generateReport(reportName, getBulkRateChangeHeader(), list, 1,
 				getUserWorkspace().getLoggedInUser().getFullName(), this.window_BulkRateChangeDialog);
 
 		logger.debug("Leaving" + event.toString());

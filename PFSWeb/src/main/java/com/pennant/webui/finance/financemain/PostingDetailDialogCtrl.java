@@ -237,7 +237,7 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			list.add(accountingDetails);
 		}
 
-		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", true, list, true, 1, usrName, window);
+		ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", true, list, 1, usrName, window);
 		logger.debug("Leaving" + event.toString());
 	}
 

@@ -200,8 +200,13 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		searchCriteriaDesc.append("File Name is " + fileName.getValue());
 		searchCriteriaDesc.append("User ID is" + userId);
 		searchCriteriaDesc.append("Upload Date is" + transcationDate);
-		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), "MandateUploadReport",
-				whereCond, searchCriteriaDesc);
+		
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		try {
+			ReportGenerationUtil.generateReport(userName, "MandateUploadReport", whereCond, searchCriteriaDesc);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -4283,7 +4283,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),
 					securityUser.getUsrLName());
 
-			ReportGenerationUtil.generateReport(reportName, financeMain, list, true, 1, usrName, window);
+			ReportGenerationUtil.generateReport(reportName, financeMain, list, 1, usrName, window);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

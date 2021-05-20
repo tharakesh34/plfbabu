@@ -985,7 +985,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				reportName = "FINENQ_FinanceCalculationDetails_bank";
 			}
 
-			ReportGenerationUtil.generateReport(reportName, reportData, list, true, 1,
+			ReportGenerationUtil.generateReport(reportName, reportData, list, 1,
 					getUserWorkspace().getLoggedInUser().getFullName(), this.window_RetailWIFFinanceMainDialog);
 		}
 		logger.debug("Leaving" + event.toString());

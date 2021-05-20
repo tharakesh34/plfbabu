@@ -3681,7 +3681,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 			list.add(creditReviewSubCtgDetailsList);
 
-			ReportGenerationUtil.generateReport("CreditApplication_Review", creditReviewMainCtgDetails, list, true, 1,
+			ReportGenerationUtil.generateReport("CreditApplication_Review", creditReviewMainCtgDetails, list, 1,
 					getUserWorkspace().getLoggedInUser().getFullName(), this.window_CreditApplicationReviewDialog);
 		}
 

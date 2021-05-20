@@ -448,7 +448,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				list.add(accountingDetails);
 			}
 
-			ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, true, 1, usrName, window);
+			ReportGenerationUtil.generateReport("FINENQ_AccountingDetail", financeMain, list, 1, usrName, window);
 		} else {
 			MessageUtil.showError(Labels.getLabel("btnPrintStageAccounting.Error_Message"));
 		}

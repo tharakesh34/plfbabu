@@ -1088,7 +1088,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
 							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
 				} else {
-					ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, true, 1,
+					ReportGenerationUtil.generateReport("FINENQ_FinanceBasicDetail", reportData, list, 1,
 							getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
 				}
 			}
@@ -1188,8 +1188,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 					reportName = "ODFINENQ_ScheduleDetail";
 				}
-				ReportGenerationUtil.generateReport(reportName, financeMain, list, true, 1,
-						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog, false);
+				ReportGenerationUtil.generateReport(reportName, financeMain, list, 1,
+						getUserWorkspace().getLoggedInUser().getFullName(), window_FinEnqHeaderDialog);
 				if (financeMain.getFinCategory() != null) {
 					if (financeMain.getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
 						financeMain.setEffectiveRateOfReturn(effectiveRateOfReturn);

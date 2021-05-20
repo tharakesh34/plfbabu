@@ -214,7 +214,7 @@ public class FinanceProfitEnquiryDialogCtrl extends GFCBaseCtrl<FinanceSummary> 
 		if (this.financeSummary != null) {
 
 			list.add(financeSummary);
-			ReportGenerationUtil.generateReport("FinanceDetail", financeSummary, list, true, 1,
+			ReportGenerationUtil.generateReport("FinanceDetail", financeSummary, list, 1,
 					getUserWorkspace().getLoggedInUser().getUserName(), window_FinProfitEnquiryDialog);
 		}
 		logger.debug("Leaving" + event.toString());

@@ -348,9 +348,14 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		} else if (PennantConstants.EXPENSE_UPLOAD_LOANTYPE.equals(selectedModuleType)) {
 			reportName = "ExpenseReport_LoanType";
 		}
-
-		ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName, whereCond,
-				searchCriteria);
+		
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
+		
+		try {
+			ReportGenerationUtil.generateReport(userName, reportName, whereCond, searchCriteria);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

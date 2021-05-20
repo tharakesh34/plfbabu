@@ -1801,68 +1801,65 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		Connection con = null;
 		DataSource reportDataSourceObj = null;
 
+		File file = new File(reportSrc);
+		if (!file.exists()) {
+			MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
+			closeDialog();
+		}
+
 		try {
-			File file = new File(reportSrc);
-			if (file.exists()) {
 
-				logger.debug("Buffer started");
+			// This will come dynamically
+			reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());
+			con = reportDataSourceObj.getConnection();
 
-				// This will come dynamically
-				reportDataSourceObj = (DataSource) SpringUtil.getBean(reportConfiguration.getDataSourceName());
-				con = reportDataSourceObj.getConnection();
+			if ((!isExcel && !this.rows_formatType.isVisible())
+					|| (this.rows_formatType.isVisible() && this.pdfFormat.isChecked())) {
 
-				if ((!isExcel && !this.rows_formatType.isVisible())
-						|| (this.rows_formatType.isVisible() && this.pdfFormat.isChecked())) {
-
-					buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, con);
-					Map<String, Object> auditMap = new HashMap<String, Object>(4);
-					auditMap.put("reportBuffer", buf);
-					auditMap.put("parentWindow", this.window_ReportPromptFilterCtrl);
-					auditMap.put("reportName", reportConfiguration.getReportName().replace(EXCEL_TYPE, ""));
-					auditMap.put("tabbox", tabbox);
-					auditMap.put("searchClick", searchClick);
-					auditMap.put("selectTab", selectTab);
-					if (dialogWindow != null) {
-						auditMap.put("dialogWindow", dialogWindow);
-					}
-
-					// call the ZUL-file with the parameters packed in a map
-					Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
-				} else {
-					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-					String printfileName = JasperFillManager.fillReportToFile(reportSrc, argsMap, con);
-					reportName = reportConfiguration.getReportHeading();
-
-					JRXlsExporter excelExporter = new JRXlsExporter();
-					excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
-					AbstractXlsReportConfiguration configuration = new AbstractXlsReportConfiguration();
-					configuration.setDetectCellType(true);
-					configuration.setWhitePageBackground(false);
-					configuration.setRemoveEmptySpaceBetweenColumns(true);
-					configuration.setRemoveEmptySpaceBetweenRows(true);
-					configuration.setIgnoreGraphics(false);
-					configuration.setIgnoreCellBorder(false);
-					configuration.setCollapseRowSpan(true);
-					configuration.setImageBorderFixEnabled(false);
-					SimpleOutputStreamExporterOutput outputStreamExporterOutput = new SimpleOutputStreamExporterOutput(
-							outputStream);
-					excelExporter.setExporterOutput(outputStreamExporterOutput);
-					excelExporter.setConfiguration(configuration);
-					excelExporter.exportReport();
-					Filedownload.save(
-							new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
-
-					if (selectTab != null) {
-						// selectTab.setSelected(true);
-						// if(!reportConfiguration.isPromptRequired()){//ReOpen the Comment after Auto Refresh Fix
-						selectTab.onClose();
-						// }
-					}
+				buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, con);
+				Map<String, Object> auditMap = new HashMap<String, Object>(4);
+				auditMap.put("reportBuffer", buf);
+				auditMap.put("parentWindow", this.window_ReportPromptFilterCtrl);
+				auditMap.put("reportName", reportConfiguration.getReportName().replace(EXCEL_TYPE, ""));
+				auditMap.put("tabbox", tabbox);
+				auditMap.put("searchClick", searchClick);
+				auditMap.put("selectTab", selectTab);
+				if (dialogWindow != null) {
+					auditMap.put("dialogWindow", dialogWindow);
 				}
 
+				// call the ZUL-file with the parameters packed in a map
+				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 			} else {
-				MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
-				closeDialog();
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				String printfileName = JasperFillManager.fillReportToFile(reportSrc, argsMap, con);
+				reportName = reportConfiguration.getReportHeading();
+
+				JRXlsExporter excelExporter = new JRXlsExporter();
+				excelExporter.setExporterInput(new SimpleExporterInput(printfileName));
+				AbstractXlsReportConfiguration configuration = new AbstractXlsReportConfiguration();
+				configuration.setDetectCellType(true);
+				configuration.setWhitePageBackground(false);
+				configuration.setRemoveEmptySpaceBetweenColumns(true);
+				configuration.setRemoveEmptySpaceBetweenRows(true);
+				configuration.setIgnoreGraphics(false);
+				configuration.setIgnoreCellBorder(false);
+				configuration.setCollapseRowSpan(true);
+				configuration.setImageBorderFixEnabled(false);
+				SimpleOutputStreamExporterOutput outputStreamExporterOutput = new SimpleOutputStreamExporterOutput(
+						outputStream);
+				excelExporter.setExporterOutput(outputStreamExporterOutput);
+				excelExporter.setConfiguration(configuration);
+				excelExporter.exportReport();
+				Filedownload
+						.save(new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
+
+				if (selectTab != null) {
+					// selectTab.setSelected(true);
+					// if(!reportConfiguration.isPromptRequired()){//ReOpen the Comment after Auto Refresh Fix
+					selectTab.onClose();
+					// }
+				}
 			}
 
 		} catch (Exception e) {

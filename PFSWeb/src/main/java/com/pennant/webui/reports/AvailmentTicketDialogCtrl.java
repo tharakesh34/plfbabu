@@ -471,10 +471,10 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 		availCustomer.setTotalCustBlockedBal(PennantApplicationUtil.amountFormate(detail.getTotalCustBlockedBal(), 2));
 
 		if (isfinance) {
-			ReportGenerationUtil.generateReport("AvailmentTicket", availCustomer, list, true, 1,
+			ReportGenerationUtil.generateReport("AvailmentTicket", availCustomer, list, 1,
 					getUserWorkspace().getLoggedInUser().getFullName(), parentWindow);
 		} else {
-			ReportGenerationUtil.generateReport("AvailmentTicket", availCustomer, list, true, 1,
+			ReportGenerationUtil.generateReport("AvailmentTicket", availCustomer, list, 1,
 					getUserWorkspace().getLoggedInUser().getFullName(), this.window_AvailmentTicket);
 		}
 
