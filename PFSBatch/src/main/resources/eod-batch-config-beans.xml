@@ -340,12 +340,6 @@
 	<bean id="takafulProviderDAO" class="com.pennant.backend.dao.applicationmaster.impl.TakafulProviderDAOImpl"
 		parent="basicDao" />
 
-	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData" scope="prototype">
-		<property name="dataSource" ref="dataSource" />
-		<property name="reportUtil" ref="reportUtil" />
-		<property name="notificationsService" ref="notificationsService" />
-	</bean>
-
 	<bean id="reportUtil" class="com.pennant.app.util.ReportUtil" scope="prototype" />
 
 	<bean id="notificationsService" class="com.pennant.backend.service.notifications.impl.NotificationsServiceImpl">
