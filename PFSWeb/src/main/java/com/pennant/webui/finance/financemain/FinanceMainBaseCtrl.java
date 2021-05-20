@@ -8666,6 +8666,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			}
 
+			if (aFinanceDetail.getFinScheduleData().getFinanceMain().isAlwLoanSplit()
+					&& !pricingDetailListCtrl.split.isChecked() && !this.alwLoanSplit.isDisabled()
+					&& !StringUtils.equals(userAction.getSelectedItem().getValue().toString(), "Approved")
+					&& !StringUtils.equals(userAction.getSelectedItem().getValue().toString(), "Resubmitted")
+					&& !StringUtils.equals(userAction.getSelectedItem().getValue().toString(), "Cancelled")
+					&& !StringUtils.equals(userAction.getSelectedItem().getValue().toString(), "Rejected")) {
+				if (MessageUtil.confirm("Loan is not splited, Do you want to proceed ?",
+						MessageUtil.NO | MessageUtil.YES) == MessageUtil.NO) {
+					return;
+				}
+			}
+
 			if (editable) {
 				boolean proceed = pricingDetailListCtrl.doSave(aFinanceDetail, pricingTab, recSave);
 
