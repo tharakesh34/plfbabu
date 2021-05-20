@@ -543,28 +543,24 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 	@Override
 	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType,
 			int verificationCategory) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" id from verifications");
+		sql.append(" Where ReferenceFor = ? and VerificationType = ? and KeyReference = ?");
+		sql.append(" and RequestType = ? and verificationcategory = ?");
 
-		StringBuilder sql = new StringBuilder("select id from verifications");
-		sql.append(
-				" where referenceFor=:referenceFor and verificationType=:verificationType and keyReference=:keyReference and requestType=:requestType");
-		sql.append(" and verificationcategory = :verificationcategory");
+		logger.debug(Literal.SQL + sql);
 
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("keyReference", finReference);
-		paramMap.addValue("referenceFor", referenceFor);
-		paramMap.addValue("verificationType", verificationType);
-		paramMap.addValue("requestType", RequestType.INITIATE.getKey());
-		paramMap.addValue("verificationcategory", verificationCategory);
+		Object[] args = new Object[] { referenceFor, verificationType, finReference, RequestType.INITIATE.getKey(),
+				verificationCategory };
+
 		try {
-			Long verificationId = jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
-			if (verificationId != null) {
-				return verificationId;
-			}
-		} catch (Exception e) {
+			return jdbcOperations.queryForObject(sql.toString(), args, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(
+					"Reference Id is not found in verifications table for the specified referenceFor > {}, verificationType > {}, keyReference > {}, requestType > {}, verificationcategory > {}",
+					args);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
