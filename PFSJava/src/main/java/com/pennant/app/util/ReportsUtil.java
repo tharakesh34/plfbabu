@@ -40,6 +40,7 @@ import net.sf.jasperreports.engine.fill.JRAbstractLRUVirtualizer;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 
 public class ReportsUtil {
@@ -67,6 +68,14 @@ public class ReportsUtil {
 		Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, dataMap);
 	}
 
+	public static void showPDF(String reportPath, String reportName, Map<String, Object> parameters,
+			String dataSourceName) {
+		byte[] buf = generatePDF(reportPath, reportName, parameters, dataSourceName);
+
+		parameters.put("reportBuffer", buf);
+		Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, parameters);
+	}
+
 	public static byte[] generatePDF(String reportName, Object object, List<Object> listData, String userName) {
 		logger.info(Literal.ENTERING);
 
@@ -90,6 +99,36 @@ public class ReportsUtil {
 		return buf;
 	}
 
+	public static byte[] generatePDF(String reportPath, String reportName, Map<String, Object> parameters,
+			String dataSourceName) {
+		logger.info(Literal.ENTERING);
+
+		byte[] buf = null;
+
+		String template = getTemplate(reportPath, reportName);
+
+		int maxSize = 250;
+		JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
+		JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
+		parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
+
+		try (Connection connection = getConnection(dataSourceName)) {
+			buf = JasperRunManager.runReportToPdf(template, parameters, connection);
+			virtualizer.setReadOnly(true);
+		} catch (JRException e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(String.format(RPT_EXCEPTION, reportName));
+		} catch (SQLException e1) {
+			throw new AppException(e1.getMessage());
+		} finally {
+			if (virtualizer != null) {
+				virtualizer.cleanup();
+			}
+		}
+		logger.info(Literal.LEAVING);
+		return buf;
+	}
+
 	public static void downloadExcel(String reportName, Object object, List<Object> listData, String userName) {
 		logger.info(Literal.ENTERING);
 
@@ -108,10 +147,9 @@ public class ReportsUtil {
 		logger.info(Literal.LEAVING);
 	}
 
-	public static void downloadExcel(String reportPath, String reportName, String userName, String dataSourceName) {
+	public static void downloadExcel(String reportPath, String reportName, Map<String, Object> parameters,
+			String dataSourceName) {
 		logger.info(Literal.ENTERING);
-
-		Map<String, Object> parameters = getParameters(userName, reportName);
 
 		String jasperPrint = fillReportToFile(reportPath, reportName, parameters, dataSourceName);
 
@@ -218,6 +256,8 @@ public class ReportsUtil {
 		excelExporter.setConfiguration(configuration);
 
 		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+			excelExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputStream));
+			excelExporter.exportReport();
 			excelData = outputStream.toByteArray();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -232,7 +272,8 @@ public class ReportsUtil {
 	}
 
 	public static String getTemplate(String reportPath, String reportName) {
-		String reportSrc = reportPath + "/" + reportName + ".jasper";
+		String path = PathUtil.getPath(reportPath);
+		String reportSrc = path + "/" + reportName + ".jasper";
 		logger.info("Report Template: {}", reportSrc);
 
 		if (!new File(reportSrc).exists()) {

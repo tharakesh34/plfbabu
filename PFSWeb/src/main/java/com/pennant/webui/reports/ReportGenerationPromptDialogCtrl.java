@@ -44,7 +44,6 @@ package com.pennant.webui.reports;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -135,7 +134,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
@@ -1756,7 +1754,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		argsMap.put("searchCriteria", searchCriteriaDesc.toString());
 		String reportName = reportConfiguration.getReportJasperName();// This will come dynamically
-		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
 
 		if (reportConfiguration.isScheduleReq()) {
 			String finReference = "";
@@ -1789,24 +1786,12 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 		}
 
-		byte[] buf = null;
-
-		File file = new File(reportSrc);
-		if (!file.exists()) {
-			MessageUtil.showError(Labels.getLabel("label_Error_ReportNotImplementedYet.vlaue"));
-			closeDialog();
-		}
-
-		Connection connection = ReportsUtil.getConnection(reportConfiguration.getDataSourceName());
-
 		try {
 
+			String dataSourceName = reportConfiguration.getDataSourceName();
 			if ((!isExcel && !this.rows_formatType.isVisible())
 					|| (this.rows_formatType.isVisible() && this.pdfFormat.isChecked())) {
-
-				buf = JasperRunManager.runReportToPdf(reportSrc, argsMap, connection);
 				Map<String, Object> auditMap = new HashMap<String, Object>(4);
-				auditMap.put("reportBuffer", buf);
 				auditMap.put("parentWindow", this.window_ReportPromptFilterCtrl);
 				auditMap.put("reportName", reportConfiguration.getReportName().replace(EXCEL_TYPE, ""));
 				auditMap.put("tabbox", tabbox);
@@ -1815,27 +1800,21 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				if (dialogWindow != null) {
 					auditMap.put("dialogWindow", dialogWindow);
 				}
+				
+				argsMap.putAll(auditMap);
 
-				// call the ZUL-file with the parameters packed in a map
-				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+				ReportsUtil.showPDF(PathUtil.REPORTS_ORGANIZATION, reportName, argsMap, dataSourceName);
 			} else {
-				ReportsUtil.downloadExcel(PathUtil.REPORTS_ORGANIZATION, reportName, userName, reportConfiguration.getDataSourceName());
-
+				ReportsUtil.downloadExcel(PathUtil.REPORTS_ORGANIZATION, reportName, argsMap, dataSourceName);
+				
 				if (selectTab != null) {
 					selectTab.onClose();
 				}
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showError("Error in Configuring the " + reportName + " report");
+			MessageUtil.showError(e);
 			closeDialog();
-		} finally {
-			if (connection != null) {
-				connection.close();
-			}
-			connection = null;
-			buf = null;
 		}
 		logger.debug(Literal.LEAVING);
 	}
