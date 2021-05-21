@@ -246,13 +246,13 @@ public class DisbursementInstCtrl {
 			Integer key = entrySet.getKey();
 			FinanceDisbursement groupFinDisbursement = getTotal(financeDisbursements, financeMain, key, true);
 			BigDecimal groupDisbAmount = groupFinDisbursement.getDisbAmount();
-			
+
 			for (FinAdvancePayments fad : entrySet.getValue()) {
 				if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(fad.getPaymentDetail())) {
 					groupDisbAmount = groupDisbAmount.add(fad.getAmtToBeReleased());
 				}
 			}
-			
+
 			Date groupDate = groupFinDisbursement.getDisbDate();
 
 			//condition to not allow under servicing record to be displayed in disbursement queue.
@@ -291,7 +291,7 @@ public class DisbursementInstCtrl {
 					grandTotal = grandTotal.add(detail.getAmtToBeReleased());
 					subTotal = subTotal.add(detail.getAmtToBeReleased());
 				}
-				
+
 				Listitem item = new Listitem();
 				lc = new Listcell(Integer.toString(detail.getPaymentSeq()));
 				lc.setParent(item);
@@ -386,7 +386,6 @@ public class DisbursementInstCtrl {
 			for (Entry<Integer, List<FinAdvancePayments>> entrySet : map.entrySet()) {
 
 				BigDecimal subTotal = BigDecimal.ZERO;
-				Integer key = entrySet.getKey();
 
 				Listgroup listgroup = new Listgroup();
 				Listcell lc;
