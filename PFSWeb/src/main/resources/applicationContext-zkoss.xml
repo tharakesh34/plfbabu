@@ -4279,8 +4279,6 @@
 	<bean id="disbursementInstCtrl" class="com.pennant.webui.finance.payorderissue.DisbursementInstCtrl" scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
-		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
 	</bean>
 
 

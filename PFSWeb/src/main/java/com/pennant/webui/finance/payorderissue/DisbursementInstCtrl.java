@@ -70,10 +70,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.configuration.VASConfigurationDAO;
-import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -110,8 +107,6 @@ public class DisbursementInstCtrl {
 	private List<FinanceDisbursement> approvedDisbursments;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private DocumentDetails documentDetails;
-	private VASConfigurationDAO vASConfigurationDAO;
-	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 
 	private DMSService dMSService;
 
@@ -883,13 +878,5 @@ public class DisbursementInstCtrl {
 
 	public void setModuleDefiner(String moduleDefiner) {
 		this.moduleDefiner = moduleDefiner;
-	}
-
-	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
-		this.vASConfigurationDAO = vASConfigurationDAO;
-	}
-
-	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
-		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
 	}
 }
