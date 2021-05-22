@@ -459,16 +459,28 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		} else {
 			FinanceMain financeMain = (FinanceMain) dataObject;
 			if (financeMain != null) {
-				this.finReference.setValue(financeMain.getFinReference(), "");
-				setJointAccountDetailList(this.financeTaxDetailService
-						.getJountAccountDetailByFinRef(financeMain.getFinReference(), "_AView"));
-				setGurantorsDetailList(this.financeTaxDetailService
-						.getGuarantorDetailByFinRef(financeMain.getFinReference(), "_AView"));
+				String finRef = financeMain.getFinReference();
+				this.finReference.setValue(finRef, "");
+				setJointAccountDetailList(this.financeTaxDetailService.getJountAccountDetailByFinRef(finRef, "_AView"));
+				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finRef, "_AView"));
 				this.taxCustId = financeMain.getCustID();
 			}
 		}
 
+		filterCustomerDetails();
+
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void filterCustomerDetails() {
+		if (this.applicableFor.getSelectedIndex() == 0) {
+			this.applicableFor.setSelectedIndex(1);
+		}
+		if (ImplementationConstants.CUST_ADDR_AUTO_FILL) {
+			setCustCIFFilter(true);
+		} else {
+			setCustomerFilters(this.applicableFor.getSelectedItem().getValue(), false);
+		}
 	}
 
 	/**
@@ -670,23 +682,18 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				this.taxCustId = customer.getCustID();
 			}
 			if (CollectionUtils.isNotEmpty(addressList) && flag) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (StringUtils.equals(PennantConstants.KYC_PRIORITY_VERY_HIGH,
-							String.valueOf(customerAddres.getCustAddrPriority()))) {
-						String addrLine1 = getCommaSeperate(customerAddres.getCustAddrHNbr(),
-								customerAddres.getCustFlatNbr(), customerAddres.getCustAddrStreet(),
-								customerAddres.getCustAddrLine1());
+				for (CustomerAddres ca : addressList) {
+					if (PennantConstants.KYC_PRIORITY_VERY_HIGH.equals(String.valueOf(ca.getCustAddrPriority()))) {
+						String addrLine1 = getCommaSeperate(ca.getCustAddrHNbr(), ca.getCustFlatNbr(),
+								ca.getCustAddrStreet(), ca.getCustAddrLine1());
 						this.addrLine1.setValue(addrLine1);
-						this.addrLine2.setValue(customerAddres.getCustAddrLine2());
-						this.addrLine3.setValue(customerAddres.getCustAddrLine3());
-						this.addrLine4.setValue(customerAddres.getCustAddrLine4());
-						this.country.setValue(customerAddres.getCustAddrCountry(),
-								customerAddres.getLovDescCustAddrCountryName());
-						this.province.setValue(customerAddres.getCustAddrProvince(),
-								customerAddres.getLovDescCustAddrProvinceName());
-						this.city.setValue(customerAddres.getCustAddrCity(),
-								customerAddres.getLovDescCustAddrCityName());
-						this.pinCode.setValue(customerAddres.getCustAddrZIP(), customerAddres.getLovDescCustAddrZip());
+						this.addrLine2.setValue(ca.getCustAddrLine2());
+						this.addrLine3.setValue(ca.getCustAddrLine3());
+						this.addrLine4.setValue(ca.getCustAddrLine4());
+						this.country.setValue(ca.getCustAddrCountry(), ca.getLovDescCustAddrCountryName());
+						this.province.setValue(ca.getCustAddrProvince(), ca.getLovDescCustAddrProvinceName());
+						this.city.setValue(ca.getCustAddrCity(), ca.getLovDescCustAddrCityName());
+						this.pinCode.setValue(ca.getCustAddrZIP(), ca.getLovDescCustAddrZip());
 					}
 				}
 			}
@@ -825,20 +832,17 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				this.custRef.setValue(customer.getCustCIF());
 				this.custRef.setDescription(customer.getCustShrtName());
 				this.taxCustId = customer.getCustID();
-				CustomerAddres customerAddres = this.financeTaxDetailService
-						.getHighPriorityCustAddr(customer.getCustID());
-				if (null != customerAddres) {
-					this.addrLine1.setValue(customerAddres.getCustAddrHNbr());
-					this.country.setValue(customerAddres.getCustAddrCountry(),
-							customerAddres.getLovDescCustAddrCountryName());
-					this.province.setValue(customerAddres.getCustAddrProvince(),
-							customerAddres.getLovDescCustAddrProvinceName());
-					this.city.setValue(customerAddres.getCustAddrCity(), customerAddres.getLovDescCustAddrCityName());
-					this.pinCode.setValue(customerAddres.getCustAddrZIP(), customerAddres.getLovDescCustAddrZip());
-					this.addressDetail.setValue(customerAddres.getCustAddrType());
-					this.addressDetail.setDescription(String.valueOf(customerAddres.getCustAddrPriority()));
-					this.addressDetail.setFilters(
-							new Filter[] { new Filter("CustID", customerAddres.getCustID(), Filter.OP_EQUAL) });
+				CustomerAddres ca = this.financeTaxDetailService.getHighPriorityCustAddr(customer.getCustID());
+				if (null != ca) {
+					this.addrLine1.setValue(ca.getCustAddrHNbr());
+					this.country.setValue(ca.getCustAddrCountry(), ca.getLovDescCustAddrCountryName());
+					this.province.setValue(ca.getCustAddrProvince(), ca.getLovDescCustAddrProvinceName());
+					this.city.setValue(ca.getCustAddrCity(), ca.getLovDescCustAddrCityName());
+					this.pinCode.setValue(ca.getCustAddrZIP(), ca.getLovDescCustAddrZip());
+					this.addressDetail.setValue(ca.getCustAddrType());
+					this.addressDetail.setDescription(String.valueOf(ca.getCustAddrPriority()));
+					this.addressDetail
+							.setFilters(new Filter[] { new Filter("CustID", ca.getCustID(), Filter.OP_EQUAL) });
 				}
 			}
 		}
@@ -874,23 +878,20 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			this.addressDetail.setValue(dataObject.toString());
 			this.addressDetail.setDescription(dataObject.toString());
 		} else {
-			CustomerAddres customerAddres = (CustomerAddres) dataObject;
-			if (customerAddres != null) {
-				this.taxCustId = customerAddres.getCustID();
-				if (null != customerAddres) {
-					String addrLine1 = getCommaSeperate(customerAddres.getCustAddrHNbr(),
-							customerAddres.getCustFlatNbr(), customerAddres.getCustAddrStreet(),
-							customerAddres.getCustAddrLine1());
+			CustomerAddres ca = (CustomerAddres) dataObject;
+			if (ca != null) {
+				this.taxCustId = ca.getCustID();
+				if (null != ca) {
+					String addrLine1 = getCommaSeperate(ca.getCustAddrHNbr(), ca.getCustFlatNbr(),
+							ca.getCustAddrStreet(), ca.getCustAddrLine1());
 					this.addrLine1.setValue(addrLine1);
-					this.addrLine2.setValue(customerAddres.getCustAddrLine2());
-					this.addrLine3.setValue(customerAddres.getCustAddrLine3());
-					this.addrLine4.setValue(customerAddres.getCustAddrLine4());
-					this.country.setValue(customerAddres.getCustAddrCountry(),
-							customerAddres.getLovDescCustAddrCountryName());
-					this.province.setValue(customerAddres.getCustAddrProvince(),
-							customerAddres.getLovDescCustAddrProvinceName());
-					this.city.setValue(customerAddres.getCustAddrCity(), customerAddres.getLovDescCustAddrCityName());
-					this.pinCode.setValue(customerAddres.getCustAddrZIP(), customerAddres.getLovDescCustAddrZip());
+					this.addrLine2.setValue(ca.getCustAddrLine2());
+					this.addrLine3.setValue(ca.getCustAddrLine3());
+					this.addrLine4.setValue(ca.getCustAddrLine4());
+					this.country.setValue(ca.getCustAddrCountry(), ca.getLovDescCustAddrCountryName());
+					this.province.setValue(ca.getCustAddrProvince(), ca.getLovDescCustAddrProvinceName());
+					this.city.setValue(ca.getCustAddrCity(), ca.getLovDescCustAddrCityName());
+					this.pinCode.setValue(ca.getCustAddrZIP(), ca.getLovDescCustAddrZip());
 				}
 			}
 		}
@@ -1160,7 +1161,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	public void doWriteBeanToComponents(FinanceTaxDetail aFinanceTaxDetail) {
 		logger.debug(Literal.ENTERING);
 
-		this.finReference.setValue(aFinanceTaxDetail.getFinReference());
+		String finRef = aFinanceTaxDetail.getFinReference();
+		this.finReference.setValue(finRef);
 
 		fillComboBox(this.applicableFor, aFinanceTaxDetail.getApplicableFor(), listApplicableFor, getExcludeFields());
 
@@ -1171,10 +1173,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		if (!fromLoan) {
 			this.recordStatus.setValue(aFinanceTaxDetail.getRecordStatus());
 			if (!aFinanceTaxDetail.isNewRecord()) {
-				setJointAccountDetailList(this.financeTaxDetailService
-						.getJountAccountDetailByFinRef(aFinanceTaxDetail.getFinReference(), "_AView"));
-				setGurantorsDetailList(this.financeTaxDetailService
-						.getGuarantorDetailByFinRef(aFinanceTaxDetail.getFinReference(), "_AView"));
+				setJointAccountDetailList(this.financeTaxDetailService.getJountAccountDetailByFinRef(finRef, "_AView"));
+				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finRef, "_AView"));
 			}
 		}
 
@@ -1207,31 +1207,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		}
 		this.custRef.setValue(aFinanceTaxDetail.getCustCIF(), aFinanceTaxDetail.getCustShrtName());
 		custID = aFinanceTaxDetail.getTaxCustId();
-		if (this.applicableFor.getSelectedIndex() == 0) {
-			this.applicableFor.setSelectedIndex(1);
-		}
-		if (ImplementationConstants.CUST_ADDR_AUTO_FILL) {
-			setCustCIFFilter(true);
-
-			if (fromLoan) {
-				if (this.financeDetail.getFinScheduleData().getFinanceMain().isNew()) {
-					if (this.applicableFor.getSelectedIndex() == 0) {
-						this.applicableFor.setSelectedIndex(1);
-						setCustCIFFilter(true);
-					}
-				}
-			} else {
-				if (this.applicableFor.getSelectedIndex() == 0) {
-					this.applicableFor.setSelectedIndex(1);
-					setCustCIFFilter(true);
-				}
-			}
-		} else {
-			setCustomerFilters(this.applicableFor.getSelectedItem().getValue(), false);
-		}
+		filterCustomerDetails();
 
 		if (!aFinanceTaxDetail.isNew()) {
-			ArrayList<Filter> filters = new ArrayList<Filter>();
+			List<Filter> filters = new ArrayList<>();
 
 			if (this.country.getValue() != null && !this.country.getValue().isEmpty()) {
 				Filter filterPin0 = new Filter("PCCountry", this.country.getValue(), Filter.OP_EQUAL);
@@ -1283,7 +1262,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		doSetLOVValidation();
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
 		// Finance Reference
 		try {

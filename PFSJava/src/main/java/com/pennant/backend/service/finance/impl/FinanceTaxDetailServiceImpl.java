@@ -422,7 +422,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String finReference = financeTaxDetail.getFinReference();
 		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_FEEPOSTING.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinanceConstants.FINSER_EVENT_GSTDETAILS.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
