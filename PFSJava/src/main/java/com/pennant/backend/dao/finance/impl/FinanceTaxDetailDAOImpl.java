@@ -45,7 +45,6 @@ package com.pennant.backend.dao.finance.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,16 +227,11 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 			ps.setString(index++, ftd.getNextTaskId());
 			ps.setString(index++, ftd.getRecordType());
 			ps.setLong(index++, ftd.getWorkflowId());
-			if ((Object) ftd.getPinCodeId() instanceof Long) {
-				ps.setLong(index++, ftd.getPinCodeId());
-			} else {
-				ps.setNull(index++, Types.NULL);
-			}
-
+			ps.setObject(index++, JdbcUtil.getLong(ftd.getPinCodeId()));
 			ps.setString(index++, ftd.getFinReference());
 
 			if (tableType == TableType.TEMP_TAB) {
-				ps.setTimestamp(index++, ftd.getLastMntOn());
+				ps.setTimestamp(index++, ftd.getPrevMntOn());
 			} else {
 				ps.setInt(index++, ftd.getVersion() - 1);
 			}
