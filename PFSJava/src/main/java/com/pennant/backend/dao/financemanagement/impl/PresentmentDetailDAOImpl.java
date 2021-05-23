@@ -1016,7 +1016,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			@Override
 			public void setValues(PreparedStatement ps, int index) throws SQLException {
 				PresentmentDetail pd = presenetments.get(index);
-				ps.setLong(1, pd.getPresentmentId());
+				ps.setLong(1, pd.getId());
 				ps.setString(2, pd.getFinReference());
 				ps.setDate(3, JdbcUtil.getDate(pd.getSchDate()));
 				ps.setInt(4, pd.getSchSeq());

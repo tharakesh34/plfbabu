@@ -123,7 +123,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 		boolean disbursements = false;
 		boolean payments = false;
-		
+
 		for (DataEngineStatus dataEngineStatus : list) {
 			if (!"S".equals(dataEngineStatus.getStatus())) {
 				long btachId = dataEngineStatus.getId();
@@ -509,7 +509,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 		if (job) {
 			fileLocation = fileLocation.concat("Repository");
 			fileLocation = fileLocation.concat(File.separator);
-			//fileLocation = fileLocation.concat(DateUtil.format(DateUtil.getSysDate(), "yyyyMMdd"));
+			// fileLocation = fileLocation.concat(DateUtil.format(DateUtil.getSysDate(), "yyyyMMdd"));
 		}
 
 		request.setLocalRepLocation(fileLocation);
@@ -533,10 +533,8 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	/**
 	 * This method will download the file from Amazon-s3 and store in specified local repository location
 	 * 
-	 * @param eventproperties
-	 *            The required parameters to call the Amazon-s3 client
-	 * @param request
-	 *            Required file details.
+	 * @param eventproperties The required parameters to call the Amazon-s3 client
+	 * @param request         Required file details.
 	 * @return The downloaded file which needs to be send to actual interface.
 	 */
 	private File getFileFromS3Bucket(EventProperties eventproperties, DisbursementRequest request) {
@@ -560,13 +558,10 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	/**
 	 * This method will download the file from configured FTP/SFTP and store in specified local repository location
 	 * 
-	 * @param eventproperties
-	 *            The required parameters to call the FTP/SFTP client
-	 * @param request
-	 *            Required file details
+	 * @param eventproperties The required parameters to call the FTP/SFTP client
+	 * @param request         Required file details
 	 * 
-	 * @param protoCol
-	 *            FTP/SFTP Protocol
+	 * @param protoCol        FTP/SFTP Protocol
 	 * @return The downloaded file which needs to be send to actual interface.
 	 */
 	private File getFileFromFTP(EventProperties eventproperties, DisbursementRequest request, String protoCol) {
@@ -612,8 +607,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	/**
 	 * This method will download the file from configured local folder and store in specified local repository location
 	 * 
-	 * @param request
-	 *            Required file details
+	 * @param request Required file details
 	 * @return
 	 */
 	private File getFileFromLocal(DisbursementRequest request) {
@@ -626,10 +620,8 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 	/**
 	 * 
-	 * @param eventproperties
-	 *            The required parameters to get the file from remote folder
-	 * @param request
-	 *            Required file details
+	 * @param eventproperties The required parameters to get the file from remote folder
+	 * @param request         Required file details
 	 * @return
 	 */
 	private File getFileFromSharedFolder(EventProperties eventproperties, DisbursementRequest request) {
@@ -736,6 +728,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 			request.setFileNamePrefix(finAdvancePayment.getFileName());
 			request.setAutoDownload(true);
 			request.setChannel(finAdvancePayment.getChannel());
+			request.setAppValueDate(SysParamUtil.getAppValueDate());
 
 			try {
 				prepareRequest(request);

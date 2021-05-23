@@ -156,12 +156,12 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 							req.setPartnerBankCode(getValueAsString(rs, "PARTNER_BANK_CODE"));
 							req.setAlwFileDownload(getValueAsBoolean(rs, "ALW_FILE_DOWNLOAD"));
 							req.setPartnerBankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
-
 							req.setChequeNumber(getValueAsString(rs, "CHEQUE_NUMBER"));
 							// default data
 							req.setPaymentDetail1(DISB_FI_EMAIL);
 							req.setHeaderId(requestData.getHeaderId());
 							req.setRespBatchId(new Long(0));
+							req.setDownloadedOn(requestData.getAppValueDate());
 
 							long id = insertDisbursement(req);
 							req.setId(id);

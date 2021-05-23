@@ -140,8 +140,9 @@ public class DisbursementRequest implements Serializable {
 	private String disbType;
 	private String requestSource = "OFF_LINE";
 	private Long paymentId;
-	@XmlElement //FIXME This field needs to be included in API Specification
+	@XmlElement // FIXME This field needs to be included in API Specification
 	private String disbParty;
+	private Date downloadedOn;
 
 	public DisbursementRequest() {
 		super();
@@ -899,4 +900,11 @@ public class DisbursementRequest implements Serializable {
 		this.disbParty = disbParty;
 	}
 
+	public Date getDownloadedOn() {
+		return downloadedOn;
+	}
+
+	public void setDownloadedOn(Date downloadedOn) {
+		this.downloadedOn = downloadedOn;
+	}
 }

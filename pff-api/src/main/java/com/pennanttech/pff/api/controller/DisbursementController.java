@@ -12,6 +12,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.PaymentInstruction;
@@ -128,6 +129,7 @@ public class DisbursementController extends ExtendedTestClass {
 
 			request.getFinAdvancePayments().add(disb);
 			request.setRequestSource(PennantConstants.FINSOURCE_ID_API);
+			request.setAppValueDate(SysParamUtil.getAppValueDate());
 		}
 
 		try {

@@ -112,6 +112,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.BankAccountValidationService;
+
 import AccountEventConstants.AccountingEvent;
 
 /**
@@ -565,14 +566,15 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		if (finAdvancePay.isNew()) { // for New record or new record into work flow
 
-			if (!finAdvancePay.isWorkflow()) {// With out Work flow only new records  
-				if (befFinAdvancePay != null) { // Record Already Exists in the table then error  
+			if (!finAdvancePay.isWorkflow()) {// With out Work flow only new records
+				if (befFinAdvancePay != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finAdvancePay.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinAdvancePay != null || tempFinAdvancePay != null) { // if records already exists in the main table
+					if (befFinAdvancePay != null || tempFinAdvancePay != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -607,7 +609,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				}
 			} else {
 
-				if (tempFinAdvancePay == null) { // if records not exists in the Work flow table 
+				if (tempFinAdvancePay == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -620,7 +622,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		//validation related to Scheduled Disbursement date And Disbursement date should be same.
+		// validation related to Scheduled Disbursement date And Disbursement date should be same.
 		boolean noValidation = isnoValidationUserAction(financeDetail.getUserAction());
 		if (!noValidation && !isDeleteRecord(finAdvancePay) && !finAdvancePay.ispOIssued()) {
 			List<FinanceDisbursement> finDisbursementDetails = financeDetail.getFinScheduleData()
@@ -686,7 +688,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		//Validation for Automatic Blocking of Add Disbursement after N due days from Overdue schedules. 
+		// Validation for Automatic Blocking of Add Disbursement after N due days from Overdue schedules.
 		if (isOverDraft) {
 			int currODDays = getProfitDetailsDAO().getCurOddays(finReference, "");
 			if (currODDays != 0 && currODDays > maxODDays) {
@@ -741,7 +743,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			poiHeader.setRecordType("");
 			poiHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		}
-		//get total amount from disbursement details
+		// get total amount from disbursement details
 		BigDecimal totPOAmount = BigDecimal.ZERO;
 		FinScheduleData schd = financeDetail.getFinScheduleData();
 		if (schd != null && schd.getDisbursementDetails() != null) {
@@ -793,7 +795,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		String recordStatus = fm.getRecordStatus();
 
-		if (isQDPProcess(fd) && FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
+		if (isQDPProcess(fd) && FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)) {
 			processDisbursments(fd);
 			// Postings preparation
 
@@ -922,10 +924,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
 
 		BigDecimal netFinAmount = totDisb.getDisbAmount();
-		//Since this is moved Fees should not be used here. 
-		//	if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
-		//		netFinAmount = netFinAmount.subtract(financeMain.getAdvanceEMI());
-		//	}
+		// Since this is moved Fees should not be used here.
+		// if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
+		// netFinAmount = netFinAmount.subtract(financeMain.getAdvanceEMI());
+		// }
 
 		List<ErrorDetail> errorList = new ArrayList<>();
 		boolean checkMode = true;
@@ -940,7 +942,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		 */
 
 		for (FinAdvancePayments finAdvPayment : list) {
-			//Skip the instruction if it is related to VAS
+			// Skip the instruction if it is related to VAS
 			if (DisbursementConstants.PAYMENT_DETAIL_VAS.equals(finAdvPayment.getPaymentDetail())) {
 				continue;
 			}
@@ -959,9 +961,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 
 		if (netFinAmount.compareTo(totDisbAmt) != 0) {
-			//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
+			// since if the loan not approved then user can cancel the instruction and resubmit the record in loan
+			// origination
 			if (loanApproved || financeMain.isQuickDisb()) {
-				//Total amount should match with disbursement amount.
+				// Total amount should match with disbursement amount.
 				String[] valueParm = new String[2];
 				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
 				valueParm[1] = PennantApplicationUtil.amountFormate(netFinAmount, ccyFormat);
@@ -972,13 +975,14 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 
 		if (!checkMode && financeMain.isQuickDisb()) {
-			//For quick disbursement, only payment type cheque is allowed.
+			// For quick disbursement, only payment type cheque is allowed.
 			ErrorDetail error = new ErrorDetail("60402", null);
 			errorList.add(error);
 			return errorList;
 		}
 
-		//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
+		// since if the loan not approved then user can cancel the instruction and resubmit the record in loan
+		// origination
 		if (loanApproved) {
 			// Get approved disbursements.
 			List<FinanceDisbursement> approvedDisbursments = getFinanceDisbursementDAO()
@@ -1030,7 +1034,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				}
 				if (singletDisbursment.compareTo(totalGroupAmt) != 0) {
 					String errorDesc = DateUtility.formatToLongDate(disbDate) + " , " + disbursement.getDisbSeq();
-					//Total amount should match with disbursement amount dated :{0}.
+					// Total amount should match with disbursement amount dated :{0}.
 					ErrorDetail error = new ErrorDetail("60404", new String[] { errorDesc });
 					errorList.add(error);
 					return errorList;
@@ -1065,7 +1069,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 				date = financeDisbursement.getDisbDate();
 
-				//check is first disbursement to make sure the we deducted from first disbursement date
+				// check is first disbursement to make sure the we deducted from first disbursement date
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 						&& financeDisbursement.getDisbSeq() == 1) {
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
@@ -1110,14 +1114,14 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			return errors;
 		}
 
-		//If the fee is greater than 0 then it is having an instruction.
+		// If the fee is greater than 0 then it is having an instruction.
 		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 			for (VASRecording vas : vasRecordingList) {
 				if (vas.getFee().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 
-				//if the given VAS fee has no Instruction
+				// if the given VAS fee has no Instruction
 				FinAdvancePayments advancePayments = getVasInstruction(advPaymentsList, vas.getVasReference());
 				if (advancePayments == null) {
 					String[] errParm = new String[1];
@@ -1126,7 +1130,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					valueParm[0] = vas.getVasReference();
 					ErrorDetail error = new ErrorDetail(PennantConstants.KEY_FIELD, "VINST01", errParm, valueParm);
 					errors.add(error);
-					//if the given VAS fee has not matched with Instruction amount
+					// if the given VAS fee has not matched with Instruction amount
 				} else if (vas.getFee().compareTo(advancePayments.getAmtToBeReleased()) != 0) {
 					String[] errParm = new String[1];
 					String[] valueParm = new String[1];
@@ -1138,7 +1142,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		//VAS Instruction must be in the fee with amount greater than 0
+		// VAS Instruction must be in the fee with amount greater than 0
 		if (CollectionUtils.isNotEmpty(advPaymentsList)) {
 			for (FinAdvancePayments fap : advPaymentsList) {
 				if (!DisbursementConstants.PAYMENT_DETAIL_VAS.equals(fap.getPaymentDetail())) {
@@ -1149,7 +1153,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					continue;
 				}
 
-				//if instruction is there and finance having no VasRecording
+				// if instruction is there and finance having no VasRecording
 				VASRecording vasRecording = getVasInst(fap.getVasReference(), vasRecordingList);
 				if (vasRecording == null) {
 					String[] errParm = new String[1];
@@ -1206,7 +1210,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			curAdvPaymentsList = new ArrayList<>(1);
 		}
 
-		//Process VASRecording
+		// Process VASRecording
 		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 			for (VASRecording vasRecording : vasRecordingList) {
 
@@ -1280,7 +1284,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 			VASRecording vasRecording = getVasInst(fap.getVasReference(), vasRecordingList);
 			if (vasRecording == null) {
-				//need to remove that instruction;
+				// need to remove that instruction;
 				if (PennantConstants.RCD_ADD.equals(fap.getRecordType())) {
 					//
 				} else {
