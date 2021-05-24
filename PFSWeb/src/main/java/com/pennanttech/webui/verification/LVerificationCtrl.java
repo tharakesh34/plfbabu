@@ -222,7 +222,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			setDialog(DialogType.EMBEDDED);
 		}
 
-		//render Initiation and Waiver Lists
+		// render Initiation and Waiver Lists
 		renderLVInitiationList();
 		renderLVWaiverList();
 		setScreenDocuments();
@@ -238,8 +238,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNew_Initiation(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -265,8 +264,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNew_Waiver(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -396,7 +394,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			Listitem item = new Listitem();
 			Listcell listCell;
 			if (!initType && !fromVerification) {
-				//Select
+				// Select
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
 				Radio select = new Radio();
@@ -407,13 +405,13 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				listCell.setParent(item);
 			}
 
-			//Collateral Type
+			// Collateral Type
 			listCell = new Listcell();
 			listCell.setId("CollateralType".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceFor().concat("-").concat(vrf.getReferenceType())));
 			listCell.setParent(item);
 
-			//Agency
+			// Agency
 			listCell = new Listcell();
 			listCell.setId("Agency".concat(String.valueOf(i)));
 			Label agency = new Label();
@@ -424,7 +422,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(agency);
 			listCell.setParent(item);
 
-			//Remarks
+			// Remarks
 			listCell = new Listcell();
 			listCell.setId("IRemarks".concat(String.valueOf(i)));
 			Label remarks = new Label(vrf.getRemarks());
@@ -438,7 +436,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				listCell.setParent(item);
 			}
 
-			//Status
+			// Status
 			listCell = new Listcell();
 			Label status = new Label();
 			if (initType && vrf.getLastStatus() != 0) {
@@ -461,7 +459,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			listCell.setParent(item);
 
 			if (!initType) {
-				//Decision
+				// Decision
 				listCell = new Listcell();
 				listCell.setId("Decision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
@@ -473,7 +471,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
-				//Re-Initiation Remarks
+				// Re-Initiation Remarks
 				listCell = new Listcell();
 				listCell.setId("IReInitRemarks".concat(String.valueOf(i)));
 				Textbox reInitRemarks = new Textbox();
@@ -482,7 +480,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				listCell.appendChild(reInitRemarks);
 				listCell.setParent(item);
 
-				//ReInitiate
+				// ReInitiate
 				listCell = new Listcell();
 				listCell.setId("IReInitiate".concat(String.valueOf(i)));
 				Button btnReInit = new Button("ReInitiate");
@@ -670,8 +668,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onVerificationItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -681,10 +678,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		if (selectedItem == null) {
 			return;
 		}
-
 		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
-		Verification vrf = verificationService.getVerificationById(id);
+		Verification vrf = verificationService.getVerificationById(id, VerificationType.LV);
 		if (vrf == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -751,19 +747,19 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			Listitem item = new Listitem();
 			Listcell listCell;
 
-			//Collateral Reference
+			// Collateral Reference
 			listCell = new Listcell();
 			listCell.setId("CollateralRef".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceFor()));
 			listCell.setParent(item);
 
-			//Document Type
+			// Document Type
 			listCell = new Listcell();
 			listCell.setId("DocumentType".concat(String.valueOf(i)));
 			listCell.appendChild(new Label(vrf.getReferenceType()));
 			listCell.setParent(item);
 
-			//Reason
+			// Reason
 			listCell = new Listcell();
 			listCell.setId("Reason".concat(String.valueOf(i)));
 			ExtendedCombobox reason = new ExtendedCombobox();
@@ -775,7 +771,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(reason);
 			listCell.setParent(item);
 
-			//Remarks
+			// Remarks
 			listCell = new Listcell();
 			listCell.setId("WRemarks".concat(String.valueOf(i)));
 			Textbox remarks = new Textbox(vrf.getRemarks());
@@ -789,7 +785,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				listCell.setParent(item);
 			}
 
-			//Status
+			// Status
 			listCell = new Listcell();
 			Label status = new Label();
 			if (initType && vrf.getLastStatus() != 0) {
@@ -812,7 +808,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			listCell.setParent(item);
 
 			if (!initType) {
-				//Decision
+				// Decision
 				listCell = new Listcell();
 				listCell.setId("WDecision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
@@ -824,7 +820,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
-				//Re-Initiation Remarks
+				// Re-Initiation Remarks
 				listCell = new Listcell();
 				listCell.setId("WReInitRemarks".concat(String.valueOf(i)));
 				Textbox reInitRemarks = new Textbox();
@@ -833,7 +829,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 				listCell.appendChild(reInitRemarks);
 				listCell.setParent(item);
 
-				//ReInitiate
+				// ReInitiate
 				listCell = new Listcell();
 				listCell.setId("WReInitiate".concat(String.valueOf(i)));
 				Button btnReInit = new Button("ReInitiate");
@@ -1356,7 +1352,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private List<Verification> getWaiveVerifications() {
-		//get verifications
+		// get verifications
 		List<Verification> verifications = verificationService.getVerifications(verification.getKeyReference(),
 				VerificationType.LV.getKey());
 

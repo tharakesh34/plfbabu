@@ -128,7 +128,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	protected Listbox listBoxCustomerDocuments;
 	protected Textbox remarks;
 
-	//Initiation components
+	// Initiation components
 	protected ExtendedCombobox collateral;
 	protected ExtendedCombobox agency;
 	protected Row collateralRow;
@@ -137,7 +137,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	protected Row customerRow;
 	protected Row verificationRow;
 
-	//Waiver components
+	// Waiver components
 	protected ExtendedCombobox reason;
 	protected Row reasonRow;
 
@@ -303,7 +303,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 		this.collateral.setDescColumn("CollateralType");
 		this.collateral.setValidateColumns(new String[] { "CollateralRef" });
 		this.collateral.addForward("onFulfill", self, "onChangeCollateral");
-		//this.collateral.setFilters(new Filter[] { new Filter("CollateralRef", "", Filter.OP_EQUAL) });
+		// this.collateral.setFilters(new Filter[] { new Filter("CollateralRef", "", Filter.OP_EQUAL) });
 
 		if (initiation) {
 			this.agency.setMandatoryStyle(true);
@@ -335,7 +335,8 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	// Getting the approved collateral setup values from search object and adding the newly created collateral setup list
+	// Getting the approved collateral setup values from search object and adding the newly created collateral setup
+	// list
 	public void setCollateralTypeList(List<CollateralAssignment> collateralAsssignments,
 			List<CollateralSetup> collateralSetupList) {
 
@@ -426,8 +427,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -448,8 +448,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aVerification
-	 *            CustomerPhoneNumber
+	 * @param aVerification CustomerPhoneNumber
 	 */
 	public void doWriteBeanToComponents(Verification aVerification) {
 		logger.debug(Literal.ENTERING);
@@ -523,10 +522,11 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 			}
 		}
 
-		List<LVDocument> oldDocuments = legalVettingService.getLVDocuments(verification.getKeyReference());
+		String keyReference = verification.getKeyReference();
+		List<LVDocument> oldDocuments = legalVettingService.getLVDocuments(keyReference, docType.getKey());
 		oldDocumentRefIds = getOldDocumentRefIds(oldDocuments);
 
-		//Find changed collateral document and added it as new Document
+		// Find changed collateral document and added it as new Document
 		if (collateralRef != null) {
 			for (LVDocument newDoc : documents) {
 				for (LVDocument oldDoc : oldDocuments) {
@@ -544,7 +544,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 			}
 		}
 
-		//get saved collateral documents ids.
+		// get saved collateral documents ids.
 		for (LVDocument lvDocument : oldDocuments) {
 			idList.add(String.valueOf(lvDocument.getDocumentId()));
 		}
@@ -564,7 +564,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 				}
 			}
 
-			//invisible the saved collateral documents
+			// invisible the saved collateral documents
 			if (idList.contains(reference) && !checkedDocuments.contains(reference)
 					&& !changedDocuments.values().contains(reference)) {
 				continue;
@@ -634,7 +634,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//collateral Type
+		// collateral Type
 		try {
 			if (StringUtils.isNotBlank(this.collateral.getValue())) {
 				Object object = this.collateral.getObject();
@@ -656,7 +656,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 			wve.add(we);
 		}
 		if (initiation) {
-			//agency
+			// agency
 			try {
 				if (StringUtils.isNotBlank(this.agency.getValue())) {
 					Object object = this.agency.getAttribute("agency");
@@ -670,7 +670,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 				wve.add(we);
 			}
 		} else {
-			//Reason
+			// Reason
 			try {
 				if (StringUtils.isNotBlank(this.reason.getValue())) {
 					Object object = this.reason.getObject();
@@ -688,14 +688,14 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 			}
 		}
 
-		//Remarks
+		// Remarks
 		try {
 			aVerification.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//DocumentIds
+		// DocumentIds
 		setVettingDocuments();
 
 		doRemoveValidation();
@@ -721,7 +721,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 			}
 		}
 
-		//Removed mandatory validation for collateral document
+		// Removed mandatory validation for collateral document
 		/*
 		 * if (this.verification.getVettingDocuments().isEmpty()) { throw new
 		 * WrongValueException(listBoxCollateralDocuments, Labels.getLabel("ATLEAST_ONE", new String[] {
@@ -1060,11 +1060,9 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aVerification
-	 *            (CustomerAddres)
+	 * @param aVerification (CustomerAddres)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1151,11 +1149,9 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * 
-	 * @param method
-	 *            (String)
+	 * @param method      (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1278,7 +1274,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 			CollateralSetup collateralSetup = (CollateralSetup) dataObject;
 			if (collateralSetup != null) {
 				collateral.setAttribute("collateralType", collateralSetup.getCollateralType());
-				//renderDocuments(collateralSetup.getDocuments());
+				// renderDocuments(collateralSetup.getDocuments());
 				setAgencyFiltersByCollateralCity(collateralSetup.getCollateralRef());
 			}
 		}
@@ -1301,8 +1297,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1320,8 +1315,7 @@ public class LegalVettingInitiationDialogCtrl extends GFCBaseCtrl<Verification> 
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

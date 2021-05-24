@@ -21,6 +21,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.Agencies;
@@ -439,28 +440,31 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 	}
 
 	@Override
-	public List<LVDocument> getLVDocuments(String keyReference) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" select vs.verificationId,vs.documentid,vs.documentType, vs.documentSubId,vs.documentRefId,v.referencefor collateralRef");
-		sql.append(" from verification_vt_dtls_stage vs left join verifications v on  v.id=vs.verificationId");
-		sql.append(" where vs.verificationId in ( select id from verifications where keyReference=:keyReference)");
-		sql.append(" and documentType=:documentType");
+	public List<LVDocument> getLVDocuments(String keyReference, int docTypeKey) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" vs.VerificationId, vs.DocumentId, vs.DocumentType, vs.DocumentSubId");
+		sql.append(", vs.DocumentRefId, v.ReferenceFor CollateralRef");
+		sql.append(" From verification_vt_dtls_stage vs");
+		sql.append(" Left Join Verifications v on v.id = vs.verificationId");
+		sql.append(" Where vs.VerificationId in (Select Id From Verifications");
+		sql.append(" Where KeyReference = ?) and DocumentType = ?");
 
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("keyReference", keyReference);
-		paramSource.addValue("documentType", DocumentType.COLLATRL.getKey());
+		logger.debug(Literal.SQL + sql);
 
-		RowMapper<LVDocument> rowMapper = BeanPropertyRowMapper.newInstance(LVDocument.class);
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, keyReference);
+			ps.setInt(2, docTypeKey);
+		}, (rs, i) -> {
+			LVDocument doc = new LVDocument();
+			doc.setVerificationId(rs.getLong("VerificationId"));
+			doc.setDocumentId(JdbcUtil.getLong(rs.getObject("DocumentId")));
+			doc.setDocumentType(rs.getInt("DocumentType"));
+			doc.setDocumentSubId(rs.getString("DocumentSubId"));
+			doc.setDocumentRefId(JdbcUtil.getLong(rs.getObject("DocumentRefId")));
+			doc.setCollateralRef(rs.getString("CollateralRef"));
 
-		try {
-			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return doc;
+		});
 	}
 
 	@Override

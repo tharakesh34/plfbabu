@@ -35,7 +35,7 @@ public interface LegalVettingDAO extends BasicCrudDao<LegalVetting> {
 
 	void saveDocuments(LVDocument lvDocument, String tableType);
 
-	List<LVDocument> getLVDocuments(String keyReference);
+	List<LVDocument> getLVDocuments(String keyReference, int docTypeKey);
 
 	boolean isVettingExists(long id);
 

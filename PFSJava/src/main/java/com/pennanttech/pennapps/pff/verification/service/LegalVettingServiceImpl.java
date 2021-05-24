@@ -74,8 +74,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 	 * method 3) Audit the record in to AuditHeader and Adtverification_vetting by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -136,7 +135,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "saveOrUpdate");
 		}
@@ -169,8 +168,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 	 * verification_fi by using verification_fiDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and Adtverification_fi by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -288,7 +286,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], lv.getBefImage(), lv));
 		auditHeader.setAuditDetails(auditDetailList);
 		auditHeaderDAO.addAudit(auditHeader);
-		//calling post hoot
+		// calling post hoot
 		if (postExteranalServiceHook != null) {
 			postExteranalServiceHook.doProcess(auditHeader, "doApprove");
 		}
@@ -372,8 +370,8 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 	}
 
 	@Override
-	public List<LVDocument> getLVDocuments(String keyReference) {
-		return legalVettingDAO.getLVDocuments(keyReference);
+	public List<LVDocument> getLVDocuments(String keyReference, int docTypeKey) {
+		return legalVettingDAO.getLVDocuments(keyReference, docTypeKey);
 	}
 
 	@Override

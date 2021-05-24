@@ -38,7 +38,7 @@ public interface LegalVettingService {
 
 	DocumentManager getDocumentById(long id);
 
-	List<LVDocument> getLVDocuments(String keyReference);
+	List<LVDocument> getLVDocuments(String keyReference, int docTypeKey);
 
 	boolean isVettingExists(long id);
 

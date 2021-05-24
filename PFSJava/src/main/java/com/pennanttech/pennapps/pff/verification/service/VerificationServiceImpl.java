@@ -209,7 +209,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		for (Verification item : verification.getVerifications()) {
 
 			if (item.getId() != 0 && !isInitTab && verificationType == VerificationType.TV) {
-				//Update the Collateral valuation amount
+				// Update the Collateral valuation amount
 				updateCollateralValuationAmount(financeDetail, item);
 			}
 
@@ -331,7 +331,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 		}
 
-		//calling post hook for data sync to external system
+		// calling post hook for data sync to external system
 		if (postExteranalServiceHook != null) {
 			AuditHeader aAuditHeader = getAuditHeader(financeDetail, auditTranType);
 			postExteranalServiceHook.doProcess(aAuditHeader, "saveOrUpdate");
@@ -352,7 +352,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			return;
 		}
 
-		//Process only if forward direction.
+		// Process only if forward direction.
 		String recordStatus = financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus();
 		if (!PennantConstants.RCD_STATUS_SAVED.equals(recordStatus)
 				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordStatus)
@@ -361,14 +361,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			BigDecimal collateralValue = verification.getFinalValAmt();
 			String collateralRef = verification.getReferenceFor();
 
-			//Fetching the collateral setup
+			// Fetching the collateral setup
 			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupDetails(collateralRef, "_View");
 			if (collateralSetup == null) {
 				logger.info("Collateral setup not available for the collateral reference :" + collateralRef);
 				return;
 			}
 
-			//Collateral value
+			// Collateral value
 			collateralSetup.setBankValuation(collateralValue);
 
 			/*
@@ -377,7 +377,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			 * RoundingMode.HALF_DOWN); collateralSetup.setBankValuation(bankValuation);
 			 */
 
-			//Updating the Collateral value and bank valuation.
+			// Updating the Collateral value and bank valuation.
 			collateralSetupDAO.updateCollateralSetup(collateralSetup, "_Temp");
 			collateralSetupDAO.updateCollateralSetup(collateralSetup, "");
 
@@ -1001,8 +1001,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * verifications by using verificationsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and Adtverifications by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -1028,8 +1027,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * getApprovedverificationsById fetch the details by using verificationsDAO's getverificationsById method . with
 	 * parameter id and type as blank. it fetches the approved records from the verifications.
 	 * 
-	 * @param id
-	 *            id of the Verification. (String)
+	 * @param id id of the Verification. (String)
 	 * @return verifications
 	 */
 	@Override
@@ -1048,8 +1046,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and Adtverifications by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -1112,8 +1109,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * workFlow table by using verificationDAO.delete with parameters verification,"_Temp" 3) Audit the record in to
 	 * AuditHeader and Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -1141,8 +1137,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -1292,13 +1287,25 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	@Override
-	public Verification getVerificationById(long id) {
+	public Verification getVerificationById(long id, VerificationType type) {
 		Verification verification = verificationDAO.getVerificationById(id);
-		if (verification != null) {
-			verification.setLvDocuments(legalVerificationService.getLVDocumentsFromStage(id));
-		}
-		return verification;
 
+		if (verification == null) {
+			return null;
+		}
+
+		switch (type.getValue()) {
+		case "VETTING":
+			verification.setVettingDocuments(legalVettingService.getLVDocumentsFromStage(id));
+			break;
+		case "LV":
+			verification.setLvDocuments(legalVerificationService.getLVDocumentsFromStage(id));
+			break;
+		default:
+			break;
+		}
+
+		return verification;
 	}
 
 	private void setVerificationData(FinanceDetail financeDetail, Verification verification,

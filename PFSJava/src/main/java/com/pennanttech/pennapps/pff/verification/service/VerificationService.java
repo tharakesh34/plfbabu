@@ -70,7 +70,7 @@ public interface VerificationService {
 
 	void setLVDetails(List<Verification> verifications);
 
-	Verification getVerificationById(long id);
+	Verification getVerificationById(long id, VerificationType type);
 
 	void savereInitLegalVerification(FinanceDetail financeDetail, Verification verification);
 
