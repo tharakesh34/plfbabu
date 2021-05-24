@@ -537,7 +537,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.setReferenceType(lvDocument.getDocumentSubId());
 
 			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(item.getKeyReference(),
-					item.getReferenceType(), VerificationType.LV.getKey(), verification.getVerificationCategory());
+					item.getReferenceType(), VerificationType.LV.getKey(), verification.getRequestType(),
+					verification.getVerificationCategory());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -562,7 +563,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Long verificationId;
 		if (!verification.isApproveTab()) {
 			verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
-					verification.getReferenceFor(), VerificationType.LV.getKey(),
+					verification.getReferenceFor(), VerificationType.LV.getKey(), verification.getRequestType(),
 					verification.getVerificationCategory());
 			Verification vrf = new Verification();
 			if (verification.getId() != 0 || verificationId != null) {
@@ -1635,7 +1636,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		Long verificationId;
 		if (!verification.isApproveTab()) {
 			verificationId = verificationDAO.getVerificationIdByReferenceFor(verification.getKeyReference(),
-					verification.getReferenceFor(), VerificationType.VETTING.getKey(),
+					verification.getReferenceFor(), VerificationType.VETTING.getKey(), verification.getRequestType(),
 					verification.getVerificationCategory());
 			Verification vrf = new Verification();
 			if (verification.getId() != 0 || verificationId != null) {
@@ -1690,14 +1691,15 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void saveLVettingWaive(Verification verification) {
 		Verification item = null;
 		List<LVDocument> newLVDocs;
-		for (LVDocument lvDocument : verification.getLvDocuments()) {
+		for (LVDocument lvDocument : verification.getVettingDocuments()) {
 			item = new Verification();
 			newLVDocs = new ArrayList<>();
 			BeanUtils.copyProperties(verification, item);
 			item.setReferenceType(lvDocument.getDocumentSubId());
 
 			Long verificationId = verificationDAO.getVerificationIdByReferenceFor(item.getKeyReference(),
-					item.getReferenceType(), VerificationType.LV.getKey(), verification.getVerificationCategory());
+					item.getReferenceFor(), VerificationType.VETTING.getKey(), verification.getRequestType(),
+					verification.getVerificationCategory());
 
 			if (verificationId != null) {
 				item.setId(verificationId);
@@ -1711,10 +1713,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			item.setVettingDocuments(newLVDocs);
 
 			// Legal verification
-			legalVerificationService.save(item, TableType.MAIN_TAB);
+			legalVettingService.save(item, TableType.MAIN_TAB);
 
 			// LV Documents
-			legalVerificationService.saveDocuments(item.getLvDocuments(), TableType.STAGE_TAB);
+			legalVettingService.saveDocuments(item.getLvDocuments(), TableType.STAGE_TAB);
 		}
 	}
 

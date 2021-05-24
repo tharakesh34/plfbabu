@@ -71,7 +71,7 @@ public interface VerificationDAO extends BasicCrudDao<Verification> {
 	Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType);
 
 	Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType,
-			int verificationCategory);
+			int requestType, int verificationCategory);
 
 	Verification getVerificationById(long id);
 

@@ -542,7 +542,8 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 	@Override
 	public Long getVerificationIdByReferenceFor(String finReference, String referenceFor, int verificationType,
-			int verificationCategory) {
+			int requestType, int verificationCategory) {
+
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" id from verifications");
 		sql.append(" Where ReferenceFor = ? and VerificationType = ? and KeyReference = ?");
@@ -550,7 +551,7 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		logger.debug(Literal.SQL + sql);
 
-		Object[] args = new Object[] { referenceFor, verificationType, finReference, RequestType.INITIATE.getKey(),
+		Object[] args = new Object[] { referenceFor, verificationType, finReference, requestType,
 				verificationCategory };
 
 		try {
