@@ -407,6 +407,7 @@ public class ScheduleGenerator {
 			} else {
 				if (prvSchd != null) {
 					curSchd.setCalculatedRate(prvSchd.getActRate());
+					curSchd.setActRate(prvSchd.getActRate());
 				}
 			}
 			finScheduleData.setScheduleMap(curSchd);
