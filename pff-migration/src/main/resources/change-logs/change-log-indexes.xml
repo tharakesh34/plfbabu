@@ -148,14 +148,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="16" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_cced_seq_ref on customer_corp_ed(seqno,lower(reference));
-  		    ]]>
-		</sql>
-	</changeSet> 
-	
 	<changeSet id="17" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -180,22 +172,6 @@
 		</sql>
 	</changeSet> 
 	
-	<changeSet id="20" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_cue_ref on customer_retail_ed(lower(reference));
-    		]]>
-		</sql>
-	</changeSet> 
-	
-	<changeSet id="21" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_cuet_ref on customer_retail_ed_temp(lower(reference));
-    		]]>
-		</sql>
-	</changeSet> 
-	
 	<changeSet id="22" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -209,22 +185,6 @@
 			<![CDATA[
 				create index ix_lc_limitcode on limitcodedetail(lower(limitcode));
     		]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="24" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_cur_seq on customer_retail_ed(seqno);
-    		]]>
-		</sql>
-	</changeSet> 
-	
-	<changeSet id="25" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_cur_ref_seq on customer_retail_ed(lower(reference),seqno);
-   			]]>
 		</sql>
 	</changeSet> 
 	
@@ -468,14 +428,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="56" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_cse_ref_sen on customer_sme_ed(seqno,lower(reference));
-    		]]>
-		</sql>
-	</changeSet>
-	
 	<changeSet id="57" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -564,14 +516,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="68" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_ccet_reference on customer_corp_ed_temp(lower(reference));
-    		]]>
-		</sql>
-	</changeSet>
-	
 	<changeSet id="69" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -584,22 +528,6 @@
 		<sql>
 			<![CDATA[
 				create index ix_pds_acn_ifsc on penny_drop_status(lower(acctnum),lower(ifsc));
-    		]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="71" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_lhoe_ref on loan_hfl_org_ed(lower(reference));
-    		]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="72" author="murthy.y" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				create index ix_lhoet_ref on loan_hfl_org_ed_temp(lower(reference));
     		]]>
 		</sql>
 	</changeSet>
@@ -1609,14 +1537,6 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="16" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_cced_seq_ref on customer_corp_ed(seqno,NLSSORT(reference,'nls_sort=''BINARY_CI'''));
-    		]]>
-		</sql>
-	</changeSet> -->
-	
 	<changeSet id="17" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1641,22 +1561,6 @@
 		</sql>
 	</changeSet> 
 	
-	<!-- <changeSet id="20" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_cue_ref on customer_retail_ed(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
-    		]]>
-		</sql>
-	</changeSet> -->
-	
-	<!-- <changeSet id="21" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_cuet_ref on customer_retail_ed_temp(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
-    		]]>
-		</sql>
-	</changeSet> -->
-	
 	<changeSet id="22" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -1672,22 +1576,6 @@
     		]]>
 		</sql>
 	</changeSet>
-	
-	<!-- <changeSet id="24" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_cur_seq on customer_retail_ed(seqno);
-    		]]>
-		</sql>
-	</changeSet> -->
-	
-	<!-- <changeSet id="25" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_cur_ref_seq on customer_retail_ed(NLSSORT(reference,'nls_sort=''BINARY_CI'''),seqno);
-    		]]>
-		</sql>
-	</changeSet> -->
 	
 	<changeSet id="26" author="murthy.y" dbms="oracle">
 		<sql>
@@ -1782,14 +1670,6 @@
 			<![CDATA[
 				create index ix_taxt_referenceid on tax_details_temp(referenceid);
 		    ]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="38_pre" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-			        drop index IX_TAXDETAIL_BV;
-			]]>
 		</sql>
 	</changeSet>
 	
@@ -1953,14 +1833,6 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="56" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_cse_ref_sen on customer_sme_ed(seqno,NLSSORT(reference,'nls_sort=''BINARY_CI'''));
-		    ]]>
-		</sql>
-	</changeSet> -->
-	
 	<changeSet id="57" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2049,14 +1921,6 @@
 		</sql>
 	</changeSet>
 	
-	<!-- <changeSet id="68" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_ccet_reference on customer_corp_ed_temp(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
-		    ]]>
-		</sql>
-	</changeSet> -->
-	
 	<changeSet id="69" author="murthy.y" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -2072,22 +1936,6 @@
     		]]>
 		</sql>
 	</changeSet>
-	
-	<!-- <changeSet id="71" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_lhoe_ref on loan_hfl_org_ed(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
-		    ]]>
-		</sql>
-	</changeSet> -->
-	
-	<!-- <changeSet id="72" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				create index ix_lhoet_ref on loan_hfl_org_ed_temp(NLSSORT(reference,'nls_sort=''BINARY_CI'''));
-		    ]]>
-		</sql>
-	</changeSet> -->
 	
 	<changeSet id="73" author="murthy.y" dbms="oracle">
 		<sql>
@@ -2206,14 +2054,6 @@
 			<![CDATA[
 				create  index IX_Financemain_12 on financemain(finisactive,NLSSORT(FINBRANCH,'nls_sort=''BINARY_CI'''),grcperiodenddate,NLSSORT(FINTYPE,'nls_sort=''BINARY_CI'''),mandateid);
 		    ]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="88_pre" author="murthy.y" dbms="oracle">
-		<sql>
-			<![CDATA[
-				drop index IX_PRESENTMNTDTLS_RECEIPTID;
-			]]>
 		</sql>
 	</changeSet>
 	
@@ -3121,14 +2961,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="16" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_cced_seq_ref on customer_corp_ed(seqno,reference);
-    		]]>
-		</sql>
-	</changeSet> 
-	
 	<changeSet id="17" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3151,23 +2983,7 @@
 				create nonclustered index    ix_icd_linkid on income_details(linkid);
     		]]>
 		</sql>
-	</changeSet> 
-	
-	<changeSet id="20" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_cue_ref on customer_retail_ed(reference);
-    		]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="21" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_cuet_ref on customer_retail_ed_temp(reference);
-    		]]>
-		</sql>
-	</changeSet> 
+	</changeSet>  
 	
 	<changeSet id="22" author="murthy.y" dbms="mssql">
 		<sql>
@@ -3184,22 +3000,6 @@
     		]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="24" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_cur_seq on customer_retail_ed(seqno);
-    		]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="25" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_cur_ref_seq on customer_retail_ed(reference,seqno);
-    		]]>
-		</sql>
-	</changeSet> 
 	
 	<changeSet id="26" author="murthy.y" dbms="mssql">
 		<sql>
@@ -3441,14 +3241,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="56" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_cse_ref_sen on customer_sme_ed(seqno,reference);
-		    ]]>
-		</sql>
-	</changeSet> 
-	
 	<changeSet id="57" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3537,14 +3329,6 @@
 		</sql>
 	</changeSet>
 	
-	 <changeSet id="68" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_ccet_reference on customer_corp_ed_temp(reference);
-		    ]]>
-		</sql>
-	</changeSet> 
-	
 	<changeSet id="69" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3560,22 +3344,6 @@
 		    ]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="71" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_lhoe_ref on loan_hfl_org_ed(reference);
-		    ]]>
-		</sql>
-	</changeSet> 
-	
-	<changeSet id="72" author="murthy.y" dbms="mssql">
-		<sql>
-			<![CDATA[
-				create nonclustered index    ix_lhoet_ref on loan_hfl_org_ed_temp(reference);
-		    ]]>
-		</sql>
-	</changeSet> 
 	
 	<changeSet id="73" author="murthy.y" dbms="mssql">
 		<sql>
