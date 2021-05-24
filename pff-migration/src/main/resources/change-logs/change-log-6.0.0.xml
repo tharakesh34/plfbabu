@@ -14309,7 +14309,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="420" author="rajesh.n">
+	<!-- <changeSet id="420" author="rajesh.n">
 		<comment>ST#6_TK#32</comment>
 		<sql>
             <![CDATA[
@@ -14329,7 +14329,7 @@ UNION ALL
 			INSERT INTO reportfilterfields values ((select reportid from reportconfiguration where menuitemcode='menu_item_verificationstsreport'),1,'FinReference','LOVSEARCH','Loan Reference','keyreference','','FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,'','','','',250,0,'=',1,1000,'Approved','','','','','',0,current_timestamp,'');
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="422" author="rajesh.n">
 		<comment>PSD#150367</comment>
@@ -32725,6 +32725,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'externaldocuments');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#163278" author="Gopal.p" >
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 't1.entitycode' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_MiscellaneouspostUploadStsrpt') AND FIELDID = 1;
 			]]>
 		</sql>
 	</changeSet>
