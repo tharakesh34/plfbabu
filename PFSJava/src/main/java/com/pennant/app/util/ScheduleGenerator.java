@@ -282,7 +282,12 @@ public class ScheduleGenerator {
 
 			if (DateUtil.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) == 0
 					&& financeMain.getRepayBaseRate() == null) {
-				prvSchd.setActRate(financeMain.getRepayProfitRate());
+				if (prvSchd != null) {
+					prvSchd.setActRate(financeMain.getRepayProfitRate());
+				} else {
+					curSchd.setActRate(financeMain.getRepayProfitRate());
+					curSchd.setCalculatedRate(financeMain.getRepayProfitRate());
+				}
 			}
 
 			//Interest Days basis kept as same for both grace and repayment periods.
@@ -330,13 +335,15 @@ public class ScheduleGenerator {
 					curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 					repayRateReset = false;
 				} else {
-					curSchd.setActRate(prvSchd.getActRate());
-					curSchd.setBaseRate(prvSchd.getBaseRate());
-					curSchd.setSplRate(prvSchd.getSplRate());
-					curSchd.setMrgRate(prvSchd.getMrgRate());
-					curSchd.setAdvBaseRate(prvSchd.getAdvBaseRate());
-					curSchd.setAdvMargin(prvSchd.getAdvMargin());
-					curSchd.setAdvPftRate(prvSchd.getAdvPftRate());
+					if (prvSchd != null) {
+						curSchd.setActRate(prvSchd.getActRate());
+						curSchd.setBaseRate(prvSchd.getBaseRate());
+						curSchd.setSplRate(prvSchd.getSplRate());
+						curSchd.setMrgRate(prvSchd.getMrgRate());
+						curSchd.setAdvBaseRate(prvSchd.getAdvBaseRate());
+						curSchd.setAdvMargin(prvSchd.getAdvMargin());
+						curSchd.setAdvPftRate(prvSchd.getAdvPftRate());
+					}
 				}
 
 				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) == 0) {
