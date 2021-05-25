@@ -7,6 +7,10 @@ function encrypt(val, randomKey) {
 	return encrypted;
 }
 
+function encryptEventValue(event) {
+    event.data.value = encrypt(event.data.value, randomKey.getValue());
+}
+
 function encryptPassword() {
     zAu.cmd0.showBusy('Processing...');
 	var userNameField = zk.Widget.$('$txtbox_Username');
