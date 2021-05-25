@@ -222,8 +222,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_PaymentHeaderDialog(Event event) throws Exception {
@@ -384,8 +383,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -396,8 +394,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -408,8 +405,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -420,8 +416,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -432,8 +427,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -444,8 +438,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -459,8 +452,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -778,8 +770,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param paymentHeader
-	 *            The entity that need to be render.
+	 * @param paymentHeader The entity that need to be render.
 	 */
 	public void doShowDialog(PaymentHeader paymentHeader) {
 		logger.debug(Literal.LEAVING);
@@ -941,7 +932,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 		}
 
-		//#Bug Fix 153031
+		// #Bug Fix 153031
 		if (totAmount == null) {
 			MessageUtil.showError(Labels.getLabel("label_PaymentHeaderDialog_NoPayInstruction.value"));
 			return;
@@ -1016,11 +1007,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 * @param aAuthorizedSignatoryRepository (AuthorizedSignatoryRepository)
 	 * 
-	 * @param tranType
-	 *            (String)
+	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1107,10 +1096,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param AuditHeader
-	 *            auditHeader
-	 * @param method
-	 *            (String)
+	 * @param AuditHeader auditHeader
+	 * @param method      (String)
 	 * @return boolean
 	 * 
 	 */
@@ -1287,7 +1274,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
 				}
 
-				//GST Calculations
+				// GST Calculations
 				TaxHeader taxHeader = detail.getTaxHeader();
 				Taxes cgstTax = null;
 				Taxes sgstTax = null;
@@ -1337,7 +1324,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					taxHeader.setTaxDetails(new ArrayList<>());
 				}
 
-				//CGST
+				// CGST
 				if (cgstTax == null) {
 					cgstTax = getTaxDetail(RuleConstants.CODE_CGST, cGSTPerc, taxHeader);
 					taxHeader.getTaxDetails().add(cgstTax);
@@ -1345,7 +1332,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					cgstTax.setTaxPerc(cGSTPerc);
 				}
 
-				//SGST
+				// SGST
 				if (sgstTax == null) {
 					sgstTax = getTaxDetail(RuleConstants.CODE_SGST, sGSTPerc, taxHeader);
 					taxHeader.getTaxDetails().add(sgstTax);
@@ -1353,7 +1340,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					sgstTax.setTaxPerc(sGSTPerc);
 				}
 
-				//IGST
+				// IGST
 				if (igstTax == null) {
 					igstTax = getTaxDetail(RuleConstants.CODE_IGST, iGSTPerc, taxHeader);
 					taxHeader.getTaxDetails().add(igstTax);
@@ -1361,7 +1348,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					igstTax.setTaxPerc(iGSTPerc);
 				}
 
-				//UGST
+				// UGST
 				if (ugstTax == null) {
 					ugstTax = getTaxDetail(RuleConstants.CODE_UGST, uGSTPerc, taxHeader);
 					taxHeader.getTaxDetails().add(ugstTax);
@@ -1369,7 +1356,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					ugstTax.setTaxPerc(uGSTPerc);
 				}
 
-				//CESS percentage
+				// CESS percentage
 				if (cessTax == null) {
 					cessTax = getTaxDetail(RuleConstants.CODE_CESS, cessPerc, taxHeader);
 					taxHeader.getTaxDetails().add(cessTax);
@@ -1511,7 +1498,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					BigDecimal amount = oldDetail.getAmount();
 					if (oldDetail.getTaxHeader() != null
 							&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(oldDetail.getTaxComponent())) {
-						//GST Calculations
+						// GST Calculations
 						TaxHeader taxHeader = oldDetail.getTaxHeader();
 						List<Taxes> taxDetails = taxHeader.getTaxDetails();
 						BigDecimal gstAmount = BigDecimal.ZERO;
@@ -1523,7 +1510,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 						amount = amount.subtract(gstAmount);
 					}
 
-					oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
+					oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
 					oldDetail.setAdviseAmount(newDetail.getAdviseAmount());
 					oldDetail.setManualAdvise(newDetail.getManualAdvise());
 					oldDetail.setPrvGST(newDetail.getPrvGST());
@@ -1566,7 +1553,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				avaAmount = detail.getAvailableAmount().add(avaAmount);
 				if (detail.getTaxHeader() != null
 						&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-					//GST Calculations
+					// GST Calculations
 					TaxHeader taxHeader = detail.getTaxHeader();
 					List<Taxes> taxDetails = taxHeader.getTaxDetails();
 					BigDecimal gstAmount = BigDecimal.ZERO;
@@ -1589,7 +1576,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				BigDecimal balAmount = detail.getAvailableAmount();
 				if (detail.getTaxHeader() != null
 						&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-					//GST Calculations
+					// GST Calculations
 					TaxHeader taxHeader = detail.getTaxHeader();
 					List<Taxes> taxDetails = taxHeader.getTaxDetails();
 					BigDecimal gstAmount = BigDecimal.ZERO;
@@ -1697,7 +1684,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
 			}
 
-			//GST Calculations
+			// GST Calculations
 			Taxes cgstTax = null;
 			Taxes sgstTax = null;
 			Taxes igstTax = null;
@@ -1768,7 +1755,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					avaAmount = paymentDetail.getAvailableAmount().add(avaAmount);
 					payAmount = paymentDetail.getAmount().add(payAmount);
 
-					//GST Calculations
+					// GST Calculations
 					TaxHeader taxHeader = paymentDetail.getTaxHeader();
 
 					if (taxHeader != null) {
@@ -2019,8 +2006,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the Plus button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onAddPaymentHeader(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
@@ -2033,8 +2019,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the minus button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onDeletePaymentHeader(Event event) throws Exception {
 
@@ -2067,7 +2052,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					BigDecimal paidAmount = advise.getAmount();
 					String desc = advise.getFeeTypeDesc();
 
-					//GST Calculations
+					// GST Calculations
 					TaxHeader taxHeader = advise.getTaxHeader();
 					if (taxHeader != null) {
 						List<Taxes> taxDetails = taxHeader.getTaxDetails();
@@ -2178,7 +2163,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			if (paymentDetail.getReferenceId() == detail.getReferenceId()) {
 				avaAmount = detail.getAvailableAmount();
 
-				//GST Calculations
+				// GST Calculations
 				TaxHeader taxHeader = detail.getTaxHeader();
 				if (taxHeader != null) {
 					List<Taxes> taxDetails = taxHeader.getTaxDetails();
