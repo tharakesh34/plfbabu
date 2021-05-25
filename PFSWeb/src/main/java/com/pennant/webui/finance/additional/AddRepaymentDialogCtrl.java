@@ -316,8 +316,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -402,14 +401,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.wIAmount.setValue(BigDecimal.ZERO);
 		}
 
-		//Check if schedule header is null or not and set the recal type fields.
+		// Check if schedule header is null or not and set the recal type fields.
 		if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 					PennantStaticListUtil.getSchCalCodes(),
 					",TILLMDT,TILLDATE,ADDRECAL,ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
 		} else {
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-					PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,STEPPOS,");//,ADDTERM
+					PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,STEPPOS,");// ,ADDTERM
 		}
 
 		logger.debug("Leaving");
@@ -458,7 +457,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
@@ -631,7 +630,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 		try {
-			//allow zero for Re payment 
+			// allow zero for Re payment
 			if (this.wIAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0 || this.cbSchdMthd.getSelectedItem()
 					.getValue().toString().equals(CalculationConstants.SCHMTHD_PFTCAP)) {
 				BigDecimal amount = PennantApplicationUtil.unFormateAmount(this.wIAmount.getValidateValue(), format);
@@ -643,12 +642,12 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 						FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
 
-						//Not before Selected From date
+						// Not before Selected From date
 						if (curSchd.getSchDate().compareTo(finServiceInstruction.getFromDate()) < 0) {
 							continue;
 						}
 
-						//Maximum Outstanding Repay amount Allowed to Change
+						// Maximum Outstanding Repay amount Allowed to Change
 						totalAlwRpyAmt = totalAlwRpyAmt.add(curSchd.getPrincipalSchd());
 					}
 				}
@@ -794,12 +793,10 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			doClearMessage();
 			if (this.cbRepayFromDate.getSelectedItem().getAttribute("fromSpecifier")
 					.equals(CalculationConstants.SCH_SPECIFIER_GRACE)) {
-				if (!showMessage(
-						ErrorUtil.getErrorDetail(
-								new ErrorDetail("scheduleMethod", "65002", new String[] {},
-										new String[] { finServiceInstruction.getSchdMethod() }),
-								getUserWorkspace().getUserLanguage()).getError(),
-						Labels.getLabel("message.Overide"))) {
+				if (!showMessage(ErrorUtil.getErrorDetail(
+						new ErrorDetail("scheduleMethod", "65002", new String[] {},
+								new String[] { finServiceInstruction.getSchdMethod() }),
+						getUserWorkspace().getUserLanguage()).getError(), Labels.getLabel("message.Overide"))) {
 					return;
 				}
 			}
@@ -885,7 +882,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	//Enable till date field if the selected recalculation type is TIIDATE
+	// Enable till date field if the selected recalculation type is TIIDATE
 	public void onChange$cbReCalType(Event event) {
 		logger.debug("Entering" + event.toString());
 		String selectedRecalType = this.cbReCalType.getSelectedItem().getValue().toString();
@@ -1004,11 +1001,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else if (repayToDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0
 					|| this.cbRepayToDate.getSelectedIndex() != (totalCount - 1)) {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
-						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,CURPRD,ADDTERM,STEPPOS,");
+						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
 			} else {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getSchCalCodes(),
-						",ADDLAST,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
+						",ADDLAST,ADJTERMS,CURPRD,ADDTERM,TILLDATE,TILLMDT,ADDRECAL,STEPPOS,");
 			}
 
 			fillSchToDates(this.cbTillDate, getFinScheduleData().getFinanceScheduleDetails(),
@@ -1026,7 +1023,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void onChange$cbRepayFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		//fillSchdMethod();
+		// fillSchdMethod();
 		this.cbRepayToDate.setDisabled(true);
 		if (isValidComboValue(this.cbRepayFromDate, Labels.getLabel("label_ChangeRepaymentDialog_FromDate.value"))) {
 			fillSchToDates(this.cbRepayToDate, getFinScheduleData().getFinanceScheduleDetails(),
@@ -1039,8 +1036,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Method to show error message
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 * @throws InterruptedException
 	 * @return true/false (boolean)
 	 */
