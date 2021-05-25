@@ -276,7 +276,7 @@ public class ImplementationConstants {
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true);
 		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
-		PRESEMENT_STOP_RECEIPTS_ON_EOD = getValueAsBoolean(extensions, "PRESEMENT_STOP_RECEIPTS_ON_EOD", false);
+		PRESEMENT_STOP_RECEIPTS_ON_EOD = getValueAsBoolean(extensions, "PRESEMENT_STOP_RECEIPTS_ON_EOD", true);
 		HOLD_DISB_INST_POST = getValueAsBoolean(extensions, "HOLD_DISB_INST_POST", false);
 		VAS_INST_ON_DISB = getValueAsBoolean(extensions, "VAS_INST_ON_DISB", false);
 
