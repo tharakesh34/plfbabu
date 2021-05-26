@@ -12,11 +12,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -29,17 +24,14 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinAutoApprovalDetails;
-import com.pennant.backend.model.finance.InstBasedSchdDetails;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineImport;
-import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
-import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.DataEngineUtil;
@@ -47,611 +39,182 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.process.DisbursementProcess;
 import com.pennanttech.pff.core.process.PaymentProcess;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementResponse;
-import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
-import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
 
-public class DefaultDisbursementResponse extends AbstractInterface implements DisbursementResponse, ValidateRecord {
+public class DefaultDisbursementResponse extends AbstractInterface implements DisbursementResponse {
 	protected final Logger logger = LogManager.getLogger(getClass());
 
 	private DisbursementProcess disbursementProcess;
 	private PaymentProcess paymentProcess;
-	private LoggedInUser loggedInUser;
-
-	@Autowired(required = false)
-	private FinAutoApprovalDetailDAO finAutoApprovalDetailDAO;
-	@Autowired
 	private DataEngineConfig dataEngineConfig;
-	private static List<Configuration> DISB_RESP_CONFIG = new ArrayList<>();
-	private DataEngineStatus DISB_IMPORT_STATUS = null;
+
+	private static List<Configuration> disbRespConfig = new ArrayList<>();
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
-	String localLocation = "";
 
-	Channel channel = null;
-	ChannelSftp channelSftp = null;
-	Session session = null;
-
-	@Autowired(required = false)
-	private InstBasedSchdDetailDAO instBasedSchdDetailDAO;
+	private static String customPaidStatus;
+	static {
+		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+		if (StringUtils.isNotBlank(disbStatus)) {
+			customPaidStatus = disbStatus;
+		}
+	}
 
 	public DefaultDisbursementResponse() {
 		super();
 	}
 
-	/*
-	 * @Override public void receiveResponse(Object... params) throws Exception { logger.debug(Literal.ENTERING); long
-	 * userId = (Long) params[0]; DataEngineStatus status = (DataEngineStatus) params[1]; File file = (File) params[2];
-	 * Media media = (Media) params[3];
-	 * 
-	 * String configName = status.getName();
-	 * 
-	 * String name = "";
-	 * 
-	 * if (file != null) { name = file.getName(); } else if (media != null) { name = media.getName(); }
-	 * 
-	 * status.reset(); status.setFileName(name); status.setRemarks("initiated disbursement response file [ " + name +
-	 * " ] processing..");
-	 * 
-	 * DataEngineImport dataEngine; dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true,
-	 * getValueDate(), status); dataEngine.setFile(file); dataEngine.setMedia(media);
-	 * dataEngine.setValueDate(getValueDate());
-	 * 
-	 * Map<String, Object> filterMap = new HashMap<>(); filterMap.put(DisbursementConstants.STATUS_AWAITCON,
-	 * DisbursementConstants.STATUS_AWAITCON); dataEngine.setFilterMap(filterMap);
-	 * 
-	 * dataEngine.importData(configName);
-	 * 
-	 * do { if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) { receiveResponse(status.getId());
-	 * break; } } while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
-	 * 
-	 * logger.info(name + " file processing completed"); }
-	 */
-
 	@Override
-	public void processAutoResponseFiles() {
-		logger.info("Processing Disbursement Respone files..");
-		loadConfig();
-		for (Configuration configuration : DISB_RESP_CONFIG) {
-			localLocation = setLocalRepoLocation(configuration.getUploadPath());
+	public void receiveResponse(DataEngineStatus dataEngineStatus) {
+		logger.info(Literal.ENTERING);
+		long respBatchID = dataEngineStatus.getId();
+		long userId = dataEngineStatus.getUserId();
 
-			Map<String, EventProperties> properties = eventProperties.computeIfAbsent(configuration.getId(),
-					abc -> dataEngineConfig.getEventPropertyMap(configuration.getId()));
+		dataEngineStatus.setRemarks("Start updating the dibursement/payment instrunctions status..");
+		logger.info(dataEngineStatus.getRemarks());
 
-			String[] postEvents = StringUtils.trimToEmpty(configuration.getPostEvent()).split(",");
-			EventProperties property = null;
+		logger.info("Response-Batch-ID: {}", respBatchID);
+		logger.info("User-ID: {}", userId);
 
-			EventProperties s3Property = null;
-			EventProperties sharedFTPProperty = null;
-			EventProperties sharedSFTPProperty = null;
-			EventProperties sharedNetworkFolderProperty = null;
+		List<FinAdvancePayments> finAdvPayments = disbursementProcess.getDisbRequestsByRespBatchId(respBatchID);
+		List<PaymentInstruction> instructions = disbursementProcess.getPaymentInstructionsByRespBatchId(respBatchID);
 
-			for (String postEvent : postEvents) {
-				postEvent = StringUtils.trimToEmpty(postEvent);
-				property = properties.get(postEvent);
+		long totalRecords = finAdvPayments.size() + instructions.size();
+		long processedRecords = 0;
+		long failureRecords = 0;
+		long successRecords = 0;
 
-				if (property != null) {
-					String storageType = StringUtils.trimToEmpty(property.getStorageType());
-					if (storageType.equals("S3")) {
-						s3Property = property;
-					} else if (storageType.equals("SHARE_TO_FTP")) {
-						sharedFTPProperty = property;
-					} else if (storageType.equals("SHARE_TO_SFTP")) {
-						sharedSFTPProperty = property;
-					} else if (storageType.equals("SHARED_NETWORK_FOLDER")) {
-						sharedNetworkFolderProperty = property;
-					}
-				}
+		dataEngineStatus.setTotalRecords(totalRecords);
+		dataEngineStatus.setProcessedRecords(processedRecords);
+		dataEngineStatus.setSuccessRecords(successRecords);
+		dataEngineStatus.setFailedRecords(failureRecords);
+		dataEngineStatus.setStatus(ExecutionStatus.E.name());
+
+		logger.info("Total dibursemnt instructions: {}", totalRecords);
+
+		for (FinAdvancePayments fap : finAdvPayments) {
+			String finReference = fap.getFinReference();
+			long paymentId = fap.getPaymentId();
+			String status = fap.getStatus();
+			String clearingStatus = fap.getClearingStatus();
+
+			logger.info("FinReference: {}", finReference);
+			logger.info("PaymentId: {}", paymentId);
+			logger.info("Disbursement instruction status: {}", status);
+			logger.info("Disbursement instruction clearing status: {}", clearingStatus);
+
+			FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.MAIN_TAB);
+			if (fm == null) {
+				fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.TEMP_TAB);
 			}
 
-			if (s3Property != null) {
-				// FIXME
-			} else if (sharedSFTPProperty != null) {
-				getListOfFilesFromFTP(sharedSFTPProperty, "SFTP", configuration);
-			} else if (sharedFTPProperty != null) {
-				getListOfFilesFromFTP(sharedFTPProperty, "FTP", configuration);
-			} else if (sharedNetworkFolderProperty != null) {
-				// FIXME
-			}
+			fap.setDisbResponseBatchId(respBatchID);
+			fap.setUserId(userId);
 
-		}
-
-	}
-
-	private List<File> getListOfFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config) {
-		logger.info("Connecting into SFTP Shared location to Retreive Files..");
-		List<String> fileNames = null;
-		try {
-			String hostName = eventProperty.getHostName();
-			String port = eventProperty.getPort();
-			String accessKey = eventProperty.getAccessKey();
-			String secretKey = eventProperty.getSecretKey();
-			String bucketName = eventProperty.getBucketName();
-
-			FtpClient ftpClient = null;
-			if ("FTP".equals(protocol)) {
-				ftpClient = new FtpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
-				logger.info("Connected to FTP Location");
-				fileNames = ftpClient.getFileNameList(bucketName);
-			} else if ("SFTP".equals(protocol)) {
-				ftpClient = new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
-				logger.info("Connected to SFTP Location");
-				fileNames = getFileNameList(bucketName, hostName, Integer.parseInt(port), accessKey, secretKey);
-			}
-
-			for (String fileName : fileNames) {
-				logger.info("Total {} Files are available to Upload in Shared Location.", fileNames.size());
-				logger.info("Processing {} response file", fileName);
-				validateFileProperties(config, fileName);
-				ftpClient.download(eventProperty.getBucketName(), localLocation, fileName);
-				File file = new File(localLocation.concat(File.separator).concat(fileName));
-				if (file.exists()) {
-					byte[] data = FileUtils.readFileToByteArray(file);
-					Media aMedia = new AMedia(file.getName(), null, "application/octet-stream", data);
-					processResponseFile(1000L, DISB_IMPORT_STATUS, file, aMedia, false, loggedInUser);
-					Map<String, EventProperties> properties = eventProperties.computeIfAbsent(config.getId(),
-							abc -> dataEngineConfig.getEventPropertyMap(config.getId()));
-
-					if (file != null) {
-						String postEvent = "COPY_TO_FTP";
-						eventProperty = getPostEvent(properties, postEvent);
-
-						if (eventProperty == null) {
-							postEvent = "COPY_TO_SFTP";
-							eventProperty = getPostEvent(properties, postEvent);
-						}
-
-						if (eventProperty != null) {
-							DataEngineUtil.postEvents(postEvent, eventProperty, file);
-						}
-					}
-					new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey)
-							.deleteFile(bucketName.concat("/").concat(fileName));
-					logger.info("{} file Processed successfully..", fileName);
-				} else {
-					logger.info(fileName + " does not exists");
-				}
-			}
-
-		} catch (Exception e) {
-			throw new AppException("" + e);
-		}
-		return null;
-
-	}
-
-	public void validateFileProperties(Configuration config, String fileName) {
-		// Get the selected configuration details.
-		String prefix = config.getFilePrefixName();
-		String extension = config.getFileExtension();
-
-		// Validate the file extension.
-		if (extension != null && !(StringUtils.endsWithIgnoreCase(fileName, extension))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
-
-			return;
-		}
-
-		// Validate the file prefix.
-
-		if (prefix != null && !(StringUtils.startsWith(fileName, prefix))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
-
-			return;
-		}
-	}
-
-	private EventProperties getPostEvent(Map<String, EventProperties> properties, String postEvent) {
-		return properties.get(postEvent);
-	}
-
-	/**
-	 * Returns list of files from the FTP server contained in the given path
-	 * 
-	 * @param pathname
-	 *            The path name in the FTP server.
-	 * @param secretKey
-	 * @param accessKey
-	 * @param port
-	 * @return Returns list of files from the FTP server contained in the given path
-	 */
-	@SuppressWarnings("rawtypes")
-	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
-			String secretKey) {
-		JSch jsch = new JSch();
-		try {
-			session = jsch.getSession(accessKey, hostName, port);
-			session.setPassword(secretKey);
-			java.util.Properties config = new java.util.Properties();
-			config.put("StrictHostKeyChecking", "no");
-			session.setConfig(config);
-			session.connect();
-			channel = session.openChannel("sftp");
-			channel.connect();
-		} catch (JSchException e1) {
-			e1.printStackTrace();
-		}
-		channelSftp = (ChannelSftp) channel;
-		LsEntry entry = null;
-		List<String> fileName = new ArrayList<String>();
-		Vector filelist = null;
-		try {
-			filelist = ((ChannelSftp) channel).ls(pathname);
-		} catch (Exception e) {
-			throw new AppException(e.getMessage());
-		}
-		for (int i = 0; i < filelist.size(); i++) {
-			entry = (LsEntry) filelist.get(i);
-			if (!entry.getFilename().startsWith(".")) {
-				fileName.add(entry.getFilename());
-			}
-		}
-		return fileName;
-	}
-
-	private String setLocalRepoLocation(String localPath) {
-		StringBuilder fileLocation = new StringBuilder(localPath);
-		fileLocation.append(File.separator);
-		fileLocation.append("repository");
-		fileLocation.append(File.separator);
-		fileLocation.append(DateUtil.format(DateUtil.getSysDate(), "yyyyMMdd"));
-		new File(fileLocation.toString()).mkdirs();
-		return fileLocation.toString();
-	}
-
-	private void loadConfig() {
-		if (CollectionUtils.isEmpty(DISB_RESP_CONFIG)) {
 			try {
-				for (Configuration config : dataEngineConfig.getConfigurationList()) {
-					String configName = config.getName();
-					if (configName.startsWith("DISB_") && configName.endsWith("_IMPORT")) {
-						DISB_RESP_CONFIG.add(config);
-						DISB_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
-					}
-				}
+				dataEngineStatus.setProcessedRecords(processedRecords++);
+				validate(status, clearingStatus);
+
+				disbursementProcess.process(fm, fap);
+				
+				dataEngineStatus.setSuccessRecords(successRecords++);
+				
 			} catch (Exception e) {
-				//
+				logger.error(Literal.EXCEPTION, e);
+				dataEngineStatus.setFailedRecords(failureRecords++);
+				dataEngineStatus.setProcessedRecords(processedRecords++);
+				logError(respBatchID, String.valueOf(paymentId), "F", e.getMessage());
 			}
-		}
-	}
-
-	@Override
-	public void processResponseFile(Object... params) throws Exception {
-		logger.debug(Literal.ENTERING);
-		long userId = (Long) params[0];
-		DataEngineStatus status = (DataEngineStatus) params[1];
-		File file = (File) params[2];
-		Media media = (Media) params[3];
-		loggedInUser = (LoggedInUser) params[5];
-
-		String configName = status.getName();
-
-		String name = "";
-
-		if (file != null) {
-			name = file.getName();
-		} else if (media != null) {
-			name = media.getName();
-		}
-
-		status.reset();
-		status.setFileName(name);
-		status.setRemarks("initiated disbursement response file [ " + name + " ] processing..");
-
-		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
-				status);
-		dataEngine.setFile(file);
-		dataEngine.setMedia(media);
-		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
-
-		// FIXME
-		//DisbStatusUploadValidationImpl disbStatusUploadValidationImpl=new DisbStatusUploadValidationImpl();
-		//disbStatusUploadValidationImpl.setFinAutoApprovalDetailDAO(finAutoApprovalDetailDAO);
-		dataEngine.setValidateRecord(this);
-
-		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
-		dataEngine.setFilterMap(filterMap);
-
-		dataEngine.importData(configName);
-
-		do {
-			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
-				receiveResponse(status.getId(), status.getStatus(), userId);
-				break;
-			}
-		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
-
-		logger.info(name + " file processing completed");
-	}
-
-	private void receiveResponse(long batchId) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
-
-		// Disbursements
-		List<FinAdvancePayments> disbursements = null;
-		RowMapper<FinAdvancePayments> rowMapper = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(
-					" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE, FA.PAYMENTTYPE, DR.STATUS,");
-			sql.append(" FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID, FA.BANKCODE,");
-			sql.append(" FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE,");
-			sql.append(" DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON,");
-			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF, FA.PAYMENTSEQ, FA.AMTTOBERELEASED, ");
-			sql.append(" PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY, FA.LLDATE");
-			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
-			sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
-			sql.append(" LEFT JOIN partnerbanks PB ON PB.partnerbankid = FA.partnerbankid");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL = :CHANNEL");
-			paramMap = new MapSqlParameterSource();
-			paramMap.addValue("RESP_BATCH_ID", batchId);
-			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_DISBURSEMENT);
-
-			rowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
-			disbursements = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
-
-			for (FinAdvancePayments disbursement : disbursements) {
-				try {
-					disbursementProcess.process(disbursement);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 		}
 
 		// Payments..
-		List<PaymentInstruction> instructions = null;
-		RowMapper<PaymentInstruction> instructionRowMapper = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO, ");
-			sql.append(
-					" PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID, PI.PAYMENTAMOUNT,");
-			sql.append(" PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS, DR.REJECT_REASON REJECTREASON,");
-			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
-			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
-			sql.append(" INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID");
-			sql.append(" INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID  AND CHANNEL = :CHANNEL");
-			paramMap = new MapSqlParameterSource();
-			paramMap.addValue("RESP_BATCH_ID", batchId);
-			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_PAYMENT);
+		for (PaymentInstruction pi : instructions) {
+			String finReference = pi.getFinReference();
+			long paymentId = pi.getPaymentId();
+			String status = pi.getStatus();
+			String clearingStatus = pi.getClearingStatus();
 
-			instructionRowMapper = BeanPropertyRowMapper.newInstance(PaymentInstruction.class);
-			instructions = namedJdbcTemplate.query(sql.toString(), paramMap, instructionRowMapper);
+			logger.info("FinReference: {}", finReference);
+			logger.info("PaymentId: {}", paymentId);
+			logger.info("Payment instruction status: {}", status);
+			logger.info("Payment instruction clearing status: {}", clearingStatus);
 
-			for (PaymentInstruction instruction : instructions) {
-				try {
-					paymentProcess.process(instruction);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
+			try {
+				validate(status, clearingStatus);
+
+				paymentProcess.process(pi);
+				
+				dataEngineStatus.setSuccessRecords(successRecords++);
+				dataEngineStatus.setProcessedRecords(processedRecords++);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				dataEngineStatus.setFailedRecords(failureRecords++);
+				dataEngineStatus.setProcessedRecords(processedRecords++);
+				logError(respBatchID, String.valueOf(paymentId), "F", e.getMessage());
 			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 		}
+
+		StringBuilder remarks = new StringBuilder();
+		dataEngineStatus.setStatus(ExecutionStatus.S.name());
+
+		if (failureRecords > 0) {
+			remarks.append("Completed with exceptions, total Records: ");
+			remarks.append(totalRecords);
+			remarks.append(", Success: ");
+			remarks.append(successRecords);
+			remarks.append(", Failure: ");
+			remarks.append(failureRecords);
+			dataEngineStatus.setStatus(ExecutionStatus.F.name());
+
+		} else {
+			remarks.append("Completed successfully, total Records: ");
+			remarks.append(totalRecords);
+			remarks.append(", Success: ");
+			remarks.append(successRecords);
+		}
+		
+		dataEngineStatus.setRemarks(remarks.toString());
+		updateDEStatus(dataEngineStatus);
+
+		dataEngineStatus.setDataEngineLogList(dataEngineConfig.getExceptions(respBatchID));
 		
 		logger.debug(Literal.LEAVING);
 	}
 
-	@Autowired
-	public void setDisbursementProcess(DisbursementProcess disbursementProcess) {
-		this.disbursementProcess = disbursementProcess;
-	}
-
-	@Autowired
-	public void setPaymentProcess(PaymentProcess paymentProcess) {
-		this.paymentProcess = paymentProcess;
-	}
-
-	@Override
-	public void receiveResponse(Object... params) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
-		List<String> channelList = new ArrayList<>();
-		channelList.add(DisbursementConstants.CHANNEL_DISBURSEMENT);
-		channelList.add(DisbursementConstants.CHANNEL_VAS);
-
-		// Disbursements
-		//Below fields in select query not to be removed.
-		List<FinAdvancePayments> finAdvPayments = null;
-		RowMapper<FinAdvancePayments> rowMapper = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT FA.PAYMENTID,FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE");
-			sql.append(", FA.PAYMENTTYPE, DR.STATUS, FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID");
-			sql.append(", FA.BANKCODE, FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE, FA.AMTTOBERELEASED");
-			sql.append(", FA.RECORDTYPE, DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON");
-			sql.append(", DR.REALIZATION_DATE REALIZATIONDATE, DR.DOWNLOADED_ON DOWNLOADEDON");
-			sql.append(", DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF, FA.PAYMENTSEQ");
-			sql.append(", PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY, FA.LLDATE");
-			sql.append(", FA.VasReference , AV.SHORTCODE AS DealerShortCode, VS.SHORTCODE AS ProductShortCode ");
-			sql.append(", FA.PaymentDetail ");
-			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
-			sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
-			sql.append(" LEFT JOIN partnerbanks PB ON PB.partnerbankid = FA.partnerbankid");
-			sql.append(" LEFT JOIN VASRecording VR ON VR.VasReference = FA.VasReference ");
-			sql.append(" LEFT JOIN VASSTRUCTURE VS ON VS.PRODUCTCODE = VR.ProductCode ");
-			sql.append(" LEFT JOIN AMTVEHICLEDEALER AV ON  AV.DEALERID = VS.MANUFACTURERID ");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL IN(:CHANNEL) ");
-			paramMap = new MapSqlParameterSource();
-			paramMap.addValue("RESP_BATCH_ID", params[0]);
-			paramMap.addValue("CHANNEL", channelList);
-
-			rowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
-			finAdvPayments = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
-
-			List<FinAutoApprovalDetails> autoAppList = new ArrayList<FinAutoApprovalDetails>();
-			List<InstBasedSchdDetails> instBasedSchdList = new ArrayList<InstBasedSchdDetails>();
-
-			for (FinAdvancePayments finAdvPayment : finAdvPayments) {
-				try {
-					disbursementProcess.process(finAdvPayment);
-
-					boolean autoApprove = false;
-					boolean instBasedSchd = false;
-
-					// get the QDP flag from Loan level.
-					FinanceType financeType = finAutoApprovalDetailDAO
-							.getQDPflagByFinref(finAdvPayment.getFinReference());
-
-					if (financeType.isQuickDisb()) {
-						// Check for the AutoApprove flag from LoanType.
-						if (financeType.isAutoApprove()) {
-							autoApprove = true;
-						} else if (financeType.isInstBasedSchd() && (StringUtils.equals(finAdvPayment.getStatus(),
-								DisbursementConstants.STATUS_REALIZED)
-								|| StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID))) {
-							// Check Rebuild Schd is true
-							// should check in finance main if the inst based
-							// schedule yes or no
-
-							//check if record already available in table
-							boolean isRecordExists = instBasedSchdDetailDAO
-									.isDisbRecordProceed(finAdvPayment.getPaymentId());
-
-							if (!isRecordExists) {
-								instBasedSchd = true;
-							}
-						}
-					}
-
-					if (autoApprove) {
-
-						FinAutoApprovalDetails detail = new FinAutoApprovalDetails();
-						detail.setFinReference(finAdvPayment.getFinReference());
-						detail.setBatchId(Long.valueOf(params[0].toString()));
-						detail.setDisbId(finAdvPayment.getPaymentId());
-						detail.setRealizedDate(finAdvPayment.getRealizationDate());
-						if (detail.getRealizedDate() == null) {
-							detail.setRealizedDate(finAdvPayment.getClearingDate());
-						}
-						detail.setStatus(DisbursementConstants.AUTODISB_STATUS_PENDING);
-						detail.setUserId(Long.valueOf(params[2].toString()));
-						detail.setDownloadedon(finAdvPayment.getDownloadedon());
-						autoAppList.add(detail);
-					}
-
-					if (instBasedSchd) {
-						InstBasedSchdDetails instBasedSchdDetails = new InstBasedSchdDetails();
-						instBasedSchdDetails.setFinReference(finAdvPayment.getFinReference());
-						instBasedSchdDetails.setBatchId(Long.valueOf(params[0].toString()));
-						instBasedSchdDetails.setDisbId(finAdvPayment.getPaymentId());
-						instBasedSchdDetails.setRealizedDate(finAdvPayment.getRealizationDate());
-						instBasedSchdDetails.setDisbAmount(finAdvPayment.getAmtToBeReleased());
-						if (instBasedSchdDetails.getRealizedDate() == null) {
-							instBasedSchdDetails.setRealizedDate(finAdvPayment.getClearingDate());
-						}
-						instBasedSchdDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_PENDING);
-						instBasedSchdDetails.setUserId(Long.valueOf(params[2].toString()));
-						instBasedSchdDetails.setDownloadedon(finAdvPayment.getDownloadedon());
-						instBasedSchdDetails.setLinkedTranId(finAdvPayment.getLinkedTranId());
-						instBasedSchdList.add(instBasedSchdDetails);
-					}
-
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
-			}
-			finAutoApprovalDetailDAO.logFinAutoApprovalDetails(autoAppList);
-
-			if (CollectionUtils.isNotEmpty(instBasedSchdList)) {
-				instBasedSchdDetailDAO.saveInstBasedSchdDetails(instBasedSchdList);
-			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+	public void validate(String status, String clearingStatus) {
+		String paidStatus = "E";
+		if (StringUtils.isNotBlank(customPaidStatus)) {
+			paidStatus = customPaidStatus;
 		}
 
-		// Payments..
-		List<PaymentInstruction> instructions = null;
-		RowMapper<PaymentInstruction> instructionRowMapper = null;
-		try {
-			sql = new StringBuilder();
-			sql.append(" SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO, ");
-			sql.append(
-					" PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID, PI.PAYMENTAMOUNT,");
-			sql.append(
-					" PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS, DR.REJECT_REASON REJECTREASON,DR.REALIZATION_DATE REALIZATIONDATE,");
-			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
-			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
-			sql.append(" INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID");
-			sql.append(" INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL = :CHANNEL");
-			paramMap = new MapSqlParameterSource();
-			paramMap.addValue("RESP_BATCH_ID", params[0]);
-			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_PAYMENT);
+		status = status.toUpperCase();
+		clearingStatus = clearingStatus.toUpperCase();
 
-			instructionRowMapper = BeanPropertyRowMapper.newInstance(PaymentInstruction.class);
-			instructions = namedJdbcTemplate.query(sql.toString(), paramMap, instructionRowMapper);
+		String statusDes = getStatus(status);
+		String message = "Payment is in " + statusDes + " status";
 
-			for (PaymentInstruction instruction : instructions) {
-				try {
-					paymentProcess.process(instruction);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-				}
+		if (paidStatus.equals(clearingStatus)) {
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(status)) {// for
+				throw new AppException(message);
 			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
-
-		String status = (String) record.getValue("STATUS");
-		Long id = Long.valueOf(String.valueOf((Object) record.getValue("ID")));
-		FinAdvancePayments finAdvPayments = null;
-		String PAID_STATUS = "E";
-		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
-		if (StringUtils.isNotBlank(disbStatus)) {
-			PAID_STATUS = disbStatus;
-		}
-		String channel = getDisbType(id);
-		if (channel.equals("")) {
-			throw new Exception("No data matched with this disbursement id:-" + id);
-		}
-		if (DisbursementConstants.CHANNEL_DISBURSEMENT.equals(channel)) {
-			finAdvPayments = getFinAdvancePaymentDetails(id);
-		} else if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
-			finAdvPayments = getPaymentInstructionDetails(id);
-		} else if (DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
-			finAdvPayments = getInsuranceInstructionDetails(id);
-		}
-
-		if (PAID_STATUS.equals(status)) {
-			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())) {// for
-																								// paid
-				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status");
+		} else if ("REJECTED".equals(clearingStatus) || "REJECT".equals(clearingStatus) || "R".equals(clearingStatus)) {
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(status)) {
+				throw new AppException("Payment is in " + statusDes + " status cannot reject");
 			}
-		} else if ("REJECTED".equalsIgnoreCase(status) || "REJECT".equalsIgnoreCase(status) || "R".equals(status)) {// for rejected
-			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())) {
-				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status cannot reject");
-			}
-		} else if ("P".equals(status)) {// for realized
-			if (!DisbursementConstants.STATUS_AWAITCON.equals(finAdvPayments.getStatus())
-					&& !DisbursementConstants.STATUS_PAID.equals(finAdvPayments.getStatus())) {
-				throw new Exception("Payment is in " + getStatus(finAdvPayments.getStatus()) + " status");
+		} else if ("P".equals(clearingStatus)) {
+			if (!DisbursementConstants.STATUS_AWAITCON.equals(status)
+					&& !DisbursementConstants.STATUS_PAID.equals(status)) {
+				throw new AppException(message);
 			}
 		} else {
-			throw new Exception("Invalid Id " + id);
+			throw new AppException(
+					clearingStatus + " is not valid. Valid status codes are " + paidStatus + "/P/REJECTED/REJECT.");
 		}
 	}
 
@@ -687,124 +250,288 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		return status;
 	}
 
-	public String getPaymentType(String type) {
-		String status = "";
-		switch (type) {
-		case "N":
-			status = "NEFT";
-			break;
-		case "R":
-			status = "RTGS";
-			break;
-		case "C":
-			status = "CHEQUE";
-			break;
-		case "D":
-			status = "DD";
-			break;
-		default:
-			status = "";
-			break;
+	@Override
+	public void processAutoResponseFiles() {
+		logger.info("Processing Disbursement Respone files..");
+		DataEngineStatus des = loadConfig();
+
+		for (Configuration configuration : disbRespConfig) {
+			executeDataEngine(des, configuration);
 		}
-		return status;
+
 	}
 
-	public FinAdvancePayments getFinAdvancePaymentDetails(Long id) {
-		logger.debug(Literal.ENTERING);
+	private void executeDataEngine(DataEngineStatus des, Configuration configuration) {
+		String localLocation = setLocalRepoLocation(configuration.getUploadPath());
 
-		FinAdvancePayments finAdvancePayments = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ID", id);
+		Map<String, EventProperties> properties = eventProperties.computeIfAbsent(configuration.getId(),
+				abc -> dataEngineConfig.getEventPropertyMap(configuration.getId()));
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select FA.STATUS, FA.PAYMENTTYPE, DS.NAME, FM.FINSTARTDATE ");
-		sql.append(" From DISBURSEMENT_REQUESTS DR ");
-		sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID ");
-		sql.append(" LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = FA.FINREFERENCE ");
-		sql.append(" INNER JOIN DATA_ENGINE_STATUS DS ON DR.BATCH_ID=DS.ID WHERE DR.ID = :ID ");
+		String[] postEvents = StringUtils.trimToEmpty(configuration.getPostEvent()).split(",");
+		EventProperties property = null;
 
-		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
-		try {
-			finAdvancePayments = this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-			finAdvancePayments = null;
+		EventProperties s3Property = null;
+		EventProperties sharedFTPProperty = null;
+		EventProperties sharedSFTPProperty = null;
+		EventProperties sharedNetworkFolderProperty = null;
+
+		for (String postEvent : postEvents) {
+			postEvent = StringUtils.trimToEmpty(postEvent);
+			property = properties.get(postEvent);
+
+			if (property == null) {
+				continue;
+			}
+
+			String storageType = StringUtils.trimToEmpty(property.getStorageType());
+			if (storageType.equals("S3")) {
+				s3Property = property;
+			} else if (storageType.equals("SHARE_TO_FTP")) {
+				sharedFTPProperty = property;
+			} else if (storageType.equals("SHARE_TO_SFTP")) {
+				sharedSFTPProperty = property;
+			} else if (storageType.equals("SHARED_NETWORK_FOLDER")) {
+				sharedNetworkFolderProperty = property;
+			}
 		}
-		logger.debug(Literal.LEAVING);
-		return finAdvancePayments;
+
+		if (s3Property != null) {
+			//
+		} else if (sharedSFTPProperty != null) {
+			processDisbRespFilesFromFTP(sharedSFTPProperty, "SFTP", configuration, des, localLocation);
+		} else if (sharedFTPProperty != null) {
+			processDisbRespFilesFromFTP(sharedFTPProperty, "FTP", configuration, des, localLocation);
+		} else if (sharedNetworkFolderProperty != null) {
+			//
+		}
 	}
 
-	public FinAdvancePayments getPaymentInstructionDetails(Long id) {
-		logger.debug(Literal.ENTERING);
+	private void processDisbRespFilesFromFTP(EventProperties eventProperty, String protocol, Configuration config,
+			DataEngineStatus des, String localLocation) {
 
-		FinAdvancePayments finAdvancePayments = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ID", id);
+		List<String> fileNames = new ArrayList<>();
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select FA.STATUS,FA.PAYMENTTYPE,DS.NAME from DISBURSEMENT_REQUESTS DR");
-		sql.append(" INNER JOIN PAYMENTINSTRUCTIONS FA ON FA.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID ");
-		sql.append(" INNER JOIN DATA_ENGINE_STATUS DS ON DR.BATCH_ID=DS.ID WHERE DR.ID=:ID");
+		String hostName = eventProperty.getHostName();
+		String port = eventProperty.getPort();
+		String accessKey = eventProperty.getAccessKey();
+		String secretKey = eventProperty.getSecretKey();
+		String bucketName = eventProperty.getBucketName();
 
-		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
-		try {
-			finAdvancePayments = this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-			finAdvancePayments = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return finAdvancePayments;
-	}
-
-	public FinAdvancePayments getInsuranceInstructionDetails(Long id) {
-		logger.debug(Literal.ENTERING);
-
-		FinAdvancePayments finAdvancePayments = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ID", id);
-
-		StringBuilder sql = new StringBuilder(" Select FA.STATUS,FA.PAYMENTTYPE,DS.NAME from DISBURSEMENT_REQUESTS");
-		sql.append(" DR INNER JOIN INSURANCEPAYMENTINSTRUCTIONS FA ON FA.ID = DR.DISBURSEMENT_ID");
-		sql.append(" INNER JOIN DATA_ENGINE_STATUS DS ON DR.BATCH_ID=DS.ID WHERE DR.ID=:ID");
-
-		logger.debug(Literal.SQL + sql.toString());
-		RowMapper<FinAdvancePayments> typeRowMapper = BeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
-		try {
-			finAdvancePayments = this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.warn(Literal.EXCEPTION, e);
-			finAdvancePayments = null;
-		}
-		logger.debug(Literal.LEAVING);
-		return finAdvancePayments;
-	}
-
-	public String getDisbType(Long id) {
-		logger.debug(Literal.ENTERING);
-
-		String disbType = "";
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Id", id);
-
-		StringBuilder sql = new StringBuilder(" Select Channel ");
-		sql.append(" From DISBURSEMENT_REQUESTS");
-		sql.append(" Where Id = :Id ");
-
-		logger.debug(Literal.SQL + sql.toString());
+		logger.info("Connecting into {} shared location to Retreive Files..", protocol);
 
 		try {
-			disbType = this.namedJdbcTemplate.queryForObject(sql.toString(), source, String.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			disbType = "";
+			FtpClient ftpClient = null;
+			if ("FTP".equals(protocol)) {
+				ftpClient = new FtpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
+				logger.info("Connected to FTP Location");
+				fileNames.addAll(ftpClient.getFileNameList(bucketName));
+			} else if ("SFTP".equals(protocol)) {
+				ftpClient = new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey);
+				logger.info("Connected to SFTP Location");
+				fileNames.addAll(getFileNameList(bucketName, hostName, Integer.parseInt(port), accessKey, secretKey));
+			}
+
+			logger.info("Total {} Files are available to Upload in Shared Location.", fileNames.size());
+
+			for (String fileName : fileNames) {
+				logger.info("Processing {} response file", fileName);
+
+				validateFileProperties(config, fileName);
+
+				ftpClient.download(bucketName, localLocation, fileName);
+
+				File file = new File(localLocation.concat(File.separator).concat(fileName));
+
+				if (!file.exists()) {
+					logger.info("{} does not exists", fileName);
+					continue;
+				}
+
+				byte[] data = FileUtils.readFileToByteArray(file);
+				Media aMedia = new AMedia(file.getName(), null, "application/octet-stream", data);
+
+				processResponseFile(1000L, des, file, aMedia);
+
+				Map<String, EventProperties> properties = eventProperties.computeIfAbsent(config.getId(),
+						abc -> dataEngineConfig.getEventPropertyMap(config.getId()));
+
+				if (file != null) {
+					String postEvent = "COPY_TO_FTP";
+					eventProperty = getPostEvent(properties, postEvent);
+
+					if (eventProperty == null) {
+						postEvent = "COPY_TO_SFTP";
+						eventProperty = getPostEvent(properties, postEvent);
+					}
+
+					if (eventProperty != null) {
+						DataEngineUtil.postEvents(postEvent, eventProperty, file);
+					}
+				}
+
+				new SftpClient(hostName, Integer.parseInt(port), accessKey, secretKey)
+						.deleteFile(bucketName.concat("/").concat(fileName));
+
+				logger.info("{} file Processed successfully..", fileName);
+			}
+
 		} catch (Exception e) {
-			logger.info(e);
-			disbType = "";
+			throw new AppException("" + e);
 		}
-		logger.debug(Literal.LEAVING);
-		return disbType;
+
 	}
+
+	public void validateFileProperties(Configuration config, String fileName) {
+		// Get the selected configuration details.
+		String prefix = config.getFilePrefixName();
+		String extension = config.getFileExtension();
+
+		// Validate the file extension.
+		if (extension != null && !(StringUtils.endsWithIgnoreCase(fileName, extension))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+			return;
+		}
+
+		// Validate the file prefix.
+
+		if (prefix != null && !(StringUtils.startsWith(fileName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+		}
+	}
+
+	private EventProperties getPostEvent(Map<String, EventProperties> properties, String postEvent) {
+		return properties.get(postEvent);
+	}
+
+	private List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
+			String secretKey) {
+		JSch jsch = new JSch();
+		Session session = null;
+		Channel channel = null;
+		try {
+			session = jsch.getSession(accessKey, hostName, port);
+			session.setPassword(secretKey);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+		} catch (JSchException e1) {
+			//
+		}
+
+		if (channel == null) {
+			return new ArrayList<>();
+		}
+
+		LsEntry entry = null;
+		List<String> fileName = new ArrayList<>();
+		Vector<?> filelist = null;
+		try {
+			filelist = ((ChannelSftp) channel).ls(pathname);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage());
+		}
+		for (int i = 0; i < filelist.size(); i++) {
+			entry = (LsEntry) filelist.get(i);
+			if (!entry.getFilename().startsWith(".")) {
+				fileName.add(entry.getFilename());
+			}
+		}
+		return fileName;
+	}
+
+	private String setLocalRepoLocation(String localPath) {
+		StringBuilder fileLocation = new StringBuilder(localPath);
+		fileLocation.append(File.separator);
+		fileLocation.append("repository");
+		fileLocation.append(File.separator);
+		fileLocation.append(DateUtil.format(DateUtil.getSysDate(), "yyyyMMdd"));
+		new File(fileLocation.toString()).mkdirs();
+		return fileLocation.toString();
+	}
+
+	private DataEngineStatus loadConfig() {
+		DataEngineStatus dataEngineStatus = null;
+		if (CollectionUtils.isEmpty(disbRespConfig)) {
+			try {
+				for (Configuration config : dataEngineConfig.getConfigurationList()) {
+					String configName = config.getName();
+					if (configName.startsWith("DISB_") && configName.endsWith("_IMPORT")) {
+						disbRespConfig.add(config);
+						dataEngineStatus = dataEngineConfig.getLatestExecution(configName);
+					}
+				}
+			} catch (Exception e) {
+				dataEngineStatus = new DataEngineStatus();
+			}
+		}
+		return dataEngineStatus;
+	}
+
+	@Override
+	public void processResponseFile(long userId, DataEngineStatus status, File file, Media media) {
+		logger.debug(Literal.ENTERING);
+
+		String configName = status.getName();
+
+		String name = "";
+
+		if (file != null) {
+			name = file.getName();
+		} else if (media != null) {
+			name = media.getName();
+		}
+
+		status.reset();
+		status.setFileName(name);
+		status.setRemarks("Initiated disbursement response file [ " + name + " ] processing..");
+
+		logger.info(status.getRemarks());
+
+		DataEngineImport dataEngine;
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
+				status);
+		dataEngine.setFile(file);
+		dataEngine.setMedia(media);
+		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
+
+		Map<String, Object> filterMap = new HashMap<>();
+		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
+		dataEngine.setFilterMap(filterMap);
+
+		try {
+			dataEngine.importData(configName);
+		} catch (Exception e) {
+			status.setRemarks(e.getMessage());
+			throw new AppException(e.getMessage());
+		}
+
+		do {
+			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
+				if (status.getSuccessRecords() > 0) {
+					receiveResponse(status);
+				}
+				break;
+			}
+		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
+
+		logger.info("{} file processing completed", name);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void setDisbursementProcess(DisbursementProcess disbursementProcess) {
+		this.disbursementProcess = disbursementProcess;
+	}
+
+	public void setPaymentProcess(PaymentProcess paymentProcess) {
+		this.paymentProcess = paymentProcess;
+	}
+
+	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
+		this.dataEngineConfig = dataEngineConfig;
+	}
+
 }

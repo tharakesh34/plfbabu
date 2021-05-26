@@ -96,4 +96,6 @@ public interface FinAdvancePaymentsDAO {
 	int getFinAdvanceByVasRef(String finReference, String vasReference, String type);
 
 	void updateLLDate(FinAdvancePayments finAdvancePayments, String type);
+
+	FinAdvancePayments getFinAdvancePaymentsById(long paymentId);
 }

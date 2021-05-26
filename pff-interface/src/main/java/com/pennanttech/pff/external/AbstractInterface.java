@@ -5,8 +5,6 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -14,11 +12,9 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.backend.model.cersai.Cersai;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public class AbstractInterface {
-	private static final Logger logger = LogManager.getLogger(AbstractInterface.class);
-
 	protected DataSource dataSource;
 
 	protected JdbcTemplate jdbcTemplate;
@@ -59,8 +55,33 @@ public class AbstractInterface {
 		this.transDef.setTimeout(120);
 	}
 
-	public void updateCollateralAssignment(Cersai cersai, String cersaiReferenceNumber) {
-		// TODO Auto-generated method stub
+	protected void updateDEStatus(DataEngineStatus status) {
+		String sql = "UPDATE DATA_ENGINE_STATUS Set Status = ?, SuccessRecords = ?, FailedRecords = ?,  Remarks = ? WHERE Id = ?";
 
+		this.namedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+			int index = 1;
+			ps.setString(index++, status.getStatus());
+			ps.setLong(index++, status.getSuccessRecords());
+			ps.setLong(index++, status.getFailedRecords());
+			ps.setString(index++, status.getRemarks());
+			ps.setLong(index++, status.getId());
+		});
 	}
+
+	protected void logError(long id, String keyId, String status, String reason) {
+		if (reason == null) {
+			return;
+		}
+
+		String sql = "INSERT INTO DATA_ENGINE_LOG (StatusId, KeyId, Status, Reason) VALUES(?, ?, ?, ?)";
+
+		this.namedJdbcTemplate.getJdbcOperations().update(sql, ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+			ps.setString(index++, keyId);
+			ps.setString(index++, status);
+			ps.setString(index, reason.length() > 2000 ? reason.substring(0, 1999) : reason);
+		});
+	}
+
 }

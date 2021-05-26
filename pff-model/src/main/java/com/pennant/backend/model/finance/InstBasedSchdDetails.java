@@ -6,7 +6,6 @@ import java.util.Date;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class InstBasedSchdDetails extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -6234931333270161797L;
 	private long id;
 	private long batchId;
@@ -18,7 +17,7 @@ public class InstBasedSchdDetails extends AbstractWorkflowEntity {
 	private long userId;
 	private String paymentType;
 	private BigDecimal disbAmount;
-	private Date downloadedon;
+	private Date downloadedOn;
 	private long linkedTranId;
 
 	public InstBasedSchdDetails() {
@@ -97,12 +96,12 @@ public class InstBasedSchdDetails extends AbstractWorkflowEntity {
 		this.realizedDate = realizedDate;
 	}
 
-	public Date getDownloadedon() {
-		return downloadedon;
+	public Date getDownloadedOn() {
+		return downloadedOn;
 	}
 
-	public void setDownloadedon(Date downloadedon) {
-		this.downloadedon = downloadedon;
+	public void setDownloadedOn(Date downloadedOn) {
+		this.downloadedOn = downloadedOn;
 	}
 
 	public BigDecimal getDisbAmount() {

@@ -55,7 +55,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -69,7 +68,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"liabilityHoldName", "payableLoc", "printingLoc", "valueDate", "llReferenceNo" })
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
+public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -6234931333270161797L;
 	@XmlElement(name = "disbInstId")
@@ -150,6 +149,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String phoneNumber;
 	private Date clearingDate;
 	private String status;
+	private String clearingStatus;
 	private boolean active;
 	private Date inputDate;
 	private String disbCCy;
@@ -221,6 +221,9 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	@XmlElement
 	private String vasProductCode;
 
+	private Long disbResponseBatchId;
+	private long userId;
+
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
 	}
@@ -275,6 +278,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		entity.setPhoneNumber(this.phoneNumber);
 		entity.setClearingDate(this.clearingDate);
 		entity.setStatus(this.status);
+		entity.setClearingStatus(this.clearingStatus);
 		entity.setActive(this.active);
 		entity.setInputDate(this.inputDate);
 		entity.setDisbCCy(this.disbCCy);
@@ -288,7 +292,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		entity.setPartnerBankName(this.partnerBankName);
 		entity.setFinType(this.finType);
 		if (financeDisbursements != null) {
-			entity.setFinanceDisbursements(new ArrayList<FinanceDisbursement>());
+			entity.setFinanceDisbursements(new ArrayList<>());
 			this.financeDisbursements.stream()
 					.forEach(e -> entity.getFinanceDisbursements().add(e == null ? null : e.copyEntity()));
 		}
@@ -328,6 +332,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		entity.setDocImage(this.docImage);
 		entity.setDocType(this.docType);
 		entity.setVasProductCode(this.vasProductCode);
+		entity.setDisbResponseBatchId(this.disbResponseBatchId);
+		entity.setUserId(this.userId);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -389,20 +395,13 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("docImage");
 		excludeFields.add("docType");
 		excludeFields.add("vasProductCode");
+		excludeFields.add("userId");
+		excludeFields.add("disbResponseBatchId");
+		excludeFields.add("clearingStatus");
 
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	@Override
-	public long getId() {
-
-		return paymentId;
-
-	}
 
 	public String getServiceReqNo() {
 		return serviceReqNo;
@@ -410,11 +409,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setServiceReqNo(String serviceReqNo) {
 		this.serviceReqNo = serviceReqNo;
-	}
-
-	@Override
-	public void setId(long paymentId) {
-		this.paymentId = paymentId;
 	}
 
 	public String getFinReference() {
@@ -625,12 +619,12 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.status = status;
 	}
 
-	public String getPOStatus() {
-		return status;
+	public String getClearingStatus() {
+		return clearingStatus;
 	}
 
-	public void setPOStatus(String status) {
-		this.status = status;
+	public void setClearingStatus(String clearingStatus) {
+		this.clearingStatus = clearingStatus;
 	}
 
 	public boolean isActive() {
@@ -1087,6 +1081,22 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setVasProductCode(String vasProductCode) {
 		this.vasProductCode = vasProductCode;
+	}
+
+	public Long getDisbResponseBatchId() {
+		return disbResponseBatchId;
+	}
+
+	public void setDisbResponseBatchId(Long disbResponseBatchId) {
+		this.disbResponseBatchId = disbResponseBatchId;
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 
 }

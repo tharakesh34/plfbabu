@@ -157,6 +157,7 @@ import com.pennant.webui.financemanagement.insurance.InsuranceRebookingDialogCtr
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1020,9 +1021,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (isRegenerate) {
 			try {
 				createReport(reportName, object, listData, userName, window);
-			} catch (JRException e) {
-				logger.error("Exception: ", e);
-				MessageUtil.showError("Template does not exist.");
+			} catch (AppException e) {
+				logger.error(Literal.EXCEPTION, e);
+				MessageUtil.showError(e.getMessage());
 				ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
 			}
 		}
@@ -1030,8 +1031,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return false;
 	}
 
-	private void createReport(String reportName, Object object, List listData, String userName, Window dialogWindow)
-			throws JRException, InterruptedException {
+	private void createReport(String reportName, Object object, List listData, String userName, Window dialogWindow) {
 		logger.debug("Entering");
 		try {
 			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
@@ -1055,8 +1055,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 			}
 		} catch (AppException e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showError("Template does not exist.");
+			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError(e.getMessage());
 			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
 		}
 		logger.debug("Leaving");

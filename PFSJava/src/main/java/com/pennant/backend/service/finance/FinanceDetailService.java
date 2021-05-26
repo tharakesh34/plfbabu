@@ -54,7 +54,6 @@ import org.jaxen.JaxenException;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -62,7 +61,6 @@ import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
-import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCustomerDetails;
@@ -215,7 +213,7 @@ public interface FinanceDetailService {
 
 	void updateFinApprovalStatus(String finReference, String approvalStatus);
 
-	String getNextRoleCodeByRef(String finReference, String type);
+	String getNextRoleCodeByRef(String finReference);
 
 	FinanceMain getFinanceMain(String finReference, String type);
 

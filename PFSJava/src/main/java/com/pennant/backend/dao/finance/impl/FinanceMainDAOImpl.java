@@ -252,60 +252,59 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 */
 	@Override
 	public FinanceMain getDisbursmentFinMainById(final String finReference, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		FinanceMain fm = null;
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" t1.FinCcy, t1.FinType, t1.CustID, t1.FinStartDate, t1.FinBranch");
-		sql.append(", t1.FinReference, t1.MaturityDate, t1.FeeChargeAmt, t1.DownPayment");
-		sql.append(", t1.DeductFeeDisb, t1.BpiAmount, t1.DeductInsDisb, t1.FinIsActive");
-		sql.append(", t1.BpiTreatment, t1.QuickDisb, t1.FinAssetValue, t1.FinCurrAssetValue");
-		sql.append(", t3.CustCIF, t3.CustShrtName, t2.alwMultiPartyDisb, t2.FinTypeDesc");
+		sql.append(" fm.FinCcy, fm.FinType, fm.CustID, fm.FinStartDate, fm.FinBranch");
+		sql.append(", fm.FinReference, fm.MaturityDate, fm.FeeChargeAmt, fm.DownPayment");
+		sql.append(", fm.DeductFeeDisb, fm.BpiAmount, fm.DeductInsDisb, fm.FinIsActive");
+		sql.append(", fm.BpiTreatment, fm.QuickDisb, fm.InstBasedSchd, fm.FinAssetValue, fm.FinCurrAssetValue");
+		sql.append(", c.CustCIF, c.CustShrtName, ft.alwMultiPartyDisb, ft.FinTypeDesc");
+		sql.append(", PromotionCode, e.EntityCode");
 		sql.append(" from FinanceMain");
 		sql.append(tableType.getSuffix());
-		sql.append(" t1 INNER JOIN RMTFinanceTypes t2 ON t1.FinType=t2.FinType ");
-		sql.append(" INNER JOIN Customers t3 ON t1.CustID = t3.CustID ");
-		sql.append(" Where T1.FinReference = ?");
+		sql.append(" fm ");
+		sql.append(" Inner Join RMTFinanceTypes ft ON fm.FinType = ft.FinType ");
+		sql.append(" Inner Join Customers c ON fm.CustID = c.CustID ");
+		sql.append(" Inner Join SmtDivisionDetail d on d.DivisionCode = ft.FinDivision");
+		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
+		sql.append(" Where fm.FinReference = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 		try {
-			fm = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<FinanceMain>() {
-						@Override
-						public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinanceMain fm = new FinanceMain();
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
 
-							fm.setFinCcy(rs.getString("FinCcy"));
-							fm.setFinType(rs.getString("FinType"));
-							fm.setCustID(rs.getLong("CustID"));
-							fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-							fm.setFinBranch(rs.getString("FinBranch"));
-							fm.setFinReference(rs.getString("FinReference"));
-							fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-							fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-							fm.setDownPayment(rs.getBigDecimal("DownPayment"));
-							fm.setDeductFeeDisb(rs.getBigDecimal("DeductFeeDisb"));
-							fm.setBpiAmount(rs.getBigDecimal("BpiAmount"));
-							fm.setDeductInsDisb(rs.getBigDecimal("DeductInsDisb"));
-							fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-							fm.setBpiTreatment(rs.getString("BpiTreatment"));
-							fm.setQuickDisb(rs.getBoolean("QuickDisb"));
-							fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-							fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-							fm.setLovDescCustCIF(rs.getString("CustCIF"));
-							fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
-							fm.setAlwMultiDisb(rs.getBoolean("AlwMultiPartyDisb"));
-							fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+				fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+				fm.setDeductFeeDisb(rs.getBigDecimal("DeductFeeDisb"));
+				fm.setBpiAmount(rs.getBigDecimal("BpiAmount"));
+				fm.setDeductInsDisb(rs.getBigDecimal("DeductInsDisb"));
+				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fm.setBpiTreatment(rs.getString("BpiTreatment"));
+				fm.setQuickDisb(rs.getBoolean("QuickDisb"));
+				fm.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+				fm.setLovDescCustCIF(rs.getString("CustCIF"));
+				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
+				fm.setAlwMultiDisb(rs.getBoolean("AlwMultiPartyDisb"));
+				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+				fm.setLovDescEntityCode(rs.getString("EntityCode"));
+				fm.setPromotionCode(rs.getString("PromotionCode"));
 
-							return fm;
-						}
-					});
+				return fm;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return fm;
+
+		return null;
 
 	}
 
@@ -2011,27 +2010,19 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public String getNextRoleCodeByRef(String finReference, String type) {
-		logger.debug("Entering");
+	public String getNextRoleCodeByRef(String finReference) {
+		StringBuilder sql = new StringBuilder("SELECT NextRoleCode From FinanceMain_Temp");
+		sql.append(" Where FinReference = ?");
 
-		String nextRoleCode = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		StringBuilder sql = new StringBuilder("SELECT NextRoleCode From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference");
-		logger.debug("selectSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			nextRoleCode = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			nextRoleCode = null;
+			//
 		}
 
-		logger.debug("Leaving");
-		return nextRoleCode;
+		return null;
 	}
 
 	@Override

@@ -15,11 +15,13 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.pff.core.process.DisbursementProcess;
 import com.pennanttech.pff.core.process.PaymentProcess;
@@ -165,6 +167,7 @@ public class DisbursementController extends ExtendedTestClass {
 
 	public WSReturnStatus approveDisbursementResponse(List<DisbursementRequest> disbRequests) {
 		logger.info(Literal.ENTERING);
+		
 		try {
 			for (DisbursementRequest request : disbRequests) {
 				request.setId(request.getDisbReqId());
@@ -222,9 +225,6 @@ public class DisbursementController extends ExtendedTestClass {
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				}
 
-				int count = 0;
-				TransactionStatus txStatus = null;
-
 				switch (channel) {
 				case DisbursementConstants.CHANNEL_DISBURSEMENT:
 					FinAdvancePayments fa = disbursementDAO.getDisbursementInstruction(disbReqId);
@@ -250,38 +250,20 @@ public class DisbursementController extends ExtendedTestClass {
 					}
 
 					fa.setClearingDate(request.getClearingDate());
-					fa.setStatus(request.getStatus());
+					fa.setClearingStatus(request.getStatus());
 					fa.setRejectReason(request.getRejectReason());
 					fa.setTransactionRef(request.getTransactionref());
+					
 					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(request.getPaymentType())
 							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(request.getPaymentType())) {
-
 						fa.setLLReferenceNo(request.getChequeNumber());
 					}
 
-					try {
-						DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-						txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+					String finReference = request.getFinReference();
+					FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.MAIN_TAB);
 
-						txStatus = transactionManager.getTransaction(txDef);
-
-						count = disbursementProcess.processDisbursement(fa);
-
-						if (count == 1) {
-							count = updateRequest(request);
-							if (count == 0 || count > 1) {
-								transactionManager.rollback(txStatus);
-							} else {
-								transactionManager.commit(txStatus);
-							}
-						} else {
-							transactionManager.rollback(txStatus);
-						}
-
-					} catch (Exception e) {
-						transactionManager.rollback(txStatus);
-						logger.error(Literal.EXCEPTION, e);
-						throw e;
+					if (fm == null) {
+						fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.TEMP_TAB);
 					}
 
 					break;
@@ -310,39 +292,20 @@ public class DisbursementController extends ExtendedTestClass {
 
 					pi.setFinReference(request.getFinReference());
 					pi.setClearingDate(request.getClearingDate());
-					pi.setStatus(request.getStatus());
+					pi.setClearingStatus(request.getStatus());
 					pi.setRejectReason(request.getRejectReason());
 					pi.setTransactionRef(request.getTransactionref());
 
-					try {
-						DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-						txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-						txStatus = transactionManager.getTransaction(txDef);
-
-						count = paymentProcess.processPayment(pi);
-
-						if (count == 1) {
-							count = updateRequest(request);
-							if (count == 0 || count > 1) {
-								transactionManager.rollback(txStatus);
-							} else {
-								this.transactionManager.commit(txStatus);
-							}
-						} else {
-							transactionManager.rollback(txStatus);
-						}
-
-					} catch (Exception e) {
-						transactionManager.rollback(txStatus);
-						logger.error(Literal.EXCEPTION, e);
-						throw e;
-					}
 
 					break;
 				default:
 					break;
 				}
+				
+				updateRequest(request);
 			}
+			
+			
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			String valueParm[] = new String[2];

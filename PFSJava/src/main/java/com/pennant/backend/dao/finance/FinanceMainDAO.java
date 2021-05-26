@@ -169,7 +169,7 @@ public interface FinanceMainDAO {
 
 	void updateApprovalStatus(String finReference, String approvalStatus);
 
-	String getNextRoleCodeByRef(String finReference, String type);
+	String getNextRoleCodeByRef(String finReference);
 
 	List<String> getFinanceWorlflowFirstTaskOwners(String event, String moduleName);
 

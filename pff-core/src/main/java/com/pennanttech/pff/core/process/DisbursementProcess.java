@@ -1,13 +1,22 @@
 package com.pennanttech.pff.core.process;
 
+import java.util.List;
+
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennanttech.pff.core.TableType;
 
 public interface DisbursementProcess {
-	void process(FinAdvancePayments finAdvancePayments);
+	void process(FinanceMain fm, FinAdvancePayments finAdvancePayments);
 
-	void updateStatus(Object... params);
+	FinAdvancePayments getFinAdvancePayments(FinAdvancePayments fap);
 
-	FinAdvancePayments getFinAdvancePayments(FinAdvancePayments finAdvancePayments);
+	int processDisbursement(FinanceMain fm, FinAdvancePayments fap);
 
-	int processDisbursement(FinAdvancePayments finadv);
+	List<FinAdvancePayments> getDisbRequestsByRespBatchId(long respBatchId);
+
+	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
+
+	List<PaymentInstruction> getPaymentInstructionsByRespBatchId(long respBatchId);
 }

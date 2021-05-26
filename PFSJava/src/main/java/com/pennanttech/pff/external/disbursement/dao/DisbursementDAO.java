@@ -65,4 +65,8 @@ public interface DisbursementDAO {
 
 	int updateDisbRequest(DisbursementRequest request);
 
+	List<FinAdvancePayments> getDisbRequestsByRespBatchId(long respBatchId);
+
+	List<PaymentInstruction> getPaymentInstructionsByRespBatchId(long respBatchId);
+
 }

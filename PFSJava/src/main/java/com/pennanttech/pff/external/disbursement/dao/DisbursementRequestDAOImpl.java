@@ -943,4 +943,108 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		});
 	}
+
+	@Override
+	public List<FinAdvancePayments> getDisbRequestsByRespBatchId(long respBatchId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT FA.PAYMENTID, FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE");
+		sql.append(", FA.PAYMENTTYPE, FA.STATUS, DR.STATUS CLEARINGSTATUS, FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME");
+		sql.append(", FA.BANKBRANCHID, FA.BANKCODE, FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE");
+		sql.append(", FA.AMTTOBERELEASED, FA.RECORDTYPE, DR.CHEQUE_NUMBER LLREFERENCENO");
+		sql.append(", DR.REJECT_REASON REJECTREASON, DR.REALIZATION_DATE REALIZATIONDATE");
+		sql.append(", DR.DOWNLOADED_ON DOWNLOADEDON, DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF, FA.PAYMENTSEQ");
+		sql.append(", PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY, FA.LLDATE");
+		sql.append(", FA.VASREFERENCE, AV.SHORTCODE AS DEALERSHORTCODE, VS.SHORTCODE AS PRODUCTSHORTCODE");
+		sql.append(", FA.PAYMENTDETAIL");
+		sql.append(" FROM DISBURSEMENT_REQUESTS DR");
+		sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
+		sql.append(" LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID");
+		sql.append(" LEFT JOIN VASRECORDING VR ON VR.VASREFERENCE = FA.VASREFERENCE");
+		sql.append(" LEFT JOIN VASSTRUCTURE VS ON VS.PRODUCTCODE = VR.PRODUCTCODE");
+		sql.append(" LEFT JOIN AMTVEHICLEDEALER AV ON  AV.DEALERID = VS.MANUFACTURERID");
+		sql.append(" WHERE RESP_BATCH_ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, respBatchId);
+		}, (rs, rowNum) -> {
+			FinAdvancePayments fap = new FinAdvancePayments();
+
+			fap.setPaymentId(rs.getLong("PAYMENTID"));
+			fap.setFinReference(rs.getString("FINREFERENCE"));
+			fap.setLinkedTranId(JdbcUtil.getLong(rs.getObject("LINKEDTRANID")));
+			fap.setPaymentType(rs.getString("PAYMENTTYPE"));
+			fap.setStatus(rs.getString("STATUS"));
+			fap.setClearingStatus(rs.getString("CLEARINGSTATUS"));
+			fap.setBeneficiaryAccNo(rs.getString("BENEFICIARYACCNO"));
+			fap.setBeneficiaryName(rs.getString("BENEFICIARYNAME"));
+			fap.setBankBranchID(JdbcUtil.getLong(rs.getObject("BANKBRANCHID")));
+			fap.setBankCode(rs.getString("BANKCODE"));
+			fap.setPhoneCountryCode(rs.getString("PHONECOUNTRYCODE"));
+			fap.setPhoneAreaCode(rs.getString("PHONEAREACODE"));
+			fap.setPhoneNumber(rs.getString("PHONENUMBER"));
+			fap.setAmtToBeReleased(rs.getBigDecimal("AMTTOBERELEASED"));
+			fap.setRecordType(rs.getString("RECORDTYPE"));
+			fap.setLLReferenceNo(rs.getString("LLREFERENCENO"));
+			fap.setRejectReason(rs.getString("REJECTREASON"));
+			fap.setRealizationDate(rs.getDate("REALIZATIONDATE"));
+			fap.setDownloadedon(rs.getDate("DOWNLOADEDON"));
+			fap.setClearingDate(rs.getDate("CLEARINGDATE"));
+			fap.setTransactionRef(rs.getString("TRANSACTIONREF"));
+			fap.setPaymentSeq(rs.getInt("PAYMENTSEQ"));
+			fap.setPartnerBankAcType(rs.getString("PARTNERBANKACTYPE"));
+			fap.setPartnerBankAc(rs.getString("PARTNERBANKAC"));
+			fap.setDisbCCy(rs.getString("DISBCCY"));
+			fap.setLLDate(rs.getDate("LLDATE"));
+			fap.setVasReference(rs.getString("VASREFERENCE"));
+			fap.setDealerShortCode(rs.getString("DEALERSHORTCODE"));
+			fap.setProductShortCode(rs.getString("PRODUCTSHORTCODE"));
+			fap.setPaymentDetail(rs.getString("PAYMENTDETAIL"));
+
+			return fap;
+		});
+	}
+
+	@Override
+	public List<PaymentInstruction> getPaymentInstructionsByRespBatchId(long respBatchId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO");
+		sql.append(", PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID");
+		sql.append(", PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, PI.STATUS, DR.STATUS CLEARINGSTATUS");
+		sql.append(", DR.REJECT_REASON REJECTREASON, DR.REALIZATION_DATE REALIZATIONDATE");
+		sql.append(", DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
+		sql.append(" FROM DISBURSEMENT_REQUESTS DR");
+		sql.append(" INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID");
+		sql.append(" INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID");
+		sql.append(" WHERE RESP_BATCH_ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, respBatchId);
+		}, (rs, rowNum) -> {
+			PaymentInstruction pi = new PaymentInstruction();
+
+			pi.setFinReference(rs.getString("FINREFERENCE"));
+			pi.setLinkedTranId(JdbcUtil.getLong(rs.getObject("LINKEDTRANID")));
+			pi.setPaymentId(rs.getLong("PAYMENTID"));
+			pi.setBankBranchId(JdbcUtil.getLong(rs.getObject("BANKBRANCHID")));
+			pi.setAccountNo(rs.getString("ACCOUNTNO"));
+			pi.setAcctHolderName(rs.getString("ACCTHOLDERNAME"));
+			pi.setPhoneCountryCode(rs.getString("PHONECOUNTRYCODE"));
+			pi.setPhoneNumber(rs.getString("PHONENUMBER"));
+			pi.setPaymentInstructionId(JdbcUtil.getLong(rs.getObject("PAYMENTINSTRUCTIONID")));
+			pi.setPaymentAmount(rs.getBigDecimal("PAYMENTAMOUNT"));
+			pi.setPaymentType(rs.getString("PAYMENTTYPE"));
+			pi.setStatus(rs.getString("STATUS"));
+			pi.setClearingStatus(rs.getString("CLEARINGSTATUS"));
+			pi.setRejectReason(rs.getString("REJECTREASON"));
+			pi.setRealizationDate(rs.getDate("REALIZATIONDATE"));
+			pi.setClearingDate(rs.getDate("CLEARINGDATE"));
+			pi.setTransactionRef(rs.getString("TRANSACTIONREF"));
+
+			return pi;
+		});
+	}
 }

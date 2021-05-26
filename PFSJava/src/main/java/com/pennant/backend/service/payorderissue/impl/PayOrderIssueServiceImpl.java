@@ -509,7 +509,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			BigDecimal totIssuedPOAmt = payOrderIssueHeader.getIssuedPOAmount();
 			int totIssuedPOCount = payOrderIssueHeader.getIssuedPOCount();
 			for (FinAdvancePayments finAdvancePayments : payOrderIssueHeader.getFinAdvancePaymentsList()) {
-				if (StringUtils.equals(PennantConstants.PO_STATUS_ISSUE, finAdvancePayments.getPOStatus())) {
+				if (StringUtils.equals(PennantConstants.PO_STATUS_ISSUE, finAdvancePayments.getStatus())) { //FIXME MURTHY
 					totIssuedPOAmt = totIssuedPOAmt.add(finAdvancePayments.getAmtToBeReleased());
 					totIssuedPOCount++;
 				}

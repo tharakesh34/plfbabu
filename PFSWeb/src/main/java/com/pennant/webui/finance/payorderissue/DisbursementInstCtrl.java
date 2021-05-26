@@ -124,44 +124,47 @@ public class DisbursementInstCtrl {
 
 	public static boolean checkQDPProceeed(FinanceDetail financeDetail) {
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if (finMain.isQuickDisb()) {
-			List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
-			if (list != null && !list.isEmpty()) {
-				List<FinanceDisbursement> listDisb = financeDetail.getFinScheduleData().getDisbursementDetails();
 
-				FinanceDisbursement totFinDisbursement = getTotal(listDisb, finMain, 0, false);
-				BigDecimal totalDisb = totFinDisbursement.getDisbAmount();
-				BigDecimal paidAmount = BigDecimal.ZERO;
+		if (!finMain.isQuickDisb()) {
+			return true;
+		}
 
-				for (FinAdvancePayments finAdvancePayments : list) {
-					if (finAdvancePayments.ispOIssued()) {
-						if (StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_PAID)) {
-							paidAmount = paidAmount.add(finAdvancePayments.getAmtToBeReleased());
-						}
+		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
+
+		if (list == null || list.isEmpty()) {
+			return true;
+		}
+
+		List<FinanceDisbursement> listDisb = financeDetail.getFinScheduleData().getDisbursementDetails();
+
+		FinanceDisbursement totFinDisbursement = getTotal(listDisb, finMain, 0, false);
+		BigDecimal totalDisb = totFinDisbursement.getDisbAmount();
+		BigDecimal paidAmount = BigDecimal.ZERO;
+
+		for (FinAdvancePayments finAdvancePayments : list) {
+			if (finAdvancePayments.ispOIssued()) {
+				if (StringUtils.equals(finAdvancePayments.getStatus(), DisbursementConstants.STATUS_PAID)) {
+					paidAmount = paidAmount.add(finAdvancePayments.getAmtToBeReleased());
+				}
+			}
+		}
+
+		if (totalDisb.compareTo(paidAmount) == 0) {
+			return true;
+		}
+
+		for (FinAdvancePayments finAdvancePayments : list) {
+			if (finAdvancePayments.ispOIssued()) {
+				String status = finAdvancePayments.getStatus();
+				if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
+					if (!(DisbursementConstants.STATUS_CANCEL.equals(status)
+							|| DisbursementConstants.STATUS_REJECTED.equals(status)
+							|| DisbursementConstants.STATUS_PRINT.equals(status))) {
+						return false;
 					}
-				}
-
-				if (totalDisb.compareTo(paidAmount) == 0) {
-					return true;
-				}
-
-				for (FinAdvancePayments finAdvancePayments : list) {
-					if (finAdvancePayments.ispOIssued()) {
-						if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
-							if (!(StringUtils.equals(finAdvancePayments.getStatus(),
-									DisbursementConstants.STATUS_CANCEL)
-									|| StringUtils.equals(finAdvancePayments.getStatus(),
-											DisbursementConstants.STATUS_REJECTED)
-									|| StringUtils.equals(finAdvancePayments.getStatus(),
-											DisbursementConstants.STATUS_PRINT))) {
-								return false;
-							}
-						} else {
-							if (!StringUtils.equals(finAdvancePayments.getStatus(),
-									DisbursementConstants.STATUS_CANCEL)) {
-								return false;
-							}
-						}
+				} else {
+					if (!DisbursementConstants.STATUS_CANCEL.equals(status)) {
+						return false;
 					}
 				}
 			}

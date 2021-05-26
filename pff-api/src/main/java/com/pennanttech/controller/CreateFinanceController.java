@@ -3908,7 +3908,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finAdvancePayments.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				finAdvancePayments.setNewRecord(true);
 				finAdvancePayments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				finAdvancePayments.setId(Long.MIN_VALUE);
+				finAdvancePayments.setPaymentId(Long.MIN_VALUE);
 
 			}
 

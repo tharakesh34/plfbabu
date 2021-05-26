@@ -1175,19 +1175,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeDetail;
 	}
 
-	/**
-	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsServicing method.
-	 * 
-	 * @param finReference
-	 *            (String)
-	 * @param eventCodeRef
-	 *            (String)
-	 * @param procEdtEvent
-	 *            (String)
-	 * @param userrole
-	 *            (String)
-	 * @return FinanceDetail
-	 */
+	
 	@Override
 	public FinanceDetail getServicingFinance(String finReference, String eventCodeRef, String procEdtEvent,
 			String userrole) {
@@ -11290,8 +11278,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public String getNextRoleCodeByRef(String finReference, String type) {
-		return getFinanceMainDAO().getNextRoleCodeByRef(finReference, type);
+	public String getNextRoleCodeByRef(String finReference) {
+		return getFinanceMainDAO().getNextRoleCodeByRef(finReference);
 
 	}
 

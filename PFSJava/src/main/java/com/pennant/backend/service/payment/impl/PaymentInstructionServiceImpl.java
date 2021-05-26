@@ -139,7 +139,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 			tableType = TableType.TEMP_TAB;
 		}
 		if (paymentInstruction.isNew()) {
-			paymentInstruction.setId(Long.parseLong(getPaymentInstructionDAO().save(paymentInstruction, tableType)));
+			paymentInstruction.setPaymentInstructionId(Long.parseLong(getPaymentInstructionDAO().save(paymentInstruction, tableType)));
 			auditHeader.getAuditDetail().setModelData(paymentInstruction);
 			auditHeader.setAuditReference(String.valueOf(paymentInstruction.getPaymentInstructionId()));
 		} else {

@@ -7,22 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.FactoryConfigurationError;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -42,8 +35,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -52,54 +43,38 @@ import com.pennanttech.pff.logging.dao.InstBasedSchdDetailDAO;
 public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 	private static Logger logger = LogManager.getLogger(InstBasedSchdProcess.class);
 
-	private transient FinanceDetailService financeDetailService;
-	private transient InstBasedSchdDetailDAO instBasedSchdDetailDAO;
-	private transient BatchProcessStatusDAO batchProcessStatusDAO;
-	private PlatformTransactionManager transactionManager;
-
-	protected Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
-	protected transient WorkflowEngine workFlow = null;
+	private FinanceDetailService financeDetailService;
+	private InstBasedSchdDetailDAO instBasedSchdDetailDAO;
 
 	/**
 	 * Method to Check Any Records Are There For Inst Based Schedule.
 	 */
 
-	public void rebuildSchdBasedOnInst(LoggedInUser userId, long batchId) {
+	public void process(InstBasedSchdDetails instBasedSchd) {
 		logger.debug(Literal.ENTERING);
 
-		List<InstBasedSchdDetails> instBasedSchddetailList = instBasedSchdDetailDAO
-				.getUploadedDisbursementsWithBatchId(batchId);
+		LoggedInUser userDetails = new LoggedInUser();
+		FinanceDetail financeDetail = null;
 
-		if (CollectionUtils.isEmpty(instBasedSchddetailList)) {
-			return;
+		//Check in main and temp rather than instruction
+		String finReference = instBasedSchd.getFinReference();
+		String nxtRoleCd = financeDetailService.getNextRoleCodeByRef(finReference);
+		boolean isLoanApproved = instBasedSchdDetailDAO.getFinanceIfApproved(finReference);
+
+		// Check if Loan is not Approveda
+		if (!isLoanApproved) {
+			financeDetail = financeDetailService.getOriginationFinance(finReference, nxtRoleCd,
+					FinanceConstants.FINSER_EVENT_ORG, "");
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		} else if (StringUtils.isNotBlank(nxtRoleCd)) {
+			financeDetail = financeDetailService.getServicingFinanceForQDP(finReference,
+					AccountEventConstants.ACCEVENT_ADDDBSN, FinanceConstants.FINSER_EVENT_ADDDISB, nxtRoleCd);
+		} else {
+			financeDetail = financeDetailService.getFinSchdDetailByRef(finReference, "", false);
 		}
 
-		batchProcessStatusDAO.saveBatchStatus("IBS", new Timestamp(System.currentTimeMillis()), "I");
-
-		FinanceDetail financeDetail = null;
-		for (InstBasedSchdDetails instBasedSchdDetail : instBasedSchddetailList) {
-
-			//Check in main and temp rather than instruction
-			String nxtRoleCd = financeDetailService.getNextRoleCodeByRef(instBasedSchdDetail.getFinReference(),
-					"_temp");
-			boolean isLoanApproved = instBasedSchdDetailDAO.getFinanceIfApproved(instBasedSchdDetail.getFinReference());
-
-			// Check if Loan is not Approved
-			if (!isLoanApproved) {
-				financeDetail = financeDetailService.getOriginationFinance(instBasedSchdDetail.getFinReference(),
-						nxtRoleCd, FinanceConstants.FINSER_EVENT_ORG, "");
-				financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-			} else if (StringUtils.isNotBlank(nxtRoleCd)) {
-				financeDetail = financeDetailService.getServicingFinanceForQDP(instBasedSchdDetail.getFinReference(),
-						AccountEventConstants.ACCEVENT_ADDDBSN, FinanceConstants.FINSER_EVENT_ADDDISB, nxtRoleCd);
-			} else {
-				financeDetail = financeDetailService.getFinSchdDetailByRef(instBasedSchdDetail.getFinReference(), "",
-						false);
-			}
-
-			if (financeDetail != null) {
-				processAndApprove(userId, instBasedSchdDetail, financeDetail, !isLoanApproved, nxtRoleCd);
-			}
+		if (financeDetail != null) {
+			processAndApprove(userDetails, instBasedSchd, financeDetail, !isLoanApproved, nxtRoleCd);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -110,21 +85,17 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 	 * Realization Date and Validate and Approves the Record.
 	 */
 
-	private void processAndApprove(LoggedInUser userDetails, InstBasedSchdDetails instSchdDetail,
-			FinanceDetail financeDetail, boolean isLoanNotApproved, String nxtRoleCd) {
+	private void processAndApprove(LoggedInUser userDetails, InstBasedSchdDetails instSchdDetail, FinanceDetail fd,
+			boolean isLoanNotApproved, String nxtRoleCd) {
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
-
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		FinanceDisbursement finDisb = null;
 		FinScheduleData instBasedSchedule = null;
 
 		// from payment id we need to get disbursement id
 		//in disbursement details we need to mark  instCalReq ="false";
-		for (FinanceDisbursement financeDisbursement : financeDetail.getFinScheduleData().getDisbursementDetails()) {
-			for (FinAdvancePayments finAdvancePayments : financeDetail.getAdvancePaymentsList()) {
+		for (FinanceDisbursement financeDisbursement : fd.getFinScheduleData().getDisbursementDetails()) {
+			for (FinAdvancePayments finAdvancePayments : fd.getAdvancePaymentsList()) {
 
 				// Check if payment id match
 				if (instSchdDetail.getDisbId() == finAdvancePayments.getPaymentId()
@@ -138,49 +109,48 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		//Step Changes
 		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
-		financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+		fm.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 
-		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES) && financeMain.isStepFinance()) {
-			if (StringUtils.isNotBlank(financeMain.getStepPolicy())
-					|| (financeMain.isAlwManualSteps() && financeMain.getNoOfSteps() > 0)) {
+		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES) && fm.isStepFinance()) {
+			if (StringUtils.isNotBlank(fm.getStepPolicy()) || (fm.isAlwManualSteps() && fm.getNoOfSteps() > 0)) {
 
-				financeDetail.getFinScheduleData().setStepPolicyDetails(financeDetailService
-						.getFinStepDetailListByFinRef(financeMain.getFinReference(), "_view", false));
+				fd.getFinScheduleData().setStepPolicyDetails(
+						financeDetailService.getFinStepDetailListByFinRef(fm.getFinReference(), "_view", false));
 
 				Date recalFromDate = null;
 
-				List<RepayInstruction> rpst = financeDetail.getFinScheduleData().getRepayInstructions();
+				List<RepayInstruction> rpst = fd.getFinScheduleData().getRepayInstructions();
 
 				if (CollectionUtils.isEmpty(rpst)) {
-					financeDetail.getFinScheduleData().setRepayInstructions(
-							financeDetailService.getRepayInstructions(financeMain.getFinReference(), "_view", false));
-					rpst = financeDetail.getFinScheduleData().getRepayInstructions();
+					fd.getFinScheduleData().setRepayInstructions(
+							financeDetailService.getRepayInstructions(fm.getFinReference(), "_view", false));
+					rpst = fd.getFinScheduleData().getRepayInstructions();
 				}
 
-				if (instSchdDetail.getRealizedDate().compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
+				if (instSchdDetail.getRealizedDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
 					RepayInstruction rins = rpst.get(rpst.size() - 1);
 					recalFromDate = rins.getRepayDate();
-					financeMain.setRecalSteps(false);
+					fm.setRecalSteps(false);
 				} else {
-					financeMain.setRecalSteps(true);
+					fm.setRecalSteps(true);
 					for (RepayInstruction repayInstruction : rpst) {
-						if (repayInstruction.getRepayDate().compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
+						if (repayInstruction.getRepayDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
 							recalFromDate = repayInstruction.getRepayDate();
 							break;
 						}
 					}
 				}
 
-				financeMain.setRecalFromDate(recalFromDate);
-				financeMain.setRecalToDate(financeMain.getMaturityDate());
-				financeMain.setRecalType(CalculationConstants.RPYCHG_STEPINST);
-				if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinServiceInstructions())) {
-					for (FinServiceInstruction finServiceInstruction : financeDetail.getFinScheduleData()
+				fm.setRecalFromDate(recalFromDate);
+				fm.setRecalToDate(fm.getMaturityDate());
+				fm.setRecalType(CalculationConstants.RPYCHG_STEPINST);
+				if (CollectionUtils.isNotEmpty(fd.getFinScheduleData().getFinServiceInstructions())) {
+					for (FinServiceInstruction finServiceInstruction : fd.getFinScheduleData()
 							.getFinServiceInstructions()) {
 						finServiceInstruction.setRecalFromDate(recalFromDate);
-						finServiceInstruction.setRecalToDate(financeMain.getMaturityDate());
+						finServiceInstruction.setRecalToDate(fm.getMaturityDate());
 						finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_STEPINST);
-						finServiceInstruction.setSchdMethod(financeMain.getScheduleMethod());
+						finServiceInstruction.setSchdMethod(fm.getScheduleMethod());
 					}
 				}
 			}
@@ -189,111 +159,93 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		try {
 
-			txStatus = transactionManager.getTransaction(txDef);
-
 			// if Loan not approved, then
 			if (isLoanNotApproved) {
 
-				financeMain.setEventFromDate(instSchdDetail.getRealizedDate());
-				financeMain.setRecalToDate(financeMain.getMaturityDate());
+				fm.setEventFromDate(instSchdDetail.getRealizedDate());
+				fm.setRecalToDate(fm.getMaturityDate());
 				//financeMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 
-				instBasedSchedule = ScheduleCalculator.instBasedSchedule(financeDetail.getFinScheduleData(),
+				instBasedSchedule = ScheduleCalculator.instBasedSchedule(fd.getFinScheduleData(),
 						instSchdDetail.getDisbAmount(), false, isLoanNotApproved, finDisb, true);
 
-				financeDetail.setFinScheduleData(instBasedSchedule);
-				financeDetail.getFinScheduleData().setSchduleGenerated(true);
+				fd.setFinScheduleData(instBasedSchedule);
+				fd.getFinScheduleData().setSchduleGenerated(true);
 
-				financeMain.setUserDetails(userDetails);
-				financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				fm.setUserDetails(userDetails);
+				fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				fd.getFinScheduleData().setFinanceMain(fm);
 
-				doProcess(financeDetail, userDetails);
+				doProcess(fd, userDetails);
 
 			} else {
 
 				if (StringUtils.isBlank(nxtRoleCd)) {
 
-					financeMain.setEventFromDate(instSchdDetail.getRealizedDate());
-					financeMain.setRecalToDate(financeMain.getMaturityDate());
+					fm.setEventFromDate(instSchdDetail.getRealizedDate());
+					fm.setRecalToDate(fm.getMaturityDate());
 
-					instBasedSchedule = ScheduleCalculator.instBasedSchedule(financeDetail.getFinScheduleData(),
+					instBasedSchedule = ScheduleCalculator.instBasedSchedule(fd.getFinScheduleData(),
 							instSchdDetail.getDisbAmount(), false, isLoanNotApproved, finDisb, false);
 
-					financeDetail.setFinScheduleData(instBasedSchedule);
-					financeDetail.getFinScheduleData().setSchduleGenerated(true);
+					fd.setFinScheduleData(instBasedSchedule);
+					fd.getFinScheduleData().setSchduleGenerated(true);
 
-					financeMain.setUserDetails(userDetails);
-					financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+					fm.setUserDetails(userDetails);
+					fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					fd.getFinScheduleData().setFinanceMain(fm);
 
-					doProcessDisbRecord(financeDetail.getFinScheduleData(), userDetails);
+					doProcessDisbRecord(fd.getFinScheduleData(), userDetails);
 
 				} else {
 
-					if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinServiceInstructions())) {
-						for (FinServiceInstruction finServiceInstruction : financeDetail.getFinScheduleData()
+					if (CollectionUtils.isNotEmpty(fd.getFinScheduleData().getFinServiceInstructions())) {
+						for (FinServiceInstruction finServiceInstruction : fd.getFinScheduleData()
 								.getFinServiceInstructions()) {
 
-							financeMain.setEventFromDate(instSchdDetail.getRealizedDate());
-							financeMain.setRecalToDate(finServiceInstruction.getRecalToDate());
-							financeMain.setScheduleMethod(finServiceInstruction.getSchdMethod());
-							financeMain.setRecalType(finServiceInstruction.getRecalType());
+							fm.setEventFromDate(instSchdDetail.getRealizedDate());
+							fm.setRecalToDate(finServiceInstruction.getRecalToDate());
+							fm.setScheduleMethod(finServiceInstruction.getSchdMethod());
+							fm.setRecalType(finServiceInstruction.getRecalType());
 
 							if (instSchdDetail.getRealizedDate().compareTo(finDisb.getDisbDate()) == 0) {
 								List<FinanceScheduleDetail> listSchdDetails = getFinanceDetailService()
-										.getFinScheduleDetails(financeMain.getFinReference(), "_temp", false);
+										.getFinScheduleDetails(fm.getFinReference(), "_temp", false);
 								if (CollectionUtils.isNotEmpty(listSchdDetails)) {
-									financeDetail.getFinScheduleData().setFinanceScheduleDetails(listSchdDetails);
+									fd.getFinScheduleData().setFinanceScheduleDetails(listSchdDetails);
 								}
 							}
-							instBasedSchedule = ScheduleCalculator.instBasedSchedule(financeDetail.getFinScheduleData(),
+							instBasedSchedule = ScheduleCalculator.instBasedSchedule(fd.getFinScheduleData(),
 									finServiceInstruction.getAmount(), false, isLoanNotApproved, finDisb, true);
-							financeDetail.setFinScheduleData(instBasedSchedule);
-							financeDetail.getFinScheduleData().setSchduleGenerated(true);
+							fd.setFinScheduleData(instBasedSchedule);
+							fd.getFinScheduleData().setSchduleGenerated(true);
 
-							financeMain.setUserDetails(userDetails);
-							financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-							financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+							fm.setUserDetails(userDetails);
+							fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+							fd.getFinScheduleData().setFinanceMain(fm);
 
 							// save/approve
-							doProcess(financeDetail, userDetails);
+							doProcess(fd, userDetails);
 						}
 					}
 				}
 			}
 		} catch (Exception e) {
-			transactionManager.rollback(txStatus);
 			instSchdDetail.setErrorDesc(StringUtils.substring(e.toString(), 0, 900));
 			logger.info(e.toString());
 			logger.debug(Literal.EXCEPTION, e);
 			instSchdDetail.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
 
-			DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-			txDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-			TransactionStatus txSts = null;
-			instBasedSchdDetailDAO.updateFinAutoApprovals(instSchdDetail);
-
-			txSts = transactionManager.getTransaction(txDefinition);
-			transactionManager.commit(txSts);
 		}
 
 		if (DisbursementConstants.AUTODISB_STATUS_FAILED != instSchdDetail.getStatus()) {
 			instSchdDetail.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
-			instBasedSchdDetailDAO.updateFinAutoApprovals(instSchdDetail);
-			if (txStatus != null) {
-				transactionManager.commit(txStatus);
-			}
 		}
-
-		batchProcessStatusDAO.updateBatchStatus("IBS", new Timestamp(System.currentTimeMillis()), "C");
 
 	}
 
 	private void doProcessDisbRecord(FinScheduleData finDetail, LoggedInUser userDetails) {
-
-		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 		// Finance Schedule Details
 		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {
 			int seqNo = 0;
@@ -333,13 +285,6 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 				finDetail.getFinanceMain().getFinReference());
 	}
 
-	/**
-	 * Method for Processing Finance Detail Object for Database Operation
-	 * 
-	 * @param afinanceMain
-	 * @param tranType
-	 * @param userDetails
-	 */
 	private AuditHeader doProcess(FinanceDetail financeDetail, LoggedInUser userDetails) throws Exception {
 		AuditHeader auditHeader = null;
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -353,7 +298,10 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		financeDetail.getCustomerDetails().setUserDetails(userDetails);
 		//remove covenant documents from  DocumentdetailsList the same documents are available in covenant doc list(Bugfix: PrimaryKey issue)
 		removeCovenantDocuments(financeDetail);
-		auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
+
+		Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
+
+		auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF, overideMap);
 		auditHeader = financeDetailService.doApprove(auditHeader, false);
 
 		if (auditHeader.getOverideMessage() != null) {
@@ -365,8 +313,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			}
 
 			auditHeader.setOverideMap(overideMap);
-			setOverideMap(overideMap);
-			auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
+			auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF, overideMap);
 			auditHeader = financeDetailService.doApprove(auditHeader, false);
 		}
 
@@ -421,17 +368,11 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		return false;
 	}
 
-	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID)
-			throws FactoryConfigurationError {
-		if (workFlowEnabled) {
-			setWorkFlow(new WorkflowEngine(WorkFlowUtil.getWorkflow(workFlowId).getWorkFlowXml()));
-		}
-	}
-
-	private AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
+	private AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType,
+			Map<String, List<ErrorDetail>> overideMap) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
 		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-				afinanceDetail.getUserDetails(), getOverideMap());
+				afinanceDetail.getUserDetails(), overideMap);
 	}
 
 	private void removeCovenantDocuments(FinanceDetail financeDetail) {
@@ -466,30 +407,6 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		financeDetail.setDocumentDetailsList(documentDetails);
 	}
 
-	public WorkflowEngine getWorkFlow() {
-		return workFlow;
-	}
-
-	public void setWorkFlow(WorkflowEngine workFlow) {
-		this.workFlow = workFlow;
-	}
-
-	public Map<String, List<ErrorDetail>> getOverideMap() {
-		return overideMap;
-	}
-
-	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
-		this.overideMap = overideMap;
-	}
-
-	public PlatformTransactionManager getTransactionManager() {
-		return transactionManager;
-	}
-
-	public void setTransactionManager(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
-	}
-
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}
@@ -504,14 +421,6 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 	public void setInstBasedSchdDetailDAO(InstBasedSchdDetailDAO instBasedSchdDetailDAO) {
 		this.instBasedSchdDetailDAO = instBasedSchdDetailDAO;
-	}
-
-	public BatchProcessStatusDAO getBatchProcessStatusDAO() {
-		return batchProcessStatusDAO;
-	}
-
-	public void setBatchProcessStatusDAO(BatchProcessStatusDAO batchProcessStatusDAO) {
-		this.batchProcessStatusDAO = batchProcessStatusDAO;
 	}
 
 }

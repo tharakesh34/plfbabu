@@ -19,7 +19,6 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse;
 
@@ -65,15 +64,13 @@ public class DisbAutoUploadService extends BasicDao<Object> {
 
 			file = new File("D:/test.txt");
 			OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-			boolean status = ftpClient.retrieveFile(remoteFile, os);
+			ftpClient.retrieveFile(remoteFile, os);
 			os.close();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		try {
-			//LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			LoggedInUser loggedInUser = new LoggedInUser();
-			getDefaultDisbursementResponse().processResponseFile(1000L, status, file, null, null, loggedInUser);
+			defaultDisbursementResponse.processResponseFile(1000L, status, file, null);
 
 		} catch (Exception io) {
 			logger.error(Literal.EXCEPTION, io);

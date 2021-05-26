@@ -6,410 +6,311 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.FactoryConfigurationError;
-
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.jaxen.JaxenException;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.batchProcessStatus.BatchProcessStatusDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAutoApprovalDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.WorkFlowUtil;
-import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.logging.dao.FinAutoApprovalDetailDAO;
 
 public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetails> {
-
 	private static Logger logger = LogManager.getLogger(FinAutoApprovalProcess.class);
 
-	protected transient WorkflowEngine workFlow = null;
+	private FinanceDetailService financeDetailService;
+	private FinAutoApprovalDetailDAO finAutoApprovalDetailDAO;
 
-	Date minReqFinStartDate = DateUtility.addDays(DateUtility.getAppDate(),
-			-SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE") + 1);
-	Date maxReqFinStartDate = DateUtility.addDays(DateUtility.getAppDate(),
-			+SysParamUtil.getValueAsInt("FUTUREDAYS_STARTDATE") + 1);
+	public void process(FinAutoApprovalDetails autoApproval) {
+		logger.info(Literal.ENTERING);
+		long userId = autoApproval.getUserId();
 
-	private Map<String, Integer> qdpValidityDays = new HashMap<>();
+		LoggedInUser loggedInUser = new LoggedInUser();
+		loggedInUser.setLoginUsrID(userId);
 
-	private List<FinAutoApprovalDetails> nonQDPList = new ArrayList<>();
+		String finReference = autoApproval.getFinReference();
 
-	@Autowired
-	private transient FinanceDetailService financeDetailService;
-	@Autowired
-	private transient FinAutoApprovalDetailDAO finAutoApprovalDetailDAO;
+		boolean finisQuickDisb = finAutoApprovalDetailDAO.isQuickDisb(finReference);
 
-	@Autowired
-	private transient BatchProcessStatusDAO batchProcessStatusDAO;
-	private PlatformTransactionManager transactionManager;
-	protected Map<String, List<ErrorDetail>> overideMap = new HashMap<>();
-
-	public PlatformTransactionManager getTransactionManager() {
-		return transactionManager;
-	}
-
-	public void setTransactionManager(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
-	}
-
-	/**
-	 * Method to Check Any Records Are There For Auto Approval. After successful upload of Disbursements It Will Call
-	 */
-
-	public void checkForAutoApproval(LoggedInUser userId, long batchId) {
-		List<FinAutoApprovalDetails> autoAppDisbs = finAutoApprovalDetailDAO
-				.getUploadedDisbursementsWithBatchId(batchId);
-		if (CollectionUtils.isEmpty(autoAppDisbs)) {
+		if (!finisQuickDisb) {
+			autoApproval.setErrorDesc("Quick disbursement is not enabled for the disbursement instruction.");
+			logger.info(autoApproval.getErrorDesc());
+			autoApproval.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
+			logger.info(Literal.LEAVING);
 			return;
 		}
-		loadQDPValidityDays();
-		batchProcessStatusDAO.saveBatchStatus("QDP", new Timestamp(System.currentTimeMillis()), "I");
 
-		Iterator<FinAutoApprovalDetails> batchIterator = autoAppDisbs.iterator();
+		boolean approvedLoan = checkForPreviousApproval(finReference);
+
+		String nextRoleCode = financeDetailService.getNextRoleCodeByRef(finReference);
+
 		FinanceDetail financeDetail = null;
-
-		while (batchIterator.hasNext()) {
-			FinAutoApprovalDetails appDetails = batchIterator.next();
-			Map<String, String> tempMap = new HashMap<String, String>();
-
-			if (tempMap.isEmpty()) {
-				tempMap.put(appDetails.getFinReference(), "");
-			} else {
-				if (!tempMap.containsKey(appDetails.getFinReference())) {
-					tempMap.put(appDetails.getFinReference(), "");
-				} else {
-					continue;
-				}
-			}
-
-			boolean finisQuickDisb = checkForQuickDisbInDisbursements(appDetails.getFinReference());
-			if (!finisQuickDisb) {
-				updateStatus(appDetails, null);
-				continue;
-			}
-
-			boolean servicing = checkForServicing(appDetails.getFinReference());
-
-			String finMain = financeDetailService.getNextRoleCodeByRef(appDetails.getFinReference(), "_View");
-
-			if (!servicing && !checkForPreviousApproval(appDetails.getFinReference())) {
-				financeDetail = financeDetailService.getOriginationFinance(appDetails.getFinReference(), finMain,
-						FinanceConstants.FINSER_EVENT_ORG, "");
-				financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-
-			} else {
-				financeDetail = financeDetailService.getServicingFinanceForQDP(appDetails.getFinReference(),
-						AccountEventConstants.ACCEVENT_ADDDBSN, FinanceConstants.FINSER_EVENT_ADDDISB, finMain);
-			}
-
-			if (financeDetail != null) {
-				processAndApprove(userId, batchIterator, appDetails, financeDetail);
-			}
-
+		
+		boolean servicing = finAutoApprovalDetailDAO.getFinanceServiceInstruction(finReference);
+		
+		if (!servicing && !approvedLoan) {
+			financeDetail = financeDetailService.getOriginationFinance(finReference, nextRoleCode,
+					FinanceConstants.FINSER_EVENT_ORG, "");
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		} else {
+			financeDetail = financeDetailService.getServicingFinanceForQDP(finReference,
+					AccountEventConstants.ACCEVENT_ADDDBSN, FinanceConstants.FINSER_EVENT_ADDDISB, nextRoleCode);
 		}
 
-		// finAutoApprovalDetailDAO.deleteNonQDPRecords(nonQDPList);
+
+		if (financeDetail != null) {
+			processAndApprove(loggedInUser, autoApproval, financeDetail);
+		}
+		
+		
+		if (DisbursementConstants.AUTODISB_STATUS_PENDING.equals(autoApproval.getStatus())
+				&& autoApproval.getErrorDesc() == null) {
+			autoApproval.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
+		}
+		
+		logger.info(Literal.LEAVING);
 	}
 
 	/**
 	 * This Method Process and Approves the Finance which are in For Auto Approval. Prepares new Schedule based on the
 	 * Realization Date and Validate and Approves the Record.
 	 */
+	private void processAndApprove(LoggedInUser user, FinAutoApprovalDetails finAad, FinanceDetail fd) {
+		logger.info(Literal.ENTERING);
 
-	private void processAndApprove(LoggedInUser userDetails, Iterator<FinAutoApprovalDetails> batchIterator,
-			FinAutoApprovalDetails appDetails, FinanceDetail financeDetail) {
+		FinScheduleData finScheduleData = fd.getFinScheduleData();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		FinanceType financeType = finScheduleData.getFinanceType();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		List<FinAdvancePayments> finAdvancePayments = fd.getAdvancePaymentsList();
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		FinanceDisbursement disbursement = null;
+		String paymentType = finAad.getPaymentType();
+		for (FinanceDisbursement fds : finScheduleData.getDisbursementDetails()) {
+			for (FinAdvancePayments fap : finAdvancePayments) {
+				String disbStatus = fds.getDisbStatus();
+				if (StringUtils.equals(null, disbStatus) && (fap.getPaymentId() == finAad.getDisbId())) {
+					paymentType = fap.getPaymentType();
+					disbursement = fds;
+					break;
+				}
+			}
+		}
 
-		List<FinanceDisbursement> financeDisbursements = financeDetail.getFinScheduleData().getDisbursementDetails();
-		List<FinanceDisbursement> processedDisbursementList = new ArrayList<>(financeDisbursements.size());
-		List<FinAdvancePayments> finAdvancePayments = financeDetail.getAdvancePaymentsList();
+		if (!disbursement.isQuickDisb()) {
+			finAad.setErrorDesc("Quick disbursement is not enabled for the disbursement instruction.");
+			finAad.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
+
+			logger.info(finAad.getErrorDesc());
+			logger.info(Literal.LEAVING);
+			return;
+		}
+
+		if (!financeType.isAutoApprove()) {
+			finAad.setErrorDesc("Auto approval flag is not enabled in loan type master.");
+			finAad.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
+
+			logger.info(finAad.getErrorDesc());
+			logger.info(Literal.LEAVING);
+			return;
+		}
+
+		Map<String, Integer> qdpValidityDays = finAutoApprovalDetailDAO.loadQDPValidityDays();
+		int days = qdpValidityDays.get(paymentType);
+
+		boolean validDisb = validateQDPDays(days, finAad.getDownloadedOn(), finAad.getRealizedDate());
+
+		if (!validDisb) {
+			finAad.setErrorDesc("Payment type validity expired");
+			finAad.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
+
+			logger.info(finAad.getErrorDesc());
+			logger.info(Literal.LEAVING);
+			return;
+		}
+
+		String moduleDefiner = fd.getModuleDefiner();
 
 		try {
-			int noOfDisbursements = financeDetail.getFinScheduleData().getDisbursementDetails().size();
-			for (int i = 0; i < noOfDisbursements; i++) {
-				FinanceDisbursement disbursement = financeDisbursements.get(i);
 
-				if (!recordToBeProcessed(finAdvancePayments, disbursement, appDetails)) {
-					processedDisbursementList.add(disbursement);
-					continue;
-				}
-
-				txStatus = transactionManager.getTransaction(txDef);
-
-				if (financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)) {
-					if (disbursement.isQuickDisb() && financeType.isAutoApprove()) {
-						boolean validDisb = validateQDPDays(appDetails.getPaymentType(), appDetails.getDownloadedon(),
-								appDetails.getRealizedDate());
-
-						if (validDisb) {
-							String tranType = "";
-							if (financeMain.isWorkflow()) {
-								tranType = PennantConstants.TRAN_WF;
-								if (StringUtils.isEmpty(financeMain.getRecordType())) {
-									financeMain.setVersion(financeMain.getVersion() + 1);
-									if (financeMain.isNew()) {
-										financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-									} else {
-										financeMain.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-										financeMain.setNewRecord(true);
-									}
-								}
-							} else {
-								financeMain.setVersion(financeMain.getVersion() + 1);
-								if (financeMain.isNew()) {
-									tranType = PennantConstants.TRAN_ADD;
-								} else {
-									tranType = PennantConstants.TRAN_UPD;
-								}
-							}
-							disbursement.setDisbStatus("D");
-							disbursement.setDisbDate(appDetails.getRealizedDate());
-							processedDisbursementList.add(disbursement);
-							financeDetail.getFinScheduleData().setDisbursementDetails(processedDisbursementList);
-
-							financeMain.setFinStartDate(appDetails.getRealizedDate());
-							financeMain.setLastRepayDate(appDetails.getRealizedDate());
-							financeMain.setLastRepayPftDate(appDetails.getRealizedDate());
-
-							financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-							if (!financeMain.isAllowGrcPeriod()) {
-								financeMain.setGrcPeriodEndDate(appDetails.getRealizedDate());
-							}
-
-							financeMain.setRecalType("");
-							financeMain.setCalculateRepay(true);
-							financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-
-							financeDetail.getFinScheduleData().getRepayInstructions().clear();
-
-							prepareSchedule(financeDetail, financeMain, financeType);
-							financeMain.setUserDetails(userDetails);
-
-							AuditHeader auditheader = doProcess(financeDetail, tranType, userDetails);
-							// If validation fails while approving the record
-							if (!auditheader.isNextProcess()) {
-								updateStatus(appDetails, auditheader, txStatus);
-							}
-						} else {
-							updateStatus(appDetails, txStatus);
-						}
-					} else {
-						updateStatus(batchIterator, appDetails, txStatus, disbursement);
-					}
-				} else if (checkForServicing(financeMain.getFinReference())) {
-
-					if (disbursement.isQuickDisb() && financeType.isAutoApprove()) {
-						financeMain.setNewRecord(false);
-
-						boolean validDisb = validateQDPDays(appDetails.getPaymentType(), appDetails.getDownloadedon(),
-								appDetails.getRealizedDate());
-
-						if (validDisb) {
-							if (financeDetail.getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
-								List<FinServiceInstruction> finServiceInstructions = financeDetail.getFinScheduleData()
-										.getFinServiceInstructions();
-
-								for (FinServiceInstruction finServiceInstruction : finServiceInstructions) {
-
-									String tranType = "";
-									if (financeMain.isWorkflow()) {
-										tranType = PennantConstants.TRAN_WF;
-										//financeMain.setVersion(financeMain.getVersion());
-										if (StringUtils.isEmpty(financeMain.getRecordType())) {
-											financeMain.setVersion(financeMain.getVersion() + 1);
-											if (financeMain.isNew()) {
-												financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-											} else {
-												financeMain.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-												financeMain.setNewRecord(true);
-											}
-										}
-									} else {
-										financeMain.setVersion(financeMain.getVersion() + 1);
-										if (financeMain.isNew()) {
-											tranType = PennantConstants.TRAN_ADD;
-										} else {
-											tranType = PennantConstants.TRAN_UPD;
-										}
-									}
-
-									financeDetail.getFinScheduleData().getDisbursementDetails().clear();
-									financeDetail.getFinScheduleData()
-											.setDisbursementDetails(processedDisbursementList);
-
-									finServiceInstruction.setRecalFromDate(appDetails.getRealizedDate());
-									financeMain.setEventFromDate(appDetails.getRealizedDate());
-									financeMain.setRecalToDate(finServiceInstruction.getRecalToDate());
-									financeMain.setScheduleMethod(finServiceInstruction.getSchdMethod());
-									financeMain.setRecalType(finServiceInstruction.getRecalType());
-
-									financeDetail.setFinScheduleData(
-											ScheduleCalculator.addDisbursement(financeDetail.getFinScheduleData(),
-													finServiceInstruction.getAmount(), BigDecimal.ZERO, false));
-									financeDetail.getFinScheduleData().setSchduleGenerated(true);
-
-									// Update Disb Status as D for the disbursement that was processed.
-									for (FinanceDisbursement financeDisbursement : financeDetail.getFinScheduleData()
-											.getDisbursementDetails()) {
-										for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
-											if ((StringUtils.equals(DisbursementConstants.STATUS_REALIZED,
-													finAdvancePayment.getStatus()))
-													|| (StringUtils.equals(DisbursementConstants.STATUS_PAID,
-															finAdvancePayment.getStatus()))) {
-												financeDisbursement.setDisbStatus("D");
-												financeDisbursement.setQuickDisb(true);
-											}
-										}
-									}
-
-									financeMain.setUserDetails(userDetails);
-									financeMain.getFinCurrAssetValue().add(finServiceInstruction.getAmount());
-
-									financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-									financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-
-									doProcess(financeDetail, tranType, userDetails);
-								}
-							}
-
-						} else {
-							updateStatus(appDetails, txStatus);
-						}
-
-					} else {
-						updateStatus(batchIterator, appDetails, txStatus, disbursement);
-					}
-
-				} else {
-					appDetails.setErrorDesc("Unable to Process");
-					appDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
-					finAutoApprovalDetailDAO.updateFinAutoApprovals(appDetails);
-					transactionManager.commit(txStatus);
-
-				}
-
+			if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)) {
+				approveLoan(fd, user, finAad, disbursement);
+			} else if (checkForServicing(fm.getFinReference())) {
+				approveAddDisbursemnt(fd, user, finAad);
+			} else {
+				finAad.setErrorDesc("Unable to Process");
+				finAad.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
 			}
+
 		} catch (Exception e) {
-			transactionManager.rollback(txStatus);
-			appDetails.setErrorDesc(StringUtils.substring(e.toString(), 0, 900));
-			logger.info(e.toString());
-			logger.debug(Literal.EXCEPTION, e);
-			appDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
-
-			DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
-			txDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-			TransactionStatus txSts = null;
-			finAutoApprovalDetailDAO.updateFinAutoApprovals(appDetails);
-
-			txSts = transactionManager.getTransaction(txDefinition);
-			transactionManager.commit(txSts);
-
+			logger.error(Literal.EXCEPTION, e);
+			finAad.setErrorDesc(StringUtils.substring(e.toString(), 0, 900));
+			finAad.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
 		}
 
-		if (DisbursementConstants.AUTODISB_STATUS_FAILED != appDetails.getStatus()) {
-			appDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
-			finAutoApprovalDetailDAO.updateFinAutoApprovals(appDetails);
-			if (txStatus != null) {
-				transactionManager.commit(txStatus);
+		logger.info(Literal.LEAVING);
+	}
+
+	private void approveAddDisbursemnt(FinanceDetail fd, LoggedInUser userDetails,
+			FinAutoApprovalDetails autoApproval) {
+		logger.info(Literal.ENTERING);
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		fm.setNewRecord(false);
+
+		List<FinanceDisbursement> financeDisbursements = schdData.getDisbursementDetails();
+		List<FinanceDisbursement> processedDisbursementList = new ArrayList<>(financeDisbursements.size());
+		List<FinAdvancePayments> finAdvancePayments = fd.getAdvancePaymentsList();
+
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		if (CollectionUtils.isNotEmpty(schedules)) {
+			List<FinServiceInstruction> finServiceInstructions = schdData.getFinServiceInstructions();
+
+			for (FinServiceInstruction fsi : finServiceInstructions) {
+				if (fm.isWorkflow()) {
+					if (StringUtils.isEmpty(fm.getRecordType())) {
+						fm.setVersion(fm.getVersion() + 1);
+						if (fm.isNew()) {
+							fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						} else {
+							fm.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+							fm.setNewRecord(true);
+						}
+					}
+				} else {
+					fm.setVersion(fm.getVersion() + 1);
+				}
+
+				schdData.getDisbursementDetails().clear();
+				schdData.setDisbursementDetails(processedDisbursementList);
+
+				fsi.setRecalFromDate(autoApproval.getRealizedDate());
+				fm.setEventFromDate(autoApproval.getRealizedDate());
+				fm.setRecalToDate(fsi.getRecalToDate());
+				fm.setScheduleMethod(fsi.getSchdMethod());
+				fm.setRecalType(fsi.getRecalType());
+
+				fd.setFinScheduleData(
+						ScheduleCalculator.addDisbursement(schdData, fsi.getAmount(), BigDecimal.ZERO, false));
+				schdData.setSchduleGenerated(true);
+
+				// Update Disb Status as D for the disbursement that was processed.
+				for (FinanceDisbursement financeDisbursement : schdData.getDisbursementDetails()) {
+					for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
+						String status = finAdvancePayment.getStatus();
+						if ((DisbursementConstants.STATUS_REALIZED.equals(status))
+								|| (DisbursementConstants.STATUS_PAID.equals(status))) {
+							financeDisbursement.setDisbStatus("D");
+							financeDisbursement.setQuickDisb(true);
+						}
+					}
+				}
+
+				fm.setUserDetails(userDetails);
+				fm.setFinCurrAssetValue(fm.getFinCurrAssetValue().add(fsi.getAmount()));
+
+				fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				schdData.setFinanceMain(fm);
+
+				doProcess(fd, userDetails);
 			}
 		}
 
-		batchProcessStatusDAO.updateBatchStatus("QDP", new Timestamp(System.currentTimeMillis()), "C");
-
+		logger.info(Literal.LEAVING);
 	}
 
-	private void updateStatus(FinAutoApprovalDetails appDetails, AuditHeader auditheader, TransactionStatus txStatus) {
+	private void approveLoan(FinanceDetail fd, LoggedInUser user, FinAutoApprovalDetails appDetails,
+			FinanceDisbursement disbursement) {
+		logger.info(Literal.ENTERING);
 
-		appDetails.setErrorDesc(auditheader.getAuditOveride());
-		appDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
-		finAutoApprovalDetailDAO.updateFinAutoApprovals(appDetails);
-		transactionManager.commit(txStatus);
+		FinScheduleData finScheduleData = fd.getFinScheduleData();
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		FinanceType financeType = finScheduleData.getFinanceType();
 
-	}
+		List<FinanceDisbursement> financeDisbursements = finScheduleData.getDisbursementDetails();
+		List<FinanceDisbursement> processedDisbursementList = new ArrayList<>(financeDisbursements.size());
 
-	private void updateStatus(Iterator<FinAutoApprovalDetails> batchIterator, FinAutoApprovalDetails appDetails,
-			TransactionStatus txStatus, FinanceDisbursement disbursement) {
-		nonQDPList.add(appDetails);
-		if (!disbursement.isQuickDisb()) {
-			appDetails.setErrorDesc("Disbursement is not QDP");
+		if (fm.isWorkflow()) {
+			if (StringUtils.isEmpty(fm.getRecordType())) {
+				fm.setVersion(fm.getVersion() + 1);
+				if (fm.isNew()) {
+					fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					fm.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					fm.setNewRecord(true);
+				}
+			}
 		} else {
-			appDetails.setErrorDesc("Auto Approval Flag is set to False in Loan Type");
+			fm.setVersion(fm.getVersion() + 1);
 		}
-		appDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
-		finAutoApprovalDetailDAO.updateFinAutoApprovals(appDetails);
-		transactionManager.commit(txStatus);
-		batchIterator.remove();
-	}
+		disbursement.setDisbStatus("D");
+		disbursement.setDisbDate(appDetails.getRealizedDate());
+		processedDisbursementList.add(disbursement);
+		finScheduleData.setDisbursementDetails(processedDisbursementList);
 
-	private void updateStatus(FinAutoApprovalDetails appDetails, TransactionStatus txStatus) {
-		// update status and error description in BatchTable
-		appDetails.setErrorDesc("Payment Type Validity Expired");
-		appDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
+		fm.setFinStartDate(appDetails.getRealizedDate());
+		fm.setLastRepayDate(appDetails.getRealizedDate());
+		fm.setLastRepayPftDate(appDetails.getRealizedDate());
 
-		if (txStatus == null) {
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			txStatus = transactionManager.getTransaction(txDef);
-			appDetails.setErrorDesc("Disbursement is not QDP.");
+		fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		if (!fm.isAllowGrcPeriod()) {
+			fm.setGrcPeriodEndDate(appDetails.getRealizedDate());
 		}
 
-		finAutoApprovalDetailDAO.updateFinAutoApprovals(appDetails);
-		transactionManager.commit(txStatus);
+		fm.setRecalType("");
+		fm.setCalculateRepay(true);
+		finScheduleData.setFinanceMain(fm);
+
+		finScheduleData.getRepayInstructions().clear();
+
+		prepareSchedule(fd, fm, financeType);
+		fm.setUserDetails(user);
+
+		AuditHeader auditheader = doProcess(fd, user);
+		if (!auditheader.isNextProcess()) {
+			appDetails.setErrorDesc(auditheader.getAuditOveride());
+			appDetails.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
+		}
+
+		logger.info(Literal.LEAVING);
 	}
 
-	/**
-	 * Prepares the New Schedule based on Realization Date
-	 * 
-	 * @param financeDetail
-	 * @param financeMain
-	 * @param financeType
-	 */
-	private void prepareSchedule(FinanceDetail financeDetail, FinanceMain financeMain, FinanceType financeType) {
-
+	private void prepareSchedule(FinanceDetail fd, FinanceMain fm, FinanceType financeType) {
 		int fddLockPeriod = financeType.getFddLockPeriod();
-		if (financeMain.isAllowGrcPeriod() && !ImplementationConstants.APPLY_FDDLOCKPERIOD_AFTERGRACE) {
+		if (fm.isAllowGrcPeriod() && !ImplementationConstants.APPLY_FDDLOCKPERIOD_AFTERGRACE) {
 			fddLockPeriod = 0;
 		}
 
@@ -418,153 +319,127 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 		}
 
 		// grace period details
-		if (financeMain.isAllowGrcPeriod()) {
-
-			List<Calendar> scheduleDateList = FrequencyUtil
-					.getNextDate(financeMain.getGrcPftFrq(), financeMain.getGraceTerms(),
-							financeMain.getNextGrcPftDate(), HolidayHandlerTypes.MOVE_NONE, true, 0)
-					.getScheduleList();
-
-			Date grcEndDate = null;
-			if (scheduleDateList != null) {
-				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				grcEndDate = calendar.getTime();
-			}
-			scheduleDateList = null;
-
-			financeMain.setGrcPeriodEndDate(DateUtility.getDate(
-					DateUtility.format(grcEndDate, PennantConstants.DBDateFormat), PennantConstants.DBDateFormat));
-
-			if (financeMain.isAllowGrcPftRvw()) {
-
-				RateDetail rateDetail = RateUtil.rates(financeMain.getGraceBaseRate(), financeMain.getFinCcy(),
-						financeMain.getGraceSpecialRate(), financeMain.getGrcMargin(), financeType.getFInGrcMinRate(),
-						financeType.getFinGrcMaxRate());
-				Date baseDate = DateUtility.addDays(financeMain.getFinStartDate(), rateDetail.getLockingPeriod());
-
-				// Next Grace profit Review Date
-				if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
-					financeMain
-							.setNextGrcPftRvwDate(FrequencyUtil
-									.getNextDate(financeMain.getGrcPftRvwFrq(), 1, baseDate,
-											HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-									.getNextFrequencyDate());
-				} else {
-					financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeMain.getGrcPftRvwFrq(), 1,
-							baseDate, HolidayHandlerTypes.MOVE_NONE, false, 0).getNextFrequencyDate());
-				}
-				financeMain.setNextGrcPftRvwDate(DateUtility
-						.getDate(DateUtility.format(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormat)));
-				if (financeMain.getNextGrcPftRvwDate().after(financeMain.getGrcPeriodEndDate())) {
-					financeMain.setNextGrcPftRvwDate(financeMain.getGrcPeriodEndDate());
-				}
-			}
-
-			// Allow Grace Capitalization
-			if (financeMain.isAllowGrcCpz()) {
-				financeMain.setAllowGrcCpz(true);
-				financeMain.setNextGrcCpzDate(FrequencyUtil
-						.getNextDate(financeMain.getGrcCpzFrq(), 1, financeMain.getFinStartDate(),
-								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-						.getNextFrequencyDate());
-				financeMain.setNextGrcCpzDate(DateUtility
-						.getDate(DateUtility.format(financeMain.getNextGrcCpzDate(), PennantConstants.dateFormat)));
-				if (financeMain.getNextGrcCpzDate().after(financeMain.getGrcPeriodEndDate())) {
-					financeMain.setNextGrcCpzDate(financeMain.getGrcPeriodEndDate());
-				}
-			}
-
-			financeMain.setNextGrcPftDate(DateUtility.getDate(DateUtility.format(FrequencyUtil
-					.getNextDate(financeMain.getGrcPftFrq(), 1, financeMain.getFinStartDate(),
-							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
-					.getNextFrequencyDate(), PennantConstants.dateFormat)));
+		if (fm.isAllowGrcPeriod()) {
+			setGraceDetails(fm, financeType);
 		}
 
 		// Repay period details
-		if (financeMain.getRepayPftFrq() != null) {
-			financeMain
-					.setNextRepayPftDate(
-							FrequencyUtil
-									.getNextDate(financeMain.getRepayPftFrq(), 1, financeMain.getGrcPeriodEndDate(),
-											HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
-									.getNextFrequencyDate());
+		if (fm.getRepayPftFrq() != null) {
+			fm.setNextRepayPftDate(FrequencyUtil.getNextDate(fm.getRepayPftFrq(), 1, fm.getGrcPeriodEndDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 		}
 
-		if (financeMain.getNextRepayPftDate() != null) {
-			financeMain.setNextRepayPftDate(DateUtility
-					.getDate(DateUtility.format(financeMain.getNextRepayPftDate(), PennantConstants.dateFormat)));
-		}
+		fm.setNextRepayPftDate(DateUtil.getDatePart(fm.getNextRepayPftDate()));
 
 		// Allow Repay Review
 		if (financeType.isFinIsRvwAlw()) {
-			financeMain.setAllowRepayRvw(financeType.isFinIsRvwAlw());
-
-			RateDetail rateDetail = RateUtil.rates(financeMain.getRepayBaseRate(), financeMain.getFinCcy(),
-					financeMain.getRepaySpecialRate(), financeMain.getRepayMargin(), financeType.getFInMinRate(),
-					financeType.getFinMaxRate());
-			Date baseDate = DateUtility.addDays(financeMain.getGrcPeriodEndDate(), rateDetail.getLockingPeriod());
-
-			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1, baseDate,
-					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
-
-			financeMain.setNextRepayRvwDate(DateUtility
-					.getDate(DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
+			setRepayReviewDetails(fm, financeType);
 		} else {
-			financeMain.setRepayRvwFrq("");
+			fm.setRepayRvwFrq("");
 		}
 
 		// Allow Repay Capitalization
 		if (financeType.isFinIsIntCpz()) {
-			financeMain.setAllowRepayCpz(financeType.isFinIsIntCpz());
-			financeMain
-					.setNextRepayCpzDate(
-							FrequencyUtil
-									.getNextDate(financeMain.getRepayCpzFrq(), 1, financeMain.getGrcPeriodEndDate(),
-											HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
-									.getNextFrequencyDate());
+			fm.setAllowRepayCpz(financeType.isFinIsIntCpz());
+			fm.setNextRepayCpzDate(FrequencyUtil.getNextDate(fm.getRepayCpzFrq(), 1, fm.getGrcPeriodEndDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 
-			financeMain.setNextRepayCpzDate(DateUtility
-					.getDate(DateUtility.format(financeMain.getNextRepayCpzDate(), PennantConstants.dateFormat)));
+			fm.setNextRepayCpzDate(DateUtil.getDatePart(fm.getNextRepayCpzDate()));
 		} else {
-			financeMain.setRepayCpzFrq("");
+			fm.setRepayCpzFrq("");
 		}
 
 		// Repay Frequency
-		if (financeMain.getRepayFrq() != null) {
-			financeMain
-					.setNextRepayDate(
-							FrequencyUtil
-									.getNextDate(financeMain.getRepayFrq(), 1, financeMain.getGrcPeriodEndDate(),
-											HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
-									.getNextFrequencyDate());
+		if (fm.getRepayFrq() != null) {
+			fm.setNextRepayDate(FrequencyUtil.getNextDate(fm.getRepayFrq(), 1, fm.getGrcPeriodEndDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod).getNextFrequencyDate());
 		}
-		if (financeMain.getNextRepayDate() != null) {
-			financeMain.setNextRepayDate(DateUtility
-					.getDate(DateUtility.format(financeMain.getNextRepayDate(), PennantConstants.dateFormat)));
+		if (fm.getNextRepayDate() != null) {
+			fm.setNextRepayDate(DateUtil.getDatePart(fm.getNextRepayDate()));
 		}
 
 		// Maturity Date
-		if (financeMain.getRepayFrq() != null && financeMain.getNextRepayDate() != null) {
-			List<Calendar> scheduleDateList = FrequencyUtil
-					.getNextDate(financeMain.getRepayFrq(), financeMain.getNumberOfTerms(),
-							financeMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true, 0)
-					.getScheduleList();
-			if (scheduleDateList != null) {
-				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				financeMain.setMaturityDate(calendar.getTime());
-				financeMain.setMaturityDate(DateUtility
-						.getDate(DateUtility.format(financeMain.getMaturityDate(), PennantConstants.dateFormat)));
+		List<Calendar> scheduleDateList = null;
+		if (fm.getRepayFrq() != null && fm.getNextRepayDate() != null) {
+			scheduleDateList = FrequencyUtil.getNextDate(fm.getRepayFrq(), fm.getNumberOfTerms(), fm.getNextRepayDate(),
+					HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
+
+		}
+
+		if (scheduleDateList != null) {
+			Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+			fm.setMaturityDate(calendar.getTime());
+			fm.setMaturityDate(DateUtil.getDatePart(fm.getMaturityDate()));
+		}
+
+		fd.setFinScheduleData(ScheduleGenerator.getNewSchd(fd.getFinScheduleData()));
+
+		if (!fd.getFinScheduleData().getFinanceScheduleDetails().isEmpty()) {
+			fd.setFinScheduleData(ScheduleCalculator.getCalSchd(fd.getFinScheduleData(), BigDecimal.ZERO));
+			fd.getFinScheduleData().setSchduleGenerated(true);
+		}
+	}
+
+	private void setRepayReviewDetails(FinanceMain fm, FinanceType financeType) {
+		int fddLockPeriod = financeType.getFddLockPeriod();
+		fm.setAllowRepayRvw(financeType.isFinIsRvwAlw());
+
+		RateDetail rateDetail = RateUtil.rates(fm.getRepayBaseRate(), fm.getFinCcy(), fm.getRepaySpecialRate(),
+				fm.getRepayMargin(), financeType.getFInMinRate(), financeType.getFinMaxRate());
+		Date baseDate = DateUtil.addDays(fm.getGrcPeriodEndDate(), rateDetail.getLockingPeriod());
+
+		fm.setNextRepayRvwDate(FrequencyUtil
+				.getNextDate(fm.getRepayRvwFrq(), 1, baseDate, HolidayHandlerTypes.MOVE_NONE, false, fddLockPeriod)
+				.getNextFrequencyDate());
+
+		fm.setNextRepayRvwDate(DateUtil.getDatePart(fm.getNextRepayRvwDate()));
+	}
+
+	private void setGraceDetails(FinanceMain fm, FinanceType financeType) {
+		List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(fm.getGrcPftFrq(), fm.getGraceTerms(),
+				fm.getNextGrcPftDate(), HolidayHandlerTypes.MOVE_NONE, true, 0).getScheduleList();
+
+		Date grcEndDate = null;
+		if (scheduleDateList != null) {
+			Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
+			grcEndDate = calendar.getTime();
+		}
+
+		fm.setGrcPeriodEndDate(DateUtil.getDatePart(grcEndDate));
+
+		if (fm.isAllowGrcPftRvw()) {
+			RateDetail rateDetail = RateUtil.rates(fm.getGraceBaseRate(), fm.getFinCcy(), fm.getGraceSpecialRate(),
+					fm.getGrcMargin(), financeType.getFInGrcMinRate(), financeType.getFinGrcMaxRate());
+			Date baseDate = DateUtil.addDays(fm.getFinStartDate(), rateDetail.getLockingPeriod());
+
+			// Next Grace profit Review Date
+			if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
+				fm.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(fm.getGrcPftRvwFrq(), 1, baseDate,
+						HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			} else {
+				fm.setNextGrcPftRvwDate(FrequencyUtil
+						.getNextDate(fm.getGrcPftRvwFrq(), 1, baseDate, HolidayHandlerTypes.MOVE_NONE, false, 0)
+						.getNextFrequencyDate());
+			}
+			fm.setNextGrcPftRvwDate(DateUtil.getDatePart(fm.getNextGrcPftRvwDate()));
+			if (fm.getNextGrcPftRvwDate().after(fm.getGrcPeriodEndDate())) {
+				fm.setNextGrcPftRvwDate(fm.getGrcPeriodEndDate());
 			}
 		}
 
-		financeDetail.setFinScheduleData(ScheduleGenerator.getNewSchd(financeDetail.getFinScheduleData()));
-
-		if (financeDetail.getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
-
-			financeDetail.setFinScheduleData(
-					ScheduleCalculator.getCalSchd(financeDetail.getFinScheduleData(), BigDecimal.ZERO));
-			financeDetail.getFinScheduleData().setSchduleGenerated(true);
+		// Allow Grace Capitalization
+		if (fm.isAllowGrcCpz()) {
+			fm.setAllowGrcCpz(true);
+			fm.setNextGrcCpzDate(FrequencyUtil.getNextDate(fm.getGrcCpzFrq(), 1, fm.getFinStartDate(),
+					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			fm.setNextGrcCpzDate(DateUtil.getDatePart(fm.getNextGrcCpzDate()));
+			if (fm.getNextGrcCpzDate().after(fm.getGrcPeriodEndDate())) {
+				fm.setNextGrcCpzDate(fm.getGrcPeriodEndDate());
+			}
 		}
+
+		fm.setNextGrcPftDate(DateUtil.getDatePart(FrequencyUtil.getNextDate(fm.getGrcPftFrq(), 1, fm.getFinStartDate(),
+				HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate()));
 	}
 
 	private boolean checkForPreviousApproval(String finReference) {
@@ -575,72 +450,48 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 		return finAutoApprovalDetailDAO.getFinanceServiceInstruction(finReference);
 	}
 
-	private boolean checkForQuickDisbInDisbursements(String finReference) {
-		return finAutoApprovalDetailDAO.CheckDisbForQDP(finReference);
+	private boolean validateQDPDays(int days, Date disbDate, Date realizedDate) {
+		Date diffDate = DateUtil.addDays(disbDate, days);
+		return realizedDate.compareTo(diffDate) < 0;
 	}
 
-	private boolean validateQDPDays(String paymentType, Date disbDate, Date realizedDate) {
-		int days = qdpValidityDays.get(paymentType);
-		Date diffDate = DateUtility.addDays(disbDate, days);
+	private AuditHeader doProcess(FinanceDetail fd, LoggedInUser user) {
+		Map<String, List<ErrorDetail>> overideMap = new HashMap<>();
 
-		if (realizedDate.compareTo(diffDate) > 0) {
-			return false;
-		}
-		return true;
-	}
-
-	private void loadQDPValidityDays() {
-		qdpValidityDays = finAutoApprovalDetailDAO.loadQDPValidityDays();
-
-	}
-
-	// Skip the records already updated with status "D" or those were not uploaded in this batch.
-	private boolean recordToBeProcessed(List<FinAdvancePayments> finAdvancePayments, FinanceDisbursement disbursement,
-			FinAutoApprovalDetails appDetails) {
-		for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
-			if (StringUtils.equals(null, disbursement.getDisbStatus())
-					&& (finAdvancePayment.getPaymentId() == appDetails.getDisbId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Method for Processing Finance Detail Object for Database Operation
-	 * 
-	 * @param afinanceMain
-	 * @param tranType
-	 * @param userDetails
-	 */
-	private AuditHeader doProcess(FinanceDetail financeDetail, String tranType, LoggedInUser userDetails)
-			throws Exception {
 		AuditHeader auditHeader = null;
-		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
-		afinanceMain.setLastMntBy(userDetails.getUserId());
-		afinanceMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		afinanceMain.setAutoApprove(true);
+		fm.setLastMntBy(user.getUserId());
+		fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		fm.setAutoApprove(true);
 
-		afinanceMain.setUserDetails(userDetails);
-		financeDetail.setUserDetails(userDetails);
-		financeDetail.getCustomerDetails().setUserDetails(userDetails);
+		fm.setUserDetails(user);
+		fd.setUserDetails(user);
+		fd.getCustomerDetails().setUserDetails(user);
 
-		auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-		auditHeader = financeDetailService.doApprove(auditHeader, false);
+		auditHeader = getAuditHeader(fd, PennantConstants.TRAN_WF, overideMap);
+		try {
+			auditHeader = financeDetailService.doApprove(auditHeader, false);
+		} catch (InterfaceException | JaxenException e) {
+			throw new AppException(e.getMessage(), e);
+		}
 
-		if (auditHeader.getOverideMessage() != null) {
-			for (int i = 0; i < auditHeader.getOverideMessage().size(); i++) {
-				ErrorDetail overideDetail = auditHeader.getOverideMessage().get(i);
+		List<ErrorDetail> overideMessage = auditHeader.getOverideMessage();
+		if (overideMessage != null) {
+			for (int i = 0; i < overideMessage.size(); i++) {
+				ErrorDetail overideDetail = overideMessage.get(i);
 				if (!isOverride(overideMap, overideDetail)) {
 					setOverideMap(overideMap, overideDetail);
 				}
 			}
 
 			auditHeader.setOverideMap(overideMap);
-			setOverideMap(overideMap);
-			auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
-			auditHeader = financeDetailService.doApprove(auditHeader, false);
+			auditHeader = getAuditHeader(fd, PennantConstants.TRAN_WF, overideMap);
+			try {
+				auditHeader = financeDetailService.doApprove(auditHeader, false);
+			} catch (InterfaceException | JaxenException e) {
+				throw new AppException(e.getMessage(), e);
+			}
 		}
 
 		return auditHeader;
@@ -650,84 +501,59 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 	private Map<String, List<ErrorDetail>> setOverideMap(Map<String, List<ErrorDetail>> overideMap,
 			ErrorDetail errorDetail) {
 
-		if (StringUtils.isNotBlank(errorDetail.getField())) {
-			List<ErrorDetail> errorDetails = null;
-
-			if (overideMap.containsKey(errorDetail.getField())) {
-				errorDetails = overideMap.get(errorDetail.getField());
-
-				for (int i = 0; i < errorDetails.size(); i++) {
-					if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
-						errorDetails.remove(i);
-						break;
-					}
-				}
-
-				overideMap.remove(errorDetail.getField());
-
-			} else {
-				errorDetails = new ArrayList<ErrorDetail>();
-
-			}
-
-			errorDetail.setOveride(true);
-			errorDetails.add(errorDetail);
-
-			overideMap.put(errorDetail.getField(), errorDetails);
-
+		if (StringUtils.isBlank(errorDetail.getField())) {
+			return overideMap;
 		}
+
+		List<ErrorDetail> errorDetails = null;
+
+		if (!overideMap.containsKey(errorDetail.getField())) {
+			errorDetails = new ArrayList<>();
+			overideMap.put(errorDetail.getField(), errorDetails);
+		}
+
+		errorDetails = overideMap.get(errorDetail.getField());
+
+		for (int i = 0; i < errorDetails.size(); i++) {
+			if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
+				errorDetails.remove(i);
+				break;
+			}
+		}
+
+		overideMap.remove(errorDetail.getField());
+
+		errorDetail.setOveride(true);
+		errorDetails.add(errorDetail);
+
+		overideMap.put(errorDetail.getField(), errorDetails);
+
 		return overideMap;
 	}
 
 	private boolean isOverride(Map<String, List<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
+		if (!overideMap.containsKey(errorDetail.getField())) {
+			return false;
+		}
 
-		if (overideMap.containsKey(errorDetail.getField())) {
-
-			List<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
-
-			for (int i = 0; i < errorDetails.size(); i++) {
-
-				if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
-					return errorDetails.get(i).isOveride();
-				}
+		List<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
+		for (ErrorDetail ed : errorDetails) {
+			if (ed.getCode().equals(errorDetail.getCode())) {
+				return ed.isOveride();
 			}
-
 		}
 
 		return false;
 	}
 
-	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID)
-			throws FactoryConfigurationError {
-		if (workFlowEnabled) {
-			setWorkFlow(new WorkflowEngine(WorkFlowUtil.getWorkflow(workFlowId).getWorkFlowXml()));
-		}
+	private AuditHeader getAuditHeader(FinanceDetail fd, String tranType, Map<String, List<ErrorDetail>> overideMap) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, fd.getBefImage(), fd);
+		String finReference = fd.getFinScheduleData().getFinReference();
+		return new AuditHeader(finReference, null, null, null, auditDetail, fd.getUserDetails(), overideMap);
 	}
 
-	private AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
-		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-				afinanceDetail.getUserDetails(), getOverideMap());
-	}
-
-	public WorkflowEngine getWorkFlow() {
-		return workFlow;
-	}
-
-	public void setWorkFlow(WorkflowEngine workFlow) {
-		this.workFlow = workFlow;
-	}
-
-	public Map<String, List<ErrorDetail>> getOverideMap() {
-		return overideMap;
-	}
-
-	public void setOverideMap(Map<String, List<ErrorDetail>> overideMap) {
-		this.overideMap = overideMap;
-	}
-
-	public FinAutoApprovalDetailDAO getFinAutoApprovalDetailDAO() {
-		return finAutoApprovalDetailDAO;
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 	public void setFinAutoApprovalDetailDAO(FinAutoApprovalDetailDAO finAutoApprovalDetailDAO) {

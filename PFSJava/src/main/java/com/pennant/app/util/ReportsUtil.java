@@ -288,8 +288,7 @@ public class ReportsUtil {
 	}
 
 	public static String getTemplate(String reportPath, String reportName) {
-		String path = PathUtil.getPath(reportPath);
-		String reportSrc = path + "/" + reportName + ".jasper";
+		String reportSrc = reportPath + "/" + reportName + ".jasper";
 		logger.info("Report Template: {}", reportSrc);
 
 		if (!new File(reportSrc).exists()) {
@@ -416,7 +415,7 @@ public class ReportsUtil {
 	}
 
 	public static void generatePDF(String reportName, Object object, List listData, String userName, Window window) {
-		logger.info(Literal.ENTERING + reportName);
+		logger.info(Literal.ENTERING);
 
 		try {
 
@@ -428,7 +427,7 @@ public class ReportsUtil {
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			MessageUtil.showError("Template does not exist.");
+			MessageUtil.showError(e.getMessage());
 			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
 		}
 
@@ -440,8 +439,8 @@ public class ReportsUtil {
 			ReportsUtil.downloadExcel(reportName, object, listData, userName);
 
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			MessageUtil.showError("Template does not exist.");
+			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError(e.getMessage());
 			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
 		}
 		logger.debug(Literal.LEAVING);

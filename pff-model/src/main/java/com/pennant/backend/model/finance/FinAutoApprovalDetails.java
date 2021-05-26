@@ -16,7 +16,7 @@ public class FinAutoApprovalDetails extends AbstractWorkflowEntity {
 	private String errorDesc;
 	private long userId;
 	private String paymentType;
-	private Date downloadedon;
+	private Date downloadedOn;
 
 	public FinAutoApprovalDetails() {
 		super();
@@ -94,12 +94,12 @@ public class FinAutoApprovalDetails extends AbstractWorkflowEntity {
 		this.realizedDate = realizedDate;
 	}
 
-	public Date getDownloadedon() {
-		return downloadedon;
+	public Date getDownloadedOn() {
+		return downloadedOn;
 	}
 
-	public void setDownloadedon(Date downloadedon) {
-		this.downloadedon = downloadedon;
+	public void setDownloadedOn(Date downloadedOn) {
+		this.downloadedOn = downloadedOn;
 	}
 
 }

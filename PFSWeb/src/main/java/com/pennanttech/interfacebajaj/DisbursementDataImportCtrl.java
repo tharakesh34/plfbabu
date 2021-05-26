@@ -23,8 +23,6 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.core.FinAutoApprovalProcess;
-import com.pennant.app.core.InstBasedSchdProcess;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
@@ -70,12 +68,6 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private boolean allowPaymentType;
 	private DisbursementResponse defaultDisbursementResponse;
 	private DisbursementResponse disbursementResponse;
-
-	@Autowired(required = false)
-	private FinAutoApprovalProcess finAutoApprovalService;
-
-	@Autowired(required = false)
-	private InstBasedSchdProcess instBasedSchdProcess;
 
 	/**
 	 * default constructor.<br>
@@ -229,22 +221,12 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			return;
 		}
 		try {
-
-			ProcessData t1 = null;
-			FinAutoApprove t2 = null;
-			FinInstBasedSchd t3 = null;
-
-			t1 = new ProcessData(userId, DISB_IMPORT_STATUS);
-
+			DISB_IMPORT_STATUS.setUserId(userId);
+			DISB_IMPORT_STATUS.setFileName(media.getName());
+			
+			
+			ProcessData t1 = new ProcessData(userId, DISB_IMPORT_STATUS);
 			t1.start();
-			t1.join();
-
-			t2 = new FinAutoApprove(userId, DISB_IMPORT_STATUS.getId());
-			t2.start();
-			t2.join();
-
-			t3 = new FinInstBasedSchd(DISB_IMPORT_STATUS.getId());
-			t3.start();
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -362,48 +344,13 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				getDisbursementResponse().processResponseFile(userId, status, file, media, false,
-						getUserWorkspace().getLoggedInUser());
+				getDisbursementResponse().processResponseFile(userId, status, file, media);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}
 		}
 	}
 
-	public class FinAutoApprove extends Thread {
-		private long batchId;
-
-		public FinAutoApprove(long userId, long batchId) {
-			this.batchId = batchId;
-		}
-
-		@Override
-		public void run() {
-			try {
-				finAutoApprovalService.checkForAutoApproval(getUserWorkspace().getLoggedInUser(), batchId);
-
-			} catch (Exception e) {
-				logger.error("Exception:", e);
-			}
-		}
-	}
-
-	public class FinInstBasedSchd extends Thread {
-		private long batchId;
-
-		public FinInstBasedSchd(long batchId) {
-			this.batchId = batchId;
-		}
-
-		@Override
-		public void run() {
-			try {
-				instBasedSchdProcess.rebuildSchdBasedOnInst(getUserWorkspace().getLoggedInUser(), batchId);
-			} catch (Exception e) {
-				logger.error("Exception:", e);
-			}
-		}
-	}
 
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;

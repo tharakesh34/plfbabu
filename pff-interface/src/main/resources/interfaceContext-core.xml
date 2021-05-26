@@ -27,7 +27,11 @@
 	<bean id="defaultDisbursementRequest" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementRequest"
 		parent="abstractInterface" />
 	<bean id="defaultDisbursementResponse" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse"
-		parent="abstractInterface" />
+		parent="abstractInterface">
+		<property name="disbursementProcess" ref="disbursementProcess" />
+		<property name="paymentProcess" ref="paymentProcess" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
 
 	<!-- The below bean configurations should be in implementation layer only if required. -->
 	<bean id="creditInformation" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess"
@@ -62,5 +66,6 @@
 	</bean>
 	<bean id="abstractCersaiProcess" class="com.pennanttech.pff.external.cersai.AbstractCersaiProcess" abstract="true"
 		parent="abstractInterface" />
-	<bean id="extendedFieldRendererDAO" class="com.pennanttech.pff.extended.dao.ExtendedFieldRendererDAOImpl" parent="basicDao"/>
+	<bean id="extendedFieldRendererDAO" class="com.pennanttech.pff.extended.dao.ExtendedFieldRendererDAOImpl" parent="basicDao" />
+
 </beans>

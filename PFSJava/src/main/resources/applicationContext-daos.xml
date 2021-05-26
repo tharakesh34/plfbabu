@@ -8501,6 +8501,11 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+		<property name="disbursementRequestDAO" ref="disbursementRequestDAO" />
+		<property name="finAutoApprovalDetailDAO" ref="finAutoApprovalDetailDAO" />
+		<property name="finAutoApprovalProcess" ref="finAutoApprovalProcess" />
+		<property name="instBasedSchdProcess" ref="instBasedSchdProcess" />
+		<property name="instBasedSchdDetailDAO" ref="instBasedSchdDetailDAO" />
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
@@ -10454,7 +10459,8 @@
 
 	<!-- QDP Changes -->
 	<bean id="finAutoApprovalProcess" class="com.pennant.app.core.FinAutoApprovalProcess">
-		<property name="transactionManager" ref="transactionManager" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="finAutoApprovalDetailDAO" ref="finAutoApprovalDetailDAO" />
 	</bean>
 
 	<bean id="finAutoApprovalDetailDAO" class="com.pennanttech.pff.logging.dao.impl.FinAutoApprovalDetailDAOImpl"
@@ -12199,10 +12205,8 @@
 
 	<!-- IBS Changes -->
 	<bean id="instBasedSchdProcess" class="com.pennant.app.core.InstBasedSchdProcess">
-		<property name="transactionManager" ref="transactionManager" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="instBasedSchdDetailDAO" ref="instBasedSchdDetailDAO" />
-		<property name="batchProcessStatusDAO" ref="batchProcessStatusDAO" />
 	</bean>
 
 	<bean id="instBasedSchdDetailDAO" class="com.pennanttech.pff.logging.dao.impl.InstBasedSchdDetailDAOImpl" parent="sequenceDao" />

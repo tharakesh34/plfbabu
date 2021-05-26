@@ -98,6 +98,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private String branchDesc;
 	private String bankName;
 	private String status;
+	private String clearingStatus;
 
 	private Date realizationDate;
 	private boolean active;
@@ -147,11 +148,6 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public PaymentInstruction(long id) {
-		super();
-		this.setId(id);
-	}
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("partnerBankCode");
@@ -173,15 +169,8 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		excludeFields.add("realizationDate");
 		excludeFields.add("paymentProcReq");
 		excludeFields.add("branchBankCode");
+		excludeFields.add("clearingStatus");
 		return excludeFields;
-	}
-
-	public long getId() {
-		return paymentInstructionId;
-	}
-
-	public void setId(long id) {
-		this.paymentInstructionId = id;
 	}
 
 	public long getPaymentInstructionId() {
@@ -434,6 +423,14 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getClearingStatus() {
+		return clearingStatus;
+	}
+
+	public void setClearingStatus(String clearingStatus) {
+		this.clearingStatus = clearingStatus;
 	}
 
 	public String getFinReference() {

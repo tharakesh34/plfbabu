@@ -118,15 +118,6 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		return finAdvancePayments;
 	}
 
-	/**
-	 * Fetch the Record Goods Details details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinAdvancePayments
-	 */
 	@Override
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
 		StringBuilder sql = getSqlQuery(type);
@@ -142,6 +133,25 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record not found in FinAdvancePayments{} table for the specified PaymentId >> {}", type,
 					paymentId);
+		}
+
+		return null;
+
+	}
+	
+	@Override
+	public FinAdvancePayments getFinAdvancePaymentsById(long paymentId) {
+		StringBuilder sql = getSqlQuery("");
+		sql.append(" Where PaymentId = ?");
+
+		FinAdvancePaymentsRowMapper rowMapper = new FinAdvancePaymentsRowMapper("");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record not found in FinAdvancePayments table for the specified PaymentId >> {}", paymentId);
 		}
 
 		return null;
@@ -234,8 +244,8 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	@Override
 	public String save(FinAdvancePayments finAdvancePayments, String type) {
 		logger.debug("Entering");
-		if (finAdvancePayments.getId() == Long.MIN_VALUE) {
-			finAdvancePayments.setId(getNextValue("SeqAdvpayment"));
+		if (finAdvancePayments.getPaymentId() == Long.MIN_VALUE) {
+			finAdvancePayments.setPaymentId(getNextValue("SeqAdvpayment"));
 		}
 
 		StringBuilder insertSql = new StringBuilder();
@@ -430,44 +440,49 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		logger.debug("Leaving");
 	}
 
-	// update the Disbursement Status when DisbursementProcess Interface Calling
 	@Override
-	public int updateDisbursmentStatus(FinAdvancePayments disbursement) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-
+	public int updateDisbursmentStatus(FinAdvancePayments fap) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Update FINADVANCEPAYMENTS");
-		sql.append(
-				" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF ,REALIZATIONDATE = :REALIZATIONDATE");
-		sql.append(", REJECTREASON = :REJECTREASON");
+		sql.append("Update FINADVANCEPAYMENTS Set");
+		sql.append(" Status = ?, ClearingDate = ?, TransactionRef = ?, RealizationDate = ?, RejectReason = ?");
 
-		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType())
-				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursement.getPaymentType())) {
-			sql.append(", LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
-			paramMap.addValue("LLREFERENCENO", disbursement.getLlReferenceNo());
-			paramMap.addValue("LLDATE", disbursement.getClearingDate());
+		String paymentType = fap.getPaymentType();
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+			sql.append(", LlReferenceNo = ?, LlDate = ?");
 		}
 
-		if (disbursement.getLastMntOn() != null) {
-			sql.append(", LastMntOn= :LastMntOn");
-			paramMap.addValue("LastMntOn", disbursement.getLastMntOn());
+		if (fap.getLastMntOn() != null) {
+			sql.append(", LastMntOn = ?");
 		}
 
-		sql.append("  Where PAYMENTID = :PAYMENTID  AND STATUS = :OLDSTATUS");
-
-		paramMap.addValue("STATUS", disbursement.getStatus());
-		paramMap.addValue("CLEARINGDATE", disbursement.getClearingDate());
-		paramMap.addValue("TRANSACTIONREF", disbursement.getTransactionRef());
-		paramMap.addValue("REALIZATIONDATE", disbursement.getRealizationDate());
-		paramMap.addValue("REJECTREASON", disbursement.getRejectReason());
-		paramMap.addValue("PAYMENTID", disbursement.getPaymentId());
-		paramMap.addValue("OLDSTATUS", DisbursementConstants.STATUS_AWAITCON);
+		sql.append("  Where PaymentId = ? and Status = ?");
 
 		logger.debug(Literal.SQL + sql);
 
-		logger.debug(Literal.LEAVING);
-		return this.jdbcTemplate.update(sql.toString(), paramMap);
+		return this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, fap.getStatus());
+			ps.setDate(index++, JdbcUtil.getDate(fap.getClearingDate()));
+			ps.setString(index++, fap.getTransactionRef());
+			ps.setDate(index++, JdbcUtil.getDate(fap.getRealizationDate()));
+			ps.setString(index++, fap.getRejectReason());
+
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+				ps.setString(index++, fap.getLlReferenceNo());
+				ps.setDate(index++, JdbcUtil.getDate(fap.getLlDate()));
+			}
+
+			if (fap.getLastMntOn() != null) {
+				ps.setDate(index++, JdbcUtil.getDate(fap.getLastMntOn()));
+			}
+
+			ps.setLong(index++, fap.getPaymentId());
+			ps.setString(index++, DisbursementConstants.STATUS_AWAITCON);
+
+		});
 
 	}
 
