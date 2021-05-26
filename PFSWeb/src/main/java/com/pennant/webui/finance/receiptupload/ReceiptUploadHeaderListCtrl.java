@@ -43,10 +43,7 @@
 package com.pennant.webui.finance.receiptupload;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,12 +56,9 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -96,7 +90,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.PathUtil;
-import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
@@ -117,12 +111,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 1817958653208633892L;
@@ -774,33 +762,31 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			return;
 		}
 
-		if (receiptidList.size() > 1) {
-			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-			ZipOutputStream out = new ZipOutputStream(arrayOutputStream);
-
+		if (receiptidList.size() == 1) {
 			for (long id : receiptidList) {
-				ByteArrayOutputStream outputStream = null;
-				outputStream = doDownloadFiles(String.valueOf(id));
-				out.putNextEntry(new ZipEntry(id + ".xls"));
-				out.write(outputStream.toByteArray());
-				out.closeEntry();
-
+				byte[] byteArray = getExcelData(String.valueOf(id));
+				Filedownload.save(new AMedia(String.valueOf(id), "xls", "application/vnd.ms-excel", byteArray));
 				this.receiptUploadHeaderService.updateUploadProgress(id, ReceiptUploadConstants.RECEIPT_DOWNLOADED);
 			}
-			out.close();
-			String zipfileName = "ReceiptUpload.zip";
+		} else if (receiptidList.size() > 1) {
 
-			byte[] tobytes = arrayOutputStream.toByteArray();
-			arrayOutputStream.close();
-			arrayOutputStream = null;
-			Filedownload.save(new AMedia(zipfileName, "zip", "application/*", tobytes));
-		} else {
-			for (long id : receiptidList) {
-				ByteArrayOutputStream outputStream = null;
-				outputStream = doDownloadFiles(String.valueOf(id));
-				Filedownload.save(
-						new AMedia(String.valueOf(id), "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
-				this.receiptUploadHeaderService.updateUploadProgress(id, ReceiptUploadConstants.RECEIPT_DOWNLOADED);
+			try (ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream()) {
+				try (ZipOutputStream out = new ZipOutputStream(arrayOutputStream)) {
+					for (long id : receiptidList) {
+						byte[] byteArray = getExcelData(String.valueOf(id));
+						out.putNextEntry(new ZipEntry(id + ".xls"));
+						out.write(byteArray);
+						out.closeEntry();
+
+						this.receiptUploadHeaderService.updateUploadProgress(id,
+								ReceiptUploadConstants.RECEIPT_DOWNLOADED);
+					}
+					out.close();
+					String zipfileName = "ReceiptUpload.zip";
+
+					byte[] tobytes = arrayOutputStream.toByteArray();
+					Filedownload.save(new AMedia(zipfileName, "zip", "application/*", tobytes));
+				}
 			}
 		}
 
@@ -966,105 +952,19 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * download excel files based on upload ids
-	 * 
-	 * @param receiptUploadHeader
-	 */
-	private ByteArrayOutputStream doDownloadFiles(String id) {
+	private byte[] getExcelData(String id) {
 		logger.debug(Literal.ENTERING);
 
 		String whereCond = " where t.uploadHeaderId in (" + "'" + id + "'" + ") and  ProcessingStatus ="
 				+ ReceiptDetailStatus.SUCCESS.getValue();
 		StringBuilder searchCriteria = new StringBuilder(" ");
 
+		String reportPath = PathUtil.REPORTS_ORGANIZATION;
 		String reportName = "ReceiptUploadApprover";
-		ByteArrayOutputStream outputStream = null;
-		outputStream = generateReport(getUserWorkspace().getLoggedInUser().getFullName(), reportName, whereCond,
-				searchCriteria, this.window_ReceiptUploadList, true, id);
+		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 
 		logger.debug(Literal.LEAVING);
-		return outputStream;
-	}
-
-	public ByteArrayOutputStream generateReport(String userName, String reportName, String whereCond,
-			StringBuilder searchCriteriaDesc, Window window, boolean createExcel, String id) {
-		logger.debug(Literal.ENTERING);
-
-		Connection connection = null;
-		DataSource dataSourceObj = null;
-		ByteArrayOutputStream outputStream = null;
-		try {
-
-			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
-			connection = dataSourceObj.getConnection();
-
-			Map<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
-			reportArgumentsMap.put("userName", userName);
-			reportArgumentsMap.put("reportHeading", reportName);
-			reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
-			reportArgumentsMap.put("appDate", SysParamUtil.getAppDate());
-			reportArgumentsMap.put("appCcy", SysParamUtil.getAppCurrency());
-			reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
-			reportArgumentsMap.put("unitParam", "Pff");
-			reportArgumentsMap.put("whereCondition", whereCond);
-			reportArgumentsMap.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
-			reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
-			reportArgumentsMap.put("bankName", Labels.getLabel("label_ClientName"));
-			reportArgumentsMap.put("searchCriteria", searchCriteriaDesc.toString());
-			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
-
-			Connection con = null;
-			DataSource reportDataSourceObj = null;
-
-			try {
-				File file = new File(reportSrc);
-				if (file.exists()) {
-
-					logger.debug("Buffer started");
-
-					reportDataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
-					con = reportDataSourceObj.getConnection();
-
-					String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
-
-					JRXlsExporter excelExporter = new JRXlsExporter();
-					excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME, printfileName);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS,
-							Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.FALSE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IGNORE_CELL_BORDER, Boolean.FALSE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
-					excelExporter.setParameter(JRXlsExporterParameter.IS_IMAGE_BORDER_FIX_ENABLED, Boolean.FALSE);
-					excelExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, id);
-
-					outputStream = new ByteArrayOutputStream();
-					excelExporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
-
-					excelExporter.exportReport();
-				}
-			} catch (JRException e) {
-				logger.error(e.getMessage());
-			}
-		} catch (SQLException e1) {
-			logger.error(e1.getMessage());
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					logger.error(e.getMessage());
-				}
-			}
-			connection = null;
-			dataSourceObj = null;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return outputStream;
+		return ReportsUtil.getExcelData(reportPath, reportName, userName, whereCond, searchCriteria);
 	}
 
 	private boolean doProcess(ReceiptUploadHeader aReceiptUploadHeader, String tranType, String rcdStatus) {

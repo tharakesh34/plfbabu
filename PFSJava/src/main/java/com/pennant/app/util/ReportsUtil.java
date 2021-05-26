@@ -49,6 +49,8 @@ public class ReportsUtil {
 	private static final String RPT_NOT_FOUND = "%s report not found in %s location. Please contact the system administrator.";
 	private static final String RPT_EXCEPTION = "Unable to generate the %s report. Please contact the system administrator.";
 
+	private static final String URL_REPORT_PDF_VIEW = "/WEB-INF/pages/Reports/ReportView.zul";
+
 	private ReportsUtil() {
 		//
 	}
@@ -57,7 +59,7 @@ public class ReportsUtil {
 		byte[] buf = generatePDF(reportName, object, listData, userName);
 
 		Map<String, Object> dataMap = getDataMap(reportName, listData, buf, null);
-		Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, dataMap);
+		Executions.createComponents(URL_REPORT_PDF_VIEW, null, dataMap);
 	}
 
 	public static void showPDF(String reportName, Object object, List<Object> listData, String userName,
@@ -65,7 +67,7 @@ public class ReportsUtil {
 		byte[] buf = generatePDF(reportName, object, listData, userName);
 
 		Map<String, Object> dataMap = getDataMap(reportName, listData, buf, window);
-		Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, dataMap);
+		Executions.createComponents(URL_REPORT_PDF_VIEW, null, dataMap);
 	}
 
 	public static void showPDF(String reportPath, String reportName, Map<String, Object> parameters,
@@ -73,7 +75,7 @@ public class ReportsUtil {
 		byte[] buf = generatePDF(reportPath, reportName, parameters, dataSourceName);
 
 		parameters.put("reportBuffer", buf);
-		Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, parameters);
+		Executions.createComponents(URL_REPORT_PDF_VIEW, null, parameters);
 	}
 
 	public static byte[] generatePDF(String reportName, Object object, List<Object> listData, String userName) {
@@ -107,9 +109,7 @@ public class ReportsUtil {
 
 		String template = getTemplate(reportPath, reportName);
 
-		int maxSize = 250;
-		JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
-		JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
+		JRAbstractLRUVirtualizer virtualizer = getVirtualizer();
 		parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
 
 		try (Connection connection = getConnection(dataSourceName)) {
@@ -121,9 +121,7 @@ public class ReportsUtil {
 		} catch (SQLException e1) {
 			throw new AppException(e1.getMessage());
 		} finally {
-			if (virtualizer != null) {
-				virtualizer.cleanup();
-			}
+			virtualizer.cleanup();
 		}
 		logger.info(Literal.LEAVING);
 		return buf;
@@ -171,14 +169,38 @@ public class ReportsUtil {
 		logger.info(Literal.LEAVING);
 	}
 
+	public static byte[] getExcelData(String reportPath, String reportName, String userName, String whereCond,
+			StringBuilder searchCriteriaDesc, String dataSourceName) {
+		logger.info(Literal.ENTERING);
+
+		Map<String, Object> parameters = getParameters(userName, reportName, whereCond, searchCriteriaDesc);
+
+		String jasperPrint = fillReportToFile(reportPath, reportName, parameters, dataSourceName);
+
+		logger.info(Literal.LEAVING);
+
+		return getExcelData(reportName, jasperPrint);
+	}
+	
+	public static byte[] getExcelData(String reportPath, String reportName, String userName, String whereCond,
+			StringBuilder searchCriteriaDesc) {
+		logger.info(Literal.ENTERING);
+
+		Map<String, Object> parameters = getParameters(userName, reportName, whereCond, searchCriteriaDesc);
+
+		String jasperPrint = fillReportToFile(reportPath, reportName, parameters, "dataSource");
+
+		logger.info(Literal.LEAVING);
+
+		return getExcelData(reportName, jasperPrint);
+	}
+
 	public static String fillReportToFile(String reportPath, String reportName, Map<String, Object> parameters,
 			JRBeanCollectionDataSource mainDS) {
 
 		String template = getTemplate(reportPath, reportName);
 
-		int maxSize = 250;
-		JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
-		JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
+		JRAbstractLRUVirtualizer virtualizer = getVirtualizer();
 		parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
 
 		String printfileName = null;
@@ -189,9 +211,7 @@ public class ReportsUtil {
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException(String.format(RPT_EXCEPTION, reportName));
 		} finally {
-			if (virtualizer != null) {
-				virtualizer.cleanup();
-			}
+			virtualizer.cleanup();
 		}
 
 		return printfileName;
@@ -202,9 +222,7 @@ public class ReportsUtil {
 
 		String template = getTemplate(reportPath, reportName);
 
-		int maxSize = 250;
-		JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
-		JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
+		JRAbstractLRUVirtualizer virtualizer = getVirtualizer();
 		parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
 
 		String printfileName = null;
@@ -217,9 +235,7 @@ public class ReportsUtil {
 		} catch (SQLException e1) {
 			throw new AppException(e1.getMessage());
 		} finally {
-			if (virtualizer != null) {
-				virtualizer.cleanup();
-			}
+			virtualizer.cleanup();
 		}
 
 		return printfileName;
@@ -313,6 +329,7 @@ public class ReportsUtil {
 		parameters.put("appCcy", SysParamUtil.getAppCurrency());
 		parameters.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 		parameters.put("unitParam", "Pff");
+		parameters.put("organizationLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_CLIENT));
 		parameters.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
 		parameters.put("bankName", Labels.getLabel("label_ClientName"));
 
@@ -330,11 +347,9 @@ public class ReportsUtil {
 	}
 
 	private static JRBeanCollectionDataSource getDataSource(Object object) {
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 		list.add(object);
-		JRBeanCollectionDataSource mainDS = new JRBeanCollectionDataSource(list);
-
-		return mainDS;
+		return new JRBeanCollectionDataSource(list);
 	}
 
 	private static void setDataSource(Map<String, Object> parameters, List<Object> listData) {
@@ -356,7 +371,7 @@ public class ReportsUtil {
 	}
 
 	private static Map<String, Object> getDataMap(String reportName, List<Object> listData, byte[] buf, Window window) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
+		Map<String, Object> dataMap = new HashMap<>();
 		String genReportName = Labels.getLabel(reportName);
 		dataMap.put("reportBuffer", buf);
 		dataMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
@@ -438,7 +453,7 @@ public class ReportsUtil {
 
 		try {
 			JRBeanCollectionDataSource subListDS = null;
-			Map<String, Object> parameters = new HashMap<String, Object>();
+			Map<String, Object> parameters = new HashMap<>();
 			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_CHECKS) + "/ChecksMain.jasper";
 
 			for (int i = 0; i < listData.size(); i++) {
@@ -467,7 +482,7 @@ public class ReportsUtil {
 				auditMap.put("dialogWindow", dialogWindow);
 			}
 
-			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+			Executions.createComponents(URL_REPORT_PDF_VIEW, null, auditMap);
 		} catch (JRException e) {
 			MessageUtil.showError(e);
 		}
@@ -483,5 +498,12 @@ public class ReportsUtil {
 				"dataSource");
 
 		logger.info(Literal.LEAVING);
+	}
+
+	private static JRAbstractLRUVirtualizer getVirtualizer() {
+		int maxSize = 250;
+		JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
+		JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
+		return virtualizer;
 	}
 }
