@@ -53,8 +53,9 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 	public void process(InstBasedSchdDetails instBasedSchd) {
 		logger.debug(Literal.ENTERING);
 
-		LoggedInUser userDetails = new LoggedInUser();
-		FinanceDetail financeDetail = null;
+		LoggedInUser user = new LoggedInUser();
+		user.setLoginUsrID(instBasedSchd.getUserId());
+		FinanceDetail fd = null;
 
 		//Check in main and temp rather than instruction
 		String finReference = instBasedSchd.getFinReference();
@@ -63,18 +64,18 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		// Check if Loan is not Approveda
 		if (!isLoanApproved) {
-			financeDetail = financeDetailService.getOriginationFinance(finReference, nxtRoleCd,
-					FinanceConstants.FINSER_EVENT_ORG, "");
-			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+			fd = financeDetailService.getOriginationFinance(finReference, nxtRoleCd, FinanceConstants.FINSER_EVENT_ORG,
+					"");
+			fd.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 		} else if (StringUtils.isNotBlank(nxtRoleCd)) {
-			financeDetail = financeDetailService.getServicingFinanceForQDP(finReference,
-					AccountEventConstants.ACCEVENT_ADDDBSN, FinanceConstants.FINSER_EVENT_ADDDISB, nxtRoleCd);
+			fd = financeDetailService.getServicingFinanceForQDP(finReference, AccountEventConstants.ACCEVENT_ADDDBSN,
+					FinanceConstants.FINSER_EVENT_ADDDISB, nxtRoleCd);
 		} else {
-			financeDetail = financeDetailService.getFinSchdDetailByRef(finReference, "", false);
+			fd = financeDetailService.getFinSchdDetailByRef(finReference, "", false);
 		}
 
-		if (financeDetail != null) {
-			processAndApprove(userDetails, instBasedSchd, financeDetail, !isLoanApproved, nxtRoleCd);
+		if (fd != null) {
+			processAndApprove(user, instBasedSchd, fd, !isLoanApproved, nxtRoleCd);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -87,6 +88,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 	private void processAndApprove(LoggedInUser userDetails, InstBasedSchdDetails instSchdDetail, FinanceDetail fd,
 			boolean isLoanNotApproved, String nxtRoleCd) {
+		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		FinanceDisbursement finDisb = null;
@@ -113,48 +115,8 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES) && fm.isStepFinance()) {
 			if (StringUtils.isNotBlank(fm.getStepPolicy()) || (fm.isAlwManualSteps() && fm.getNoOfSteps() > 0)) {
-
-				fd.getFinScheduleData().setStepPolicyDetails(
-						financeDetailService.getFinStepDetailListByFinRef(fm.getFinReference(), "_view", false));
-
-				Date recalFromDate = null;
-
-				List<RepayInstruction> rpst = fd.getFinScheduleData().getRepayInstructions();
-
-				if (CollectionUtils.isEmpty(rpst)) {
-					fd.getFinScheduleData().setRepayInstructions(
-							financeDetailService.getRepayInstructions(fm.getFinReference(), "_view", false));
-					rpst = fd.getFinScheduleData().getRepayInstructions();
-				}
-
-				if (instSchdDetail.getRealizedDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
-					RepayInstruction rins = rpst.get(rpst.size() - 1);
-					recalFromDate = rins.getRepayDate();
-					fm.setRecalSteps(false);
-				} else {
-					fm.setRecalSteps(true);
-					for (RepayInstruction repayInstruction : rpst) {
-						if (repayInstruction.getRepayDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
-							recalFromDate = repayInstruction.getRepayDate();
-							break;
-						}
-					}
-				}
-
-				fm.setRecalFromDate(recalFromDate);
-				fm.setRecalToDate(fm.getMaturityDate());
-				fm.setRecalType(CalculationConstants.RPYCHG_STEPINST);
-				if (CollectionUtils.isNotEmpty(fd.getFinScheduleData().getFinServiceInstructions())) {
-					for (FinServiceInstruction finServiceInstruction : fd.getFinScheduleData()
-							.getFinServiceInstructions()) {
-						finServiceInstruction.setRecalFromDate(recalFromDate);
-						finServiceInstruction.setRecalToDate(fm.getMaturityDate());
-						finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_STEPINST);
-						finServiceInstruction.setSchdMethod(fm.getScheduleMethod());
-					}
-				}
+				setStepFinanceDetails(instSchdDetail, fd, fm);
 			}
-
 		}
 
 		try {
@@ -242,26 +204,72 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			instSchdDetail.setStatus(DisbursementConstants.AUTODISB_STATUS_SUCCESS);
 		}
 
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void setStepFinanceDetails(InstBasedSchdDetails instSchdDetail, FinanceDetail fd, FinanceMain fm) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		String finReference = fm.getFinReference();
+		schdData.setStepPolicyDetails(financeDetailService.getFinStepDetailListByFinRef(finReference, "_view", false));
+
+		Date recalFromDate = null;
+
+		List<RepayInstruction> rpst = schdData.getRepayInstructions();
+
+		if (CollectionUtils.isEmpty(rpst)) {
+			schdData.setRepayInstructions(financeDetailService.getRepayInstructions(finReference, "_view", false));
+			rpst = schdData.getRepayInstructions();
+		}
+
+		if (instSchdDetail.getRealizedDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
+			RepayInstruction rins = rpst.get(rpst.size() - 1);
+			recalFromDate = rins.getRepayDate();
+			fm.setRecalSteps(false);
+		} else {
+			fm.setRecalSteps(true);
+			for (RepayInstruction repayInstruction : rpst) {
+				if (repayInstruction.getRepayDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
+					recalFromDate = repayInstruction.getRepayDate();
+					break;
+				}
+			}
+		}
+
+		fm.setRecalFromDate(recalFromDate);
+		fm.setRecalToDate(fm.getMaturityDate());
+		fm.setRecalType(CalculationConstants.RPYCHG_STEPINST);
+
+		if (CollectionUtils.isNotEmpty(schdData.getFinServiceInstructions())) {
+			for (FinServiceInstruction fsi : schdData.getFinServiceInstructions()) {
+				fsi.setRecalFromDate(recalFromDate);
+				fsi.setRecalToDate(fm.getMaturityDate());
+				fsi.setRecalType(CalculationConstants.RPYCHG_STEPINST);
+				fsi.setSchdMethod(fm.getScheduleMethod());
+			}
+		}
 	}
 
 	private void doProcessDisbRecord(FinScheduleData finDetail, LoggedInUser userDetails) {
 		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 		// Finance Schedule Details
-		for (int i = 0; i < finDetail.getFinanceScheduleDetails().size(); i++) {
+		List<FinanceScheduleDetail> schedules = finDetail.getFinanceScheduleDetails();
+		for (FinanceScheduleDetail schd : schedules) {
 			int seqNo = 0;
 
-			if (mapDateSeq.containsKey(finDetail.getFinanceScheduleDetails().get(i).getSchDate())) {
-				seqNo = mapDateSeq.get(finDetail.getFinanceScheduleDetails().get(i).getSchDate());
-				mapDateSeq.remove(finDetail.getFinanceScheduleDetails().get(i).getSchDate());
+			if (mapDateSeq.containsKey(schd.getSchDate())) {
+				seqNo = mapDateSeq.get(schd.getSchDate());
+				mapDateSeq.remove(schd.getSchDate());
 			}
 			seqNo = seqNo + 1;
-			mapDateSeq.put(finDetail.getFinanceScheduleDetails().get(i).getSchDate(), seqNo);
-			finDetail.getFinanceScheduleDetails().get(i).setSchSeq(seqNo);
-			finDetail.getFinanceScheduleDetails().get(i).setLogKey(0);
+			mapDateSeq.put(schd.getSchDate(), seqNo);
+			schd.setSchSeq(seqNo);
+			schd.setLogKey(0);
 		}
 
-		financeDetailService.saveFinSchdDetail(finDetail.getFinanceScheduleDetails(),
-				finDetail.getFinanceMain().getFinReference());
+		FinanceMain fm = finDetail.getFinanceMain();
+		String finReference = fm.getFinReference();
+		financeDetailService.saveFinSchdDetail(schedules, finReference);
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
@@ -273,7 +281,6 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			disbursement.setDisbIsActive(true);
 			disbursement.setDisbDisbursed(true);
 			disbursement.setLogKey(0);
-			//LastMnton  and LastMnt By
 			disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			disbursement.setLastMntBy(userDetails.getUserId());
 
@@ -281,8 +288,8 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 				disbursement.setInstructionUID(0);
 			}
 		}
-		financeDetailService.saveDisbDetails(finDetail.getDisbursementDetails(),
-				finDetail.getFinanceMain().getFinReference());
+
+		financeDetailService.saveDisbDetails(finDetail.getDisbursementDetails(), finReference);
 	}
 
 	private AuditHeader doProcess(FinanceDetail financeDetail, LoggedInUser userDetails) throws Exception {
@@ -324,44 +331,45 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 	private Map<String, List<ErrorDetail>> setOverideMap(Map<String, List<ErrorDetail>> overideMap,
 			ErrorDetail errorDetail) {
 
-		if (StringUtils.isNotBlank(errorDetail.getField())) {
-
-			List<ErrorDetail> errorDetails = null;
-			if (overideMap.containsKey(errorDetail.getField())) {
-				errorDetails = overideMap.get(errorDetail.getField());
-
-				for (int i = 0; i < errorDetails.size(); i++) {
-					if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
-						errorDetails.remove(i);
-						break;
-					}
-				}
-
-				overideMap.remove(errorDetail.getField());
-
-			} else {
-				errorDetails = new ArrayList<ErrorDetail>();
-
-			}
-
-			errorDetail.setOveride(true);
-			errorDetails.add(errorDetail);
-
-			overideMap.put(errorDetail.getField(), errorDetails);
-
+		if (StringUtils.isBlank(errorDetail.getField())) {
+			return overideMap;
 		}
+
+		List<ErrorDetail> errorDetails = null;
+
+		if (!overideMap.containsKey(errorDetail.getField())) {
+			errorDetails = new ArrayList<>();
+			overideMap.put(errorDetail.getField(), errorDetails);
+		}
+
+		errorDetails = overideMap.get(errorDetail.getField());
+
+		for (int i = 0; i < errorDetails.size(); i++) {
+			if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
+				errorDetails.remove(i);
+				break;
+			}
+		}
+
+		overideMap.remove(errorDetail.getField());
+
+		errorDetail.setOveride(true);
+		errorDetails.add(errorDetail);
+
+		overideMap.put(errorDetail.getField(), errorDetails);
+
 		return overideMap;
 	}
-
+	
 	private boolean isOverride(Map<String, List<ErrorDetail>> overideMap, ErrorDetail errorDetail) {
+		if (!overideMap.containsKey(errorDetail.getField())) {
+			return false;
+		}
 
-		if (overideMap.containsKey(errorDetail.getField())) {
-			List<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
-			for (int i = 0; i < errorDetails.size(); i++) {
-
-				if (errorDetails.get(i).getCode().equals(errorDetail.getCode())) {
-					return errorDetails.get(i).isOveride();
-				}
+		List<ErrorDetail> errorDetails = overideMap.get(errorDetail.getField());
+		for (ErrorDetail ed : errorDetails) {
+			if (ed.getCode().equals(errorDetail.getCode())) {
+				return ed.isOveride();
 			}
 		}
 
