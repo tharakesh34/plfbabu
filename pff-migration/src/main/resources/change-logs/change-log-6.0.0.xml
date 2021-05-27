@@ -32737,4 +32737,179 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="69" author="SaiKiran">
+		<sql>
+			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='VERIFICATION_VT';
+		</sql>
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">VERIFICATION_VT</column>
+			<column name="WorkFlowSubType">Vetting Verification</column>
+			<column name="WorkFlowDesc">Vetting Verification Workflow Process</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">VERIFICATION_VT_MAKER;VERIFICATION_VT_APPROVER</column>
+			<column name="FirstTaskOwner">VERIFICATION_VT_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">0</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="70" author="SaiKiran">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":821,"properties":{"process_id":"VERIFICATION_VT","name":"Vetting Verification","documentation":"Vetting Verification Process","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-9C0345D0-B5EB-4F4C-886C-AF4E6CBE9429"}],"bounds":{"lowerRight":{"x":130,"y":193},"upperLeft":{"x":100,"y":163}},"dockers":[]},{"resourceId":"sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC","properties":{"overrideid":"","name":"VERIFICATION_VT_MAKER","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"VERIFICATION_VT_MAKER","firstName":"VERIFICATION_VT_MAKER","fullName":"VERIFICATION_VT_MAKER","id":"VERIFICATION_VT_MAKER","roledesc":"Vetting Verification  Maker Role","$$hashKey":"object:4797"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-49B74A98-CD3C-44E9-9E5C-99DA499919E1"}],"bounds":{"lowerRight":{"x":325,"y":218},"upperLeft":{"x":225,"y":138}},"dockers":[]},{"resourceId":"sid-9C0345D0-B5EB-4F4C-886C-AF4E6CBE9429","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC"}],"bounds":{"lowerRight":{"x":224.625,"y":178},"upperLeft":{"x":130.375,"y":178}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC"}},{"resourceId":"sid-A83FA45C-5E90-4206-B37D-A6FC02C39993","properties":{"overrideid":"","name":"VERIFICATION_VT_APPROVER","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"VERIFICATION_VT_APPROVER","firstName":"VERIFICATION_VT_APPROVER","fullName":"VERIFICATION_VT_APPROVER","id":"VERIFICATION_VT_APPROVER","roledesc":"Vetting Verification Approver Role","$$hashKey":"object:2089"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-EDAAAE1E-16DF-4B8C-8640-B90DBD133D12"}],"bounds":{"lowerRight":{"x":565,"y":218},"upperLeft":{"x":465,"y":138}},"dockers":[]},{"resourceId":"sid-8D807C3F-B007-4737-8971-81A8B1D8D91D","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-754CDCA0-A00A-4EB1-A8B5-BF83D76D431E"},{"resourceId":"sid-9DEEC218-5DFF-43C9-9E1F-34B8150E1CCC"}],"bounds":{"lowerRight":{"x":650,"y":198},"upperLeft":{"x":610,"y":158}},"dockers":[]},{"resourceId":"sid-EDAAAE1E-16DF-4B8C-8640-B90DBD133D12","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-8D807C3F-B007-4737-8971-81A8B1D8D91D"}],"bounds":{"lowerRight":{"x":609.6484468700075,"y":178.4097335362338},"upperLeft":{"x":565.6288968799925,"y":178.2191727137662}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-8D807C3F-B007-4737-8971-81A8B1D8D91D"}},{"resourceId":"sid-B6912A57-A720-41C6-9848-F18CD022A882","properties":{"overrideid":"","name":"Approve","rerunnable":true,"servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-329543F4-DC3F-4B7B-81F9-CD9E162FD23A"}],"bounds":{"lowerRight":{"x":880,"y":219},"upperLeft":{"x":780,"y":139}},"dockers":[]},{"resourceId":"sid-BA5BFBBF-D153-4B2A-832B-93F44CAEADDC","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":953,"y":193},"upperLeft":{"x":925,"y":165}},"dockers":[]},{"resourceId":"sid-329543F4-DC3F-4B7B-81F9-CD9E162FD23A","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-BA5BFBBF-D153-4B2A-832B-93F44CAEADDC"}],"bounds":{"lowerRight":{"x":924.375,"y":179},"upperLeft":{"x":880.390625,"y":179}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-BA5BFBBF-D153-4B2A-832B-93F44CAEADDC"}},{"resourceId":"sid-754CDCA0-A00A-4EB1-A8B5-BF83D76D431E","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"capturereasons":"false","typeofreason":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC"}],"bounds":{"lowerRight":{"x":630.5,"y":157.482421875},"upperLeft":{"x":275,"y":40}},"dockers":[{"x":20.5,"y":20.5},{"x":630.5,"y":40},{"x":275,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC"}},{"resourceId":"sid-9DEEC218-5DFF-43C9-9E1F-34B8150E1CCC","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","capturereasons":"false","typeofreason":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B6912A57-A720-41C6-9848-F18CD022A882"}],"bounds":{"lowerRight":{"x":779.125003140669,"y":178.87249374220718},"upperLeft":{"x":650.203121859331,"y":178.54938125779282}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-B6912A57-A720-41C6-9848-F18CD022A882"}},{"resourceId":"sid-49B74A98-CD3C-44E9-9E5C-99DA499919E1","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","capturereasons":"false","typeofreason":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-A83FA45C-5E90-4206-B37D-A6FC02C39993"}],"bounds":{"lowerRight":{"x":464.3125,"y":178},"upperLeft":{"x":325.6875,"y":178}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-A83FA45C-5E90-4206-B37D-A6FC02C39993"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+				  <process id="VERIFICATION_VT" name="Vetting Verification" isExecutable="true">
+				    <documentation>Vetting Verification Process</documentation>
+				    <startEvent id="startEvent1" name="Start"/>
+				    <userTask id="sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC" name="VERIFICATION_VT_MAKER" activiti:actor="VERIFICATION_VT_MAKER" activiti:assignmentLevel="Role Queue"/>
+				    <sequenceFlow id="sid-9C0345D0-B5EB-4F4C-886C-AF4E6CBE9429" sourceRef="startEvent1" targetRef="sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+				    <userTask id="sid-A83FA45C-5E90-4206-B37D-A6FC02C39993" name="VERIFICATION_VT_APPROVER" activiti:actor="VERIFICATION_VT_APPROVER" activiti:assignmentLevel="Role Queue"/>
+				    <exclusiveGateway id="sid-8D807C3F-B007-4737-8971-81A8B1D8D91D"/>
+				    <sequenceFlow id="sid-EDAAAE1E-16DF-4B8C-8640-B90DBD133D12" sourceRef="sid-A83FA45C-5E90-4206-B37D-A6FC02C39993" targetRef="sid-8D807C3F-B007-4737-8971-81A8B1D8D91D" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+				    <serviceTask id="sid-B6912A57-A720-41C6-9848-F18CD022A882" name="Approve" activiti:operation="doApprove" activiti:rerunnable="true"/>
+				    <endEvent id="sid-BA5BFBBF-D153-4B2A-832B-93F44CAEADDC" name="Approved"/>
+				    <sequenceFlow id="sid-329543F4-DC3F-4B7B-81F9-CD9E162FD23A" sourceRef="sid-B6912A57-A720-41C6-9848-F18CD022A882" targetRef="sid-BA5BFBBF-D153-4B2A-832B-93F44CAEADDC" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+				    <sequenceFlow id="sid-754CDCA0-A00A-4EB1-A8B5-BF83D76D431E" name="Resubmit" sourceRef="sid-8D807C3F-B007-4737-8971-81A8B1D8D91D" targetRef="sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
+				      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
+				    </sequenceFlow>
+				    <sequenceFlow id="sid-9DEEC218-5DFF-43C9-9E1F-34B8150E1CCC" name="Approve" sourceRef="sid-8D807C3F-B007-4737-8971-81A8B1D8D91D" targetRef="sid-B6912A57-A720-41C6-9848-F18CD022A882" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
+				      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
+				    </sequenceFlow>
+				    <sequenceFlow id="sid-49B74A98-CD3C-44E9-9E5C-99DA499919E1" name="Submit" sourceRef="sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC" targetRef="sid-A83FA45C-5E90-4206-B37D-A6FC02C39993" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+				      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
+				    </sequenceFlow>
+				  </process>
+				  <bpmndi:BPMNDiagram id="BPMNDiagram_VERIFICATION_VT">
+				    <bpmndi:BPMNPlane bpmnElement="VERIFICATION_VT" id="BPMNPlane_VERIFICATION_VT">
+				      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+				        <omgdc:Bounds height="30.0" width="30.0" x="100.0" y="163.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC" id="BPMNShape_sid-FE192EFC-5336-4FD0-9E08-C134CDC4DBBC">
+				        <omgdc:Bounds height="80.0" width="100.0" x="225.0" y="138.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-A83FA45C-5E90-4206-B37D-A6FC02C39993" id="BPMNShape_sid-A83FA45C-5E90-4206-B37D-A6FC02C39993">
+				        <omgdc:Bounds height="80.0" width="100.0" x="465.0" y="138.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-8D807C3F-B007-4737-8971-81A8B1D8D91D" id="BPMNShape_sid-8D807C3F-B007-4737-8971-81A8B1D8D91D">
+				        <omgdc:Bounds height="40.0" width="40.0" x="610.0" y="158.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-B6912A57-A720-41C6-9848-F18CD022A882" id="BPMNShape_sid-B6912A57-A720-41C6-9848-F18CD022A882">
+				        <omgdc:Bounds height="80.0" width="100.0" x="780.0" y="139.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNShape bpmnElement="sid-BA5BFBBF-D153-4B2A-832B-93F44CAEADDC" id="BPMNShape_sid-BA5BFBBF-D153-4B2A-832B-93F44CAEADDC">
+				        <omgdc:Bounds height="28.0" width="28.0" x="925.0" y="165.0"/>
+				      </bpmndi:BPMNShape>
+				      <bpmndi:BPMNEdge bpmnElement="sid-754CDCA0-A00A-4EB1-A8B5-BF83D76D431E" id="BPMNEdge_sid-754CDCA0-A00A-4EB1-A8B5-BF83D76D431E">
+				        <omgdi:waypoint x="630.5" y="158.5"/>
+				        <omgdi:waypoint x="630.5" y="40.0"/>
+				        <omgdi:waypoint x="275.0" y="40.0"/>
+				        <omgdi:waypoint x="275.0" y="138.0"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-9C0345D0-B5EB-4F4C-886C-AF4E6CBE9429" id="BPMNEdge_sid-9C0345D0-B5EB-4F4C-886C-AF4E6CBE9429">
+				        <omgdi:waypoint x="130.0" y="178.0"/>
+				        <omgdi:waypoint x="225.0" y="178.0"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-9DEEC218-5DFF-43C9-9E1F-34B8150E1CCC" id="BPMNEdge_sid-9DEEC218-5DFF-43C9-9E1F-34B8150E1CCC">
+				        <omgdi:waypoint x="649.4525" y="178.5475"/>
+				        <omgdi:waypoint x="780.0" y="178.87468671679198"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-49B74A98-CD3C-44E9-9E5C-99DA499919E1" id="BPMNEdge_sid-49B74A98-CD3C-44E9-9E5C-99DA499919E1">
+				        <omgdi:waypoint x="325.0" y="178.0"/>
+				        <omgdi:waypoint x="465.0" y="178.0"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-EDAAAE1E-16DF-4B8C-8640-B90DBD133D12" id="BPMNEdge_sid-EDAAAE1E-16DF-4B8C-8640-B90DBD133D12">
+				        <omgdi:waypoint x="565.0" y="178.2164502164502"/>
+				        <omgdi:waypoint x="610.4130434782609" y="178.41304347826087"/>
+				      </bpmndi:BPMNEdge>
+				      <bpmndi:BPMNEdge bpmnElement="sid-329543F	4-DC3F-4B7B-81F9-CD9E162FD23A" id="BPMNEdge_sid-329543F4-DC3F-4B7B-81F9-CD9E162FD23A">
+				        <omgdi:waypoint x="880.0" y="179.0"/>
+				        <omgdi:waypoint x="925.0" y="179.0"/>
+				      </bpmndi:BPMNEdge>
+				    </bpmndi:BPMNPlane>
+				  </bpmndi:BPMNDiagram>
+				</definitions>]]></column>
+			<where>workflowtype='VERIFICATION_VT' and workflowactive=1
+			</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="71" author="Saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVettingVerification') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVetting_Initiation') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnSave') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnNew') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnEdit') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnDelete') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_AgentCode') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_AgentName') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Documents') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Reason') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Recommendations') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks1') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks2') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks3') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_VerificationDate') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVettingVerification') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVetting_Initiation') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnSave') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnNew') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnEdit') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnDelete') and GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER');
+				
+				DELETE FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'VERIFICATION_VT_MAKER') AND GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'VERIFICATION_VT_APPROVER') AND GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER');
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER';
+				
+				DELETE FROM SECROLES WHERE ROLECD = 'VERIFICATION_VT_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'VERIFICATION_VT_APPROVER';
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS), 'VERIFICATION_VT_MAKER', 'Vetting Verification Maker Group', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((select max(GRPID)+1 from SECGROUPS), 'VERIFICATION_VT_APPROVER', 'Vetting Verification Approver Group', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'VERIFICATION_VT_MAKER', 'Vetting Verification Maker Role', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0) ;
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'VERIFICATION_VT_APPROVER', 'Vetting Verification Approver Role', '', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0) ;	
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVettingVerification'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVetting_Initiation'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnSave'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnNew'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnEdit'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnDelete'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_AgentCode'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_AgentName'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);					
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Documents'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Reason'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Recommendations'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks1'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks2'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_Remarks3'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LegalVettingVerificationDialog_VerificationDate'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVettingVerification'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LegalVetting_Initiation'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnSave'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnNew'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnEdit'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'VERIFICATION_VT_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LegalVettingVerificationDialog_btnDelete'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);					
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

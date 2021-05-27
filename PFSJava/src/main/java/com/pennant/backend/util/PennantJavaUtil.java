@@ -537,6 +537,7 @@ public class PennantJavaUtil {
 	private final static String WF_VERIFICATION_FI = "VERIFICATION_FI";
 	private final static String WF_VERIFICATION_TV = "VERIFICATION_TV";
 	private final static String WF_VERIFICATION_LV = "VERIFICATION_LV";
+	private final static String WF_VERIFICATION_VT = "VERIFICATION_VT";
 	private final static String WF_VERIFICATION_RCU = "VERIFICATION_RCU";
 	private final static String PRESENTMENT_BATCH = "PRESENTMENTBATCH";
 	private final static String GST_WF = "GSTDETAILS";
@@ -3045,7 +3046,7 @@ public class PennantJavaUtil {
 				new String[] { "verification_lv", "verification_lv_AView" }, WF_VERIFICATION_LV, null, null, 600));
 
 		ModuleUtil.register("LegalVetting", new ModuleMapping("LegalVetting", LegalVetting.class,
-				new String[] { "verification_vt", "verification_vt_view" }, WF_VERIFICATION_LV, null, null, 600));
+				new String[] { "verification_vt", "verification_vt_view" }, WF_VERIFICATION_VT, null, null, 600));
 
 		ModuleUtil.register("LVDocument",
 				new ModuleMapping("LVDocument", LVDocument.class,
