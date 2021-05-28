@@ -650,10 +650,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						}
 
 						boolean processReceipt = false;
-						if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD) {
-							processReceipt = processInactiveLoan(presentmentRef);
-						} else {
+						if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
 							processReceipt = processPresentmentReceipt(presentmentRef);
+						} else {
+							processReceipt = processInactiveLoan(presentmentRef);
 						}
 
 						Long linkedTranId = null;

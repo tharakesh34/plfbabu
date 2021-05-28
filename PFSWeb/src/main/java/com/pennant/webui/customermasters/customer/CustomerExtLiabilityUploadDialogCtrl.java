@@ -190,7 +190,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 					workBook = new HSSFWorkbook(media.getStreamData());
 					this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) workBook);
 				} catch (OfficeXmlFileException e) {
-					//due to some xl version issue we have to use	
+					// due to some xl version issue we have to use
 					workBook = new XSSFWorkbook(media.getStreamData());
 					this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workBook);
 				}
@@ -209,12 +209,12 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		}
 
 		Sheet myExcelSheet = workBook.getSheetAt(0);
-		//if it is empty sheet return
+		// if it is empty sheet return
 		if (myExcelSheet == null) {
 			MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
 			return;
 		}
-		//only header column is available with out data return
+		// only header column is available with out data return
 		int rowCount = myExcelSheet.getPhysicalNumberOfRows();
 		if (rowCount <= 1) {
 			MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
@@ -230,19 +230,19 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 				continue;
 			}
 			int cellCount = -1;
-			//for list maintenance
+			// for list maintenance
 			seqNo += 1;
 			Iterator<Cell> cells = row.cellIterator();
-			//reading each row and preparing the list of values
+			// reading each row and preparing the list of values
 			while (cells.hasNext()) {
 				data[++cellCount] = this.objDefaultFormat.formatCellValue(cells.next(), this.formulaEvaluator);
 			}
-			//This method will create  
+			// This method will create
 			prepareLiabilityList(data, map, seqNo);
 		}
 		workBook.close();
 
-		//save the data
+		// save the data
 		String msg = Labels.getLabel("label_FileUpload_Save_Confirmation");
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			doSave();
@@ -259,17 +259,17 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	private void prepareLiabilityList(String[] data, Map<String, CustomerExtLiability> map, int seqNo) {
 		if (data != null && data.length == columnsize) {
 			if (!map.containsKey(data[0])) {
-				//Preparing CustomerExtLiability Data
+				// Preparing CustomerExtLiability Data
 				CustomerExtLiability customerExtLiability = new CustomerExtLiability();
 				customerExtLiability.setSeqNo(seqNo);
 				customerExtLiability.setCustId(custId);
 				prepareLiabilityData(customerExtLiability, data);
-				//Here we have to set RTR data
+				// Here we have to set RTR data
 				prepareRTRData(customerExtLiability, data);
 				map.put(data[0], customerExtLiability);
 			} else if (map.containsKey(data[0])) {
 				CustomerExtLiability customerExtLiability = map.get(data[0]);
-				//Only need to set RTR data for Duplicate Liability Record
+				// Only need to set RTR data for Duplicate Liability Record
 				prepareRTRData(customerExtLiability, data);
 			}
 		}
@@ -283,107 +283,107 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 * @param data
 	 */
 	private void prepareLiabilityData(CustomerExtLiability customerExtLiability, String[] data) {
-		//Product
+		// Product
 		customerExtLiability.setFinType(data[1]);
 
-		//Financer Name
+		// Financer Name
 		customerExtLiability.setLoanBank(data[2]);
 
-		//Other Financial Institution
+		// Other Financial Institution
 		customerExtLiability.setOtherFinInstitute(data[3]);
 
-		//Installment Amount/EMI
+		// Installment Amount/EMI
 		customerExtLiability.setInstalmentAmount(PennantApplicationUtil.unFormateAmount(data[4], formater));
 
-		//Outstanding Balance/Limit
+		// Outstanding Balance/Limit
 		customerExtLiability.setOutstandingBalance(PennantApplicationUtil.unFormateAmount(data[5], formater));
 
-		//Loan Amount
+		// Loan Amount
 		customerExtLiability.setOriginalAmount(PennantApplicationUtil.unFormateAmount(data[6], formater));
 
-		//Loan Date
+		// Loan Date
 		customerExtLiability.setFinDate(DateUtil.parse(data[7], DateFormat.SHORT_DATE));
 
-		//Status
+		// Status
 		customerExtLiability.setFinStatus(data[8]);
 
-		//ROI
+		// ROI
 		customerExtLiability.setRateOfInterest(PennantApplicationUtil.unFormateAmount(data[9], formater));
 
-		//Loan Tenure
+		// Loan Tenure
 		customerExtLiability.setTenure(Integer.valueOf(data[10]));
 
-		//Balance Tenure
+		// Balance Tenure
 		customerExtLiability.setBalanceTenure(Integer.valueOf(data[11]));
 
-		//Number of Bounces in last 3 months
+		// Number of Bounces in last 3 months
 		customerExtLiability.setBounceInstalments(Integer.valueOf(data[12]));
 
-		//Number of Bounces in last 6 months
+		// Number of Bounces in last 6 months
 		customerExtLiability.setNoOfBouncesInSixMonths(Integer.valueOf(data[13]));
 
-		//Number of Bounces in last 12 months
+		// Number of Bounces in last 12 months
 		customerExtLiability.setNoOfBouncesInTwelveMonths(Integer.valueOf(data[14]));
 
-		//POS
+		// POS
 		customerExtLiability.setPrincipalOutstanding(PennantApplicationUtil.unFormateAmount(data[15], formater));
 
-		//Overdue
+		// Overdue
 		customerExtLiability.setOverdueAmount(PennantApplicationUtil.unFormateAmount(data[16], formater));
 
-		//EMI Considered for FOIR
-		customerExtLiability.setFoir("true".equalsIgnoreCase(data[17]) ? true : false);//data[17]
+		// EMI Considered for FOIR
+		customerExtLiability.setFoir("true".equalsIgnoreCase(data[17]) ? true : false);// data[17]
 
-		//Source of Info
+		// Source of Info
 		customerExtLiability.setSource(Integer.valueOf(data[18]));
 
-		//Track Check from
+		// Track Check from
 		customerExtLiability.setCheckedBy(Integer.valueOf(data[19]));
 
-		//Security Details/Property details
+		// Security Details/Property details
 		customerExtLiability.setSecurityDetails(data[20]);
 
-		//End Use of Funds
+		// End Use of Funds
 		customerExtLiability.setLoanPurpose(data[21]);
 
-		//Repayment Account Bank Name
+		// Repayment Account Bank Name
 		customerExtLiability.setRepayBank(data[22]);
 
-		//Repayment Bank Account No
+		// Repayment Bank Account No
 		customerExtLiability.setRepayFromAccNo(data[23]);
 
-		//Considered for RTR based loan
-		customerExtLiability.setConsideredBasedOnRTR("true".equalsIgnoreCase(data[24]) ? true : false);//data[24]
+		// Considered for RTR based loan
+		customerExtLiability.setConsideredBasedOnRTR("true".equalsIgnoreCase(data[24]) ? true : false);// data[24]
 
-		//Number of Installments for RTR
+		// Number of Installments for RTR
 
-		//Imputed EMI
+		// Imputed EMI
 		customerExtLiability.setImputedEmi(PennantApplicationUtil.unFormateAmount(data[26], formater));
 
-		//OwnerShip
+		// OwnerShip
 		customerExtLiability.setOwnerShip(data[27]);
 
-		//Last 24 Months
-		customerExtLiability.setLastTwentyFourMonths("true".equalsIgnoreCase(data[28]) ? true : false);//data[28]
+		// Last 24 Months
+		customerExtLiability.setLastTwentyFourMonths("true".equalsIgnoreCase(data[28]) ? true : false);// data[28]
 
-		//Last 6 Months
-		customerExtLiability.setLastSixMonths("true".equalsIgnoreCase(data[29]) ? true : false);//data[29]
+		// Last 6 Months
+		customerExtLiability.setLastSixMonths("true".equalsIgnoreCase(data[29]) ? true : false);// data[29]
 
-		//Last 3 Months
-		customerExtLiability.setLastThreeMonths("true".equalsIgnoreCase(data[30]) ? true : false);//data[30]
+		// Last 3 Months
+		customerExtLiability.setLastThreeMonths("true".equalsIgnoreCase(data[30]) ? true : false);// data[30]
 
-		//Current OverDue
+		// Current OverDue
 		customerExtLiability.setCurrentOverDue(PennantApplicationUtil.unFormateAmount(data[31], formater));
 
-		//MOB
+		// MOB
 		if (StringUtils.isNotBlank(data[32])) {
 			customerExtLiability.setMob(Integer.valueOf(data[32]));
 		}
 
-		//Remarks
+		// Remarks
 		customerExtLiability.setRemarks(data[33]);
 
-		//workflow data
+		// workflow data
 		customerExtLiability.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		customerExtLiability.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -399,15 +399,15 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 */
 	private void prepareRTRData(CustomerExtLiability customerExtLiability, String[] data) {
 		ExtLiabilityPaymentdetails paymentdetails = new ExtLiabilityPaymentdetails();
-		//Month
+		// Month
 		paymentdetails.setEmiType(data[34]);
-		//Cleared
+		// Cleared
 		paymentdetails.setEmiClearance(data[35]);
-		//Cleared Day
+		// Cleared Day
 		if (StringUtils.isNotBlank(data[36])) {
 			paymentdetails.setEmiClearedDay(Integer.valueOf(data[36]));
 		}
-		//workflow data
+		// workflow data
 		paymentdetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		paymentdetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		paymentdetails.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -424,7 +424,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
-		//doSave();
+		// doSave();
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
@@ -439,16 +439,16 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 				for (String key : map.keySet()) {
 					CustomerExtLiability customerExtLiability = map.get(key);
 					if (customerExtLiability != null) {
-						//setting the linkId
+						// setting the linkId
 						customerExtLiabilityDAO.setLinkId(customerExtLiability);
 						if (!flag) {
-							//delete the existing data first while upload 
+							// delete the existing data first while upload
 							externalLiabilityDAO.deleteByLinkId(customerExtLiability.getLinkId(), "");
-							//delete the existing data first while upload 
+							// delete the existing data first while upload
 							customerExtLiabilityDAO.delete(customerExtLiability.getLinkId(), "");
 							flag = true;
 						}
-						//Saving the Data
+						// Saving the Data
 						externalLiabilityDAO.save(customerExtLiability, "");
 						if (customerExtLiability.getExtLiabilitiesPayments() != null
 								&& !customerExtLiability.getExtLiabilitiesPayments().isEmpty()) {
@@ -456,14 +456,14 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 									.getExtLiabilitiesPayments()) {
 								extLiabilityPaymentdetails.setLiabilityId(customerExtLiability.getId());
 							}
-							//saving the list
+							// saving the list
 							customerExtLiabilityDAO.save(customerExtLiability.getExtLiabilitiesPayments(), "");
 						}
 					}
 				}
-				//Displaying the success message
+				// Displaying the success message
 				MessageUtil.showMessage(Labels.getLabel("label_ValidatedDataSaved"));
-				//Data retrieving to render the data in liability list
+				// Data retrieving to render the data in liability list
 				CustomerExtLiability liability = new CustomerExtLiability();
 				liability.setCustId(custId);
 				List<CustomerExtLiability> customerExtLiabilities = externalLiabilityDAO
@@ -474,9 +474,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 								customerExtLiabilityDAO.getExtLiabilitySubDetailById(extLiability.getId(), ""));
 					}
 				}
-				//Refreshing the list box data after successful upload
+				// Refreshing the list box data after successful upload
 				customerDialogCtrl.doFillCustomerExtLiabilityDetails(customerExtLiabilities);
-				//close the dialog after save
+				// close the dialog after save
 				closeDialog();
 				logger.debug(Literal.LEAVING);
 			}
@@ -488,8 +488,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -558,28 +557,28 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			ExtLiabilityPaymentdetails paymentdetails) {
 		ArrayList<String> list = new ArrayList<>();
 		list.add(String.valueOf(customerExtLiability.getId()));
-		//Product
+		// Product
 		list.add(customerExtLiability.getFinType());
 
-		//Financer Name
+		// Financer Name
 		list.add(customerExtLiability.getLoanBank());
 
-		//Other Financial Institution
+		// Other Financial Institution
 		list.add(customerExtLiability.getOtherFinInstitute());
 
-		//Installment Amount/EMI
+		// Installment Amount/EMI
 		BigDecimal instalmentAmount = customerExtLiability.getInstalmentAmount();
 		list.add(PennantApplicationUtil.amountFormate(instalmentAmount, formater).replace(",", ""));
 
-		//Outstanding Balance/Limit
+		// Outstanding Balance/Limit
 		BigDecimal outstandingBalance = customerExtLiability.getOutstandingBalance();
 		list.add(PennantApplicationUtil.amountFormate(outstandingBalance, formater).replace(",", ""));
 
-		//Loan Amount
+		// Loan Amount
 		BigDecimal originalAmount = customerExtLiability.getOriginalAmount();
 		list.add(PennantApplicationUtil.amountFormate(originalAmount, formater).replace(",", ""));
 
-		//Loan Date
+		// Loan Date
 		Date finDate = customerExtLiability.getFinDate();
 		if (finDate != null && DateUtility.formatDate(finDate, "dd-MM-yyyy") != null) {
 			list.add(DateUtility.formatDate(finDate, "dd-MM-yyyy"));
@@ -587,112 +586,112 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			list.add(" ");
 		}
 
-		//Status
+		// Status
 		String finStatus = customerExtLiability.getFinStatus();
 		list.add(finStatus);
 
-		//ROI
+		// ROI
 		BigDecimal rateOfInterest = customerExtLiability.getRateOfInterest();
 		list.add(PennantApplicationUtil.amountFormate(rateOfInterest, formater));
 
-		//Loan Tenure
+		// Loan Tenure
 		int tenure = customerExtLiability.getTenure();
 		list.add(String.valueOf(tenure));
 
-		//Balance Tenure
+		// Balance Tenure
 		int balanceTenure = customerExtLiability.getBalanceTenure();
 		list.add(String.valueOf(balanceTenure));
 
-		//Number of Bounces in last 3 months
+		// Number of Bounces in last 3 months
 		int bounceInstalments = customerExtLiability.getBounceInstalments();
 		list.add(String.valueOf(bounceInstalments));
 
-		//Number of Bounces in last 6 months
+		// Number of Bounces in last 6 months
 		int noOfBouncesInSixMonths = customerExtLiability.getNoOfBouncesInSixMonths();
 		list.add(String.valueOf(noOfBouncesInSixMonths));
 
-		//Number of Bounces in last 12 months
+		// Number of Bounces in last 12 months
 		int noOfBouncesInTwelveMonths = customerExtLiability.getNoOfBouncesInTwelveMonths();
 		list.add(String.valueOf(noOfBouncesInTwelveMonths));
 
-		//POS
+		// POS
 		BigDecimal principalOutstanding = customerExtLiability.getPrincipalOutstanding();
 		list.add(PennantApplicationUtil.amountFormate(principalOutstanding, formater).replace(",", ""));
 
-		//Overdue
+		// Overdue
 		BigDecimal overdueAmount = customerExtLiability.getOverdueAmount();
 		list.add(PennantApplicationUtil.amountFormate(overdueAmount, formater).replace(",", ""));
 
-		//EMI Considered for FOIR
+		// EMI Considered for FOIR
 		boolean foir = customerExtLiability.isFoir();
 
 		list.add(foir ? "true" : "false");
 
-		//Source of Info
+		// Source of Info
 		int source = customerExtLiability.getSource();
 		list.add(String.valueOf(source));
 
-		//Track Check from
+		// Track Check from
 		int checkedBy = customerExtLiability.getCheckedBy();
 		list.add(String.valueOf(checkedBy));
 
-		//Security Details/Property details
+		// Security Details/Property details
 		String securityDetails = customerExtLiability.getSecurityDetails();
 		list.add(String.valueOf(securityDetails));
 
-		//End Use of Funds
+		// End Use of Funds
 		String loanPurpose = customerExtLiability.getLoanPurpose();
 		list.add(String.valueOf(loanPurpose));
 
-		//Repayment Account Bank Name
+		// Repayment Account Bank Name
 		String repayBank = customerExtLiability.getRepayBank();
 		list.add(String.valueOf(repayBank));
 
-		//Repayment Bank Account No
+		// Repayment Bank Account No
 		String repayFromAccNo = customerExtLiability.getRepayFromAccNo();
 		list.add(String.valueOf(repayFromAccNo));
 
-		//Considered for RTR based loan
+		// Considered for RTR based loan
 		boolean consideredBasedOnRTR = customerExtLiability.isConsideredBasedOnRTR();
 		list.add(consideredBasedOnRTR ? "true" : "false");
 
-		//Number of Installments for RTR
+		// Number of Installments for RTR
 		int size = customerExtLiability.getExtLiabilitiesPayments().size();
 		list.add(String.valueOf(size));
 
-		//Imputed EMI
+		// Imputed EMI
 		BigDecimal imputedEmi = customerExtLiability.getImputedEmi();
 		list.add(PennantApplicationUtil.amountFormate(imputedEmi, formater).replace(",", ""));
 
-		//OwnerShip
+		// OwnerShip
 		String ownerShip = customerExtLiability.getOwnerShip();
 		list.add(ownerShip);
 
-		//Last 24 Months
+		// Last 24 Months
 		boolean lastTwentyFourMonths = customerExtLiability.isLastTwentyFourMonths();
 		list.add(lastTwentyFourMonths ? "true" : "false");
 
-		//Last 6 Months
+		// Last 6 Months
 		boolean lastSixMonths = customerExtLiability.isLastSixMonths();
 		list.add(lastSixMonths ? "true" : "false");
 
-		//Last 3 Months
+		// Last 3 Months
 		boolean lastThreeMonths = customerExtLiability.isLastThreeMonths();
 		list.add(lastThreeMonths ? "true" : "false");
 
-		//Current OverDue
+		// Current OverDue
 		BigDecimal currentOverDue = customerExtLiability.getCurrentOverDue();
 		list.add(PennantApplicationUtil.amountFormate(currentOverDue, formater).replace(",", ""));
 
-		//MOB
+		// MOB
 		int mob = customerExtLiability.getMob();
 		list.add(String.valueOf(mob));
 
-		//Remarks
+		// Remarks
 		String remarks = customerExtLiability.getRemarks();
 		list.add(String.valueOf(remarks));
 
-		//RTR data
+		// RTR data
 		if (paymentdetails != null) {
 			list.add(paymentdetails.getEmiType());
 			list.add(paymentdetails.getEmiClearance());
@@ -717,24 +716,24 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		Sheet sheet = null;
 		String path = PathUtil.getPath(PathUtil.ExtLiability) + "/ExternalLiabilities.xlsx";
 		try {
-			//Reading the template
+			// Reading the template
 			file = new FileInputStream(new File(path));
 			workbook = new XSSFWorkbook(file);
-			//Getting the external liability sheet at index 0
+			// Getting the external liability sheet at index 0
 			sheet = workbook.getSheetAt(0);
 			if (sheet == null) {
 				MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
 				return null;
 			} else {
-				//writing the data to existing template
+				// writing the data to existing template
 				createExternalLiabilitiesSheet(sheet, customerExtLiabilities);
-				//Here we need to prepare master data
-				createProductSheet(workbook);//sheet at index 1
-				createBankMasterSheet(workbook);//sheet at index 2
-				createStatusSheet(workbook);//sheet at index 3
-				createSourceInfoSheet(workbook);//sheet at index 4
-				createTrackCheckFromSheet(workbook);//sheet at index 5
-				createEMIClearanceSheet(workbook);//sheet at index 6
+				// Here we need to prepare master data
+				createProductSheet(workbook);// sheet at index 1
+				createBankMasterSheet(workbook);// sheet at index 2
+				createStatusSheet(workbook);// sheet at index 3
+				createSourceInfoSheet(workbook);// sheet at index 4
+				createTrackCheckFromSheet(workbook);// sheet at index 5
+				createEMIClearanceSheet(workbook);// sheet at index 6
 				file.close();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				workbook.write(baos);
@@ -763,7 +762,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 * @param workbook
 	 */
 	private void createSourceInfoSheet(Workbook workbook) {
-		//getting the source of info sheet at index
+		// getting the source of info sheet at index
 		Sheet sheet = workbook.getSheetAt(4);
 		if (sheet == null) {
 			return;
@@ -774,9 +773,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (CollectionUtils.isNotEmpty(valueLabels)) {
 			for (ValueLabel valueLabel : valueLabels) {
 				row = sheet.createRow(++rowcount);
-				//code
+				// code
 				createCell(row, 0, valueLabel.getValue());
-				//description
+				// description
 				createCell(row, 1, valueLabel.getLabel());
 			}
 		}
@@ -798,9 +797,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (CollectionUtils.isNotEmpty(valueLabels)) {
 			for (ValueLabel valueLabel : valueLabels) {
 				row = trackSheet.createRow(++rowcount);
-				//code
+				// code
 				createCell(row, 0, valueLabel.getValue());
-				//description
+				// description
 				createCell(row, 1, valueLabel.getLabel());
 			}
 		}
@@ -816,7 +815,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (statusSheet == null) {
 			return;
 		}
-		//get the status data
+		// get the status data
 		JdbcSearchObject<CustomerStatusCode> searchObject = new JdbcSearchObject<CustomerStatusCode>(
 				CustomerStatusCode.class);
 		searchObject.addField("CustStsCode");
@@ -828,9 +827,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (CollectionUtils.isNotEmpty(customerStatusCodes)) {
 			for (CustomerStatusCode customerStatusCode : customerStatusCodes) {
 				row = statusSheet.createRow(++rowcount);
-				//code
+				// code
 				createCell(row, 0, customerStatusCode.getCustStsCode());
-				//description
+				// description
 				createCell(row, 1, customerStatusCode.getCustStsDescription());
 			}
 		}
@@ -846,7 +845,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (financierSheet == null) {
 			return;
 		}
-		//get the bank details data
+		// get the bank details data
 		JdbcSearchObject<BankDetail> searchObject = new JdbcSearchObject<BankDetail>(BankDetail.class);
 		searchObject.addField("BankCode");
 		searchObject.addField("BankName");
@@ -857,9 +856,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (CollectionUtils.isNotEmpty(bankDetails)) {
 			for (BankDetail bankDetail : bankDetails) {
 				row = financierSheet.createRow(++rowcount);
-				//bank code code
+				// bank code code
 				createCell(row, 0, bankDetail.getBankCode());
-				//bank name
+				// bank name
 				createCell(row, 1, bankDetail.getBankName());
 			}
 		}
@@ -875,7 +874,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (productSheet == null) {
 			return;
 		}
-		//get the loan type data
+		// get the loan type data
 		JdbcSearchObject<OtherBankFinanceType> searchObject = new JdbcSearchObject<OtherBankFinanceType>(
 				OtherBankFinanceType.class);
 		searchObject.addField("FinType");
@@ -883,14 +882,14 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		searchObject.addTabelName("OtherBankFinanceType_AView");
 		List<OtherBankFinanceType> financeTypes = pagedListService.getBySearchObject(searchObject);
 		int rowcount = 0;
-		//header
+		// header
 		Row row = null;
 		if (CollectionUtils.isNotEmpty(financeTypes)) {
 			for (OtherBankFinanceType financeType : financeTypes) {
 				row = productSheet.createRow(++rowcount);
-				//code
+				// code
 				createCell(row, 0, financeType.getFinType());
-				//description
+				// description
 				createCell(row, 1, financeType.getFinTypeDesc());
 			}
 		}
@@ -912,9 +911,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		if (CollectionUtils.isNotEmpty(valueLabels)) {
 			for (ValueLabel valueLabel : valueLabels) {
 				row = emiClearanceSheet.createRow(++rowcount);
-				//code
+				// code
 				createCell(row, 0, valueLabel.getValue());
-				//description
+				// description
 				createCell(row, 1, valueLabel.getLabel());
 			}
 		}
@@ -931,7 +930,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		List<String> values = null;
 		if (CollectionUtils.isNotEmpty(customerExtLiabilities)) {
 			for (CustomerExtLiability extLiability : customerExtLiabilities) {
-				//getting the default RTR upload list based on app date and loan start date for each record
+				// getting the default RTR upload list based on app date and loan start date for each record
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(extLiability);
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
 					// as per the UD we are not considering existing RTR details, so we are setting the default RTR's
@@ -939,7 +938,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 					for (ExtLiabilityPaymentdetails paymentdetails : paymentDetails) {
 						if (PennantConstants.RCD_STATUS_APPROVED.equals(extLiability.getRecordStatus())) {
 							Row row = sheet.createRow(++rowCount);
-							//preparing the list of values with format
+							// preparing the list of values with format
 							values = prepareLiabilityValuesFromObject(extLiability, paymentdetails);
 							writeData(row, values);
 						}
@@ -983,7 +982,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 * @return
 	 */
 	public static List<ExtLiabilityPaymentdetails> getPaymentDetails(CustomerExtLiability customerExtLiability) {
-		//getting the emi list between app date and loan start date
+		// getting the emi list between app date and loan start date
 		Date dtStartDate = com.pennant.app.util.DateUtility.addMonths(customerExtLiability.getFinDate(), -1);
 		Date dtEndDate = com.pennant.app.util.DateUtility.addMonths(dtStartDate, -6);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate);
@@ -1004,11 +1003,11 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		}
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
-		while (com.pennant.app.util.DateUtility.compare(tempStartDate, tempEndDate) > 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);
-			tempStartDate = com.pennant.app.util.DateUtility.addMonths(tempStartDate, -1);
+			tempStartDate = DateUtil.addMonths(tempStartDate, -1);
 			list.add(temp);
 		}
 		return list;

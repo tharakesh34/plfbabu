@@ -48,7 +48,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		logger.debug(Literal.ENTERING);
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
-		//	check at least one banking presentation  exists or not.
+		// check at least one banking presentation exists or not.
 		boolean presentment = false;
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -62,7 +62,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 			return;
 		}
 
-		//if banking presentation exists then fetch all the banking presentation related to the customer at once process accordingly
+		// if banking presentation exists then fetch all the banking presentation related to the customer at once
+		// process accordingly
 
 		Date businessDate = custEODEvent.getEodValueDate();
 		Customer customer = custEODEvent.getCustomer();
@@ -79,13 +80,13 @@ public class ReceiptPaymentService extends ServiceHelper {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 			String finReference = fm.getFinReference();
 
-			//check banking presentation exists
+			// check banking presentation exists
 			PresentmentDetail prestDetails = getPresentmentDetail(presentments, finReference, businessDate);
 			if (prestDetails != null) {
 				processprestment(prestDetails, finEODEvent, customer, businessDate, false, true);
 
 			} else {
-				//if banking presentation not exists check advance EMI			
+				// if banking presentation not exists check advance EMI
 				FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
 						RepayConstants.EXAMOUNTTYPE_EMIINADV);
 
@@ -153,7 +154,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
 		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setReceiptAmount(presentmentAmt);//header.setReceiptAmount(advanceAmt.add(presentmentAmt));
+		header.setReceiptAmount(presentmentAmt);// header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
 		header.setActFinReceipt(true);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
@@ -182,9 +183,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 		}
 
 		header.setLogSchInPresentment(true);
-		header.setPostBranch("EOD");//FIXME
+		header.setPostBranch("EOD");// FIXME
 
-		//work flow details
+		// work flow details
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<>();
@@ -204,26 +205,32 @@ public class ReceiptPaymentService extends ServiceHelper {
 			processAdvanceEMi(pd, finEODEvent, customer, businessDate, noReserve);
 		}
 
-		if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD && presentmentAmt.compareTo(BigDecimal.ZERO) > 0) {
-			receiptDetail = new FinReceiptDetail();
-			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
-			receiptDetail.setAmount(presentmentAmt);
-			receiptDetail.setDueAmount(presentmentAmt);
-			receiptDetail.setValueDate(schDate);
-			receiptDetail.setReceivedDate(businessDate);
-			receiptDetail.setFundingAc(pd.getPartnerBankId());
-			receiptDetail.setPartnerBankAc(pd.getAccountNo());
-			receiptDetail.setPartnerBankAcType(pd.getAcType());
-			receiptDetails.add(receiptDetail);
+		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+			logger.debug("Receipts are not creating on EOD, Same will create on Response Upload.");
+		}
 
-			header.setReceiptDetails(receiptDetails);
-			repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header,
-					repayHeirarchy, businessDate, businessDate);
-			if (pd.getId() != Long.MIN_VALUE) {
-				presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
-			}
+		if (presentmentAmt.compareTo(BigDecimal.ZERO) <= 0) {
+			logger.debug("Presentment Receipts are not Creating, Due to Presentment Amount is ZERO");
+		}
+
+		receiptDetail = new FinReceiptDetail();
+		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
+		receiptDetail.setAmount(presentmentAmt);
+		receiptDetail.setDueAmount(presentmentAmt);
+		receiptDetail.setValueDate(schDate);
+		receiptDetail.setReceivedDate(businessDate);
+		receiptDetail.setFundingAc(pd.getPartnerBankId());
+		receiptDetail.setPartnerBankAc(pd.getAccountNo());
+		receiptDetail.setPartnerBankAcType(pd.getAcType());
+		receiptDetails.add(receiptDetail);
+
+		header.setReceiptDetails(receiptDetails);
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header, repayHeirarchy,
+				businessDate, businessDate);
+		if (pd.getId() != Long.MIN_VALUE) {
+			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
 		}
 	}
 
@@ -255,7 +262,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setActFinReceipt(true);
 		header.setLogSchInPresentment(true);
 		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
-		header.setPostBranch("EOD");//FIXME
+		header.setPostBranch("EOD");// FIXME
 		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		header.setReceivedDate(businessDate);
 		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));

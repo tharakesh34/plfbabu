@@ -397,7 +397,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				updateChequeStatus(pd.getMandateId(), PennantConstants.CHEQUESTATUS_NEW);
 			}
 		}
-		//reverse the excess movement
+		// reverse the excess movement
 		reverseExcessMovements(presentmentId);
 
 		this.presentmentDetailDAO.deletePresentmentDetails(presentmentId);
@@ -408,7 +408,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<FinExcessMovement> advlist = finExcessAmountDAO.getFinExcessAmount(presentmentId);
 		if (advlist != null && !advlist.isEmpty()) {
 			for (FinExcessMovement finExcessAmount : advlist) {
-				//update reserver and delete the movement
+				// update reserver and delete the movement
 				FinExcessAmount movement = finExcessAmountDAO.getFinExcessByID(finExcessAmount.getExcessID());
 
 				movement.setReservedAmt(movement.getReservedAmt().subtract(finExcessAmount.getAmount()));
@@ -499,7 +499,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 						processAdvaceEMI(detail, false);
 						idExcludeEmiList.add(detailID);
 					} else {
-						if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD
+						if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP
 								&& detail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
 							processReceipts(detail, false);
 						}
@@ -839,13 +839,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
 		header.setReference(presentmentDetail.getFinReference());
 		header.setPresentmentSchDate(presentmentDetail.getSchDate());
-		if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD) {
-			header.setReceiptDate(presentmentDetail.getSchDate());
-		} else {
-			header.setReceiptDate(SysParamUtil.getAppDate());
-			if (StringUtils.equals(presentmentDetail.getPresentmentType(), PennantConstants.PROCESS_REPRESENTMENT)) {
-				valueDate = SysParamUtil.getAppDate();
+		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
+			header.setReceiptDate(appDate);
+			if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentDetail.getPresentmentType())) {
+				valueDate = appDate;
 			}
+		} else {
+			header.setReceiptDate(presentmentDetail.getSchDate());
 		}
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
@@ -881,11 +881,10 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
 			receiptDetail.setDueAmount(presentmentDetail.getPresentmentAmt());
 			receiptDetail.setValueDate(presentmentDetail.getSchDate());
-			if (ImplementationConstants.PRESEMENT_STOP_RECEIPTS_ON_EOD) {
+			if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
 				receiptDetail.setValueDate(presentmentDetail.getSchDate());
-			} else if (StringUtils.equals(presentmentDetail.getPresentmentType(),
-					PennantConstants.PROCESS_REPRESENTMENT)) {
-				receiptDetail.setValueDate(SysParamUtil.getAppDate());
+			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentDetail.getPresentmentType())) {
+				receiptDetail.setValueDate(appDate);
 			}
 			receiptDetail.setReceivedDate(receiptDetail.getValueDate());
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());

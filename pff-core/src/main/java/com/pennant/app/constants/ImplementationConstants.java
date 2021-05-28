@@ -23,8 +23,8 @@ public class ImplementationConstants {
 		// The below are the steps that are required to extend the constants.
 		// 1. Interface, IFeatureExtension, will be available in pff-core.
 		// 2. The implementation class, FeatureExtension, for the above interface will be available in both
-		//    - pff-extension-core (dummy implementation and can be used for testing the constants as well)
-		//    - pff-extension-client
+		// - pff-extension-core (dummy implementation and can be used for testing the constants as well)
+		// - pff-extension-client
 
 		Map<String, Object> extensions = getFeatureExtensions();
 
@@ -170,7 +170,6 @@ public class ImplementationConstants {
 		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_SHARE_HOLDER_DETAILS", true);
 		ALLOW_SIMILARITY = getValueAsBoolean(extensions, "ALLOW_SIMILARITY", false);
 
-		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		CUST_EMP_TYPE_MANDATORY = getValueAsBoolean(extensions, "CUST_EMP_TYPE_MANDATORY", false);
 		DEDUP_BLACKLIST_COAPP = getValueAsBoolean(extensions, "DEDUP_BLACKLIST_COAPP", false);
@@ -193,7 +192,7 @@ public class ImplementationConstants {
 		CHEQUE_ALLOW_CO_APP = getValueAsBoolean(extensions, "CHEQUE_ALLOW_CO_APP", false);
 		PERC_REQ_FOR_FINTYPE_FEE = getValueAsBoolean(extensions, "PERC_REQ_FOR_FINTYPE_FEE", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
-		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); // Default value should be "true"
+		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); /* Default value should be "true" */
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
 		ALLOW_EOD_INTERVAL_VALIDATION = getValueAsBoolean(extensions, "ALLOW_EOD_INTERVAL_VALIDATION", false);
 		DEFAULT_VAS_MODE_OF_PAYMENT = getValueAsBoolean(extensions, "DEFAULT_VAS_MODE_OF_PAYMENT", false);
@@ -241,7 +240,7 @@ public class ImplementationConstants {
 		BASE_CCY_EDT_FIELD = getValueAsInt(extensions, "BASE_CCY_EDT_FIELD", 2);
 		// FIXME HL >>
 
-		//<<
+		// <<
 
 		VAS_INST_EDITABLE = getValueAsBoolean(extensions, "VAS_INST_EDITABLE", false);
 		ALLOW_DISB_ENQUIRY = getValueAsBoolean(extensions, "ALLOW_DISB_ENQUIRY", false);
@@ -276,7 +275,7 @@ public class ImplementationConstants {
 		ALLOW_AUTO_KNOCK_OFF = getValueAsBoolean(extensions, "ALLOW_AUTO_KNOCK_OFF", false);
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true);
 		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
-		PRESEMENT_STOP_RECEIPTS_ON_EOD = getValueAsBoolean(extensions, "PRESEMENT_STOP_RECEIPTS_ON_EOD", true);
+		PRESENT_RECEIPTS_ON_RESP = getValueAsBoolean(extensions, "PRESENT_RECEIPTS_ON_RESP", false);
 		HOLD_DISB_INST_POST = getValueAsBoolean(extensions, "HOLD_DISB_INST_POST", false);
 		VAS_INST_ON_DISB = getValueAsBoolean(extensions, "VAS_INST_ON_DISB", false);
 
@@ -416,7 +415,7 @@ public class ImplementationConstants {
 	/* Flag to allow similarity to check the % patch match of given string values */
 	public static boolean ALLOW_SIMILARITY;
 
-	//FIXME>>HL >>
+	// FIXME>>HL >>
 
 	public static boolean ALLOW_NPA_PROVISION;
 	public static boolean ALLOW_UNACCURED_PENALITY_SOA;
@@ -452,7 +451,7 @@ public class ImplementationConstants {
 	public static boolean FINREFERENCE_ALW_SWIFT_CODE;
 	public static boolean DEFAULT_PRESENTMENT_UPLOAD;
 
-	//Currency constants for Performance
+	// Currency constants for Performance
 	public static boolean ALLOW_MULTI_CCY;
 	public static String BASE_CCY;
 	public static int BASE_CCY_EDT_FIELD;
@@ -500,7 +499,7 @@ public class ImplementationConstants {
 
 	public static String GST_SCHD_CAL_ON = "I";
 	public static String ALLOW_AMOIUNT_INTEGRAL_PART;
-	//flag to allow VAS disbursement instruction editable or not
+	// flag to allow VAS disbursement instruction editable or not
 	public static boolean VAS_INST_EDITABLE;
 	public static boolean ALLOW_DISB_ENQUIRY;
 	public static boolean ALLOW_SCDREPAY_REALIZEDATE_AS_VALUEDATE;
@@ -509,13 +508,13 @@ public class ImplementationConstants {
 	public static boolean UPDATE_METADATA_IN_DMS;
 	public static boolean CHEQUENO_MANDATORY_DISB_INS;
 	public static boolean ALW_QDP_CUSTOMIZATION;
-	//Update the Manual Cheque Receipt status as paid at Deposit approver
+	// Update the Manual Cheque Receipt status as paid at Deposit approver
 	public static boolean CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER;
 	public static boolean BRANCHWISE_RCU_INITIATION;
 	public static boolean ALLOW_NON_LAN_RECEIPTS;
 	public static boolean ALLOW_BUILDER_BENEFICIARY_DETAILS;
 	public static boolean COVENANT_ADTNL_REMARKS;
-	public static boolean PRESEMENT_STOP_RECEIPTS_ON_EOD;
+	public static boolean PRESENT_RECEIPTS_ON_RESP;
 	public static boolean HOLD_DISB_INST_POST;
 	public static boolean VAS_INST_ON_DISB;
 
@@ -542,12 +541,10 @@ public class ImplementationConstants {
 	 * Returns the value as boolean from extended constants to which the specified key is mapped, or defaultValue if the
 	 * extended constants contain no mapping for the key.
 	 * 
-	 * @param extendedConstants
-	 *            The constants specified in the extension layer.
-	 * @param key
-	 *            The key whose associated value is to be returned.
-	 * @param defaultValue
-	 *            The default value that has to be used if the extended constants contain no mapping for the key.
+	 * @param extendedConstants The constants specified in the extension layer.
+	 * @param key               The key whose associated value is to be returned.
+	 * @param defaultValue      The default value that has to be used if the extended constants contain no mapping for
+	 *                          the key.
 	 * @return the value as boolean from extended constants to which the specified key is mapped, or defaultValue if
 	 *         this map contain no mapping for the key.
 	 */
@@ -563,12 +560,10 @@ public class ImplementationConstants {
 	 * Returns the value as String from extended constants to which the specified key is mapped, or defaultValue if the
 	 * extended constants contain no mapping for the key.
 	 * 
-	 * @param extendedConstants
-	 *            The constants specified in the extension layer.
-	 * @param key
-	 *            The key whose associated value is to be returned.
-	 * @param defaultValue
-	 *            The default value that has to be used if the extended constants contain no mapping for the key.
+	 * @param extendedConstants The constants specified in the extension layer.
+	 * @param key               The key whose associated value is to be returned.
+	 * @param defaultValue      The default value that has to be used if the extended constants contain no mapping for
+	 *                          the key.
 	 * @return the value as String from extended constants to which the specified key is mapped, or defaultValue if this
 	 *         map contain no mapping for the key.
 	 */
@@ -590,9 +585,9 @@ public class ImplementationConstants {
 
 	// FIXME MURTHT
 	public static final boolean OLD_FINANCIALS_REQUIRED = false;
-	//Old Phone numbers required listbox 
+	// Old Phone numbers required listbox
 	public static final boolean OLD_PHONENUMBERS_REQUIRED = false;
-	// Old Emails required listbox 
+	// Old Emails required listbox
 	public static final boolean OLD_EMAILS_REQUIRED = false;
 
 	public static final boolean CUST_ADDR_AUTO_FILL;
@@ -644,7 +639,7 @@ public class ImplementationConstants {
 		VER_INIT_AGENT_MANDATORY = getValueAsBoolean(extensions, "VER_INIT_AGENT_MANDATORY", false);
 		VER_AGENCY_FILTER_BY_CITY = getValueAsBoolean(extensions, "VER_AGENCY_FILTER_BY_CITY", true);
 
-		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); // HL>>FIXME "CITY" for HL
+		VER_TV_COLL_ED_ADDR_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_ADDR_COLUMN", "PROPERTYCITY"); /* HL>>FIXME "CITY" for HL*/
 		VER_TV_COLL_ED_PROP_VAL_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_VAL_COLUMN",
 				"TOTALVALUATIONASPE"); // HL>>FIXME "DOCVALUE" for HL
 		VER_TV_COLL_ED_PROP_COST_COLUMN = getValueAsString(extensions, "VER_TV_COLL_ED_PROP_COST_COLUMN",
