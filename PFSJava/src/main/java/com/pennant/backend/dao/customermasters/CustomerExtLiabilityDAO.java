@@ -49,4 +49,5 @@ public interface CustomerExtLiabilityDAO {
 
 	void delete(long liabilityId, String type);
 
+	boolean getExtendedComboData(String sql, String code);
 }

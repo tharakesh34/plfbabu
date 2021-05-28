@@ -46,6 +46,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -93,6 +94,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
 	private FormulaEvaluator formulaEvaluator = null; // for cell value formating
 	private CustomerDialogCtrl customerDialogCtrl;
+	private final List<ValueLabel> sourceInfoList = PennantStaticListUtil.getSourceInfoList();
+	private final List<ValueLabel> trackCheckList = PennantStaticListUtil.getTrackCheckList();
 
 	@Override
 	protected void doSetProperties() {
@@ -448,6 +451,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 							customerExtLiabilityDAO.delete(customerExtLiability.getLinkId(), "");
 							flag = true;
 						}
+						//Validations
+						validate(customerExtLiability);
+						//Saving the Data
 						// Saving the Data
 						externalLiabilityDAO.save(customerExtLiability, "");
 						if (customerExtLiability.getExtLiabilitiesPayments() != null
@@ -480,8 +486,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 				closeDialog();
 				logger.debug(Literal.LEAVING);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (WrongValueException e) {
+			MessageUtil.showError(e.getMessage());
 		}
 	}
 
@@ -1011,5 +1017,90 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			list.add(temp);
 		}
 		return list;
+	}
+
+	private void validate(CustomerExtLiability custExt) {
+		int count = 0;
+
+		String finStatus = custExt.getFinStatus();
+		String finType = custExt.getFinType();
+		String loanBank = custExt.getLoanBank();
+		String repayBank = custExt.getRepayBank();
+		String loanPurpose = custExt.getLoanPurpose();
+		String checkedBy = Integer.toString(custExt.getCheckedBy());
+		String extSource = Integer.toString(custExt.getSource());
+
+		StringBuilder errorMessage = new StringBuilder();
+
+		String sql = "";
+		if (StringUtils.isNotEmpty(finStatus)) {
+			sql = "Select Coalesce(Count(*), 0) from BMTCustStatusCodes_AView Where Custstscode = ? and CuststsIsActive = ?";
+			if (!customerExtLiabilityDAO.getExtendedComboData(sql, finStatus)) {
+				errorMessage.append("Status,");
+			}
+		}
+
+		if (StringUtils.isNotEmpty(finType)) {
+			sql = "Select Coalesce(Count(*), 0) from OtherBankFinanceType_AView Where FinType = ? and Active = ?";
+			if (!customerExtLiabilityDAO.getExtendedComboData(sql, finType)) {
+				errorMessage.append(" Product,");
+			}
+		}
+
+		if (StringUtils.isNotEmpty(loanBank)) {
+			sql = "Select Coalesce(Count(*), 0) from BMTBankDetail_AView Where BankCode = ? and Active = ?";
+			if (!customerExtLiabilityDAO.getExtendedComboData(sql, loanBank)) {
+				errorMessage.append(" Financer Name/Bank Name,");
+			}
+		}
+
+		if (StringUtils.isNotEmpty(repayBank)) {
+			sql = "Select Coalesce(Count(*), 0) from BMTBankDetail_AView Where BankCode = ? and Active = ?";
+			if (!customerExtLiabilityDAO.getExtendedComboData(sql, repayBank)) {
+				errorMessage.append(" Repayment from/Repayment Account Bank Name,");
+			}
+		}
+
+		if (StringUtils.isNotEmpty(loanPurpose)) {
+			sql = "Select Coalesce(Count(*), 0) from LoanPurposes_AView Where LoanPurposeCode = ? and LoanPurposeIsActive = ?";
+			if (!customerExtLiabilityDAO.getExtendedComboData(sql, loanPurpose)) {
+				errorMessage.append(" End Use of Funds/Loan Purpose,");
+			}
+		}
+
+		for (ValueLabel source : sourceInfoList) {
+			if (source.getValue().equals(extSource)) {
+				count++;
+				break;
+			}
+		}
+
+		if (count == 0) {
+			errorMessage.append(" Source Of Info,");
+		}
+
+		count = 0;
+		for (ValueLabel trackCheck : trackCheckList) {
+			if (trackCheck.getValue().equals(checkedBy)) {
+				count++;
+				break;
+			}
+		}
+
+		if (count == 0) {
+			errorMessage.append(" Track Check,");
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+		if (DateUtil.compare(custExt.getFinDate(), appDate) > 0) {
+			errorMessage.append(" Loan Date should on/before Application Date,");
+		}
+
+		if (StringUtils.isNotEmpty(errorMessage.toString())) {
+			errorMessage.deleteCharAt(errorMessage.length() - 1);
+			errorMessage.append(" : Given Fields data is invalid.");
+
+			throw new WrongValueException(errorMessage.toString());
+		}
 	}
 }

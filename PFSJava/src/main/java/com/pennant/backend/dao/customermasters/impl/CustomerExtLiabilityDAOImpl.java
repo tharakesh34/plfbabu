@@ -562,4 +562,11 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		source.addValue("linkId", linkId);
 		this.jdbcTemplate.update(sql.toString(), source);
 	}
+
+	@Override
+	public boolean getExtendedComboData(String sql, String code) {
+		logger.trace(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, new Object[] { code, 1 }, Integer.class) > 0;
+	}
 }
