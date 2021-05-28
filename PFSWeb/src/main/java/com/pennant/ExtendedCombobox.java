@@ -512,7 +512,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	private void setObject() {
-		if (StringUtils.isEmpty(this.textbox.getValue()) || getValidateColumns() == null || getValidateColumns().length == 0 || isMultySelection()) {
+		if (getValidateColumns() == null || getValidateColumns().length == 0 || isMultySelection()) {
 			return;
 		}
 
