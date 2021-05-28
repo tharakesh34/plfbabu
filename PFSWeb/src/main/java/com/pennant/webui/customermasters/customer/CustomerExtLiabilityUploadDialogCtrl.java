@@ -984,8 +984,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 */
 	public static List<ExtLiabilityPaymentdetails> getPaymentDetails(CustomerExtLiability customerExtLiability) {
 		//getting the emi list between app date and loan start date
-		Date dtStartDate = com.pennant.app.util.DateUtility.addMonths(customerExtLiability.getFinDate(), 1);
-		Date dtEndDate = com.pennant.app.util.DateUtility.addMonths(dtStartDate, 6);
+		Date dtStartDate = com.pennant.app.util.DateUtility.addMonths(customerExtLiability.getFinDate(), -1);
+		Date dtEndDate = com.pennant.app.util.DateUtility.addMonths(dtStartDate, -6);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate);
 		return months;
 	}
@@ -1004,11 +1004,11 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		}
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
-		while (com.pennant.app.util.DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+		while (com.pennant.app.util.DateUtility.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);
-			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
+			tempStartDate = com.pennant.app.util.DateUtility.addMonths(tempStartDate, -1);
 			list.add(temp);
 		}
 		return list;
