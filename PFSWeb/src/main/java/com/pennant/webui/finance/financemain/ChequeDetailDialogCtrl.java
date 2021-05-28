@@ -1436,6 +1436,19 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			Combobox emi = getCombobox(String.valueOf(++emiNum));
 			String date = emi.getValue();
 			boolean exists = false;
+			boolean bpiorholiday = false;
+
+			for (FinanceScheduleDetail fsd : getFinanceSchedules()) {
+				if (emi.getValue().equals(DateUtil.formatToShortDate(fsd.getSchDate()))) {
+					if (StringUtils.isNotBlank(fsd.getBpiOrHoliday())) {
+						bpiorholiday = true;
+						break;
+					}
+				}
+			}
+			if (bpiorholiday) {
+				continue;
+			}
 
 			for (Listitem listitem : items) {
 				List<Listcell> list = listitem.getChildren();
