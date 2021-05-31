@@ -207,10 +207,12 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
 			logger.debug("Receipts are not creating on EOD, Same will create on Response Upload.");
+			return;
 		}
 
 		if (presentmentAmt.compareTo(BigDecimal.ZERO) <= 0) {
 			logger.debug("Presentment Receipts are not Creating, Due to Presentment Amount is ZERO");
+			return;
 		}
 
 		receiptDetail = new FinReceiptDetail();
