@@ -44,7 +44,6 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected Button btnProceed;
 	private LoanClosureEnquiryDialogCtrl loanClosureEnquiryDialogCtrl;
 	private String finRefValue;
-	protected Tabbox tabbox;
 	private boolean isModelWindow = false;
 	private transient String moduleType;
 	private boolean isMatured = false;
@@ -87,7 +86,6 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		try {
 			doCheckRights();
 			doSetFieldProperties();
-			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
 		} catch (Exception e) {
 			closeDialog();
 			logger.debug(Literal.EXCEPTION, e);
