@@ -106,7 +106,6 @@ import com.pennant.AccountSelectionBox;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.Interface.model.IAccounts;
-import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -382,7 +381,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private Commitment commitment;
 
 	// ServiceDAOs / Domain Classes				
-	private transient AccountInterfaceService accountInterfaceService;
 	private transient CustomerDetailsService customerDetailsService;
 	private transient CommitmentService commitmentService;
 	private transient PagedListService pagedListService;
@@ -3136,7 +3134,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		iAccount.setAcCustCIF(this.custCIF.getValue());
 		iAccount.setDivision(getDivisionByBranch());
 		try {
-			iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
 			dataObject = ExtendedSearchListBox.show(this.window_CommitmentDialog, "Accounts", iAccountList);
 			if (dataObject instanceof String) {
 				this.cmtChargesAccount.setValue("");
@@ -3168,7 +3165,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			iAccount.setDivision(this.cmtBranch.getValue());
 
 			try {
-				iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
 				dataObject = ExtendedSearchListBox.show(this.window_CommitmentDialog, "Accounts", iAccountList);
 				if (dataObject instanceof String) {
 					this.cmtAccount.setValue("");
@@ -3764,7 +3760,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			newAccount.setTransOrder("");
 			newAccount.setDivision(getDivisionByBranch());
 			iAccountList.add(newAccount);
-			return getAccountInterfaceService().fetchExistAccount(iAccountList, "N").get(0);
+			return newAccount;
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -4272,14 +4268,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	public void setAccountsService(AccountsService accountsService) {
 		this.accountsService = accountsService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
 	}
 
 	public List<CommitmentRate> getCommitmentRateDetailList() {

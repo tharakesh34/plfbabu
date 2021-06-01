@@ -929,7 +929,6 @@
 		scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="commitmentService" ref="commitmentService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="accountsService" ref="accountsService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="notificationService" ref="notificationService" />
