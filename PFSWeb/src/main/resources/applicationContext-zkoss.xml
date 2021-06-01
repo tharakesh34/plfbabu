@@ -855,7 +855,6 @@
 
 	<bean id="selectAccountDetailsDialogCtrl" class="com.pennant.webui.accounts.accounts.SelectAccountDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 	</bean>
 
 	<!-- ====================================================== -->

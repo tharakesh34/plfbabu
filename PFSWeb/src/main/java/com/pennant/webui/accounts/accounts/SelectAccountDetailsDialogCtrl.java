@@ -65,7 +65,6 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	private AccountType accountType;
 	private boolean isInterAcc = true;
 	private transient AccountsListCtrl acountsListCtrl; // over handed per parameters
-	private AccountInterfaceService accountInterfaceService;
 
 	/**
 	 * default constructor.<br>
@@ -301,7 +300,6 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 			newAccount.setFlagCreateNew(false);
 			newAccount.setInternalAc(false);
 			iAccountList.add(newAccount);
-			newAccount = getAccountInterfaceService().fetchExistAccount(iAccountList, "N").get(0);
 
 			final Map<String, Object> map = new HashMap<String, Object>();
 			this.accounts.setNewRecord(true);
@@ -412,11 +410,4 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 		return acountsListCtrl;
 	}
 
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
 }
