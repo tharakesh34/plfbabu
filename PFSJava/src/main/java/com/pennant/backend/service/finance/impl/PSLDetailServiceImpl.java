@@ -221,7 +221,7 @@ public class PSLDetailServiceImpl extends GenericService<PSLDetail> implements P
 		getPSLDetailDAO().delete(pslDetail, tableType);
 
 		logger.debug(Literal.LEAVING);
-		return new AuditDetail(auditTranType, 1, fields[0], fields[1], pslDetail.getBefImage(), pslDetail);
+		return new AuditDetail(auditTranType, 1, fields[0], fields[1], null, pslDetail);
 	}
 
 	/**

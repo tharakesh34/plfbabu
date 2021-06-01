@@ -488,8 +488,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" NSchdDate = :NSchdDate, NSchdPri = :NSchdPri, NSchdPft = :NSchdPft, ");
 		updateSql.append(" NSchdPriDue = :NSchdPriDue, NSchdPftDue = :NSchdPftDue,");
 		updateSql.append(" AccumulatedDepPri = :AccumulatedDepPri, DepreciatePri = :DepreciatePri,");
-		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, TdSchdRbt = :TdSchdRbt, TotalAdvPftSchd = :TotalAdvPftSchd,");
-		updateSql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
+		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, ");
+		updateSql.append(" TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		updateSql.append(
 				" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate, ");
 		updateSql.append(
@@ -548,9 +548,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" ClosingStatus = :ClosingStatus, PrvRpySchDate = :PrvRpySchDate, ");
 		updateSql.append(
 				" PrvRpySchPri = :PrvRpySchPri, PrvRpySchPft = :PrvRpySchPft, TotalWriteoff = :TotalWriteoff, ");
-		updateSql.append(
-				" TotalAdvPftSchd = :TotalAdvPftSchd, TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv=:TotalPriPaidInAdv, TdSchdAdvPft=:TdSchdAdvPft, ");
-		updateSql.append(" TdSchdRbt = :TdSchdRbt, PftAmzNormal = :PftAmzNormal, PftAmzPD=:PftAmzPD ");
+		updateSql.append(" TotalPriPaidInAdv=:TotalPriPaidInAdv, TdSchdAdvPft=:TdSchdAdvPft, ");
+		updateSql.append(" PftAmzNormal = :PftAmzNormal, PftAmzPD=:PftAmzPD ");
 		updateSql.append(" ,GapIntAmz = :GapIntAmz, GapIntAmzLbd = :GapIntAmzLbd ");
 		updateSql.append(" Where FinReference =:FinReference");
 
@@ -611,13 +610,12 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" DownPayment, CurReducingRate, CurFlatRate, TotalpriSchd, ODPrincipal, ODProfit,");
 		insertSql.append(" PenaltyPaid, PenaltyDue, PenaltyWaived, NSchdDate, NSchdPri, NSchdPft,");
 		insertSql.append(" NSchdPriDue, NSchdPftDue, PftInSusp, FinStatus, FinStsReason, FinWorstStatus,");
-		insertSql.append(" NOInst, NOPaidInst, NOODInst, FinAccount, FinAcType, DisbAccountId, DisbActCcy,");
-		insertSql.append(" RepayAccountId, FinCustPftAccount, IncomeAccount, UEIncomeSuspAccount,");
+		insertSql.append(" NOInst, NOPaidInst, NOODInst, DisbActCcy,");
 		insertSql.append(" FinCommitmentRef, FinIsActive, FirstRepayDate, FirstRepayAmt, FinalRepayAmt,");
 		insertSql.append(" CurODDays, ActualODDays, MaxODDays, FirstODDate, PrvODDate, ClosingStatus, FinCategory,");
 		insertSql.append(" PrvRpySchDate, PrvRpySchPri, PrvRpySchPft, LatestRpyDate, LatestRpyPri,");
-		insertSql.append(" LatestRpyPft, TotalWriteoff, AccumulatedDepPri, DepreciatePri, TotalAdvPftSchd,");
-		insertSql.append(" TotalRbtSchd, TotalPriPaidInAdv, TdSchdAdvPft, TdSchdRbt, PftAmzNormal, PftAmzPD,");
+		insertSql.append(" LatestRpyPft, TotalWriteoff, AccumulatedDepPri, DepreciatePri,");
+		insertSql.append(" TotalPriPaidInAdv, TdSchdAdvPft, PftAmzNormal, PftAmzPD,");
 		insertSql.append(" AmzTillLBDNormal, AmzTillLBDPD, AmzTillLBDPIS, CalPftOnPD, PftOnPDMethod,");
 		insertSql.append(" PftOnPDMrg, TotPftOnPD, TotPftOnPDPaid, TotPftOnPDWaived, TotPftOnPDDue,");
 		insertSql.append(" AcrSuspTillLBD, PrvMthAmz, PrvMthAmzNrm, PrvMthAmzPD, PrvMthAmzSusp, PrvMthAcr,");
@@ -638,14 +636,13 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" :DownPayment, :CurReducingRate, :CurFlatRate, :TotalpriSchd, :ODPrincipal, :ODProfit,");
 		insertSql.append(" :PenaltyPaid, :PenaltyDue, :PenaltyWaived, :NSchdDate, :NSchdPri, :NSchdPft,");
 		insertSql.append(" :NSchdPriDue, :NSchdPftDue, :PftInSusp, :FinStatus, :FinStsReason, :FinWorstStatus,");
-		insertSql.append(" :NOInst, :NOPaidInst, :NOODInst, :FinAccount, :FinAcType, :DisbAccountId, :DisbActCcy,");
-		insertSql.append(" :RepayAccountId, :FinCustPftAccount, :IncomeAccount, :UEIncomeSuspAccount,");
+		insertSql.append(" :NOInst, :NOPaidInst, :NOODInst, :DisbActCcy,");
 		insertSql.append(" :FinCommitmentRef, :FinIsActive, :FirstRepayDate, :FirstRepayAmt, :FinalRepayAmt,");
 		insertSql.append(
 				" :CurODDays, :ActualODDays, :MaxODDays, :FirstODDate, :PrvODDate, :ClosingStatus, :FinCategory,");
 		insertSql.append(" :PrvRpySchDate, :PrvRpySchPri, :PrvRpySchPft, :LatestRpyDate, :LatestRpyPri,");
-		insertSql.append(" :LatestRpyPft, :TotalWriteoff, :AccumulatedDepPri, :DepreciatePri, :TotalAdvPftSchd,");
-		insertSql.append(" :TotalRbtSchd, :TotalPriPaidInAdv, :TdSchdAdvPft, :TdSchdRbt, :PftAmzNormal, :PftAmzPD,");
+		insertSql.append(" :LatestRpyPft, :TotalWriteoff, :AccumulatedDepPri, :DepreciatePri,");
+		insertSql.append(" :TotalPriPaidInAdv, :TdSchdAdvPft, :PftAmzNormal, :PftAmzPD,");
 		insertSql.append(" :AmzTillLBDNormal, :AmzTillLBDPD, :AmzTillLBDPIS, :CalPftOnPD, :PftOnPDMethod,");
 		insertSql.append(" :PftOnPDMrg, :TotPftOnPD, :TotPftOnPDPaid, :TotPftOnPDWaived, :TotPftOnPDDue,");
 		insertSql.append(" :AcrSuspTillLBD, :PrvMthAmz, :PrvMthAmzNrm, :PrvMthAmzPD, :PrvMthAmzSusp, :PrvMthAcr,");
@@ -716,26 +713,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeProfitDetail);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Updation of Repayment Account ID on Finance Basic Details Maintenance
-	 */
-	@Override
-	public void updateRpyAccount(String finReference, String repayAccountId) {
-		logger.debug("Entering");
-
-		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
-		finProfitDetails.setFinReference(finReference);
-		finProfitDetails.setRepayAccountId(repayAccountId);
-
-		StringBuilder updateSql = new StringBuilder("Update FinPftDetails ");
-		updateSql.append(" Set RepayAccountId = :RepayAccountId Where FinReference =:FinReference");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
@@ -822,7 +799,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", FirstDisbDate = ?, LatestDisbDate = ?, FullPaidDate = ?, PrvRpySchDate = ?");
 		sql.append(", PrvRpySchPri = ?, PrvRpySchPft = ?, NSchdDate = ?, NSchdPri = ?, NSchdPft = ?");
 		sql.append(", NSchdPriDue = ?, NSchdPftDue = ?, AccumulatedDepPri = ?, DepreciatePri = ?");
-		sql.append(", TdSchdAdvPft = ?, TdSchdRbt = ?, TotalAdvPftSchd = ?, TotalRbtSchd = ?, TotalPriPaidInAdv = ?");
+		sql.append(", TotalPriPaidInAdv = ?");
 		sql.append(", FinStatus = ?, FinStsReason = ?, FinWorstStatus = ?, TotalPftPaidInAdv = ?");
 		sql.append(", LastMdfDate = ?, AMZMethod = ?, GapIntAmz = ?, NOAutoIncGrcEnd = ?");
 
@@ -904,10 +881,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			ps.setBigDecimal(index++, fpd.getNSchdPftDue());
 			ps.setBigDecimal(index++, fpd.getAccumulatedDepPri());
 			ps.setBigDecimal(index++, fpd.getDepreciatePri());
-			ps.setBigDecimal(index++, fpd.getTdSchdAdvPft());
-			ps.setBigDecimal(index++, fpd.getTdSchdRbt());
-			ps.setBigDecimal(index++, fpd.getTotalAdvPftSchd());
-			ps.setBigDecimal(index++, fpd.getTotalRbtSchd());
 			ps.setBigDecimal(index++, fpd.getTotalPriPaidInAdv());
 			ps.setString(index++, fpd.getFinStatus());
 			ps.setString(index++, fpd.getFinStsReason());

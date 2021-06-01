@@ -58,7 +58,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
-import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
@@ -67,7 +66,6 @@ import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
-import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -88,7 +86,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 	//Child Services
 	private FinTypeFeesService finTypeFeesService;
-	private FinTypeInsurancesService finTypeInsurancesService;
 	private FinTypeAccountingService finTypeAccountingService;
 
 	/**
@@ -136,13 +133,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 			List<AuditDetail> feeDetails = promotion.getAuditDetailMap().get("FinTypeFees");
 			feeDetails = this.finTypeFeesService.processFinTypeFeesDetails(feeDetails, tableType);
 			auditDetailsList.addAll(feeDetails);
-		}
-		// Finance Type Insurances
-		if (promotion.getFinTypeInsurancesList() != null && promotion.getFinTypeInsurancesList().size() > 0) {
-			List<AuditDetail> insuranceDetails = promotion.getAuditDetailMap().get("FinTypeInsurance");
-			insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
-					tableType);
-			auditDetailsList.addAll(insuranceDetails);
 		}
 		// Finance Type Accounting
 		if (promotion.getFinTypeAccountingList() != null && promotion.getFinTypeAccountingList().size() > 0) {
@@ -203,11 +193,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 			auditDetailsList.addAll(this.finTypeFeesService.delete(promotion.getFinTypeFeesList(), tableType,
 					auditTranType, promotion.getPromotionCode(), FinanceConstants.MODULEID_PROMOTION));
 		}
-		// Insurance Deatails
-		if (promotion.getFinTypeInsurancesList() != null && !promotion.getFinTypeInsurancesList().isEmpty()) {
-			auditDetailsList.addAll(this.finTypeInsurancesService.delete(promotion.getFinTypeInsurancesList(),
-					tableType, auditTranType, promotion.getPromotionCode(), FinanceConstants.MODULEID_PROMOTION));
-		}
 		// Accounting Deatails
 		if (promotion.getFinTypeAccountingList() != null && !promotion.getFinTypeAccountingList().isEmpty()) {
 			auditDetailsList.addAll(this.finTypeAccountingService.delete(promotion.getFinTypeAccountingList(),
@@ -237,8 +222,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				rcdType = ((FinTypeFees) object).getRecordType();
 			} else if (object instanceof FinTypeAccounting) {
 				rcdType = ((FinTypeAccounting) object).getRecordType();
-			} else if (object instanceof FinTypeInsurances) {
-				rcdType = ((FinTypeInsurances) object).getRecordType();
 			}
 
 			if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(rcdType)) {
@@ -275,8 +258,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		if (promotion != null) {
 			promotion.setFinTypeFeesList(getFinTypeFeesService().getFinTypeFeesById(promotionCode, moduleId));
-			promotion.setFinTypeInsurancesList(
-					getFinTypeInsurancesService().getFinTypeInsuranceListByID(promotionCode, moduleId));
 			promotion.setFinTypeAccountingList(
 					getFinTypeAccountingService().getFinTypeAccountingListByID(promotionCode, moduleId));
 		}
@@ -371,8 +352,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		if (childExist && promotion != null) {
 			promotion.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(promotionCode, moduleId));
-			promotion.setFinTypeInsurancesList(
-					getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(promotionCode, moduleId));
 			promotion.setFinTypeAccountingList(
 					getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(promotionCode, moduleId));
 		}
@@ -390,8 +369,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 		if (childExist && promotion != null) {
 			promotion.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(promotionCode, moduleId));
-			promotion.setFinTypeInsurancesList(
-					getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(promotionCode, moduleId));
 			promotion.setFinTypeAccountingList(
 					getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(promotionCode, moduleId));
 		}
@@ -484,16 +461,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				if (feeDetails != null && !feeDetails.isEmpty()) {
 					feeDetails = this.finTypeFeesService.processFinTypeFeesDetails(feeDetails, "");
 					auditDetailsList.addAll(feeDetails);
-				}
-			}
-			// Insurances
-			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
-				List<AuditDetail> insuranceDetails = promotion.getAuditDetailMap().get("FinTypeInsurance");
-
-				if (insuranceDetails != null && !insuranceDetails.isEmpty()) {
-					insuranceDetails = this.finTypeInsurancesService.processFinTypeInsuranceDetails(insuranceDetails,
-							"");
-					auditDetailsList.addAll(insuranceDetails);
 				}
 			}
 			// Accounting
@@ -672,24 +639,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 			auditDetails.addAll(auditDetailMap.get("FinTypeFees"));
 		}
 
-		// Insurance Details
-		if (promotion.getFinTypeInsurancesList() != null && promotion.getFinTypeInsurancesList().size() > 0) {
-			for (FinTypeInsurances finTypeInsurances : promotion.getFinTypeInsurancesList()) {
-				finTypeInsurances.setWorkflowId(promotion.getWorkflowId());
-				finTypeInsurances.setRecordStatus(promotion.getRecordStatus());
-				finTypeInsurances.setUserDetails(promotion.getUserDetails());
-				finTypeInsurances.setLastMntOn(promotion.getLastMntOn());
-				finTypeInsurances.setRoleCode(promotion.getRoleCode());
-				finTypeInsurances.setNextRoleCode(promotion.getNextRoleCode());
-				finTypeInsurances.setTaskId(promotion.getTaskId());
-				finTypeInsurances.setNextTaskId(promotion.getNextTaskId());
-			}
-
-			auditDetailMap.put("FinTypeInsurance", finTypeInsurancesService
-					.setFinTypeInsuranceDetailsAuditData(promotion.getFinTypeInsurancesList(), auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("FinTypeInsurance"));
-		}
-
 		// Accounting
 		if (promotion.getFinTypeAccountingList() != null && promotion.getFinTypeAccountingList().size() > 0) {
 			for (FinTypeAccounting finTypeAccounting : promotion.getFinTypeAccountingList()) {
@@ -735,17 +684,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 				} else {
 					details = this.finTypeFeesService.validation(auditDetail, usrLanguage, method).getErrorDetails();
 				}
-				if (details != null) {
-					errorDetails.addAll(details);
-				}
-			}
-		}
-
-		if (promotion.getAuditDetailMap().get("FinTypeInsurance") != null) {
-			auditDetails = promotion.getAuditDetailMap().get("FinTypeInsurance");
-			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details = this.finTypeInsurancesService.validation(auditDetail, usrLanguage, method)
-						.getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -914,14 +852,6 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 	public void setFinTypeFeesService(FinTypeFeesService finTypeFeesService) {
 		this.finTypeFeesService = finTypeFeesService;
-	}
-
-	public FinTypeInsurancesService getFinTypeInsurancesService() {
-		return finTypeInsurancesService;
-	}
-
-	public void setFinTypeInsurancesService(FinTypeInsurancesService finTypeInsurancesService) {
-		this.finTypeInsurancesService = finTypeInsurancesService;
 	}
 
 	public FinTypeAccountingService getFinTypeAccountingService() {

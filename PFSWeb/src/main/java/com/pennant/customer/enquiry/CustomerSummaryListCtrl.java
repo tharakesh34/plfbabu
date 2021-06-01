@@ -80,7 +80,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.coreinterface.model.CustomerLimit;
-import com.pennant.coreinterface.process.CustomerDataProcess;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -109,7 +108,6 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	protected Listbox listBoxCustomerLimit;
 	protected Listbox listBoxCustCollateral;
 	private CurrencyService currencyService;
-	private CustomerDataProcess customerDataProcess;
 	private CustomerLimitIntefaceService customerLimitIntefaceService;
 	protected JdbcSearchObject<Customer> searchObj;
 	// NEEDED for the ReUse in the SearchWindow
@@ -283,7 +281,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				fillCommitmentListBox(getPagedListWrapper().getPagedListService().getBySearchObject(cmtSearchObj),
 						this.listBoxCommitment);
 				fillLimitListBox(this.custCIF.getValue(), custBranch);
-				//doFillCustomerCollateral(getCustomerDataProcess().getCustomerCollateral(this.custCIF.getValue()));
+
 				JdbcSearchObject<CustomerCollateral> collateralSearchObj = new JdbcSearchObject<CustomerCollateral>(
 						CustomerCollateral.class);
 				collateralSearchObj.addTabelName("Collateral_summary_view");
@@ -529,13 +527,4 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 	public CurrencyService getCurrencyService() {
 		return currencyService;
 	}
-
-	public CustomerDataProcess getCustomerDataProcess() {
-		return customerDataProcess;
-	}
-
-	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
-		this.customerDataProcess = customerDataProcess;
-	}
-
 }

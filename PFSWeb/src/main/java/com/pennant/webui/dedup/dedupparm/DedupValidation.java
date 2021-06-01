@@ -49,22 +49,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Window;
 
-import com.pennant.Interface.service.NorkamCheckService;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.constants.InterfaceConstants;
-import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -74,7 +68,6 @@ public class DedupValidation implements Serializable {
 	private static final long serialVersionUID = -4728201973665323130L;
 	private static final Logger logger = LogManager.getLogger(DedupValidation.class);
 
-	private NorkamCheckService norkamCheckService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
 
 	/**
@@ -121,12 +114,6 @@ public class DedupValidation implements Serializable {
 
 			// Black List Process Check
 			processCompleted = doBlacklistCheck(aFinanceDetail, role, window, curLoginUser);
-			if (!processCompleted) {
-				return false;
-			}
-
-			//PoliceCase List Process Check
-			processCompleted = doPoliceCaseCheck(aFinanceDetail, role, window, curLoginUser);
 			if (!processCompleted) {
 				return false;
 			}
@@ -273,89 +260,7 @@ public class DedupValidation implements Serializable {
 			isProcessCompleted = true;
 		}
 
-		// norkom checking for Blacklisted customers
-
-		if (isProcessCompleted) {
-			isProcessCompleted = doNorkomCheck(aFinanceDetail.getCustomerDetails());
-		}
-
 		return isProcessCompleted;
-	}
-
-	/**
-	 * Blacklist customer checking with norkom interface
-	 * 
-	 * @param customerDetails
-	 * 
-	 * @return
-	 * @throws InterfaceException
-	 */
-	private boolean doNorkomCheck(CustomerDetails customerDetails) throws InterfaceException {
-		logger.debug("Entering");
-
-		boolean isProcessCompleted = false;
-
-		// Send Norkom check request
-		InterfaceNorkamCheck interfaceNorkamCheck = new InterfaceNorkamCheck();
-		Customer customer = customerDetails.getCustomer();
-		interfaceNorkamCheck.setCustomerId(String.valueOf(customer.getCustID()));
-		interfaceNorkamCheck.setCustomerName(customer.getCustShrtName());
-		interfaceNorkamCheck.setCustomerDOB(customer.getCustDOB());
-		interfaceNorkamCheck.setCustomerPOB(customer.getCustPOB());
-		interfaceNorkamCheck.setCustomerCountry(customer.getCustNationality());
-		interfaceNorkamCheck.setCustomerAddress(customer.getCustAddlVar1());
-
-		InterfaceNorkamCheck norkomCheck = getNorkamCheckService().doNorkamCheck(interfaceNorkamCheck);
-
-		if (norkomCheck == null) {
-			return true;
-		}
-
-		if (InterfaceConstants.SUCCESS_CODE.equals(norkomCheck.getReturnCode())) {
-			isProcessCompleted = true;
-		} else if (InterfaceConstants.BLACKLIST_HIT.equals(norkomCheck.getReturnCode())) {
-			try {
-				if (MessageUtil.confirm(Labels.getLabel("NORKOM_BLACKLIST")) == MessageUtil.YES) {
-					isProcessCompleted = true;
-				} else {
-					isProcessCompleted = false;
-				}
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-		return isProcessCompleted;
-	}
-
-	/**
-	 * Method for Process check of Police & Court Case Details
-	 * 
-	 * @param aFinanceDetail
-	 * @return
-	 */
-	private boolean doPoliceCaseCheck(FinanceDetail aFinanceDetail, String role, Window window, String curLoginUser) {
-		boolean processCompleted;
-		aFinanceDetail = FetchPoliceCaseDetails.getPoliceCaseCustomer(role, aFinanceDetail, window, curLoginUser);
-		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseFound()) {
-			if (aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseOverride()) {
-				processCompleted = true;
-			} else {
-				processCompleted = false;
-			}
-		} else {
-			processCompleted = true;
-		}
-		return processCompleted;
-	}
-
-	public NorkamCheckService getNorkamCheckService() {
-		return norkamCheckService;
-	}
-
-	public void setNorkamCheckService(NorkamCheckService norkamCheckService) {
-		this.norkamCheckService = norkamCheckService;
 	}
 
 	public FinanceReferenceDetailService getFinanceReferenceDetailService() {

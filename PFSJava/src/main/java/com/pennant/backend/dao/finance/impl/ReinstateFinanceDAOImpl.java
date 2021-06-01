@@ -339,15 +339,14 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		selectSql.append(
 				" GrcMargin, RepayMargin, FinCommitmentRef, DepreciationFrq, FinCurrAssetValue,FinContractDate,");
 		selectSql.append(
-				" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
-		selectSql
-				.append(" ClosingStatus, FinApprovedDate, InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, ");
+				" NextDepDate, LastDepDate, FinCustPftAccount, NextDepDate, LastDepDate, FinAccount, FinCustPftAccount,");
+		selectSql.append(" ClosingStatus, FinApprovedDate, InitiateUser,");
 		selectSql.append(
 				" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, StepFinance , StepPolicy, AlwManualSteps, NoOfSteps, ");
 		selectSql.append(" LinkedFinRef,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId, ");
-		selectSql.append(" InvestmentRef , DownPayAccount,  SecurityDeposit, RcdMaintainSts, FinRepayMethod, ");
+		selectSql.append(" DownPayAccount,  SecurityDeposit, RcdMaintainSts, FinRepayMethod, ");
 		selectSql
 				.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, CustDSR,JointAccount,JointCustId,");
 		selectSql.append(
@@ -390,7 +389,6 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		saveFinanceChildDetail("FinScheduledetails_Temp", "RejectFinScheduledetails", finRef);
 		saveFinanceChildDetail("FinDedupDetail", "RejectFinDedupDetail", finRef);
 		saveFinanceChildDetail("FinBlackListDetail", "RejectFinBlackListDetail", finRef);
-		saveFinanceChildDetail("FinPoliceCaseDetail", "RejectFinPoliceCaseDetail", finRef);
 		saveFinanceChildDetail("FinODPenaltyRates_Temp", "RejectFinODPenaltyRates", finRef);
 		saveFinanceChildDetail("FinFeeCharges_Temp", "RejectFinFeeCharges", finRef);
 
@@ -415,7 +413,6 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		deleteChildDetailsByTableName("RejectFinScheduledetails", finRef);
 		deleteChildDetailsByTableName("RejectFinDedupDetail", finRef);
 		deleteChildDetailsByTableName("RejectFinBlackListDetail", finRef);
-		deleteChildDetailsByTableName("RejectFinPoliceCaseDetail", finRef);
 		deleteChildDetailsByTableName("RejectFinODPenaltyRates", finRef);
 		deleteChildDetailsByTableName("RejectFinFeeCharges", finRef);
 

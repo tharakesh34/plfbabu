@@ -101,18 +101,6 @@ public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> i
 
 	}
 
-	/**
-	 * This method Deletes the Record from the FinTypeVASProducts or FinTypeVASProducts_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Finance Flags by key finRef
-	 * 
-	 * @param Sukuk
-	 *            Brokers (finType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	public void delete(String finType, String vasProduct, String type) {
 		logger.debug("Entering");
 		FinTypeVASProducts finTypeVASProducts = new FinTypeVASProducts();

@@ -102,18 +102,17 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinRpyFrq, FinRepayMethod, FinIsAlwPartialRpy, FinIsAlwDifferment, FinMaxDifferment");
 		sql.append(", FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, AlwPlanDeferment, PlanDeferCount");
 		sql.append(", FinIsDwPayRequired, FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd");
-		sql.append(", FinIsRateRvwAtGrcEnd, FinSchCalCodeOnRvw, FinAssetType, FinDepositRestrictedTo");
-		sql.append(", FinAEBuyOrInception, FinAESellOrMaturity, FinIsActive, PftPayAcType, FinIsOpenPftPayAcc");
+		sql.append(", FinIsRateRvwAtGrcEnd, FinSchCalCodeOnRvw, FinAssetType");
+		sql.append(", FinIsActive, PftPayAcType, FinIsOpenPftPayAcc");
 		sql.append(", FinGrcSchdMthd, FinIsAlwGrcRepay, FinMargin, FinGrcMargin, FinScheduleOn, FinGrcScheduleOn");
 		sql.append(", FinCommitmentReq, FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, AllowRIAInvestment");
 		sql.append(", OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq");
 		sql.append(", FinPftUnChanged, ManualSchedule, ApplyODPenalty, ODIncGrcDays, ODChargeType");
 		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
 		sql.append(", ODMinCapAmount, ODMinCapAmount, FinDivision, StepFinance, SteppingMandatory");
-		sql.append(", AlwManualSteps, AlwdStepPolicies, DftStepPolicy, StartDate, EndDate, AllowDownpayPgm");
-		sql.append(", Remarks, AlwEarlyPayMethods, PastduePftCalMthd, PastduePftMargin, AlwAdvanceRent");
-		sql.append(", GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate");
-		sql.append(", RollOverFinance, RollOverFrq, DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb");
+		sql.append(", AlwManualSteps, AlwdStepPolicies, DftStepPolicy, StartDate, EndDate");
+		sql.append(", Remarks, AlwEarlyPayMethods, PastduePftCalMthd, PastduePftMargin");
+		sql.append(", DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb");
 		sql.append(", TdsApplicable, CollateralType, ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing");
 		sql.append(", RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod, RateChgAnyDay, AlwBPI");
 		sql.append(", BpiTreatment, PftDueSchOn, PlanEMIHAlw, AlwPlannedEmiInGrc, PlanEMIHMethod, PlanEMIHMaxPerYear");
@@ -215,9 +214,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
 				ft.setFinSchCalCodeOnRvw(rs.getString("FinSchCalCodeOnRvw"));
 				ft.setFinAssetType(rs.getString("FinAssetType"));
-				ft.setFinDepositRestrictedTo(rs.getString("FinDepositRestrictedTo"));
-				ft.setFinAEBuyOrInception(rs.getInt("FinAEBuyOrInception"));
-				ft.setFinAESellOrMaturity(rs.getInt("FinAESellOrMaturity"));
 				ft.setFinIsActive(rs.getBoolean("FinIsActive"));
 				ft.setPftPayAcType(rs.getString("PftPayAcType"));
 				ft.setFinIsOpenPftPayAcc(rs.getBoolean("FinIsOpenPftPayAcc"));
@@ -256,20 +252,10 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setDftStepPolicy(rs.getString("DftStepPolicy"));
 				ft.setStartDate(rs.getTimestamp("StartDate"));
 				ft.setEndDate(rs.getTimestamp("EndDate"));
-				ft.setAllowDownpayPgm(rs.getBoolean("AllowDownpayPgm"));
 				ft.setRemarks(rs.getString("Remarks"));
 				ft.setAlwEarlyPayMethods(rs.getString("AlwEarlyPayMethods"));
 				ft.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
 				ft.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
-				ft.setAlwAdvanceRent(rs.getBoolean("AlwAdvanceRent"));
-				ft.setGrcAdvBaseRate(rs.getString("GrcAdvBaseRate"));
-				ft.setGrcAdvMargin(rs.getBigDecimal("GrcAdvMargin"));
-				ft.setGrcAdvPftRate(rs.getBigDecimal("GrcAdvPftRate"));
-				ft.setRpyAdvBaseRate(rs.getString("RpyAdvBaseRate"));
-				ft.setRpyAdvMargin(rs.getBigDecimal("RpyAdvMargin"));
-				ft.setRpyAdvPftRate(rs.getBigDecimal("RpyAdvPftRate"));
-				ft.setRollOverFinance(rs.getBoolean("RollOverFinance"));
-				ft.setRollOverFrq(rs.getString("RollOverFrq"));
 				ft.setDownPayRule(rs.getLong("DownPayRule"));
 				ft.setFinSuspTrigger(rs.getString("FinSuspTrigger"));
 				ft.setFinSuspRemarks(rs.getString("FinSuspRemarks"));
@@ -432,10 +418,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinProvisionAcType, AllowRIAInvestment, OverrideLimit, LimitRequired, FinCommitmentOvrride");
 		sql.append(", FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
-		sql.append(", ODMinCapAmount, FinDivision, FinSuspAcType, Product, StartDate, EndDate, AllowDownpayPgm");
-		sql.append(", PastduePftCalMthd, PastduePftMargin, AlwAdvanceRent, GrcAdvBaseRate, GrcAdvMargin");
-		sql.append(", GrcAdvPftRate, RpyAdvBaseRate, RpyAdvMargin, RpyAdvPftRate, RollOverFinance");
-		sql.append(", RollOverFrq, DownPayRule, AlwMultiPartyDisb, CollateralType, TdsApplicable, ApplyGrcPricing");
+		sql.append(", ODMinCapAmount, FinDivision, FinSuspAcType, Product, StartDate, EndDate");
+		sql.append(", PastduePftCalMthd, PastduePftMargin");
+		sql.append(", DownPayRule, AlwMultiPartyDisb, CollateralType, TdsApplicable, ApplyGrcPricing");
 		sql.append(", ApplyRpyPricing, DroplineOD, DroppingMethod, RateChgAnyDay, ManualSchedule, AlwBPI");
 		sql.append(", BpiTreatment, PftDueSchOn, PlanEMIHAlw, AlwPlannedEmiInGrc, PlanEMIHMethod, PlanEMIHMaxPerYear");
 		sql.append(", PlanEMIHMax, PlanEMIHLockPeriod, PlanEMICpz, UnPlanEMIHLockPeriod, UnPlanEMICpz, ReAgeCpz");
@@ -565,18 +550,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 							ft.setProduct(rs.getString("Product"));
 							ft.setStartDate(rs.getTimestamp("StartDate"));
 							ft.setEndDate(rs.getTimestamp("EndDate"));
-							ft.setAllowDownpayPgm(rs.getBoolean("AllowDownpayPgm"));
 							ft.setPastduePftCalMthd(rs.getString("PastduePftCalMthd"));
 							ft.setPastduePftMargin(rs.getBigDecimal("PastduePftMargin"));
-							ft.setAlwAdvanceRent(rs.getBoolean("AlwAdvanceRent"));
-							ft.setGrcAdvBaseRate(rs.getString("GrcAdvBaseRate"));
-							ft.setGrcAdvMargin(rs.getBigDecimal("GrcAdvMargin"));
-							ft.setGrcAdvPftRate(rs.getBigDecimal("GrcAdvPftRate"));
-							ft.setRpyAdvBaseRate(rs.getString("RpyAdvBaseRate"));
-							ft.setRpyAdvMargin(rs.getBigDecimal("RpyAdvMargin"));
-							ft.setRpyAdvPftRate(rs.getBigDecimal("RpyAdvPftRate"));
-							ft.setRollOverFinance(rs.getBoolean("RollOverFinance"));
-							ft.setRollOverFrq(rs.getString("RollOverFrq"));
 							ft.setDownPayRule(rs.getLong("DownPayRule"));
 							ft.setAlwMultiPartyDisb(rs.getBoolean("AlwMultiPartyDisb"));
 							ft.setCollateralType(rs.getString("CollateralType"));
@@ -831,8 +806,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" AlwPlanDeferment, PlanDeferCount,FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, ");
 		sql.append(" FinIsDwPayRequired, FinRvwRateApplFor,FinIsIntCpzAtGrcEnd, FinIsRateRvwAtGrcEnd, ");
 		sql.append(" FinAlwRateChangeAnyDate, ");
-		sql.append(
-				" FinSchCalCodeOnRvw,FinAssetType ,FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity, ");
+		sql.append(" FinSchCalCodeOnRvw,FinAssetType ,");
 		sql.append(
 				" FinIsActive, PftPayAcType,FinIsOpenPftPayAcc	,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		sql.append(" NextTaskId, RecordType, WorkflowId ,FinGrcSchdMthd,FinIsAlwGrcRepay,");
@@ -845,10 +819,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				"  ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, ODMinCapAmount, FinDivision, ");
 		sql.append(
 				"  StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate, ");
-		sql.append(" AllowDownpayPgm, Remarks, AlwEarlyPayMethods ,ProductCategory, ");
-		sql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
-		sql.append(
-				" GrcAdvBaseRate , GrcAdvMargin , GrcAdvPftRate, RpyAdvBaseRate , RpyAdvMargin , RpyAdvPftRate , RollOverFinance, RollOverFrq,");
+		sql.append(" Remarks, AlwEarlyPayMethods ,ProductCategory, ");
+		sql.append(" PastduePftCalMthd,PastduePftMargin,");
 		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TdsApplicable, CollateralType, ");
 		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod,RateChgAnyDay, ");
@@ -866,7 +838,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AllowDrawingPower, AllowRevolving, AlwSanctionAmt, AlwSanctionAmtOverride, SanBsdSchdle");
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
 		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths ");
-		sql.append(", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType) ");
+		sql.append(
+				", MaxAutoIncrAllowed, ThrldtoMaintainGrcPrd, CalcOfSteps, StepsAppliedFor, AlwLoanSplit, SplitLoanType,InstBasedSchd, TdsType) ");
 		sql.append(
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
 		sql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
@@ -883,8 +856,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" :AlwPlanDeferment, :PlanDeferCount,:FinIsAlwEarlyRpy, :FinIsAlwEarlySettle, :FinODRpyTries, ");
 		sql.append(
 				" :FinIsDwPayRequired, :FinRvwRateApplFor,:FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate, :FinIsRateRvwAtGrcEnd,");
-		sql.append(
-				" :FinSchCalCodeOnRvw,:FinAssetType ,:FinDepositRestrictedTo,:FinAEBuyOrInception,:FinAESellOrMaturity, ");
+		sql.append(" :FinSchCalCodeOnRvw,:FinAssetType, ");
 		sql.append(
 				" :FinIsActive, :PftPayAcType,:FinIsOpenPftPayAcc ,:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
 		sql.append(" :NextTaskId, :RecordType, :WorkflowId ,:FinGrcSchdMthd,:FinIsAlwGrcRepay,");
@@ -897,10 +869,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" :ApplyODPenalty , :ODIncGrcDays , :ODChargeType , :ODGraceDays , :ODChargeCalOn , :ODChargeAmtOrPerc , :ODAllowWaiver , :ODMaxWaiverPerc, :ODMinCapAmount, :FinDivision, ");
 		sql.append(
 				" :StepFinance , :SteppingMandatory , :AlwManualSteps , :AlwdStepPolicies, :DftStepPolicy, :StartDate, :EndDate, ");
-		sql.append(" :AllowDownpayPgm, :Remarks, :AlwEarlyPayMethods ,:ProductCategory, ");
-		sql.append(" :PastduePftCalMthd,:PastduePftMargin,:AlwAdvanceRent,");
-		sql.append(
-				" :GrcAdvBaseRate , :GrcAdvMargin , :GrcAdvPftRate, :RpyAdvBaseRate , :RpyAdvMargin , :RpyAdvPftRate , :RollOverFinance, :RollOverFrq,");
+		sql.append(" :Remarks, :AlwEarlyPayMethods ,:ProductCategory, ");
+		sql.append(" :PastduePftCalMthd,:PastduePftMargin,");
 		sql.append(
 				" :DownPayRule, :FinSuspTrigger, :FinSuspRemarks, :AlwMultiPartyDisb, :TdsApplicable, :CollateralType, ");
 		sql.append(
@@ -983,10 +953,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinIsDwPayRequired = :FinIsDwPayRequired,");
 		sql.append(
 				" FinRvwRateApplFor = :FinRvwRateApplFor,FinIsIntCpzAtGrcEnd = :FinIsIntCpzAtGrcEnd,FinAlwRateChangeAnyDate = :FinAlwRateChangeAnyDate, FinIsRateRvwAtGrcEnd = :FinIsRateRvwAtGrcEnd, ");
-		sql.append(
-				" FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw,FinAssetType=:FinAssetType,FinDepositRestrictedTo=:FinDepositRestrictedTo,");
-		sql.append(
-				" FinAEBuyOrInception=:FinAEBuyOrInception,FinAESellOrMaturity=:FinAESellOrMaturity,FinIsActive = :FinIsActive,");
+		sql.append(" FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw,FinAssetType=:FinAssetType,");
+		sql.append(" FinIsActive = :FinIsActive,");
 		sql.append(
 				" PftPayAcType=:PftPayAcType,FinIsOpenPftPayAcc=:FinIsOpenPftPayAcc,Version = :Version ,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,");
 		sql.append(
@@ -995,10 +963,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,FinGrcSchdMthd=:FinGrcSchdMthd, ");
 		sql.append(
 				" FinIsAlwGrcRepay=:FinIsAlwGrcRepay,FinScheduleOn=:FinScheduleOn,FinGrcScheduleOn=:FinGrcScheduleOn,");
-		sql.append(
-				" FinMargin=:FinMargin,FinGrcMargin=:FinGrcMargin,GrcAdvBaseRate=:GrcAdvBaseRate , GrcAdvMargin=:GrcAdvMargin , ");
-		sql.append(
-				" GrcAdvPftRate=:GrcAdvPftRate, RpyAdvBaseRate=:RpyAdvBaseRate , RpyAdvMargin=:RpyAdvMargin , RpyAdvPftRate=:RpyAdvPftRate,");
+		sql.append(" FinMargin=:FinMargin,FinGrcMargin=:FinGrcMargin,");
 		sql.append(
 				" FinCommitmentReq=:FinCommitmentReq ,FinCollateralReq=:FinCollateralReq ,FinDepreciationReq=:FinDepreciationReq,");
 		sql.append(" FinDepreciationFrq=:FinDepreciationFrq ,");
@@ -1013,9 +978,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" StepFinance=:StepFinance , SteppingMandatory=:SteppingMandatory , AlwManualSteps=:AlwManualSteps , AlwdStepPolicies=:AlwdStepPolicies , DftStepPolicy=:DftStepPolicy,");
 		sql.append(" StartDate=:StartDate, EndDate=:EndDate, ");
-		sql.append(" AllowDownpayPgm=:AllowDownpayPgm, Remarks=:Remarks, AlwEarlyPayMethods=:AlwEarlyPayMethods,");
+		sql.append(" Remarks=:Remarks, AlwEarlyPayMethods=:AlwEarlyPayMethods,");
 		sql.append("  PastduePftCalMthd=:PastduePftCalMthd,PastduePftMargin=:PastduePftMargin,");
-		sql.append(" AlwAdvanceRent=:AlwAdvanceRent, RollOverFinance=:RollOverFinance, RollOverFrq = :RollOverFrq, ");
 		sql.append(" DownPayRule=:DownPayRule, ProductCategory=:ProductCategory,");
 		sql.append(
 				" FinSuspTrigger=:FinSuspTrigger, FinSuspRemarks=:FinSuspRemarks , AlwMultiPartyDisb = :AlwMultiPartyDisb , TdsApplicable=:TdsApplicable, CollateralType = :CollateralType, ");

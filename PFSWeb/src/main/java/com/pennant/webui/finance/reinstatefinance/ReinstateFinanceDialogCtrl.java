@@ -885,9 +885,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
-					processCompleted = true;
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
 					List<String> finTypeList = getReinstateFinanceService().getScheduleEffectModuleList(true);

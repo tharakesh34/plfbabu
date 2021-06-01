@@ -349,7 +349,6 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		// Set Deferred scheduled date and schedule method first time
 		chkFirstRpyDate = false;
-		boolean suplRentUpdated = false;
 		Date newFirstRpyDate = null;
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
 			curSchd = scheduleData.getFinanceScheduleDetails().get(i);
@@ -382,21 +381,6 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), "B")) {
 						curSchd.setPftDaysBasis(financeMain.getBpiPftDaysBasis());
 					}
-				}
-			}
-
-			// Supplement Rent & Increased Cost Re-Setting
-			if (curSchd.getSchDate().compareTo(fromDate) >= 0) {
-
-				if (!suplRentUpdated) {
-					if (prvSchd.getSchDate().compareTo(financeMain.getFinStartDate()) == 0) {
-						financeMain.setCurSuplRent(financeMain.getSupplementRent());
-						financeMain.setCurIncrCost(financeMain.getIncreasedCost());
-					} else {
-						financeMain.setCurSuplRent(prvSchd.getSuplRent());
-						financeMain.setCurIncrCost(prvSchd.getIncrCost());
-					}
-					suplRentUpdated = true;
 				}
 			}
 
@@ -457,19 +441,6 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null
 							? BigDecimal.ZERO : finServiceInstruction.getMargin());
 					curSchd.setActRate(finServiceInstruction.getActualRate());
-
-					// Advised Rates Setting
-					if (i != 0 && StringUtils.equals(FinanceConstants.PRODUCT_STRUCTMUR,
-							scheduleData.getFinanceType().getFinCategory())) {
-						if (prvSchd != null) {
-							curSchd.setAdvPftRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null
-									? prvSchd.getAdvPftRate() : BigDecimal.ZERO);
-							curSchd.setAdvBaseRate(StringUtils.trimToNull(prvSchd.getAdvBaseRate()));
-							curSchd.setAdvMargin(StringUtils.trimToNull(prvSchd.getAdvBaseRate()) == null
-									? BigDecimal.ZERO : prvSchd.getAdvMargin());
-						}
-					}
-
 				}
 			}
 
@@ -567,11 +538,6 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		sd.setCalculatedRate(prvSchd.getCalculatedRate());
 		sd.setSchdMethod(prvSchd.getSchdMethod());
 		sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
-		sd.setAdvBaseRate(prvSchd.getAdvBaseRate());
-		sd.setAdvMargin(prvSchd.getAdvMargin());
-		sd.setAdvPftRate(prvSchd.getAdvPftRate());
-		sd.setSuplRent(prvSchd.getSuplRent());
-		sd.setIncrCost(prvSchd.getIncrCost());
 
 		finScheduleData.getFinanceScheduleDetails().add(sd);
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));

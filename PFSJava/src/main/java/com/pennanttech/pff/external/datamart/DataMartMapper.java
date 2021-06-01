@@ -818,7 +818,6 @@ public class DataMartMapper {
 		sql.append(",EXCESS_AMOUNT");
 		sql.append(",EXCESS_REFUND");
 		sql.append(",ADVICE");
-		sql.append(",REBATE");
 		sql.append(",ADVINSTL");
 		sql.append(",EXCESSPRINPMNT");
 		sql.append(",SDAMT");
@@ -912,9 +911,8 @@ public class DataMartMapper {
 				rs.getObject("CURRENT_OVERDUES"), rs.getObject("CURRENT_WAVEOFFAMT"),
 				rs.getObject("OVER_DISTANCE_CHARGES"), rs.getObject("INTREST_ON_TERMINATION_PER_DAY"),
 				rs.getObject("INTREST_ACCRUALS"), rs.getObject("EXCESS_AMOUNT"), rs.getObject("EXCESS_REFUND"),
-				rs.getObject("ADVICE"), rs.getObject("REBATE"), rs.getObject("ADVINSTL"),
-				rs.getObject("EXCESSPRINPMNT"), rs.getObject("SDAMT"), rs.getObject("SDINT"),
-				rs.getObject("EXCESS_INTREST_RATE"), rs.getObject("VAT_ON_FORECLOSURE"),
+				rs.getObject("ADVICE"), rs.getObject("ADVINSTL"), rs.getObject("EXCESSPRINPMNT"), rs.getObject("SDAMT"),
+				rs.getObject("SDINT"), rs.getObject("EXCESS_INTREST_RATE"), rs.getObject("VAT_ON_FORECLOSURE"),
 				rs.getObject("UNDER_DISTANCE_CHARGES"), rs.getObject("NET_PAYBALE"), rs.getObject("WAIVEOFFAMOUNT"),
 				rs.getObject("ACTIVITY"), rs.getObject("AUTHORIZEDON"), rs.getObject("COMMITMENT_FEE"),
 				rs.getObject("ORIGINATION_FEE"), rs.getObject("PRE_EMI"), appDate, rs.getObject("CHEQUEID"),

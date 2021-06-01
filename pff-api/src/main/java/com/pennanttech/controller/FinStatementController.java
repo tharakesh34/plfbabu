@@ -383,7 +383,6 @@ public class FinStatementController extends SummaryDetailService {
 			throws IllegalAccessException, InvocationTargetException {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
-		financeDetail.getFinScheduleData().setInsuranceList(null);
 		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);

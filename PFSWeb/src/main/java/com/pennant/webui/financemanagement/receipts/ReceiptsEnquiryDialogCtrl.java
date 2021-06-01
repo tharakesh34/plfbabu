@@ -1708,8 +1708,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		BigDecimal totInsPaid = BigDecimal.ZERO;
 		BigDecimal totSchdFeePaid = BigDecimal.ZERO;
-		BigDecimal totSchdSuplRentPaid = BigDecimal.ZERO;
-		BigDecimal totSchdIncrCostPaid = BigDecimal.ZERO;
 
 		Listcell lc;
 		Listitem item;
@@ -1786,19 +1784,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdSuplRentPayNow(), formatter));
-				lc.setStyle("text-align:right;");
-				totSchdSuplRentPaid = totSchdSuplRentPaid.add(repaySchd.getSchdSuplRentPayNow());
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(repaySchd.getSchdIncrCostPayNow(), formatter));
-				lc.setStyle("text-align:right;");
-				totSchdIncrCostPaid = totSchdIncrCostPaid.add(repaySchd.getSchdIncrCostPayNow());
-				lc.setParent(item);
 
 				BigDecimal netPay = repaySchd.getProfitSchdPayNow().add(repaySchd.getPftSchdWaivedNow())
 						.add(repaySchd.getPrincipalSchdPayNow().add(repaySchd.getPriSchdWaivedNow()))
 						.add(repaySchd.getSchdInsPayNow()).add(repaySchd.getSchdFeePayNow())
-						.add(repaySchd.getSchdSuplRentPayNow()).add(repaySchd.getSchdIncrCostPayNow())
 						.add(repaySchd.getLatePftSchdPayNow().add(repaySchd.getLatePftSchdWaivedNow()))
 						.add(repaySchd.getPenaltyPayNow().add(repaySchd.getWaivedAmt()).subtract(refundPft));
 				lc = new Listcell(PennantAppUtil.amountFormate(netPay, formatter));
@@ -1806,8 +1795,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				lc.setParent(item);
 
 				BigDecimal netBalance = repaySchd.getProfitSchdBal().add(repaySchd.getPrincipalSchdBal())
-						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal())
-						.add(repaySchd.getSchdSuplRentBal()).add(repaySchd.getSchdIncrCostBal());
+						.add(repaySchd.getSchdInsBal()).add(repaySchd.getSchdFeeBal());
 
 				lc = new Listcell(PennantAppUtil.amountFormate(
 						netBalance.subtract(netPay.subtract(totalCharge).subtract(totalLatePft)), formatter));
@@ -1827,8 +1815,6 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			paymentMap.put("insPaid", totInsPaid);
 			paymentMap.put("schdFeePaid", totSchdFeePaid);
-			paymentMap.put("schdSuplRentPaid", totSchdSuplRentPaid);
-			paymentMap.put("schdIncrCostPaid", totSchdIncrCostPaid);
 
 			doFillSummaryDetails(paymentMap);
 		}

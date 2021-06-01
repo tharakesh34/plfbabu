@@ -36,7 +36,6 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
-import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -62,7 +61,6 @@ import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
-import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -113,7 +111,6 @@ public class RepaymentProcessUtil {
 	private RepayInstructionDAO repayInstructionDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
-	private FinInsurancesDAO finInsurancesDAO;
 	private LimitManagement limitManagement;
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
@@ -1771,8 +1768,6 @@ public class RepaymentProcessUtil {
 						// update fee schedule details
 						updateFeeDetails(rpySchd, finFeeDetails, allocationPaidMap, allocationWaivedMap);
 
-						// update insurance schedule details
-						updateInsuranceDetails(rpySchd);
 					}
 				}
 
@@ -1810,40 +1805,6 @@ public class RepaymentProcessUtil {
 			});
 		}
 		return rcdList;
-	}
-
-	private void updateInsuranceDetails(RepayScheduleDetail rpySchd) {
-		logger.debug("Entering");
-
-		BigDecimal remBalPaidAmount = rpySchd.getSchdInsPayNow();
-		if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
-			return;
-		}
-
-		List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
-		List<FinSchFrqInsurance> list = finInsurancesDAO.getInsScheduleBySchDate(rpySchd.getFinReference(),
-				rpySchd.getSchDate());
-
-		for (FinSchFrqInsurance insSchd : list) {
-
-			if (remBalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
-				break;
-			}
-			BigDecimal insBal = insSchd.getAmount().subtract(insSchd.getInsurancePaid())
-					.subtract(insSchd.getInsuranceWaived());
-			if (insBal.compareTo(remBalPaidAmount) > 0) {
-				insBal = remBalPaidAmount;
-			}
-			insSchd.setInsurancePaid(insSchd.getInsurancePaid().add(insBal));
-			updateInsList.add(insSchd);
-			remBalPaidAmount = remBalPaidAmount.subtract(insBal);
-
-		}
-
-		if (!updateInsList.isEmpty()) {
-			finInsurancesDAO.updateInsPaids(updateInsList);
-		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -2166,10 +2127,6 @@ public class RepaymentProcessUtil {
 					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(paidNow));
 					rpyQueueHeader.setFeeWaived(rpyQueueHeader.getFeeWaived().add(waivedNow));
 					break;
-				case RepayConstants.ALLOCATION_INS:
-					rpyQueueHeader.setInsurance(rpyQueueHeader.getInsurance().add(paidNow));
-					rpyQueueHeader.setInsWaived(rpyQueueHeader.getInsWaived().add(waivedNow));
-					break;
 				case RepayConstants.ALLOCATION_MANADV:
 				case RepayConstants.ALLOCATION_BOUNCE:
 					rpyQueueHeader.setAdviseAmount(rpyQueueHeader.getAdviseAmount().add(paidNow).add(waivedNow));
@@ -2299,20 +2256,6 @@ public class RepaymentProcessUtil {
 		finRepayQueue.setSchdInsPaid(rsd.getSchdInsPaid());
 		finRepayQueue.setSchdInsWaivedNow(rsd.getSchdInsWaivedNow());
 
-		// 3. Schedule Supplementary Rent Amount
-		finRepayQueue.setSchdSuplRent(rsd.getSchdSuplRent());
-		finRepayQueue.setSchdSuplRentBal(rsd.getSchdSuplRentBal());
-		finRepayQueue.setSchdSuplRentPayNow(rsd.getSchdSuplRentPayNow());
-		finRepayQueue.setSchdSuplRentPaid(rsd.getSchdSuplRentPaid());
-		finRepayQueue.setSchdSuplRentWaivedNow(rsd.getSchdSuplRentWaivedNow());
-
-		// 4. Schedule Increased Cost Amount
-		finRepayQueue.setSchdIncrCost(rsd.getSchdIncrCost());
-		finRepayQueue.setSchdIncrCostBal(rsd.getSchdIncrCostBal());
-		finRepayQueue.setSchdIncrCostPayNow(rsd.getSchdIncrCostPayNow());
-		finRepayQueue.setSchdIncrCostPaid(rsd.getSchdIncrCostPaid());
-		finRepayQueue.setSchdIncrCostWaivedNow(rsd.getSchdIncrCostWaivedNow());
-
 		logger.debug("Leaving");
 		return finRepayQueue;
 	}
@@ -2348,14 +2291,6 @@ public class RepaymentProcessUtil {
 			rsd.setSchdIns(curSchd.getInsSchd());
 			rsd.setSchdInsPaid(curSchd.getSchdInsPaid());
 			rsd.setSchdInsBal(rsd.getSchdIns().subtract(rsd.getSchdInsPaid()));
-
-			rsd.setSchdSuplRent(curSchd.getSuplRent());
-			rsd.setSchdSuplRentPaid(curSchd.getSuplRentPaid());
-			rsd.setSchdSuplRentBal(rsd.getSchdSuplRent().subtract(rsd.getSchdSuplRentPaid()));
-
-			rsd.setSchdIncrCost(curSchd.getIncrCost());
-			rsd.setSchdIncrCostPaid(curSchd.getIncrCostPaid());
-			rsd.setSchdIncrCostBal(rsd.getSchdIncrCost().subtract(rsd.getSchdIncrCostPaid()));
 
 			rsd.setSchdFee(curSchd.getFeeSchd());
 			rsd.setSchdFeePaid(curSchd.getSchdFeePaid());
@@ -2456,7 +2391,6 @@ public class RepaymentProcessUtil {
 				disbursement.setFinReference(scheduleData.getFinReference());
 				disbursement.setDisbReqDate(curBDay);
 				disbursement.setDisbIsActive(true);
-				disbursement.setDisbDisbursed(true);
 				disbursement.setLogKey(logKey);
 				disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				disbursement.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
@@ -2708,10 +2642,6 @@ public class RepaymentProcessUtil {
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
-		this.finInsurancesDAO = finInsurancesDAO;
 	}
 
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {

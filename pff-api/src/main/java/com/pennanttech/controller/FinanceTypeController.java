@@ -53,7 +53,6 @@ public class FinanceTypeController extends ExtendedTestClass {
 					FinanceConstants.MODULEID_PROMOTION, true);
 			financeType.setFInTypeFromPromotiion(promotion);
 			financeType.setFinTypeFeesList(promotion.getFinTypeFeesList());
-			financeType.setFinTypeInsurances(promotion.getFinTypeInsurancesList());
 			financeType.setFinTypeAccountingList(promotion.getFinTypeAccountingList());
 		}
 

@@ -187,10 +187,6 @@ public class FinanceDataDefaulting {
 			financeMain.setMaturityDate(DateUtility
 					.getDBDate(DateUtility.format(financeMain.getMaturityDate(), PennantConstants.DBDateFormat)));
 		}
-		if (financeMain.getNextRolloverDate() != null) {
-			financeMain.setNextRolloverDate(DateUtility
-					.getDBDate(DateUtility.format(financeMain.getNextRolloverDate(), PennantConstants.DBDateFormat)));
-		}
 	}
 
 	/*
@@ -500,17 +496,6 @@ public class FinanceDataDefaulting {
 			}
 		}
 
-		// Validate Rollover Frequency
-		if (StringUtils.isNotBlank(finMain.getRolloverFrq())) {
-			ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getRolloverFrq());
-			if (tempError != null) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Rollover";
-				valueParm[1] = finMain.getRolloverFrq();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90160", valueParm)));
-			}
-		}
-
 		// BPI Treatment
 		if (StringUtils.isNotBlank(finMain.getBpiTreatment())) {
 			if (!StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_NO)
@@ -592,7 +577,6 @@ public class FinanceDataDefaulting {
 		finMain.setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
 		finMain.setInitiateUser(finMain.getUserDetails().getUserId());
 		finMain.setInitiateDate(SysParamUtil.getAppDate());
-		finMain.setShariaStatus(PennantConstants.SHARIA_STATUS_NOTREQUIRED);
 		finMain.setCalRoundingMode(financeType.getRoundingMode());
 		finMain.setRoundingTarget(financeType.getRoundingTarget());
 		finMain.setTDSApplicable(financeType.isTdsApplicable());
@@ -662,9 +646,6 @@ public class FinanceDataDefaulting {
 			finMain.setGrcSchdMthd(null);
 			finMain.setGrcMinRate(zeroValue);
 			finMain.setGrcMaxRate(zeroValue);
-			finMain.setGrcAdvBaseRate(null);
-			finMain.setGrcAdvMargin(zeroValue);
-			finMain.setGrcAdvPftRate(zeroValue);
 			finMain.setCalGrcEndDate(finMain.getFinStartDate());
 			finMain.setGrcRateBasis(PennantConstants.List_Select);
 			return;

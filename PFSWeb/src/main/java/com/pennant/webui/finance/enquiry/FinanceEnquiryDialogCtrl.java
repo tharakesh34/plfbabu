@@ -123,7 +123,6 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.SubventionDetail;
-import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -392,8 +391,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected BigDecimal curContributionCalAmt = null;
 	// not auto wired variables
 	private FinScheduleData finScheduleData; // over handed per parameters
-	private List<ContractorAssetDetail> assetDetails = null; // over handed per
-																// parameters
 	private FinContributorHeader finContributorHeader; // over handed per
 														// parameters
 	private FinanceDetail financeDetail;
@@ -458,10 +455,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected Label disb_startDate;
 	protected Label disb_maturityDate;
-	protected Decimalbox disb_expenses;
-	protected Decimalbox disb_totalBilling;
-	protected Decimalbox disb_consultFee;
-	protected Decimalbox disb_totalCost;
 
 	protected Listbox listBoxDisbursementDetail;
 	protected Listbox listBoxContributorDetails;
@@ -661,11 +654,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				setFinContributorHeader(null);
 			}
 
-			if (arguments.containsKey("assetDetailList")) {
-				setAssetDetails((List<ContractorAssetDetail>) arguments.get("assetDetailList"));
-			} else {
-				setFinContributorHeader(null);
-			}
+			setFinContributorHeader(null);
 
 			if (arguments.containsKey("financeSummary")) {
 				this.finSummary = (FinanceSummary) arguments.get("financeSummary");
@@ -1440,28 +1429,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.riaDetailsTab.setVisible(false);
 		}
 
-		if (FinanceConstants.PRODUCT_ISTISNA.equals(aFinanceMain.getLovDescProductCodeName())) {
-			if (getFinScheduleData().getDisbursementDetails() != null
-					&& getFinScheduleData().getDisbursementDetails().size() > 0) {
-
-				this.disb_finType.setValue(StringUtils.trimToEmpty(aFinanceMain.getLovDescFinTypeName()));
-				this.disb_finCcy.setValue(StringUtils.trimToEmpty(aFinanceMain.getFinCcy()));
-				this.disb_profitDaysBasis.setValue(StringUtils.trimToEmpty(aFinanceMain.getProfitDaysBasis()));
-				this.disb_finReference.setValue(StringUtils.trimToEmpty(aFinanceMain.getFinReference()));
-				this.disb_grcEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
-				this.disb_noOfTerms.setValue(String.valueOf(aFinanceMain.getCalTerms()));
-				this.disb_startDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
-				this.disb_maturityDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getMaturityDate()));
-
-				doFillDisbursementDetails(getFinScheduleData().getDisbursementDetails());
-			}
-
-			if (getAssetDetails() != null && getAssetDetails().size() > 0) {
-				doFillContractorDetails(getAssetDetails());
-			}
-		} else {
-			this.disburseDetailsTab.setVisible(false);
-		}
+		this.disburseDetailsTab.setVisible(false);
 
 		if (finSummary != null) {
 			// profit Deatils
@@ -2591,184 +2559,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return listChartSetElement;
 	}
 
-	public void doFillDisbursementDetails(List<FinanceDisbursement> disbursementDetails) {
-		logger.debug("Entering");
-
-		int formatter = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
-
-		BigDecimal endingBal = BigDecimal.ZERO;
-		BigDecimal istisnaExp = BigDecimal.ZERO;
-		BigDecimal totBillingAmt = BigDecimal.ZERO;
-		BigDecimal conslFee = BigDecimal.ZERO;
-		BigDecimal totIstisnaCost = BigDecimal.ZERO;
-
-		this.listBoxDisbursementDetail.setSizedByContent(true);
-		this.listBoxDisbursementDetail.getItems().clear();
-
-		for (FinanceDisbursement disburse : disbursementDetails) {
-
-			Listitem listitem = new Listitem();
-			Listcell listcell;
-			listcell = new Listcell(DateUtility.formatToLongDate(disburse.getDisbDate()));
-			listitem.appendChild(listcell);
-			listcell = new Listcell(Labels.getLabel("label_DisbursementDetail_" + disburse.getDisbType()));
-			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbAmount(), formatter));
-			listcell.setStyle("text-align:right;");
-			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbClaim(), formatter));
-			listcell.setStyle("text-align:right;");
-			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantApplicationUtil.formatAccountNumber(disburse.getDisbAccountId()));
-			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(endingBal, formatter));
-			listcell.setStyle("text-align:right;");
-			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantAppUtil.amountFormate(disburse.getDisbRetAmount(), formatter));
-			listcell.setStyle("text-align:right;");
-			listitem.appendChild(listcell);
-			listcell = new Listcell(disburse.getDisbRemarks());
-			listitem.appendChild(listcell);
-			listitem.setAttribute("data", disburse);
-			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onDisbursementItemDoubleClicked");
-			this.listBoxDisbursementDetail.appendChild(listitem);
-
-			// Amounts Calculation
-
-			if ("B".equals(disburse.getDisbType())) {
-				totBillingAmt = totBillingAmt.add(disburse.getDisbClaim());
-			} else if ("C".equals(disburse.getDisbType())) {
-				conslFee = conslFee.add(disburse.getDisbAmount());
-			} else if ("E".equals(disburse.getDisbType())) {
-				istisnaExp = istisnaExp.add(disburse.getDisbAmount());
-			}
-
-			totIstisnaCost = totIstisnaCost.add(disburse.getDisbAmount());
-		}
-
-		// Amount Labels Reset with Amounts
-		this.disb_totalCost.setValue(PennantAppUtil.formateAmount(totIstisnaCost, formatter));
-		this.disb_consultFee.setValue(PennantAppUtil.formateAmount(conslFee, formatter));
-		this.disb_totalBilling.setValue(PennantAppUtil.formateAmount(totBillingAmt, formatter));
-		this.disb_expenses.setValue(PennantAppUtil.formateAmount(istisnaExp, formatter));
-
-		logger.debug("Leaving");
-	}
-
-	public void onDisbursementItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
-
-		// get the selected invoiceHeader object
-		final Listitem item = this.listBoxDisbursementDetail.getSelectedItem();
-
-		if (item != null) {
-			// CAST AND STORE THE SELECTED OBJECT
-			final FinanceDisbursement disbursement = (FinanceDisbursement) item.getAttribute("data");
-
-			if (disbursement.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showError("Not Allowed to maintain This Record");
-			} else {
-
-				ContractorAssetDetail aContractorAssetDetail = null;
-				for (ContractorAssetDetail contractorAssetDetail : getAssetDetails()) {
-					if (contractorAssetDetail.getContractorId() == disbursement.getContractorId()) {
-						aContractorAssetDetail = contractorAssetDetail;
-						break;
-					}
-				}
-				final Map<String, Object> map = new HashMap<String, Object>();
-				map.put("financeDisbursement", disbursement);
-				map.put("currency", getFinScheduleData().getFinanceMain().getFinCcy());
-				map.put("formatter", CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy()));
-				map.put("isEnq", true);
-				map.put("ContractorAssetDetail", aContractorAssetDetail);
-				map.put("ContractorAssetDetails", getAssetDetails());
-
-				try {
-					Executions.createComponents(getZULPath(disbursement.getDisbType()), window_FinanceEnquiryDialog,
-							map);
-				} catch (Exception e) {
-					MessageUtil.showError(e);
-				}
-			}
-		}
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void onContractroDetailItemDoubleClicked(Event event) throws InterruptedException {
-		Listitem listitem = this.listBoxContributorDetails.getSelectedItem();
-		if (listitem != null && listitem.getAttribute("data") != null) {
-			final ContractorAssetDetail acoContractorAssetDetail = (ContractorAssetDetail) listitem
-					.getAttribute("data");
-			acoContractorAssetDetail.setNewRecord(false);
-			final Map<String, Object> map = new HashMap<String, Object>();
-			map.put("contractorAssetDetail", acoContractorAssetDetail);
-			map.put("enqModule", true);
-			// call the ZUL-file with the parameters packed in a map
-			try {
-				Executions.createComponents("/WEB-INF/pages/Finance/FinanceContractor/ContractorAssetDetailDialog.zul",
-						window_FinanceEnquiryDialog, map);
-			} catch (Exception e) {
-				MessageUtil.showError(e);
-			}
-		}
-	}
-
-	public void doFillContractorDetails(List<ContractorAssetDetail> contractorAssetDetails) {
-		this.listBoxContributorDetails.getItems().clear();
-
-		int ccyFormat = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
-		if (contractorAssetDetails != null) {
-			for (ContractorAssetDetail contractorAssetDetail : contractorAssetDetails) {
-
-				double totClaimAmt = PennantApplicationUtil
-						.formateAmount(contractorAssetDetail.getTotClaimAmt(), ccyFormat).doubleValue();
-				double assetValue = PennantApplicationUtil
-						.formateAmount(contractorAssetDetail.getAssetValue(), ccyFormat).doubleValue();
-
-				BigDecimal amount = BigDecimal.valueOf((totClaimAmt / assetValue) * 10000);
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(contractorAssetDetail.getLovDescCustCIF() + "-"
-						+ contractorAssetDetail.getLovDescCustShrtName());
-				lc.setParent(item);
-				lc = new Listcell(contractorAssetDetail.getAssetDesc());
-				lc.setParent(item);
-				lc = new Listcell(
-						PennantApplicationUtil.amountFormate(contractorAssetDetail.getAssetValue(), ccyFormat));
-				lc.setStyle("text-align:right");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.amountFormate(amount, 2));
-
-				lc.setParent(item);
-				lc = new Listcell(contractorAssetDetail.getRecordType());
-				lc.setParent(item);
-
-				item.setAttribute("data", contractorAssetDetail);
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onContractroDetailItemDoubleClicked");
-				this.listBoxContributorDetails.appendChild(item);
-			}
-
-		}
-	}
-
-	private String getZULPath(String disbType) {
-		logger.debug("Entering");
-
-		String zulPath = "";
-		if ("A".equals(disbType)) {
-			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaContractorAdvanceDialog.zul";
-		} else if ("B".equals(disbType)) {
-			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaBillingDialog.zul";
-		} else if ("C".equals(disbType)) {
-			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaConsultingFeeDialog.zul";
-		} else if ("E".equals(disbType)) {
-			zulPath = "/WEB-INF/pages/Finance/FinanceBilling/IstisnaExpensesDialog.zul";
-		}
-		logger.debug("Leaving");
-		return zulPath;
-	}
-
 	public List<FinanceDisbursement> sortDisbDetails(List<FinanceDisbursement> financeDisbursement) {
 
 		if (financeDisbursement != null && financeDisbursement.size() > 0) {
@@ -2912,14 +2702,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public AccountInterfaceService getAccountInterfaceService() {
 		return accountInterfaceService;
-	}
-
-	public void setAssetDetails(List<ContractorAssetDetail> assetDetails) {
-		this.assetDetails = assetDetails;
-	}
-
-	public List<ContractorAssetDetail> getAssetDetails() {
-		return assetDetails;
 	}
 
 	public CustomerService getCustomerService() {

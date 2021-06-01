@@ -99,7 +99,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
@@ -156,13 +155,11 @@ import com.pennant.backend.model.finance.AgreementDetail.Score;
 import com.pennant.backend.model.finance.AgreementDetail.ScoreHeader;
 import com.pennant.backend.model.finance.AgreementDetail.SourcingDetail;
 import com.pennant.backend.model.finance.AgreementDetail.VerificationDetail;
-import com.pennant.backend.model.finance.AgreementFieldDetails;
 import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CustomerAgreementDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinAssetEvaluation;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
@@ -213,7 +210,6 @@ import com.pennant.backend.service.NotesService;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.BranchService;
-import com.pennant.backend.service.applicationmaster.MMAgreementService;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -283,7 +279,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	private NotesService notesService;
 	private FinanceDetailService financeDetailService;
-	private MMAgreementService mMAgreementService;
 
 	@Autowired
 	private CustomerDetailsService customerDetailsService;
@@ -413,7 +408,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 		String finRef = financeMain.getFinReference();
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		String mMAReference = financeMain.getLovDescMMAReference();
 		String finProduct = financeMain.getFinCategory();
 		if (StringUtils.isNotEmpty(finProduct) && productDAO != null) {
 			Product product = productDAO.getProductByProduct(finProduct);
@@ -485,7 +479,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					agreement.setCustId(customer.getCustID());
 					agreement.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
 					agreement.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
-					agreement.setCustArabicName(StringUtils.trimToEmpty(customer.getCustShrtNameLclLng()));
+					agreement.setCustLocalLngName(StringUtils.trimToEmpty(customer.getCustShrtNameLclLng()));
 					agreement.setCustPassport(StringUtils.trimToEmpty(customer.getCustPassportNo()));
 					agreement.setCustDOB(DateUtil.formatToLongDate(customer.getCustDOB()));
 					agreement.setCustRO1(StringUtils.trimToEmpty(customer.getLovDescCustRO1Name()));
@@ -1420,10 +1414,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement = getFinRepayHeaderDetails(agreement, detail.getFinRepayHeader(), formatter);
 			}
 
-			if (detail.getAgreementFieldDetails() != null) {
-				agreement = getAgreementArabicFieldDetails(agreement, detail.getAgreementFieldDetails(), formatter);
-			}
-
 			// -----------------Customer Credit Review Details
 
 			if (CollectionUtils.isEmpty(agreement.getCrdRevElgProfitAndLoss())) {
@@ -1806,17 +1796,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement = getCustomerFinanceDetails(agreement, formatter);
 			}
 
-			// -------------------Group Recommendations List
-			// MMAgreement Details
-			agreement = setGroupRecommendations(agreement, finRef);
-			if (mMAReference != null && !StringUtils.equals(mMAReference, "")) {
-				setMMAgreementGenDetails(agreement, appDate, formatter, mMAReference);
-			}
-			// --------------------Asset Evalution Details
-			if (detail.getFinAssetEvaluation() != null) {
-				agreement = getFinAssetEvaluationDetails(agreement, detail.getFinAssetEvaluation(), formatter,
-						financeMain.getFinCcy());
-			}
 			// Co-applicant details
 			setCoapplicantDetails(detail, agreement, aggModuleDetails);
 			// Mandate details
@@ -4197,43 +4176,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		return agreement;
 	}
 
-	private AgreementDetail getAgreementArabicFieldDetails(AgreementDetail agreement,
-			AgreementFieldDetails aAgreementFieldDetails, int formatter) {
-
-		agreement.setCustCityArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCustCity()));
-		agreement.setBuildUpAreaArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getBuiltupAreainSqft()));
-		agreement.setCustNationalityArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCustNationality()));
-		agreement.setPlotUnitNumberArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPlotOrUnitNo()));
-		agreement.setOtherbankNameArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getOtherbankName()));
-		agreement.setPropertyTypeArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPropertyType()));
-		agreement.setSectorOrCommArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSectorOrCommunity()));
-		agreement.setFinAmountInArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getFinAmount()));
-		agreement.setUnitAreaInSqftArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPlotareainsqft()));
-		agreement.setPropertyLocArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPropertyLocation()));
-		agreement.setSellerInternalArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerInternal()));
-		agreement.setOtherBankAmtArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getOtherBankAmt()));
-		agreement.setCustJointNameArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getJointApplicant()));
-		agreement.setCollateralArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCollateral1()));
-		agreement.setCollateralAuthArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCollateralAuthority()));
-		agreement.setPropertyUseArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getPropertyUse()));
-		agreement.setSellerNationalityArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerNationality()));
-		agreement.setSellerCntbAmtArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerCntbAmt()));
-		agreement.setCustCntAmtArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getCustCntAmt()));
-		agreement.setSellerNameArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerName()));
-		agreement.setSellerAddrArabic(StringUtils.trimToEmpty(aAgreementFieldDetails.getSellerPobox()));
-
-		return agreement;
-	}
-
-	private AgreementDetail getFinAssetEvaluationDetails(AgreementDetail agreement,
-			FinAssetEvaluation finAssetEvaluation, int formatter, String finCCy) throws Exception {
-		agreement.setMarketValue(CurrencyUtil.format(finAssetEvaluation.getMarketValueAED(), formatter));
-		agreement.setMarketValueInWords(NumberToEnglishWords
-				.getAmountInText(CurrencyUtil.parse(finAssetEvaluation.getMarketValueAED(), formatter), finCCy)
-				.toUpperCase());
-		return agreement;
-	}
-
 	private AgreementDetail getScheduleDetails(AgreementDetail agreement, FinanceDetail detail, int formatter) {
 		List<FinanceScheduleDetail> finschdetails = detail.getFinScheduleData().getFinanceScheduleDetails();
 		Date nextRepDate = detail.getFinScheduleData().getFinanceMain().getNextRepayDate();
@@ -4275,7 +4217,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			scheduleData.setSchdPri(CurrencyUtil.format(finSchDetail.getPrincipalSchd(), formatter));
 			scheduleData.setSchTotalPriAmt(CurrencyUtil.format(finSchDetail.getRepayAmount(), formatter));
 			scheduleData.setClosingBalance(CurrencyUtil.format(finSchDetail.getClosingBalance(), formatter));
-			scheduleData.setSuplRent(CurrencyUtil.format(finSchDetail.getSuplRent(), formatter));
 			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
 				if (finSchDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0
 						&& !StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
@@ -4290,14 +4231,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 			scheduleData.setInsSchd(CurrencyUtil.format(finSchDetail.getInsSchd(), formatter));
 			defDates = defDates.concat(DateUtil.formatToLongDate(finSchDetail.getDefSchdDate()) + ",");
-			scheduleData.setSchAdvPft(CurrencyUtil.format(finSchDetail.getAdvProfit(), formatter));
-			scheduleData.setAdvPayment(CurrencyUtil.format(finSchDetail.getAdvRepayAmount(), formatter));
 			agreement.getScheduleData().add(scheduleData);
 			if (finSchDetail.isRepayOnSchDate() && !isSchdPftFirstInst) {
 				agreement.setSchdPftFirstInstl(
 						String.valueOf(CurrencyUtil.format(finSchDetail.getProfitSchd(), formatter)));
-				agreement.setSchdAdvPftFirstInstl(
-						String.valueOf(CurrencyUtil.format(finSchDetail.getAdvProfit(), formatter)));
 				isSchdPftFirstInst = true;
 			}
 			if (seqNo == 2) {
@@ -4479,50 +4416,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 			collateralData.setExtendedDetailsList(extendedDetailsList);
 		}
-	}
-
-	private void setMMAgreementGenDetails(AgreementDetail agreement, String appDate, int ccyformatt,
-			String mMAReference) throws Exception {
-		MMAgreement mMAgreement = mMAgreementService.getMMAgreementByIdMMARef(mMAReference);
-
-		if (agreement == null || mMAgreement == null) {
-			return;
-		}
-
-		agreement.setmMADate(DateUtil.formatToLongDate(mMAgreement.getContractDate()));
-		agreement.setCustCIF(mMAgreement.getCustCIF());
-		agreement.setCustName(mMAgreement.getCustShrtName());
-		agreement.setmMAPurchRegOffice(mMAgreement.getLovDescPurchRegOffice());
-		agreement.setmMAContractAmt(CurrencyUtil.format(mMAgreement.getContractAmt(), ccyformatt));
-		agreement.setmMAPurchaddress(mMAgreement.getPurchaddress());
-		agreement.setAttention(mMAgreement.getAttention());
-		agreement.setmMAFax(mMAgreement.getFax());
-		agreement.setmMARate(String.valueOf(mMAgreement.getRate()));
-		agreement.setmMAFOLIssueDate(DateUtil.formatToLongDate(mMAgreement.getfOLIssueDate()));
-		agreement.setMaturityDate(DateUtil.formatToLongDate(mMAgreement.getMaturityDate()));
-		agreement.setmMAFacilityLimit(CurrencyUtil.format(mMAgreement.getFacilityLimit(), ccyformatt));
-		String word = NumberToEnglishWords
-				.getAmountInText(CurrencyUtil.parse(mMAgreement.getFacilityLimit(), ccyformatt), agreement.getFinCcy());
-		agreement.setFacLimitInWords(word);
-		agreement.setmMAMinAmount(CurrencyUtil.format(mMAgreement.getMinAmount(), ccyformatt));
-		if (mMAgreement.getProfitRate() != null) {
-			agreement.setmMAPftRate(PennantApplicationUtil.formatRate(mMAgreement.getProfitRate().doubleValue(), 2));
-		}
-		agreement.setmMAMargin(PennantApplicationUtil.formatRate(mMAgreement.getMargin().doubleValue(), 9));
-		agreement.setmMAMinRate(PennantApplicationUtil.formatRate(mMAgreement.getMinRate().doubleValue(), 9));
-		agreement.setmMAMLatePayRate(PennantApplicationUtil.formatRate(mMAgreement.getLatePayRate().doubleValue(), 9));
-		agreement.setmMANumberOfTerms(String.valueOf(mMAgreement.getNumberOfTerms()));
-		agreement.setmMAProfitPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
-		agreement.setFolReference(String.valueOf(mMAgreement.getfOlReference()));
-		agreement.setAvlPerDays(String.valueOf(mMAgreement.getAvlPerDays()));
-		agreement.setMaxCapProfitRate(
-				PennantApplicationUtil.formatRate(mMAgreement.getMaxCapProfitRate().doubleValue(), 9));
-		agreement.setMinCapRate(PennantApplicationUtil.formatRate(mMAgreement.getMinCapRate().doubleValue(), 9));
-		agreement.setFacOfferLetterDate(DateUtil.formatToLongDate(mMAgreement.getFacOfferLetterDate()));
-		agreement.setPmaryRelOfficer(String.valueOf(mMAgreement.getPmaryRelOfficer()));
-		agreement.setmMAFOLPeriod(String.valueOf(mMAgreement.getProfitPeriod()));
-		agreement.setBaseRateCode(mMAgreement.getBaseRateCode());
-
 	}
 
 	public AgreementDetail setAdvancePaymentDetails(AgreementDetail agreement, FinAdvancePayments finAdvancePayments,
@@ -4715,15 +4608,10 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setEffPftRate(PennantApplicationUtil.formatRate(fm.getEffectiveRateOfReturn().doubleValue(), 2));
 			agreement.setMaturityDate(DateUtil.formatToLongDate(fm.getMaturityDate()));
 			agreement.setProfit(String.valueOf(CurrencyUtil.format(fm.getTotalProfit(), formatter)));
-			agreement.setBankName(StringUtils.trimToEmpty(fm.getBankName()));
-			agreement.setAccountType(StringUtils.trimToEmpty(fm.getAccountType()));
-			agreement.setIban(StringUtils.trimToEmpty(fm.getIban()));
-			agreement.setDdaPurposeCode(PennantConstants.REQ_TYPE_REG);
 
 			agreement.setCustDSR(String.valueOf(fm.getCustDSR() == null ? "0.00" : fm.getCustDSR()));
 			agreement.setAssetValue(CurrencyUtil.format(fm.getFinAmount(), formatter));
 			agreement.setSchdInst(String.valueOf(fm.getNumberOfTerms()));
-			agreement.setIfscCode(fm.getIfscCode());
 			agreement.setSecSixTermAmt(CurrencyUtil
 					.format(fm.getTotalRepayAmt().divide(new BigDecimal(6), RoundingMode.HALF_DOWN), formatter));
 			agreement.setTotalRepayAmt(CurrencyUtil.format(fm.getTotalRepayAmt(), formatter));
@@ -4751,7 +4639,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			agreement.setSecDeposit(CurrencyUtil.format(fm.getSecurityDeposit(), formatter));
 			agreement.setSharePerc(CurrencyUtil.format((fm.getFinAmount().subtract(fm.getDownPayment()))
 					.divide(fm.getFinAmount().multiply(new BigDecimal(100)), RoundingMode.HALF_DOWN), formatter));
-			agreement.setFacilityAmt(CurrencyUtil.format(fm.getAvailCommitAmount(), formatter));
 			agreement.setTotalPrice(CurrencyUtil.format(fm.getFinAmount().add(fm.getTotalProfit()), formatter));
 			List<FeeRule> feeChargesList = detail.getFinScheduleData().getFeeRules();
 			BigDecimal totalExpAmt = BigDecimal.ZERO;
@@ -5574,14 +5461,6 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public MMAgreementService getmMAgreementService() {
-		return mMAgreementService;
-	}
-
-	public void setmMAgreementService(MMAgreementService mMAgreementService) {
-		this.mMAgreementService = mMAgreementService;
 	}
 
 	public SecurityUserService getSecurityUserService() {

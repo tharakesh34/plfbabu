@@ -48,13 +48,15 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class Taxes extends AbstractWorkflowEntity {
+public class Taxes extends AbstractWorkflowEntity implements Entity {
+
 	private static final long serialVersionUID = 1L;
 	private long id = Long.MIN_VALUE;
-	private Long referenceId;
+	private long referenceId = Long.MIN_VALUE;
 	private String taxType;
 	private BigDecimal taxPerc = BigDecimal.ZERO;
 	private boolean newRecord;
@@ -96,19 +98,26 @@ public class Taxes extends AbstractWorkflowEntity {
 		return entity;
 	}
 
+	@Override
+	public boolean isNew() {
+		return newRecord;
+	}
+
+	@Override
 	public long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(long id) {
 		this.id = id;
 	}
 
-	public Long getReferenceId() {
+	public long getReferenceId() {
 		return referenceId;
 	}
 
-	public void setReferenceId(Long referenceId) {
+	public void setReferenceId(long referenceId) {
 		this.referenceId = referenceId;
 	}
 

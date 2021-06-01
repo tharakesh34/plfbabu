@@ -90,9 +90,6 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(financeMain.getNOInst()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate() == null
-				? financeMain.getNextRolloverDate() : financeMain.getMaturityDate()));
-		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
 		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())

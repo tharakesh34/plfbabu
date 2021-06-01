@@ -161,22 +161,16 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Decimalbox label_FinWriteoffDialog_WOPriAmt;
 	protected Decimalbox label_FinWriteoffDialog_WOPftAmt;
 	protected Decimalbox label_FinWriteoffDialog_WOInsAmt;
-	protected Decimalbox label_FinWriteoffDialog_WOIncrCostAmt;
-	protected Decimalbox label_FinWriteoffDialog_WOSuplRentAmt;
 	protected Decimalbox label_FinWriteoffDialog_WOSchdFeeAmt;
 	protected Decimalbox label_FinWriteoffDialog_ODPriAmt;
 	protected Decimalbox label_FinWriteoffDialog_ODPftAmt;
 	protected Decimalbox label_FinWriteoffDialog_UnPaidPriAmt;
 	protected Decimalbox label_FinWriteoffDialog_UnPaidPftAmt;
 	protected Decimalbox label_FinWriteoffDialog_UnPaidInsAmt;
-	protected Decimalbox label_FinWriteoffDialog_UnPaidIncrCostAmt;
-	protected Decimalbox label_FinWriteoffDialog_UnPaidSuplRentAmt;
 	protected Decimalbox label_FinWriteoffDialog_UnPaidSchFeeAmt;
 	protected Decimalbox label_FinWriteoffDialog_OutStandPrincipal;
 	protected Decimalbox label_FinWriteoffDialog_OutStandProfit;
 	protected Decimalbox label_FinWriteoffDialog_OutStandIns;
-	protected Decimalbox label_FinWriteoffDialog_OutStandIncrCost;
-	protected Decimalbox label_FinWriteoffDialog_OutStandSuplRent;
 	protected Decimalbox label_FinWriteoffDialog_OutStandSchFee;
 	protected Decimalbox label_FinWriteoffDialog_ProvisionAmt;
 	protected Decimalbox label_FinWriteoffDialog_PenaltyAmt;
@@ -184,8 +178,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Decimalbox writeoffPriAmt;
 	protected Decimalbox writeoffPftAmt;
 	protected Decimalbox writeoffInsAmt;
-	protected Decimalbox writeoffIncrCost;
-	protected Decimalbox writeoffSuplRent;
 	protected Decimalbox writeoffSchFee;
 	protected AccountSelectionBox writtenoffAcc;
 	protected Label label_FinWriteoffDialog_WrittenoffAcc;
@@ -197,8 +189,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected transient BigDecimal oldVar_writeoffPriAmt;
 	protected transient BigDecimal oldVar_writeoffPftAmt;
 	protected transient BigDecimal oldVar_writeoffInsAmt;
-	protected transient BigDecimal oldVar_writeoffIncrCost;
-	protected transient BigDecimal oldVar_writeoffSuplRent;
 	protected transient BigDecimal oldVar_writeoffSchFee;
 	protected transient BigDecimal oldVar_adjAmount;
 	protected transient String oldVar_remarks;
@@ -208,13 +198,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEvent;
 	protected Listheader listheader_ScheduleDetailDialog_CalProfit;
 	protected Listheader listheader_ScheduleDetailDialog_SchFee;
-	protected Listheader listheader_ScheduleDetailDialog_SupplementRent;
-	protected Listheader listheader_ScheduleDetailDialog_IncreasedCost;
-	protected Listheader listheader_ScheduleDetailDialog_SchAdvProfit;
 	protected Listheader listheader_ScheduleDetailDialog_SchProfit;
 	protected Listheader listheader_ScheduleDetailDialog_Principal;
-	protected Listheader listheader_ScheduleDetailDialog_AdvTotal;
-	protected Listheader listheader_ScheduleDetailDialog_Rebate;
 	protected Listheader listheader_ScheduleDetailDialog_Total;
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEndBal;
 	protected Listheader listHeader_cashFlowEffect;
@@ -391,16 +376,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.writeoffInsAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.writeoffInsAmt.setScale(format);
 
-		this.writeoffIncrCost.setMaxlength(18);
-		this.writeoffIncrCost.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.writeoffIncrCost.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.writeoffIncrCost.setScale(format);
-
-		this.writeoffSuplRent.setMaxlength(18);
-		this.writeoffSuplRent.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.writeoffSuplRent.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.writeoffSuplRent.setScale(format);
-
 		this.writeoffSchFee.setMaxlength(18);
 		this.writeoffSchFee.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.writeoffSchFee.setRoundingMode(BigDecimal.ROUND_DOWN);
@@ -425,16 +400,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.label_FinWriteoffDialog_WOInsAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.label_FinWriteoffDialog_WOInsAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.label_FinWriteoffDialog_WOInsAmt.setScale(format);
-
-		this.label_FinWriteoffDialog_WOIncrCostAmt.setMaxlength(18);
-		this.label_FinWriteoffDialog_WOIncrCostAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_WOIncrCostAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.label_FinWriteoffDialog_WOIncrCostAmt.setScale(format);
-
-		this.label_FinWriteoffDialog_WOSuplRentAmt.setMaxlength(18);
-		this.label_FinWriteoffDialog_WOSuplRentAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_WOSuplRentAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.label_FinWriteoffDialog_WOSuplRentAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_WOSchdFeeAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_WOSchdFeeAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
@@ -465,16 +430,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.label_FinWriteoffDialog_UnPaidInsAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.label_FinWriteoffDialog_UnPaidInsAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.label_FinWriteoffDialog_UnPaidInsAmt.setScale(format);
-
-		this.label_FinWriteoffDialog_UnPaidIncrCostAmt.setMaxlength(18);
-		this.label_FinWriteoffDialog_UnPaidIncrCostAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_UnPaidIncrCostAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.label_FinWriteoffDialog_UnPaidIncrCostAmt.setScale(format);
-
-		this.label_FinWriteoffDialog_UnPaidSuplRentAmt.setMaxlength(18);
-		this.label_FinWriteoffDialog_UnPaidSuplRentAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
-		this.label_FinWriteoffDialog_UnPaidSuplRentAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
-		this.label_FinWriteoffDialog_UnPaidSuplRentAmt.setScale(format);
 
 		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setMaxlength(18);
 		this.label_FinWriteoffDialog_UnPaidSchFeeAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
@@ -525,8 +480,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		 * this.writeoffInsAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffInsAmt"));
 		 * this.writeoffPptInsAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPptInsAmt"));
 		 * this.writeoffCrInsAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffCrInsAmt"));
-		 * this.writeoffIncrCost.setDisabled(isReadOnly("FinWriteoffDialog_writeoffIncrCost"));
-		 * this.writeoffSuplRent.setDisabled(isReadOnly("FinWriteoffDialog_writeoffSuplRent"));
 		 * this.writeoffSchFee.setDisabled(isReadOnly("FinWriteoffDialog_writeoffSchFee"));
 		 */
 		this.adjAmount.setDisabled(isReadOnly("FinWriteoffDialog_adjAmount"));
@@ -566,19 +519,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.listheader_ScheduleDetailDialog_CalProfit
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_CalProfit"));
 		this.listheader_ScheduleDetailDialog_SchFee.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchFee"));
-		this.listheader_ScheduleDetailDialog_SupplementRent
-				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SupplementRent"));
-		this.listheader_ScheduleDetailDialog_IncreasedCost
-				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_IncreasedCost"));
 		this.listheader_ScheduleDetailDialog_SchProfit
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchProfit"));
-		this.listheader_ScheduleDetailDialog_SchAdvProfit
-				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_SchAdvProfit"));
 		this.listheader_ScheduleDetailDialog_Principal
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Principal"));
-		this.listheader_ScheduleDetailDialog_AdvTotal
-				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_AdvTotal"));
-		this.listheader_ScheduleDetailDialog_Rebate.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Rebate"));
 		this.listheader_ScheduleDetailDialog_Total.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_Total"));
 		this.listheader_ScheduleDetailDialog_ScheduleEndBal
 				.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_ScheduleEndBal"));
@@ -609,10 +553,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		this.label_FinWriteoffDialog_WOInsAmt
 				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffIns(), format));
-		this.label_FinWriteoffDialog_WOIncrCostAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffIncrCost(), format));
-		this.label_FinWriteoffDialog_WOSuplRentAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffSuplRent(), format));
 		this.label_FinWriteoffDialog_WOSchdFeeAmt
 				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWrittenoffSchFee(), format));
 
@@ -626,10 +566,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPft(), format));
 		this.label_FinWriteoffDialog_UnPaidInsAmt
 				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidIns(), format));
-		this.label_FinWriteoffDialog_UnPaidIncrCostAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidIncrCost(), format));
-		this.label_FinWriteoffDialog_UnPaidSuplRentAmt
-				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSuplRent(), format));
 		this.label_FinWriteoffDialog_UnPaidSchFeeAmt
 				.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSchFee(), format));
 		this.label_FinWriteoffDialog_OutStandPrincipal
@@ -644,8 +580,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.writeoffPriAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffPrincipal(), format));
 		this.writeoffPftAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffProfit(), format));
 		this.writeoffInsAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffIns(), format));
-		this.writeoffIncrCost.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffIncrCost(), format));
-		this.writeoffSuplRent.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffSuplRent(), format));
 		this.writeoffSchFee.setValue(PennantAppUtil.formateAmount(financeWriteoff.getWriteoffSchFee(), format));
 		this.adjAmount.setValue(PennantAppUtil.formateAmount(financeWriteoff.getAdjAmount(), format));
 		this.remarks.setValue(financeWriteoff.getRemarks());
@@ -675,17 +609,11 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (financeWriteoff.getWriteoffPrincipal().compareTo(BigDecimal.ZERO) == 0
 					&& financeWriteoff.getWriteoffProfit().compareTo(BigDecimal.ZERO) == 0
 					&& financeWriteoff.getWriteoffIns().compareTo(BigDecimal.ZERO) == 0
-					&& financeWriteoff.getWriteoffIncrCost().compareTo(BigDecimal.ZERO) == 0
-					&& financeWriteoff.getWriteoffSuplRent().compareTo(BigDecimal.ZERO) == 0
 					&& financeWriteoff.getWriteoffSchFee().compareTo(BigDecimal.ZERO) == 0) {
 
 				this.writeoffPriAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPri(), format));
 				this.writeoffPftAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnPaidSchdPft(), format));
 				this.writeoffInsAmt.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidIns(), format));
-				this.writeoffIncrCost
-						.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidIncrCost(), format));
-				this.writeoffSuplRent
-						.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSuplRent(), format));
 				this.writeoffSchFee.setValue(PennantAppUtil.formateAmount(financeWriteoff.getUnpaidSchFee(), format));
 
 				Events.sendEvent("onClick$btnWriteoffCal", this.window_FinWriteoffDialog, null);
@@ -753,8 +681,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oldVar_writeoffPriAmt = this.writeoffPriAmt.getValue();
 		this.oldVar_writeoffPftAmt = this.writeoffPftAmt.getValue();
 		this.oldVar_writeoffInsAmt = this.writeoffInsAmt.getValue();
-		this.oldVar_writeoffIncrCost = this.writeoffIncrCost.getValue();
-		this.oldVar_writeoffSuplRent = this.writeoffSuplRent.getValue();
 		this.oldVar_writeoffSchFee = this.writeoffSchFee.getValue();
 		this.oldVar_adjAmount = this.adjAmount.getValue();
 		this.oldVar_remarks = this.remarks.getValue();
@@ -768,8 +694,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.writeoffPriAmt.setErrorMessage("");
 		this.writeoffPftAmt.setErrorMessage("");
 		this.writeoffInsAmt.setErrorMessage("");
-		this.writeoffIncrCost.setErrorMessage("");
-		this.writeoffSuplRent.setErrorMessage("");
 		this.writeoffSchFee.setErrorMessage("");
 		this.adjAmount.setErrorMessage("");
 		this.writtenoffAcc.setErrorMessage("");
@@ -801,8 +725,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		/*
 		 * this.writeoffPriAmt.setDisabled(true); this.writeoffPftAmt.setDisabled(true);
 		 * this.writeoffInsAmt.setDisabled(true); this.writeoffPptInsAmt.setDisabled(true);
-		 * this.writeoffCrInsAmt.setDisabled(true); this.writeoffIncrCost.setDisabled(true);
-		 * this.writeoffSuplRent.setDisabled(true); this.writeoffSchFee.setDisabled(true);
 		 * this.adjAmount.setDisabled(true);
 		 */
 
@@ -836,8 +758,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal woPriAmt = PennantAppUtil.unFormateAmount(this.writeoffPriAmt.getValue(), format);
 		BigDecimal woPftAmt = PennantAppUtil.unFormateAmount(this.writeoffPftAmt.getValue(), format);
 		BigDecimal woInsAmt = PennantAppUtil.unFormateAmount(this.writeoffInsAmt.getValue(), format);
-		BigDecimal woIncrCost = PennantAppUtil.unFormateAmount(this.writeoffIncrCost.getValue(), format);
-		BigDecimal woSuplRent = PennantAppUtil.unFormateAmount(this.writeoffSuplRent.getValue(), format);
 		BigDecimal woSchFee = PennantAppUtil.unFormateAmount(this.writeoffSchFee.getValue(), format);
 
 		List<FinanceScheduleDetail> effectedFinSchDetails = effectFinScheduleData.getFinanceDetail()
@@ -891,34 +811,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 
-				//Reset Write-off Increased Cost 
-				if (woIncrCost.compareTo(BigDecimal.ZERO) > 0) {
-					BigDecimal schIncrCost = curSchdl.getIncrCost()
-							.subtract(curSchdl.getIncrCostPaid().subtract(curSchdl.getWriteoffIncrCost()));
-					if (schIncrCost.compareTo(BigDecimal.ZERO) > 0) {
-						if (woIncrCost.compareTo(schIncrCost) >= 0) {
-							curSchdl.setWriteoffIncrCost(curSchdl.getWriteoffIncrCost().add(schIncrCost));
-							woIncrCost = woIncrCost.subtract(schIncrCost);
-						} else {
-							curSchdl.setWriteoffIncrCost(curSchdl.getWriteoffIncrCost().add(woIncrCost));
-							woIncrCost = BigDecimal.ZERO;
-						}
-					}
-				}
-				//Reset Write-off Suplement Rent 
-				if (woSuplRent.compareTo(BigDecimal.ZERO) > 0) {
-					BigDecimal schSuplRent = curSchdl.getSuplRent()
-							.subtract(curSchdl.getSuplRentPaid().subtract(curSchdl.getWriteoffSuplRent()));
-					if (schSuplRent.compareTo(BigDecimal.ZERO) > 0) {
-						if (woSuplRent.compareTo(schSuplRent) >= 0) {
-							curSchdl.setWriteoffSuplRent(curSchdl.getWriteoffSuplRent().add(schSuplRent));
-							woSuplRent = woSuplRent.subtract(schSuplRent);
-						} else {
-							curSchdl.setWriteoffSuplRent(curSchdl.getWriteoffSuplRent().add(woSuplRent));
-							woSuplRent = BigDecimal.ZERO;
-						}
-					}
-				}
 				//Reset Write-off Schedule Fee
 				if (woSchFee.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal schFee = curSchdl.getFeeSchd()
@@ -1068,8 +960,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.writeoffPriAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPriAmt"));
 		this.writeoffPftAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffPftAmt"));
 		this.writeoffInsAmt.setDisabled(isReadOnly("FinWriteoffDialog_writeoffInsAmt"));
-		this.writeoffIncrCost.setDisabled(isReadOnly("FinWriteoffDialog_writeoffIncrCost"));
-		this.writeoffSuplRent.setDisabled(isReadOnly("FinWriteoffDialog_writeoffSuplRent"));
 		this.writeoffSchFee.setDisabled(isReadOnly("FinWriteoffDialog_writeoffSchFee"));
 		this.adjAmount.setDisabled(isReadOnly("FinWriteoffDialog_adjAmount"));
 
@@ -1091,10 +981,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						|| this.writeoffPftAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
 				&& (this.writeoffInsAmt.getValue() == null
 						|| this.writeoffInsAmt.getValue().compareTo(BigDecimal.ZERO) <= 0)
-				&& (this.writeoffIncrCost.getValue() == null
-						|| this.writeoffIncrCost.getValue().compareTo(BigDecimal.ZERO) <= 0)
-				&& (this.writeoffSuplRent.getValue() == null
-						|| this.writeoffSuplRent.getValue().compareTo(BigDecimal.ZERO) <= 0)
 				&& (this.writeoffSchFee.getValue() == null
 						|| this.writeoffSchFee.getValue().compareTo(BigDecimal.ZERO) <= 0)) {
 
@@ -1105,15 +991,11 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		BigDecimal woPriAmt = PennantAppUtil.unFormateAmount(this.writeoffPriAmt.getValue(), format);
 		BigDecimal woPftAmt = PennantAppUtil.unFormateAmount(this.writeoffPftAmt.getValue(), format);
 		BigDecimal woInsAmt = PennantAppUtil.unFormateAmount(this.writeoffInsAmt.getValue(), format);
-		BigDecimal woIncrCost = PennantAppUtil.unFormateAmount(this.writeoffIncrCost.getValue(), format);
-		BigDecimal woSuplRent = PennantAppUtil.unFormateAmount(this.writeoffSuplRent.getValue(), format);
 		BigDecimal woSchFee = PennantAppUtil.unFormateAmount(this.writeoffSchFee.getValue(), format);
 
 		if (woPriAmt.compareTo(financeWriteoff.getUnPaidSchdPri()) > 0
 				|| woPftAmt.compareTo(financeWriteoff.getUnPaidSchdPft()) > 0
 				|| woInsAmt.compareTo(financeWriteoff.getUnpaidIns()) > 0
-				|| woIncrCost.compareTo(financeWriteoff.getUnpaidIncrCost()) > 0
-				|| woSuplRent.compareTo(financeWriteoff.getUnpaidSuplRent()) > 0
 				|| woSchFee.compareTo(financeWriteoff.getUnpaidSchFee()) > 0) {
 			MessageUtil.showError("Entered Write-off Amount Should be less than Unpaid Balances.");
 			return false;
@@ -1138,10 +1020,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOPftAmt.getValue(), format));
 		writeoff.setWriteoffIns(
 				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOInsAmt.getValue(), format));
-		writeoff.setWrittenoffIncrCost(
-				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOIncrCostAmt.getValue(), format));
-		writeoff.setWrittenoffSuplRent(
-				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOSuplRentAmt.getValue(), format));
 		writeoff.setWrittenoffSchFee(
 				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOSchdFeeAmt.getValue(), format));
 		writeoff.setCurODPri(
@@ -1154,10 +1032,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_UnPaidPftAmt.getValue(), format));
 		writeoff.setUnpaidIns(
 				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_UnPaidInsAmt.getValue(), format));
-		writeoff.setUnpaidIncrCost(PennantApplicationUtil
-				.unFormateAmount(this.label_FinWriteoffDialog_UnPaidIncrCostAmt.getValue(), format));
-		writeoff.setUnpaidSuplRent(PennantApplicationUtil
-				.unFormateAmount(this.label_FinWriteoffDialog_UnPaidSuplRentAmt.getValue(), format));
 		writeoff.setUnpaidSchFee(PennantApplicationUtil
 				.unFormateAmount(this.label_FinWriteoffDialog_UnPaidSchFeeAmt.getValue(), format));
 		writeoff.setPenaltyAmount(
@@ -1168,8 +1042,6 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		writeoff.setWriteoffPrincipal(PennantApplicationUtil.unFormateAmount(this.writeoffPriAmt.getValue(), format));
 		writeoff.setWriteoffProfit(PennantApplicationUtil.unFormateAmount(this.writeoffPftAmt.getValue(), format));
 		writeoff.setWriteoffIns(PennantApplicationUtil.unFormateAmount(this.writeoffInsAmt.getValue(), format));
-		writeoff.setWriteoffIncrCost(PennantApplicationUtil.unFormateAmount(this.writeoffIncrCost.getValue(), format));
-		writeoff.setWriteoffSuplRent(PennantApplicationUtil.unFormateAmount(this.writeoffSuplRent.getValue(), format));
 		writeoff.setWriteoffSchFee(PennantApplicationUtil.unFormateAmount(this.writeoffSchFee.getValue(), format));
 		writeoff.setAdjAmount(PennantApplicationUtil.unFormateAmount(this.adjAmount.getValue(), format));
 		writeoff.setRemarks(this.remarks.getValue());
@@ -1518,9 +1390,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
-					processCompleted = true;
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else if (StringUtils.trimToEmpty(method).contains(FinanceConstants.method_scheduleChange)) {
 					List<String> finTypeList = getFinanceDetailService().getScheduleEffectModuleList(true);

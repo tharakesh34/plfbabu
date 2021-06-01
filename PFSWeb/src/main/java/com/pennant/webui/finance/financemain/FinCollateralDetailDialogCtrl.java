@@ -70,24 +70,18 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.Interface.service.ChequeVerifyInterfaceService;
-import com.pennant.Interface.service.DepositInterfaceService;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.constants.InterfaceConstants;
-import com.pennant.coreinterface.model.chequeverification.ChequeStatus;
-import com.pennant.coreinterface.model.chequeverification.ChequeVerification;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -155,8 +149,6 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	private String moduleType = "";
 
 	private FinCollateralHeaderDialogCtrl finCollateralHeaderDialogCtrl;
-	private DepositInterfaceService depositInterfaceService;
-	private ChequeVerifyInterfaceService chequeVerifyInterfaceService;
 
 	/**
 	 * default constructor.<br>
@@ -1093,26 +1085,9 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 			throws InterruptedException, WrongValueException, InterfaceException, ParseException {
 		logger.debug("Entering" + event.toString());
 
-		FinCollaterals finCollaterals = null;
-
 		// Fetch Deposit Details from T24 interface
 		try {
-			if (!StringUtils.isBlank(this.FDReference.getValue())) {
-				finCollaterals = getDepositInterfaceService().fetchDepositDetails(this.FDReference.getValue());
-			}
-
-			if (finCollaterals != null) {
-				this.FDReference.clearErrorMessage();
-				this.FDCurrency.setValue(finCollaterals.getCcy());
-				this.FDAmount.setValue(PennantAppUtil.formateAmount(finCollaterals.getValue(),
-						CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
-				this.FDTenor.setValue(finCollaterals.getTenor());
-				this.FDRate.setValue(finCollaterals.getRate());
-				this.FDStartDate.setValue(finCollaterals.getStartDate());
-				this.FDMaturityDate.setValue(finCollaterals.getMaturityDate());
-			} else {
-				clearDepositDetails();
-			}
+			clearDepositDetails();
 		} catch (InterfaceException e) {
 			clearDepositDetails();
 			MessageUtil.showError(e);
@@ -1153,81 +1128,7 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 					new String[] { Labels.getLabel("label_FinCollateralDetailDialog_LastChequeNbr.value") }));
 		}
 
-		// Verify Customer cheque details by sending request to middleware
-		try {
-			ChequeVerification chequeVerifyResponse = doChequeVerification();
-
-			if (chequeVerifyResponse != null) {
-				if (StringUtils.equals(chequeVerifyResponse.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
-
-					this.pdcStatus.setValue("Valid range of cheques");
-					this.oldVar_firstChequeNbr = this.firstChequeNbr.getValue();
-					this.oldVar_lastChequeNbr = this.lastChequeNbr.getValue();
-
-				} else {
-					if (chequeVerifyResponse.getChequeStsList() != null) {
-
-						StringBuilder chkStatus = new StringBuilder();
-
-						for (ChequeStatus chequeStatus : chequeVerifyResponse.getChequeStsList()) {
-							if (!StringUtils.isBlank(chkStatus.toString())) {
-								chkStatus.append(PennantConstants.DELIMITER_COMMA);
-							}
-
-							chkStatus.append(chequeStatus.getChequeNo());
-							chkStatus.append("-");
-							chkStatus.append(chequeStatus.getValidity());
-						}
-
-						// setting response status into status field
-						MessageUtil.showError(chkStatus.toString());
-						return;
-					} else {
-						throw new InterfaceException(chequeVerifyResponse.getReturnCode(),
-								chequeVerifyResponse.getReturnText());
-					}
-				}
-			} else {
-				throw new InterfaceException("PTI3001", Labels.getLabel("FAILED_CHEQUE_VERIFICATION"));
-			}
-		} catch (InterfaceException e) {
-			MessageUtil.showError(e);
-		}
-
 		logger.debug("Leaving" + event.toString());
-	}
-
-	/**
-	 * Method for prepare capture cheque details and send to middleware to validate
-	 * 
-	 * @return ChequeVerification
-	 * @throws InterfaceException
-	 */
-	private ChequeVerification doChequeVerification() throws InterfaceException {
-		logger.debug("Entering");
-
-		CustomerDetails customerDetails = getFinCollateralHeaderDialogCtrl().getFinanceDetail().getCustomerDetails();
-		String custBranchCode = customerDetails.getCustomer().getCustDftBranch();
-
-		ChequeVerification chequeVerification = new ChequeVerification();
-		chequeVerification.setCustCIF(customerDetails.getCustomer().getCustCIF());
-		chequeVerification.setFinanceRef(getFinanceMain().getFinReference());
-		chequeVerification.setChequeRangeFrom(this.firstChequeNbr.getValue());
-		chequeVerification.setChequeRangeTo(this.lastChequeNbr.getValue());
-
-		String remarks = this.pdcRemarks.getValue();
-		if (!StringUtils.isBlank(remarks) && remarks.length() > 50) {
-			remarks = remarks.substring(0, 49);
-		}
-		chequeVerification.setRemarks(remarks);
-		chequeVerification.setBranchCode(custBranchCode);
-
-		// Send Cheque verification request to middleware
-		ChequeVerification chequeVerifyResponse = getChequeVerifyInterfaceService()
-				.verifySecurityCheque(chequeVerification);
-
-		logger.debug("Leaving");
-		return chequeVerifyResponse;
 	}
 
 	/**
@@ -1290,21 +1191,4 @@ public class FinCollateralDetailDialogCtrl extends GFCBaseCtrl<FinCollaterals> {
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
 	}
-
-	public DepositInterfaceService getDepositInterfaceService() {
-		return depositInterfaceService;
-	}
-
-	public void setDepositInterfaceService(DepositInterfaceService depositInterfaceService) {
-		this.depositInterfaceService = depositInterfaceService;
-	}
-
-	public ChequeVerifyInterfaceService getChequeVerifyInterfaceService() {
-		return chequeVerifyInterfaceService;
-	}
-
-	public void setChequeVerifyInterfaceService(ChequeVerifyInterfaceService chequeVerifyInterfaceService) {
-		this.chequeVerifyInterfaceService = chequeVerifyInterfaceService;
-	}
-
 }

@@ -61,7 +61,6 @@ import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
 import com.pennant.backend.dao.limit.LimitStructureDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
-import com.pennant.backend.dao.rmtmasters.FinTypeInsuranceDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rmtmasters.ScoringMetricsDAO;
@@ -95,7 +94,6 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 	private LimitGroupService limitGroupService;
 	private LimitStructureDAO limitStructureDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
-	private FinTypeInsuranceDAO finTypeInsuranceDAO;
 	private TransactionEntryDAO transactionEntryDAO;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
 	private CheckListDAO checkListDAO;
@@ -532,9 +530,6 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 			case RuleConstants.MODULE_FEES:
 				count = finTypeFeesDAO.getFinTypeFeesByRuleCode(rule.getRuleCode(), "_View");
 				break;
-			case RuleConstants.MODULE_INSRULE:
-				count = finTypeInsuranceDAO.getFinTypeInsuranceByRuleCode(rule.getRuleCode(), "_View");
-				break;
 			case RuleConstants.MODULE_SUBHEAD:
 				count = transactionEntryDAO.getTransactionEntryByRuleCode(rule.getRuleCode(), "_View");
 				break;
@@ -671,14 +666,6 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
 		this.finTypeFeesDAO = finTypeFeesDAO;
-	}
-
-	public FinTypeInsuranceDAO getFinTypeInsuranceDAO() {
-		return finTypeInsuranceDAO;
-	}
-
-	public void setFinTypeInsuranceDAO(FinTypeInsuranceDAO finTypeInsuranceDAO) {
-		this.finTypeInsuranceDAO = finTypeInsuranceDAO;
 	}
 
 	public TransactionEntryDAO getTransactionEntryDAO() {

@@ -114,12 +114,6 @@ public class RemoveMaintenanceProcess implements Tasklet {
 			sqlStatement.executeUpdate();
 			sqlStatement.close();
 
-			//14. Finance Contractor Asset Details
-			sqlStatement = connection
-					.prepareStatement(prepareDeleteQuery("FinContractorAstDtls", "FinReference", true, true));
-			sqlStatement.executeUpdate();
-			sqlStatement.close();
-
 			//15. Finance Main Details
 			sqlStatement = connection.prepareStatement(prepareDeleteQuery("FinanceMain", "FinReference", false, true));
 			sqlStatement.executeUpdate();

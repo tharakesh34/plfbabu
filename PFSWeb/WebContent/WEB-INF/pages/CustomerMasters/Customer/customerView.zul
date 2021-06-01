@@ -241,7 +241,7 @@
 													</row>
 													<row>
 														<label id="custDOBB" sclass="labelweightt" />
-														<label id="custArabicName" sclass="labelweightt" />
+														<label id="custLocalLngName" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
 																<label id="custNationality" sclass="labelweightt" style="padding-left:20px" />
@@ -514,7 +514,7 @@
 														<space />
 													</row>
 													<row>
-														<label value="${c:l('label_CustomerDialog_CustArabicNamee.value')}" sclass="labelfont" />
+														<label value="${c:l('label_CustomerDialog_CustLocalLngNamee.value')}" sclass="labelfont" />
 														<label value="${c:l('label_CustomerDialog_CustNationality.value')}" sclass="labelfont" />
 														<label value="${c:l('label_CustomerDialog_CustRO1.value')}" sclass="labelfont" />
 														<label value="${c:l('label_CustomerDialog_CORPCustCOB.value')}" sclass="labelfont" />
@@ -522,7 +522,7 @@
 														<label value="${c:l('label_CustomerDialog_CustIndustry.value')}" sclass="labelfont" />
 													</row>
 													<row>
-														<label id="custArabicNamee" sclass="labelweightt" />
+														<label id="custLocalLngNamee" sclass="labelweightt" />
 														<hlayout sclass="removewhitestrips">
 															<vlayout>
 																<label id="custNationalityy" sclass="labelweightt" style="padding-left:20px" />

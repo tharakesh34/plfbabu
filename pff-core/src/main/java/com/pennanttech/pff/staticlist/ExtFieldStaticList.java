@@ -84,7 +84,6 @@ public final class ExtFieldStaticList {
 		list.add("NationalityCode");
 		list.add("OtherBankFinanceType");
 		list.add("PhoneType");
-		list.add("PoliceCaseDetail");
 		list.add("Product");
 		list.add("Profession");
 		list.add("PromotionCode");

@@ -183,18 +183,6 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinanceFlags or FinanceFlags_Bonds_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Finance Flags by key finRef
-	 * 
-	 * @param Sukuk
-	 *            Brokers (finRef)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
 	public void deleteList(String finRef, String module, String type) {
 		logger.debug("Entering");
@@ -212,18 +200,6 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method Deletes the Record from the FinanceFlags or FinanceFlags_Bonds_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Finance Flags by key finRef
-	 * 
-	 * @param Sukuk
-	 *            Brokers (finRef)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	public void delete(String finRef, String flagCode, String moduleName, String type) {
 		logger.debug("Entering");
 		FinFlagsDetail finFlagsDetail = new FinFlagsDetail();

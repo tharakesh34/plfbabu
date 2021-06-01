@@ -33,12 +33,12 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.others.external.reports.LoanReport;
 import com.pennant.backend.service.others.external.reports.LoanMasterReportService;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.equation.util.DateUtility;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -116,8 +116,8 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 						new String[] { startYearLabel, String.valueOf(appYear) }));
 				return;
 			}
-			fromDate = DateUtility.getUtilDate("01-01-" + year, "dd-MM-yyyy");
-			toDate = DateUtility.getUtilDate("31-12-" + year, "dd-MM-yyyy");
+			fromDate = DateUtility.getDate("01-01-" + year, "dd-MM-yyyy");
+			toDate = DateUtility.getDate("31-12-" + year, "dd-MM-yyyy");
 		}
 		List<LoanReport> loanReports = loanMasterReportService.getLoanReports(finRef, fromDate, toDate);
 		if (CollectionUtils.isNotEmpty(loanReports)) {
@@ -265,15 +265,15 @@ public class LoanMasterReportCtrl extends GFCBaseCtrl<LoanReport> {
 		list.add(String.valueOf(" "));//Scheme
 		//First Disb Date
 		Date firstDisbDate = loanReport.getFirstDisbDate();
-		if (firstDisbDate != null && DateUtility.formatDate(firstDisbDate, "dd-MM-yyyy") != null) {
-			list.add(DateUtility.formatDate(firstDisbDate, "dd-MM-yyyy"));
+		if (firstDisbDate != null && DateUtility.format(firstDisbDate, "dd-MM-yyyy") != null) {
+			list.add(DateUtility.format(firstDisbDate, "dd-MM-yyyy"));
 		} else {
 			list.add(" ");
 		}
 		//Last Disb Date
 		Date lastDisbDate = loanReport.getLastDisbDate();
-		if (lastDisbDate != null && DateUtility.formatDate(lastDisbDate, "dd-MM-yyyy") != null) {
-			list.add(DateUtility.formatDate(lastDisbDate, "dd-MM-yyyy"));
+		if (lastDisbDate != null && DateUtility.format(lastDisbDate, "dd-MM-yyyy") != null) {
+			list.add(DateUtility.format(lastDisbDate, "dd-MM-yyyy"));
 		} else {
 			list.add(" ");
 		}

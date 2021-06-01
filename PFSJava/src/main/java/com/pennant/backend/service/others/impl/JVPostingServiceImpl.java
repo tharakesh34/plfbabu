@@ -74,7 +74,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.UploadConstants;
-import com.pennant.coreinterface.model.CoreBankAccountDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -231,65 +230,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	public boolean doAccountValidation(JVPosting jVPosting, List<JVPostingEntry> distinctEntryList) {
 		logger.debug("Entering");
 
-		boolean isValid = validateAccounts(distinctEntryList);
-
 		// METHOD TO CHECK ALL THE RECORDS ARE VALIDATED OR NOT
-		if (isValid) {
-			jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
-		} else {
-			jVPosting.setValidationStatus(PennantConstants.POSTSTS_FAILED);
-		}
+		jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
 
 		logger.debug("Leaving");
 		return jVPosting.getValidationStatus().equals(PennantConstants.POSTSTS_SUCCESS);
-	}
-
-	private boolean validateAccounts(List<JVPostingEntry> distinctEntryList) {
-		logger.debug("Entering");
-		boolean validationSuccess = true;
-		List<CoreBankAccountDetail> cbAccountsList = new ArrayList<CoreBankAccountDetail>();
-		for (JVPostingEntry aJVPostingEntry : distinctEntryList) {
-			CoreBankAccountDetail iAccount = new CoreBankAccountDetail();
-			iAccount.setAccountNumber(aJVPostingEntry.getAccount());
-			cbAccountsList.add(iAccount);
-		}
-		// Fetch account ids from Equation
-		try {
-			cbAccountsList = getAccountInterfaceService().checkAccountID(cbAccountsList);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			for (JVPostingEntry jVPostingEntry : distinctEntryList) {
-				jVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
-				jVPostingEntry
-						.setValidationStatus(PennantConstants.POSTSTS_FAILED + " : " + (e instanceof InterfaceException
-								? ((InterfaceException) e).getErrorMessage() : e.getMessage()));
-			}
-			return false;
-		}
-
-		if (cbAccountsList != null && cbAccountsList.size() > 0) {
-			for (JVPostingEntry aJVPostingEntry : distinctEntryList) {
-				for (CoreBankAccountDetail accountDetail : cbAccountsList) {
-					if (aJVPostingEntry.getAccount().equalsIgnoreCase(accountDetail.getAccountNumber())) {
-						if (!StringUtils.equals(accountDetail.getErrorCode(), "0000")
-								&& StringUtils.isNotEmpty(accountDetail.getErrorCode())) {
-							aJVPostingEntry.setValidationStatus(
-									accountDetail.getErrorCode() + ":" + accountDetail.getErrorMessage());
-							validationSuccess = false;
-						} else {
-							if (aJVPostingEntry.isExternalAccount()) {
-								aJVPostingEntry.setAcType(accountDetail.getAcType());
-								aJVPostingEntry.setAccountName(accountDetail.getAcShrtName());
-								aJVPostingEntry.setAccCCy(accountDetail.getAcCcy());
-							}
-							aJVPostingEntry.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
-						}
-					}
-				}
-			}
-		}
-		logger.debug("Leaving");
-		return validationSuccess;
 	}
 
 	/**

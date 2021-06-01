@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 		"finMaxAmount", "finCategory", "finAssetType", "finIsDwPayRequired", "downPayRule", "downPayRuleDesc",
 		"fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "finDepreciationReq", "limitRequired", "overrideLimit",
 		"finCollateralReq", "finCollateralOvrride", "collateralType", "partiallySecured", "allowRIAInvestment",
-		"alwAdvanceRent", "finDivision", "finIsActive", "allowDownpayPgm", "rollOverFinance", "rollOverFrq",
+		"finDivision", "finIsActive",
 		"finCommitmentReq", "finCommitmentOvrride", "finAcType", "lovDescFinAcTypeName", "finContingentAcType",
 		"lovDescFinContingentAcTypeName", "finBankContingentAcType", "lovDescFinBankContAcTypeName",
 		"finProvisionAcType", "lovDescFinProvisionAcTypeName", "finSuspAcType", "lovDescFinSuspAcTypeName",
@@ -60,12 +60,8 @@ public class BasicDetail implements Serializable {
 	private boolean finCollateralOvrride;
 	private String collateralType;
 	private boolean allowRIAInvestment;
-	private boolean alwAdvanceRent;
 	private String finDivision;
 	private boolean finIsActive;
-	private boolean allowDownpayPgm;
-	private boolean rollOverFinance;
-	private String rollOverFrq;
 	private boolean finCommitmentReq;
 	private boolean finCommitmentOvrride;
 	private String finAcType;
@@ -258,14 +254,6 @@ public class BasicDetail implements Serializable {
 		this.allowRIAInvestment = allowRIAInvestment;
 	}
 
-	public boolean isAlwAdvanceRent() {
-		return alwAdvanceRent;
-	}
-
-	public void setAlwAdvanceRent(boolean alwAdvanceRent) {
-		this.alwAdvanceRent = alwAdvanceRent;
-	}
-
 	public String getFinDivision() {
 		return finDivision;
 	}
@@ -280,30 +268,6 @@ public class BasicDetail implements Serializable {
 
 	public void setFinIsActive(boolean finIsActive) {
 		this.finIsActive = finIsActive;
-	}
-
-	public boolean isAllowDownpayPgm() {
-		return allowDownpayPgm;
-	}
-
-	public void setAllowDownpayPgm(boolean allowDownpayPgm) {
-		this.allowDownpayPgm = allowDownpayPgm;
-	}
-
-	public boolean isRollOverFinance() {
-		return rollOverFinance;
-	}
-
-	public void setRollOverFinance(boolean rollOverFinance) {
-		this.rollOverFinance = rollOverFinance;
-	}
-
-	public String getRollOverFrq() {
-		return rollOverFrq;
-	}
-
-	public void setRollOverFrq(String rollOverFrq) {
-		this.rollOverFrq = rollOverFrq;
 	}
 
 	public boolean isFinCommitmentReq() {

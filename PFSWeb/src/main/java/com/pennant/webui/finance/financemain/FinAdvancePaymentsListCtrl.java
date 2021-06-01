@@ -302,7 +302,6 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param commodityHeader
 	 * 
 	 */
 	public void doWriteBeanToComponents() {

@@ -125,11 +125,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	protected Listheader listHeader_cashFlowEffect;
 	protected Listheader listHeader_vSProfit;
 	protected Listheader listHeader_orgPrincipalDue;
-	protected Listheader listheader_SupplementRent;
-	protected Listheader listheader_IncreasedCost;
-	protected Listheader listheader_SchAdvProfit;
-	protected Listheader listheader_AdvTotal;
-	protected Listheader listheader_Rebate;
 	protected Listheader listheader_Total;
 	protected Listheader listheader_TDSAmount;
 
@@ -218,19 +213,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				this.listHeader_cashFlowEffect.setLabel(Labels.getLabel("listheader_sellingPricePft.label"));
 				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_rebateBucket.label"));
 			}
-		}
-
-		String product = getFinScheduleData().getFinanceType().getFinCategory();
-		if (StringUtils.equals(product, FinanceConstants.PRODUCT_STRUCTMUR)) {
-			this.listheader_SchAdvProfit.setVisible(true);
-			this.listheader_AdvTotal.setVisible(true);
-			this.listheader_Rebate.setVisible(true);
-			this.listheader_Total.setVisible(false);
-		} else if ((StringUtils.equals(product, FinanceConstants.PRODUCT_IJARAH)
-				|| StringUtils.equals(product, FinanceConstants.PRODUCT_FWIJARAH))
-				|| StringUtils.equals(product, FinanceConstants.PRODUCT_ISTISNA)) {
-			this.listheader_SupplementRent.setVisible(true);
-			this.listheader_IncreasedCost.setVisible(true);
 		}
 
 		this.listheader_TDSAmount.setVisible(TDSCalculator.isTDSApplicable(getFinScheduleData().getFinanceMain()));
@@ -389,33 +371,23 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		}
 
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(schedules));
-		BigDecimal totalAdvPft = BigDecimal.ZERO;
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		for (int i = 0; i < sdSize; i++) {
 			FinanceScheduleDetail curSchd = schedules.get(i);
 			boolean showRate = false;
-			boolean showAdvRate = false;
 			if (i == 0) {
 				prvSchDetail = curSchd;
 				showRate = true;
 
-				if (finScheduleData.getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_STRUCTMUR)) {
-					showAdvRate = true;
-				}
 			} else {
 				prvSchDetail = schedules.get(i - 1);
 				if (curSchd.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) != 0) {
 					showRate = true;
 				}
-				if (curSchd.getAdvCalRate().compareTo(prvSchDetail.getAdvCalRate()) != 0) {
-					showAdvRate = true;
-				}
 			}
 			// ####_0.2
 			doFillIrrDetails(finScheduleData.getiRRDetails());
-			// Preparing Total Advance Profit Amount
-			totalAdvPft = totalAdvPft.add(curSchd.getAdvProfit());
 
 			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("finSchdData", finScheduleData);
@@ -424,8 +396,6 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 			map.put("penaltyDetailsMap", penaltyDetailsMap);
 			map.put("accrueValue", finScheduleData.getAccrueValue());
 			map.put("window", this.window_ScheduleEnquiryDialog);
-			map.put("totalAdvPft", totalAdvPft);
-			map.put("showAdvRate", showAdvRate);
 			map.put("formatter", formatter);
 
 			finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate,

@@ -39,9 +39,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
-import com.pennant.backend.model.finance.Insurance;
 import com.pennant.backend.model.finance.JointAccountDetail;
-import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -104,7 +102,6 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 			financeDetail.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
-			financeDetail.setEtihadCreditBureauDetail(null);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -194,16 +191,11 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		finScheduleData.getFinanceMain().setRecordType("");
 
 		finScheduleData.setStepPolicyDetails(new ArrayList<FinanceStepPolicyDetail>(1));
-		finScheduleData.setInsuranceList(new ArrayList<Insurance>());
 		finScheduleData.setFinODPenaltyRate(null);
 		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
 
 		aFinanceDetail.setFinContributorHeader(null);
-		aFinanceDetail.setIndicativeTermDetail(null);
-		aFinanceDetail.setEtihadCreditBureauDetail(null);
-		aFinanceDetail.setBundledProductsDetail(null);
 		aFinanceDetail.setTatDetail(null);
-		aFinanceDetail.setFinAssetEvaluation(null);
 		aFinanceDetail.setFinanceCheckList(new ArrayList<FinanceCheckListReference>(1));
 		aFinanceDetail.setCheckList(new ArrayList<FinanceReferenceDetail>(1));
 		aFinanceDetail.setAggrementList(new ArrayList<FinanceReferenceDetail>(1));
@@ -211,7 +203,6 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		aFinanceDetail.setFinElgRuleList(new ArrayList<FinanceEligibilityDetail>(1));
 		aFinanceDetail.setGurantorsDetailList(new ArrayList<GuarantorDetail>(1));
 		aFinanceDetail.setJountAccountDetailList(new ArrayList<JointAccountDetail>(1));
-		aFinanceDetail.setContractorAssetDetails(new ArrayList<ContractorAssetDetail>(1));
 		aFinanceDetail.setFinanceDeviations(new ArrayList<FinanceDeviations>());
 		aFinanceDetail.setApprovedFinanceDeviations(new ArrayList<FinanceDeviations>());
 		aFinanceDetail.setFinanceCollaterals(new ArrayList<FinCollaterals>(1));

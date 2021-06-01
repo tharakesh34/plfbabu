@@ -409,8 +409,6 @@
 										<listheader id="listheader_Refund" visible="false" label="${c:l('listheader_RefundPft.label')}" sort="false" hflex="min" />
 										<listheader id="listheader_InsPayment" label="${c:l('listheader_InsPayment.label')}" sort="false" visible="false" hflex="min" />
 										<listheader id="listheader_SchdFee" label="${c:l('listheader_SchdFee.label')}" sort="false" visible="false" hflex="min" />
-										<listheader id="listheader_SuplRent" label="${c:l('listheader_SuplRent.label')}" sort="false" visible="false" hflex="min" />
-										<listheader id="listheader_IncrCost" label="${c:l('listheader_IncrCost.label')}" sort="false" visible="false" hflex="min" />
 										<listheader label="${c:l('listheader_NetPayment.label')}" sort="false" hflex="min" />
 										<listheader label="${c:l('listheader_RpyAmtBal.label')}" sort="false" hflex="min" />
 									</listhead>

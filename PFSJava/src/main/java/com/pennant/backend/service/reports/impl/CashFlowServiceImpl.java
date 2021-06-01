@@ -27,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.reports.CashFlowReportDAO;
 import com.pennant.backend.model.finance.CashFlow;
@@ -36,7 +37,6 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.reports.CashFlowService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.equation.util.DateUtility;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -296,8 +296,8 @@ public class CashFlowServiceImpl implements CashFlowService {
 	private List<String> prepareCashFlowValuesFromObject(CashFlow cashFlow) {
 		ArrayList<String> list = new ArrayList<>();
 		Date date = cashFlow.getDate();
-		if (date != null && DateUtility.formatDate(date, "dd-MM-yyyy") != null) {
-			list.add(DateUtility.formatDate(date, "dd-MM-yyyy"));
+		if (date != null && DateUtility.format(date, "dd-MM-yyyy") != null) {
+			list.add(DateUtility.format(date, "dd-MM-yyyy"));
 		} else {
 			list.add(" ");
 		}

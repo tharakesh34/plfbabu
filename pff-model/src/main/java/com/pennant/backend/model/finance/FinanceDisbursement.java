@@ -76,32 +76,18 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	@XmlElement
 	private String disbType;
 	private String disbDesc;
-	private long disbExpType;
-	private String lovDescDisbExpType;
-	private long contractorId = Long.MIN_VALUE;
-	private BigDecimal disbRetPerc = BigDecimal.ZERO;
-	private BigDecimal disbRetAmount = BigDecimal.ZERO;
-	private BigDecimal disbRetPaid = BigDecimal.ZERO;
-	private Date retPaidDate = null;
 	private boolean autoDisb;
 	@XmlElement
 	private String disbAccountId;
 	@XmlElement
 	private BigDecimal disbAmount = BigDecimal.ZERO;
 	private Date disbReqDate = null;
-	private BigDecimal disbClaim = BigDecimal.ZERO;
-	private boolean disbDisbursed;
 	@XmlElement
 	private BigDecimal feeChargeAmt = BigDecimal.ZERO;
 	private BigDecimal insuranceAmt = BigDecimal.ZERO;
 	private boolean disbIsActive;
 	private String disbStatus;
 	private String disbRemarks;
-	private BigDecimal netAdvDue = BigDecimal.ZERO;
-	private BigDecimal netRetDue = BigDecimal.ZERO;
-	private String consultFeeFrq;
-	private Date consultFeeStartDate;
-	private Date consultFeeEndDate;
 	private boolean quickDisb;
 
 	private long linkedTranId;
@@ -150,29 +136,15 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		entity.setLogKey(this.logKey);
 		entity.setDisbType(this.disbType);
 		entity.setDisbDesc(this.disbDesc);
-		entity.setDisbExpType(this.disbExpType);
-		entity.setLovDescDisbExpType(this.lovDescDisbExpType);
-		entity.setContractorId(this.contractorId);
-		entity.setDisbRetPerc(this.disbRetPerc);
-		entity.setDisbRetAmount(this.disbRetAmount);
-		entity.setDisbRetPaid(this.disbRetPaid);
-		entity.setRetPaidDate(this.retPaidDate);
 		entity.setAutoDisb(this.autoDisb);
 		entity.setDisbAccountId(this.disbAccountId);
 		entity.setDisbAmount(this.disbAmount);
 		entity.setDisbReqDate(this.disbReqDate);
-		entity.setDisbClaim(this.disbClaim);
-		entity.setDisbDisbursed(this.disbDisbursed);
 		entity.setFeeChargeAmt(this.feeChargeAmt);
 		entity.setInsuranceAmt(this.insuranceAmt);
 		entity.setDisbIsActive(this.disbIsActive);
 		entity.setDisbStatus(this.disbStatus);
 		entity.setDisbRemarks(this.disbRemarks);
-		entity.setNetAdvDue(this.netAdvDue);
-		entity.setNetRetDue(this.netRetDue);
-		entity.setConsultFeeFrq(this.consultFeeFrq);
-		entity.setConsultFeeStartDate(this.consultFeeStartDate);
-		entity.setConsultFeeEndDate(this.consultFeeEndDate);
 		entity.setQuickDisb(this.quickDisb);
 		entity.setLinkedTranId(this.linkedTranId);
 		entity.setNewRecord(this.newRecord);
@@ -249,54 +221,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		this.disbType = disbType;
 	}
 
-	public long getDisbExpType() {
-		return disbExpType;
-	}
-
-	public void setDisbExpType(long disbExpType) {
-		this.disbExpType = disbExpType;
-	}
-
-	public String getLovDescDisbExpType() {
-		return lovDescDisbExpType;
-	}
-
-	public void setLovDescDisbExpType(String lovDescDisbExpType) {
-		this.lovDescDisbExpType = lovDescDisbExpType;
-	}
-
-	public BigDecimal getDisbRetPerc() {
-		return disbRetPerc;
-	}
-
-	public void setDisbRetPerc(BigDecimal disbRetPerc) {
-		this.disbRetPerc = disbRetPerc;
-	}
-
-	public BigDecimal getDisbRetAmount() {
-		return disbRetAmount;
-	}
-
-	public void setDisbRetAmount(BigDecimal disbRetAmount) {
-		this.disbRetAmount = disbRetAmount;
-	}
-
-	public void setDisbRetPaid(BigDecimal disbRetPaid) {
-		this.disbRetPaid = disbRetPaid;
-	}
-
-	public BigDecimal getDisbRetPaid() {
-		return disbRetPaid;
-	}
-
-	public void setRetPaidDate(Date retPaidDate) {
-		this.retPaidDate = retPaidDate;
-	}
-
-	public Date getRetPaidDate() {
-		return retPaidDate;
-	}
-
 	public boolean isAutoDisb() {
 		return autoDisb;
 	}
@@ -345,22 +269,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		this.disbReqDate = disbReqDate;
 	}
 
-	public boolean isDisbDisbursed() {
-		return disbDisbursed;
-	}
-
-	public void setDisbDisbursed(boolean disbDisbursed) {
-		this.disbDisbursed = disbDisbursed;
-	}
-
-	public void setDisbClaim(BigDecimal disbClaim) {
-		this.disbClaim = disbClaim;
-	}
-
-	public BigDecimal getDisbClaim() {
-		return disbClaim;
-	}
-
 	public void setFeeChargeAmt(BigDecimal feeChargeAmt) {
 		this.feeChargeAmt = feeChargeAmt;
 	}
@@ -391,22 +299,6 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
-	}
-
-	public void setNetAdvDue(BigDecimal netAdvDue) {
-		this.netAdvDue = netAdvDue;
-	}
-
-	public BigDecimal getNetAdvDue() {
-		return netAdvDue;
-	}
-
-	public void setNetRetDue(BigDecimal netRetDue) {
-		this.netRetDue = netRetDue;
-	}
-
-	public BigDecimal getNetRetDue() {
-		return netRetDue;
 	}
 
 	public boolean isNewRecord() {
@@ -449,44 +341,12 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		return logKey;
 	}
 
-	public String getConsultFeeFrq() {
-		return consultFeeFrq;
-	}
-
-	public void setConsultFeeFrq(String consultFeeFrq) {
-		this.consultFeeFrq = consultFeeFrq;
-	}
-
-	public Date getConsultFeeStartDate() {
-		return consultFeeStartDate;
-	}
-
-	public void setConsultFeeStartDate(Date consultFeeStartDate) {
-		this.consultFeeStartDate = consultFeeStartDate;
-	}
-
-	public Date getConsultFeeEndDate() {
-		return consultFeeEndDate;
-	}
-
-	public void setConsultFeeEndDate(Date consultFeeEndDate) {
-		this.consultFeeEndDate = consultFeeEndDate;
-	}
-
 	public boolean isQuickDisb() {
 		return quickDisb;
 	}
 
 	public void setQuickDisb(boolean quickDisb) {
 		this.quickDisb = quickDisb;
-	}
-
-	public long getContractorId() {
-		return contractorId;
-	}
-
-	public void setContractorId(long contractorId) {
-		this.contractorId = contractorId;
 	}
 
 	public BigDecimal getInsuranceAmt() {

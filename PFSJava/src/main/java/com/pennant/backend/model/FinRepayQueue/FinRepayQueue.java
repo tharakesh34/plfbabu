@@ -44,20 +44,6 @@ public class FinRepayQueue {
 	private BigDecimal schdInsPayNow = BigDecimal.ZERO;
 	private BigDecimal schdInsWaivedNow = BigDecimal.ZERO;
 
-	// Supplementary Rent
-	private BigDecimal schdSuplRent = BigDecimal.ZERO;
-	private BigDecimal schdSuplRentPaid = BigDecimal.ZERO;
-	private BigDecimal schdSuplRentBal = BigDecimal.ZERO;
-	private BigDecimal schdSuplRentPayNow = BigDecimal.ZERO;
-	private BigDecimal schdSuplRentWaivedNow = BigDecimal.ZERO;
-
-	// Increased Cost Amount
-	private BigDecimal schdIncrCost = BigDecimal.ZERO;
-	private BigDecimal schdIncrCostPaid = BigDecimal.ZERO;
-	private BigDecimal schdIncrCostBal = BigDecimal.ZERO;
-	private BigDecimal schdIncrCostPayNow = BigDecimal.ZERO;
-	private BigDecimal schdIncrCostWaivedNow = BigDecimal.ZERO;
-
 	// External Fields Used for EOD process
 	private BigDecimal refundAmount = BigDecimal.ZERO;
 	private boolean rcdNotExist = false;
@@ -82,11 +68,7 @@ public class FinRepayQueue {
 	private BigDecimal latePayPftPayNow = BigDecimal.ZERO;
 	private BigDecimal latePayPftWaivedNow = BigDecimal.ZERO;
 	private BigDecimal latePayPftBal = BigDecimal.ZERO;
-
-	//Advised profit Rates
-	private BigDecimal advProfit = BigDecimal.ZERO;
-	private BigDecimal rebate = BigDecimal.ZERO;
-
+	
 	private TaxHeader taxHeader;
 
 	public FinRepayQueue() {
@@ -345,70 +327,6 @@ public class FinRepayQueue {
 		this.schdInsPayNow = schdInsPayNow;
 	}
 
-	public BigDecimal getSchdSuplRent() {
-		return schdSuplRent;
-	}
-
-	public void setSchdSuplRent(BigDecimal schdSuplRent) {
-		this.schdSuplRent = schdSuplRent;
-	}
-
-	public BigDecimal getSchdSuplRentPaid() {
-		return schdSuplRentPaid;
-	}
-
-	public void setSchdSuplRentPaid(BigDecimal schdSuplRentPaid) {
-		this.schdSuplRentPaid = schdSuplRentPaid;
-	}
-
-	public BigDecimal getSchdSuplRentBal() {
-		return schdSuplRentBal;
-	}
-
-	public void setSchdSuplRentBal(BigDecimal schdSuplRentBal) {
-		this.schdSuplRentBal = schdSuplRentBal;
-	}
-
-	public BigDecimal getSchdSuplRentPayNow() {
-		return schdSuplRentPayNow;
-	}
-
-	public void setSchdSuplRentPayNow(BigDecimal schdSuplRentPayNow) {
-		this.schdSuplRentPayNow = schdSuplRentPayNow;
-	}
-
-	public BigDecimal getSchdIncrCost() {
-		return schdIncrCost;
-	}
-
-	public void setSchdIncrCost(BigDecimal schdIncrCost) {
-		this.schdIncrCost = schdIncrCost;
-	}
-
-	public BigDecimal getSchdIncrCostPaid() {
-		return schdIncrCostPaid;
-	}
-
-	public void setSchdIncrCostPaid(BigDecimal schdIncrCostPaid) {
-		this.schdIncrCostPaid = schdIncrCostPaid;
-	}
-
-	public BigDecimal getSchdIncrCostBal() {
-		return schdIncrCostBal;
-	}
-
-	public void setSchdIncrCostBal(BigDecimal schdIncrCostBal) {
-		this.schdIncrCostBal = schdIncrCostBal;
-	}
-
-	public BigDecimal getSchdIncrCostPayNow() {
-		return schdIncrCostPayNow;
-	}
-
-	public void setSchdIncrCostPayNow(BigDecimal schdIncrCostPayNow) {
-		this.schdIncrCostPayNow = schdIncrCostPayNow;
-	}
-
 	public BigDecimal getAcrTillLBD() {
 		return acrTillLBD;
 	}
@@ -497,22 +415,6 @@ public class FinRepayQueue {
 		this.latePayPftBal = latePayPftBal;
 	}
 
-	public BigDecimal getAdvProfit() {
-		return advProfit;
-	}
-
-	public void setAdvProfit(BigDecimal advProfit) {
-		this.advProfit = advProfit;
-	}
-
-	public BigDecimal getRebate() {
-		return rebate;
-	}
-
-	public void setRebate(BigDecimal rebate) {
-		this.rebate = rebate;
-	}
-
 	public BigDecimal getSchdPftWaivedNow() {
 		return schdPftWaivedNow;
 	}
@@ -551,22 +453,6 @@ public class FinRepayQueue {
 
 	public void setLatePayPftWaivedNow(BigDecimal latePayPftWaivedNow) {
 		this.latePayPftWaivedNow = latePayPftWaivedNow;
-	}
-
-	public BigDecimal getSchdSuplRentWaivedNow() {
-		return schdSuplRentWaivedNow;
-	}
-
-	public void setSchdSuplRentWaivedNow(BigDecimal schdSuplRentWaivedNow) {
-		this.schdSuplRentWaivedNow = schdSuplRentWaivedNow;
-	}
-
-	public BigDecimal getSchdIncrCostWaivedNow() {
-		return schdIncrCostWaivedNow;
-	}
-
-	public void setSchdIncrCostWaivedNow(BigDecimal schdIncrCostWaivedNow) {
-		this.schdIncrCostWaivedNow = schdIncrCostWaivedNow;
 	}
 
 	public BigDecimal getSchdTdsPayNow() {

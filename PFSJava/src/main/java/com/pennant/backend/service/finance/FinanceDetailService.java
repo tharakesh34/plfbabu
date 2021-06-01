@@ -59,8 +59,6 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
-import com.pennant.backend.model.finance.BulkDefermentChange;
-import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCustomerDetails;
@@ -75,9 +73,7 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
-import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.TATDetail;
-import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -159,24 +155,11 @@ public interface FinanceDetailService {
 
 	FinanceSummary getFinanceProfitDetails(String finRef);
 
-	List<BulkProcessDetails> getIjaraBulkRateFinList(Date fromDate, Date toDate);
-
-	boolean bulkRateChangeFinances(List<BulkProcessDetails> bulkRateChangeFinances, String recalType,
-			BigDecimal rateChange) throws InterfaceException, IllegalAccessException, InvocationTargetException;
-
-	List<BulkDefermentChange> getBulkDefermentFinList(Date fromDate, Date toDate);
-
-	boolean bulkDefermentChanges(List<BulkDefermentChange> defermentChangeFinances, String recalType,
-			boolean excludeDeferment, String addTermAfter, Date calFromDate, Date calToDate)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
-
 	FinanceMain fetchConvertedAmounts(FinanceMain financeMain, boolean calAllAmounts);
 
 	FinanceProfitDetail getFinProfitDetailsById(String finReference);
 
 	boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName);
-
-	List<ContractorAssetDetail> getContractorAssetDetailList(String finReference);
 
 	List<Rule> getFeeRuleDetails(FinanceType finType, Date startDate, boolean isWIF);
 
@@ -218,14 +201,6 @@ public interface FinanceDetailService {
 	FinanceMain getFinanceMain(String finReference, String type);
 
 	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException;
-
-	List<String> getRollOverLimitRefList();
-
-	List<String> getRollOverFinTypeList(String limitRef);
-
-	List<Date> getRollOverNextDateList(String limitRef, String finType);
-
-	List<RolledoverFinanceDetail> getRolloverFinanceList(String value, String value2, Date dbDate);
 
 	FinanceDetail getPreApprovalFinanceDetailsById(String finReference);
 

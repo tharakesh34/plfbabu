@@ -500,7 +500,6 @@ public class FinanceDetailController extends SummaryDetailService {
 		response.setRepayInstructions(null);
 		response.setRateInstruction(null);
 		response.setFinFeeDetailList(null);
-		response.setInsuranceList(null);
 		response.setStepPolicyDetails(null);
 		response.setFinanceScheduleDetails(null);
 		response.setPlanEMIHDates(null);
@@ -570,9 +569,6 @@ public class FinanceDetailController extends SummaryDetailService {
 					financeMain.setGrcSchdMthd(null);
 					financeMain.setGrcMinRate(null);
 					financeMain.setGrcMaxRate(null);
-					financeMain.setGrcAdvPftRate(null);
-					financeMain.setGrcAdvBaseRate(null);
-					financeMain.setGrcAdvMargin(null);
 				}
 
 				// Summary details

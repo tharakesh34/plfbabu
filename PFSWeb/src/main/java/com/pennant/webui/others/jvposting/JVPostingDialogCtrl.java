@@ -1487,9 +1487,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 
 				String method = serviceTasks.split(";")[0];
 
-				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_DDAMaintenance)) {
-					processCompleted = true;
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckCollaterals)) {
 					processCompleted = true;
 				} else {
 					JVPosting tJVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();

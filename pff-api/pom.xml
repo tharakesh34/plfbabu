@@ -24,17 +24,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
-			<artifactId>PLFInterface</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>${pff.groupId}</groupId>
 			<artifactId>PFSJava</artifactId>
 			<version>${project.version}</version>
 			<exclusions>

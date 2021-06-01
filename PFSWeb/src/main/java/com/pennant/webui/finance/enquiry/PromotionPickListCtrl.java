@@ -353,7 +353,6 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 					fieldsandvalues.put("noOfTerms", detail.getFinDftTerms());
 
 					fieldsandvalues.put("stepFinance", detail.isStepFinance());
-					fieldsandvalues.put("alwDPSP", detail.isAllowDownpayPgm());
 					fieldsandvalues.put("alwPlannedDefer", detail.isAlwPlanDeferment());
 
 					//Currency Conversions if Currency Constants Exists in Rule 
@@ -450,7 +449,6 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		jdbcSearchObject.addField("Remarks");
 		jdbcSearchObject.addField("AlwPlanDeferment");
 		jdbcSearchObject.addField("StepFinance");
-		jdbcSearchObject.addField("AllowDownpayPgm");
 		jdbcSearchObject.addField("FinAssetType");
 
 		List<FinanceType> returnFintypes = pagedListService.getBySearchObject(jdbcSearchObject);

@@ -159,8 +159,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	protected Button btnNew_CustomerDedupeLink;
 	protected Listbox listBoxBlackListRules;
 	protected Button btnNew_CustBlackListLink;
-	protected Listbox listBoxPoliceRules;
-	protected Button btnNew_CustPoliceLink;
 	protected Listbox listBoxLimitService;
 	protected Button btnNew_LimitServiceLink;
 	protected Listbox listBoxTatNotification;
@@ -193,10 +191,9 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	 * oldVar_CorpScoringGroup; private transient List<FinanceReferenceDetail> oldVar_AdvanceAccount; private transient
 	 * List<FinanceReferenceDetail> oldVar_MailTemplate; private transient List<FinanceReferenceDetail>
 	 * oldVar_FinanceDedupe; private transient List<FinanceReferenceDetail> oldVar_CustomerDedupe; private transient
-	 * List<FinanceReferenceDetail> oldVar_BlackListDedupe; private transient List<FinanceReferenceDetail>
-	 * oldVar_PoliceDedupe; private transient List<FinanceReferenceDetail> oldVar_ReturnChq; private transient
-	 * List<FinanceReferenceDetail> oldVar_LimitCodeDetail; private transient List<FinanceReferenceDetail>
-	 * oldVar_TatNotification;
+	 * List<FinanceReferenceDetail> oldVar_BlackListDedupe; private transient List<FinanceReferenceDetail> private
+	 * transient List<FinanceReferenceDetail> oldVar_ReturnChq; private transient List<FinanceReferenceDetail>
+	 * oldVar_LimitCodeDetail; private transient List<FinanceReferenceDetail> oldVar_TatNotification;
 	 */
 
 	private String roles;
@@ -313,7 +310,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 			this.listBoxDedupRules.setHeight(listboxHeight + "px");
 			this.listBoxCustDedupRules.setHeight(listboxHeight + "px");
 			this.listBoxBlackListRules.setHeight(listboxHeight + "px");
-			this.listBoxPoliceRules.setHeight(listboxHeight + "px");
 			this.listBoxReturnCheques.setHeight(listboxHeight + "px");
 			this.delationDeviation.setHeight((listboxHeight + 80) + "px");
 			this.listBoxLimitService.setHeight((listboxHeight + 80) + "px");
@@ -506,8 +502,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		dofillListbox(aFinanceReference.getCustomerDedupeList(), this.listBoxCustDedupRules);
 
 		dofillListbox(aFinanceReference.getBlackListDedupeList(), this.listBoxBlackListRules);
-
-		dofillListbox(aFinanceReference.getPoliceDedupeList(), this.listBoxPoliceRules);
 
 		dofillListbox(aFinanceReference.getReturnChequeList(), this.listBoxReturnCheques);
 
@@ -747,7 +741,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		this.btnNew_FinanceDedupeLink.setDisabled(false);
 		this.btnNew_CustomerDedupeLink.setDisabled(false);
 		this.btnNew_CustBlackListLink.setDisabled(false);
-		this.btnNew_CustPoliceLink.setDisabled(false);
 		this.btnNew_ReturnChequeLink.setDisabled(false);
 
 		enableOrDisablelistitems(this.listBoxFinanceCheckList, false);
@@ -760,7 +753,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		enableOrDisablelistitems(this.listBoxDedupRules, false);
 		enableOrDisablelistitems(this.listBoxCustDedupRules, false);
 		enableOrDisablelistitems(this.listBoxBlackListRules, false);
-		enableOrDisablelistitems(this.listBoxPoliceRules, false);
 		enableOrDisablelistitems(this.listBoxReturnCheques, false);
 		enableOrDisablelistitems(this.listboxFinanceTabs, false);
 
@@ -1099,7 +1091,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		items.addAll(this.listBoxDedupRules.getItems());
 		items.addAll(this.listBoxCustDedupRules.getItems());
 		items.addAll(this.listBoxBlackListRules.getItems());
-		items.addAll(this.listBoxPoliceRules.getItems());
 		items.addAll(this.listBoxReturnCheques.getItems());
 		items.addAll(this.listBoxLimitService.getItems());
 		items.addAll(this.listBoxTatNotification.getItems());
@@ -1507,11 +1498,6 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	public void onClick$btnNew_CustBlackListLink(Event event) throws InterruptedException {
 		selectedTab = FinanceConstants.PROCEDT_CUSTDEDUP;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_BLACKLIST);
-	}
-
-	public void onClick$btnNew_CustPoliceLink(Event event) throws InterruptedException {
-		selectedTab = FinanceConstants.PROCEDT_POLICEDEDUP;
-		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_POLICEDEDUP);
 	}
 
 	public void onClick$btnNew_ReturnChequeLink(Event event) throws InterruptedException {

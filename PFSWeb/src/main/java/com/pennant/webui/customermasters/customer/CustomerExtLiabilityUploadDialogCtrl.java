@@ -45,6 +45,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
@@ -59,7 +60,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.equation.util.DateUtility;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -494,7 +494,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -586,8 +587,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 
 		// Loan Date
 		Date finDate = customerExtLiability.getFinDate();
-		if (finDate != null && DateUtility.formatDate(finDate, "dd-MM-yyyy") != null) {
-			list.add(DateUtility.formatDate(finDate, "dd-MM-yyyy"));
+		if (finDate != null && DateUtility.format(finDate, "dd-MM-yyyy") != null) {
+			list.add(DateUtility.format(finDate, "dd-MM-yyyy"));
 		} else {
 			list.add(" ");
 		}

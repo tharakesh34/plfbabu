@@ -24,7 +24,6 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceGraphReportData;
@@ -52,7 +51,6 @@ public class FinScheduleReportGenerator {
 	private boolean lastRec;
 	protected Button btnAddDisbursement;
 
-	private boolean showAdvRate = false;
 	private String moduleDefiner = "";
 	private boolean isLimitIncrease = false;
 	private int odCount = 0;
@@ -334,9 +332,8 @@ public class FinScheduleReportGenerator {
 				data.setTdsAmount(formatAmt(curSchd.getTDSAmount(), false, false));
 				data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 				data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
-				data.setTotalAmount(
-						formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd())
-								.add(curSchd.getSuplRent().add(curSchd.getIncrCost())), false, false));
+				data.setTotalAmount(formatAmt(
+						curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd()), false, false));
 				data.setEndBal(formatAmt(curSchd.getClosingBalance(), false, false));
 				data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 				data.setTotalLimit(formatAmt(odAvailAmt, false, false));
@@ -533,36 +530,6 @@ public class FinScheduleReportGenerator {
 					}
 				}
 
-				// Insurance Details
-				if (curSchd.getInsuranceAmt() != null && curSchd.getInsuranceAmt().compareTo(BigDecimal.ZERO) > 0) {
-
-					BigDecimal insuranceAmt = curSchd.getInsuranceAmt();
-					for (FinInsurances insurance : getFinScheduleData().getFinInsuranceList()) {
-
-						BigDecimal actInsuranceAmt = insurance.getAmount();
-						if (actInsuranceAmt.compareTo(BigDecimal.ZERO) >= 0) {
-							data = new FinanceScheduleReportData();
-							data.setLabel(insurance.getInsuranceTypeDesc() + "(" + insurance.getInsReference() + ")");
-							data.setPftAmount("");
-							data.setSchdPft("");
-							data.setSchdPri("");
-							data.setTdsAmount("");
-							data.setSchdFee("");
-							data.setTotalAmount(formatAmt(actInsuranceAmt, false, true));
-							data.setEndBal(
-									formatAmt(curSchd.getClosingBalance().subtract(insuranceAmt).add(actInsuranceAmt),
-											false, false));
-							data.setLimitDrop("");
-							BigDecimal availLimit = odAvailAmt.subtract(curSchd.getClosingBalance());
-							data.setAvailLimit(formatAmt(availLimit, false, false));
-							data.setTotalLimit(formatAmt(odAvailAmt, false, false));
-							data.setSchDate("");
-							reportList.add(data);
-							insuranceAmt = insuranceAmt.subtract(actInsuranceAmt);
-						}
-					}
-				}
-
 				if (!curSchd.isPftOnSchDate() && !curSchd.isRepayOnSchDate() && !curSchd.isRvwOnSchDate()
 						&& curSchd.isDisbOnSchDate()) {
 
@@ -625,14 +592,7 @@ public class FinScheduleReportGenerator {
 						label = Labels.getLabel("label_listcell_ReAgeHMonth.label");
 					}
 
-					// Checking Rollover Condition to make Closing Bal
-					BigDecimal closingBal = BigDecimal.ZERO;
-					if (getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && curSchd.getSchDate()
-							.compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0) {
-						closingBal = curSchd.getRolloverAmount();
-					} else {
-						closingBal = curSchd.getClosingBalance();
-					}
+					BigDecimal closingBal = curSchd.getClosingBalance();
 
 					if (curSchd.isCpzOnSchDate()) {
 						closingBal = closingBal.subtract(curSchd.getCpzAmount()).add(curSchd.getCpzBalance());
@@ -647,8 +607,8 @@ public class FinScheduleReportGenerator {
 					data.setSchdFee(formatAmt(curSchd.getFeeSchd(), false, false));
 					data.setSchdPri(formatAmt(curSchd.getPrincipalSchd(), false, false));
 					data.setTotalAmount(
-							formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd())
-									.add(curSchd.getSuplRent().add(curSchd.getIncrCost())), false, false));
+							formatAmt(curSchd.getRepayAmount().add(curSchd.getFeeSchd()).add(curSchd.getInsSchd()),
+									false, false));
 					data.setEndBal(formatAmt(closingBal, false, false));
 					data.setLimitDrop(formatAmt(limitIncreaseAmt, false, false));
 					data.setTotalLimit(formatAmt(odAvailAmt, false, false));
@@ -1069,45 +1029,9 @@ public class FinScheduleReportGenerator {
 							reportList.add(data);
 						}
 
-						if (showAdvRate) {
-
-							// Advised profit rate
-							data = new FinanceScheduleReportData();
-							data.setLabel(Labels.getLabel("label_listcell_advisedProfitRate.label"));
-							data.setSchDate("");
-							data.setPftAmount(formatAmt(curSchd.getAdvCalRate(), true, false));
-							data.setSchdPft("");
-							data.setSchdFee("");
-							data.setTdsAmount("");
-							data.setSchdPri("");
-							data.setTotalAmount("");
-							data.setEndBal("");
-							data.setTotalLimit("");
-							data.setAvailLimit("");
-							data.setLimitDrop("");
-							reportList.add(data);
-							count = 2;
-						}
 						count = 2;
 					}
 				}
-			} else if (showAdvRate) {
-				// Advised profit rate
-				data = new FinanceScheduleReportData();
-				data.setLabel(Labels.getLabel("label_listcell_advisedProfitRate.label"));
-				data.setSchDate("");
-				data.setPftAmount(formatAmt(curSchd.getAdvCalRate(), true, false));
-				data.setSchdPft("");
-				data.setSchdFee("");
-				data.setTdsAmount("");
-				data.setSchdPri("");
-				data.setTotalAmount("");
-				data.setEndBal("");
-				data.setTotalLimit("");
-				data.setAvailLimit("");
-				data.setLimitDrop("");
-				reportList.add(data);
-				count = 2;
 			}
 
 			if (!curSchd.isRepayOnSchDate() && !curSchd.isPftOnSchDate() && !(curSchd.isRvwOnSchDate())
@@ -1115,15 +1039,8 @@ public class FinScheduleReportGenerator {
 
 				if (curSchd.getSchDate().compareTo(aFinanceMain.getFinStartDate()) != 0) {
 
-					BigDecimal closingBal = BigDecimal.ZERO;
-					if (getFinScheduleData().getFinanceMain().getNextRolloverDate() != null && curSchd.getSchDate()
-							.compareTo(getFinScheduleData().getFinanceMain().getNextRolloverDate()) == 0) {
-						closingBal = curSchd.getRolloverAmount().subtract(curSchd.getCpzAmount())
-								.add(curSchd.getCpzBalance());
-					} else {
-						closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount())
-								.add(curSchd.getCpzBalance());
-					}
+					BigDecimal closingBal = curSchd.getClosingBalance().subtract(curSchd.getCpzAmount())
+							.add(curSchd.getCpzBalance());
 
 					data = new FinanceScheduleReportData();
 					data.setInstNumber(getInstNumber(curSchd.getInstNumber(), count));
@@ -1260,24 +1177,6 @@ public class FinScheduleReportGenerator {
 					reportList.add(data);
 				}
 
-				// Advised profit rate
-				if (showAdvRate) {
-
-					data = new FinanceScheduleReportData();
-					data.setLabel(Labels.getLabel("label_listcell_advisedProfitRate.label"));
-					data.setSchDate("");
-					data.setPftAmount(formatAmt(curSchd.getAdvCalRate(), true, false));
-					data.setSchdPft("");
-					data.setSchdFee("");
-					data.setTdsAmount("");
-					data.setSchdPri("");
-					data.setTotalAmount("");
-					data.setEndBal("");
-					data.setTotalLimit("");
-					data.setAvailLimit("");
-					data.setLimitDrop("");
-					reportList.add(data);
-				}
 				count = 2;
 			}
 

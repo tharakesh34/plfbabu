@@ -366,18 +366,6 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 				fullyPaid = false;
 				break;
 			}
-
-			// Supplementary Rent
-			if ((curSchd.getSuplRent().subtract(curSchd.getSuplRentPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
-
-			// Increased Cost
-			if ((curSchd.getIncrCost().subtract(curSchd.getIncrCostPaid())).compareTo(BigDecimal.ZERO) > 0) {
-				fullyPaid = false;
-				break;
-			}
 		}
 
 		// Check Penalty Paid Fully or not

@@ -104,7 +104,6 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceMainExt;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -121,7 +120,6 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.FinanceMainExtService;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -278,7 +276,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private CustomerDetailsService customerDetailsService;
 	private GuarantorDetailService guarantorDetailService;
-	private FinanceMainExtService financeMainExtService;
 
 	List<Property> severities = PennantStaticListUtil.getManualDeviationSeverities();
 	protected Tabpanel otherDetailsFieldTabPanel;
@@ -2042,19 +2039,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
 		this.customerDialogCtrl = customerDialogCtrl;
-	}
-
-	public void doFillRemarks(FinanceMainExt financeMainExt) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public FinanceMainExtService getFinanceMainExtService() {
-		return financeMainExtService;
-	}
-
-	public void setFinanceMainExtService(FinanceMainExtService financeMainExtService) {
-		this.financeMainExtService = financeMainExtService;
 	}
 
 }

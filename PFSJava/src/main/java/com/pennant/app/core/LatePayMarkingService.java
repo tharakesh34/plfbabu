@@ -278,7 +278,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		} else {
 			appDate = SysParamUtil.getAppDate();
 		}
-		
+
 		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, "");
 
 		if (penaltyRate == null) {

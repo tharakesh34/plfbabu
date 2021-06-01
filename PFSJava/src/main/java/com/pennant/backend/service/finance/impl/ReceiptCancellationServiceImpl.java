@@ -106,7 +106,6 @@ import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
-import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
@@ -1452,7 +1451,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				rpySchdList = sortRpySchdDetails(new ArrayList<>(rpySchdMap.values()));
 				List<FinanceScheduleDetail> updateSchdList = new ArrayList<>();
 				List<FinFeeScheduleDetail> updateFeeList = new ArrayList<>();
-				List<FinSchFrqInsurance> updateInsList = new ArrayList<>();
 				Map<String, FinanceScheduleDetail> schdMap = null;
 
 				FinScheduleData scheduleData = null;
@@ -1565,38 +1563,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						}
 					}
 
-					// Update Insurance Balance
-					// ============================================
-					if (rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0) {
-						List<FinSchFrqInsurance> insList = finInsurancesDAO.getInsScheduleBySchDate(finReference,
-								rpySchd.getSchDate());
-						BigDecimal insBal = rpySchd.getSchdInsPayNow();
-						for (int j = insList.size() - 1; j >= 0; j--) {
-							FinSchFrqInsurance insSchd = insList.get(j);
-							BigDecimal paidReverse = BigDecimal.ZERO;
-
-							if (insBal.compareTo(BigDecimal.ZERO) == 0) {
-								continue;
-							}
-							if (insSchd.getInsurancePaid().compareTo(BigDecimal.ZERO) == 0) {
-								continue;
-							}
-
-							if (insBal.compareTo(insSchd.getInsurancePaid()) > 0) {
-								paidReverse = insSchd.getInsurancePaid();
-							} else {
-								paidReverse = insBal;
-							}
-							insBal = insBal.subtract(paidReverse);
-
-							// Create list of updated objects to save one time
-							FinSchFrqInsurance updInsSchd = new FinSchFrqInsurance();
-							updInsSchd.setInsId(insSchd.getInsId());
-							updInsSchd.setInsSchDate(insSchd.getInsSchDate());
-							updInsSchd.setInsurancePaid(paidReverse.negate());
-							updateInsList.add(updInsSchd);
-						}
-					}
 				}
 
 				// Schedule Details Updation
@@ -1609,16 +1575,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					finFeeScheduleDetailDAO.updateFeeSchdPaids(updateFeeList);
 				}
 
-				// Insurance Schedule Details Updation
-				if (!updateInsList.isEmpty()) {
-					finInsurancesDAO.updateInsSchdPaids(updateInsList);
-				}
-
 				rpySchdList = null;
 				rpySchdMap = null;
 				updateSchdList = null;
 				updateFeeList = null;
-				updateInsList = null;
 
 				// Deletion of Finance Schedule Related Details From Main Table
 				FinanceProfitDetail pftDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
@@ -2565,7 +2525,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			fd.setFinReference(finDetail.getFinanceMain().getFinReference());
 			fd.setDisbReqDate(curBDay);
 			fd.setDisbIsActive(true);
-			fd.setDisbDisbursed(true);
 			fd.setLogKey(logKey);
 			fd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			fd.setLastMntBy(finDetail.getFinanceMain().getLastMntBy());

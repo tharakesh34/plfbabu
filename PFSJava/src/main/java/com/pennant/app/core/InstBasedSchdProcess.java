@@ -279,7 +279,6 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			disbursement.setFinReference(finDetail.getFinReference());
 			disbursement.setDisbReqDate(curBDay);
 			disbursement.setDisbIsActive(true);
-			disbursement.setDisbDisbursed(true);
 			disbursement.setLogKey(0);
 			disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			disbursement.setLastMntBy(userDetails.getUserId());

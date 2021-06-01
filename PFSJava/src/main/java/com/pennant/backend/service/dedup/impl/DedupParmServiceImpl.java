@@ -66,9 +66,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
-import com.pennant.backend.dao.policecase.PoliceCaseDAO;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.applicationmaster.PoliceCaseDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
@@ -83,7 +81,6 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.policecase.PoliceCase;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.util.FinanceConstants;
@@ -110,7 +107,6 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	private BlackListCustomerDAO blacklistCustomerDAO;
 	private FinanceDedupeDAO financeDedupeDAO;
 	private CustomerInterfaceService customerInterfaceService;
-	private PoliceCaseDAO policeCaseDAO;
 	private CustomerDedupDAO customerDedupDAO;
 
 	@Autowired(required = false)
@@ -675,11 +671,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			} else { // with work flow
 				if (dedupParm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																								// records
 																							// type
 																							// is new
 					if (befDedupParm != null || tempDedupParm != null) { // if
-																			// records
+																				// records
 																			// already
 																			// exists
 																			// in
@@ -716,7 +712,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			} else {
 
 				if (tempDedupParm == null) { // if records not exists in the
-												// Work flow table
+													// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -1030,209 +1026,6 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	@Override
-	public List<PoliceCaseDetail> fetchPoliceCaseCustomers(String userRole, String finType, PoliceCaseDetail pcd,
-			String curUser) {
-		logger.debug(Literal.ENTERING);
-
-		FinanceReferenceDetail frd = new FinanceReferenceDetail();
-		frd.setMandInputInStage(userRole + ",");
-		frd.setFinType(finType);
-
-		List<FinanceReferenceDetail> queryCodeList = dedupParmDAO.getQueryCodeList(frd, "_APCView");
-
-		if (CollectionUtils.isEmpty(queryCodeList)) {
-			return new ArrayList<>();
-		}
-
-		List<PoliceCaseDetail> policeCase = new ArrayList<>();
-		List<PoliceCase> exePoliceCase = new ArrayList<>();
-		List<PoliceCase> overridePoliceCaseList = new ArrayList<>();
-		List<DedupParm> dedupParmList = new ArrayList<>();
-		boolean newUser = false;
-
-		String finReference = pcd.getFinReference();
-
-		for (FinanceReferenceDetail queryCode : queryCodeList) {
-			String descLovName = queryCode.getLovDescNamelov();
-			exePoliceCase = policeCaseDAO.fetchPoliceCase(finReference, descLovName);
-			String custCtgCode = pcd.getCustCtgCode();
-			DedupParm dedupParm = getApprovedDedupParmById(descLovName, FinanceConstants.DEDUP_POLICE, custCtgCode);
-
-			if (dedupParm != null) {
-				dedupParmList.add(dedupParm);
-			}
-
-			exePoliceCase.forEach(l1 -> l1.setOverridenby(l1.getOverrideUser()));
-			overridePoliceCaseList.addAll(exePoliceCase);
-		}
-
-		if (CollectionUtils.isNotEmpty(dedupParmList)) {
-			policeCase.addAll(getPoliceCaseListCustomer(pcd, dedupParmList));
-			if (CollectionUtils.isEmpty(policeCase)) {
-				return policeCase;
-			}
-			policeCase = resetPoliceCaseList(policeCase, queryCodeList);
-		} else {
-			for (PoliceCase pc : overridePoliceCaseList) {
-				if (!pc.getOverrideUser().contains(curUser)) {
-					pc.setOverridenby(pc.getOverrideUser());
-					pc.setOverrideUser(pc.getOverrideUser() + "," + curUser);
-					newUser = false;
-				}
-			}
-		}
-
-		policeCase = dosetPoliceCaseGrouping(policeCase);
-
-		if (CollectionUtils.isNotEmpty(overridePoliceCaseList) && CollectionUtils.isEmpty(policeCase)) {
-			policeCase = doSetFinPoliceCaseCustomers(overridePoliceCaseList);
-			return policeCase;
-		} else if (CollectionUtils.isEmpty(overridePoliceCaseList) && CollectionUtils.isNotEmpty(policeCase)) {
-			return policeCase;
-		}
-
-		for (PoliceCase pc : overridePoliceCaseList) {
-			for (PoliceCaseDetail pcDtls : policeCase) {
-				if (pc.getFinReference().equals(pcDtls.getFinReference())) {
-					if (pc.getCustCIF().equals(pcDtls.getCustCIF())) {
-						pcDtls.setOverridenby(pc.getOverrideUser());
-						if (pc.getOverrideUser().contains(curUser)) {
-							pcDtls.setOverrideUser(pc.getOverrideUser());
-							newUser = false;
-						} else {
-							pcDtls.setOverrideUser(pc.getOverrideUser() + "," + curUser);
-						}
-
-						if (isRuleChanged(pc.getPoliceCaseRule(), pcDtls.getPoliceCaseRule())) {
-							pcDtls.setNewRule(true);
-							if (pc.getCustCIF().equals(pcDtls.getCustCIF())) {
-								pcDtls.setNewPolicecaseRecord(false);
-							} else {
-								pcDtls.setNewPolicecaseRecord(true);
-								pcDtls.setOverride(false);
-							}
-						} else {
-							pcDtls.setNewPolicecaseRecord(false);
-						}
-						if (newUser) {
-							pcDtls.setOverride(pc.isOverride());
-						}
-					}
-				}
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-		return policeCase;
-	}
-
-	private List<PoliceCaseDetail> doSetFinPoliceCaseCustomers(List<PoliceCase> pcList) {
-		List<PoliceCaseDetail> list = new ArrayList<>();
-		for (PoliceCase pc : pcList) {
-			PoliceCaseDetail pcd = new PoliceCaseDetail();
-			pcd.setCustCIF(pc.getCustCIF());
-			pcd.setFinReference(pc.getFinReference());
-			pcd.setCustFName(pc.getCustFName());
-			pcd.setCustLName(pc.getCustLName());
-			pcd.setCustDOB(pc.getCustDOB());
-			pcd.setCustCRCPR(pc.getCustCRCPR());
-			pcd.setCustPassportNo(pc.getCustPassportNo());
-			pcd.setCustNationality(pc.getCustNationality());
-			pcd.setPoliceCaseRule(pc.getPoliceCaseRule());
-			pcd.setOverride(pc.isOverride());
-			pcd.setOverrideUser(pc.getOverrideUser());
-			pcd.setMobileNumber(pc.getMobileNumber());
-			pcd.setNewPolicecaseRecord(pc.isNewPolicecaseRecord());
-			pcd.setRules(pc.getRules());
-			list.add(pcd);
-		}
-
-		return list;
-	}
-
-	private List<PoliceCaseDetail> getPoliceCaseListCustomer(PoliceCaseDetail pcd, List<DedupParm> dedupParmList) {
-		if (CollectionUtils.isEmpty(dedupParmList)) {
-			return new ArrayList<>();
-		}
-
-		List<PoliceCaseDetail> pcdList = new ArrayList<>();
-
-		String custCtgCode = pcd.getCustCtgCode();
-		List<String> fieldNameList = dedupParmDAO.getRuleFieldNames(custCtgCode + FinanceConstants.DEDUP_POLICE);
-
-		for (DedupParm dedupParm : dedupParmList) {
-			List<PoliceCaseDetail> list = policeCaseDAO.fetchCorePolice(pcd, dedupParm.getSQLQuery());
-
-			for (PoliceCaseDetail policeCaseList : list) {
-				policeCaseList.setPoliceCaseRule(dedupParm.getQueryCode());
-				policeCaseList.setFinReference(pcd.getFinReference());
-				policeCaseList.setRules(getQueryFields(dedupParm.getSQLQuery(), fieldNameList));
-				pcdList.add(policeCaseList);
-			}
-		}
-
-		return pcdList;
-	}
-
-	private List<PoliceCaseDetail> dosetPoliceCaseGrouping(List<PoliceCaseDetail> policeCaseList) {
-		List<PoliceCaseDetail> policecase = new ArrayList<>();
-		policecase.addAll(policeCaseList);
-
-		for (int i = 0; i < policecase.size() - 1; i++) {
-			for (int j = i + 1; j < policecase.size(); j++) {
-				PoliceCaseDetail pcd = policecase.get(i);
-				PoliceCaseDetail pc = policecase.get(j);
-				if (pcd.getCustCIF().equals(pc.getCustCIF())) {
-					if (pcd.getPoliceCaseRule().contains(pc.getPoliceCaseRule())) {
-						pcd.setPoliceCaseRule(pcd.getPoliceCaseRule());
-					} else {
-						pcd.setPoliceCaseRule(pcd.getPoliceCaseRule() + ',' + pc.getPoliceCaseRule());
-						if (pcd.isNewRule() != pc.isNewRule()) {
-							pcd.setNewRule(true);
-							pcd.setOverride(false);
-						}
-					}
-					pcd.setRules(pcd.getRules() + ',' + pc.getRules());
-					policecase.remove(j);
-					j--;
-
-				}
-			}
-		}
-
-		return policecase;
-	}
-
-	private List<PoliceCaseDetail> resetPoliceCaseList(List<PoliceCaseDetail> pcdList,
-			List<FinanceReferenceDetail> frdList) {
-		Map<String, Boolean> queryOverrideMap = new HashMap<>();
-
-		frdList.forEach(l1 -> queryOverrideMap.put(l1.getLovDescNamelov(), l1.isOverRide()));
-
-		for (PoliceCaseDetail policeCaseList : pcdList) {
-			String[] policecaserule = policeCaseList.getPoliceCaseRule().split(",");
-			for (String key : policecaserule) {
-				if (queryOverrideMap.containsKey(key)) {
-					policeCaseList.setOverride(queryOverrideMap.get(key));
-					if (policeCaseList.isOverride()) {
-						policeCaseList.setOverride(queryOverrideMap.get(key));
-					} else {
-						policeCaseList.setOverride(false);
-						break;
-					}
-				}
-			}
-
-			if (queryOverrideMap.containsKey(policeCaseList.getPoliceCaseRule())) {
-				policeCaseList.setOverride(queryOverrideMap.get(policeCaseList.getPoliceCaseRule()));
-			}
-
-		}
-
-		return pcdList;
-	}
-
-	@Override
 	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details, String finType, String ref) {
 		logger.debug(Literal.ENTERING);
 
@@ -1380,10 +1173,6 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 	public void setBlacklistCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
 		this.blacklistCustomerDAO = blacklistCustomerDAO;
-	}
-
-	public void setPoliceCaseDAO(PoliceCaseDAO policeCaseDAO) {
-		this.policeCaseDAO = policeCaseDAO;
 	}
 
 	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {

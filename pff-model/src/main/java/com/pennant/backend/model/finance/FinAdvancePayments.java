@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  EtihadCreditBureauDetail.java                                                   * 	  
+ * FileName    		:  FinAdvancePayments.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -59,7 +59,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * Model class for the <b>EtihadCreditBureauDetail table</b>.<br>
+ * Model class for the <b>FinAdvancePayments table</b>.<br>
  * 
  */
 @XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "branchBankCode", "branchBankName",

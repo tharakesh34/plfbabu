@@ -31,8 +31,6 @@ public class SubHeadRule implements Serializable {
 	private int tenure = 0;
 	private int remTenure = 0;
 
-	//Commodity broker
-	private String brokerAccount;
 	private String insAccount;
 
 	/*
@@ -230,14 +228,6 @@ public class SubHeadRule implements Serializable {
 			}
 		}
 		return subHeadRuleMap;
-	}
-
-	public String getBrokerAccount() {
-		return brokerAccount;
-	}
-
-	public void setBrokerAccount(String brokerAccount) {
-		this.brokerAccount = brokerAccount;
 	}
 
 	public String getInsAccount() {

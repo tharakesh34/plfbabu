@@ -112,7 +112,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.dedup.dedupparm.FetchBlackListDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
-import com.pennant.webui.dedup.dedupparm.FetchPoliceCaseDetails;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
@@ -1511,12 +1510,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (!processCompleted) {
 				return;
 			}
-
-			// PoliceCase List Process Check
-			processCompleted = doPoliceCaseCheck(aFinanceDetail);
-			if (!processCompleted) {
-				return;
-			}
 		}
 
 		String tranType = "";
@@ -1662,29 +1655,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			isProcessCompleted = true;
 		}
 		return isProcessCompleted;
-	}
-
-	/**
-	 * Method for Process check of Police & Court Case Details
-	 * 
-	 * @param aFinanceDetail
-	 * @return
-	 */
-	private boolean doPoliceCaseCheck(FinanceDetail aFinanceDetail) {
-		boolean processCompleted;
-		String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-		aFinanceDetail = FetchPoliceCaseDetails.getPoliceCaseCustomer(getRole(), aFinanceDetail, getMainWindow(),
-				curLoginUser);
-		if (aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseFound()) {
-			if (aFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseOverride()) {
-				processCompleted = true;
-			} else {
-				processCompleted = false;
-			}
-		} else {
-			processCompleted = true;
-		}
-		return processCompleted;
 	}
 
 	private String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks) {
@@ -1849,23 +1819,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doPoliceCase)) {
-					String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-					FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					tFinanceDetail = FetchPoliceCaseDetails.getPoliceCaseCustomer(getRole(), tFinanceDetail,
-							this.window_QDEFinanceMainDialog, curLoginUser);
-
-					if (tFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseFound()) {
-						if (tFinanceDetail.getFinScheduleData().getFinanceMain().isPoliceCaseOverride()) {
-							processCompleted = true;
-						} else {
-							processCompleted = false;
-						}
-					} else {
-						processCompleted = true;
-					}
-					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
-
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_CheckLimits)) {
 
 					processCompleted = doSaveProcess(auditHeader, method);
@@ -1887,19 +1840,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doClearQueues)) {
 
 					aFinanceDetail.getFinScheduleData().getFinanceMain().setNextTaskId("");
-
-				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doFundsAvailConfirmed)) {
-
-					String nextRoleCode = StringUtils
-							.trimToEmpty(aFinanceDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
-					String nextRoleCodes[] = nextRoleCode.split(",");
-
-					if (nextRoleCodes.length > 1) {
-						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(false);
-						MessageUtil.showError(Labels.getLabel("message.Conformation_Check"));
-					} else {
-						aFinanceDetail.getFinScheduleData().getFinanceMain().setFundsAvailConfirmed(true);
-					}
 
 				} else if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckProspectCustomer)) {
 					// Prospect Customer Checking
@@ -2485,8 +2425,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		financeDetail.getCustomerEligibilityCheck().setNoOfTerms(financeMain.getNumberOfTerms());
 		financeDetail.getCustomerEligibilityCheck().setFinRepayMethod(financeMain.getFinRepayMethod());
 		financeDetail.getCustomerEligibilityCheck()
-				.setAlwDPSP(financeDetail.getFinScheduleData().getFinanceType().isAllowDownpayPgm());
-		financeDetail.getCustomerEligibilityCheck()
 				.setAlwPlannedDefer(financeMain.getPlanDeferCount() > 0 ? true : false);
 		financeDetail.getCustomerEligibilityCheck().setSalariedCustomer(customer.isSalariedCustomer());
 		financeDetail.getCustomerEligibilityCheck().setCustEmpDesg(custEmpDesg);
@@ -2558,30 +2496,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	private void setDownpayAmount() {
-		logger.debug("Entering");
 		this.downPayBank.clearErrorMessage();
-		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		BigDecimal reqDwnPay = BigDecimal.ZERO;
-		if (getFinanceDetail().getFinScheduleData().getFinanceType().isAllowDownpayPgm()) {
-			if (this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-				reqDwnPay = PennantAppUtil.getPercentageValue(
-						PennantAppUtil.unFormateAmount(this.finAmount.getActualValue(), formatter),
-						getFinanceDetail().getFinScheduleData().getFinanceMain().getMinDownPayPerc());
-				if (this.downPaySupl.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-					this.downPayBank.setValue(PennantAppUtil.formateAmount(
-							reqDwnPay.subtract(
-									PennantAppUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter)),
-							formatter));
-					if (PennantAppUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter)
-							.compareTo(BigDecimal.ZERO) < 0) {
-						this.downPayBank.setValue(BigDecimal.ZERO);
-					}
-				} else {
-					this.downPayBank.setValue(PennantAppUtil.formateAmount(reqDwnPay, formatter));
-				}
-			}
-		}
-		logger.debug("Leaving");
 	}
 
 	private void setDownPayAcMand() {

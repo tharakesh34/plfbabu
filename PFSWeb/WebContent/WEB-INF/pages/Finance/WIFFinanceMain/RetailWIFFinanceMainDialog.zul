@@ -421,12 +421,6 @@
 													<label id="label_FinanceMainDialog_RepayBaseRate" value="${c:l('label_FinanceMainDialog_RepayBaseRate.value')}" />
 													<ratebox id="repayRate" />
 												</row>
-												<row id="row_supplementRent" visible="false">
-													<label id="label_FinanceMainDialog_SupplementRent" value="${c:l('label_FinanceMainDialog_SupplementRent.value')}" />
-													<currencyBox id="supplementRent" />
-													<label id="label_FinanceMainDialog_IncreasedCost" value="${c:l('label_FinanceMainDialog_IncreasedCost.value')}" />
-													<currencyBox id="increasedCost" />
-												</row>
 												<row id="row_FinRepRates" visible="false">
 													<label id="label_FinanceMainDialog_FinMinRate" value="${c:l('label_FinanceMainDialog_FinMinRate.value')}" />
 													<hbox>

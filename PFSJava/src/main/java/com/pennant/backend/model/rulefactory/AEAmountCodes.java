@@ -82,12 +82,9 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal instcpz = BigDecimal.ZERO;
 	private BigDecimal insttot = BigDecimal.ZERO;
 	private BigDecimal refund = BigDecimal.ZERO;
-	private BigDecimal rebate = BigDecimal.ZERO;
 	private BigDecimal insRefund = BigDecimal.ZERO;
 	private BigDecimal InsPay = BigDecimal.ZERO;
 	private BigDecimal schFeePay = BigDecimal.ZERO;
-	private BigDecimal suplRentPay = BigDecimal.ZERO;
-	private BigDecimal incrCostPay = BigDecimal.ZERO;
 	private BigDecimal woPayAmt = BigDecimal.ZERO;
 	private int ODDays = 0;
 	private int daysFromFullyPaid = 0;
@@ -327,12 +324,9 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_instcpz", this.instcpz);
 		map.put("ae_insttot", this.insttot);
 		map.put("ae_refund", this.refund);
-		map.put("ae_rebate", this.rebate);
 		map.put("ae_insRefund", this.insRefund);
 		map.put("ae_InsPay", this.InsPay);
 		map.put("ae_schFeePay", this.schFeePay);
-		map.put("ae_suplRentPay", this.suplRentPay);
-		map.put("ae_incrCostPay", this.incrCostPay);
 		map.put("ae_woPayAmt", this.woPayAmt);
 		map.put("ae_ODDays", this.ODDays);
 		map.put("ae_daysFromFullyPaid", this.daysFromFullyPaid);
@@ -898,14 +892,6 @@ public class AEAmountCodes implements Serializable {
 		this.refund = refund;
 	}
 
-	public BigDecimal getRebate() {
-		return rebate;
-	}
-
-	public void setRebate(BigDecimal rebate) {
-		this.rebate = rebate;
-	}
-
 	public BigDecimal getInsRefund() {
 		return insRefund;
 	}
@@ -928,22 +914,6 @@ public class AEAmountCodes implements Serializable {
 
 	public void setSchFeePay(BigDecimal schFeePay) {
 		this.schFeePay = schFeePay;
-	}
-
-	public BigDecimal getSuplRentPay() {
-		return suplRentPay;
-	}
-
-	public void setSuplRentPay(BigDecimal suplRentPay) {
-		this.suplRentPay = suplRentPay;
-	}
-
-	public BigDecimal getIncrCostPay() {
-		return incrCostPay;
-	}
-
-	public void setIncrCostPay(BigDecimal incrCostPay) {
-		this.incrCostPay = incrCostPay;
 	}
 
 	public BigDecimal getWoPayAmt() {

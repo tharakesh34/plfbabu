@@ -80,8 +80,6 @@ public interface FinanceProfitDetailDAO {
 
 	void updateLatestRpyDetails(FinanceProfitDetail financeProfitDetail);
 
-	void updateRpyAccount(String finReference, String repayAccountId);
-
 	void saveAccumulates(Date valueDate);
 
 	void resetAcrTsfdInSusp();

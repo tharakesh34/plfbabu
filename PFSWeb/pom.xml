@@ -18,11 +18,6 @@
 		<!-- Module Dependencies -->
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
-			<artifactId>PLFInterface</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${pff.groupId}</groupId>
 			<artifactId>PFSJava</artifactId>
 			<version>${project.version}</version>
 		</dependency>

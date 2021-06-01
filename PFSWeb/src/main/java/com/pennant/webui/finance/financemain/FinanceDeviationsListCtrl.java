@@ -176,7 +176,6 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					.addFilter(SearchFilterControl.getFilter("PhoneNumber", phoneNumber, sortOperator_mobileNumber));
 		}
 
-		searchObject.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		searchObject.addFilter(new Filter("DeviationApproval", 1, Filter.OP_EQUAL));
 		searchObject.addFilter(new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
 		searchObject.addSortDesc("Priority");

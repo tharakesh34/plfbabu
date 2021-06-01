@@ -117,7 +117,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
-import com.pennant.webui.rmtmasters.financetype.FinTypeInsuranceListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -225,7 +224,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Component accountingDetailWindow;
 
 	protected FinTypeFeesListCtrl finTypeFeesListCtrl;
-	protected FinTypeInsuranceListCtrl finTypeInsuranceListCtrl;
 	protected FinTypeAccountingListCtrl finTypeAccountingListCtrl;
 
 	private boolean isCompReadonly = false;
@@ -885,7 +883,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			map.put("finCcy", this.finCcy);
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
-			map.put("finTypeInsuranceList", this.promotion.getFinTypeInsurancesList());
 
 			insuranceDetailWindow = Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeInsuranceList.zul",
@@ -1333,10 +1330,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (this.finTypeFeesListCtrl != null) {
 			aPromotion.setFinTypeFeesList(this.finTypeFeesListCtrl.doSave());
-		}
-
-		if (this.finTypeInsuranceListCtrl != null) {
-			aPromotion.setFinTypeInsurancesList(this.finTypeInsuranceListCtrl.getFinTypeInsuranceList());
 		}
 
 		if (wve.isEmpty() && this.finTypeAccountingListCtrl != null) {
@@ -2459,10 +2452,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 	public void setFinTypeFeesListCtrl(FinTypeFeesListCtrl finTypeFeesListCtrl) {
 		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
-	}
-
-	public void setFinTypeInsuranceListCtrl(FinTypeInsuranceListCtrl finTypeInsuranceListCtrl) {
-		this.finTypeInsuranceListCtrl = finTypeInsuranceListCtrl;
 	}
 
 	public void setFinTypeAccountingListCtrl(FinTypeAccountingListCtrl finTypeAccountingListCtrl) {

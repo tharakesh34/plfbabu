@@ -364,11 +364,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		//this.rate.setReadonly(true);
 		//this.repayPftRate.setReadonly(true);
 
-		if (StringUtils.equals(aFinSchData.getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_QARDHASSAN)) {
-			this.row_Rate.setVisible(false);
-			this.row_PftIntact.setVisible(false);
-		}
-
 		this.repayFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
 		this.repayFrq.setValue(aFinanceMain.getRepayFrq());
 		this.grcPftFrq.setAlwFrqDays(aFinSchData.getFinanceType().getFrequencyDays());
@@ -618,21 +613,6 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 											new String[] {
 													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
 													DateUtility.formatToLongDate(fromDate) }));
-						} else if (!financeMain.isNewRecord() && !StringUtils.trimToEmpty(financeMain.getRecordType())
-								.equals(PennantConstants.RECORD_TYPE_NEW)) {
-
-							if (StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
-									.equals(FinanceConstants.PRODUCT_IJARAH)
-									|| StringUtils.trimToEmpty(getFinScheduleData().getFinanceType().getFinCategory())
-											.equals(FinanceConstants.PRODUCT_FWIJARAH)) {
-								Date curBussDate = DateUtility.getAppDate();
-								if (this.grcPeriodEndDate.getValue().compareTo(curBussDate) <= 0) {
-									throw new WrongValueException(this.grcPeriodEndDate,
-											Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL", new String[] {
-													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
-													Labels.getLabel("label_ReScheduleDialog_CurBussDate.value") }));
-								}
-							}
 						}
 					}
 				}

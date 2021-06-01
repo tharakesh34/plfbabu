@@ -3049,7 +3049,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private void prepareResponse(FinanceDetail financeDetail) {
 		financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		financeDetail.getFinScheduleData().setFinReference(null);
-		financeDetail.getFinScheduleData().setInsuranceList(null);
 		financeDetail.getFinScheduleData().setStepPolicyDetails(null);
 		financeDetail.getFinScheduleData().setPlanEMIHDates(null);
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
@@ -3845,7 +3844,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		finScheduleData.setRateInstruction(null);
 		finScheduleData.setFeeDues(null);
 		finScheduleData.setFinFeeDetailList(null);
-		finScheduleData.setInsuranceList(null);
 		finScheduleData.setStepPolicyDetails(null);
 		finScheduleData.setFinanceScheduleDetails(null);
 		finScheduleData.setApiPlanEMIHDates(null);

@@ -556,13 +556,6 @@
 													</hbox>
 												
 												</row>
-												<row id="row_shariaApproval" visible="true">
-													<label id="label_FinanceMainDialog_ShariaApprovalReq" value="${c:l('label_FinanceMainDialog_ShariaApprovalReq.value')}" />
-													<hbox>
-														<space id="space_ShariaApprovalReq" spacing="2px" />
-														<checkbox id="shariaApprovalReq" />
-													</hbox>
-												</row>
 												<!-- Facility Details Start -->
 												<row id="row_commitment">
 													<label id="label_FinanceMainDialog_CommitRef" value="${c:l('label_FinanceMainDialog_CommitRef.value')}" />
@@ -773,17 +766,6 @@
 													<label id="label_FinanceMainDialog_GraceBaseRate" value="${c:l('label_FinanceMainDialog_GraceBaseRate.value')}" />
 													<ratebox id="graceRate" />
 												</row>
-												<row id="row_GrcAdvBaseRate" visible="false">
-													<label id="label_FinanceMainDialog_GrcAdvBaseRate" value="${c:l('label_FinanceMainDialog_GrcAdvBaseRate.value')}" />
-													<ratebox id="grcAdvRate" />
-												</row>
-												<row id="row_GrcAdvPftRate" visible="false">
-													<label id="label_FinanceMainDialog_GrcAdvPftRate" value="${c:l('label_FinanceMainDialog_GrcAdvPftRate.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<decimalbox id="grcAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
-													</hbox>
-												</row>
 												<row id="row_FinGrcRates" visible="false">
 													<label id="label_FinanceMainDialog_FinGrcMinRate" value="${c:l('label_FinanceMainDialog_FinGrcMinRate.value')}" />
 													<hbox>
@@ -951,23 +933,6 @@
 														<decimalbox id="repayProfitRate" width="120px" maxlength="15" />
 													</hbox>
 												</row>
-												<row id="row_RpyAdvBaseRate" visible="false">
-													<label id="label_FinanceMainDialog_RpyAdvBaseRate" value="${c:l('label_FinanceMainDialog_RpyAdvBaseRate.value')}" />
-													<ratebox id="rpyAdvRate" />
-												</row>
-												<row id="row_RpyAdvPftRate" visible="false">
-													<label id="label_FinanceMainDialog_RpyAdvPftRate" value="${c:l('label_FinanceMainDialog_RpyAdvPftRate.value')}" />
-													<hbox>
-														<space spacing="2px" />
-														<decimalbox id="rpyAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
-													</hbox>
-												</row>
-												<row id="row_supplementRent" visible="false">
-													<label id="label_FinanceMainDialog_SupplementRent" value="${c:l('label_FinanceMainDialog_SupplementRent.value')}" />
-													<currencyBox id="supplementRent" />
-													<label id="label_FinanceMainDialog_IncreasedCost" value="${c:l('label_FinanceMainDialog_IncreasedCost.value')}" />
-													<currencyBox id="increasedCost" />
-												</row>
 												<row id="row_FinRepRates" visible="false">
 													<label id="label_FinanceMainDialog_FinMinRate" value="${c:l('label_FinanceMainDialog_FinMinRate.value')}" />
 													<hbox>
@@ -1029,17 +994,6 @@
 														<datebox id="nextRepayDate" width="120px" />
 														<space spacing="2px" />
 														<datebox id="nextRepayDate_two" readonly="true" buttonVisible="false" width="120px" tabindex="-1" />
-													</hbox>
-												</row>
-												<row id="rolloverFrqRow" visible="false">
-													<label id="label_FinanceMainDialog_RolloverFrq" value="${c:l('label_FinanceMainDialog_RolloverFrq.value')}" />
-													<frequencybox id="rolloverFrq" />
-													<label id="label_FinanceMainDialog_NextRollOverDate" value="${c:l('label_FinanceMainDialog_NextRollOverDate.value')}" />
-													<hbox>
-														<space spacing="2px" sclass="mandatory" />
-														<datebox id="nextRollOverDate" width="120px" />
-														<space spacing="2px" />
-														<datebox id="nextRollOverDate_two" readonly="true" buttonVisible="false" width="120px" tabindex="-1" />
 													</hbox>
 												</row>
 												<row id="row_PlannedEMIH" visible="false">

@@ -72,7 +72,6 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Decimalbox;
@@ -103,7 +102,6 @@ import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
-import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -124,13 +122,10 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -158,9 +153,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	protected Listbox listBoxPaymentDetails;
 	protected Listbox listBoxFeeDetail;
 	protected Listbox listBoxFinFeeReceipts;
-	protected Listbox listBoxInsuranceDetails;
-	protected Button btnNew_FeeDetailList_FinInsurance;
-	protected Groupbox gb_InsuranceDetails;
 	protected Groupbox gb_PaymentDetails;
 	protected Groupbox gb_FinFeeReceipts;
 	protected Listheader listheader_FeeDetailList_PaymentRef;
@@ -183,7 +175,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private Tab parentTab = null;
 	private List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 	private List<FeePaymentDetail> feePaymentDetailList = new ArrayList<>();
-	private List<FinInsurances> finInsuranceList = new ArrayList<>();
 	private int ccyFormat = 0;
 	private String roleCode = "";
 	private boolean isEnquiry = false;
@@ -351,7 +342,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		int divHeight = this.borderLayoutHeight - 80;
 		int semiBorderlayoutHeights = divHeight / 2;
 		this.listBoxPaymentDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
-		this.listBoxInsuranceDetails.setHeight(semiBorderlayoutHeights - 105 + "px");
 
 		if (isWIF) {
 			this.gb_PaymentDetails.setVisible(false);
@@ -397,8 +387,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, roleCode);
 		this.btnNew_NewPaymentDetail.setVisible(getUserWorkspace().isAllowed("FinFeeDetailListCtrl_NewPaymentDetail"));
-		this.btnNew_FeeDetailList_FinInsurance
-				.setVisible(getUserWorkspace().isAllowed("FinFeeDetailListCtrl_NewFinInsurance"));
 
 		this.btn_autoAllocate.setVisible(getUserWorkspace().isAllowed("FinFeeDetailListCtrl_Adjust"));
 
@@ -460,14 +448,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param commodityHeader
 	 * 
 	 */
 	public void doWriteBeanToComponents(FinanceDetail financeDetail) {
 		logger.debug("Entering ");
 
 		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(), false);
-		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
 
 		List<FinFeeDetail> finFeeDetailActualList = financeDetail.getFinScheduleData().getFinFeeDetailList();
 
@@ -2663,143 +2649,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 	}
 
-	public void onClick$btnNew_FeeDetailList_FinInsurance(Event event) throws InterruptedException {
-		logger.debug("Entering");
-
-		FinInsurances finInsurance = new FinInsurances();
-		finInsurance.setNewRecord(true);
-		finInsurance.setInsuranceReq(true);
-		finInsurance.setModule(PennantConstants.WORFLOW_MODULE_FINANCE);
-		finInsurance.setWorkflowId(getWorkFlowId());
-		doShowInsuranceDialog(finInsurance);
-
-		logger.debug("Leaving");
-	}
-
-	private void doShowInsuranceDialog(FinInsurances finInsurance) {
-		logger.debug("Entering");
-
-		Map<String, Object> arg = new HashMap<String, Object>();
-		arg.put("finInsurance", finInsurance);
-		arg.put("finFeeDetailListCtrl", this);
-		arg.put("role", roleCode);
-		arg.put("isWIF", isWIF);
-
-		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinInsuranceDialog.zul", null, arg);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	public void doFillFinInsurances(List<FinInsurances> finInsurances) {
-		logger.debug("Entering");
-
-		try {
-			if (finInsurances != null) {
-				setFinInsuranceList(finInsurances);
-				fillFinInsuranecs(finInsurances);
-			}
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	private void fillFinInsuranecs(List<FinInsurances> finInsurances) {
-		logger.debug("Entering");
-
-		this.listBoxInsuranceDetails.getItems().clear();
-		for (FinInsurances finInsurance : finInsurances) {
-			Listitem item = new Listitem();
-			Listcell lc;
-
-			lc = new Listcell(finInsurance.getInsuranceType());
-			lc.setStyle("font-weight:bold;");
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getInsuranceTypeDesc());
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getPolicyCode());
-			lc.setStyle("font-weight:bold;");
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getPolicyDesc());
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getInsReference());
-			lc.setParent(item);
-
-			lc = new Listcell();
-			Checkbox checkbox = new Checkbox();
-			checkbox.setChecked(finInsurance.isInsuranceReq());
-			checkbox.setDisabled(true);
-			checkbox.setParent(lc);
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getProvider());
-			lc.setParent(item);
-
-			lc = new Listcell(PennantApplicationUtil.getLabelDesc(finInsurance.getPaymentMethod(),
-					PennantStaticListUtil.getInsurancePaymentType()));
-			lc.setParent(item);
-
-			lc = new Listcell(String.valueOf(finInsurance.getInsuranceRate()));
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getWaiverReason());
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getInsuranceFrq());
-			lc.setParent(item);
-
-			if (StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
-
-				if (finInsurance.getCalType().equals(InsuranceConstants.CALTYPE_CON_AMT)) {
-					lc = new Listcell(PennantApplicationUtil.amountFormate(finInsurance.getAmount(),
-							CurrencyUtil.getFormat(financeMain.getFinCcy())));
-				} else {
-					lc = new Listcell(PennantApplicationUtil.amountFormate(BigDecimal.ZERO,
-							CurrencyUtil.getFormat(financeMain.getFinCcy())));
-				}
-			} else {
-				lc = new Listcell(PennantApplicationUtil.amountFormate(finInsurance.getAmount(),
-						CurrencyUtil.getFormat(financeMain.getFinCcy())));
-			}
-			lc.setStyle("text-align:right;font-weight:bold;");
-			lc.setParent(item);
-
-			lc = new Listcell(finInsurance.getRecordStatus());
-			lc.setParent(item);
-
-			lc = new Listcell(PennantJavaUtil.getLabel(finInsurance.getRecordType()));
-			lc.setParent(item);
-
-			item.setAttribute("data", finInsurance);
-			ComponentsCtrl.applyForward(item, "onDoubleClick=onFinInsuranceItemDoubleClicked");
-			this.listBoxInsuranceDetails.appendChild(item);
-		}
-
-		logger.debug("Leaving");
-	}
-
-	public void onFinInsuranceItemDoubleClicked(ForwardEvent event) throws InterruptedException {
-		logger.debug("Entering");
-
-		Listitem item = (Listitem) event.getOrigin().getTarget();
-		FinInsurances finInsurance = (FinInsurances) item.getAttribute("data");
-		if (!StringUtils.trimToEmpty(finInsurance.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			finInsurance.setNewRecord(false);
-			doShowInsuranceDialog(finInsurance);
-		}
-
-		logger.debug("Leaving");
-	}
-
 	public void doExecuteFeeCharges(boolean isSchdCal, FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
@@ -2823,81 +2672,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (StringUtils.isBlank(moduleDefiner)) {
 			fetchFeeDetails(finScheduleData, true);
 		}
-
-		// Insurance Amounts calculation
-		List<FinInsurances> insurances = getFinInsuranceList();
-		BigDecimal insAddToDisb = BigDecimal.ZERO;
-		BigDecimal deductInsFromDisb = BigDecimal.ZERO;
-		BigDecimal finAmount = finScheduleData.getFinanceMain().getFinAmount();
-		BigDecimal downPayAmt = finScheduleData.getFinanceMain().getDownPayment();
-		Rule rule;
-
-		Customer customer = null;
-		if (financeDetail.getCustomerDetails() != null) {
-			customer = financeDetail.getCustomerDetails().getCustomer();
-		}
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-
-		Map<String, Object> declaredFieldValues = getDataMap(financeMain, customer, financeType);
-
-		if (insurances != null && !insurances.isEmpty()) {
-			for (FinInsurances insurance : insurances) {
-				if (insurance.isInsuranceReq()) {
-					String payType = insurance.getPaymentMethod();
-					if (StringUtils.equals(InsuranceConstants.PAYTYPE_SCH_FRQ, payType)) {
-						continue;
-					}
-
-					BigDecimal insAmount = insurance.getAmount();
-					insurance.setAmount(BigDecimal.ZERO);
-
-					// Rule Based then Execute rule to Insurance Amount
-					if (insurance.getCalType().equals(InsuranceConstants.CALTYPE_RULE)) {
-						rule = ruleService.getRuleById(insurance.getCalRule(), RuleConstants.MODULE_INSRULE,
-								RuleConstants.MODULE_INSRULE);
-						if (rule != null) {
-							insAmount = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(),
-									declaredFieldValues, financeMain.getFinCcy(), RuleReturnType.DECIMAL);
-						}
-					}
-					// Percentage Based then based on calculation Type, percentage Amount to be calculated
-					else if (insurance.getCalType().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
-						if (insurance.getCalOn().equals(InsuranceConstants.CALCON_FINAMT)) {
-							insAmount = finAmount.multiply(insurance.getCalPerc()).divide(new BigDecimal(100),
-									RoundingMode.HALF_DOWN);
-						} else if (insurance.getCalOn().equals(InsuranceConstants.CALCON_OSAMT)) {
-							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getCalPerc())
-									.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-						}
-					}
-					// Provider Rate Based then based on calculation Type, Amount to be calculated
-					else if (insurance.getCalType().equals(InsuranceConstants.CALTYPE_PROVIDERRATE)) {
-						if (insurance.getCalOn().equals(InsuranceConstants.CALCON_FINAMT)) {
-							insAmount = finAmount.multiply(insurance.getInsuranceRate()).divide(new BigDecimal(100),
-									RoundingMode.HALF_DOWN);
-						} else if (insurance.getCalOn().equals(InsuranceConstants.CALCON_OSAMT)) {
-							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getInsuranceRate())
-									.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-						}
-					}
-					// Constant Amount not required any calculation
-
-					if (StringUtils.equals(InsuranceConstants.PAYTYPE_DF_DISB, payType)) {
-						deductInsFromDisb = deductInsFromDisb.add(insAmount);
-						insurance.setAmount(insAmount);
-					} else if (StringUtils.equals(InsuranceConstants.PAYTYPE_ADD_DISB, payType)) {
-						insAddToDisb = insAddToDisb.add(insAmount);
-						insurance.setAmount(insAmount);
-					}
-				}
-			}
-		}
-
-		// Insurance Amounts
-		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
-		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);
-
-		finScheduleData.setFinInsuranceList(getFinInsuranceList());
 
 		logger.debug("Leaving");
 	}
@@ -3478,14 +3252,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	public void setFeePaymentDetailList(List<FeePaymentDetail> feePaymentDetailList) {
 		this.feePaymentDetailList = feePaymentDetailList;
-	}
-
-	public List<FinInsurances> getFinInsuranceList() {
-		return finInsuranceList;
-	}
-
-	public void setFinInsuranceList(List<FinInsurances> finInsuranceList) {
-		this.finInsuranceList = finInsuranceList;
 	}
 
 	public FinanceDetailService getFinanceDetailService() {

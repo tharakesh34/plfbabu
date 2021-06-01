@@ -11,7 +11,6 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
-import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -41,7 +40,6 @@ public class FinEODEvent implements Serializable {
 	private FinODPenaltyRate penaltyrate;
 	private List<FinanceDisbursement> financeDisbursements = new ArrayList<>(1);
 	private List<FinFeeScheduleDetail> finFeeScheduleDetails = new ArrayList<>(1);
-	private List<FinSchFrqInsurance> finSchFrqInsurances = new ArrayList<>(1);
 	private List<PresentmentDetail> presentmentDetails = new ArrayList<>(1);
 	private List<ReturnDataSet> returnDataSet = new ArrayList<>(1);
 	private List<Provision> provisions = new ArrayList<>(1);
@@ -105,8 +103,6 @@ public class FinEODEvent implements Serializable {
 				.forEach(e -> entity.getFinanceDisbursements().add(e == null ? null : e.copyEntity()));
 		this.finFeeScheduleDetails.stream()
 				.forEach(e -> entity.getFinFeeScheduleDetails().add(e == null ? null : e.copyEntity()));
-		this.finSchFrqInsurances.stream()
-				.forEach(e -> entity.getFinSchFrqInsurances().add(e == null ? null : e.copyEntity()));
 		this.presentmentDetails.stream()
 				.forEach(e -> entity.getPresentmentDetails().add(e == null ? null : e.copyEntity()));
 		this.returnDataSet.stream().forEach(e -> entity.getReturnDataSet().add(e == null ? null : e.copyEntity()));
@@ -322,14 +318,6 @@ public class FinEODEvent implements Serializable {
 		this.finFeeScheduleDetails = finFeeScheduleDetails;
 	}
 
-	public List<FinSchFrqInsurance> getFinSchFrqInsurances() {
-		return finSchFrqInsurances;
-	}
-
-	public void setFinSchFrqInsurances(List<FinSchFrqInsurance> finSchFrqInsurances) {
-		this.finSchFrqInsurances = finSchFrqInsurances;
-	}
-
 	public List<PresentmentDetail> getPresentmentDetails() {
 		return presentmentDetails;
 	}
@@ -521,7 +509,6 @@ public class FinEODEvent implements Serializable {
 		this.penaltyrate = null;
 		this.financeDisbursements.clear();
 		this.finFeeScheduleDetails.clear();
-		this.finSchFrqInsurances.clear();
 		this.presentmentDetails.clear();
 		this.returnDataSet.clear();
 		this.provisions.clear();

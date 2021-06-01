@@ -231,7 +231,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 		 * append(" FinStartDate,GraceTerms, NumberOfTerms, NextGrcPftDate, NextRepayDate, LastRepayPftDate, NextRepayPftDate, "
 		 * ); selectSql.append(" LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue,FinRepayMethod, "
 		 * ); selectSql.append(" RecordType, Version, ProfitDaysBasis , FeeChargeAmt, FinStatus, FinStsReason," );
-		 * selectSql.append(" InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate "
+		 * selectSql.append(" InitiateUser, BankName, AccountType, DdaReferenceNo, SecurityDeposit, MaturityDate "
 		 * );
 		 */
 		if (isRejectFinance) {

@@ -56,15 +56,12 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
-import com.pennant.backend.model.finance.FinInsurances;
-import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -127,9 +124,6 @@ public class ScheduleGenerator {
 				curSchd.setBaseRate(financeMain.getGraceBaseRate());
 				curSchd.setSplRate(financeMain.getGraceSpecialRate());
 				curSchd.setMrgRate(financeMain.getGrcMargin());
-				curSchd.setAdvBaseRate(financeMain.getGrcAdvBaseRate());
-				curSchd.setAdvMargin(financeMain.getGrcAdvMargin());
-				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
 
 				curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
@@ -149,9 +143,6 @@ public class ScheduleGenerator {
 				curSchd.setBaseRate(financeMain.getRepayBaseRate());
 				curSchd.setSplRate(financeMain.getRepaySpecialRate());
 				curSchd.setMrgRate(financeMain.getRepayMargin());
-				curSchd.setAdvBaseRate(financeMain.getRpyAdvBaseRate());
-				curSchd.setAdvMargin(financeMain.getRpyAdvMargin());
-				curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 				curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
@@ -169,9 +160,6 @@ public class ScheduleGenerator {
 		}
 
 		finScheduleData.getScheduleMap().clear();
-
-		//prepare Insurance Schedule
-		getInsSchedule(finScheduleData, financeMain);
 
 		logger.debug("Leaving");
 		return finScheduleData;
@@ -313,9 +301,6 @@ public class ScheduleGenerator {
 					curSchd.setBaseRate(prvSchd.getBaseRate());
 					curSchd.setSplRate(prvSchd.getSplRate());
 					curSchd.setMrgRate(prvSchd.getMrgRate());
-					curSchd.setAdvBaseRate(prvSchd.getAdvBaseRate());
-					curSchd.setAdvMargin(prvSchd.getAdvMargin());
-					curSchd.setAdvPftRate(prvSchd.getAdvPftRate());
 				}
 
 				curSchd.setSchdMethod(newGrcSchdMethod);
@@ -330,9 +315,6 @@ public class ScheduleGenerator {
 					curSchd.setBaseRate(financeMain.getRepayBaseRate());
 					curSchd.setSplRate(financeMain.getRepaySpecialRate());
 					curSchd.setMrgRate(financeMain.getRepayMargin());
-					curSchd.setAdvBaseRate(financeMain.getRpyAdvBaseRate());
-					curSchd.setAdvMargin(financeMain.getRpyAdvMargin());
-					curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
 					repayRateReset = false;
 				} else {
 					if (prvSchd != null) {
@@ -340,9 +322,6 @@ public class ScheduleGenerator {
 						curSchd.setBaseRate(prvSchd.getBaseRate());
 						curSchd.setSplRate(prvSchd.getSplRate());
 						curSchd.setMrgRate(prvSchd.getMrgRate());
-						curSchd.setAdvBaseRate(prvSchd.getAdvBaseRate());
-						curSchd.setAdvMargin(prvSchd.getAdvMargin());
-						curSchd.setAdvPftRate(prvSchd.getAdvPftRate());
 					}
 				}
 
@@ -464,9 +443,6 @@ public class ScheduleGenerator {
 		finScheduleData.getScheduleMap().clear();
 		financeMain.setSkipRateReset(true);
 
-		//prepare Insurance Schedule
-		getInsSchedule(finScheduleData, financeMain);
-
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -545,28 +521,6 @@ public class ScheduleGenerator {
 
 		logger.debug("Leaving");
 		return scheduleData;
-	}
-
-	/**
-	 * Method for Setting Schedule Frequency Insurance details based on Selection frequency
-	 */
-	private static void getInsSchedule(FinScheduleData finScheduleData, FinanceMain financeMain) {
-
-		// No Insurance Details exists then close the process of calculation
-		if (finScheduleData.getFinInsuranceList() == null || finScheduleData.getFinInsuranceList().isEmpty()) {
-			return;
-		}
-
-		//prepare the schedule frequency Insurances
-		for (int i = 0; i < finScheduleData.getFinInsuranceList().size(); i++) {
-
-			FinInsurances finInsurance = finScheduleData.getFinInsuranceList().get(i);
-			if (StringUtils.equals(finInsurance.getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
-				List<FinSchFrqInsurance> schFrqList = getInsuranceSchedule(finScheduleData, finInsurance,
-						financeMain.getFinStartDate(), financeMain.getMaturityDate(), false);
-				finInsurance.setFinSchFrqInsurances(schFrqList);
-			}
-		}
 	}
 
 	/**
@@ -1128,50 +1082,6 @@ public class ScheduleGenerator {
 
 		logger.debug("Leaving");
 		return finScheduleData;
-	}
-
-	/**
-	 * Method for preparing list of Schedule Frequency Insurance Details
-	 */
-	private static List<FinSchFrqInsurance> getInsuranceSchedule(FinScheduleData finScheduleData,
-			FinInsurances finInsurance, Date startDate, Date endDate, boolean includeStartDate) {
-		logger.debug("Entering");
-
-		FrequencyDetails frequencyDetails = FrequencyUtil.getTerms(finInsurance.getInsuranceFrq(), startDate, endDate,
-				true, includeStartDate);
-		if (frequencyDetails.getErrorDetails() != null) {
-			logger.warn("Schedule Error: on condition --->  Validate frequency:" + finInsurance.getInsuranceFrq());
-			finScheduleData.setErrorDetail(frequencyDetails.getErrorDetails());
-		}
-
-		List<FinSchFrqInsurance> schFrqList = null;
-		if (frequencyDetails.getScheduleList() != null && frequencyDetails.getScheduleList().size() > 0) {
-			schFrqList = new ArrayList<>();
-			for (int i = 0; i < frequencyDetails.getScheduleList().size(); i++) {
-				Calendar calendar = frequencyDetails.getScheduleList().get(i);
-				Date insDate = DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat));
-
-				if (DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), insDate) == 0) {
-					continue;
-				}
-				FinSchFrqInsurance frqInsurance = new FinSchFrqInsurance();
-				frqInsurance.setInsSchDate(insDate);
-				frqInsurance.setInsuranceRate(finInsurance.getInsuranceRate());
-				//If calculation type is Percentage then percentage is captured as insurance Rate
-				if (StringUtils.equals(finInsurance.getCalType(), InsuranceConstants.CALTYPE_PERCENTAGE)) {
-					frqInsurance.setInsuranceRate(finInsurance.getCalPerc());
-				}
-				frqInsurance.setReference(finInsurance.getReference());
-				frqInsurance.setModule(FinanceConstants.MODULE_NAME);
-				frqInsurance.setInsuranceType(finInsurance.getInsuranceType());
-				frqInsurance.setInsReference(finInsurance.getInsReference());
-				frqInsurance.setInsuranceRate(finInsurance.getInsuranceRate());
-				frqInsurance.setInsuranceFrq(finInsurance.getInsuranceFrq());
-
-				schFrqList.add(frqInsurance);
-			}
-		}
-		return schFrqList;
 	}
 
 	/**

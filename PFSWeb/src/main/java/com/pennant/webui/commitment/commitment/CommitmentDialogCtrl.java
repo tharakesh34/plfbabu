@@ -3252,11 +3252,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	}
 
 	private String getDivisionByBranch() {
-		if (this.cmtBranch.getValue().equals(PennantConstants.IBD_Branch)) {
-			return FinanceConstants.FIN_DIVISION_CORPORATE;
-		} else {
-			return FinanceConstants.FIN_DIVISION_RETAIL;
-		}
+		return FinanceConstants.FIN_DIVISION_RETAIL;
 	}
 
 	private CommitmentRuleData prepareDate() {

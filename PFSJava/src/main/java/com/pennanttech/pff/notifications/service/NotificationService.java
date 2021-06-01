@@ -67,7 +67,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
-import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.finance.finoption.FinOption;
@@ -222,8 +221,6 @@ public class NotificationService extends GenericService<Notification> {
 			} else if (object instanceof FinCreditReviewDetails) {
 				FinCreditReviewDetails finCreditReviewDetails = (FinCreditReviewDetails) object;
 				keyReference = finCreditReviewDetails.getLovDescCustCIF();
-			} else if (object instanceof InvestmentFinHeader) {
-				//
 			} else if (object instanceof RepayData) {
 				RepayData repayData = (RepayData) object;
 				financeMain = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -1091,49 +1088,6 @@ public class NotificationService extends GenericService<Notification> {
 	}
 
 	/**
-	 * Method for Data Preparing
-	 * 
-	 * @param data
-	 * @param InvestmentFinHeader
-	 * @return
-	 */
-	public MailTemplateData getTemplateData(InvestmentFinHeader investmentFinHeader) {
-		MailTemplateData data = new MailTemplateData();
-		int format = CurrencyUtil.getFormat(investmentFinHeader.getFinCcy());
-
-		// Facility Data Preparation For Notifications
-		data.setInvestmentRef(investmentFinHeader.getInvestmentRef());
-		data.setTotPrincipalAmt(PennantApplicationUtil.amountFormate(investmentFinHeader.getTotPrincipalAmt(), format));
-		data.setFinCcy(investmentFinHeader.getFinCcy());
-		data.setStartDate(DateUtility.formatToLongDate(investmentFinHeader.getStartDate()));
-		data.setMaturityDate(DateUtility.formatToLongDate(investmentFinHeader.getMaturityDate()));
-		data.setPrincipalInvested(
-				PennantApplicationUtil.amountFormate(investmentFinHeader.getPrincipalInvested(), format));
-		data.setPrincipalMaturity(
-				PennantApplicationUtil.amountFormate(investmentFinHeader.getPrincipalMaturity(), format));
-		data.setPrincipalDueToInvest(
-				PennantApplicationUtil.amountFormate(investmentFinHeader.getPrincipalDueToInvest(), format));
-		data.setAvgPftRate(investmentFinHeader.getAvgPftRate().toString());
-		// Role Code For Alert Notification
-		List<SecurityRole> securityRoles = PennantApplicationUtil.getRoleCodeDesc(investmentFinHeader.getRoleCode());
-		data.setRoleCode(securityRoles.get(0).getRoleDesc());
-		// user Details
-		data.setUsrName(PennantApplicationUtil.getUserDesc(investmentFinHeader.getLastMntBy()));
-		data.setNextUsrName("");
-		data.setPrevUsrName(PennantApplicationUtil.getUserDesc(investmentFinHeader.getLastMntBy()));
-		data.setWorkflowType(PennantApplicationUtil.getWorkFlowType(investmentFinHeader.getWorkflowId()));
-		data.setNextUsrRoleCode(investmentFinHeader.getNextRoleCode());
-
-		List<SecurityRole> securityUsrRoles = PennantApplicationUtil
-				.getRoleCodeDesc(investmentFinHeader.getNextRoleCode());
-		data.setNextUsrRole(securityUsrRoles.get(0).getRoleDesc());
-		data.setPrevUsrRole(investmentFinHeader.getLastMntBy());
-		data.setUsrRole(investmentFinHeader.getRoleCode());
-
-		return data;
-	}
-
-	/**
 	 * Method for Data Preparion
 	 * 
 	 * @param data
@@ -1176,13 +1130,6 @@ public class NotificationService extends GenericService<Notification> {
 		return data;
 	}
 
-	/**
-	 * Method for Data Preparion
-	 * 
-	 * @param data
-	 * @param InvestmentFinHeader
-	 * @return
-	 */
 	public MailTemplateData getTemplateData(FinanceSuspHead financeSuspHead) {
 		MailTemplateData data = new MailTemplateData();
 		// Manual Suspense Data Preparation For Notifications

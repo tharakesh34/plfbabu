@@ -91,7 +91,7 @@ public class AgreementDetail {
 	private String custName = ""; // Full Name or Short Name
 
 	/** Provides current Customer Mothers Name. */
-	private String custArabicName = ""; // Customer Arabic Name
+	private String custLocalLngName = ""; // Customer Arabic Name
 
 	/** Provides current Customer Passport Number. */
 	private String custPassport = ""; // Customer Passport Number
@@ -1068,7 +1068,7 @@ public class AgreementDetail {
 	 */
 	private String finType = ""; // Finance Type
 	/**
-	 *  Provides current Loan Type Product.
+	 * Provides current Loan Type Product.
 	 */
 	private String finProduct = ""; // Product
 
@@ -1154,12 +1154,12 @@ public class AgreementDetail {
 	/**
 	 * Provides Down Payment amount.
 	 */
-	private String downPayment = ""; // Down Payment to Bank / Down Pay by Bank in case of AHB DPSP
+	private String downPayment = "";
 
 	/**
 	 * Provides Down Payment Bank.
 	 */
-	private String downPayBank = ""; // Down Payment to Bank / Down Pay by Bank in case of AHB DPSP
+	private String downPayBank = "";
 
 	/**
 	 * Provides Down Payment to Supplier/Vendor.
@@ -1512,26 +1512,6 @@ public class AgreementDetail {
 	private String repayBaseRate = ""; // Actual repay Rate Base  of Repayment
 
 	/**
-	 * Provides Advised Actual Profit Rate of Repayment.
-	 */
-	private String advPftRate = ""; // Advised Actual Profit Rate of Repayment
-
-	/**
-	 * Provides Advised Base Rate of Repayment.
-	 */
-	private String advBaseRate = ""; // Advised Base Rate of Repayment
-
-	/**
-	 * Provides Advised Margin Rate of Repayment.
-	 */
-	private String advMargin = ""; // Advised Margin Rate of Repayment
-
-	/**
-	 * Provides Advance Payment.
-	 */
-	private String advPayment = ""; // Advance Payment
-
-	/**
 	 * Provides Effective Rate of Return.
 	 */
 	private String effPftRate = ""; // Effective Rate of Return
@@ -1545,11 +1525,6 @@ public class AgreementDetail {
 	 * Provides Total Profit.
 	 */
 	private String profit = ""; // Total Profit
-
-	/**
-	 * Provides Total Advised Profit.
-	 */
-	private String advProfit = ""; // Total Advised Profit
 
 	/**
 	 * Provides Loan Late Payment Penalty Rate.
@@ -1634,14 +1609,6 @@ public class AgreementDetail {
 	private String firstDisbursementAmt = "";
 
 	private String repaySplRate = "";
-
-	//DDA Fields
-	//===============================
-	private String bankName = ""; // DDA Sponsoring Bank
-	private String accountType = ""; // DDA Bank Account Type for selected Account
-	private String iban = ""; // Customer IBAN Number
-	private String ddaPurposeCode = ""; // DDA Purpose Code
-	private String ifscCode = ""; // DDA Purpose Code
 
 	//Mandate
 	/**
@@ -1851,19 +1818,6 @@ public class AgreementDetail {
 	private String assetPricePF = "";
 	private String assetFinRatio = "";
 
-	//====== Goods Finance =====================//
-
-	private List<GoodLoanDetails> goodsLoanDetails;
-
-	//====== Commodity Finance =================//
-
-	private String holdCertificateNo = "";
-	private String quantity = "";
-	private String commodityType = "";
-	private String commodityDesc = ""; //  Quantity and General Description of Commodities
-
-	private String commodityUnit = "";
-	private String brokerName = "";
 	/*
 	 * private int tenureDays; private String splInstruction; private List<CommidityLoanDetails> commidityLoanDetail;
 	 */
@@ -1892,7 +1846,6 @@ public class AgreementDetail {
 	private String sharePerc = ""; //AHB Share (finAmount-downpayment)/finAmount
 	private String perofPri = ""; //Perc of Pri in Schd on Total Pri
 	private String fIDate = ""; // First Installment Date
-	private String SchAdvRate = "";
 	private String schdInst = ""; //Schd Installment
 	private String osPriAmount = "";
 	private String SchPriAmtPerBank = ""; //Schd Pri Amount % for bank
@@ -1904,7 +1857,6 @@ public class AgreementDetail {
 	private String priAmtCurtInst = ""; //Pri amount of cur Instl
 	private String schPriFirstInstl = ""; //Schd Pri Amount on First Instl
 	private String schdPftFirstInstl = ""; //Schd Pft Amount on First Instl
-	private String schdAdvPftFirstInstl = ""; //Schd Adv Pft Amount on First Instl
 
 	private String oDInsDate = ""; //OD Instl Date
 	private String emiRate = ""; //EMI DATE 
@@ -2166,38 +2118,6 @@ public class AgreementDetail {
 		this.nextInstDate = nextInstDate;
 	}
 
-	public String getAdvPftRate() {
-		return advPftRate;
-	}
-
-	public void setAdvPftRate(String advPftRate) {
-		this.advPftRate = advPftRate;
-	}
-
-	public String getAdvBaseRate() {
-		return advBaseRate;
-	}
-
-	public void setAdvBaseRate(String advBaseRate) {
-		this.advBaseRate = advBaseRate;
-	}
-
-	public String getAdvMargin() {
-		return advMargin;
-	}
-
-	public void setAdvMargin(String advMargin) {
-		this.advMargin = advMargin;
-	}
-
-	public String getAdvProfit() {
-		return advProfit;
-	}
-
-	public void setAdvProfit(String advProfit) {
-		this.advProfit = advProfit;
-	}
-
 	public String getLatePayRate() {
 		return latePayRate;
 	}
@@ -2278,22 +2198,6 @@ public class AgreementDetail {
 		this.finOcrRequired = finOcrRequired;
 	}
 
-	public String getCommodityDesc() {
-		return commodityDesc;
-	}
-
-	public void setCommodityDesc(String commodityDesc) {
-		this.commodityDesc = commodityDesc;
-	}
-
-	public String getBrokerName() {
-		return brokerName;
-	}
-
-	public void setBrokerName(String brokerName) {
-		this.brokerName = brokerName;
-	}
-
 	public String getOsPri() {
 		return osPri;
 	}
@@ -2332,14 +2236,6 @@ public class AgreementDetail {
 
 	public void setfIDate(String fIDate) {
 		this.fIDate = fIDate;
-	}
-
-	public String getSchAdvRate() {
-		return SchAdvRate;
-	}
-
-	public void setSchAdvRate(String schAdvRate) {
-		SchAdvRate = schAdvRate;
 	}
 
 	public String getSchdInst() {
@@ -3129,8 +3025,6 @@ public class AgreementDetail {
 		private String schdSeqNo = "";
 		private String closingBalance = ""; //closing Balance(AED)
 		private String insSchd = ""; //Insurance Fee
-		private String suplRent = "";
-		private String schAdvPft = "";
 		private String advPayment = ""; // Advance Payment
 		private String openingPrincipal = ""; // Advance Payment
 		private String rateOfInterst = ""; // Advance Payment
@@ -3192,28 +3086,12 @@ public class AgreementDetail {
 			this.insSchd = insSchd;
 		}
 
-		public String getSuplRent() {
-			return suplRent;
-		}
-
-		public void setSuplRent(String suplRent) {
-			this.suplRent = suplRent;
-		}
-
 		public String getSchTotalPriAmt() {
 			return schTotalPriAmt;
 		}
 
 		public void setSchTotalPriAmt(String schTotalPriAmt) {
 			this.schTotalPriAmt = schTotalPriAmt;
-		}
-
-		public String getSchAdvPft() {
-			return schAdvPft;
-		}
-
-		public void setSchAdvPft(String schAdvPft) {
-			this.schAdvPft = schAdvPft;
 		}
 
 		public String getAdvPayment() {
@@ -4000,30 +3878,6 @@ public class AgreementDetail {
 	 * trafficProfileNo) { this.trafficProfileNo = trafficProfileNo; }
 	 */
 
-	public String getBankName() {
-		return bankName;
-	}
-
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
-	}
-
-	public String getAccountType() {
-		return accountType;
-	}
-
-	public void setAccountType(String accountType) {
-		this.accountType = accountType;
-	}
-
-	public String getIban() {
-		return iban;
-	}
-
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
-
 	public String getCustIdType() {
 		return custIdType;
 	}
@@ -4040,36 +3894,12 @@ public class AgreementDetail {
 		this.custIdName = custIdName;
 	}
 
-	public String getDdaPurposeCode() {
-		return ddaPurposeCode;
+	public String getCustLocalLngName() {
+		return custLocalLngName;
 	}
 
-	public void setDdaPurposeCode(String ddaPurposeCode) {
-		this.ddaPurposeCode = ddaPurposeCode;
-	}
-
-	public String getCustArabicName() {
-		return custArabicName;
-	}
-
-	public void setCustArabicName(String custArabicName) {
-		this.custArabicName = custArabicName;
-	}
-
-	public String getHoldCertificateNo() {
-		return holdCertificateNo;
-	}
-
-	public void setHoldCertificateNo(String holdCertificateNo) {
-		this.holdCertificateNo = holdCertificateNo;
-	}
-
-	public String getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(String quantity) {
-		this.quantity = quantity;
+	public void setCustLocalLngName(String custLocalLngName) {
+		this.custLocalLngName = custLocalLngName;
 	}
 
 	public String getCustRO1() {
@@ -4086,14 +3916,6 @@ public class AgreementDetail {
 
 	public void setMMADate(String mMADate) {
 		this.mMADate = mMADate;
-	}
-
-	public String getCommodityType() {
-		return commodityType;
-	}
-
-	public void setCommodityType(String commodityType) {
-		this.commodityType = commodityType;
 	}
 
 	public String getDisbAccount() {
@@ -4603,14 +4425,6 @@ public class AgreementDetail {
 		this.mMADate = mMADate;
 	}
 
-	public String getCommodityUnit() {
-		return commodityUnit;
-	}
-
-	public void setCommodityUnit(String commodityUnit) {
-		this.commodityUnit = commodityUnit;
-	}
-
 	public String getAppTime() {
 		return appTime;
 	}
@@ -4742,28 +4556,12 @@ public class AgreementDetail {
 	 * public void setDealerCity(String dealerCity) { this.dealerCity = dealerCity; }
 	 */
 
-	public List<GoodLoanDetails> getGoodsLoanDetails() {
-		return goodsLoanDetails;
-	}
-
-	public void setGoodsLoanDetails(List<GoodLoanDetails> goodsLoanDetails) {
-		this.goodsLoanDetails = goodsLoanDetails;
-	}
-
 	public String getCustOccupation() {
 		return custOccupation;
 	}
 
 	public void setCustOccupation(String custOccupation) {
 		this.custOccupation = custOccupation;
-	}
-
-	public String getAdvPayment() {
-		return advPayment;
-	}
-
-	public void setAdvPayment(String advPayment) {
-		this.advPayment = advPayment;
 	}
 
 	/*
@@ -4801,14 +4599,6 @@ public class AgreementDetail {
 
 	public void setInsAmt(String insAmt) {
 		this.insAmt = insAmt;
-	}
-
-	public String getIfscCode() {
-		return ifscCode;
-	}
-
-	public void setIfscCode(String ifscCode) {
-		this.ifscCode = ifscCode;
 	}
 
 	public String getDownPayment() {
@@ -5286,14 +5076,6 @@ public class AgreementDetail {
 	 * public String getMarketValueInWords() { return marketValueInWords; } public void setMarketValueInWords(String
 	 * marketValueInWords) { this.marketValueInWords = marketValueInWords; }
 	 */
-
-	public String getSchdAdvPftFirstInstl() {
-		return schdAdvPftFirstInstl;
-	}
-
-	public void setSchdAdvPftFirstInstl(String schdAdvPftFirstInstl) {
-		this.schdAdvPftFirstInstl = schdAdvPftFirstInstl;
-	}
 
 	public String getEarlySettleAmt() {
 		return earlySettleAmt;
@@ -11579,7 +11361,7 @@ public class AgreementDetail {
 	public void setInitialCreditCompletedDate(String initialCreditCompletedDate) {
 		this.initialCreditCompletedDate = initialCreditCompletedDate;
 	}
-	
+
 	public String getFinProduct() {
 		return finProduct;
 	}

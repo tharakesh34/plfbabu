@@ -654,7 +654,7 @@ public class IRRCodeDialogCtrl extends GFCBaseCtrl<IRRCode> {
 			this.btnCancel.setVisible(true);
 		}
 
-		if (StringUtils.equals(aIRRCode.getRecordStatus(), PennantConstants.SHARIA_STATUS_APPROVED)) {
+		if (StringUtils.equals(aIRRCode.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
 			this.active.setDisabled(false);
 		} else {
 			this.active.setDisabled(true);

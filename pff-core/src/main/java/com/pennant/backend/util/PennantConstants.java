@@ -149,7 +149,6 @@ public class PennantConstants {
 	public static final String RCD_STATUS_FINALIZED = "Finalized";
 	public static final String RCD_STATUS_REASSIGNED = "Reassigned";
 	public static final String RCD_STATUS_MANUALASSIGNED = "ManuallyAssigned";
-	public static final String DFT_THREAD_COUNT = "BULKRATECHANGE_DFT_THREAD_COUNT";
 
 	// List Maintenance Workflow Record Type codes
 	public static final String RCD_ADD = "ADD";
@@ -169,7 +168,6 @@ public class PennantConstants {
 	public static final String WF_CIBIL = "cibilCheck";
 	public static final String method_doDedup = "doDedup";
 	public static final String method_doBlacklist = "doBlacklist";
-	public static final String method_doPoliceCase = "doPoliceCase";
 	public static final String method_CheckLimits = "CheckLimits";
 	public static final String method_doCheckExceptions = "doCheckExceptions";
 	public static final String method_doSendNotification = "doSendNotification";
@@ -177,21 +175,11 @@ public class PennantConstants {
 	public static final String method_doConfirm = "doConfirm";
 	public static final String method_RejectStatus = "rejectStatus";
 	public static final String method_doClearQueues = "doClearQueues";
-	public static final String method_doFundsAvailConfirmed = "doFundsAvailConfirmed";
 	public static final String method_doCheckProspectCustomer = "doCheckProspectCustomer";
 	public static final String method_doCheckDeviations = "doCheckDeviations";
 	public static final String method_doCheckAuthLimit = "doCheckAuthLimit";
 	public static final String method_doCheckScore = "doCheckScore";
-	public static final String method_doCheckLPOApproval = "doCheckLPOApproval";
-	public static final String WF_SEND_LPO_REQUETS = "LPORequest";
 	public static final String method_doCheckSMECustomer = "doCheckSMECustomer";
-	public static final String method_doCheckCADRequired = "doCheckCADRequired";
-	public static final String method_sendDDARequest = "sendDDARequest";
-	public static final String method_DDAMaintenance = "ddaMaintenance";
-	public static final String method_checkDDAResponse = "checkDDAResponse";
-	public static final String method_doCheckShariaRequired = "doCheckShariaRequired";
-	public static final String method_doCheckPaymentToBank = "doCheckPaymentToBank";
-	public static final String method_doCheckOtherPayments = "doCheckOtherPayments";
 	public static final String method_doCheckCollaterals = "doCheckCollaterals";
 	public static final String method_doCheckDepositProc = "doCheckDeposit";
 	public static final String method_doCheckFurtherWF = "doCheckFurtherWF";
@@ -315,7 +303,6 @@ public class PennantConstants {
 	public static final String INCCATTYPE_COMMIT = "COMMIT";
 	public static final String INCCATTYPE_OTHCOMMIT = "COMMITOTH";
 
-	// This code is Considered as EID for AHB or As CPR for AIB
 	public static final String CPRCODE = "01";
 	public static final String PASSPORT = "02";
 	public static final String TRADELICENSE = "15";
@@ -405,25 +392,6 @@ public class PennantConstants {
 	public static final String EOD_ACCRUAL_POSTING = "ACCRUAL POSTING";
 	public static final String EOD_PFT_DTL_UPLOAD = "UPLOAD PROFIT DETAILS";
 
-	public static final String IBD_Branch = "2010";// TODO
-
-	public static final String EXPENSE_FOR_EDUCATION = "E";
-	public static final String EXPENSE_FOR_ADVANCEBILLING = "A";
-
-	// LPO Documents for multiple agreements generation
-	public static final String DOCCTG_LPO = "LPOISSUE";
-	public static final String DOCCTG_LPO_FLEET = "LPOISSUEFLEET";
-	public static final String DOCCTG_LPO_R = "LPOREISSUE";
-
-	// DDA Document Type Codes
-	public static final String DOCCTG_DDA_FORM = "ECS";
-
-	public static final String TAKEOVERAGRDATA = "TAKEOVER";
-	public static final String ADVANCEPAYMENTAGRDATA = "ADVANCEPAY";
-	public static final String JOINSCUSTAGRDATA = "JOINTCUST";
-	public static final String LPOFORFLEETVEHICLE_DEALER = "LPOFLTDLR";
-	public static final String LPOFORFLEETVEHICLE_PRIVATE = "LPOFLTPRI";
-
 	// Rating Type Details
 	public static final String DEFAULT_RATE_TYPE = "MOODY";
 	public static final String DEFAULT_CUST_TYPE = "EA";
@@ -438,10 +406,6 @@ public class PennantConstants {
 	public static final String POSTSTS_FAILED = "Failed";
 	public static final String MODULETYPE_ENQ = "ENQ";
 	public static final String MODULETYPE_REPOSTING = "REPOSTING";
-
-	// Account Holding Type
-	public static final String HOLDTYPE_OVERDUE = "P";
-	public static final String HOLDTYPE_FUTURE = "F";
 
 	public static final String KYC_PRIORITY_VERY_HIGH = "5";
 	public static final String KYC_PRIORITY_HIGH = "4";
@@ -484,88 +448,18 @@ public class PennantConstants {
 	public static final String EMAILTYPE_ADHRCRD = "ADHRCRD";
 	public static final String DELIMITER_COMMA = ",";
 
-	public static final String COMMISSION_TYPE_FLAT = "F";
-	public static final String COMMISSION_TYPE_PERCENTAGE = "P";
-
 	public static final Double SQUAREFEET = 0.09290304;
 	public static final Double SQUAREMETER = 10.7639;
 
-	public static final String COMMODITY_SOLD = "SOLD";
-	public static final String COMMODITY_ALLOCATED = "ALLOCATED";
-	public static final String COMMODITY_CANCELLED = "CANCELLED";
-
 	public static final String HOLIDAY_CATEGORY_DEFAULT = "NOTAPP";
-
-	public static final String AGREEMENT_GEN = "UAE Master Commodity Murabaha Agreement (Revolving VIP).docx";
-	public static final String AGREEMENT_IJA = "UAE Master Commodity Murabaha Agreement (Revolving).docx";
-	public static final String AGREEMENT_Master_SCM = "UAE Master Commodity Murabaha Agreement (Term VIP).docx";
-	public static final String AGREEMENT_LEASE = "UAE Master Commodity Murabaha Agreement (Term).docx";
-
-	public static final String AGREEMENT_WAKALA = "SCHEDULE5";
-	public static final String AGREEMENT_MURABAHA_FAC = "SCHEDULE6";
-	public static final String AGREEMENT_UAE_MASTER_COM_MUR_RE_VIP = "SCHEDULE7";
-
-	public static final String COMM_MUR = "COMM_MUR";
-	public static final String STRU_MUR = "STRU_MUR";
-	public static final String QARD_HAN = "QARD_HAN";
-	public static final String CORP_MUR = "CORP_MUR";
-	public static final String CORP_MUD = "CORP_MUD";
-	public static final String WAKALA = "WAKALA";
-	public static final String DIM_MUSH = "DIM_MUSH";
-	public static final String IJARAH = "IJARAH";
-	public static final String TAWARRUQ = "TAWARRUQ";
-
-	public static final String PO_AUTHORIZATION_AUTHORIZE = "A";
-	public static final String PO_AUTHORIZATION_DECLINE = "D";
-	public static final String PO_AUTHORIZATION_CLOSE = "C";
-	public static final String PO_AUTHORIZATION_CHEQUE_ISSUED = "I";
-	public static final String PO_AUTHORIZATION_CHEQUE_REJECTED = "R";
-
-	public static final String POAUTH_ROLE_TCS = "PO_AUTHORIZATION_TCS";
-	public static final String POAUTH_ROLE_CHEQUE_ISSUE = "PO_AUTHORIZATION_CHEQUE_ISSUE";
-	public static final String CONSTRUCTIONSTAGE = "CONSTSTAGE";
-	public static final String USAGE = "USAGE";
-	public static final String MORTSTATUS = "MORTSTATUS";
 
 	public static final String ACCOUNTTYPE_CA = "CA";
 	public static final String ACCOUNTTYPE_SA = "SA";
 
 	public static final String REQ_TYPE_VALIDATE = "VALIDATE";
-	public static final String REQ_TYPE_REG = "REGISTRATION";
 	public static final String REQ_TYPE_CAN = "CANCELLATION";
 	public static final String RES_TYPE_SUCCESS = "0000";
 	public static final String DDA_ACK_REJECTED = "ACK";
-
-	public static final String DDA_ACK = "ACK";
-	public static final String DDA_NAK = "NAK";
-	public static final String DDA_REJECTED = "REJECTED";
-	public static final String DDA_PENDING = "PENDING";
-	public static final String DDA_PENDING_CODE = "PTIDDS04";
-
-	public static final String MORTGAGE_TRANS_TYPE = "NEW";
-	public static final String DDA_ACK_APPROVED = "ACKAPPROVED";
-
-	// Card Types
-	public static final String CARDTYPE_CLASSIC = "C";
-	public static final String CARDTYPE_GOLD = "G";
-	public static final String CARDTYPE_PLATINUM = "P";
-	public static final String CARDTYPE_NIL = "N";
-
-	// Card Class Types
-	public static final String CARDCLASS_UJARAH = "U";
-	public static final String CARDCLASS_FREEFORLIFE = "F";
-	public static final String CARDCLASS_QIBLA = "Q";
-	public static final String CARDCLASS_LAHA = "L";
-	public static final String CARDCLASS_NIL = "N";
-
-	public static final String CUSTOMERSTATUS_NORMAL = "N";
-	public static final String CUSTOMERSTATUS_VIP = "V";
-	public static final String MORTGAGE_SOURCE_CODE = "MORT_SOURCE_CODE";
-
-	public static final String EVALUATION_STATUS_PENDING = "P";
-	public static final String EVALUATION_STATUS_VALUATOR = "V";
-	public static final String EVALUATION_STATUS_COMPLETED = "C";
-	public static final String EVALUATION_STATUS_NOTPROGRESSED = "N";
 
 	public static final String ADDRESS_TYPE_RESIDENCE = "CURRES";
 	public static final String LEGEL_FEES = "Legal Fees";
@@ -573,94 +467,19 @@ public class PennantConstants {
 	public static final String OTHERS = "Others";
 	public static final int defaultCCYDecPos = 2;
 
-	public static final String EASYBUY = "EASYBUY";
-	public static final String REFINANCE = "REFINANC";
-	public static final String SWITCHOVER = "SWTCHOVR";
-	public static final String TOPUP = "TOPUP";
-	public static final String LANDANDCONSTRUTON = "LANDCONS";
-	public static final String CONSTRUCTIONONLY = "CONSTRTN";
-	public static final String GOVERNMENTHOUSINGSCHEME = "GOVNSCHM";
+	// Insurance Status Details Refactored by PV on 26JUN20
+	public static final String INSURANCE_STATUS_APPROVED = "APPROVED";
+	public static final String INSURANCE_STATUS_DECLINED = "DECLINED";
+	public static final String INSURANCE_STATUS_APPROVED_EXCEPTIONS = "APPEXCEP";
 
-	public static final String SELFUSE = "SELFUSE";
-	public static final String INVESTMENTUSE = "INVSTMNT";
-	public static final String COMMERCIALINVESTMENTUSE = "COMMINVS";
-
-	public static final String FREEHOLD = "FREEHOLD";
-	public static final String LEASEHOLD = "LEASEHLD";
-	public static final String FREEHOLDANDGIFETEDLAND = "FREEGIFT";
-	public static final String GIFTEDLAND = "GIFTLAND";
-
-	public static final String APARTMENT = "APARTMNT";
-	public static final String VILLA = "VILLA";
-	public static final String COMPOUNDVILLAS = "COMPNDVL";
-	public static final String TOWNHOUSES = "TOWNHOUS";
-	public static final String LAND = "LAND";
-
-	public static final String PRIMARY = "PRIMARY";
-	public static final String SECONDARY = "SECONDRY";
-	public static final String PRIVATEVILLA = "PRIVTVIL";
-
-	public static final String NORMAL = "NORMAL";
-	public static final String URGENT = "URGENT";
-
-	public static final String RENT = "RENT";
-	public static final String SALARY = "SALINCM";
-	public static final String SALARYINCOMERENT = "SALINRNT";
-	public static final String PENSION = "PENSION";
-
-	public static final String FIRSTDEGREE = "FIRSTDEG";
-	public static final String SECONDDEGREE = "SECONDDG";
-	public static final String THIRDDEGREE = "THIRDDEG";
-	public static final String AHBREGISTERED = "AHBREGIS";
-	public static final String IJARAHAREGISTERD = "IJARREGS";
-	public static final String TRIPARTITEASSIGNMENT = "TRIPASAG";
-
-	public static final String SOLE = "SOLE";
-	public static final String JOINT = "JOINT";
-	public static final String FREEZONE = "FREEZONE";
-	public static final String CORPORATION = "CORPRATN";
-	public static final String LIMITEDPARTNERSHIP = "LIMPARSP";
-	public static final String NONPROFITCORPORATION = "NONPFTCO";
-	public static final String LIMITEDLIABILITYCOMPANY = "LMTLBCMP";
-
-	public static final String HOMEFINANCE = "HOMEFIN";
-	public static final String CONSTRUCTIONFINANCE = "CONSTFIN";
-
-	public static final String FULLPROPERTYMANAGEMENT = "FULLPROP";
-	public static final String RENTALCOLLECTION = "RENTALCO";
-	public static final String RENTALASSIGNMENT = "RENTALAS";
-	public static final String FACILITYMANAGEMENT = "FACLTYMG";
-	public static final String NOTAPPLICABLE = "NOTAPP";
-
-	// Web Service Related
-	public static final String MQ_SUCCESS_CODE = "0000";
-
-	// National Bonds
-	public static final String BOND_PURCHASE = "PURCHASE";
-	public static final String BOND_TRANSFER_M = "TRANS_MAKER";
-	public static final String BOND_TRANSFER_C = "TRANS_CHECKER";
-
-	// Auto hunting
-	public static final String AUTOHUNT_RUNNING = "R";
-	public static final String AUTOHUNT_STOPPED = "S";
-	public static final String AUTOHUNT_BATCH = "B";
-
-	// Insurance Status Details
-	public static final String TAKAFUL_STATUS_APPROVED = "APPROVED";
-	public static final String TAKAFUL_STATUS_DECLINED = "DECLINED";
-	public static final String TAKAFUL_STATUS_APPROVED_EXCEPTIONS = "APPEXCEP";
-
-	public static final String TAKEOVERFROM_BANK = "BANK";
-	public static final String TAKEOVERFROM_THIRDPARTY = "TRDPARTY";
-
-	// Insurance CLAIM PAID STATUS
-	public static final String TAKAFUL_PAIDSTATUS_PAID = "PAID";
-	public static final String TAKAFUL_PAIDSTATUS_REJECTED = "REJECTED";
-	public static final String TAKAFUL_PAIDSTATUS_PENDING = "PENDING";
+	// Insurance CLAIM PAID STATUS Refactored by PV on 26JUN20
+	public static final String INSURANCE_PAIDSTATUS_PAID = "PAID";
+	public static final String INSURANCE_PAIDSTATUS_REJECTED = "REJECTED";
+	public static final String INSURANCE_PAIDSTATUS_PENDING = "PENDING";
 
 	// Insurance Claim Reason
-	public static final String TAKAFUL_CLAIMREASON_DEATH = "Disease";
-	public static final String TAKAFUL_CLAIMREASON_PTD = "PTD";
+	public static final String INSURANCE_CLAIMREASON_DEATH = "Disease";
+	public static final String INSURANCE_CLAIMREASON_PTD = "PTD";
 
 	public static final String EVENTBASE = "FinEvent";
 	public static final String ACCNO = "Account";
@@ -672,10 +491,6 @@ public class PennantConstants {
 	public static final String OFFICE_PHONE = "OFFICE";
 	public static final String CASDOC = "CASDOCUMENT";
 
-	public static final String SHARIA_STATUS_NOTREQUIRED = "NotRequired";
-	public static final String SHARIA_STATUS_PENDING = "Pending";
-	public static final String SHARIA_STATUS_APPROVED = "Approved";
-	public static final String SHARIA_STATUS_DECLINED = "Declined";
 	public static final String PREAPPROVAL_TABLE_TYPE = "_PA";
 
 	public static final String PO_STATUS_ISSUE = "I";
@@ -683,20 +498,6 @@ public class PennantConstants {
 
 	public static final String SUSP_TRIG_AUTO = "AUTO";
 	public static final String SUSP_TRIG_MAN = "MANUAL";
-
-	public static final String TYPE_OF_VALUATION_FULL = "F";
-	public static final String TYPE_OF_VALUATION_DRIVEBY = "R";
-	public static final String TYPE_OF_VALUATION_DESKTOP = "D";
-	public static final String TYPE_OF_VALUATION_INTERIM = "I";
-
-	public static final String PROPERTY_STATUS_READY_FOR_HANDOVER = "R";
-	public static final String PROPERTY_STATUS_COMPLETED_PROPERTY = "C";
-	public static final String PROPERTY_STATUS_UNDER_CONSTRUCTION = "U";
-
-	public static final String REU_DECISION_APPROVED = "A";
-	public static final String REU_DECISION_APPROVED_SUBJECTTO = "S";
-	public static final String REU_DECISION_DECLINE = "D";
-	public static final String REU_DECISION_PENDING = "P";
 
 	public static final String ADDRESS_TYPE_OFFICE = "OFFICE";
 

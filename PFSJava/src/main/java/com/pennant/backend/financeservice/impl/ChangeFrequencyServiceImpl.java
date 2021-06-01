@@ -319,11 +319,6 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		sd.setCalculatedRate(prvSchd.getCalculatedRate());
 		sd.setSchdMethod(prvSchd.getSchdMethod());
 		sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
-		sd.setAdvBaseRate(prvSchd.getAdvBaseRate());
-		sd.setAdvMargin(prvSchd.getAdvMargin());
-		sd.setAdvPftRate(prvSchd.getAdvPftRate());
-		sd.setSuplRent(prvSchd.getSuplRent());
-		sd.setIncrCost(prvSchd.getIncrCost());
 
 		finScheduleData.getFinanceScheduleDetails().add(sd);
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));

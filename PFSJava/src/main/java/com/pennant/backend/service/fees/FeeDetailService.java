@@ -75,7 +75,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -90,11 +89,9 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -203,12 +200,8 @@ public class FeeDetailService {
 		}
 
 		// Insurance Amounts calculation
-		List<FinInsurances> insurances = financeDetail.getFinScheduleData().getFinInsuranceList();
 		BigDecimal insAddToDisb = BigDecimal.ZERO;
 		BigDecimal deductInsFromDisb = BigDecimal.ZERO;
-		BigDecimal finAmount = finScheduleData.getFinanceMain().getFinAmount();
-		BigDecimal downPayAmt = finScheduleData.getFinanceMain().getDownPayment();
-		Rule rule;
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = null;
@@ -217,68 +210,12 @@ public class FeeDetailService {
 		}
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
-		Map<String, Object> declaredFieldValues = getDataMap(financeMain, customer, financeType);
-
-		if (insurances != null && !insurances.isEmpty()) {
-			for (FinInsurances insurance : insurances) {
-				if (insurance.isInsuranceReq()) {
-					String payType = insurance.getPaymentMethod();
-					if (StringUtils.equals(InsuranceConstants.PAYTYPE_SCH_FRQ, payType)) {
-						continue;
-					}
-
-					BigDecimal insAmount = insurance.getAmount();
-					insurance.setAmount(BigDecimal.ZERO);
-
-					// Rule Based then Execute rule to Insurance Amount
-					if (insurance.getCalType().equals(InsuranceConstants.CALTYPE_RULE)) {
-						rule = ruleService.getRuleById(insurance.getCalRule(), RuleConstants.MODULE_INSRULE,
-								RuleConstants.MODULE_INSRULE);
-						if (rule != null) {
-							insAmount = (BigDecimal) RuleExecutionUtil.executeRule(rule.getSQLRule(),
-									declaredFieldValues, financeMain.getFinCcy(), RuleReturnType.DECIMAL);
-						}
-					}
-					// Percentage Based then based on calculation Type, percentage Amount to be calculated
-					else if (insurance.getCalType().equals(InsuranceConstants.CALTYPE_PERCENTAGE)) {
-						if (insurance.getCalOn().equals(InsuranceConstants.CALCON_FINAMT)) {
-							insAmount = finAmount.multiply(insurance.getCalPerc()).divide(new BigDecimal(100),
-									RoundingMode.HALF_DOWN);
-						} else if (insurance.getCalOn().equals(InsuranceConstants.CALCON_OSAMT)) {
-							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getCalPerc())
-									.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-						}
-					}
-					// Provider Rate Based then based on calculation Type, Amount to be calculated
-					else if (insurance.getCalType().equals(InsuranceConstants.CALTYPE_PROVIDERRATE)) {
-						if (insurance.getCalOn().equals(InsuranceConstants.CALCON_FINAMT)) {
-							insAmount = finAmount.multiply(insurance.getInsuranceRate()).divide(new BigDecimal(100),
-									RoundingMode.HALF_DOWN);
-						} else if (insurance.getCalOn().equals(InsuranceConstants.CALCON_OSAMT)) {
-							insAmount = (finAmount.subtract(downPayAmt)).multiply(insurance.getInsuranceRate())
-									.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-						}
-					}
-					// Constant Amount not required any calculation
-					if (StringUtils.equals(InsuranceConstants.PAYTYPE_DF_DISB, payType)) {
-						deductInsFromDisb = deductInsFromDisb.add(insAmount);
-						insurance.setAmount(insAmount);
-					} else if (StringUtils.equals(InsuranceConstants.PAYTYPE_ADD_DISB, payType)) {
-						insAddToDisb = insAddToDisb.add(insAmount);
-						insurance.setAmount(insAmount);
-					}
-				}
-			}
-		}
-
 		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(finScheduleData.getFinanceMain().getFinSourceID())) {
 			finScheduleData.setFinFeeDetailList(finFeeDetailList);
 		}
 		// Insurance Amounts
 		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
 		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);
-
-		finScheduleData.setFinInsuranceList(financeDetail.getFinScheduleData().getFinInsuranceList());
 
 		logger.debug("Leaving");
 	}

@@ -647,22 +647,6 @@
 												<decimalbox id="finGrcMargin" width="125px" maxlength="15" style="text-align:right" />
 											</hbox>
 										</row>
-										<row id="row_GrcAdvBaseRate" visible="false">
-											<label id="label_FinanceTypeDialog_GrcAdvBaseRate" value="${c:l('label_CDFinanceTypeDialog_GrcAdvBaseRate.value')}" />
-											<extendedcombobox id="grcAdvBaseRate" />
-											<label id="label_FinanceTypeDialog_GrcAdvPftRate" value="${c:l('label_CDFinanceTypeDialog_GrcAdvPftRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="grcAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
-											</hbox>
-										</row>
-										<row id="row_GrcAdvMargin" visible="false">
-											<label id="label_FinanceTypeDialog_GrcAdvMargin" value="${c:l('label_CDFinanceTypeDialog_GrcAdvMargin.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="grcAdvMargin" width="125px" maxlength="15" style="text-align:right" />
-											</hbox>
-										</row>
 										<row id="row_FinGrcRates" visible="false">
 											<label id="label_FinanceTypeDialog_FInGrcMinRate" value="${c:l('label_CDFinanceTypeDialog_FInGrcMinRate.value')}" />
 											<hbox>
@@ -754,23 +738,6 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="equalRepayment" checked="true" />
-												</hbox>
-											</row>
-
-											<row id="row_RpyAdvBaseRate" visible="false">
-												<label id="label_FinanceTypeDialog_RpyAdvBaseRate" value="${c:l('label_CDFinanceTypeDialog_RpyAdvBaseRate.value')}" />
-												<extendedcombobox id="rpyAdvBaseRate" />
-												<label id="label_FinanceTypeDialog_RpyAdvPftRate" value="${c:l('label_CDFinanceTypeDialog_RpyAdvPftRate.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<decimalbox id="rpyAdvPftRate" width="125px" maxlength="15" style="text-align:right" />
-												</hbox>
-											</row>
-											<row id="row_RpyAdvMargin" visible="false">
-												<label id="label_FinanceTypeDialog_RpyAdvMargin" value="${c:l('label_CDFinanceTypeDialog_RpyAdvMargin.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<decimalbox id="rpyAdvMargin" width="125px" maxlength="15" style="text-align:right" />
 												</hbox>
 											</row>
 
@@ -1111,18 +1078,6 @@
 												<checkbox id="allowRIAInvestment" checked="false" />
 											</hbox>
 
-											<label id="label_FinanceTypeDialog_AllowAdvanceRent" value="${c:l('label_CDFinanceTypeDialog_AllowAdvanceRentAllow.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="alwAdvanceRent" checked="false" />
-											</hbox>
-										</row>
-										<row id="row_allowDownpayPgm" visible="false">
-											<label id="label_FinanceTypeDialog_AllowDownpayPgm" value="${c:l('label_CDFinanceTypeDialog_AllowDownpayPgm.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="allowDownpayPgm" checked="false" />
-											</hbox>
 										</row>
 										<row visible="false">
 											<label id="label_FinanceTypeDialog_AlwMaxDisbCheckReq" value="${c:l('label_FinanceTypeDialog_AlwMaxDisbCheckReq.value')}" />
@@ -1137,15 +1092,6 @@
 												<space spacing="2px" />
 												<checkbox id="alwMultiPartyDisb" checked="false" />
 											</hbox>
-										</row>
-										<row>
-											<label id="label_FinanceTypeDialog_RolloverFinance" value="${c:l('label_CDFinanceTypeDialog_RolloverFinance.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="rolloverFinance" checked="false" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_RollOverFrq" value="${c:l('label_CDFinanceTypeDialog_RollOverFrq.value')}" />
-											<frequencybox id="rollOverFrq" />
 										</row>
 										<row visible="false">
 											<label id="label_FinanceTypeDialog_FinAlwRateChangeAnyDate" value="${c:l('label_CDFinanceTypeDialog_FinAlwRateChangeAnyDate.value')}" />

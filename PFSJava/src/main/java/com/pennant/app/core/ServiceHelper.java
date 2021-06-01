@@ -81,7 +81,6 @@ import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
-import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -125,7 +124,6 @@ abstract public class ServiceHelper implements Serializable {
 	protected FinanceRepaymentsDAO financeRepaymentsDAO;
 	protected FinanceProfitDetailDAO financeProfitDetailDAO;
 	protected FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
-	protected FinInsurancesDAO finInsurancesDAO;
 	protected PresentmentDetailDAO presentmentDetailDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	//accounting
@@ -381,10 +379,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
-	}
-
-	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
-		this.finInsurancesDAO = finInsurancesDAO;
 	}
 
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {

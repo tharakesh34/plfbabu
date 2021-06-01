@@ -309,12 +309,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_COMPOUND, false);
 		}
 
-		if (StringUtils.equals(getComboboxValue(financeTypeDialogCtrl.cbfinProductType),
-				FinanceConstants.PRODUCT_ISTISNA)) {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, true);
-		} else {
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
-		}
+		setAccountingMandStyle(AccountEventConstants.ACCEVENT_PRGCLAIM, false);
 
 		logger.debug("leaving");
 	}

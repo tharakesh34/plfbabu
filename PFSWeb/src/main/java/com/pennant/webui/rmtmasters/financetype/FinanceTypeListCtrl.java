@@ -165,13 +165,15 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			} else if (consumerDurables) {
 				this.searchObject.addFilterEqual("ProductCategory", FinanceConstants.PRODUCT_CD);
 			} else {
-				//FIXME: Changed by Pradeep. Not sure about the previous condition correctness. Remove the comment after testing.
+
 				if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
 					Filter[] filters = new Filter[2];
 					filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL, Filter.OP_EQUAL);
 					filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_DISCOUNT, Filter.OP_EQUAL);
 					this.searchObject.addFilterOr(filters);
+
 				} else {
+
 					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
 					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL);
 					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CD);

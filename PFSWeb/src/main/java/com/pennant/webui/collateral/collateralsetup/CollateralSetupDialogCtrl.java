@@ -2658,8 +2658,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				Listcell lc;
 
 				String moduleName = assignmentDetail.getModule();
-				if (FinanceConstants.MODULE_NAME.equals(moduleName)
-						&& ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
+				if (FinanceConstants.MODULE_NAME.equals(moduleName)) {
 					moduleName = Labels.getLabel("label_Finance");
 				}
 				lc = new Listcell(moduleName);
@@ -2796,8 +2795,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				Listcell lc;
 
 				String moduleName = movement.getModule();
-				if (FinanceConstants.MODULE_NAME.equals(moduleName)
-						&& ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
+				if (FinanceConstants.MODULE_NAME.equals(moduleName)) {
 					moduleName = Labels.getLabel("label_Finance");
 				}
 				lc = new Listcell(moduleName);

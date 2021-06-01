@@ -47,35 +47,6 @@
 							</listhead>
 						</listbox>
 					</groupbox>
-					<groupbox id="gb_InsuranceDetails" visible="false">
-						<caption label="${c:l('label_FeeDetailList_InsuranceDetails')}" />
-						<div sclass="z-toolbar" style="padding:0">
-							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
-								<toolbar align="start" style="border:none;"/>
-								<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
-									<button id="btnNew_FeeDetailList_FinInsurance" label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_FinMainInsurance.tooltiptext')}" autodisable="btnNew_FeeDetailList_FinInsurance" />
-								</toolbar>
-							</hbox>
-						</div>
-						<listbox id="listBoxInsuranceDetails" span="true" sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
-							<listhead sizable="true">
-								<listheader id="listheader_FeeDetailList_Insurance_InsuranceType" label="${c:l('listheader_FeeDetailList_Insurance_InsuranceType.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailList_Insurance_InsuranceDesc" label="${c:l('listheader_FeeDetailList_Insurance_InsuranceDesc.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailList_Insurance_PolicyType" label="${c:l('listheader_FeeDetailList_Insurance_PolicyType.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailList_Insurance_PolicyDesc" label="${c:l('listheader_FeeDetailList_Insurance_PolicyDesc.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailList_Insurance_Reference" label="${c:l('listheader_FeeDetailList_Insurance_Reference.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailList_Insurance_InsuranceRequired" label="${c:l('listheader_FeeDetailList_Insurance_InsuranceRequired.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailList_Insurance_ProviderName" label="${c:l('listheader_FeeDetailList_Insurance_ProviderName.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailList_Insurance_PaymentMethod" label="${c:l('listheader_FeeDetailList_Insurance_PaymentMethod.label')}" sort="false" hflex="min" />
-								<listheader visible="false" style="text-align:right;" id="listheader_FeeDetailList_Insurance_insRate" label="${c:l('listheader_FeeDetailList_Insurance_insRate.label')}" sort="false" hflex="min" />
-								<listheader visible="false" id="listheader_FeeDetailDialog_Insurance_WaiverReason" label="${c:l('listheader_FeeDetailList_Insurance_WaiverReason.label')}" sort="false" hflex="min" />
-								<listheader visible="false" id="listheader_FeeDetailDialog_Insurance_Frequency" label="${c:l('listheader_FeeDetailList_Insurance_Frequency.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailDialog_Insurance_Amount" style="text-align:right;" label="${c:l('listheader_FeeDetailList_Insurance_Amount.label')}" sort="false" hflex="min" />
-								<listheader visible="false" id="listheader_FeeDetailDialog_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
-								<listheader id="listheader_FeeDetailDialog_RecordType" label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
-							</listhead>
-						</listbox>
-					</groupbox>
 					<groupbox id="gb_PaymentDetails" style="border:none;">
 						<caption label="${c:l('gp_FeesPaymentDetails')}"/>
 						<div sclass="z-toolbar" height="28px">

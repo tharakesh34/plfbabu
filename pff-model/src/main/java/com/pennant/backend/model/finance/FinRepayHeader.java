@@ -29,8 +29,6 @@ public class FinRepayHeader implements Serializable {
 	private long linkedTranId = 0;
 	private long newLinkedTranId = 0;
 	private BigDecimal totalIns = BigDecimal.ZERO;
-	private BigDecimal totalSuplRent = BigDecimal.ZERO;
-	private BigDecimal totalIncrCost = BigDecimal.ZERO;
 	private BigDecimal totalSchdFee = BigDecimal.ZERO;
 	private BigDecimal realizeUnAmz = BigDecimal.ZERO;
 	private BigDecimal realizeUnLPI = BigDecimal.ZERO;
@@ -74,8 +72,6 @@ public class FinRepayHeader implements Serializable {
 		entity.setLinkedTranId(this.linkedTranId);
 		entity.setNewLinkedTranId(this.newLinkedTranId);
 		entity.setTotalIns(this.totalIns);
-		entity.setTotalSuplRent(this.totalSuplRent);
-		entity.setTotalIncrCost(this.totalIncrCost);
 		entity.setTotalSchdFee(this.totalSchdFee);
 		entity.setRealizeUnAmz(this.realizeUnAmz);
 		entity.setRealizeUnLPI(this.realizeUnLPI);
@@ -252,22 +248,6 @@ public class FinRepayHeader implements Serializable {
 
 	public void setTotalIns(BigDecimal totalIns) {
 		this.totalIns = totalIns;
-	}
-
-	public BigDecimal getTotalSuplRent() {
-		return totalSuplRent;
-	}
-
-	public void setTotalSuplRent(BigDecimal totalSuplRent) {
-		this.totalSuplRent = totalSuplRent;
-	}
-
-	public BigDecimal getTotalIncrCost() {
-		return totalIncrCost;
-	}
-
-	public void setTotalIncrCost(BigDecimal totalIncrCost) {
-		this.totalIncrCost = totalIncrCost;
 	}
 
 	public BigDecimal getTotalSchdFee() {

@@ -308,9 +308,6 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 					finDetail.getFinScheduleData().getFinanceMain().setGrcSchdMthd(oldfinaMain.getGrcSchdMthd());
 					finDetail.getFinScheduleData().getFinanceMain().setGrcMinRate(oldfinaMain.getGrcMinRate());
 					finDetail.getFinScheduleData().getFinanceMain().setGrcMaxRate(oldfinaMain.getGrcMaxRate());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcAdvBaseRate(oldfinaMain.getGrcAdvBaseRate());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcAdvMargin(oldfinaMain.getGrcAdvMargin());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcAdvPftRate(oldfinaMain.getGrcAdvPftRate());
 				}
 				finDetail.getFinScheduleData().getFinanceMain().setRepayFrq(oldfinaMain.getRepayFrq());
 				finDetail.getFinScheduleData().getFinanceMain().setNextRepayDate(oldfinaMain.getNextRepayDate());
@@ -374,7 +371,6 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 		response.setRepayInstructions(null);
 		response.setRateInstruction(null);
 		response.setFinFeeDetailList(null);
-		response.setInsuranceList(null);
 		response.setStepPolicyDetails(null);
 		response.setFinanceScheduleDetails(null);
 		response.setPlanEMIHDates(null);

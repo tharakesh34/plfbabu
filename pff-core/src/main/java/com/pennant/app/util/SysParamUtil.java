@@ -72,7 +72,7 @@ public class SysParamUtil {
 	 * Enumerates the system parameter codes.
 	 */
 	public enum Param {
-		APP_DATE("APP_DATE"), APP_DFT_CURR("APP_DFT_CURR"), AUTOHUNTING("AUTOHUNTING"), APP_VALUEDATE("APP_VALUEDATE");
+		APP_DATE("APP_DATE"), APP_DFT_CURR("APP_DFT_CURR"), APP_VALUEDATE("APP_VALUEDATE");
 
 		private final String code;
 

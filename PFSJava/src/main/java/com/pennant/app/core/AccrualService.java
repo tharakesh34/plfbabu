@@ -301,12 +301,6 @@ public class AccrualService extends ServiceHelper {
 		pfd.setNSchdPriDue(BigDecimal.ZERO);
 		pfd.setPrvRpySchPri(BigDecimal.ZERO);
 
-		// advised Profit & Rebate
-		pfd.setTotalAdvPftSchd(BigDecimal.ZERO);
-		pfd.setTotalRbtSchd(BigDecimal.ZERO);
-		pfd.setTdSchdAdvPft(BigDecimal.ZERO);
-		pfd.setTdSchdRbt(BigDecimal.ZERO);
-
 		//Accruals and amortizations
 		pfd.setPftAccrued(BigDecimal.ZERO);
 		pfd.setPftAccrueSusp(BigDecimal.ZERO);
@@ -504,10 +498,6 @@ public class AccrualService extends ServiceHelper {
 		pfd.setTotalpriSchd(pfd.getTotalpriSchd().add(schd.getPrincipalSchd()));
 		pfd.setTotalPriPaid(pfd.getTotalPriPaid().add(schd.getSchdPriPaid()));
 
-		// advised Profit
-		pfd.setTotalAdvPftSchd(pfd.getTotalAdvPftSchd().add(schd.getAdvProfit()));
-		pfd.setTotalRbtSchd(pfd.getTotalRbtSchd().add(schd.getRebate()));
-
 		//Schedule Information
 		if ((schd.isRepayOnSchDate() || schd.isPftOnSchDate())) {
 			if ((schd.isFrqDate() && !isHoliday(schd.getBpiOrHoliday()))
@@ -557,10 +547,6 @@ public class AccrualService extends ServiceHelper {
 		// principal
 		pfd.setTdSchdPri(pfd.getTdSchdPri().add(schd.getPrincipalSchd()));
 		pfd.setTdSchdPriPaid(pfd.getTdSchdPriPaid().add(schd.getSchdPriPaid()));
-
-		// advised Profit
-		pfd.setTdSchdAdvPft(pfd.getTdSchdAdvPft().add(schd.getAdvProfit()));
-		pfd.setTdSchdRbt(pfd.getTdSchdRbt().add(schd.getRebate()));
 
 		//Fully paid Date. Fully paid flags will be only used for setting the fully paid date. will not update back in the schedule
 		if (schd.getProfitSchd().compareTo(schd.getSchdPftPaid()) <= 0) {

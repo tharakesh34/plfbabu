@@ -1030,9 +1030,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			auditDetails.addAll(details);
 		}
 
-		//Finance Profit Details Updation - Repayment Account
-		getProfitDetailsDAO().updateRpyAccount(financeMain.getFinReference(), financeMain.getRepayAccountId());
-
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 

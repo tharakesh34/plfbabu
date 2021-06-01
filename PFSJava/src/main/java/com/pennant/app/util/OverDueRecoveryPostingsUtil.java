@@ -1107,25 +1107,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			boolean accFound = false;
 
 			// Account Type Check
-			if ("TREASURY".equals(StringUtils.trimToEmpty(finDivision))) {
-				String acType = SysParamUtil.getValueAsString("ALWFULLPAY_TSR_ACTYPE");
+			String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
 
-				String[] acTypeList = acType.split(",");
-				for (int i = 0; i < acTypeList.length; i++) {
-					if (iAccount.getAcType().equals(acTypeList[i].trim())) {
-						accFound = true;
-						break;
-					}
-				}
-			} else {
-				String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
-
-				String[] acTypeList = acType.split(",");
-				for (int i = 0; i < acTypeList.length; i++) {/*
-																 * if(iAccount.getAcType().equals(acTypeList[i].trim()))
-																 * { accFound = true; break; }
-																 */
-				}
+			String[] acTypeList = acType.split(",");
+			for (int i = 0; i < acTypeList.length; i++) {/*
+															 * if(iAccount.getAcType().equals(acTypeList[i].trim())) {
+															 * accFound = true; break; }
+															 */
 			}
 
 			// Set Requested Repayment Amount as RepayAmount Balance

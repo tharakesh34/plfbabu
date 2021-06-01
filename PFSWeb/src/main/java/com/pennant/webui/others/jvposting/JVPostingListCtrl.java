@@ -325,7 +325,6 @@ public class JVPostingListCtrl extends GFCBaseListCtrl<JVPosting> {
 		 * a delete, edit or insert a JVPosting.
 		 */
 		arg.put("jVPostingListCtrl", this);
-		arg.put("isExpRequired", ImplementationConstants.ALLOW_EXPENSE_TRACKING);
 
 		// call the zul-file with the parameters packed in a map
 		try {

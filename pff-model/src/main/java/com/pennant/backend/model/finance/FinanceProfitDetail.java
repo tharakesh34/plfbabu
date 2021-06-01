@@ -21,8 +21,6 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal totalPftPaid = BigDecimal.ZERO;
 	private BigDecimal totalPftBal = BigDecimal.ZERO;
 	private BigDecimal totalPftPaidInAdv = BigDecimal.ZERO;
-	private BigDecimal totalAdvPftSchd = BigDecimal.ZERO; //New Field 
-	private BigDecimal totalRbtSchd = BigDecimal.ZERO; //New Field 
 	private BigDecimal totalpriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPriPaid = BigDecimal.ZERO;
 	private BigDecimal totalPriPaidInAdv = BigDecimal.ZERO; //New Field 
@@ -32,8 +30,6 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal tdPftCpz = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftPaid = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftBal = BigDecimal.ZERO;
-	private BigDecimal tdSchdAdvPft = BigDecimal.ZERO; //New Field 
-	private BigDecimal tdSchdRbt = BigDecimal.ZERO; //New Field
 	private BigDecimal pftAmz = BigDecimal.ZERO;
 	private BigDecimal pftAmzNormal = BigDecimal.ZERO; //New Field 
 	private BigDecimal pftAmzPD = BigDecimal.ZERO; //New Field 
@@ -87,14 +83,7 @@ public class FinanceProfitDetail implements Serializable {
 	private int NOInst = 0;
 	private int NOPaidInst = 0;
 	private int NOODInst = 0;
-	private String FinAccount;
-	private String FinAcType;
-	private String DisbAccountId;
 	private String DisbActCcy;
-	private String RepayAccountId;
-	private String FinCustPftAccount;
-	private String IncomeAccount; //Pending
-	private String UEIncomeSuspAccount; //Pending
 	private String FinCommitmentRef;
 	private boolean FinIsActive;
 	private Date firstRepayDate;
@@ -242,8 +231,6 @@ public class FinanceProfitDetail implements Serializable {
 		entity.setTotalPftPaid(this.totalPftPaid);
 		entity.setTotalPftBal(this.totalPftBal);
 		entity.setTotalPftPaidInAdv(this.totalPftPaidInAdv);
-		entity.setTotalAdvPftSchd(this.totalAdvPftSchd);
-		entity.setTotalRbtSchd(this.totalRbtSchd);
 		entity.setTotalpriSchd(this.totalpriSchd);
 		entity.setTotalPriPaid(this.totalPriPaid);
 		entity.setTotalPriPaidInAdv(this.totalPriPaidInAdv);
@@ -252,8 +239,6 @@ public class FinanceProfitDetail implements Serializable {
 		entity.setTdPftCpz(this.tdPftCpz);
 		entity.setTdSchdPftPaid(this.tdSchdPftPaid);
 		entity.setTdSchdPftBal(this.tdSchdPftBal);
-		entity.setTdSchdAdvPft(this.tdSchdAdvPft);
-		entity.setTdSchdRbt(this.tdSchdRbt);
 		entity.setPftAmz(this.pftAmz);
 		entity.setPftAmzNormal(this.pftAmzNormal);
 		entity.setPftAmzPD(this.pftAmzPD);
@@ -301,14 +286,7 @@ public class FinanceProfitDetail implements Serializable {
 		entity.setNOInst(this.NOInst);
 		entity.setNOPaidInst(this.NOPaidInst);
 		entity.setNOODInst(this.NOODInst);
-		entity.setFinAccount(this.FinAccount);
-		entity.setFinAcType(this.FinAcType);
-		entity.setDisbAccountId(this.DisbAccountId);
 		entity.setDisbActCcy(this.DisbActCcy);
-		entity.setRepayAccountId(this.RepayAccountId);
-		entity.setFinCustPftAccount(this.FinCustPftAccount);
-		entity.setIncomeAccount(this.IncomeAccount);
-		entity.setUEIncomeSuspAccount(this.UEIncomeSuspAccount);
 		entity.setFinCommitmentRef(this.FinCommitmentRef);
 		entity.setFinIsActive(this.FinIsActive);
 		entity.setFirstRepayDate(this.firstRepayDate);
@@ -885,68 +863,12 @@ public class FinanceProfitDetail implements Serializable {
 		NOODInst = nOODInst;
 	}
 
-	public String getFinAccount() {
-		return FinAccount;
-	}
-
-	public void setFinAccount(String finAccount) {
-		FinAccount = finAccount;
-	}
-
-	public String getFinAcType() {
-		return FinAcType;
-	}
-
-	public void setFinAcType(String finAcType) {
-		FinAcType = finAcType;
-	}
-
-	public String getDisbAccountId() {
-		return DisbAccountId;
-	}
-
-	public void setDisbAccountId(String disbAccountId) {
-		DisbAccountId = disbAccountId;
-	}
-
 	public String getDisbActCcy() {
 		return DisbActCcy;
 	}
 
 	public void setDisbActCcy(String disbActCcy) {
 		DisbActCcy = disbActCcy;
-	}
-
-	public String getRepayAccountId() {
-		return RepayAccountId;
-	}
-
-	public void setRepayAccountId(String repayAccountId) {
-		RepayAccountId = repayAccountId;
-	}
-
-	public String getFinCustPftAccount() {
-		return FinCustPftAccount;
-	}
-
-	public void setFinCustPftAccount(String finCustPftAccount) {
-		FinCustPftAccount = finCustPftAccount;
-	}
-
-	public String getIncomeAccount() {
-		return IncomeAccount;
-	}
-
-	public void setIncomeAccount(String incomeAccount) {
-		IncomeAccount = incomeAccount;
-	}
-
-	public String getUEIncomeSuspAccount() {
-		return UEIncomeSuspAccount;
-	}
-
-	public void setUEIncomeSuspAccount(String uEIncomeSuspAccount) {
-		UEIncomeSuspAccount = uEIncomeSuspAccount;
 	}
 
 	public String getFinCommitmentRef() {
@@ -1101,44 +1023,12 @@ public class FinanceProfitDetail implements Serializable {
 		this.depreciatePri = depreciatePri;
 	}
 
-	public BigDecimal getTotalAdvPftSchd() {
-		return totalAdvPftSchd;
-	}
-
-	public void setTotalAdvPftSchd(BigDecimal totalAdvPftSchd) {
-		this.totalAdvPftSchd = totalAdvPftSchd;
-	}
-
-	public BigDecimal getTotalRbtSchd() {
-		return totalRbtSchd;
-	}
-
-	public void setTotalRbtSchd(BigDecimal totalRbtSchd) {
-		this.totalRbtSchd = totalRbtSchd;
-	}
-
 	public BigDecimal getTotalPriPaidInAdv() {
 		return totalPriPaidInAdv;
 	}
 
 	public void setTotalPriPaidInAdv(BigDecimal totalPriPaidInAdv) {
 		this.totalPriPaidInAdv = totalPriPaidInAdv;
-	}
-
-	public BigDecimal getTdSchdAdvPft() {
-		return tdSchdAdvPft;
-	}
-
-	public void setTdSchdAdvPft(BigDecimal tdSchdAdvPft) {
-		this.tdSchdAdvPft = tdSchdAdvPft;
-	}
-
-	public BigDecimal getTdSchdRbt() {
-		return tdSchdRbt;
-	}
-
-	public void setTdSchdRbt(BigDecimal tdSchdRbt) {
-		this.tdSchdRbt = tdSchdRbt;
 	}
 
 	public BigDecimal getPftAmzNormal() {
@@ -1704,8 +1594,6 @@ public class FinanceProfitDetail implements Serializable {
 		map.put("fpt_totalPftPaid", this.totalPftPaid);
 		map.put("fpt_totalPftBal", this.totalPftBal);
 		map.put("fpt_totalPftPaidInAdv", this.totalPftPaidInAdv);
-		map.put("fpt_totalAdvPftSchd", this.totalAdvPftSchd);
-		map.put("fpt_totalRbtSchd", this.totalRbtSchd);
 		map.put("fpt_totalpriSchd", this.totalpriSchd);
 		map.put("fpt_totalPriPaid", this.totalPriPaid);
 		map.put("fpt_totalPriPaidInAdv", this.totalPriPaidInAdv);
@@ -1714,8 +1602,6 @@ public class FinanceProfitDetail implements Serializable {
 		map.put("fpt_tdPftCpz", this.tdPftCpz);
 		map.put("fpt_tdSchdPftPaid", this.tdSchdPftPaid);
 		map.put("fpt_tdSchdPftBal", this.tdSchdPftBal);
-		map.put("fpt_tdSchdAdvPft", this.tdSchdAdvPft);
-		map.put("fpt_tdSchdRbt", this.tdSchdRbt);
 		map.put("fpt_pftAmz", this.pftAmz);
 		map.put("fpt_pftAmzNormal", this.pftAmzNormal);
 		map.put("fpt_pftAmzPD", this.pftAmzPD);
@@ -1763,14 +1649,7 @@ public class FinanceProfitDetail implements Serializable {
 		map.put("fpt_NOInst", this.NOInst);
 		map.put("fpt_NOPaidInst", this.NOPaidInst);
 		map.put("fpt_NOODInst", this.NOODInst);
-		map.put("fpt_FinAccount", this.FinAccount);
-		map.put("fpt_FinAcType", this.FinAcType);
-		map.put("fpt_DisbAccountId", this.DisbAccountId);
 		map.put("fpt_DisbActCcy", this.DisbActCcy);
-		map.put("fpt_RepayAccountId", this.RepayAccountId);
-		map.put("fpt_FinCustPftAccount", this.FinCustPftAccount);
-		map.put("fpt_IncomeAccount", this.IncomeAccount);
-		map.put("fpt_UEIncomeSuspAccount", this.UEIncomeSuspAccount);
 		map.put("fpt_FinCommitmentRef", this.FinCommitmentRef);
 		map.put("fpt_FinIsActive", this.FinIsActive);
 		map.put("fpt_firstRepayDate", this.firstRepayDate);

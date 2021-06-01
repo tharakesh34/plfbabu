@@ -46,7 +46,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -317,16 +316,6 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 				&& !StringUtils.equals(cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL)) {
 			errorList.add(new ErrorDetail("StepFinance", "30703",
 					new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
-		}
-		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
-			if (StringUtils.equals(stepTypeVal, FinanceConstants.STEPTYPE_EMI)) {
-				if (StringUtils.equals(cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL)
-						&& StringUtils.equals(repayRateBasis, CalculationConstants.RATE_BASIS_R)) {
-					errorList.add(new ErrorDetail("StepFinance", "30554", new String[] {
-							Labels.getLabel("label_ScheduleMethod_Equal"), Labels.getLabel("label_Reduce") },
-							new String[] {}));
-				}
-			}
 		}
 		return errorList;
 	}
