@@ -53,8 +53,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.Interface.model.IAccounts;
-import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -105,7 +103,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private FinODDetailsDAO finODDetailsDAO;
 	private OverdueChargeRecoveryDAO recoveryDAO;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
-	private AccountInterfaceService accountInterfaceService;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private AssignmentDAO assignmentDAO;
 	private AssignmentDealDAO assignmentDealDAO;
@@ -1086,53 +1083,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			//financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 			boolean isPayNow = false;
 
-			// Check Available Funding Account Balance
-			//### 06-11-2015 Start - PSD Ticket ID 123992
-			//As per the new approach in case of failure from equation., application should not stop the EOD process and should proceed to the next Repayments 
-			IAccounts iAccount = null;
-			try {
-				iAccount = accountInterfaceService.fetchAccountAvailableBal(fm.getRepayAccountId());
-			} catch (InterfaceException e) {
-				logger.error("Exception: ", e);
-				List<Object> returnList = new ArrayList<Object>(2);
-				returnList.add(isPostingSuccess);
-				returnList.add(linkedTranId);
-				returnList.add(e.getErrorMessage());
-				returnList.add(paidAmount.subtract(BigDecimal.ONE));
-				return returnList;
-			}
 			//### 06-11-2015 End
 			BigDecimal penaltyPaidNow = BigDecimal.ZERO;
 			boolean isPaidClear = false;
-			boolean accFound = false;
 
 			// Account Type Check
 			String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
 
-			String[] acTypeList = acType.split(",");
-			for (int i = 0; i < acTypeList.length; i++) {/*
-															 * if(iAccount.getAcType().equals(acTypeList[i].trim())) {
-															 * accFound = true; break; }
-															 */
-			}
-
-			// Set Requested Repayment Amount as RepayAmount Balance
-			if (iAccount.getAcAvailableBal().compareTo(pendingPenalty) >= 0) {
-				penaltyPaidNow = pendingPenalty;
-				isPayNow = true;
-				isPaidClear = true;
-			} else if (accFound) {
-
-				penaltyPaidNow = pendingPenalty;
-				isPayNow = true;
-				isPaidClear = true;
-
-			} else {
-				if (iAccount.getAcAvailableBal().compareTo(BigDecimal.ZERO) > 0) {
-					penaltyPaidNow = iAccount.getAcAvailableBal();
-					isPayNow = true;
-				}
-			}
 			paidAmount = penaltyPaidNow;
 			if (isPayNow) {
 				// AmountCodes Preparation
@@ -1249,10 +1206,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
