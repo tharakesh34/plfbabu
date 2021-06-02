@@ -11,10 +11,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface AccountInterfaceService {
 
-	List<IAccounts> fetchExistAccount(List<IAccounts> accountDetails, String createNow) throws InterfaceException;
-
-	List<IAccounts> fetchExistAccountList(IAccounts processAccount) throws InterfaceException;
-
 	IAccounts fetchAccountAvailableBal(String processAccount) throws InterfaceException;
 
 	BigDecimal getAccountAvailableBal(String accountId);
