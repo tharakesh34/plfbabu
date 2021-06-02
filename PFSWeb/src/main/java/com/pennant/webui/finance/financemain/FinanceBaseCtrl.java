@@ -546,7 +546,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private String pdfExtTabPanelId;
 
 	//Bean Setters  by application Context
-	private AccountInterfaceService accountInterfaceService;
 	private FinanceDetailService financeDetailService;
 	private AccountsService accountsService;
 	private AccountEngineExecution engineExecution;
@@ -7380,14 +7379,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public CustomerService getCustomerService() {
 		return customerService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public FinanceMainListCtrl getFinanceMainListCtrl() {

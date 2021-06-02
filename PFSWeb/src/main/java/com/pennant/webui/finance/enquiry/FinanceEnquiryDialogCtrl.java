@@ -394,7 +394,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinContributorHeader finContributorHeader; // over handed per
 														// parameters
 	private FinanceDetail financeDetail;
-	private AccountInterfaceService accountInterfaceService;
 	private CommitmentService commitmentService;
 
 	private int formatter;
@@ -2694,14 +2693,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public FinContributorHeader getFinContributorHeader() {
 		return finContributorHeader;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
 	}
 
 	public CustomerService getCustomerService() {

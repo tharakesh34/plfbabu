@@ -88,7 +88,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private AuditHeaderDAO auditHeaderDAO;
 	private JVPostingDAO jVPostingDAO;
 	private JVPostingEntryDAO jVPostingEntryDAO;
-	private AccountInterfaceService accountInterfaceService;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
@@ -1310,14 +1309,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	@Override
 	public void updateWorkFlowDetails(JVPostingEntry jVPostingEntry) {
 		getjVPostingEntryDAO().updateWorkFlowDetails(jVPostingEntry, "_Temp");
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public PostingsPreparationUtil getPostingsPreparationUtil() {

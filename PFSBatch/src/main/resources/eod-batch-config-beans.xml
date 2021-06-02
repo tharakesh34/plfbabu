@@ -84,7 +84,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 
@@ -128,9 +127,6 @@
 	<bean id="commitmentDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentDAOImpl" parent="basicDao" />
 
 	<bean id="commitmentMovementDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentMovementDAOImpl" parent="basicDao" />
-
-	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceImpl" />
-
 
 	<bean id="dailyDownloadInterfaceService" class="com.pennant.Interface.service.impl.DailyDownloadInterfaceServiceImpl">
 		<property name="pFSParameterDAO" ref="pFSParameterDAO" />

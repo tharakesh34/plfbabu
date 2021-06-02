@@ -86,7 +86,6 @@ public class ExtFinanceUploadService {
 	private AccountsDAO accountsDAO;
 	private StepPolicyDetailDAO stepPolicyDetailDAO;
 	private FinanceDetailService financeDetailService;
-	private AccountInterfaceService accountInterfaceService;
 	private AccountEngineExecution engineExecution;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 
@@ -1277,14 +1276,6 @@ public class ExtFinanceUploadService {
 
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	private String getValue(HSSFCell cell) {

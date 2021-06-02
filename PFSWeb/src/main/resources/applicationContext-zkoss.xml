@@ -1528,7 +1528,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="accountsService" ref="accountsService" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="notificationService" ref="notificationService" />
@@ -1544,7 +1543,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="accountsService" ref="accountsService" />
 		<property name="engineExecution" ref="engineExecution" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="notificationService" ref="notificationService" />
@@ -1753,7 +1751,6 @@
 
 	<bean id="finContributorDetailDialogCtrl" class="com.pennant.webui.finance.contributor.FinContributorDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 	</bean>
 
 	<!--============ Step Detail Detail ============== -->
@@ -1849,8 +1846,6 @@
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
 		<property name="accountsService" ref="accountsService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
-
 	</bean>
 
 	<!--============ Reinstate Finance Details ============== -->
@@ -2282,7 +2277,6 @@
 	<bean id="addDisbursementDialogCtrl" class="com.pennant.webui.finance.additional.AddDisbursementDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="accountsService" ref="accountsService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="addDisbursementService" ref="addDisbursementService" />
 	</bean>
 
@@ -2674,7 +2668,6 @@
 
 	<bean id="financeEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.FinanceEnquiryDialogCtrl" parent="basisListCtrl"
 		scope="prototype">
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="customerService" ref="customerService" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />

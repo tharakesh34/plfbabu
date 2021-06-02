@@ -930,7 +930,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 
 	// Bean Setters by application Context
-	private AccountInterfaceService accountInterfaceService;
 	private FinanceDetailService financeDetailService;
 	private AccountsService accountsService;
 	private AccountEngineExecution engineExecution;
@@ -20145,14 +20144,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public CustomerService getCustomerService() {
 		return customerService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public FinanceMainListCtrl getFinanceMainListCtrl() {

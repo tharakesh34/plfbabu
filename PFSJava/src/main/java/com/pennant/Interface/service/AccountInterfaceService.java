@@ -10,12 +10,5 @@ import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface AccountInterfaceService {
 
-	List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws InterfaceException;
 
-	int removeAccountHolds() throws Exception;
-
-	List<AccountHoldStatus> addAccountHolds(List<AccountHoldStatus> accountslIst, Date valueDate, String holdType)
-			throws InterfaceException;
-
-	Map<String, String> getAccountCurrencyMap(Map<String, String> accountCcyMap) throws InterfaceException;
 }

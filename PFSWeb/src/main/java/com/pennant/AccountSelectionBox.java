@@ -70,7 +70,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -296,7 +295,6 @@ public class AccountSelectionBox extends Hbox {
 				iAccounts.setAccountId(accountId);
 				accountDetails.add(iAccounts);
 			}
-			setAccountDetails(getCoreBankAccountDetails(accountDetails));
 		}
 
 		IAccounts iAccount = new IAccounts();
@@ -308,23 +306,6 @@ public class AccountSelectionBox extends Hbox {
 
 		
 		return true;
-	}
-
-	/**
-	 * Get account details of the account
-	 * 
-	 * @param returnAccList
-	 * @return
-	 * @throws InterruptedException
-	 */
-	private List<IAccounts> getCoreBankAccountDetails(List<IAccounts> returnAccList) throws InterruptedException {
-		try {
-			return getAccountInterfaceService().getAccountsAvailableBalList(returnAccList);
-		} catch (InterfaceException e) {
-			returnAccList.clear();
-			MessageUtil.showError(e);
-		}
-		return returnAccList;
 	}
 
 	/**

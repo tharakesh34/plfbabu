@@ -155,7 +155,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 	private transient FinFeeDetailListCtrl finFeeDetailListCtrl;
-	private AccountInterfaceService accountInterfaceService;
 	private AccountsService accountsService;
 
 	private transient boolean validationOn;
@@ -1655,14 +1654,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public AccountsService getAccountsService() {

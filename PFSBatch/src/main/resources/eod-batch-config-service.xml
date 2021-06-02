@@ -330,11 +330,6 @@
 	<!-- Collateral Marking & DeMarking Details -->
 	<bean id="collateralMarkDAO" class="com.pennant.backend.dao.collateralmark.impl.CollateralMarkDAOImpl" parent="sequenceDao" />
 
-
-	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceImpl" />
-
-
-
 	<!-- Mandate -->
 	<bean id="mandateDAO" class="com.pennant.backend.dao.mandate.impl.MandateDAOImpl" parent="sequenceDao" />
 
@@ -512,7 +507,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 

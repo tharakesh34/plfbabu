@@ -1979,7 +1979,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	}
 
 	private AccountsService accountsService;
-	private AccountInterfaceService accountInterfaceService;
 
 	public AccountsService getAccountsService() {
 		return accountsService;
@@ -1987,14 +1986,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setAccountsService(AccountsService accountsService) {
 		this.accountsService = accountsService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public String getNewCustCIF() {

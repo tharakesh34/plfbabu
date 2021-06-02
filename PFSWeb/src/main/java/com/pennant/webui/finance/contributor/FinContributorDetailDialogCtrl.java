@@ -161,7 +161,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 
 	private FinanceDetail financeDetail;
 
-	private AccountInterfaceService accountInterfaceService;
 	Date appStartDate = DateUtility.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 
@@ -1222,14 +1221,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 
 	public void setContributorDetailsDialogCtrl(ContributorDetailsDialogCtrl contributorDetailsDialogCtrl) {
 		this.contributorDetailsDialogCtrl = contributorDetailsDialogCtrl;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
 	}
 
 	public FinanceDetail getFinanceDetail() {

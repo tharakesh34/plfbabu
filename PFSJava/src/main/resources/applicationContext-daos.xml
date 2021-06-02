@@ -3703,7 +3703,6 @@
 		<property name="stepPolicyDetailDAO" ref="stepPolicyDetailDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 	</bean>
 
@@ -4942,7 +4941,6 @@
 		<property name="jVPostingDAO" ref="jVPostingDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="jVPostingEntryDAO" ref="jVPostingEntryDAO" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="legalExpensesDAO" ref="legalExpensesDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
@@ -5107,7 +5105,6 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 
@@ -5323,8 +5320,6 @@
 	<!-- ====================================================== -->
 	<!-- CoreBanking Interface Services Configuration -->
 	<!-- ====================================================== -->
-
-	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceImpl" />
 
 	<bean id="customerInterfaceService" class="com.pennant.Interface.service.impl.CustomerInterfaceServiceImpl">
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
