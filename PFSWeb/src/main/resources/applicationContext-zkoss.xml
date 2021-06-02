@@ -2328,7 +2328,6 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="provisionService" ref="provisionService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="manualPaymentService" ref="manualPaymentService" />

@@ -85,7 +85,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -447,7 +446,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 
 		this.investmentAcc
 				.setValue(PennantApplicationUtil.formatAccountNumber(aFinContributorDetail.getInvestAccount()));
-		this.investmentAcctBal.setValue(getAcBalance(aFinContributorDetail.getInvestAccount()));
 		this.investmentDate.setValue(aFinContributorDetail.getInvestDate());
 		if (isNewRecord()) {
 			this.recordDate.setValue(DateUtility.getAppDate());
@@ -1104,7 +1102,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 					IAccounts details = (IAccounts) dataObject;
 					if (details != null) {
 						this.investmentAcc.setValue(details.getAccountId());
-						this.investmentAcctBal.setValue(getAcBalance(details.getAccountId()));
 					}
 				}
 			} catch (Exception e) {
@@ -1117,20 +1114,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		}
 
 		logger.debug("Leaving " + event.toString());
-	}
-
-	/**
-	 * Method for Fetching Account Balance
-	 * 
-	 * @param acId
-	 * @return
-	 */
-	private String getAcBalance(String acId) {
-		if (StringUtils.isNotBlank(acId)) {
-			return PennantAppUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId), formatter);
-		} else {
-			return "";
-		}
 	}
 
 	// WorkFlow Components

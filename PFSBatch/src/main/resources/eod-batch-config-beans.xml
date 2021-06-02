@@ -228,7 +228,6 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 		<property name="assignmentDAO" ref="assignmentDAO" />

@@ -97,7 +97,6 @@ import com.pennant.AccountSelectionBox;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.Interface.model.IAccounts;
-import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -302,7 +301,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private transient OverdueChargeRecoveryService overdueChargeRecoveryService;
 	private transient AccountsService accountsService;
-	private transient AccountInterfaceService accountInterfaceService;
 	private transient RuleService ruleService;
 	private transient CustomerDetailsService customerDetailsService;
 	private transient ManualPaymentService manualPaymentService;
@@ -1622,10 +1620,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 						if (isChgRpy && ImplementationConstants.ACCOUNTS_APPLICABLE) {
 							// Check Available Funding Account Balance
-							iAccount = getAccountInterfaceService().fetchAccountAvailableBal(
-									PennantApplicationUtil.unFormatAccountNumber(this.repayAccount.getValue()));
-
-							// Check Available Funding Account Balance
 							boolean accountTypeFound = false;
 							if (getFinanceType() != null) {
 
@@ -2823,8 +2817,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) && isChgRpy) {
 
 				if (StringUtils.isNotBlank(this.repayAccount.getValue())) {
-					iAccount = getAccountInterfaceService().fetchAccountAvailableBal(
-							PennantApplicationUtil.unFormatAccountNumber(this.repayAccount.getValue()));
 
 					// Check Available Funding Account Balance
 					boolean accountTypeFound = false;
@@ -3341,14 +3333,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public AccountsService getAccountsService() {
 		return accountsService;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public RuleService getRuleService() {

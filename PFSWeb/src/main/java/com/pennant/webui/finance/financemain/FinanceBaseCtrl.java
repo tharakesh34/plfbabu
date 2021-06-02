@@ -3990,20 +3990,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		return notes;
 	}
 
-	/**
-	 * Method for Fetching Account Balance
-	 * 
-	 * @param acId
-	 * @return
-	 */
-	protected String getAcBalance(String acId) {
-		if (StringUtils.isNotBlank(acId)) {
-			return PennantAppUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId),
-					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
-		} else {
-			return "";
-		}
-	}
 
 	public void setDisableCbFrqs(boolean isReadOnly, Combobox cbFrq1, Combobox cbFrq2, Combobox cbFrq3) {
 		readOnlyComponent(isReadOnly, cbFrq1);
