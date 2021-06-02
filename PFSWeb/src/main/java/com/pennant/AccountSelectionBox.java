@@ -49,7 +49,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -61,7 +60,6 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Space;
 
 import com.pennant.Interface.model.IAccounts;
-import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
@@ -101,7 +99,6 @@ public class AccountSelectionBox extends Hbox {
 	private String currency = null; //mandatory
 	private boolean mandatory = false; //mandatory
 
-	private transient AccountInterfaceService accountInterfaceService;
 	private List<IAccounts> accountDetails = new ArrayList<IAccounts>();
 	private IAccounts selectedAccount = null;
 
@@ -304,7 +301,6 @@ public class AccountSelectionBox extends Hbox {
 		iAccount.setAcCustCIF(this.custCIF);
 		iAccount.setDivision(this.branchCode);
 
-		
 		return true;
 	}
 
@@ -537,13 +533,6 @@ public class AccountSelectionBox extends Hbox {
 
 	public void setSelectedAccount(IAccounts selectedAccount) {
 		this.selectedAccount = selectedAccount;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		if (this.accountInterfaceService == null) {
-			this.accountInterfaceService = (AccountInterfaceService) SpringUtil.getBean("accountInterfaceService");
-		}
-		return accountInterfaceService;
 	}
 
 }

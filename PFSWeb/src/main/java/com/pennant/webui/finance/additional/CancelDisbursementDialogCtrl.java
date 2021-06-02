@@ -63,7 +63,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.financeservice.CancelDisbursementService;
@@ -102,7 +101,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private FinScheduleData finScheduleData; // overhanded per param
 	private FinanceScheduleDetail financeScheduleDetail; // overhanded per param
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
-	private AccountInterfaceService accountInterfaceService;
 	private AccountsService accountsService;
 	private transient CancelDisbursementService cancelDisbursementService;
 	private transient boolean validationOn;
@@ -574,14 +572,6 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
-	}
-
-	public AccountInterfaceService getAccountInterfaceService() {
-		return accountInterfaceService;
-	}
-
-	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
-		this.accountInterfaceService = accountInterfaceService;
 	}
 
 	public AccountsService getAccountsService() {

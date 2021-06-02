@@ -75,7 +75,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.Interface.model.IAccounts;
-import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;

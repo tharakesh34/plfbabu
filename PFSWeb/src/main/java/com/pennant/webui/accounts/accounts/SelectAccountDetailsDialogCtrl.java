@@ -20,7 +20,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.model.IAccounts;
-import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
