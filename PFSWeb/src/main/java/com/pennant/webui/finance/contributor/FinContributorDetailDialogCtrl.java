@@ -1089,7 +1089,6 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 		if (StringUtils.isNotBlank(this.contributorCIF.getValue())) {
 			Object dataObject;
 
-			List<IAccounts> iAccountList = new ArrayList<IAccounts>();
 			IAccounts iAccount = new IAccounts();
 			iAccount.setAcCcy(finCcy);
 			iAccount.setAcType("EACAJK");
@@ -1097,9 +1096,7 @@ public class FinContributorDetailDialogCtrl extends GFCBaseCtrl<FinContributorDe
 			iAccount.setDivision(getFinanceDetail().getFinScheduleData().getFinanceType().getFinDivision());
 
 			try {
-				iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
-				dataObject = ExtendedSearchListBox.show(this.window_FinContributorDetailDialog, "Accounts",
-						iAccountList);
+				dataObject = ExtendedSearchListBox.show(this.window_FinContributorDetailDialog, "Accounts");
 				if (dataObject instanceof String) {
 					this.investmentAcc.setValue(dataObject.toString());
 					this.investmentAcctBal.setValue("");

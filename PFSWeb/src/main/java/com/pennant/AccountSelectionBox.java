@@ -299,7 +299,6 @@ public class AccountSelectionBox extends Hbox {
 			setAccountDetails(getCoreBankAccountDetails(accountDetails));
 		}
 
-		List<IAccounts> iAccountList = new ArrayList<IAccounts>();
 		IAccounts iAccount = new IAccounts();
 		//Removed the Account Currency to allow multiple currencies 
 		iAccount.setAcCcy(currency);
@@ -307,20 +306,7 @@ public class AccountSelectionBox extends Hbox {
 		iAccount.setAcCustCIF(this.custCIF);
 		iAccount.setDivision(this.branchCode);
 
-		try {
-			iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
-		} catch (InterfaceException e) {
-			MessageUtil.showError(e);
-			return false;
-		}
-
-		if (iAccountList != null && !iAccountList.isEmpty()) {
-			for (IAccounts iAccounts : iAccountList) {
-				if (accReceivables == null || !accReceivables.contains(iAccounts.getAccountId())) {
-					accountDetails.add(iAccounts);
-				}
-			}
-		}
+		
 		return true;
 	}
 

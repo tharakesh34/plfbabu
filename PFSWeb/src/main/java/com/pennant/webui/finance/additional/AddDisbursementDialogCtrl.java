@@ -1562,7 +1562,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (StringUtils.isNotBlank(getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 			Object dataObject;
 
-			List<IAccounts> iAccountList = new ArrayList<IAccounts>();
 			IAccounts iAccount = new IAccounts();
 			iAccount.setAcCcy(getFinScheduleData().getFinanceMain().getFinCcy());
 			iAccount.setAcType("");
@@ -1570,9 +1569,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			iAccount.setAcCustCIF(getFinScheduleData().getFinanceMain().getLovDescCustCIF());
 
 			try {
-				iAccountList = getAccountInterfaceService().fetchExistAccountList(iAccount);
 
-				dataObject = ExtendedSearchListBox.show(this.window_AddDisbursementDialog, "Accounts", iAccountList);
+				dataObject = ExtendedSearchListBox.show(this.window_AddDisbursementDialog, "Accounts");
 				if (dataObject instanceof String) {
 					this.disbAcctId.setValue(dataObject.toString());
 				} else {
