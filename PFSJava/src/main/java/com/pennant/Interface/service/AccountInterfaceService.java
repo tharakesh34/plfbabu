@@ -1,6 +1,5 @@
 package com.pennant.Interface.service;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +9,6 @@ import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public interface AccountInterfaceService {
-
-	BigDecimal getAccountAvailableBal(String accountId);
 
 	List<IAccounts> getAccountsAvailableBalList(List<IAccounts> accountsList) throws InterfaceException;
 

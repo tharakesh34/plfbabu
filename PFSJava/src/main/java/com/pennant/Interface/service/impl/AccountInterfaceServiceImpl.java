@@ -54,20 +54,6 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 
 
 	/**
-	 * Method for Fetch Funding Account Balance depends on Parameter key fields
-	 * 
-	 * @param processAccount
-	 * @return {@link List} of {@link IAccounts}
-	 * 
-	 * @throws InterfaceException
-	 */
-	public BigDecimal getAccountAvailableBal(String accountId) {
-		logger.debug("Entering");
-
-		return BigDecimal.ZERO;
-	}
-
-	/**
 	 * Method for Fetch Funding Accounts Balance depends on Parameter key fields
 	 * 
 	 * @param processAccount

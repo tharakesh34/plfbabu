@@ -12283,20 +12283,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	/**
-	 * Method for Fetching Account Balance
-	 * 
-	 * @param acId
-	 * @return
-	 */
-	protected String getAcBalance(String acId) {
-		if (StringUtils.isNotBlank(acId)) {
-			return PennantApplicationUtil.amountFormate(getAccountInterfaceService().getAccountAvailableBal(acId),
-					CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
-		} else {
-			return "";
-		}
-	}
 
 	public void setDisableCbFrqs(boolean isReadOnly, Combobox cbFrq1, Combobox cbFrq2, Combobox cbFrq3) {
 		readOnlyComponent(isReadOnly, cbFrq1);
