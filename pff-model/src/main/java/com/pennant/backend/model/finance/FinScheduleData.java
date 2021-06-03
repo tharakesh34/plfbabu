@@ -77,7 +77,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
-		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",
+		"feeDues", "foreClosureFees", "stepPolicyDetails", "financeScheduleDetails",
 		"finODPenaltyRate", "apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary",
 		"vasRecordingList", "outstandingPri", "subventionDetail", "receiptAllocations", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")

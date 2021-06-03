@@ -17,9 +17,6 @@
 		<field name="rateInstruction">
 			<valid />
 		</field>
-		<field name="insuranceList">
-			<valid />
-		</field>
 		<field name="stepPolicyDetails">
 			<valid />
 		</field>

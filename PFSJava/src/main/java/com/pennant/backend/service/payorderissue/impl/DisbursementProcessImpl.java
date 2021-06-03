@@ -56,19 +56,15 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	private PlatformTransactionManager transactionManager;
 
 	private static String paidStatus = "E";
+	private static boolean customStatusLoaded = false;
 	private static String realizedStatus = "P";
 	private static String printStatus = "PR";
-
-	static {
-		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
-		if (StringUtils.isNotBlank(disbStatus)) {
-			paidStatus = disbStatus;
-		}
-	}
 
 	@Override
 	public int processDisbursement(FinanceMain fm, FinAdvancePayments fap) {
 		logger.info(Literal.ENTERING);
+
+		loadDefaultStatus();
 
 		String status = fap.getClearingStatus();
 
@@ -105,6 +101,18 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 
 		logger.info(Literal.LEAVING);
 		return finAdvancePaymentsDAO.updateDisbursmentStatus(fap);
+	}
+
+	private void loadDefaultStatus() {
+		if (customStatusLoaded) {
+			return;
+		}
+
+		String disbStatus = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_PAID_STATUS);
+		if (StringUtils.isNotBlank(disbStatus)) {
+			paidStatus = disbStatus;
+		}
+		customStatusLoaded = true;
 	}
 
 	private void executeQDP(FinAdvancePayments fap) {
