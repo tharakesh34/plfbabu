@@ -1533,7 +1533,6 @@
 		<property name="notificationService" ref="notificationService" />
 		<property name="stepPolicyService" ref="stepPolicyService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
-		<property name="financeMainExtService" ref="financeMainExtService" />
 		<property name="eventManager" ref="eventManager" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
@@ -2440,7 +2439,6 @@
 	<bean id="financeMaintenanceDialogCtrl" class="com.pennant.webui.finance.financemain.FinanceMaintenanceDialogCtrl"
 		parent="financeBaseCtrl" scope="prototype">
 		<property name="financeMaintenanceService" ref="financeMaintenanceService" />
-		<property name="financeMainExtService" ref="financeMainExtService" />
 		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
 	</bean>
 
@@ -5221,7 +5219,6 @@
 		<property name="notesDAO" ref="notesDAO" />
 		<property name="queryDetailDAO" ref="queryDetailDAO" />
 		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
-		<property name="financeMainExtService" ref="financeMainExtService" />
 	</bean>
 	<bean id="risksAndMitigantsDialogCtrl" class="com.pennant.webui.finance.financialsummary.RisksAndMitigantsDialogCtrl"
 		parent="basisCtrl" scope="prototype">

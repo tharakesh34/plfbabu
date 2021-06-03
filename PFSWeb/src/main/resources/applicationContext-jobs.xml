@@ -71,7 +71,6 @@
 		<property name="jobDataAsMap">
 			<map>
 				<entry key="financeMainDAO" value-ref="financeMainDAO" />
-				<entry key="financeMainExtDAO" value-ref="financeMainExtDAO" />
 				<entry key="ddaPaymentInitiateDAO" value-ref="ddaPaymentInitiateDAO" />
 			</map>
 		</property>

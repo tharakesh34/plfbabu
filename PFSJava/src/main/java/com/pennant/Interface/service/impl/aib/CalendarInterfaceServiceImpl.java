@@ -2,7 +2,8 @@ package com.pennant.Interface.service.impl.aib;
 
 import java.util.Calendar;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CalendarInterfaceService;
 import com.pennant.backend.dao.smtmasters.HolidayMasterDAO;
@@ -11,8 +12,7 @@ import com.pennant.backend.model.smtmasters.WeekendMaster;
 import com.pennanttech.pennapps.core.InterfaceException;
 
 public class CalendarInterfaceServiceImpl implements CalendarInterfaceService {
-
-	private static Logger logger = Logger.getLogger(CalendarInterfaceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(CalendarInterfaceServiceImpl.class);
 
 	private WeekendMasterDAO weekendMasterDAO;
 	private HolidayMasterDAO holidayMasterDAO;

@@ -2,14 +2,15 @@ package com.pennant.Interface.service.impl;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
 import com.pennant.backend.dao.smtmasters.PFSParameterDAO;
 
 public class DailyDownloadInterfaceServiceImpl implements DailyDownloadInterfaceService {
-	private static final Logger logger = Logger.getLogger(DailyDownloadInterfaceServiceImpl.class);
+	private static final Logger logger = LogManager.getLogger(DailyDownloadInterfaceServiceImpl.class);
 
 	private PFSParameterDAO pFSParameterDAO;
 	private CustomerInterfaceService customerInterfaceService;

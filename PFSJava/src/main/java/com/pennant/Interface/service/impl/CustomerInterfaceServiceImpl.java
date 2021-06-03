@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
@@ -17,8 +18,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
-
-	private static Logger logger = Logger.getLogger(CustomerInterfaceServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(CustomerInterfaceServiceImpl.class);
 
 	private CustomerStatusCodeDAO customerStatusCodeDAO;
 	private DesignationDAO designationDAO;

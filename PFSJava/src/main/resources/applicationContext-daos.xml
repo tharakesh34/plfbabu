@@ -5762,32 +5762,6 @@
 	<!--============ MailLog Details ============== -->
 	<bean id="mailLogDAO" class="com.pennant.backend.dao.maillog.impl.MailLogDAOImpl" parent="basicDao" />
 
-	<!--============ FinanceMain Extension Details ============== -->
-	<bean id="financeMainExtDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainExtDAOImpl" parent="basicDao" />
-
-	<bean id="financeMainExtService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="financeMainExtServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="saveFinanceMainExtDetails*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="financeMainExtServiceTarget" class="com.pennant.backend.service.finance.impl.FinanceMainExtServiceImpl">
-		<property name="financeMainExtDAO" ref="financeMainExtDAO" />
-	</bean>
-
 	<!-- -Security User Operations -->
 	<bean id="securityUserOperationsDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserOperationsDAOImpl"
 		parent="secSequenceDao" />

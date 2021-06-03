@@ -232,7 +232,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		return accountSetIDs;
 	}
 
-	public static List<TransactionEntry> sortSchdDetails(List<TransactionEntry> transactionEntries) {
+	public static List<TransactionEntry> sortTxnEntries(List<TransactionEntry> transactionEntries) {
 
 		Collections.sort(transactionEntries, new Comparator<TransactionEntry>() {
 			@Override
@@ -301,7 +301,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		return sortSchdDetails(list);
+		return sortTxnEntries(list);
 	}
 
 	/**
