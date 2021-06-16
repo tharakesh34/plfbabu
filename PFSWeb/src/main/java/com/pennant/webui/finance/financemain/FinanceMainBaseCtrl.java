@@ -14528,6 +14528,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
+			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				aFinanceSchData = doWriteSchData(aFinanceSchData);
+			}
+
 			// Added SMTParameter for the QDP.
 			if (StringUtils.equalsIgnoreCase(PennantConstants.YES, SysParamUtil.getValueAsString("ALLOW_QUICK_DISB"))) {
 				List<FinanceDisbursement> disbList = aFinanceSchData.getDisbursementDetails();
@@ -15316,82 +15320,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		amountCodes.setToExcessAmt(excessAmount);
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Method For Preparing Fees & Disbursement Details
-	 * 
-	 * @param aFinanceSchData
-	 * @param isIstisnaProd
-	 * @return
-	 * @throws InterruptedException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
-	private FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData, boolean isIstisnaProd)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-		logger.debug(Literal.ENTERING);
-
-		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
-
-		Tab taxTab = getTab(AssetConstants.UNIQUE_ID_TAX);
-		if (financeTaxDetailDialogCtrl != null && taxTab.isVisible()) {
-			if (customerDialogCtrl != null) {// passing the employment type value to validate GST details
-				getFinanceDetail().getCustomerDetails().getCustomer()
-						.setSubCategory(customerDialogCtrl.getSubCategory());
-			}
-			financeTaxDetailDialogCtrl.doSave_Tax(getFinanceDetail(), taxTab, recSave);
-		} else {
-			getFinanceDetail().setFinanceTaxDetail(null);
-		}
-
-		if (buildEvent) {
-
-			aFinanceMain.setFeeChargeAmt(BigDecimal.ZERO);
-			aFinanceMain.setInsuranceAmt(BigDecimal.ZERO);
-			if (finFeeDetailListCtrl != null) {
-				finFeeDetailListCtrl.doExecuteFeeCharges(true, aFinanceSchData);
-				// Fill the Insurances listbox's data for the amounts calculated
-			}
-
-			if (!isIstisnaProd
-					&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
-
-				aFinanceSchData.getDisbursementDetails().clear();
-				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-				disbursementDetails.setDisbDate(aFinanceMain.getFinStartDate());
-				disbursementDetails.setDisbSeq(1);
-				disbursementDetails.setDisbAmount(aFinanceMain.getFinAmount());
-				disbursementDetails.setDisbReqDate(appDate);
-				disbursementDetails.setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
-				disbursementDetails.setQuickDisb(aFinanceSchData.getFinanceMain().isQuickDisb());
-				disbursementDetails.setInsuranceAmt(aFinanceMain.getInsuranceAmt());
-				disbursementDetails
-						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAcctId.getValue()));
-				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
-
-			} else {
-				if (StringUtils.isEmpty(moduleDefiner)) {
-					if (!aFinanceSchData.getDisbursementDetails().isEmpty()) {
-						aFinanceSchData.getDisbursementDetails().get(0).setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
-						aFinanceSchData.getDisbursementDetails().get(0).setInsuranceAmt(aFinanceMain.getInsuranceAmt());
-					}
-				}
-			}
-		} else {
-			if (finFeeDetailListCtrl != null) {
-				finFeeDetailListCtrl.doExecuteFeeCharges(true, aFinanceSchData);
-				// Fill the Insurances listbox's data for the amounts calculated
-			}
-		}
-		if (!isIstisnaProd) {
-			if (aFinanceSchData.getDisbursementDetails() != null
-					&& !aFinanceSchData.getDisbursementDetails().isEmpty()) {
-				aFinanceSchData.getDisbursementDetails().get(0).setDisbAccountId(aFinanceMain.getDisbAccountId());
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return aFinanceSchData;
 	}
 
 	/**

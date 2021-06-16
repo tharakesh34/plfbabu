@@ -686,7 +686,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", AppliedLoanAmt, FinIsRateRvwAtGrcEnd");
 		if (!wif) {
-			sql.append(", MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
+			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 			sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
 			sql.append(", InitiateUser, DeviationApproval");
 			sql.append(", FinPreApprovedRef, MandateID, JointAccount, JointCustId, DownPayAccount, SecurityDeposit");
@@ -1697,7 +1697,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		insertSql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, ");
 		insertSql.append(" LinkedFinRef, ");
 		insertSql.append(" GrcMinRate, GrcMaxRate,GrcMaxAmount, RpyMinRate, RpyMaxRate,  ");
-		insertSql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
+		insertSql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
 		insertSql.append(
 				" FeeChargeAmt, BpiAmount, DeductFeeDisb, LimitValid, OverrideLimit,FinPurpose,DeviationApproval,FinPreApprovedRef,MandateID,FinStatus, FinStsReason, initiateUser,");
 		insertSql.append(

@@ -6242,7 +6242,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				taskOwner.setRoleCode(fm.getRoleCode());
 				taskOwnersDAO.updateTaskOwner(taskOwner, true);
 				if (!isWIF) {
-					getAuditHeaderDAO().addAudit(auditHeader);
+					auditHeaderDAO.addAudit(auditHeader);
 				}
 				return auditHeader;
 			}

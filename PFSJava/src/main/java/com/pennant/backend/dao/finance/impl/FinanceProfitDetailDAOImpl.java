@@ -488,7 +488,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" NSchdDate = :NSchdDate, NSchdPri = :NSchdPri, NSchdPft = :NSchdPft, ");
 		updateSql.append(" NSchdPriDue = :NSchdPriDue, NSchdPftDue = :NSchdPftDue,");
 		updateSql.append(" AccumulatedDepPri = :AccumulatedDepPri, DepreciatePri = :DepreciatePri,");
-		updateSql.append(" TdSchdAdvPft = :TdSchdAdvPft, ");
 		updateSql.append(" TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		updateSql.append(
 				" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate,MaturityDate=:MaturityDate, ");
@@ -548,7 +547,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" ClosingStatus = :ClosingStatus, PrvRpySchDate = :PrvRpySchDate, ");
 		updateSql.append(
 				" PrvRpySchPri = :PrvRpySchPri, PrvRpySchPft = :PrvRpySchPft, TotalWriteoff = :TotalWriteoff, ");
-		updateSql.append(" TotalPriPaidInAdv=:TotalPriPaidInAdv, TdSchdAdvPft=:TdSchdAdvPft, ");
+		updateSql.append(" TotalPriPaidInAdv=:TotalPriPaidInAdv,");
 		updateSql.append(" PftAmzNormal = :PftAmzNormal, PftAmzPD=:PftAmzPD ");
 		updateSql.append(" ,GapIntAmz = :GapIntAmz, GapIntAmzLbd = :GapIntAmzLbd ");
 		updateSql.append(" Where FinReference =:FinReference");
@@ -615,7 +614,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" CurODDays, ActualODDays, MaxODDays, FirstODDate, PrvODDate, ClosingStatus, FinCategory,");
 		insertSql.append(" PrvRpySchDate, PrvRpySchPri, PrvRpySchPft, LatestRpyDate, LatestRpyPri,");
 		insertSql.append(" LatestRpyPft, TotalWriteoff, AccumulatedDepPri, DepreciatePri,");
-		insertSql.append(" TotalPriPaidInAdv, TdSchdAdvPft, PftAmzNormal, PftAmzPD,");
+		insertSql.append(" TotalPriPaidInAdv, PftAmzNormal, PftAmzPD,");
 		insertSql.append(" AmzTillLBDNormal, AmzTillLBDPD, AmzTillLBDPIS, CalPftOnPD, PftOnPDMethod,");
 		insertSql.append(" PftOnPDMrg, TotPftOnPD, TotPftOnPDPaid, TotPftOnPDWaived, TotPftOnPDDue,");
 		insertSql.append(" AcrSuspTillLBD, PrvMthAmz, PrvMthAmzNrm, PrvMthAmzPD, PrvMthAmzSusp, PrvMthAcr,");
@@ -642,7 +641,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				" :CurODDays, :ActualODDays, :MaxODDays, :FirstODDate, :PrvODDate, :ClosingStatus, :FinCategory,");
 		insertSql.append(" :PrvRpySchDate, :PrvRpySchPri, :PrvRpySchPft, :LatestRpyDate, :LatestRpyPri,");
 		insertSql.append(" :LatestRpyPft, :TotalWriteoff, :AccumulatedDepPri, :DepreciatePri,");
-		insertSql.append(" :TotalPriPaidInAdv, :TdSchdAdvPft, :PftAmzNormal, :PftAmzPD,");
+		insertSql.append(" :TotalPriPaidInAdv, :PftAmzNormal, :PftAmzPD,");
 		insertSql.append(" :AmzTillLBDNormal, :AmzTillLBDPD, :AmzTillLBDPIS, :CalPftOnPD, :PftOnPDMethod,");
 		insertSql.append(" :PftOnPDMrg, :TotPftOnPD, :TotPftOnPDPaid, :TotPftOnPDWaived, :TotPftOnPDDue,");
 		insertSql.append(" :AcrSuspTillLBD, :PrvMthAmz, :PrvMthAmzNrm, :PrvMthAmzPD, :PrvMthAmzSusp, :PrvMthAcr,");

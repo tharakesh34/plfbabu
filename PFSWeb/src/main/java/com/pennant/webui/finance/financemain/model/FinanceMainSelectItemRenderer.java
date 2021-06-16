@@ -57,6 +57,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -90,6 +91,8 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(financeMain.getNOInst()));
 		lc.setParent(item);
+		lc = new Listcell(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
+		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinCcy());
 		lc.setParent(item);
 		BigDecimal finAmount = financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt())
@@ -115,12 +118,13 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 			lc = new Listcell("");
 		}
 		lc.setParent(item);
-		lc = new Listcell(StringUtils.isNotBlank(financeMain.getLovDescRequestStage())
-				? (financeMain.getLovDescRequestStage().endsWith(",")
-						? financeMain.getLovDescRequestStage().substring(0,
-								financeMain.getLovDescRequestStage().length() - 1)
-						: financeMain.getLovDescRequestStage())
-				: "");
+		lc = new Listcell(
+				StringUtils.isNotBlank(financeMain.getLovDescRequestStage())
+						? (financeMain.getLovDescRequestStage().endsWith(",")
+								? financeMain.getLovDescRequestStage().substring(0,
+										financeMain.getLovDescRequestStage().length() - 1)
+								: financeMain.getLovDescRequestStage())
+						: "");
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getRecordStatus());
 		lc.setParent(item);

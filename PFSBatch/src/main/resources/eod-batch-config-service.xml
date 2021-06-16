@@ -444,7 +444,6 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="finChequeHeaderService" ref="finChequeHeaderService" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
-		<property name="finTypeInsuranceDAO" ref="finTypeInsuranceDAO" />
 		<property name="drawingPowerService" ref="drawingPowerService" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
@@ -454,6 +453,7 @@
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl" parent="basicDao" />
