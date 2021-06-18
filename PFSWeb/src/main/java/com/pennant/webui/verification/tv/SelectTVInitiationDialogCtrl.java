@@ -81,8 +81,8 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine.Flow;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.pff.verification.Decision;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.pff.verification.service.LegalVerificationService;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -104,6 +104,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private transient FinanceDetailService financeDetailService;
 	private transient FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private transient VerificationService verificationService;
+	private transient LegalVerificationService legalVerificationService;
 
 	private String module = null;
 
@@ -187,17 +188,21 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		if (StringUtils.equals(VerificationType.VETTING.getValue(), module)) {
-			List<String> finRefs = verificationService.getApprovedLVVerifications(Decision.APPROVE.getKey(),
-					VerificationType.LV.getKey());
-			Filter[] filter = new Filter[1];
-			filter[0] = new Filter("FINREFERENCE", finRefs, Filter.OP_IN);
-			this.finReference.setFilters(filter);
-		} else {
-			Filter[] filter = new Filter[1];
-			filter[0] = new Filter("FINISACTIVE", 1, Filter.OP_EQUAL);
-			this.finReference.setFilters(filter);
-		}
+		// if (StringUtils.equals(VerificationType.LV.getValue(), module)) {
+		// List<String> finRefs = verificationService.getApprovedLVVerifications(Decision.APPROVE.getKey(),
+		// VerificationType.LV.getKey());
+		// Filter[] filter = new Filter[1];
+		// filter[0] = new Filter("FINREFERENCE", finRefs, Filter.OP_IN);
+		// this.finReference.setFilters(filter);
+		// } else {
+		// Filter[] filter = new Filter[1];
+		// filter[0] = new Filter("FINISACTIVE", 1, Filter.OP_EQUAL);
+		// this.finReference.setFilters(filter);
+		// }
+
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("FINISACTIVE", 1, Filter.OP_EQUAL);
+		this.finReference.setFilters(filter);
 
 		//FIXME for reference selection
 		logger.debug(Literal.LEAVING);
@@ -236,6 +241,14 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 		Object dataObject = this.finReference.getObject();
 		FinanceMain financeMain = (FinanceMain) dataObject;
+
+		if (initTab == FinanceConstants.PROCEDT_VERIFICATION_LVETTING_INIT) {
+			if (!legalVerificationService.isLVVerificationExists(financeMain.getFinReference())) {
+				MessageUtil.showMessage(Labels.getLabel("label_legalverification_errmsg"));
+				return;
+			}
+
+		}
 
 		List<FinanceReferenceDetail> financeReferenceDetails = getFinanceReferenceDetailDAO()
 				.getFinanceProcessEditorDetails(financeMain.getFinType(), FinanceConstants.FINSER_EVENT_ORG,
@@ -515,6 +528,14 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
+	public LegalVerificationService getLegalVerificationService() {
+		return legalVerificationService;
+	}
+
+	public void setLegalVerificationService(LegalVerificationService legalVerificationService) {
+		this.legalVerificationService = legalVerificationService;
 	}
 
 	public void setVerificationService(VerificationService verificationService) {

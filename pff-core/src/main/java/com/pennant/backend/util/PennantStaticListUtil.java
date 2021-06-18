@@ -5305,9 +5305,9 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getPercType() {
 		if (percType == null) {
-			percType = new ArrayList<ValueLabel>(2);
-			percType.add(new ValueLabel(PennantConstants.PERC_TYPE_FIXED, "FIXED"));
-			percType.add(new ValueLabel(PennantConstants.PERC_TYPE_VARIABLE, "VARIABLE"));
+			percType = new ArrayList<>(2);
+			percType.add(new ValueLabel(PennantConstants.PERC_TYPE_FIXED, "Fixed"));
+			percType.add(new ValueLabel(PennantConstants.PERC_TYPE_VARIABLE, "Variable"));
 		}
 		return percType;
 	}

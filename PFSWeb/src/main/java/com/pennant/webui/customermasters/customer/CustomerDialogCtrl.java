@@ -2694,7 +2694,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			//this.label_CustomerDialog_ResidentialStatus.setVisible(false);
 			//this.space_Residential.setVisible(false);
 			this.hbox_SubCategory.setVisible(false);
-			this.row_residentialsts.setVisible(false);
 			this.row_qualification.setVisible(false);
 			this.label_CustomerDialog_CKYCOrReferenceNo.setVisible(false);
 			this.ckycOrRefNo.setVisible(false);

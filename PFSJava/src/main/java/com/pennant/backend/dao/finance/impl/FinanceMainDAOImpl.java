@@ -60,6 +60,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -6859,4 +6860,90 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return null;
 	}
+	public List<String> getChildFinRefByParentRef(String parentRef) {
+		String sql = "Select FinReference From FinanceMain_Temp Where parentRef = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.query(sql, ps -> {
+			ps.setString(1, parentRef);
+		}, (rs, i) -> {
+			return rs.getString(1);
+		});
+	}
+
+	@Override
+	public void updateChildFinance(List<FinanceMain> list, String type) {
+		StringBuilder sql = new StringBuilder("update");
+		sql.append(" FinanceMain");
+		sql.append(type);
+		sql.append(" set FinIsActive = ?, ClosedDate = ?, ClosingStatus = ?");
+		sql.append(", RcdMaintainSts = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, WorkflowId = ?, RecordType = ?");
+		sql.append(" where Finreference = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceMain fm = list.get(i);
+				int index = 1;
+				ps.setBoolean(index++, fm.isFinIsActive());
+				ps.setDate(index++, JdbcUtil.getDate(fm.getClosedDate()));
+				ps.setString(index++, fm.getClosingStatus());
+				ps.setString(index++, fm.getRcdMaintainSts());
+				ps.setString(index++, fm.getRoleCode());
+				ps.setString(index++, fm.getNextRoleCode());
+				ps.setString(index++, fm.getTaskId());
+				ps.setString(index++, fm.getNextTaskId());
+				ps.setLong(index++, fm.getWorkflowId());
+				ps.setString(index++, fm.getRecordType());
+				ps.setString(index++, fm.getFinReference());
+
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+
+	}
+
+	@Override
+	public void updateRejectFinanceMain(List<FinanceMain> list, String type) {
+		StringBuilder sql = new StringBuilder("update");
+		sql.append(" FinanceMain");
+		sql.append(type);
+		sql.append(" set FinIsActive = ?,  RecordStatus = ?,  NextRoleCode = ?");
+		sql.append(", NextTaskId = ?,  approved = ?,  ProcessAttributes = ?");
+		sql.append(" where Finreference = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinanceMain fm = list.get(i);
+				int index = 1;
+				ps.setBoolean(index++, fm.isFinIsActive());
+				ps.setString(index++, fm.getRecordStatus());
+				ps.setString(index++, fm.getNextRoleCode());
+				ps.setString(index++, fm.getNextTaskId());
+				ps.setString(index++, fm.getApproved());
+				ps.setString(index++, fm.getProcessAttributes());
+				ps.setString(index++, fm.getFinReference());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+
+	}
+
 }

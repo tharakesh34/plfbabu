@@ -73,7 +73,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_LOAN_SPLIT", true);
 
-		customConstants.put("ALLOW_INST_BASED_SCHD", true);
+		customConstants.put("SCHD_INST_CAL_ON_DISB_RELIZATION", true);
 
 		// Temporary Enabled, need to disable once the testing is done
 		customConstants.put("MANDATE_ALLOW_CO_APP", true);
@@ -82,6 +82,8 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("CUST_ADDR_AUTO_FILL", false);
 		customConstants.put("HOLD_DISB_INST_POST", true);
 		customConstants.put("VAS_INST_ON_DISB", true);
+		customConstants.put("FEE_SERVICEING_STAMPIN_ON_ORG", true);
+		customConstants.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
 
 	}
 

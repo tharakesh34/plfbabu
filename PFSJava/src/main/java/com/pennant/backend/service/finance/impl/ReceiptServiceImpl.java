@@ -413,7 +413,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				FinanceConstants.MODULEID_FINTYPE));
 
 		financeDetail.setFinFeeConfigList(
-				finFeeConfigService.getFinFeeConfigList(financeMain.getFinReference(), eventCode, false, "_View"));
+				finFeeConfigService.getFinFeeConfigList(finReference, eventCode, false, "_View"));
 
 		scheduleData.setFeeEvent(eventCode);
 
@@ -2617,7 +2617,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinReceiptDetail finReceiptDetail = receiptHeader.getReceiptDetails().get(0);
 			fsi.setFinReference(receiptHeader.getReference());
 			fsi.setValueDate(receiptHeader.getValueDate());
-			fsi.setAmount(receiptHeader.getReceiptAmount());
 			fsi.setTransactionRef(finReceiptDetail.getTransactionRef());
 			fsi.setFavourNumber(finReceiptDetail.getFavourNumber());
 			fsi.setPaymentMode(receiptHeader.getReceiptMode());
@@ -6957,17 +6956,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		message = new StringBuilder();
-		message.append("Receipt for the Fin Reference {0} , Value Date {1}, Receipt Amount {2}");
-		message.append(" and Transaction Reference {3} already exists with Receipt Id {4} .");
+		message.append("Receipt for the Fin Reference {0} , Value Date {1} ");
+		if (fsi.getTransactionRef() != null) {
+			message.append(" and Transaction Reference");
+		}
+		message.append("{2} already exists with Receipt Id {3} .");
 
 		String[] valueParm = new String[5];
 
 		valueParm[0] = fsi.getFinReference();
 		valueParm[1] = String.valueOf(fsi.getValueDate());
-		valueParm[2] = PennantApplicationUtil.amountFormate(fsi.getAmount(),
-				CurrencyUtil.getFormat(ImplementationConstants.BASE_CCY));
-		valueParm[3] = fsi.getTransactionRef();
-		valueParm[4] = String.valueOf(receiptIdList.get(0));
+		valueParm[2] = fsi.getTransactionRef();
+		valueParm[3] = String.valueOf(receiptIdList.get(0));
 
 		errors.add(new ErrorDetail("21005", message.toString(), valueParm));
 

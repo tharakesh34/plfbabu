@@ -81,14 +81,15 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.DataTypeUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -242,8 +243,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
 
@@ -256,8 +256,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * @return a BeanObject from the listBox or null.
 	 */
 
@@ -290,8 +289,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * 
 	 * @return a BeanObject from the listBox or null.
 	 */
@@ -304,8 +302,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * 
 	 * @return a BeanObject from the listBox or null.
 	 */
@@ -319,8 +316,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * The Call method.
 	 * 
-	 * @param parent
-	 *            The parent component
+	 * @param parent The parent component
 	 * 
 	 * @return a BeanObject from the listBox or null.
 	 */
@@ -394,7 +390,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		this.listbox.setMultiple(multySelection);
 		this.listbox.setHeight("290px");
 		this.listbox.setVisible(true);
-		//this.listbox.setSizedByContent(true);
+		// this.listbox.setSizedByContent(true);
 		this.listbox.setSpan(true);
 		this.listbox.setEmptyMessage(Labels.getLabel("listbox.emptyMessage"));
 
@@ -546,12 +542,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 				String fieldValue = "";
 				String fieldMethod = "get" + fieldString[i].substring(0, 1).toUpperCase() + fieldString[i].substring(1);
 
-				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
-					fieldValue = (String) invokeMethod(fieldMethod, data);
-				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
-					fieldValue = DateUtility.formatToLongDate((Date) invokeMethod(fieldMethod, data));
-				} else {
-					fieldValue = (String) invokeMethod(fieldMethod, data);
+				fieldValue = (String) invokeMethod(fieldMethod, data);
+				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
+					Date fieldDate = DateUtil.parse(fieldValue, DateFormat.FULL_DATE_TIME.getPattern());
+					fieldValue = DateUtil.formatToLongDate(fieldDate);
 				}
 
 				if (!search && i == 0) {
@@ -640,10 +634,8 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
-	 * @param so
-	 *            SearchObject, holds the entity and properties to search. <br>
-	 * @param start
-	 *            Row to start. <br>
+	 * @param so    SearchObject, holds the entity and properties to search. <br>
+	 * @param start Row to start. <br>
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void refreshModel(String searchText, int start) {
@@ -660,10 +652,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		}
 
 		String[] lovFields = getModuleMapping().getLovFields();
-		//if module filters are 1
+		// if module filters are 1
 		if (lovFields != null && lovFields.length == 1) {
 			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
-		} else if (lovFields != null && lovFields.length > 1) { //if module filters are > 1 
+		} else if (lovFields != null && lovFields.length > 1) { // if module filters are > 1
 			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
 			this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
 		}
@@ -815,10 +807,8 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * Get the search filters for all the fields with the specified search text.
 	 * 
-	 * @param fields
-	 *            The fields for which the search condition to be built.
-	 * @param value
-	 *            The value to search.
+	 * @param fields The fields for which the search condition to be built.
+	 * @param value  The value to search.
 	 * @return The search filters for all the fields with the specified search text.
 	 */
 	private Filter[] getSearchFilters(String[] fields, String value) {
@@ -858,12 +848,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	/**
 	 * Get the search filter.
 	 * 
-	 * @param field
-	 *            The field name.
-	 * @param value
-	 *            The value to search.
-	 * @param type
-	 *            The data type of value.
+	 * @param field The field name.
+	 * @param value The value to search.
+	 * @param type  The data type of value.
 	 * @return The search filter.
 	 */
 	private Filter getSearchFilter(String field, String value, DataType type) {

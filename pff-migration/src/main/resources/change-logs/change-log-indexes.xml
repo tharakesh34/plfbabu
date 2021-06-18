@@ -1233,13 +1233,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="161" author="murthy.y" dbms="postgresql">
+	<!-- <changeSet id="161" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
      			create index ix_fodd_finref on finoddetails(lower(finreference),FinODSchdDate);
     		]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="162" author="murthy.y" dbms="postgresql">
 		<sql>
@@ -3554,11 +3554,6 @@
 	</changeSet>
 	
 	<changeSet id="99_pre" author="murthy.y" dbms="mssql">
-		<preConditions onFail="MARK_RAN">
-		<not>
-			<indexExists indexName="IX_PRTHEADER_TEMP_ID_PID" tableName="PRESENTMENTHEADER_TEMP"/>
-		</not> 
-		</preConditions>
 		<sql>
 			<![CDATA[
 				create nonclustered index    IX_PRTHEADER_TEMP_ID_PID on PRESENTMENTHEADER_TEMP(id,PartnerBankId);
@@ -3753,7 +3748,7 @@
 	<changeSet id="123.1_pre" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
-				alter table lmtfinrefdetail alter column MandInputInStage varchar(max);
+				alter table lmtfinrefdetail alter column MandInputInStage varchar(8000);
 			]]>
 		</sql>
 	</changeSet> 
@@ -3967,11 +3962,6 @@
 	</changeSet>
 	
 	<changeSet id="149_pre" author="murthy.y" dbms="mssql">
-		<preConditions onFail="MARK_RAN">
-		<not>
-			<indexExists indexName="ix_fin_ref" tableName="finreceiptheader"/>
-		</not> 
-		</preConditions>
 		<sql>
 			<![CDATA[
 				create nonclustered index ix_fin_ref on finreceiptheader(reference);
@@ -4059,13 +4049,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="161" author="murthy.y" dbms="mssql">
+	<!-- <changeSet id="161" author="murthy.y" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create  nonclustered  index ix_fodd_finref on finoddetails (finreference,finodschddate);
     		]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="162" author="murthy.y" dbms="mssql">
 		<sql>

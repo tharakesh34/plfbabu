@@ -50,13 +50,11 @@ public class FinFeeConfigServiceImpl extends GenericService<FinFeeConfig> implem
 	public List<FinFeeConfig> getFinFeeConfigList(String finReference, String eventCode, boolean origination,
 			String type) {
 		logger.debug(Literal.ENTERING);
+		
+		List<FinFeeConfig> list = finFeeConfigDAO.getFinFeeConfigList(finReference, eventCode, origination, type);
+
 		logger.debug(Literal.LEAVING);
-		return finFeeConfigDAO.getFinFeeConfigList(finReference, eventCode, origination, type);
-
-	}
-
-	public FinFeeConfigDAO getFinFeeConfigDAO() {
-		return finFeeConfigDAO;
+		return list;
 	}
 
 	public void setFinFeeConfigDAO(FinFeeConfigDAO finFeeConfigDAO) {

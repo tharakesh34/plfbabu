@@ -18,20 +18,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -48,6 +42,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -61,6 +56,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -81,21 +77,22 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	protected Textbox extUplodedFileName;
 	private Media media;
 	protected Listbox listBoxErrorDetails;
+
 	private long custId = Long.MIN_VALUE;
-	Map<String, CustomerExtLiability> map = new HashMap<String, CustomerExtLiability>();
-	@Autowired
-	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
-	@Autowired
-	private ExternalLiabilityDAO externalLiabilityDAO;
 	protected transient boolean enqiryModule;
-	private static int columnsize = 37;
 	private int formater = CurrencyUtil.getFormat("");
-	private PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
-	private FormulaEvaluator formulaEvaluator = null; // for cell value formating
+	private int noOfInstallments = 0;
+
+	Map<String, CustomerExtLiability> map = new HashMap<>();
+	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
+	private ExternalLiabilityDAO externalLiabilityDAO;
+	private PagedListService pagedListService;
 	private CustomerDialogCtrl customerDialogCtrl;
+	private BankDetailDAO bankDetailDAO;
+
 	private final List<ValueLabel> sourceInfoList = PennantStaticListUtil.getSourceInfoList();
 	private final List<ValueLabel> trackCheckList = PennantStaticListUtil.getTrackCheckList();
+	private final List<ValueLabel> emiClearance = PennantStaticListUtil.getEmiClearance();
 
 	@Override
 	protected void doSetProperties() {
@@ -186,20 +183,18 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 * @throws IOException
 	 */
 	private void readFromExcel() throws IOException {
+		map.clear();
 		Workbook workBook = null;
 		try {
 			if (media.getName().toLowerCase().endsWith(".xls")) {
 				try {
 					workBook = new HSSFWorkbook(media.getStreamData());
-					this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) workBook);
 				} catch (OfficeXmlFileException e) {
 					// due to some xl version issue we have to use
 					workBook = new XSSFWorkbook(media.getStreamData());
-					this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workBook);
 				}
 			} else if (media.getName().toLowerCase().endsWith(".xlsx")) {
 				workBook = new XSSFWorkbook(media.getStreamData());
-				this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workBook);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
@@ -217,6 +212,12 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
 			return;
 		}
+
+		if (!myExcelSheet.getSheetName().contains(Labels.getLabel("label_ExternalLibilities.label"))) {
+			MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
+			return;
+		}
+
 		// only header column is available with out data return
 		int rowCount = myExcelSheet.getPhysicalNumberOfRows();
 		if (rowCount <= 1) {
@@ -225,24 +226,55 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		}
 
 		Iterator<Row> rows = myExcelSheet.iterator();
-		String data[] = new String[myExcelSheet.getRow(0).getPhysicalNumberOfCells()];
+
 		int seqNo = 0;
 		while (rows.hasNext()) {
 			Row row = rows.next();
+
 			if (row.getRowNum() == 0) {
+				if (row.getLastCellNum() != 37) {
+					MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
+					return;
+				}
 				continue;
 			}
-			int cellCount = -1;
-			// for list maintenance
-			seqNo += 1;
-			Iterator<Cell> cells = row.cellIterator();
-			// reading each row and preparing the list of values
-			while (cells.hasNext()) {
-				data[++cellCount] = this.objDefaultFormat.formatCellValue(cells.next(), this.formulaEvaluator);
+			seqNo++;
+			CustomerExtLiability ce = new CustomerExtLiability();
+			ExtLiabilityPaymentdetails epd = new ExtLiabilityPaymentdetails();
+			String key = null;
+
+			for (Cell cell : row) {
+				if (cell.getColumnIndex() == 0) {
+					key = getValue(cell.toString());
+				}
+
+				if (key == null) {
+					MessageUtil.showError("ID is mandatory for every record.");
+					return;
+				}
+
+				try {
+					if (!map.containsKey(key)) {
+						ce.setSeqNo(seqNo);
+						ce.setCustId(custId);
+						prepareCustomerExtLiabilityData(ce, cell.toString(), cell.getColumnIndex());
+						prepareRTRData(epd, cell.toString(), cell.getColumnIndex());
+					} else {
+						ce = map.get(key);
+						prepareRTRData(epd, cell.toString(), cell.getColumnIndex());
+					}
+				} catch (WrongValueException e) {
+					MessageUtil.showError(e.getMessage());
+					return;
+				}
 			}
-			// This method will create
-			prepareLiabilityList(data, map, seqNo);
+			setWorkFlowData(ce, epd);
+
+			ce.getExtLiabilitiesPayments().add(epd);
+
+			map.put(key, ce);
 		}
+
 		workBook.close();
 
 		// save the data
@@ -252,171 +284,240 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		}
 	}
 
-	/**
-	 * This method will create a external liability object with passed values
-	 * 
-	 * @param data
-	 * @param map
-	 * @param seqNo
-	 */
-	private void prepareLiabilityList(String[] data, Map<String, CustomerExtLiability> map, int seqNo) {
-		if (data != null && data.length == columnsize) {
-			if (!map.containsKey(data[0])) {
-				// Preparing CustomerExtLiability Data
-				CustomerExtLiability customerExtLiability = new CustomerExtLiability();
-				customerExtLiability.setSeqNo(seqNo);
-				customerExtLiability.setCustId(custId);
-				prepareLiabilityData(customerExtLiability, data);
-				// Here we have to set RTR data
-				prepareRTRData(customerExtLiability, data);
-				map.put(data[0], customerExtLiability);
-			} else if (map.containsKey(data[0])) {
-				CustomerExtLiability customerExtLiability = map.get(data[0]);
-				// Only need to set RTR data for Duplicate Liability Record
-				prepareRTRData(customerExtLiability, data);
+	private void prepareCustomerExtLiabilityData(CustomerExtLiability ce, String cellValue, int i) {
+		switch (i) {
+		case 1:
+			// Product
+			ce.setFinType(getValue(cellValue));
+			break;
+		case 2:
+			// Financer Name
+			ce.setLoanBank(getValue(cellValue));
+			break;
+		case 3:
+			// Other Financial Institution
+			ce.setOtherFinInstitute(getValue(cellValue));
+			break;
+		case 4:
+			// Installment Amount/EMI
+			ce.setInstalmentAmount(getValueAsAmount(cellValue));
+			break;
+		case 5:
+			// Outstanding Balance/Limit
+			ce.setOutstandingBalance(getValueAsAmount(cellValue));
+			break;
+		case 6:
+			// Loan Amount
+			ce.setOriginalAmount(getValueAsAmount(cellValue));
+			break;
+		case 7:
+			// Loan Date
+			ce.setFinDate(DateUtil.parse(cellValue, DateFormat.LONG_DATE));
+			break;
+		case 8:
+			// Status
+			ce.setFinStatus(getValue(cellValue));
+			break;
+		case 9:
+			// ROI
+			ce.setRateOfInterest(getValueAsAmount(cellValue));
+			break;
+		case 10:
+			// Loan Tenure
+			ce.setTenure(getValueAsInt(cellValue));
+			break;
+		case 11:
+			// Balance Tenure
+			ce.setBalanceTenure(getValueAsInt(cellValue));
+			break;
+		case 12:
+			// Number of Bounces in last 3 months
+			ce.setBounceInstalments(getValueAsInt(cellValue));
+			break;
+		case 13:
+			// Number of Bounces in last 6 months
+			ce.setNoOfBouncesInSixMonths(getValueAsInt(cellValue));
+			break;
+		case 14:
+			// Number of Bounces in last 12 months
+			ce.setNoOfBouncesInTwelveMonths(getValueAsInt(cellValue));
+			break;
+		case 15:
+			// POS
+			ce.setPrincipalOutstanding(getValueAsAmount(cellValue));
+			break;
+		case 16:
+			// Overdue
+			ce.setOverdueAmount(getValueAsAmount(cellValue));
+			break;
+		case 17:
+			// EMI Considered for FOIR
+			ce.setFoir(getValueAsBoolean(cellValue));
+			break;
+		case 18:
+			// Source of Info
+			ce.setSource(getListAsInt(cellValue));
+			break;
+		case 19:
+			// Track Check from
+			ce.setCheckedBy(getListAsInt(cellValue));
+			break;
+		case 20:
+			// Security Details/Property details
+			ce.setSecurityDetails(getValue(cellValue));
+			break;
+		case 21:
+			// End Use of Funds
+			ce.setLoanPurpose(getValue(cellValue));
+			break;
+		case 22:
+			// Repayment Account Bank Name
+			ce.setRepayBank(getValue(cellValue));
+			break;
+		case 23:
+			// Repayment Bank Account No
+			ce.setRepayFromAccNo(getValue(cellValue));
+			break;
+		case 24:
+			// Considered for RTR based loan
+			ce.setConsideredBasedOnRTR(getValueAsBoolean(cellValue));
+			break;
+		case 25:
+			// Number of Installments for RTR
+			noOfInstallments = getValueAsInt(cellValue);
+			break;
+		case 26:
+			// Imputed EMI
+			ce.setImputedEmi(getValueAsAmount(cellValue));
+			break;
+		case 27:
+			// OwnerShip
+			ce.setOwnerShip(getValue(cellValue));
+			break;
+		case 28:
+			// Last 24 Months
+			ce.setLastTwentyFourMonths(getValueAsBoolean(cellValue));
+			break;
+		case 29:
+			// Last 6 Months
+			ce.setLastSixMonths(getValueAsBoolean(cellValue));
+			break;
+		case 30:
+			// Last 3 Months
+			ce.setLastThreeMonths(getValueAsBoolean(cellValue));
+			break;
+		case 31:
+			// Current OverDue
+			ce.setCurrentOverDue(getValueAsAmount(cellValue));
+			break;
+		case 32:
+			// MOB
+			BigDecimal bd = new BigDecimal(cellValue);
+			ce.setMob(getValueAsInt(bd.toString()));
+			break;
+		case 33:
+			// Remarks
+			ce.setRemarks(getValue(cellValue));
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void prepareRTRData(ExtLiabilityPaymentdetails epd, String cellValue, int i) {
+		switch (i) {
+		case 34:
+			epd.setEmiType(getValue(cellValue));
+			break;
+		case 35:
+			epd.setEmiClearance(getValue(cellValue));
+			break;
+		case 36:
+			epd.setEmiClearedDay(getValueAsInt(cellValue));
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void setWorkFlowData(CustomerExtLiability ce, ExtLiabilityPaymentdetails epd) {
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		long userId = loggedInUser.getUserId();
+		String rcdStatus = PennantConstants.RCD_STATUS_APPROVED;
+
+		ce.setLastMntBy(userId);
+		ce.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		ce.setUserDetails(loggedInUser);
+		ce.setVersion(1);
+		ce.setRecordStatus(rcdStatus);
+
+		epd.setLastMntBy(userId);
+		epd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		epd.setUserDetails(loggedInUser);
+		epd.setVersion(1);
+		epd.setRecordStatus(rcdStatus);
+	}
+
+	private String getValue(String value) {
+		return StringUtils.trimToNull(value);
+	}
+
+	private int getValueAsInt(String value) {
+		value = getValue(value);
+		if (value == null) {
+			return 0;
+		}
+		value = value.split("\\.")[0];
+		try {
+			int num = Integer.valueOf(value);
+			if (num < 0) {
+				throw new WrongValueException("The given file having wrong formatted values : " + value);
 			}
+			return num;
+		} catch (NumberFormatException e) {
+			throw new WrongValueException("The given file having wrong formatted values : " + value);
 		}
-
 	}
 
-	/**
-	 * This method will set the data to CustomerExtLiability object
-	 * 
-	 * @param customerExtLiability
-	 * @param data
-	 */
-	private void prepareLiabilityData(CustomerExtLiability customerExtLiability, String[] data) {
-		// Product
-		customerExtLiability.setFinType(data[1]);
-
-		// Financer Name
-		customerExtLiability.setLoanBank(data[2]);
-
-		// Other Financial Institution
-		customerExtLiability.setOtherFinInstitute(data[3]);
-
-		// Installment Amount/EMI
-		customerExtLiability.setInstalmentAmount(PennantApplicationUtil.unFormateAmount(data[4], formater));
-
-		// Outstanding Balance/Limit
-		customerExtLiability.setOutstandingBalance(PennantApplicationUtil.unFormateAmount(data[5], formater));
-
-		// Loan Amount
-		customerExtLiability.setOriginalAmount(PennantApplicationUtil.unFormateAmount(data[6], formater));
-
-		// Loan Date
-		customerExtLiability.setFinDate(DateUtil.parse(data[7], DateFormat.SHORT_DATE));
-
-		// Status
-		customerExtLiability.setFinStatus(data[8]);
-
-		// ROI
-		customerExtLiability.setRateOfInterest(PennantApplicationUtil.unFormateAmount(data[9], formater));
-
-		// Loan Tenure
-		customerExtLiability.setTenure(Integer.valueOf(data[10]));
-
-		// Balance Tenure
-		customerExtLiability.setBalanceTenure(Integer.valueOf(data[11]));
-
-		// Number of Bounces in last 3 months
-		customerExtLiability.setBounceInstalments(Integer.valueOf(data[12]));
-
-		// Number of Bounces in last 6 months
-		customerExtLiability.setNoOfBouncesInSixMonths(Integer.valueOf(data[13]));
-
-		// Number of Bounces in last 12 months
-		customerExtLiability.setNoOfBouncesInTwelveMonths(Integer.valueOf(data[14]));
-
-		// POS
-		customerExtLiability.setPrincipalOutstanding(PennantApplicationUtil.unFormateAmount(data[15], formater));
-
-		// Overdue
-		customerExtLiability.setOverdueAmount(PennantApplicationUtil.unFormateAmount(data[16], formater));
-
-		// EMI Considered for FOIR
-		customerExtLiability.setFoir("true".equalsIgnoreCase(data[17]) ? true : false);// data[17]
-
-		// Source of Info
-		customerExtLiability.setSource(Integer.valueOf(data[18]));
-
-		// Track Check from
-		customerExtLiability.setCheckedBy(Integer.valueOf(data[19]));
-
-		// Security Details/Property details
-		customerExtLiability.setSecurityDetails(data[20]);
-
-		// End Use of Funds
-		customerExtLiability.setLoanPurpose(data[21]);
-
-		// Repayment Account Bank Name
-		customerExtLiability.setRepayBank(data[22]);
-
-		// Repayment Bank Account No
-		customerExtLiability.setRepayFromAccNo(data[23]);
-
-		// Considered for RTR based loan
-		customerExtLiability.setConsideredBasedOnRTR("true".equalsIgnoreCase(data[24]) ? true : false);// data[24]
-
-		// Number of Installments for RTR
-
-		// Imputed EMI
-		customerExtLiability.setImputedEmi(PennantApplicationUtil.unFormateAmount(data[26], formater));
-
-		// OwnerShip
-		customerExtLiability.setOwnerShip(data[27]);
-
-		// Last 24 Months
-		customerExtLiability.setLastTwentyFourMonths("true".equalsIgnoreCase(data[28]) ? true : false);// data[28]
-
-		// Last 6 Months
-		customerExtLiability.setLastSixMonths("true".equalsIgnoreCase(data[29]) ? true : false);// data[29]
-
-		// Last 3 Months
-		customerExtLiability.setLastThreeMonths("true".equalsIgnoreCase(data[30]) ? true : false);// data[30]
-
-		// Current OverDue
-		customerExtLiability.setCurrentOverDue(PennantApplicationUtil.unFormateAmount(data[31], formater));
-
-		// MOB
-		if (StringUtils.isNotBlank(data[32])) {
-			customerExtLiability.setMob(Integer.valueOf(data[32]));
+	private int getListAsInt(String value) {
+		value = getValue(value);
+		if (value == null) {
+			throw new WrongValueException("The given file having wrong formatted values : " + value);
 		}
-
-		// Remarks
-		customerExtLiability.setRemarks(data[33]);
-
-		// workflow data
-		customerExtLiability.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		customerExtLiability.setUserDetails(getUserWorkspace().getLoggedInUser());
-		customerExtLiability.setVersion(customerExtLiability.getVersion() + 1);
-		customerExtLiability.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		value = value.split("\\.")[0];
+		try {
+			return Integer.valueOf(value);
+		} catch (NumberFormatException e) {
+			throw new WrongValueException("The given file having wrong formatted values : " + value);
+		}
 	}
 
-	/**
-	 * This method will set the data to ExtLiabilityPaymentdetails object
-	 * 
-	 * @param customerExtLiability
-	 * @param data
-	 */
-	private void prepareRTRData(CustomerExtLiability customerExtLiability, String[] data) {
-		ExtLiabilityPaymentdetails paymentdetails = new ExtLiabilityPaymentdetails();
-		// Month
-		paymentdetails.setEmiType(data[34]);
-		// Cleared
-		paymentdetails.setEmiClearance(data[35]);
-		// Cleared Day
-		if (StringUtils.isNotBlank(data[36])) {
-			paymentdetails.setEmiClearedDay(Integer.valueOf(data[36]));
+	private BigDecimal getValueAsAmount(String value) {
+		try {
+			BigDecimal amount = PennantApplicationUtil.unFormateAmount(value, formater);
+			if (amount.compareTo(BigDecimal.ZERO) < 0) {
+				throw new WrongValueException("The given file having wrong formatted values : " + value);
+			}
+			return amount;
+		} catch (NumberFormatException e) {
+			throw new WrongValueException("The given file having wrong formatted values : " + value);
 		}
-		// workflow data
-		paymentdetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		paymentdetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		paymentdetails.setUserDetails(getUserWorkspace().getLoggedInUser());
-		paymentdetails.setVersion(paymentdetails.getVersion() + 1);
-		paymentdetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		customerExtLiability.getExtLiabilitiesPayments().add(paymentdetails);
+	}
+
+	private boolean getValueAsBoolean(String value) {
+		value = getValue(value);
+		if (value == null) {
+			return false;
+		}
+
+		switch (value.toLowerCase()) {
+		case "true":
+			return true;
+		case "false":
+			return true;
+		default:
+			throw new WrongValueException("The given file having wrong formatted values : " + value);
+		}
 	}
 
 	/**
@@ -442,6 +543,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 				for (String key : map.keySet()) {
 					CustomerExtLiability customerExtLiability = map.get(key);
 					if (customerExtLiability != null) {
+						doWriteComponentsToBean(customerExtLiability);
+						extendedComboValidations(customerExtLiability);
 						// setting the linkId
 						customerExtLiabilityDAO.setLinkId(customerExtLiability);
 						if (!flag) {
@@ -451,9 +554,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 							customerExtLiabilityDAO.delete(customerExtLiability.getLinkId(), "");
 							flag = true;
 						}
-						//Validations
-						validate(customerExtLiability);
-						//Saving the Data
+
 						// Saving the Data
 						externalLiabilityDAO.save(customerExtLiability, "");
 						if (customerExtLiability.getExtLiabilitiesPayments() != null
@@ -488,6 +589,145 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			}
 		} catch (WrongValueException e) {
 			MessageUtil.showError(e.getMessage());
+		}
+	}
+
+	public void doWriteComponentsToBean(CustomerExtLiability ce) {
+		StringBuilder errors = new StringBuilder();
+
+		if (StringUtils.isEmpty(ce.getLoanBank())) {
+			errors.append("Bank Name is Mandatory;");
+		}
+
+		if (StringUtils.isEmpty(ce.getFinType())) {
+			errors.append("Product is Mandatory;");
+		}
+
+		if (ce.getInstalmentAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			errors.append("Installment Amount/EMI should be greater than Zero;");
+		}
+
+		if (ce.getOriginalAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			errors.append("Original Amount should be greater than Zero;");
+		}
+
+		if (ce.getFinDate() == null) {
+			errors.append("Loan Date should be mandatory;");
+		}
+
+		if (StringUtils.isEmpty(ce.getFinStatus())) {
+			errors.append("Status is Mandatory;");
+		}
+
+		if (ce.getTenure() <= 0) {
+			errors.append("Total Tenure should be greater than Zero;");
+		}
+
+		if (ce.getBalanceTenure() <= 0) {
+			errors.append("Balance Tenure should be greater than Zero;");
+		}
+
+		if (StringUtils.isEmpty(ce.getRepayBank())) {
+			errors.append("Repayment from is Mandatory;");
+		}
+
+		BankDetail bd = bankDetailDAO.getAccNoLengthByCode(ce.getRepayBank(), "");
+		if (bd == null) {
+			errors.append("Given Repayment from is not valid;");
+		}
+
+		int maxAccNoLength = bd.getAccNoLength();
+		int minAccNoLength = bd.getMinAccNoLength();
+		int givenAccNoLength = ce.getRepayFromAccNo().length();
+
+		if (givenAccNoLength < minAccNoLength || givenAccNoLength > maxAccNoLength) {
+			errors.append("Repayment Bank Account No should be greater than ");
+			errors.append(maxAccNoLength);
+			errors.append(" or less than or equal to ").append(minAccNoLength);
+		}
+		if (ce.getOutstandingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+			errors.append("Outstanding Balance/Limit should be greater than Zero;");
+		}
+
+		if (ce.getRateOfInterest().compareTo(BigDecimal.ZERO) <= 0) {
+			errors.append("ROI should be greater than Zero;");
+		}
+
+		if (ce.getPrincipalOutstanding().compareTo(BigDecimal.ZERO) <= 0) {
+			errors.append("POS should be greater than Zero;");
+		}
+
+		if (StringUtils.isEmpty(ce.getLoanPurpose())) {
+			errors.append("End Use of Funds is Mandatory;");
+		}
+
+		if (noOfInstallments == 0) {
+			errors.append("Number of Installments should be greater than Zero;");
+		}
+
+		List<ExtLiabilityPaymentdetails> payments = ce.getExtLiabilitiesPayments();
+
+		if (noOfInstallments != payments.size()) {
+			errors.append("Number of Installments for RTR and given months are not matched;");
+		}
+
+		Date appDate = SysParamUtil.getAppDate();
+		int i = 0;
+		for (ExtLiabilityPaymentdetails elp : payments) {
+			Date emiDate = null;
+			String emiType = elp.getEmiType();
+			if (StringUtils.isEmpty(emiType)) {
+				errors.append("EMI Month is Mandatory;");
+				break;
+			}
+
+			try {
+				emiDate = DateUtil.parse(emiType, DateFormat.LONG_DATE);
+			} catch (IllegalArgumentException e) {
+				errors.append("EMI Month format is wrong, Please provide valid format;");
+				break;
+			}
+
+			if (emiDate.after(appDate)) {
+				errors.append("EMI Month is crossed Application Date" + appDate);
+				break;
+			}
+			int monthsBetween = DateUtil.getMonthsBetween(DateUtil.addMonths(appDate, -i), emiDate);
+			i++;
+			if (monthsBetween != 0) {
+				errors.append("EMI month are not in sequence or 1st EMI month is not started with Application month");
+				break;
+			}
+
+			if (StringUtils.isEmpty(elp.getEmiClearance())) {
+				errors.append("Month Clearance is Mandatory;");
+				break;
+			}
+
+			int count = 0;
+			for (ValueLabel emi : emiClearance) {
+				if (emi.getValue().equals(elp.getEmiClearance())) {
+					count++;
+					break;
+				}
+			}
+			if (count == 0) {
+				errors.append(" Emi Clearance data is not matched;");
+				break;
+			}
+
+			if (PennantConstants.CLEARED.equals(elp.getEmiClearance()) && elp.getEmiClearedDay() <= 0) {
+				errors.append("Month Clearance is selected as 'CLRD', so Cleared Day is Mandatory;");
+				break;
+			}
+
+			if (!PennantConstants.CLEARED.equals(elp.getEmiClearance()) && elp.getEmiClearedDay() > 0) {
+				elp.setEmiClearedDay(0);
+			}
+		}
+
+		if (StringUtils.isNotEmpty(errors.toString())) {
+			throw new WrongValueException(errors.toString());
 		}
 	}
 
@@ -1020,7 +1260,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		return list;
 	}
 
-	private void validate(CustomerExtLiability custExt) {
+	private void extendedComboValidations(CustomerExtLiability custExt) {
 		int count = 0;
 
 		String finStatus = custExt.getFinStatus();
@@ -1104,4 +1344,21 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			throw new WrongValueException(errorMessage.toString());
 		}
 	}
+
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	public void setExternalLiabilityDAO(ExternalLiabilityDAO externalLiabilityDAO) {
+		this.externalLiabilityDAO = externalLiabilityDAO;
+	}
+
+	public void setPagedListService(PagedListService pagedListService) {
+		this.pagedListService = pagedListService;
+	}
+
+	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
+		this.bankDetailDAO = bankDetailDAO;
+	}
+
 }

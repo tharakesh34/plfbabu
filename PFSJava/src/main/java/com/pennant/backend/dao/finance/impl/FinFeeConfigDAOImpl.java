@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +52,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.finance.FinFeeConfigDAO;
 import com.pennant.backend.model.finance.FinFeeConfig;
@@ -79,50 +81,80 @@ public class FinFeeConfigDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 	@Override
 	public String save(FinFeeConfig finFeeDetailConfig, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+		List<FinFeeConfig> list = new ArrayList<>();
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder();
+		list.add(finFeeDetailConfig);
 
-		saveQuery(tableType.getSuffix(), sql);
+		saveList(list, tableType.getSuffix());
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finFeeDetailConfig);
-
-		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
 		return finFeeDetailConfig.getFinReference();
 	}
 
 	@Override
 	public void saveList(List<FinFeeConfig> finFeeDetailConfig, String type) {
-		StringBuilder insertSql = new StringBuilder();
-		saveQuery(type, insertSql);
+		String sql = getSaveQuery(type);
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finFeeDetailConfig.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					FinFeeConfig fc = finFeeDetailConfig.get(i);
+					int index = 1;
+
+					ps.setString(index++, fc.getFinReference());
+					ps.setBoolean(index++, fc.isOriginationFee());
+					ps.setString(index++, fc.getFinEvent());
+					ps.setLong(index++, fc.getFeeTypeID());
+					ps.setInt(index++, fc.getFeeOrder());
+					ps.setString(index++, fc.getFeeScheduleMethod());
+					ps.setString(index++, fc.getRuleCode());
+					ps.setString(index++, fc.getCalculationType());
+					ps.setBigDecimal(index++, fc.getAmount());
+					ps.setBigDecimal(index++, fc.getPercentage());
+					ps.setString(index++, fc.getCalculateOn());
+					ps.setBoolean(index++, fc.isAlwDeviation());
+					ps.setBoolean(index++, fc.isAlwModifyFeeSchdMthd());
+					ps.setBoolean(index++, fc.isAlwModifyFee());
+					ps.setBigDecimal(index++, fc.getMaxWaiverPerc());
+					ps.setLong(index++, fc.getModuleId());
+					ps.setLong(index++, fc.getReferenceId());
+					ps.setLong(index++, fc.getFinTypeFeeId());
+					ps.setBoolean(index++, fc.isAlwPreIncomization());
+					ps.setString(index++, fc.getPercType());
+					ps.setString(index++, fc.getPercRule());
+					ps.setLong(index++, fc.getPercRuleId());
+
+				}
+
+				@Override
+				public int getBatchSize() {
+					return finFeeDetailConfig.size();
+				}
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
 
 	}
 
-	private void saveQuery(String type, StringBuilder insertSql) {
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" Insert Into FinFeeConfig ");
-		insertSql.append(" (finReference,originationFee, finEvent, feeTypeID, feeOrder, ");
-		insertSql.append(" feeScheduleMethod,ruleCode, calculationType, amount ,");
-		insertSql.append(" percentage, calculateOn, alwDeviation, alwModifyFeeSchdMthd, alwModifyFee,");
-		insertSql.append(" maxWaiverPerc, moduleId, ReferenceId, finTypeFeeId, alwPreIncomization,");
-		insertSql.append(" percType ,percRule , percRuleId )");
-		insertSql.append(" Values( :finReference,:originationFee, :finEvent, :feeTypeID, :feeOrder,");
-		insertSql.append(" :feeScheduleMethod, :ruleCode, :calculationType, :amount,");
-		insertSql.append(" :percentage, :calculateOn, :alwDeviation, :alwModifyFeeSchdMthd, :alwModifyFee,");
-		insertSql.append(" :maxWaiverPerc, :moduleId, :ReferenceId, :finTypeFeeId, :alwPreIncomization,");
-		insertSql.append(" :percType , :percRule , :PercRuleId )");
+	private String getSaveQuery(String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert Into FinFeeConfig");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinReference, OriginationFee, FinEvent, FeeTypeID, FeeOrder");
+		sql.append(", FeeScheduleMethod, RuleCode, CalculationType, Amount");
+		sql.append(", Percentage, CalculateOn, AlwDeviation, AlwModifyFeeSchdMthd, AlwModifyFee");
+		sql.append(", MaxWaiverPerc, ModuleId, ReferenceId, FinTypeFeeId, AlwPreIncomization");
+		sql.append(", PercType, PercRule, PercRuleId)");
+		sql.append(" Values(?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?)");
+		return sql.toString();
 	}
 
 	@Override

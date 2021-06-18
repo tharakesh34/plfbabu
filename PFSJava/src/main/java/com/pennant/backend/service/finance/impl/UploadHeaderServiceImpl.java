@@ -47,8 +47,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -86,6 +88,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.receiptupload.UploadReceipt;
+import com.pennant.backend.model.refundupload.RefundUpload;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -573,7 +576,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 			return auditHeader;
 		}
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType1 = TableType.MAIN_TAB;
@@ -611,6 +614,39 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		return auditHeader;
 	}
 
+	private void validateEntityCode(AuditHeader auditHeader) {
+		logger.info("Validating Upload Details...");
+
+		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
+
+		if (!uploadHeader.isValidationReq()) {
+			return;
+		}
+
+		Set<String> finReferences = new HashSet<>();
+		String entityCode = uploadHeader.getEntityCode();
+
+		List<AssignmentUpload> assignmentUploads = uploadHeader.getAssignmentUploads();
+		List<RefundUpload> refundUploads = uploadHeader.getRefundUploads();
+		List<MiscPostingUpload> miscPostingUploads = uploadHeader.getMiscPostingUploads();
+		List<UploadManualAdvise> uploadManualAdvises = uploadHeader.getUploadManualAdvises();
+
+		assignmentUploads.forEach(l1 -> finReferences.add(l1.getFinReference()));
+		refundUploads.forEach(l1 -> finReferences.add(l1.getFinReference()));
+		miscPostingUploads.forEach(l1 -> finReferences.add(l1.getReference()));
+		uploadManualAdvises.forEach(l1 -> finReferences.add(l1.getFinReference()));
+
+		for (String finReference : finReferences) {
+			if (!financeMainDAO.isFinReferenceExitsWithEntity(finReference, "", entityCode)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail("MU0001", "", valueParm)));
+				break;
+			}
+		}
+
+	}
+
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
@@ -627,11 +663,12 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		// List
 		auditHeader = prepareChildsAudit(auditHeader, method);
 		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
+		validateEntityCode(auditHeader);
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
@@ -706,7 +743,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	public List<AuditDetail> deleteChilds(UploadHeader uploadHeader, String tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		if (CollectionUtils.isNotEmpty(uploadHeader.getMiscPostingUploads())) {
 			// this.miscPostingUploadService.deleteByUploadId(uploadHeader.getUploadId());
@@ -727,8 +764,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	private AuditHeader prepareChildsAudit(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
 		String auditTranType = "";

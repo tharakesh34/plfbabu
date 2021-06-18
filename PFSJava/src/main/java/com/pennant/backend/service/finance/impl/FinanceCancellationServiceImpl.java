@@ -66,6 +66,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -680,9 +681,41 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+		cancelChildLoan(finReference);
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private void cancelChildLoan(String finReference) {
+		Date appDate = SysParamUtil.getAppDate();
+
+		List<String> finRefByParentRef = financeMainDAO.getChildFinRefByParentRef(finReference);
+
+		if (CollectionUtils.isEmpty(finRefByParentRef)) {
+			logger.debug(" Undisbursed Child loans are not available for  the specified finreference >> {}",
+					finReference);
+			return;
+		}
+
+		List<FinanceMain> list = new ArrayList<>();
+		for (String reference : finRefByParentRef) {
+			FinanceMain fm = new FinanceMain();
+			fm.setFinReference(reference);
+			fm.setFinIsActive(false);
+			fm.setClosedDate(appDate);
+			fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
+			fm.setRcdMaintainSts("");
+			fm.setRoleCode("");
+			fm.setNextRoleCode("");
+			fm.setTaskId("");
+			fm.setNextTaskId("");
+			fm.setWorkflowId(0);
+			fm.setRecordType("");
+
+			list.add(fm);
+		}
+		financeMainDAO.updateChildFinance(list, "_Temp");
 	}
 
 	private void createGSTInvoiceForCancellLoan(long linkedTranID, FinanceDetail financeDetail) {

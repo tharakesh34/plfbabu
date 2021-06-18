@@ -103,6 +103,7 @@ import com.pennant.validation.ReSchedulingGroup;
 import com.pennant.validation.RecalculateGroup;
 import com.pennant.validation.RemoveTermsGroup;
 import com.pennant.validation.ScheduleMethodGroup;
+import com.pennant.validation.SchedulePaymentGroup;
 import com.pennant.validation.UpdateLoanBasicDetailsGroup;
 import com.pennant.validation.UpdateLoanPenaltyDetailGroup;
 import com.pennant.validation.UpfrontFeesGroup;
@@ -1378,6 +1379,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
+		} catch (ServiceException se) {
+			logger.error(Literal.EXCEPTION, se);
+			throw new ServiceException(se.getFaultDetails());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1400,6 +1404,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
+		} catch (ServiceException se) {
+			logger.error(Literal.EXCEPTION, se);
+			throw new ServiceException(se.getFaultDetails());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1418,6 +1425,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			eventCode = AccountEventConstants.ACCEVENT_REPAY;
 			fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_SCHDRPY);
 			fsi.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+			if (!fsi.isReceiptUpload()) {
+				validationUtility.validate(fsi, SchedulePaymentGroup.class);
+			}
 		} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 			fsi.setModuleDefiner(FinanceConstants.FINSER_EVENT_EARLYRPY);

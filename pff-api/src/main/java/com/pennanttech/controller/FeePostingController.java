@@ -324,22 +324,19 @@ public class FeePostingController extends ExtendedTestClass {
 				Taxes igstTax = new Taxes();
 				Taxes ugstTax = new Taxes();
 				Taxes cessTax = new Taxes();
-				if (taxHeader != null) {
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
-								cgstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
-								sgstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
-								igstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
-								ugstTax = taxes;
-							} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
-								cessTax = taxes;
-							}
-						}
+
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				for (Taxes taxes : taxDetails) {
+					if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
+						cgstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_SGST, taxes.getTaxType())) {
+						sgstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_IGST, taxes.getTaxType())) {
+						igstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_UGST, taxes.getTaxType())) {
+						ugstTax = taxes;
+					} else if (StringUtils.equals(RuleConstants.CODE_CESS, taxes.getTaxType())) {
+						cessTax = taxes;
 					}
 				}
 

@@ -4401,6 +4401,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="verificationService" ref="verificationService" />
+		<property name="legalVerificationService" ref="legalVerificationService" />
 	</bean>
 
 	<bean id="tvInitiationListCtrl" class="com.pennant.webui.verification.tv.TVInitiationListCtrl" parent="basisListCtrl"
@@ -5393,6 +5394,10 @@
 	<!-- Customer Ext Liability upload -->
 	<bean id="customerExtLiabilityUploadDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerExtLiabilityUploadDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
+		<property name="bankDetailDAO" ref = "bankDetailDAO"/>
+		<property name="customerExtLiabilityDAO" ref = "customerExtLiabilityDAO"/>
+		<property name="externalLiabilityDAO" ref = "externalLiabilityDAO"/>
+		<property name="pagedListService" ref="pagedListService" />
 	</bean>
 
 	<!-- PMAY -->
@@ -5567,4 +5572,9 @@
 		scope="prototype">
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 	</bean>
+	
+	  <!-- Menu Roles -->
+	<bean id="menuRolesListCtrl" class="com.pennant.menuroles.MenuRolesListCtrl" parent="basisListCtrl"
+	   scope="prototype" />
+	   
 </beans> 

@@ -1086,7 +1086,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		// Inst Based Schd
-		this.row_InstBasedSchd.setVisible(ImplementationConstants.ALLOW_INST_BASED_SCHD);
+		this.row_InstBasedSchd.setVisible(ImplementationConstants.SCHD_INST_CAL_ON_DISB_RELIZATION);
 		logger.debug(Literal.LEAVING);
 
 	}

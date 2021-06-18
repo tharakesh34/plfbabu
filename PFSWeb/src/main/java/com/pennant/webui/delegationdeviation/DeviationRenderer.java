@@ -345,6 +345,12 @@ public class DeviationRenderer {
 			listcell.setTooltiptext(deviation.getRemarks());
 			listitem.appendChild(listcell);
 
+			// Mitigants
+			listcell = getNewListCell(StringUtils.trimToEmpty(deviation.getMitigants()), devNotallowed);
+			listcell.setStyle("overflow: hidden; text-overflow: ellipsis; white-space: nowrap;");
+			listcell.setTooltiptext(deviation.getMitigants());
+			listitem.appendChild(listcell);
+
 			// Operation
 			listcell = new Listcell(PennantJavaUtil.getLabel(deviation.getRecordType()));
 			listitem.appendChild(listcell);

@@ -280,7 +280,6 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.ruleCode.setValidateColumns(new String[] { "RuleCode" });
 
 		this.percRule.setMaxlength(8);
-		this.percRule.setMandatoryStyle(true);
 		this.percRule.setModuleName("Rule");
 		this.percRule.setValueColumn("RuleCode");
 		this.percRule.setDescColumn("RuleCodeDesc");
@@ -1158,28 +1157,27 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	private void doSetPercTypeProp() {
-		logger.debug(Literal.ENTERING);
-		if (!finTypeFees.isOriginationFee()) {
-			if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
-					this.calculationType.getSelectedItem().getValue().toString())
-					&& StringUtils.equals(PennantConstants.PERC_TYPE_VARIABLE,
-							this.percType.getSelectedItem().getValue().toString())) {
-				this.percRule.setVisible(true);
-				this.percRule.clearErrorMessage();
-				this.label_FinTypeFeesDialog_PercRule.setVisible(true);
-				this.percentage.setValue(BigDecimal.ZERO);
-				this.percentage.setDisabled(true);
-			} else {
-				this.percRule.setVisible(false);
-				this.label_FinTypeFeesDialog_PercRule.setVisible(false);
-				this.percRule.setValue("");
-				this.percRule.setConstraint("");
-				this.percRule.clearErrorMessage();
-				this.percentage.setValue(this.percentage.getValue());
-				this.percentage.setDisabled(false);
-			}
+		if (finTypeFees.isOriginationFee()) {
+			this.percRule.setVisible(false);
+			this.label_FinTypeFeesDialog_PercRule.setVisible(false);
+			this.percRule.setValue("");
+			this.percRule.setConstraint("");
+			this.percRule.clearErrorMessage();
+			this.percentage.setValue(this.percentage.getValue());
+			this.percentage.setDisabled(false);
+			return;
 		}
-		logger.debug(Literal.LEAVING);
+
+		String calType = this.calculationType.getSelectedItem().getValue();
+		String perType = this.percType.getSelectedItem().getValue();
+		if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(calType)
+				&& PennantConstants.PERC_TYPE_VARIABLE.equals(perType)) {
+			this.percRule.setVisible(true);
+			this.percRule.clearErrorMessage();
+			this.label_FinTypeFeesDialog_PercRule.setVisible(true);
+			this.percentage.setValue(BigDecimal.ZERO);
+			this.percentage.setDisabled(true);
+		}
 	}
 
 	public void onSelect$calculationType(Event event) {
@@ -1248,15 +1246,12 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	public void onFulfill$feeType(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		this.ruleCode.setObject("");
 		this.ruleCode.setValue("", "");
 		doSetRuleFilters(this.ruleCode, "FEES");
 		doSetRuleFilters(this.percRule, "FEEPERC");
 
 		doSetFeeSchdMethod(this.finEvent.getValue());
-
-		logger.debug("Leaving" + event.toString());
 	}
 
 	private void doSetRuleFilters(ExtendedCombobox rule, String type) {
@@ -1290,51 +1285,56 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} else {
 			this.amount.setMandatory(true);
 		}
-		if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_RULE,
-				this.calculationType.getSelectedItem().getValue().toString())) {
+
+		String calType = this.calculationType.getSelectedItem().getValue();
+
+		switch (calType) {
+		case PennantConstants.FEE_CALCULATION_TYPE_RULE:
 			this.ruleCode.setVisible(true);
 			this.amount.setVisible(false);
 			this.amount.setMandatory(false);
 			this.percentage.setVisible(false);
 			this.row_CalculationOn.setVisible(false);
 			this.space_percentage.setVisible(false);
-		} else if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT,
-				this.calculationType.getSelectedItem().getValue().toString())) {
+			break;
+		case PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT:
 			this.amount.setVisible(true);
 			this.amount.setMandatory(true);
 			this.ruleCode.setVisible(false);
 			this.percentage.setVisible(false);
 			this.row_CalculationOn.setVisible(false);
 			this.space_percentage.setVisible(false);
-		} else if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
-				this.calculationType.getSelectedItem().getValue().toString())) {
+			break;
+		case PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE:
 			this.percentage.setVisible(true);
 			this.ruleCode.setVisible(false);
 			this.amount.setVisible(false);
 			this.amount.setMandatory(false);
 			this.row_CalculationOn.setVisible(true);
 			this.space_percentage.setVisible(true);
+			break;
+		default:
+			break;
 		}
-		if (ImplementationConstants.PERC_REQ_FOR_FINTYPE_FEE) {
-			if (!finTypeFees.isOriginationFee()) {
-				if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE,
-						this.calculationType.getSelectedItem().getValue().toString())) {
-					this.row_PercentageType.setVisible(true);
-				} else {
-					this.row_PercentageType.setVisible(false);
-					this.percType.setSelectedIndex(0);
-					this.percRule.setValue("");
-					this.percRule.setConstraint("");
-					this.percType.setConstraint("");
-					this.percType.clearErrorMessage();
-				}
-			} else {
-				this.row_PercentageType.setVisible(false);
-				this.percType.setSelectedIndex(0);
-				this.percRule.setValue("");
-				this.percRule.setConstraint("");
-				this.percType.setConstraint("");
-			}
+
+		if (finTypeFees.isOriginationFee()) {
+			this.row_PercentageType.setVisible(false);
+			this.percType.setSelectedIndex(0);
+			this.percRule.setValue("");
+			this.percRule.setConstraint("");
+			this.percType.setConstraint("");
+			return;
+		}
+
+		if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(calType)) {
+			this.row_PercentageType.setVisible(true);
+		} else {
+			this.row_PercentageType.setVisible(false);
+			this.percType.setSelectedIndex(0);
+			this.percRule.setValue("");
+			this.percRule.setConstraint("");
+			this.percType.setConstraint("");
+			this.percType.clearErrorMessage();
 		}
 	}
 

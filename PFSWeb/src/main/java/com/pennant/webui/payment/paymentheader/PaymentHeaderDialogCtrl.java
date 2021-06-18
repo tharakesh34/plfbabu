@@ -1510,7 +1510,15 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 						amount = amount.subtract(gstAmount);
 					}
 
-					oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
+					String amountType = oldDetail.getAmountType();
+					if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(amountType)
+							|| RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(amountType)
+							|| RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)) {
+						oldDetail.setAvailableAmount(amount.add(newDetail.getAvailableAmount()));
+					} else {
+						oldDetail.setAvailableAmount(newDetail.getAvailableAmount());
+					}
+
 					oldDetail.setAdviseAmount(newDetail.getAdviseAmount());
 					oldDetail.setManualAdvise(newDetail.getManualAdvise());
 					oldDetail.setPrvGST(newDetail.getPrvGST());

@@ -1835,9 +1835,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					amountWaived = advise.getBalanceAmt();
 					advise.setBalanceAmt(BigDecimal.ZERO);
 					curActualwaivedAmt = BigDecimal.ZERO;
-					waiverdetail.setCurrActualWaiver(waiverdetail.getCurrActualWaiver().subtract(amountWaived));
 				}
-				waiverdetail.setCurrActualWaiver(waiverdetail.getCurrActualWaiver().subtract(amountWaived));
+
+				// waiverdetail.setCurrActualWaiver(waiverdetail.getCurrActualWaiver().subtract(amountWaived));
 				taxSplit = GSTCalculator.getExclusiveGST(amountWaived, gstPercentages);
 				waiverdetail.setCurrWaiverAmount(amountWaived.add(taxSplit.gettGST()));
 			} else {

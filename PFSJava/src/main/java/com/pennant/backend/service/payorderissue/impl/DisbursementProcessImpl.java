@@ -165,13 +165,13 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
-		
+
 		logger.info(Literal.LEAVING);
 	}
 
 	private void processInstBasedSchd(FinAdvancePayments fap) {
 		logger.info(Literal.ENTERING);
-		
+
 		InstBasedSchdDetails instBasedSchd = new InstBasedSchdDetails();
 		instBasedSchd.setFinReference(fap.getFinReference());
 		instBasedSchd.setBatchId(fap.getDisbResponseBatchId());
@@ -217,7 +217,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
-		
+
 		logger.info(Literal.LEAVING);
 	}
 
@@ -301,7 +301,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				throw new AppException("Unable to create Beneficiary.");
 			}
 		}
-		
+
 		logger.info(Literal.LEAVING);
 	}
 

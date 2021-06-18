@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -1194,6 +1195,12 @@ public class LegalVettingInitiationCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		financeDetail.setLegalVetting(this.verification);
 
+		if (fromVerification
+				&& (this.listBoxInitiation.getItems().isEmpty() && (this.listBoxWaiver.getItems().isEmpty()))) {
+			throw new WrongValueException(
+					Labels.getLabel("label_LegalVettingInitiationDialog_Initiation_Validation.value"));
+		}
+
 		if (tab != null && tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_LEGAL_VETTING_APPROVAL))) {
 			return validateReinitiation(financeDetail.getLegalVetting().getVerifications());
 		} else {
@@ -1261,7 +1268,9 @@ public class LegalVettingInitiationCtrl extends GFCBaseCtrl<Verification> {
 		for (long documentId : requiredCollateralDocs) {
 			if (!collateralDocuments.contains(documentId)) {
 				MessageUtil.showError("Required collateral documents should be initiate/Waive");
-				tab.setSelected(true);
+				if (tab != null) {
+					tab.setSelected(true);
+				}
 				return false;
 			}
 		}
@@ -1350,11 +1359,17 @@ public class LegalVettingInitiationCtrl extends GFCBaseCtrl<Verification> {
 			doSave(financeDetail, null, recSave, vetting);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
+		} catch (WrongValueException e) {
+			MessageUtil.showError(e.getMessage());
+			return;
 		}
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.VETTING, PennantConstants.TRAN_WF,
 					initType);
 			refreshList();
+			String finReference = financeDetail.getFinScheduleData().getFinReference();
+			String msg = Labels.getLabel("VETTING_INITIATION", new String[] { finReference });
+			Clients.showNotification(msg, "info", null, null, -1);
 			closeDialog();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

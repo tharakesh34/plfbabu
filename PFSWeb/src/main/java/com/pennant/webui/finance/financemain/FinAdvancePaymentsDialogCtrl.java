@@ -50,8 +50,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -113,7 +115,6 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -302,9 +303,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Combobox vasReference;
 	protected Decimalbox vasAmount;
 	Map<String, BigDecimal> vasAmountsMAP = null;
-
-	//Incase of validation based on Fee then these details required.
-	private List<FinFeeDetail> finFeeDetailList = null;
 	private List<VASRecording> vasRecordingList = null;
 
 	protected Row row_disbdetails;
@@ -315,7 +313,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private BuilderProjcetDAO builderProjcetDAO;
 	private BankBranchDAO bankBranchDAO;
 	protected CollateralAssignmentDAO collateralAssignmentDAO;
-
+    private boolean populateBenfiryDetails = false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -337,7 +335,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * @param event
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "unchecked", "unused" })
 	public void onCreate$window_FinAdvancePaymentsDialog(Event event) throws Exception {
 		logger.debug("Entering");
 		// Set the page level components.
@@ -477,11 +474,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				finCcy = (String) arguments.get("finCcy");
 			}
 
-			if (arguments.containsKey("FinFeeDetailList")) {
-				finFeeDetailList = (List<FinFeeDetail>) arguments.get("FinFeeDetailList");
-			} else {
-				finFeeDetailList = new ArrayList<>(1);
-			}
 			if (arguments.containsKey("VasRecordingList")) {
 				vasRecordingList = (List<VASRecording>) arguments.get("VasRecordingList");
 			} else {
@@ -1258,8 +1250,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			eastDocument.setVisible(true);
 		}
 
-		ArrayList<ValueLabel> vasReferenceList = null;
-		vasReferenceList = getVasReferences(aFinAdvnancePayments.getVasReference(),
+		List<ValueLabel> vasReferenceList = getVasReferences(aFinAdvnancePayments.getVasReference(),
 				aFinAdvnancePayments.getAmtToBeReleased());
 		fillComboBox(this.vasReference, aFinAdvnancePayments.getVasReference(), vasReferenceList, "");
 		doChangePaymentDetails(aFinAdvnancePayments.getPaymentDetail());
@@ -2329,10 +2320,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug(Literal.ENTERING);
 		String dType = this.paymentType.getSelectedItem().getValue().toString();
 		String disbursementParty = this.paymentDetail.getSelectedItem().getValue().toString();
-		if (ImplementationConstants.ALLOW_BUILDER_BENEFICIARY_DETAILS) {
-			if (StringUtils.equals(disbursementParty, DisbursementConstants.PAYMENT_DETAIL_BUILDER)) {
-				doFillBenificaryDetails();
-			}
+
+		if (DisbursementConstants.PAYMENT_DETAIL_BUILDER.equals(disbursementParty)) {
+			doFillBenificaryDetails(true);
+		} else {
+			doFillBenificaryDetails(false);
 		}
 
 		this.partnerBankID.setButtonDisabled(false);
@@ -2367,100 +2359,157 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void onChange$paymentDetail(Event event) {
 		logger.debug(Literal.ENTERING);
+		String disbursementType = StringUtils.trimToNull(getComboboxValue(this.paymentType));
+		String disbursementParty = StringUtils.trimToNull(this.paymentDetail.getSelectedItem().getValue().toString());
 
-		String disbursementType = getComboboxValue(this.paymentType);
-		String disbursementParty = this.paymentDetail.getSelectedItem().getValue().toString();
-		if (ImplementationConstants.ALLOW_BUILDER_BENEFICIARY_DETAILS) {
-			if (!StringUtils.equals(PennantConstants.List_Select, disbursementType)
-					&& StringUtils.equals(disbursementParty, DisbursementConstants.PAYMENT_DETAIL_BUILDER)) {
-				doFillBenificaryDetails();
-			} else {
-				this.bankBranchID.setValue("");
-				this.finAdvancePayments.setCity("");
-				this.finAdvancePayments.setBranchBankName("");
-				this.finAdvancePayments.setBranchBankCode("");
-				this.finAdvancePayments.setBranchDesc("");
-				this.finAdvancePayments.setiFSC("");
-				this.bank.setValue("");
-				this.branch.setValue("");
-				this.beneficiaryAccNo.setValue("");
-				this.beneficiaryName.setValue("");
-				this.city.setValue("");
-				this.phoneNumber.setValue("");
-			}
+		if (PennantConstants.List_Select.equals(disbursementType)
+				|| PennantConstants.List_Select.equals(disbursementParty)) {
+			return;
+		}
+
+		/*
+		 * if (!PennantConstants.List_Select.equals(disbursementType) &&
+		 * DisbursementConstants.PAYMENT_DETAIL_BUILDER.equals(disbursementParty)) { this.bankBranchID.setValue("");
+		 * this.finAdvancePayments.setCity(""); this.finAdvancePayments.setBranchBankName("");
+		 * this.finAdvancePayments.setBranchBankCode(""); this.finAdvancePayments.setBranchDesc("");
+		 * this.finAdvancePayments.setiFSC(""); this.bank.setValue(""); this.branch.setValue("");
+		 * this.beneficiaryAccNo.setValue(""); this.beneficiaryName.setValue(""); this.city.setValue("");
+		 * this.phoneNumber.setValue("");
+		 * 
+		 * return; }
+		 */
+
+		if (DisbursementConstants.PAYMENT_DETAIL_BUILDER.equals(disbursementParty)) {
+			populateBenfiryDetails = true;
+			doFillBenificaryDetails(populateBenfiryDetails);
 		} else {
 			doChangePaymentDetails(disbursementParty);
+			this.bankBranchID.setValue("");
+			this.finAdvancePayments.setCity("");
+			this.finAdvancePayments.setBranchBankName("");
+			this.finAdvancePayments.setBranchBankCode("");
+			this.finAdvancePayments.setBranchDesc("");
+			this.finAdvancePayments.setiFSC("");
+			this.bank.setValue("");
+			this.branch.setValue("");
+			this.beneficiaryAccNo.setValue("");
+			this.beneficiaryName.setValue("");
+			this.city.setValue("");
+			this.phoneNumber.setValue("");
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doFillBenificaryDetails() {
+	public void doFillBenificaryDetails(boolean populateBenfiryDetails) {
 		logger.debug(Literal.ENTERING);
-		List<CollateralAssignment> collateralAsgmntList = null;
-		if (getFinAdvancePaymentsListCtrl() != null && getFinAdvancePaymentsListCtrl().getFinancedetail() != null) {
-			collateralAsgmntList = getFinAdvancePaymentsListCtrl().getFinancedetail().getCollateralAssignmentList();
-		} else {
-			collateralAsgmntList = collateralAssignmentDAO.getCollateralAssignmentByFinRef(
-					financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "_AView");
-		}
-		if (CollectionUtils.isEmpty(collateralAsgmntList)) {
-			return;
-		}
-		String colateralType = collateralAsgmntList.get(0).getCollateralType();
-		String collaterlref = collateralAsgmntList.get(0).getCollateralRef();
 
-		String builderID = null;
-		if (colateralType != null && collaterlref != null) {
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(CollateralConstants.MODULE_NAME);
-			tableName.append("_");
-			tableName.append(colateralType);
-			tableName.append("_ED");
-			Map<String, Object> extMapVlaues = extendedFieldRenderDAO.getCollateralMap(collaterlref,
-					tableName.toString(), "_View");
-			if (extMapVlaues != null && !extMapVlaues.isEmpty()) {
-				builderID = (String) extMapVlaues.get("projectname");
+		if (populateBenfiryDetails) {
+			List<CollateralAssignment> collateralAsgmntList = null;
+
+			if (finAdvancePaymentsListCtrl != null && finAdvancePaymentsListCtrl.getFinancedetail() != null) {
+				collateralAsgmntList = finAdvancePaymentsListCtrl.getFinancedetail().getCollateralAssignmentList();
+			} else {
+				collateralAsgmntList = collateralAssignmentDAO.getCollateralAssignmentByFinRef(
+						financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "_AView");
 			}
-		}
-		BuilderProjcet builderProjcet = null;
-		if (StringUtils.isNotBlank(builderID)) {
-			builderProjcet = builderProjcetDAO.getBuilderProjcet(NumberUtils.toLong(builderID), "");
-		}
 
-		if (builderProjcet != null) {
-			BankBranch bankBranch = bankBranchDAO.getBankBranchById(builderProjcet.getBankBranchID(), "_View");
-			if (bankBranch != null) {
-				String dType = this.paymentType.getSelectedItem().getValue().toString();
-				if (!StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, dType)
-						&& !StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, dType)) {
-					this.bankBranchID.setAttribute("bankBranchID", bankBranch.getBankBranchID());
-					this.bankBranchID.setValue(bankBranch.getIFSC());
-					this.finAdvancePayments.setCity(bankBranch.getCity());
-					this.finAdvancePayments.setBranchBankName(bankBranch.getBankName());
-					this.finAdvancePayments.setBranchBankCode(bankBranch.getBankCode());
-					this.finAdvancePayments.setBranchDesc(bankBranch.getBranchDesc());
-					this.finAdvancePayments.setiFSC(bankBranch.getIFSC());
-					this.bank.setValue(bankBranch.getBankName());
-					this.branch.setValue(bankBranch.getBranchDesc());
-					if (StringUtils.isNotBlank(bankBranch.getBankCode())) {
-						BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(bankBranch.getBankCode());
-						minAccNoLength = bankDetails.getMinAccNoLength();
-						maxAccNoLength = bankDetails.getAccNoLength();
-					}
-					if (maxAccNoLength != 0) {
-						this.beneficiaryAccNo.setMaxlength(maxAccNoLength);
-					} else {
-						this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-					}
-					this.beneficiaryAccNo.setValue(builderProjcet.getAccountNo());
-					this.beneficiaryName.setValue(builderProjcet.getBeneficiaryName());
-					this.city.setValue(bankBranch.getCity());
+			if (CollectionUtils.isEmpty(collateralAsgmntList)) {
+				logger.debug(Literal.LEAVING);
+				return;
+			}
 
-				} else {
-					this.liabilityHoldName.setValue(builderProjcet.getBeneficiaryName());
+			String colateralType = collateralAsgmntList.get(0).getCollateralType();
+			String collaterlref = collateralAsgmntList.get(0).getCollateralRef();
+
+			String builderID = null;
+			if (colateralType != null && collaterlref != null) {
+				StringBuilder tableName = new StringBuilder();
+				tableName.append(CollateralConstants.MODULE_NAME);
+				tableName.append("_");
+				tableName.append(colateralType);
+				tableName.append("_ED");
+
+				Map<String, Object> finalMap = new HashMap<>();
+				Map<String, Object> originalMap = extendedFieldRenderDAO.getCollateralMap(collaterlref,
+						tableName.toString(), "_View");
+
+				if (MapUtils.isNotEmpty(originalMap)) {
+					for (Entry<String, Object> object : originalMap.entrySet()) {
+						finalMap.put(object.getKey().toLowerCase(), object.getValue());
+					}
 				}
+
+				builderID = (String) finalMap.get("projectname");
 			}
+
+			BuilderProjcet builderProjcet = null;
+			if (StringUtils.isNotBlank(builderID)) {
+				builderProjcet = builderProjcetDAO.getBuilderProjcet(NumberUtils.toLong(builderID), "");
+			}
+
+			if (builderProjcet == null) {
+				logger.debug(Literal.LEAVING);
+				return;
+			}
+
+			BankBranch bankBranch = bankBranchDAO.getBankBranchById(builderProjcet.getBankBranchID(), "_View");
+
+			if (bankBranch == null) {
+				logger.debug(Literal.LEAVING);
+				return;
+			}
+
+			String dType = this.paymentType.getSelectedItem().getValue().toString();
+
+			if (DisbursementConstants.PAYMENT_TYPE_DD.equals(dType)
+					|| DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(dType)) {
+				this.liabilityHoldName.setValue(builderProjcet.getBeneficiaryName());
+				logger.debug(Literal.LEAVING);
+				return;
+			}
+
+			this.bankBranchID.setAttribute("bankBranchID", bankBranch.getBankBranchID());
+			this.bankBranchID.setValue(bankBranch.getIFSC());
+			this.finAdvancePayments.setCity(bankBranch.getCity());
+			this.finAdvancePayments.setBranchBankName(bankBranch.getBankName());
+			this.finAdvancePayments.setBranchBankCode(bankBranch.getBankCode());
+			this.finAdvancePayments.setBranchDesc(bankBranch.getBranchDesc());
+			this.finAdvancePayments.setiFSC(bankBranch.getIFSC());
+			this.bank.setValue(bankBranch.getBankName());
+			this.branch.setValue(bankBranch.getBranchDesc());
+
+			if (StringUtils.isNotBlank(bankBranch.getBankCode())) {
+				BankDetail bankDetails = bankDetailService.getAccNoLengthByCode(bankBranch.getBankCode());
+				minAccNoLength = bankDetails.getMinAccNoLength();
+				maxAccNoLength = bankDetails.getAccNoLength();
+			}
+
+			if (maxAccNoLength != 0) {
+				this.beneficiaryAccNo.setMaxlength(maxAccNoLength);
+			} else {
+				this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
+			}
+
+			this.beneficiaryAccNo.setValue(builderProjcet.getAccountNo());
+			this.beneficiaryName.setValue(builderProjcet.getBeneficiaryName());
+			this.city.setValue(bankBranch.getCity());
+
+		} else {
+			this.bankBranchID.setValue("");
+			this.finAdvancePayments.setCity("");
+			this.finAdvancePayments.setBranchBankName("");
+			this.finAdvancePayments.setBranchBankCode("");
+			this.finAdvancePayments.setBranchDesc("");
+			this.finAdvancePayments.setiFSC("");
+			this.bank.setValue("");
+			this.branch.setValue("");
+			this.beneficiaryAccNo.setValue("");
+			this.beneficiaryName.setValue("");
+			this.city.setValue("");
+			this.phoneNumber.setValue("");
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2577,7 +2626,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			//preparing filters to render only primary beneficiary while loading 
 			filter[0] = new Filter("CustCIF", custCIF, Filter.OP_EQUAL);
 			filter[1] = new Filter("BeneficiaryActive", 1, Filter.OP_EQUAL);
-			
+
 			aruments.put("filtersList", Arrays.asList(filter));
 
 			aruments.put("DialogCtrl", this);
@@ -2805,41 +2854,36 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.row_disbdetails.setVisible(true);
 			this.row_expensedetails.setVisible(true);
 			this.vasAmount.setValue(BigDecimal.ZERO);
-			ArrayList<ValueLabel> list = getVasReferences(null, BigDecimal.ZERO);
-			fillComboBox(this.vasReference, PennantConstants.List_Select, list, "");
+
+			if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+				List<ValueLabel> list = getVasReferences(null, BigDecimal.ZERO);
+				fillComboBox(this.vasReference, PennantConstants.List_Select, list, "");
+			}
 
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method For Creating VasReference ComoboBox List.
-	 * 
-	 * @param vasReference
-	 * @param vasAmount
-	 * @return
-	 */
-	private ArrayList<ValueLabel> getVasReferences(String vasReference, BigDecimal vasAmount) {
+	private List<ValueLabel> getVasReferences(String vasReference, BigDecimal vasAmount) {
 		logger.debug(Literal.ENTERING);
-		ArrayList<ValueLabel> vasReferences = new ArrayList<>();
+		List<ValueLabel> vasReferences = new ArrayList<>();
 		vasAmountsMAP = new HashMap<>(1);
-		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
-			boolean isDeletedVAS = true;
-			for (VASRecording vasRecording : vasRecordingList) {
-				vasReferences.add(new ValueLabel(vasRecording.getVasReference(), vasRecording.getVasReference()));
-				vasAmountsMAP.put(vasRecording.getVasReference(),
-						vasRecording.getFee().subtract(vasRecording.getPaidAmt()));
-				if (StringUtils.equals(vasRecording.getVasReference(), vasReference)) {
-					isDeletedVAS = false;
-				}
 
+		boolean isDeletedVAS = true;
+		for (VASRecording vasRecording : vasRecordingList) {
+			String vasRef = vasRecording.getVasReference();
+			vasReferences.add(new ValueLabel(vasRef, vasRef));
+			vasAmountsMAP.put(vasRef, vasRecording.getFee().subtract(vasRecording.getPaidAmt()));
+			if (StringUtils.equals(vasRef, vasReference)) {
+				isDeletedVAS = false;
 			}
-			//if the VAS Instruction is added initial and delete the vas later
-			if (StringUtils.isNotBlank(vasReference) && !PennantConstants.List_Select.equals(vasReference)
-					&& isDeletedVAS) {
-				vasReferences.add(new ValueLabel(vasReference, vasReference));
-				vasAmountsMAP.put(vasReference, vasAmount);
-			}
+
+		}
+		//if the VAS Instruction is added initial and delete the vas later
+		if (StringUtils.isNotBlank(vasReference) && !PennantConstants.List_Select.equals(vasReference)
+				&& isDeletedVAS) {
+			vasReferences.add(new ValueLabel(vasReference, vasReference));
+			vasAmountsMAP.put(vasReference, vasAmount);
 		}
 		logger.debug(Literal.LEAVING);
 		return vasReferences;

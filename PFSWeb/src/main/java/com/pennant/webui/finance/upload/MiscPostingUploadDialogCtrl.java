@@ -965,6 +965,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 							deleteNotes = true;
 						}
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						aUploadHeader.setValidationReq(false);
 						aAuditHeader = uploadHeaderService.doReject(aAuditHeader);
 
 						if (aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {

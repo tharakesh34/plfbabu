@@ -2442,7 +2442,6 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		logger.debug(Literal.ENTERING);
 
 		doShowLoanTypeSelectionDialog();
-		pricingDetail.setNewRecord(true);
 		//appendTopupLoan();
 		logger.debug(Literal.LEAVING);
 	}

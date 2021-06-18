@@ -461,4 +461,10 @@ public interface FinanceMainDAO {
 
 	void updateMaintainceStatus(String finReference, String rcdMaintainSts);
 
+	List<String> getChildFinRefByParentRef(String finReference);
+
+	void updateChildFinance(List<FinanceMain> fm, String type);
+
+	void updateRejectFinanceMain(List<FinanceMain> list, String string);
+
 }

@@ -915,6 +915,11 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		return true;
 	}
 
+	@Override
+	public boolean isLVVerificationExists(String keyReference) {
+		return legalVerificationDAO.isLVVerificationExists(keyReference);
+	}
+
 	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
 		this.postExteranalServiceHook = postExteranalServiceHook;
 	}

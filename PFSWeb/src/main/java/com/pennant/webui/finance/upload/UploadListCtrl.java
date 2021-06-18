@@ -45,6 +45,7 @@ package com.pennant.webui.finance.upload;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
@@ -72,6 +75,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
@@ -83,6 +87,7 @@ import com.pennant.backend.util.JvPostingConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.upload.model.UploadListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -171,33 +176,40 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
-			Filter[] filters = new Filter[1];
+		Filter[] filters = new Filter[1];
+	
+		switch (this.module) {
+		case JvPostingConstants.MISCELLANEOUSPOSTING_MAKER:
+			filters = new Filter[1];
 			filters[0] = new Filter("Module", JvPostingConstants.MISCELLANEOUSPOSTING_MODULE, Filter.OP_EQUAL);
 			this.searchObject.addFilters(filters);
 			this.searchObject.addFilterOr(new Filter("NextRoleCode", null, Filter.OP_EQUAL),
 					new Filter("NextRoleCode", "%MAKER%", Filter.OP_LIKE));
-		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
-			Filter[] filters = new Filter[2];
+			break;
+		case JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER:
+			filters = new Filter[2];
 			filters[0] = new Filter("Module", JvPostingConstants.MISCELLANEOUSPOSTING_MODULE, Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
 			this.searchObject.addFilters(filters);
-		} else if (UploadConstants.MANUAL_ADVISE_MAKER.equals(this.module)) {
-			Filter[] filters = new Filter[1];
+			break;
+		case UploadConstants.MANUAL_ADVISE_MAKER:
+			filters = new Filter[1];
 			filters[0] = new Filter("Module", UploadConstants.MODULE_MANUAL_ADVISE, Filter.OP_EQUAL);
 			this.searchObject.addFilters(filters);
 			this.searchObject.addFilterOr(new Filter("NextRoleCode", null, Filter.OP_EQUAL),
 					new Filter("NextRoleCode", "%MAKER%", Filter.OP_LIKE));
-
-		} else if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
-			Filter[] filters = new Filter[2];
+			break;
+		case UploadConstants.MANUAL_ADVISE_APPROVER:
+			filters = new Filter[2];
 			filters[0] = new Filter("Module", UploadConstants.MODULE_MANUAL_ADVISE, Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
 			this.searchObject.addFilters(filters);
-		} else {
-			Filter[] filters = new Filter[1];
+			break;
+		default:
+			filters = new Filter[1];
 			filters[0] = new Filter("Module", this.module, Filter.OP_EQUAL);
 			this.searchObject.addFilters(filters);
+			break;
 		}
 	}
 
@@ -212,16 +224,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		setPageComponents(window_UploadList, borderLayout_UploadList, listBoxUpload, pagingUploadList);
 		setItemRender(new UploadListModelItemRenderer(this.module));
 
-		String newButtonRight = "";
 		registerButton(button_UploadList_New, "", false);
-		if (UploadConstants.UPLOAD_MODULE_REFUND.equals(this.module)) {
-			newButtonRight = "button_UploadList_NewRefundUpload";
-		} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
-			newButtonRight = "button_UploadList_NewAssignmentUpload";
-		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
-			// Register buttons and fields.
-			newButtonRight = "button_UploadList_NewMiscPostingUpload";
-		} else if (UploadConstants.MANUAL_ADVISE_MAKER.equals(this.module)) {
+		if (UploadConstants.MANUAL_ADVISE_MAKER.equals(this.module)) {
 			registerButton(button_UploadList_New, "button_UploadList_NewAdviseUpload", true);
 		}
 
@@ -303,7 +307,43 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$button_UploadList_SearchDialog(Event event) {
+		if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+			doSetValidations();
+		}
 		search();
+	}
+
+	private void doSetValidations() {
+		logger.debug(Literal.ENTERING);
+		ArrayList<WrongValueException> wve = new ArrayList<>();
+		try {
+			if (!this.entity.isReadonly()) {
+				this.entity.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_ReceiptUploadList_EntityCode.value"), null, true, true));
+				this.entity.getValue();
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doRemoveValidation() {
+		logger.debug(Literal.ENTERING);
+		this.entity.setConstraint("");
+		this.entity.setErrorMessage("");
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
@@ -313,6 +353,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
+		doRemoveValidation();
 		doReset();
 		search();
 	}
@@ -368,7 +409,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 						uploadHeaderService.getMiscPostingUploadListByUploadId(uploadHeader.getUploadId()));
 			}
 			// Check whether the user has authority to change/view the record.
-			String whereCond = " where UploadId =?";
+			String whereCond = " where UploadId = ?";
 
 			if (doCheckAuthority(uploadHeader, whereCond, new Object[] { uploadHeader.getUploadId(), })) {
 				// Set the latest work-flow id for the new maintenance request.
@@ -383,16 +424,21 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 				String zulPath = "";
 
-				if (UploadConstants.UPLOAD_MODULE_REFUND.equals(this.module)) {
+				switch (this.module) {
+				case UploadConstants.UPLOAD_MODULE_REFUND:
 					zulPath = "/WEB-INF/pages/Finance/Uploads/RefundUploadDialog.zul";
-				} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
+					break;
+				case UploadConstants.UPLOAD_MODULE_ASSIGNMENT:
 					zulPath = "/WEB-INF/pages/Finance/Uploads/AssignmentUploadDialog.zul";
-				} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+					break;
+				case JvPostingConstants.MISCELLANEOUSPOSTING_MAKER:
 					uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
 					zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
-				} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+					break;
+				case JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER:
 					uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
 					zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
+					break;
 				}
 
 				try {
@@ -424,18 +470,24 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		String zulPath = "";
 
-		if (UploadConstants.UPLOAD_MODULE_REFUND.equals(this.module)) {
+		switch (this.module) {
+		case UploadConstants.UPLOAD_MODULE_REFUND:
 			zulPath = "/WEB-INF/pages/Finance/Uploads/RefundUploadDialog.zul";
-		} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
+			break;
+		case UploadConstants.UPLOAD_MODULE_ASSIGNMENT:
 			zulPath = "/WEB-INF/pages/Finance/Uploads/AssignmentUploadDialog.zul";
-		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+			break;
+		case JvPostingConstants.MISCELLANEOUSPOSTING_MAKER:
 			uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
 			zulPath = "/WEB-INF/pages/Finance/Uploads/SelectMiscPostingUploadDialog.zul";
-		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+			break;
+		case JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER:
 			uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
 			zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
-		} else if (UploadConstants.MANUAL_ADVISE_MAKER.equals(this.module)) {
-			Executions.createComponents("/WEB-INF/pages/Finance/UploadManualAdvise/UploadAdviseDialog.zul", null, arg);
+			break;
+		case UploadConstants.MANUAL_ADVISE_MAKER:
+			zulPath = "/WEB-INF/pages/Finance/UploadManualAdvise/UploadAdviseDialog.zul";
+			break;
 		}
 
 		try {
@@ -485,27 +537,23 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 			return false;
 		}
+		Date appDate = SysParamUtil.getAppDate();
 
-		for (UploadHeader uploadHeader : uploadHeaderList) {
+		for (UploadHeader uh : uploadHeaderList) {
 			boolean isNew = false;
-			uploadHeader = uploadHeaderService.getUploadHeaderById(uploadHeader.getUploadId(), "_View");
+			uh = uploadHeaderService.getUploadHeaderById(uh.getUploadId(), "_View");
 
 			UploadHeader befuploadHeader = new UploadHeader();
+			BeanUtils.copyProperties(uh, befuploadHeader);
+			uh.setBefImage(befuploadHeader);
 
-			BeanUtils.copyProperties(uploadHeader, befuploadHeader);
+			List<UploadManualAdvise> maUpload = uploadHeaderService.getManualAdviseListByUploadId(uh.getUploadId());
 
-			uploadHeader.setBefImage(befuploadHeader);
-
-			List<UploadManualAdvise> uploadManualAdvises = uploadHeaderService
-					.getManualAdviseListByUploadId(uploadHeader.getUploadId());
-
-			for (UploadManualAdvise uploadManualAdvise : uploadManualAdvises) {
-
-				List<String> finEvents = uploadHeaderService.getFinEventByFinRef(uploadManualAdvise.getFinReference(),
-						"_Temp");
+			for (UploadManualAdvise ma : maUpload) {
 				String reason = "";
-				if (CollectionUtils.isNotEmpty(finEvents)) {
+				List<String> finEvents = uploadHeaderService.getFinEventByFinRef(ma.getFinReference(), "_Temp");
 
+				if (CollectionUtils.isNotEmpty(finEvents)) {
 					if (finEvents.contains(FinanceConstants.FINSER_EVENT_ADDDISB)
 							|| finEvents.contains(FinanceConstants.FINSER_EVENT_RATECHG)
 							|| finEvents.contains(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
@@ -520,8 +568,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 					}
 				}
 
-				if (StringUtils.equals(uploadManualAdvise.getStatus(), UploadConstants.UPLOAD_STATUS_SUCCESS)) {
-					FeeType fee = uploadHeaderService.getApprovedFeeTypeByFeeCode(uploadManualAdvise.getFeeTypeCode());
+				if (UploadConstants.UPLOAD_STATUS_SUCCESS.equals(ma.getStatus())) {
+					FeeType fee = uploadHeaderService.getApprovedFeeTypeByFeeCode(ma.getFeeTypeCode());
 					if (fee == null) {
 						reason = reason + "Fee type doesn't exist.";
 						rejectSts = true;
@@ -538,32 +586,32 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 					if (StringUtils.isBlank(reason)) {
 						reason = Labels.getLabel("APPROVER_REJECT_REASON");
 					}
-					uploadManualAdvise.setStatus(UploadConstants.UPLOAD_STATUS_FAIL);
-					uploadManualAdvise.setReason(reason);
-					uploadManualAdvise.setRejectStage(UploadConstants.UPLOAD_APPROVER_STAGE);
+					ma.setStatus(UploadConstants.UPLOAD_STATUS_FAIL);
+					ma.setReason(reason);
+					ma.setRejectStage(UploadConstants.UPLOAD_APPROVER_STAGE);
 				} else {
-					uploadHeader.setApprovedDate(DateUtility.getAppDate());
+					uh.setApprovedDate(appDate);
 				}
 			}
 
-			uploadHeader.setUploadManualAdvises(uploadManualAdvises);
+			uh.setUploadManualAdvises(maUpload);
 
-			isNew = uploadHeader.isNew();
+			isNew = uh.isNew();
 			String tranType;
 
 			if (isWorkFlowEnabled()) {
 				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(uploadHeader.getRecordType())) {
-					uploadHeader.setVersion(uploadHeader.getVersion() + 1);
+				if (StringUtils.isBlank(uh.getRecordType())) {
+					uh.setVersion(uh.getVersion() + 1);
 					if (isNew) {
-						uploadHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						uh.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					} else {
-						uploadHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						uploadHeader.setNewRecord(true);
+						uh.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						uh.setNewRecord(true);
 					}
 				}
 			} else {
-				uploadHeader.setVersion(uploadHeader.getVersion() + 1);
+				uh.setVersion(uh.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
 				} else {
@@ -573,7 +621,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 			// save it to database
 			try {
-				doProcess(uploadHeader, tranType);
+				doProcess(uh, tranType);
 				processCompleted = true;
 			} catch (Exception e) {
 				MessageUtil.showError(e);
@@ -595,7 +643,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	private boolean doCheckAuthority(UploadHeader uploadHeader) {
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " where UploadHeaderId=?";
+		String whereCond = " where UploadHeaderId = ?";
 
 		if (doCheckAuthority(uploadHeader, whereCond, new Object[] { uploadHeader.getUploadId() })) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -606,7 +654,6 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			return false;
 		}
 		return true;
-
 	}
 
 	/**
@@ -659,31 +706,12 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		return processCompleted;
 	}
 
-	/**
-	 * Get Audit Header Details
-	 * 
-	 * @param aUploadHeader
-	 * @param tranType
-	 * @return AuditHeader
-	 */
 	private AuditHeader getAuditHeader(UploadHeader aUploadHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aUploadHeader.getBefImage(), aUploadHeader);
 		return new AuditHeader(String.valueOf(aUploadHeader.getUploadId()), null, null, null, auditDetail,
 				aUploadHeader.getUserDetails(), getOverideMap());
 	}
 
-	/**
-	 * Get the result after processing DataBase Operations
-	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
-	 * 
-	 * @param method
-	 *            (String)
-	 * 
-	 * @return boolean
-	 * 
-	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -723,7 +751,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			setOverideMap(aAuditHeader.getOverideMap());
 
 		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

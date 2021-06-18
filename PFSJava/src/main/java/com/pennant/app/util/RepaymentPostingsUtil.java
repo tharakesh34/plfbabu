@@ -190,9 +190,9 @@ public class RepaymentPostingsUtil implements Serializable {
 					rpyQueueHeader);
 
 			aeEvent = (AEEvent) returnList.get(0);
-			aeEvent.setSimulateAccounting(financeMain.isSimulateAccounting());
 
 			if (aeEvent != null) {
+				aeEvent.setSimulateAccounting(financeMain.isSimulateAccounting());
 				if (!aeEvent.isPostingSucess()) {
 					actReturnList = new ArrayList<Object>(2);
 					actReturnList.add(false);

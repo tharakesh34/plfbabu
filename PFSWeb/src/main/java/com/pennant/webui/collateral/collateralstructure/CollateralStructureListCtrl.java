@@ -286,6 +286,8 @@ public class CollateralStructureListCtrl extends GFCBaseListCtrl<CollateralStruc
 		newDetail.setFieldLength(oldDetail.getFieldLength());
 		newDetail.setFieldMandatory(oldDetail.isFieldMandatory());
 		newDetail.setFieldUnique(oldDetail.isFieldUnique());
+		newDetail.setInputElement(oldDetail.isInputElement());
+		newDetail.setEditable(oldDetail.isEditable());
 		newDetail.setVersion(1);
 		newDetail.setRecordType(PennantConstants.RCD_ADD);
 

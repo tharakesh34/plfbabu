@@ -394,6 +394,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		} else {
 			Province details = (Province) dataObject;
 			this.province.setAttribute("Province", details.getId());
+			this.province.setValue(details.getCPProvince());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -514,8 +515,8 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 				this.city.setDescription(pinCode.getPCCityName());
 				this.province.setValue(pinCode.getPCProvince());
 				this.province.setDescription(pinCode.getLovDescPCProvinceName());
-				this.pinCode.setAttribute("PinCode", pinCode.getId());
-
+				this.pinCode.setAttribute("pinCodeId", pinCode.getId());
+				this.pinCode.setValue(pinCode.getPinCode());
 				this.city.setErrorMessage("");
 				this.province.setErrorMessage("");
 				this.pinCode.setErrorMessage("");
@@ -563,13 +564,14 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 				this.province.setAttribute("Province", null);
 			}
 
+			if (aBuilderGroup.getPinCodeId() != null) {
+				this.pinCode.setAttribute("pinCodeId", aBuilderGroup.getPinCodeId());
+			} else {
+				this.pinCode.setAttribute("pinCodeId", null);
+			}
+
 			this.pinCode.setValue(StringUtils.trimToEmpty(aBuilderGroup.getPoBox()),
 					StringUtils.trimToEmpty(aBuilderGroup.getAreaName()));
-			if (aBuilderGroup.getPoBox() != null) {
-				this.pinCode.setAttribute("PinCode", aBuilderGroup.getPinCodeId());
-			} else {
-				this.pinCode.setAttribute("PinCode", null);
-			}
 		}
 		//Exposure Limit on Amount
 		this.expLimitOnAmt.setValue(
@@ -650,25 +652,20 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		//Province
 		try {
 			this.province.getValidatedValue();
-			Object obj = this.province.getAttribute("Province");
-			if (obj != null) {
-				aBuilderGroup.setProvince(obj.toString());
-			} else {
-				aBuilderGroup.setProvince(null);
-			}
+			aBuilderGroup.setProvince(this.province.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//POBox
 		try {
 			this.pinCode.getValidatedValue();
-			Object obj = this.pinCode.getAttribute("PinCode");
+			Object obj = this.pinCode.getAttribute("pinCodeId");
 			if (obj != null) {
 				aBuilderGroup.setPinCodeId(Long.parseLong(obj.toString()));
 			} else {
 				aBuilderGroup.setPinCodeId(null);
-				aBuilderGroup.setPoBox(this.pinCode.getValue());
 			}
+			aBuilderGroup.setPoBox(this.pinCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -777,7 +774,7 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 			this.province.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_BuilderGroupDialog_Province.value"), null, true, true));
 		}
-		if (!this.pinCode.isReadonly()) {
+		if (this.pinCode.isMandatory()) {
 			this.pinCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_Pincode.value"), null, true, true));
 		}

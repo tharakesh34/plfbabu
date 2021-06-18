@@ -148,7 +148,7 @@ public class ImplementationConstants {
 
 		// FROM HL
 		ALLOW_LOAN_SPLIT = getValueAsBoolean(extensions, "ALLOW_LOAN_SPLIT", false);
-		ALLOW_INST_BASED_SCHD = getValueAsBoolean(extensions, "ALLOW_INST_BASED_SCHD", false);
+		SCHD_INST_CAL_ON_DISB_RELIZATION = getValueAsBoolean(extensions, "SCHD_INST_CAL_ON_DISB_RELIZATION", false);
 
 		SHOW_CUSTOM_BLACKLIST_FIELDS = getValueAsBoolean(extensions, "SHOW_CUSTOM_BLACKLIST_FIELDS", false);
 		DSA_CODE_READONLY_FIELD = getValueAsBoolean(extensions, "DSA_CODE_READONLY_FIELD", false);
@@ -156,7 +156,6 @@ public class ImplementationConstants {
 		GENERATECIBIL_BTN_MANDATORY = getValueAsBoolean(extensions, "GENERATECIBIL_BTN_MANDATORY", false);
 		ALLOW_ALL_SERV_RCDS = getValueAsBoolean(extensions, "ALLOW_ALL_SERV_RCDS", false);
 		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean(extensions, "TV_FINALVAL_AMOUNT_VALD", false);
-		FEE_CAL_ON_RULE = getValueAsBoolean(extensions, "FEE_CAL_ON_RULE", false);
 		CUST_ADDR_AUTO_FILL = getValueAsBoolean(extensions, "CUST_ADDR_AUTO_FILL", true);
 		SHOW_CUST_EMP_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_EMP_DETAILS", true);
 		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean(extensions, "SHOW_CUST_SHARE_HOLDER_DETAILS", true);
@@ -183,7 +182,7 @@ public class ImplementationConstants {
 		MANDATE_ALLOW_CO_APP = getValueAsBoolean(extensions, "MANDATE_ALLOW_CO_APP", false);
 		DISBURSEMENT_ALLOW_CO_APP = getValueAsBoolean(extensions, "DISBURSEMENT_ALLOW_CO_APP", false);
 		CHEQUE_ALLOW_CO_APP = getValueAsBoolean(extensions, "CHEQUE_ALLOW_CO_APP", false);
-		PERC_REQ_FOR_FINTYPE_FEE = getValueAsBoolean(extensions, "PERC_REQ_FOR_FINTYPE_FEE", false);
+		FEE_SERVICEING_STAMPIN_ON_ORG = getValueAsBoolean(extensions, "FEE_SERVICEING_STAMPIN_ON_ORG", false);
 		ALW_VERIFICATION_SYNC = getValueAsBoolean(extensions, "ALW_VERIFICATION_SYNC", false);
 		SOA_SHOW_UNACCURED_PENALITY = getValueAsBoolean(extensions, "SOA_SHOW_UNACCURED_PENALITY", true); /* Default value should be "true" */
 		GROUP_BATCH_BY_PARTNERBANK = getValueAsBoolean(extensions, "GROUP_BATCH_BY_PARTNERBANK", false);
@@ -390,9 +389,8 @@ public class ImplementationConstants {
 
 	// FIXME>>HL >>
 	public static boolean ALLOW_LOAN_SPLIT;
-	public static boolean ALLOW_INST_BASED_SCHD;
+	public static boolean SCHD_INST_CAL_ON_DISB_RELIZATION;
 
-	public static boolean FEE_CAL_ON_RULE;
 	public static boolean SHOW_CUST_EMP_DETAILS;
 	public static boolean SHOW_CUST_SHARE_HOLDER_DETAILS;
 	/* Flag to allow similarity to check the % patch match of given string values */
@@ -420,7 +418,7 @@ public class ImplementationConstants {
 	public static boolean MANDATE_ALLOW_CO_APP;
 	public static boolean DISBURSEMENT_ALLOW_CO_APP;
 	public static boolean CHEQUE_ALLOW_CO_APP;
-	public static boolean PERC_REQ_FOR_FINTYPE_FEE;
+	public static boolean FEE_SERVICEING_STAMPIN_ON_ORG;
 	public static boolean ALW_VERIFICATION_SYNC;
 	public static boolean ALLOW_AUTO_GRACE_EXT;
 	public static boolean ALLOW_LOAN_DOWNSIZING;

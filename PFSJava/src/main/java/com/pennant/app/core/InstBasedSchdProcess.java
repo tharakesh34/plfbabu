@@ -35,6 +35,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -120,6 +121,10 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		}
 
 		try {
+
+			if (instSchdDetail.getRealizedDate() == null) {
+				throw new AppException("Payment Date is mandatory for Inst Based Schdules.");
+			}
 
 			// if Loan not approved, then
 			if (isLoanNotApproved) {

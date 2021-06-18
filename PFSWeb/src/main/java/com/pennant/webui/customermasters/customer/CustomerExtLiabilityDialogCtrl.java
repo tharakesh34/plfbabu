@@ -1206,10 +1206,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 		if (!this.repayFromAccNo.isReadonly() && !StringUtils.isEmpty(this.repayFromAccNo.getValue())) {
 			if (this.repayFromAccNo.getMaxlength() != this.repayFromAccNo.getValue().length()) {
-				throw new WrongValueException(this.repayFromAccNo,
-						Labels.getLabel("NUMBER_EQ_LENGTH",
-								new String[] { Labels.getLabel("label_CustomerExtLiabilityDialog_RepayFromAccNo.value"),
-										String.valueOf(this.repayFromAccNo.getMaxlength()) }));
+				this.repayFromAccNo.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerExtLiabilityDialog_RepayFromAccNo.value"),
+								null, true, minAccNoLength, maxAccNoLength));
 			}
 		}
 		logger.debug("Leaving");

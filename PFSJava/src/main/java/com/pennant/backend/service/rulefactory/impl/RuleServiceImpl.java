@@ -442,27 +442,27 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		Rule tempRule = null;
 		Rule befRule = null;
 
+		String ruleCode = rule.getRuleCode();
 		if (rule.getRuleModule().equals(RuleConstants.MODULE_FEEPERC)) {
 			if (rule.isWorkflow()) {
-				tempRule = getRuleDAO().getActiveRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(),
-						"_temp", rule.isActive());
+				tempRule = getRuleDAO().getActiveRuleByID(ruleCode, rule.getRuleModule(), rule.getRuleEvent(), "_temp",
+						rule.isActive());
 			}
-			befRule = getRuleDAO().getActiveRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "",
+			befRule = getRuleDAO().getActiveRuleByID(ruleCode, rule.getRuleModule(), rule.getRuleEvent(), "",
 					rule.isActive());
 		} else {
 			if (rule.isWorkflow()) {
-				tempRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(),
-						"_Temp");
+				tempRule = getRuleDAO().getRuleByID(ruleCode, rule.getRuleModule(), rule.getRuleEvent(), "_Temp");
 			}
 
-			befRule = getRuleDAO().getRuleByID(rule.getRuleCode(), rule.getRuleModule(), rule.getRuleEvent(), "");
+			befRule = getRuleDAO().getRuleByID(ruleCode, rule.getRuleModule(), rule.getRuleEvent(), "");
 		}
 		Rule oldRule = rule.getBefImage();
 
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
 
-		valueParm[0] = rule.getRuleCode();
+		valueParm[0] = ruleCode;
 		valueParm[1] = rule.getRuleModule();
 		valueParm[2] = rule.getRuleEvent();
 		errParm[0] = PennantJavaUtil.getLabel("label_RuleCode") + ": " + valueParm[0];
@@ -526,41 +526,42 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 
 		if (StringUtils.trimToEmpty(rule.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			int count = 0;
+			long ruleId = rule.getRuleId();
 			switch (rule.getRuleModule()) {
 			case RuleConstants.MODULE_FEES:
-				count = finTypeFeesDAO.getFinTypeFeesByRuleCode(rule.getRuleCode(), "_View");
+				count = finTypeFeesDAO.getFinTypeFeesByRuleCode(ruleCode, "_View");
 				break;
 			case RuleConstants.MODULE_SUBHEAD:
-				count = transactionEntryDAO.getTransactionEntryByRuleCode(rule.getRuleCode(), "_View");
+				count = transactionEntryDAO.getTransactionEntryByRuleCode(ruleCode, "_View");
 				break;
 			case RuleConstants.MODULE_AGRRULE:
-				count = agreementDefinitionDAO.getAgreementDefinitionByRuleCode(rule.getRuleCode(), "_View");
+				count = agreementDefinitionDAO.getAgreementDefinitionByRuleCode(ruleCode, "_View");
 				break;
 			case RuleConstants.MODULE_CLRULE:
-				count = checkListDAO.getCheckListByRuleCode(rule.getRuleCode(), "_View");
+				count = checkListDAO.getCheckListByRuleCode(ruleCode, "_View");
 				break;
 			case RuleConstants.MODULE_ELGRULE:
-				count = financeReferenceDetailDAO.getFinanceReferenceDetailByRuleCode(rule.getRuleId(), "_View");
+				count = financeReferenceDetailDAO.getFinanceReferenceDetailByRuleCode(ruleId, "_View");
 				break;
 			case RuleConstants.MODULE_SCORES:
-				count = scoringMetricsDAO.getScoringMetricsByRuleCode(rule.getRuleId(), "_View");
+				count = scoringMetricsDAO.getScoringMetricsByRuleCode(ruleId, "_View");
 				break;
 			case RuleConstants.MODULE_DOWNPAYRULE:
-				if (financeTypeDAO.getFinanceTypeByRuleCode(rule.getRuleId(), "_View") != 0) {
-					count = financeTypeDAO.getFinanceTypeByRuleCode(rule.getRuleId(), "_View");
+				if (financeTypeDAO.getFinanceTypeByRuleCode(ruleId, "_View") != 0) {
+					count = financeTypeDAO.getFinanceTypeByRuleCode(ruleId, "_View");
 				}
-				if (promotionDAO.getPromotionByRuleCode(rule.getRuleId(), "_View") != 0) {
-					count = promotionDAO.getPromotionByRuleCode(rule.getRuleId(), "_View");
+				if (promotionDAO.getPromotionByRuleCode(ruleId, "_View") != 0) {
+					count = promotionDAO.getPromotionByRuleCode(ruleId, "_View");
 				}
 				break;
 			case RuleConstants.MODULE_BOUNCE:
-				count = bounceReasonDAO.getBounceReasonByRuleCode(rule.getRuleId(), "_View");
+				count = bounceReasonDAO.getBounceReasonByRuleCode(ruleId, "_View");
 				break;
 			case RuleConstants.MODULE_LMTLINE:
-				count = limitGroupLinesDAO.getLimitLinesByRuleCode(rule.getRuleCode(), "_View");
+				count = limitGroupLinesDAO.getLimitLinesByRuleCode(ruleCode, "_View");
 				break;
 			case RuleConstants.MODULE_FEEPERC:
-				count = finFeeConfigDAO.getFinFeeConfigCountByRuleCode(rule.getRuleCode(), "");
+				count = finFeeConfigDAO.getFinFeeConfigCountByRuleCode(ruleCode, "");
 				break;
 			}
 			if (count != 0) {

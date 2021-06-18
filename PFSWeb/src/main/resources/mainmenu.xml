@@ -944,8 +944,8 @@
 				rightName="menuItem_Enquiry_CollateralSetup" />
 			<menuItem id="menu_Item_VASEnquiry" zulNavigation="/WEB-INF/pages/VASRecording/VASRecordingList.zul?module=E&amp;enqiryModule=Y"
 				rightName="menuItem_Enquiry_VASRecording" />
-			<menuItem id="menu_Item_CustomerEnquiry" zulNavigation="/WEB-INF/pages/Reports/CustomerEnquiryList.zul"
-				rightName="menuItem_Enquiry_CustomerEnquiry" />
+			<!-- <menuItem id="menu_Item_CustomerEnquiry" zulNavigation="/WEB-INF/pages/Reports/CustomerEnquiryList.zul"
+				rightName="menuItem_Enquiry_CustomerEnquiry" /> -->
 			<menuItem id="menu_Item_CommitmentEnquiry" zulNavigation="/WEB-INF/pages/Commitment/Commitment/CommitmentList.zul?enqiryModule=Y"
 				rightName="menuItem_Enquiry_CommitmentEnquiry" />
 			<menuItem id="menu_Item_CreditApplicationReviewEnquiry"
@@ -1915,4 +1915,8 @@
 	<menuItem id="menuItem_AccountUpdater_Engine" zulNavigation="/~./pages/account-updater/AccountUpdaterStatus.zul"
 		rightName="menuItem_AccountUpdater_Engine" />
 	<!--//APPEND AFTER THIS// -->
+	
+	<menuItem id="menuItem_MenuRoles" zulNavigation="/WEB-INF/pages/MenuRoles/MenuRolesList.zul"
+	   rightName="menu_Item_MenuRoles" />
+	   
 </ns2:XMLRootMenu>

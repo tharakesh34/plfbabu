@@ -1200,6 +1200,11 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		this.verification.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		financeDetail.setLvVerification(this.verification);
 
+		if (fromVerification
+				&& (this.listBoxInitiation.getItems().isEmpty() && (this.listBoxWaiver.getItems().isEmpty()))) {
+			throw new WrongValueException(Labels.getLabel("label_LVerification_Initiation_Validation.value"));
+		}
+
 		if (tab != null && tab.getId().equals("TAB".concat(AssetConstants.UNIQUE_ID_LVAPPROVAL))) {
 			return validateReinitiation(financeDetail.getLvVerification().getVerifications());
 		} else {
@@ -1386,6 +1391,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			doSave(financeDetail, null, recSave, lv);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
+		} catch (WrongValueException e) {
+			MessageUtil.showError(e.getMessage());
+			return;
 		}
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.LV, PennantConstants.TRAN_WF, initType);

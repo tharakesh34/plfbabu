@@ -100,6 +100,7 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 	private Long makerId;
 	private Long approverId;
 	private Date approvedDate = null;
+	private boolean validationReq = true;
 
 	public UploadHeader() {
 		super();
@@ -124,6 +125,7 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("assignmentUploads");
 		excludeFields.add("auditDetailMap");
 		excludeFields.add("uploadManualAdvises");
+		excludeFields.add("validationReq");
 		return excludeFields;
 	}
 
@@ -362,4 +364,11 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		this.userName = userName;
 	}
 
+	public boolean isValidationReq() {
+		return validationReq;
+	}
+
+	public void setValidationReq(boolean validationReq) {
+		this.validationReq = validationReq;
+	}
 }

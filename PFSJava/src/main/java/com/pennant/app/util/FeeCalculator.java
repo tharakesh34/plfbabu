@@ -78,9 +78,11 @@ public class FeeCalculator implements Serializable {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		List<FinFeeDetail> feeList = new ArrayList<FinFeeDetail>();
+		
+		List<FinFeeConfig> feeConfigList = financeDetail.getFinFeeConfigList();
 
-		if (ImplementationConstants.FEE_CAL_ON_RULE) {
-			calculateFeeOnRule(receiptData, feeList);
+		if (CollectionUtils.isNotEmpty(feeConfigList)) {
+			feeList.addAll(calculateFeeOnRule(receiptData));
 			receiptData.getFinanceDetail().getFinScheduleData().setFinFeeDetailList(feeList);
 			return receiptData;
 		}
@@ -161,34 +163,33 @@ public class FeeCalculator implements Serializable {
 		return receiptData;
 	}
 
-	private FinReceiptData calculateFeeOnRule(FinReceiptData receiptData, List<FinFeeDetail> feeList) {
-		FinanceDetail financeDetail = receiptData.getFinanceDetail();
-		List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain fm = finScheduleData.getFinanceMain();
+	private List<FinFeeDetail> calculateFeeOnRule(FinReceiptData receiptData) {
+		List<FinFeeDetail> list = new ArrayList<>();
+		
+		FinanceDetail fd = receiptData.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		
+		List<FinFeeConfig> feeConfigList = fd.getFinFeeConfigList();
 
-		List<FinFeeConfig> feeConfigList = financeDetail.getFinFeeConfigList();
-
-		if (CollectionUtils.isEmpty(feeConfigList)) {
-			return receiptData;
-		}
-
-		FinFeeDetail fee = null;
-		HashMap<String, Object> gstExecutionMap = new HashMap<>();
-		if (!financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
-			gstExecutionMap = (HashMap<String, Object>) financeDetail.getFinScheduleData().getGstExecutionMap();
+		
+		Map<String, Object> gstExecutionMap = new HashMap<>();
+		if (!schdData.getGstExecutionMap().isEmpty()) {
+			gstExecutionMap = schdData.getGstExecutionMap();
 		} else {
-			//gstExecutionMap = (HashMap<String, Object>) getGstMappingDetails(financeDetail);
-			gstExecutionMap = (HashMap<String, Object>) GSTCalculator.getGSTDataMap(fm.getFinReference());
-			financeDetail.getFinScheduleData().setGstExecutionMap(gstExecutionMap);
+			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
+			schdData.setGstExecutionMap(gstExecutionMap);
 		}
 		List<Object> objectList = new ArrayList<Object>();
 		int retailCount = 0;
 		int corpCount = 0;
 		int smeCount = 0;
-		HashMap<String, Object> executionMap = new HashMap<String, Object>();
-		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		
+		Map<String, Object> executionMap = new HashMap<String, Object>();
+		CustomerDetails customerDetails = fd.getCustomerDetails();
 		executionMap.put("custCtgCode", "");
+		
+		
 		if (customerDetails != null) {
 			Customer customer = customerDetails.getCustomer();
 			executionMap.put("custCtgCode", customer.getCustCtgCode());
@@ -201,6 +202,8 @@ public class FeeCalculator implements Serializable {
 				smeCount++;
 			}
 		}
+		
+		
 		Map<String, Integer> custCtgCount = jountAccountDetailDAO.getCustCtgCount(fm.getFinReference());
 		if (custCtgCount != null) {
 			if (custCtgCount.containsKey(PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -216,12 +219,13 @@ public class FeeCalculator implements Serializable {
 
 		prepareExecutionMap(receiptData, fm, executionMap);
 		//To Be configured based on requirement. Merged from BHFL trunk revision : /Products/PFF/bajaj/BHFL/trunk/ 130332
-		BigDecimal dropLineAmt = finFeeDetailService.calDropLineLPOS(finScheduleData, SysParamUtil.getAppDate());
+		BigDecimal dropLineAmt = finFeeDetailService.calDropLineLPOS(schdData, SysParamUtil.getAppDate());
 		executionMap.put("dropLineAmt", dropLineAmt);
 
 		objectList.add(fm);
+		
 		for (FinFeeConfig finFeeConfig : feeConfigList) {
-			fee = new FinFeeDetail();
+			FinFeeDetail fee = new FinFeeDetail();
 			fee.setNewRecord(true);
 			fee.setOriginationFee(finFeeConfig.isOriginationFee());
 			fee.setFinEvent(finFeeConfig.getFinEvent());
@@ -278,7 +282,7 @@ public class FeeCalculator implements Serializable {
 
 			if (finFeeConfig.isTaxApplicable()) {
 				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
-				this.finFeeDetailService.convertGSTFinFeeConfig(fee, finFeeConfig, financeDetail, taxPercentages);
+				this.finFeeDetailService.convertGSTFinFeeConfig(fee, finFeeConfig, fd, taxPercentages);
 			} else {
 				fee.setActualAmountOriginal(finFeeConfig.getAmount());
 				fee.setActualAmountGST(BigDecimal.ZERO);
@@ -309,9 +313,10 @@ public class FeeCalculator implements Serializable {
 						fee.getActualAmount().subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount()));
 			}
 
-			feeList.add(fee);
+			list.add(fee);
 		}
-		return receiptData;
+		
+		return list;
 	}
 
 	public FinReceiptData calculateFeeDetail(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
@@ -849,18 +854,19 @@ public class FeeCalculator implements Serializable {
 	public List<FinFeeConfig> convertToFinanceFees(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinFeeConfig> finfeeDetailConfigList = new ArrayList<FinFeeConfig>();
-		FinFeeConfig feeConfig;
+		List<FinFeeConfig> feeConfigList = new ArrayList<>();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		List<FinTypeFees> feeTypes = finTypeFeesDAO.getFinTypeFeesList(financeMain.getFinType(), false, "_AView");
+		String finType = financeMain.getFinType();
+		
+		List<FinTypeFees> feeTypes = finTypeFeesDAO.getFinTypeFeesList(finType, false, "_AView");
 
 		if (CollectionUtils.isEmpty(feeTypes)) {
-			return finfeeDetailConfigList;
+			return feeConfigList;
 		}
 
 		for (FinTypeFees feeType : feeTypes) {
-			feeConfig = new FinFeeConfig();
+			FinFeeConfig feeConfig = new FinFeeConfig();
 			feeConfig.setFinReference(financeMain.getFinReference());
 			feeConfig.setOriginationFee(feeType.isOriginationFee());
 			feeConfig.setFinEvent(feeType.getFinEvent());
@@ -886,17 +892,20 @@ public class FeeCalculator implements Serializable {
 
 			if (PennantConstants.PERC_TYPE_VARIABLE.equals(feeType.getPercType())
 					&& StringUtils.isNotBlank(feeType.getPercRule())) {
-				Rule feeRules = ruleDAO.getActiveRuleByID(feeConfig.getPercRule(), RuleConstants.MODULE_FEEPERC,
-						feeConfig.getFinEvent(), "", true);
+				String percRule = feeConfig.getPercRule();
+				String finEvent = feeConfig.getFinEvent();
+				Rule feeRules = ruleDAO.getActiveRuleByID(percRule, RuleConstants.MODULE_FEEPERC, finEvent, "", true);
 				if (feeRules != null) {
 					feeConfig.setPercRuleId(feeRules.getRuleId());
 				}
 			}
+			
 			feeConfig.setOriginationFee(feeType.isOriginationFee());
-			finfeeDetailConfigList.add(feeConfig);
+			feeConfigList.add(feeConfig);
 		}
+		
 		logger.debug(Literal.LEAVING);
-		return finfeeDetailConfigList;
+		return feeConfigList;
 	}
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {

@@ -181,7 +181,7 @@ public class ReportsUtil {
 
 		return getExcelData(reportName, jasperPrint);
 	}
-	
+
 	public static byte[] getExcelData(String reportPath, String reportName, String userName, String whereCond,
 			StringBuilder searchCriteriaDesc) {
 		logger.info(Literal.ENTERING);
@@ -282,13 +282,23 @@ public class ReportsUtil {
 		return excelData;
 	}
 
-	public static String getTemplate(String reportName) {
+	private static String getTemplate(String reportName) {
 		String path = PathUtil.getPath(PathUtil.REPORTS_FINANCE);
-		return getTemplate(path, reportName);
+		String reportSrc = path + "/" + reportName + ".jasper";
+
+		logger.info("Report Template: {}", reportSrc);
+
+		if (!new File(reportSrc).exists()) {
+			throw new AppException(String.format(RPT_NOT_FOUND, reportName, path));
+		}
+
+		return reportSrc;
 	}
 
 	public static String getTemplate(String reportPath, String reportName) {
+		reportPath = PathUtil.getPath(reportPath);
 		String reportSrc = reportPath + "/" + reportName + ".jasper";
+
 		logger.info("Report Template: {}", reportSrc);
 
 		if (!new File(reportSrc).exists()) {

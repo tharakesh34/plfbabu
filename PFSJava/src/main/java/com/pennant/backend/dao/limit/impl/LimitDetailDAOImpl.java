@@ -446,18 +446,21 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public List<LimitDetails> getLimitDetailsByCustID(long headerId) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select LimitLine, LimitLineDesc, SqlRule From LimitLines_View Where LimitHeaderId = ? and SqlRule is not null";
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("HeaderId", headerId);
-		StringBuilder selectSql = new StringBuilder("Select  LimitLine ,LimitLineDesc,SqlRule  ");
-		selectSql.append(" from LimitLines_view where LimitHeaderId=:HeaderId and SqlRule is not null");
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		RowMapper<LimitDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(LimitDetails.class);
-		logger.debug("Leaving");
-		List<LimitDetails> limitDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		return limitDetailsList;
+		return this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, headerId);
+		}, (rs, i) -> {
+			LimitDetails ld = new LimitDetails();
+
+			ld.setLimitLine(rs.getString(1));
+			ld.setLimitLineDesc(rs.getString(2));
+			ld.setSqlRule(rs.getString(3));
+
+			return ld;
+		});
 	}
 
 	@Override

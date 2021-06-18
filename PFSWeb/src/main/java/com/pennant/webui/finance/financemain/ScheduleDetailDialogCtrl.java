@@ -91,6 +91,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -822,8 +823,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.schdl_odTotalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGrossPft(), ccyFormatter));
 			BigDecimal futTotDisbAmt = BigDecimal.ZERO;
 			if (aFinSchData.getDisbursementDetails() != null && aFinSchData.getDisbursementDetails().size() > 0) {
+				Date appDate = SysParamUtil.getAppDate();
 				for (FinanceDisbursement finDisb : aFinSchData.getDisbursementDetails()) {
-					if (DateUtility.compare(finDisb.getDisbDate(), DateUtility.getAppDate()) >= 0) {
+					if (DateUtil.compare(finDisb.getDisbDate(), appDate) >= 0) {
 						futTotDisbAmt = futTotDisbAmt.add(finDisb.getDisbAmount());
 					}
 				}
@@ -1423,31 +1425,144 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * Method to hide buttons in schedule details tab
 	 **/
 	private void hideButtons() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String dialogName = "FinanceMainDialog";
 		if (isWIF) {
 			dialogName = "WIFFinanceMainDialog";
 		}
 
-		this.btnReCalcualte.setVisible(false);
-		this.btnAddReviewRate.setVisible(false);
-		this.btnChangeRepay.setVisible(false);
-		this.btnAddDisbursement.setVisible(false);
-		this.btnAddDatedSchedule.setVisible(false);
-		this.btnCancelDisbursement.setVisible(false);
-		this.btnPostponement.setVisible(false);
-		this.btnUnPlanEMIH.setVisible(false);
-		this.btnAddTerms.setVisible(false);
-		this.btnRmvTerms.setVisible(false);
-		this.btnSubSchedule.setVisible(false);
-		this.btnChangeProfit.setVisible(false);
-		this.btnChangeFrq.setVisible(false);
-		this.btnReschedule.setVisible(false);
-		this.btnReAgeHolidays.setVisible(false);
-		this.btnHoldEMI.setVisible(false);
-		this.btnSchdChng.setVisible(false);
+		setVisibilityAsFalse();
+		setDisbledAsTrue();
 
+		boolean isAvailable = false;
+
+		switch (moduleDefiner) {
+		case FinanceConstants.FINSER_EVENT_RATECHG:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate");
+			this.btnAddReviewRate.setVisible(isAvailable);
+			this.btnAddReviewRate.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_CHGRPY:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay");
+			this.btnChangeRepay.setVisible(isAvailable);
+			this.btnChangeRepay.setDisabled(!isAvailable);
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd");
+			this.btnAddDatedSchedule.setVisible(isAvailable);
+			this.btnAddDatedSchedule.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_ADDDISB:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb");
+			this.btnAddDisbursement.setVisible(isAvailable);
+			this.btnAddDisbursement.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_CANCELDISB:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb");
+			this.btnCancelDisbursement.setVisible(isAvailable);
+			this.btnCancelDisbursement.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_POSTPONEMENT:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement");
+			this.btnPostponement.setVisible(isAvailable);
+			this.btnPostponement.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_UNPLANEMIH:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH");
+			this.btnUnPlanEMIH.setVisible(isAvailable);
+			this.btnUnPlanEMIH.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_REAGING:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays");
+			this.btnReAgeHolidays.setVisible(isAvailable);
+			this.btnReAgeHolidays.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_ADDTERM:
+			/*
+			 * isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms");
+			 * this.btnAddTerms.setVisible(isAvailable); this.btnAddTerms.setDisabled(!isAvailable);
+			 */
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate");
+			this.btnReCalcualte.setVisible(isAvailable);
+			this.btnReCalcualte.setDisabled(!isAvailable);
+			/* PSD Ticket 130142 (LMS: Add term history is not correctly reflected on approval screen) */
+			FinanceMain fm = finScheduleData.getFinanceMain();
+			String finReference = fm.getFinReference();
+			FinanceProfitDetail pfd = financeDetailService.getFinProfitDetailsById(finReference);
+			if (pfd != null) {
+				if (fm.isAlwGrcAdj()) {
+					fm.setNOInst(pfd.getNOInst() - fm.getGraceTerms());
+				} else {
+					fm.setNOInst(pfd.getNOInst());
+				}
+			}
+			break;
+		case FinanceConstants.FINSER_EVENT_RMVTERM:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms");
+			this.btnRmvTerms.setVisible(isAvailable);
+			this.btnRmvTerms.setDisabled(!isAvailable);
+
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate");
+			this.btnReCalcualte.setVisible(isAvailable);
+			this.btnReCalcualte.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_RECALCULATE:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate");
+			this.btnReCalcualte.setVisible(isAvailable);
+			this.btnReCalcualte.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_SUBSCHD:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnBuildSubSchd");
+			this.btnSubSchedule.setVisible(isAvailable);
+			this.btnSubSchedule.setDisabled(!isAvailable);
+
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate");
+			this.btnReCalcualte.setVisible(isAvailable);
+			this.btnReCalcualte.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_CHGPFT:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeProfit");
+			this.btnChangeProfit.setVisible(isAvailable);
+			this.btnChangeProfit.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_CHGFRQ:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq");
+			this.btnChangeFrq.setVisible(isAvailable);
+			this.btnChangeFrq.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_RESCHD:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule");
+			this.btnReschedule.setVisible(isAvailable);
+			this.btnReschedule.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_HOLDEMI:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI");
+			this.btnHoldEMI.setVisible(isAvailable);
+			this.btnHoldEMI.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng");
+			this.btnSchdChng.setVisible(isAvailable);
+			this.btnSchdChng.setDisabled(!isAvailable);
+			break;
+		case FinanceConstants.FINSER_EVENT_RESTRUCTURE:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnRestructureDetail");
+			this.btnRestructure.setVisible(isAvailable);
+			this.btnRestructure.setDisabled(!isAvailable);
+			approvalScreenEventHistory.renderData(listBoxEventHistory, finScheduleData);
+			break;
+		case FinanceConstants.FINSER_EVENT_PLANNEDEMI:
+			isAvailable = getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH");
+			this.btnRecalEMIH.setVisible(isAvailable);
+			this.btnRecalEMIH.setDisabled(!isAvailable);
+			break;
+		default:
+			break;
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setDisbledAsTrue() {
 		this.btnAddReviewRate.setDisabled(true);
 		this.btnChangeRepay.setDisabled(true);
 		this.btnAddDisbursement.setDisabled(true);
@@ -1465,109 +1580,30 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnReAgeHolidays.setDisabled(true);
 		this.btnHoldEMI.setDisabled(true);
 		this.btnSchdChng.setDisabled(true);
+		this.btnRestructure.setDisabled(true);
+		this.btnRecalEMIH.setDisabled(true);
+	}
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RATECHG)) {
-			this.btnAddReviewRate.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));
-			this.btnAddReviewRate.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddRvwRate"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGRPY)) {
-			this.btnChangeRepay.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
-			this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
-			this.btnAddDatedSchedule
-					.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
-			this.btnAddDatedSchedule
-					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
-			this.btnAddDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
-			this.btnAddDisbursement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CANCELDISB)) {
-			this.btnCancelDisbursement
-					.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
-			this.btnCancelDisbursement
-					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_POSTPONEMENT)) {
-			this.btnPostponement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
-			this.btnPostponement
-					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_UNPLANEMIH)) {
-			this.btnUnPlanEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
-			this.btnUnPlanEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_REAGING)) {
-			this.btnReAgeHolidays
-					.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
-			this.btnReAgeHolidays
-					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDTERM)) {
-			// this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_"
-			// + dialogName + "_btnAddTerms"));
-			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-			// this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_"
-			// + dialogName + "_btnAddTerms"));
-			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-			// PSD Ticket 130142 (LMS: Add term history is not correctly
-			// reflected on approval screen)
-			FinanceProfitDetail financeProfitDetail = financeDetailService
-					.getFinProfitDetailsById(finScheduleData.getFinanceMain().getFinReference());
-
-			if (financeProfitDetail != null) {
-				if (finScheduleData.getFinanceMain().isAlwGrcAdj()) {
-					finScheduleData.getFinanceMain().setNOInst(
-							financeProfitDetail.getNOInst() - finScheduleData.getFinanceMain().getGraceTerms());
-				} else {
-					finScheduleData.getFinanceMain().setNOInst(financeProfitDetail.getNOInst());
-				}
-			}
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RMVTERM)) {
-			this.btnRmvTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms"));
-			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-			this.btnRmvTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms"));
-			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECALCULATE)) {
-			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_SUBSCHD)) {
-			this.btnSubSchedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnBuildSubSchd"));
-			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-			this.btnSubSchedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnBuildSubSchd"));
-			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGPFT)) {
-			this.btnChangeProfit.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeProfit"));
-			this.btnChangeProfit
-					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeProfit"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
-			this.btnChangeFrq.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq"));
-			this.btnChangeFrq.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeFrq"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RESCHD)) {
-			this.btnReschedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
-			this.btnReschedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReschedule"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_HOLDEMI)) {
-			this.btnHoldEMI.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
-			this.btnHoldEMI.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnHoldEMI"));
-
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD)) {
-			this.btnSchdChng.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
-			this.btnSchdChng.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnSchdChng"));
-		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RESTRUCTURE)) {
-			this.btnRestructure
-					.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRestructureDetail"));
-			this.btnRestructure
-					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRestructureDetail"));
-			approvalScreenEventHistory.renderData(listBoxEventHistory, finScheduleData);
-		}
-		logger.debug("Leaving");
+	private void setVisibilityAsFalse() {
+		this.btnReCalcualte.setVisible(false);
+		this.btnAddReviewRate.setVisible(false);
+		this.btnChangeRepay.setVisible(false);
+		this.btnAddDisbursement.setVisible(false);
+		this.btnAddDatedSchedule.setVisible(false);
+		this.btnCancelDisbursement.setVisible(false);
+		this.btnPostponement.setVisible(false);
+		this.btnUnPlanEMIH.setVisible(false);
+		this.btnAddTerms.setVisible(false);
+		this.btnRmvTerms.setVisible(false);
+		this.btnSubSchedule.setVisible(false);
+		this.btnChangeProfit.setVisible(false);
+		this.btnChangeFrq.setVisible(false);
+		this.btnReschedule.setVisible(false);
+		this.btnReAgeHolidays.setVisible(false);
+		this.btnHoldEMI.setVisible(false);
+		this.btnSchdChng.setVisible(false);
+		this.btnRestructure.setVisible(false);
+		this.btnRecalEMIH.setVisible(false);
 	}
 
 	/**
@@ -2247,7 +2283,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			// Re-check Event From Date in Case of Servicing
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
 				List<FinanceScheduleDetail> schList = getFinScheduleData().getFinanceScheduleDetails();
-				Date curBussDate = DateUtility.getAppDate();
+				Date curBussDate = SysParamUtil.getAppDate();
 				for (FinanceScheduleDetail curSchd : schList) {
 					if (curSchd.getSchDate().compareTo(curBussDate) <= 0) {
 						getFinScheduleData().getFinanceMain().setEventFromDate(curSchd.getSchDate());
@@ -2297,7 +2333,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (isWIF) {
 			dialogName = "WIFFinanceMainDialog";
 		}
-		if (alwPlanEMIHMonths || alwPlanEMIHDates) {
+		if ((alwPlanEMIHMonths || alwPlanEMIHDates)
+				&& (moduleDefiner.equals("") || FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner))) {
 			this.btnRecalEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 			this.btnRecalEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 		} else {

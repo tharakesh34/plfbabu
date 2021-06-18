@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -184,6 +185,25 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	@Override
+	public boolean isLVVerificationExists(String keyReference) {
+		String sql = "Select VerificationId From Verification_LV_View Where Keyreference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		List<Long> list = jdbcOperations.query(sql, ps -> {
+			ps.setString(1, keyReference);
+		}, (rs, i) -> {
+			return rs.getLong(1);
+		});
+
+		if (CollectionUtils.isNotEmpty(list)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override

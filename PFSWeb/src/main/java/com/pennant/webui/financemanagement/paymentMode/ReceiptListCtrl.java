@@ -197,8 +197,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReceiptList(Event event) {
 		logger.debug("Entering " + event.toString());
@@ -445,8 +444,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ReceiptList_ReceiptSearchDialog(Event event) {
 		search();
@@ -474,8 +472,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doRefresh();
@@ -501,8 +498,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -593,22 +589,25 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					PennantAppUtil.formateDate(finReceiptHeader.getReceivedDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
 
-			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finReceiptHeader.getKnockOffType())) {
+			String knockOffType = finReceiptHeader.getKnockOffType();
+			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(knockOffType)) {
 				lc = new Listcell("Auto");
-			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(finReceiptHeader.getKnockOffType())) {
+			} else if (RepayConstants.KNOCKOFF_TYPE_MANUAL.equals(knockOffType)) {
 				lc = new Listcell("Manual");
 			} else {
 				lc = new Listcell("");
 			}
 			lc.setParent(item);
 
-			lc = new Listcell(finReceiptHeader.getReceiptMode());
+			String receiptMode = finReceiptHeader.getReceiptMode();
+			lc = new Listcell(receiptMode);
 			lc.setParent(item);
 
-			String receiptMode = finReceiptHeader.getReceiptMode();
-			// TODO CH : Receipt Purpose in Filter and List are different. To be
-			// corrected
-			lc = new Listcell(finReceiptHeader.getReceiptPurpose());
+			String receiptPurpose = finReceiptHeader.getReceiptPurpose();
+			if (FinanceConstants.FINSER_EVENT_EARLYRPY.equals(receiptPurpose)) {
+				receiptPurpose = "Partial Payment";
+			}
+			lc = new Listcell(receiptPurpose);
 			lc.setParent(item);
 
 			lc = new Listcell(finReceiptHeader.getCustCIF());
@@ -646,46 +645,48 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(finReceiptHeader.getRecordStatus());
 			lc.setParent(item);
 
-			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_APPROVED)) {
+			switch (finReceiptHeader.getReceiptModeStatus()) {
+			case RepayConstants.PAYSTATUS_APPROVED:
 				lc = new Listcell("Approved");
 				lc.setParent(item);
-			}
-			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_FEES)) {
+				break;
+			case RepayConstants.PAYSTATUS_FEES:
 				lc = new Listcell("Fees");
 				lc.setParent(item);
-			}
-			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
-				if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_EXCESS)
-						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_EMIINADV)
-						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_PAYABLE)
-						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASHCLT)
-						|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DSF)) {
+				break;
+			case RepayConstants.PAYSTATUS_REALIZED:
+				if (RepayConstants.RECEIPTMODE_EXCESS.equals(receiptMode)
+						|| RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptMode)
+						|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptMode)
+						|| RepayConstants.RECEIPTMODE_CASHCLT.equals(receiptMode)
+						|| RepayConstants.RECEIPTMODE_DSF.equals(receiptMode)) {
 					lc = new Listcell("Adjusted");
 					lc.setParent(item);
 				} else {
 					lc = new Listcell("Realized");
 					lc.setParent(item);
 				}
-			}
-			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
+				break;
+			case RepayConstants.PAYSTATUS_BOUNCE:
 				lc = new Listcell("Bounce");
 				lc.setParent(item);
-			}
-			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+				break;
+			case RepayConstants.PAYSTATUS_CANCEL:
 				lc = new Listcell("Cancel");
 				lc.setParent(item);
-			}
-			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
+				break;
+			case RepayConstants.PAYSTATUS_DEPOSITED:
 				lc = new Listcell("Deposited");
 				lc.setParent(item);
-			}
-			if (StringUtils.equals(finReceiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_INITIATED)) {
+				break;
+			case RepayConstants.PAYSTATUS_INITIATED:
 				lc = new Listcell("Initiated");
 				lc.setParent(item);
-			}
-			if (StringUtils.isEmpty(finReceiptHeader.getReceiptModeStatus())) {
+			case "":
 				lc = new Listcell("");
 				lc.setParent(item);
+			default:
+				break;
 			}
 
 			lc = new Listcell(finReceiptHeader.getNextRoleCode());

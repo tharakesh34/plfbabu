@@ -8,9 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WSReturnStatus;
@@ -167,7 +164,7 @@ public class DisbursementController extends ExtendedTestClass {
 
 	public WSReturnStatus approveDisbursementResponse(List<DisbursementRequest> disbRequests) {
 		logger.info(Literal.ENTERING);
-		
+
 		try {
 			for (DisbursementRequest request : disbRequests) {
 				request.setId(request.getDisbReqId());
@@ -253,7 +250,7 @@ public class DisbursementController extends ExtendedTestClass {
 					fa.setClearingStatus(request.getStatus());
 					fa.setRejectReason(request.getRejectReason());
 					fa.setTransactionRef(request.getTransactionref());
-					
+
 					if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(request.getPaymentType())
 							|| DisbursementConstants.PAYMENT_TYPE_DD.equals(request.getPaymentType())) {
 						fa.setLLReferenceNo(request.getChequeNumber());
@@ -296,16 +293,14 @@ public class DisbursementController extends ExtendedTestClass {
 					pi.setRejectReason(request.getRejectReason());
 					pi.setTransactionRef(request.getTransactionref());
 
-
 					break;
 				default:
 					break;
 				}
-				
+
 				updateRequest(request);
 			}
-			
-			
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			String valueParm[] = new String[2];

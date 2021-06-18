@@ -1395,23 +1395,19 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public List<Long> isDedupReceiptExists(FinServiceInstruction fsi) {
 		logger.info("Checking for duplicate receipt...");
 
-		String paymentMode = fsi.getPaymentMode();
 		boolean isOnline = StringUtils.isNotBlank(fsi.getTransactionRef());
-		boolean isChequeOrDD = RepayConstants.RECEIPTMODE_CHEQUE.equals(paymentMode)
-				|| RepayConstants.RECEIPTMODE_DD.equals(paymentMode);
 		StringBuilder sql = new StringBuilder("Select ReceiptID From FinReceiptHeader");
-		sql.append(" Where Reference = ?  AND ValueDate = ? AND ReceiptAmount = ?");
-		sql.append(" AND ReceiptModeStatus = ?");
+		sql.append(" Where Reference = ? and ValueDate = ? and ReceiptModeStatus = ?");
 
 		if (isOnline) {
-			sql.append(" AND TransactionRef = ?");
+			sql.append(" and TransactionRef = ?");
 		}
 		logger.trace(Literal.SQL + sql);
+
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setString(index++, fsi.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(fsi.getValueDate()));
-			ps.setBigDecimal(index++, fsi.getAmount());
 			ps.setString(index++, RepayConstants.PAYSTATUS_REALIZED);
 			if (isOnline) {
 				ps.setString(index++, fsi.getTransactionRef());

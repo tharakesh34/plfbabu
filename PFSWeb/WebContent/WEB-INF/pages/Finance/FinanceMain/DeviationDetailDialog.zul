@@ -67,7 +67,8 @@
 									<listheader label="${c:l('listheader_DeviationDate.label')}" sort="false" width="8%" />
 									<listheader label="${c:l('listheader_DelegationRole.label')}" sort="false" width="12%" />
 									<listheader label="${c:l('listheader_ApprovalStatus.label')}" sort="false" width="10%" />
-									<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="auto" width="25%" />
+									<listheader label="${c:l('listheader_ApproverRemarks.label')}" sort="auto" width="20%" />
+									<listheader label="${c:l('listheader_Mitigants.label')}" sort="false" width="15%" />
 									<listheader label="${c:l('label.RecordType')}" sort="false" width="10%" />
 								</listhead>
 							</listbox>

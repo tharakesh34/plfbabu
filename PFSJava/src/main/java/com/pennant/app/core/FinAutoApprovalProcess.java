@@ -147,6 +147,10 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 			return;
 		}
 
+		if (finAad.getRealizedDate() == null) {
+			throw new AppException("Payment Date is mandatory for Auto Approval Process.");
+		}
+
 		Map<String, Integer> qdpValidityDays = finAutoApprovalDetailDAO.loadQDPValidityDays();
 		int days = qdpValidityDays.get(paymentType);
 

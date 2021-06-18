@@ -134,7 +134,7 @@ public class CustomerDetails implements java.io.Serializable {
 
 	@XmlElementWrapper(name = "addresses")
 	@XmlElement(name = "address")
-	private List<CustomerAddres> addressList;
+	private List<CustomerAddres> addressList = new ArrayList<>();
 
 	@XmlElementWrapper(name = "customerGstLists")
 	@XmlElement(name = "customerGstList")

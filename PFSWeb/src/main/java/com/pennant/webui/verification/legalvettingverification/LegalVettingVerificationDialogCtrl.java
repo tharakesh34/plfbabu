@@ -69,6 +69,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -1177,6 +1178,15 @@ public class LegalVettingVerificationDialogCtrl extends GFCBaseCtrl<LegalVetting
 		try {
 			if (doProcess(lv, tranType)) {
 				refreshList();
+
+				String roleCode = lv.getRoleCode();
+				String recordStatus = lv.getRecordStatus();
+				String nextRoleCode = lv.getNextRoleCode();
+				String finReference = lv.getKeyReference();
+
+				String msg = PennantApplicationUtil.getSavingStatus(roleCode, nextRoleCode, finReference, " Loan ",
+						recordStatus);
+				Clients.showNotification(msg, "info", null, null, -1);
 				closeDialog();
 			}
 		} catch (final DataAccessException e) {

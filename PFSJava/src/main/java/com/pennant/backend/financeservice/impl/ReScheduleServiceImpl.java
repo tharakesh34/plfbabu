@@ -37,6 +37,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.rits.cloning.Cloner;
 
 public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction> implements ReScheduleService {
@@ -126,11 +127,12 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		// Setting Event From Date Value
 		if (calFromGrcPeriod) {
-			financeMain.setGrcPeriodEndDate(finServiceInstruction.getGrcPeriodEndDate());
-			if (finServiceInstruction.getNextGrcRepayDate() != null) {
-				financeMain.setEventFromDate(finServiceInstruction.getNextGrcRepayDate());
-			} else {
+			Date grcEndDate = finServiceInstruction.getGrcPeriodEndDate();
+			financeMain.setGrcPeriodEndDate(grcEndDate);
 
+			if (DateUtil.compare(fromDate, grcEndDate) < 0) {
+				financeMain.setEventFromDate(fromDate);
+			} else {
 				Date eventFromDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayFrq(), 1,
 						finServiceInstruction.getFromDate(), "A", false, 0).getNextFrequencyDate();
 				eventFromDate = DateUtility.getDBDate(DateUtility.format(eventFromDate, PennantConstants.DBDateFormat));

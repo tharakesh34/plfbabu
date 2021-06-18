@@ -153,6 +153,8 @@
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.PartialSettlementGroup</value>
 					<value>com.pennant.validation.UpfrontFeesGroup</value>
+					<value>com.pennant.validation.SchedulePaymentGroup</value>
+					<value>com.pennant.validation.EarlySettlementGroup</value>				
 				</groups>
 				<element name="value">1</element>
 			</constraint>

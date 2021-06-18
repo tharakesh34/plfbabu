@@ -620,7 +620,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			String amount, boolean valid, String reason) {
 
 		BigDecimal percentageValue = new BigDecimal(percentage.equals("") ? "0" : percentage);
-		BigDecimal amountValue = new BigDecimal(amount.equals("") ? "0" : amount);
+		BigDecimal amountValue = new BigDecimal(amount.equals("") ? "0" : amount.replaceAll(",", "").trim());
 
 		// AppendOrOverride
 		String type = uploadFinExpenses.getType();

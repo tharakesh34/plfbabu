@@ -8081,7 +8081,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							}
 						}
 						// Setting the dafaults from loan type
-						childFinanceMain.setFinRepayMethod(childfinType.getFinRepayMethod());
+						// childFinanceMain.setFinRepayMethod(childfinType.getFinRepayMethod());
 						childFinanceMain.setQuickDisb(childfinType.isQuickDisb());
 					}
 
@@ -8393,7 +8393,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (pricingDetailListCtrl != null && pricingDetailListCtrl.hbox_Split != null
 						&& pricingDetailListCtrl.split != null && pricingDetailListCtrl.hbox_Split.isVisible()
 						&& pricingDetailListCtrl.split.isChecked()
-						&& pricingDetailListCtrl.getPricingDetail().isNewRecord()) {
+						&& ("Submit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()))) {
 					List<FinanceMain> financeMains = pricingDetailListCtrl.getPricingDetail().getFinanceMains();
 					if (CollectionUtils.isNotEmpty(financeMains)) {
 						financeMains.forEach(l1 -> splitRef.add(l1.getFinReference()));

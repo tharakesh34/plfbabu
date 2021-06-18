@@ -872,6 +872,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		getCollateralAssignment().setAvailableAssignPerc(availAssignPerc);
 		getCollateralAssignment().setCollateralValue(collateralSetup.getCollateralValue());
 		getCollateralAssignment().setTotAssignedPerc(totAssignedPerc);
+		getCollateralAssignment().setCollateralType(collateralSetup.getCollateralType());
 		this.collateralInfo.setVisible(true);
 		setEditCollateralVisibility(collateralSetup.getCollateralRef());
 

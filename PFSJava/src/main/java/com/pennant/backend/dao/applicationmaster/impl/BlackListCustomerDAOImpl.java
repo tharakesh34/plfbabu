@@ -235,6 +235,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		sql.append(", CustNationality, Employer, CustIsActive, ReasonCode, Source, CustAadhaar, CustCompName");
 		sql.append(" From BlackListCustomer_AView ");
 		sql.append(watchRule);
+		sql.append(" and CustIsActive = 1");
 		if (ImplementationConstants.ALLOW_SIMILARITY && App.DATABASE == Database.POSTGRES) {
 			sql.append(" and CustCtgCode = :CustCtgCode");
 		}

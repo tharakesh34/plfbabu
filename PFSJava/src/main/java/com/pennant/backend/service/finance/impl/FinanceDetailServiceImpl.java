@@ -5035,12 +5035,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Reset Finance Detail Object for Service Task Verifications
 		auditHeader.getAuditDetail().setModelData(fd);
 
-		if (ImplementationConstants.PERC_REQ_FOR_FINTYPE_FEE
+		if (ImplementationConstants.FEE_SERVICEING_STAMPIN_ON_ORG
 				&& StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, fd.getModuleDefiner())) {
-
 			List<FinFeeConfig> calculateFees = feeCalculator.convertToFinanceFees(fd);
 			if (CollectionUtils.isNotEmpty(calculateFees)) {
-				getFinFeeConfigService().saveList(calculateFees, "");
+				finFeeConfigService.saveList(calculateFees, "");
 			}
 		}
 
@@ -6244,6 +6243,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (!isWIF) {
 					auditHeaderDAO.addAudit(auditHeader);
 				}
+				rejectChildLoan(finReference);
 				return auditHeader;
 			}
 
@@ -6591,6 +6591,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
+	}
+
+	private void rejectChildLoan(String finReference) {
+
+		List<String> finRefByParentRef = financeMainDAO.getChildFinRefByParentRef(finReference);
+
+		if (CollectionUtils.isEmpty(finRefByParentRef)) {
+			logger.debug(" Undisbursed Child loans are not available for  the specified finreference >> {}",
+					finReference);
+			return;
+		}
+
+		List<FinanceMain> list = new ArrayList<>();
+		for (String reference : finRefByParentRef) {
+			FinanceMain fm = new FinanceMain();
+			fm.setFinReference(reference);
+			fm.setApproved(null);
+			fm.setProcessAttributes("");
+			fm.setFinIsActive(false);
+			fm.setClosingStatus(PennantConstants.RCD_STATUS_REJECTED);
+			fm.setNextRoleCode("");
+			fm.setNextTaskId("");
+			list.add(fm);
+		}
+		financeMainDAO.updateRejectFinanceMain(list, "_Temp");
 	}
 
 	private FinanceDetail getAutoRejDetails(FinanceDetail fd, String type, boolean isWIF) {
