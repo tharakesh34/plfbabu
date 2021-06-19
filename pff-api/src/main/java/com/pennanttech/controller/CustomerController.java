@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -25,6 +22,7 @@ import org.springframework.dao.DataAccessException;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
@@ -75,6 +73,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -106,12 +105,6 @@ public class CustomerController extends GenericService<Object> {
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
-
-	// create a script engine manager
-	ScriptEngineManager factory = new ScriptEngineManager();
-
-	// create a JavaScript engine
-	ScriptEngine engine = factory.getEngineByName("JavaScript");
 
 	/**
 	 * 
@@ -1811,6 +1804,9 @@ public class CustomerController extends GenericService<Object> {
 				prv1YearValuesMap = new HashMap<String, BigDecimal>();
 				prv1YearValuesMap.put("auditYear", BigDecimal.valueOf(audityear - 2));
 				creditReviewSummaryList = creditReviewSummaryMap.get(String.valueOf(audityear - 2));
+
+				Map<String, Object> engine = new HashMap<>();
+
 				if (creditReviewSummaryList != null && creditReviewSummaryList.size() > 0) {
 					prv1YearValuesMap.putAll(extValuesMap);
 					for (int k = 0; k < creditReviewSummaryList.size(); k++) {
@@ -1848,7 +1844,7 @@ public class CustomerController extends GenericService<Object> {
 					}
 				}
 				if (prv1YearValuesMap != null && prv1YearValuesMap.size() > 1) {
-					setData(prv1YearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
+					setData(prv1YearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, engine);
 				}
 
 				boolean isPrevYearSummayNull = false;
@@ -1883,7 +1879,7 @@ public class CustomerController extends GenericService<Object> {
 				}
 
 				if (prvYearValuesMap.size() > 28) {
-					setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
+					setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, engine);
 				}
 				curYearValuesMap.putAll(extValuesMap);
 				// below flag is previous years data not available.It is true
@@ -1914,7 +1910,8 @@ public class CustomerController extends GenericService<Object> {
 									PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 							if (prvYearValuesMap != null && prvYearValuesMap.size() > 0) {
-								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
+								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory,
+										engine);
 							}
 						}
 					}
@@ -1936,14 +1933,15 @@ public class CustomerController extends GenericService<Object> {
 											SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 							if (prvYearValuesMap != null && prvYearValuesMap.size() > 0
 									&& !finCreditReviewDetails.isNew()) {
-								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
+								setData(prvYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory,
+										engine);
 							}
 						}
 					}
 				}
 				// If current year data is available and not new than set
 				if (curYearValuesMap != null && !finCreditReviewDetails.isNew()) {
-					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
+					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, engine);
 				}
 
 				for (FinCreditReviewSummary finCreditReviewSummary : finCreditReviewDetails
@@ -1961,7 +1959,7 @@ public class CustomerController extends GenericService<Object> {
 									+ subCategory,
 							finCreditReviewSummary.getItemValue() == null ? BigDecimal.ZERO
 									: finCreditReviewSummary.getItemValue());
-					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory);
+					setData(curYearValuesMap, finCreditReviewDetails, listOfFinCreditRevSubCategory, engine);
 				}
 
 				for (int i = 0; i < listFinCreditRevCategory.size(); i++) {
@@ -2024,7 +2022,7 @@ public class CustomerController extends GenericService<Object> {
 	 * @throws Exception
 	 */
 	public void setData(Map<String, BigDecimal> dataMap, FinCreditReviewDetails finCreditReviewDetails,
-			List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory) throws Exception {
+			List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory, Map<String, Object> engine) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		engine.put("EXCHANGE", finCreditReviewDetails.getConversionRate());
@@ -2049,21 +2047,9 @@ public class CustomerController extends GenericService<Object> {
 			if (finCreditRevSubCategory.getSubCategoryItemType().equals(FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)
 					&& StringUtils.isNotEmpty(finCreditRevSubCategory.getItemsToCal())) {
 				BigDecimal value = BigDecimal.ZERO;
-				try {
 
-					if ("NaN".equals(engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString())
-							|| (engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString()
-									.contains("Infinity"))) {
-						value = BigDecimal.ZERO;
-					} else {
-						value = new BigDecimal(
-								engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString())
-										.setScale(48, RoundingMode.HALF_DOWN);
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-					value = BigDecimal.ZERO;
-				}
+				value = (BigDecimal) RuleExecutionUtil.executeRule(
+						replaceYear(finCreditRevSubCategory.getItemRule(), year), engine, RuleReturnType.DECIMAL);
 
 				dataMap.put(finCreditRevSubCategory.getSubCategoryCode(), value == null ? BigDecimal.ZERO : value);
 				engine.put("Y" + year + finCreditRevSubCategory.getSubCategoryCode(),
@@ -2076,26 +2062,10 @@ public class CustomerController extends GenericService<Object> {
 			FinCreditRevSubCategory finCreditRevSubCategory = listOfFinCreditRevSubCategory.get(i);
 			if (StringUtils.isNotEmpty(finCreditRevSubCategory.getItemRule())) {
 				BigDecimal value = BigDecimal.ZERO;
-				try {
-					if ("NaN".equals(engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
-							|| (engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString()
-									.contains("Infinity"))) {
-						value = BigDecimal.ZERO;
-					} else {
-						if (finCreditRevSubCategory.getRemarks().equals(FacilityConstants.CREDITREVIEW_REMARKS)) {
-							value = new BigDecimal(
-									engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
-											.setScale(48, RoundingMode.HALF_DOWN);
-						} else {
-							value = new BigDecimal(
-									engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
-											.setScale(48, RoundingMode.HALF_DOWN);
-						}
-					}
-				} catch (Exception e) {
-					value = BigDecimal.ZERO;
-					logger.error("Exception: ", e);
-				}
+
+				value = (BigDecimal) RuleExecutionUtil.executeRule(
+						replaceYear(finCreditRevSubCategory.getItemRule(), year), engine, RuleReturnType.DECIMAL);
+
 				if (finCreditRevSubCategory.getCategoryId() == 4 || finCreditRevSubCategory.getCategoryId() == 7) {
 					dataMap.put(finCreditRevSubCategory.getSubCategoryCode(), value);
 					engine.put("Y" + year + finCreditRevSubCategory.getSubCategoryCode(),

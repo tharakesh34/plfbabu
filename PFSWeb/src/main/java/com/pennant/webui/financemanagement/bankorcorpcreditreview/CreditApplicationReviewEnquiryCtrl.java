@@ -1029,12 +1029,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		if (isEnquiry) {
 			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds,
 					this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extDataMap,
-					listOfFinCreditRevCategory);
+					listOfFinCreditRevCategory, new HashMap<>());
 		} else if (maxAuditYear != null) {
 			custIds.add(custID.longValue());
 			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds,
 					Integer.parseInt(maxAuditYear), noOfYears, this.custCtgCode, true, isEnquiry, null,
-					listOfFinCreditRevCategory);
+					listOfFinCreditRevCategory, new HashMap<>());
 		}
 		if (this.dataMap.containsKey("lovDescCcyEditField")) {
 			currFormatter = Integer.parseInt(this.dataMap.get("lovDescCcyEditField"));

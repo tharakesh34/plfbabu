@@ -85,14 +85,12 @@ public class RuleExecutionUtil implements Serializable {
 
 		return result;
 	}
-
-	public static Object executeRule(String rule, Map<String, Object> dataMap, String finccy,
-			RuleReturnType returnType) {
+	
+	public static Object executeRule(String rule, Map<String, Object> dataMap, RuleReturnType returnType) {
 		if (dataMap == null) {
 			dataMap = new HashMap<String, Object>();
 		}
 
-		rule = replaceCurrencyCode(rule, finccy);
 		rule = StringUtils.replace(rule, "{BLANK}", "");
 		Object result = null;
 
@@ -132,6 +130,17 @@ public class RuleExecutionUtil implements Serializable {
 		}
 
 		return result;
+	
+	}
+
+	public static Object executeRule(String rule, Map<String, Object> dataMap, String finccy,
+			RuleReturnType returnType) {
+		rule = replaceCurrencyCode(rule, finccy);
+
+		
+		rule = StringUtils.replace(rule, "{BLANK}", "");
+		return executeRule(rule, dataMap, returnType);
+
 	}
 
 	public static String replaceCurrencyCode(String rule, String finccy) {

@@ -4,12 +4,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -115,7 +114,7 @@ public class DeviationExecutionCtrl {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
-		ScriptEngine engine = prepareScriptEngine(financeMain, financeType);
+		Map<String, Object> engine = prepareScriptEngine(financeMain, financeType);
 
 		// Get the product deviations that were defined for the finance type.
 		List<DeviationHeader> deviationHeaders = getProductDeviatations(financeType.getFinType());
@@ -948,19 +947,8 @@ public class DeviationExecutionCtrl {
 
 	}
 
-	/* Rule Execution */
-
-	/**
-	 * To execute he rule
-	 * 
-	 * @param financeMain
-	 * @param financeType
-	 * @return
-	 */
-	private ScriptEngine prepareScriptEngine(FinanceMain financeMain, FinanceType financeType) {
+	private Map<String, Object> prepareScriptEngine(FinanceMain financeMain, FinanceType financeType) {
 		logger.debug(" Entering ");
-
-		ScriptEngineManager factory = new ScriptEngineManager();
 
 		FinanceMain main = new FinanceMain();
 		BeanUtils.copyProperties(financeMain, main);
@@ -972,13 +960,12 @@ public class DeviationExecutionCtrl {
 		main.setDownPayment(
 				CalculationUtil.getConvertedAmount(main.getFinCcy(), type.getFinCcy(), main.getDownPayment()));
 
-		Bindings bindings = factory.getBindings();
+		Map<String, Object> bindings = new HashMap<>();
 		bindings.put("fm", main);
 		bindings.put("ft", type);
-		ScriptEngine engine = factory.getEngineByName("JavaScript");
 
 		logger.debug(" Leaving ");
-		return engine;
+		return bindings;
 	}
 
 	/**
@@ -990,23 +977,8 @@ public class DeviationExecutionCtrl {
 	 * @return
 	 * @throws ScriptException
 	 */
-	private Object executeRule(String rule, ScriptEngine engine) throws ScriptException {
-		logger.debug(" Entering ");
-
-		try {
-			String jsfunction = "function Rule(){ Result = " + rule + "}Rule();";
-			engine.eval(jsfunction);
-			logger.debug(" Leaving ");
-			return engine.get("Result");
-		} catch (ScriptException scriptException) {
-			throw scriptException;
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-
-		logger.debug(" Leaving ");
-		return null;
-
+	private Object executeRule(String rule, Map<String, Object> dataMap) throws ScriptException {
+		return RuleExecutionUtil.executeRule(rule, dataMap, RuleReturnType.OBJECT);
 	}
 
 	/**

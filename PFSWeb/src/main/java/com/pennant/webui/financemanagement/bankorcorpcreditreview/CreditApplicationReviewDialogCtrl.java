@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,6 +66,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -95,6 +93,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -201,11 +200,6 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 	private String creditRevCode;
 	int listRows;
-	// create a script engine manager
-	ScriptEngineManager factory = new ScriptEngineManager();
-
-	// create a JavaScript engine
-	ScriptEngine engine = factory.getEngineByName("JavaScript");
 	int currFormatter = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
 	String amtFormat = PennantApplicationUtil.getAmountFormate(currFormatter);
 	List<Filter> filterList = null;
@@ -219,6 +213,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	protected ExtendedCombobox currencyType; // autowire
 
 	private NotificationService notificationService;
+
+	private Map<String, Object> engine = new HashMap<>();
 
 	/**
 	 * default constructor.<br>
@@ -3361,20 +3357,12 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			if (finCreditRevSubCategory.getSubCategoryItemType().equals(FacilityConstants.CREDITREVIEW_CALCULATED_FIELD)
 					&& StringUtils.isNotEmpty(finCreditRevSubCategory.getItemsToCal())) {
 				BigDecimal value = BigDecimal.ZERO;
-				try {
-					if ("NaN".equals(engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString())
-							|| (engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString()
-									.contains("Infinity"))) {
-						value = BigDecimal.ZERO;
-					} else {
-						value = new BigDecimal(
-								engine.eval(replaceYear(finCreditRevSubCategory.getItemsToCal(), year)).toString())
-										.setScale(48, RoundingMode.HALF_DOWN);
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
-					value = BigDecimal.ZERO;
-				}
+
+				value = (BigDecimal) RuleExecutionUtil.executeRule(
+						replaceYear(finCreditRevSubCategory.getItemsToCal(), year), engine, RuleReturnType.DECIMAL);
+
+				value = value.setScale(48, RoundingMode.HALF_DOWN);
+
 				dataMap.put(finCreditRevSubCategory.getSubCategoryCode(), value == null ? BigDecimal.ZERO : value);
 				engine.put("Y" + year + finCreditRevSubCategory.getSubCategoryCode(),
 						value == null ? BigDecimal.ZERO : value);
@@ -3387,20 +3375,20 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 			if (StringUtils.isNotEmpty(finCreditRevSubCategory.getItemRule())) {
 				BigDecimal value = BigDecimal.ZERO;
 				try {
-					if ("NaN".equals(engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
-							|| (engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString()
-									.contains("Infinity"))) {
-						value = BigDecimal.ZERO;
+
+					value = (BigDecimal) RuleExecutionUtil.executeRule(
+							replaceYear(finCreditRevSubCategory.getItemRule(), year), engine, RuleReturnType.DECIMAL);
+
+					if (finCreditRevSubCategory.getRemarks().equals(FacilityConstants.CREDITREVIEW_REMARKS)) {
+						value = (BigDecimal) RuleExecutionUtil.executeRule(
+								replaceYear(finCreditRevSubCategory.getItemRule(), year), engine,
+								RuleReturnType.DECIMAL);
+						value = value.setScale(48, RoundingMode.HALF_DOWN);
 					} else {
-						if (finCreditRevSubCategory.getRemarks().equals(FacilityConstants.CREDITREVIEW_REMARKS)) {
-							value = new BigDecimal(
-									engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
-											.setScale(48, RoundingMode.HALF_DOWN);
-						} else {
-							value = new BigDecimal(
-									engine.eval(replaceYear(finCreditRevSubCategory.getItemRule(), year)).toString())
-											.setScale(48, RoundingMode.HALF_DOWN);
-						}
+						value = (BigDecimal) RuleExecutionUtil.executeRule(
+								replaceYear(finCreditRevSubCategory.getItemRule(), year), engine,
+								RuleReturnType.DECIMAL);
+						value = value.setScale(48, RoundingMode.HALF_DOWN);
 					}
 				} catch (Exception e) {
 					value = BigDecimal.ZERO;

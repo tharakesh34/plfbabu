@@ -8,17 +8,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.script.ScriptEngine;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.FacilityConstants;
+import com.pennant.backend.util.RuleReturnType;
 
 public class CreditReviewSummaryData {
 
@@ -30,7 +30,6 @@ public class CreditReviewSummaryData {
 	private Map<String, String> itemRuleMap = new HashMap<String, String>();
 	private boolean ratioFlag = false;
 	private transient CreditApplicationReviewService creditApplicationReviewService;
-	private transient ScriptEngine scriptEngine;
 	private Map<Long, Map<String, List<FinCreditReviewSummary>>> coAppDetailedMap = new HashMap<>();
 
 	public CreditReviewSummaryData() {
@@ -56,12 +55,8 @@ public class CreditReviewSummaryData {
 	 */
 	public Map<String, String> setDataMap(long custID, Set<Long> custIds, int year, int noOfYears, String custCtgType,
 			boolean required, boolean isEnquiry, Map<String, String> externalDataMap,
-			List<FinCreditRevCategory> listOfFinCreditRevCategory) {
+			List<FinCreditRevCategory> listOfFinCreditRevCategory, Map<String, Object> engine) {
 		logger.debug("Entering");
-
-		// create a JavaScript engine
-		// get Script engine object
-		ScriptEngine engine = this.scriptEngine;
 
 		List<FinCreditRevSubCategory> listOfFinCreditRevSubCategoryRatio = null;
 		dataMap = new HashMap<String, String>();
@@ -239,10 +234,12 @@ public class CreditReviewSummaryData {
 								if (StringUtils.isBlank(itemTotCalMap.get(subCategoryCode))) {
 									value = String.valueOf(0);
 								} else {
-									value = engine.eval(
-											replaceYear(itemTotCalMap.get(subCategoryCode), years, noOfYearsToShow))
-											.toString();
-									if ("NaN".equals(value) || value.contains("Infinity")) {
+
+									value = (String) RuleExecutionUtil.executeRule(
+											replaceYear(itemTotCalMap.get(subCategoryCode), years, noOfYearsToShow),
+											engine, RuleReturnType.STRING);
+
+									if (StringUtils.isEmpty(value)) {
 										value = "--";
 									}
 								}
@@ -270,10 +267,11 @@ public class CreditReviewSummaryData {
 							String value = "--";
 							try {
 								if (StringUtils.isNotEmpty(itemRuleMap.get(subCategoryCode))) {
-									value = engine
-											.eval(replaceYear(itemRuleMap.get(subCategoryCode), years, noOfYearsToShow))
-											.toString();
-									if ("NaN".equals(value) || value.contains("Infinity")) {
+									value = (String) RuleExecutionUtil.executeRule(
+											replaceYear(itemRuleMap.get(subCategoryCode), years, noOfYearsToShow),
+											engine, RuleReturnType.STRING);
+
+									if (StringUtils.isEmpty(value)) {
 										value = "--";
 									}
 								}
@@ -316,11 +314,15 @@ public class CreditReviewSummaryData {
 								}
 								engine.put("ratioCalValPrev", ratioCalValPrev);
 								engine.put("ratioCalValCurr", ratioCalValCurr);
-								value = engine.eval("((ratioCalValCurr-ratioCalValPrev)/ratioCalValPrev)*100")
-										.toString();
-								if ("NaN".equals(value) || value.contains("Infinity")) {
+
+								value = (String) RuleExecutionUtil.executeRule(
+										"((ratioCalValCurr-ratioCalValPrev)/ratioCalValPrev)*100", engine,
+										RuleReturnType.STRING);
+
+								if (StringUtils.isEmpty(value)) {
 									value = "--";
 								}
+
 							} catch (Exception e) {
 								value = "--";
 								logger.error("Exception: ", e);
@@ -384,7 +386,9 @@ public class CreditReviewSummaryData {
 		List<FinCreditRevSubCategory> listOfFinCreditRevSubCategoryRatio = null;
 		dataMap = new HashMap<String, String>();
 		itemTotCalMap = new HashMap<String, String>();
-		ScriptEngine engine = this.scriptEngine;
+
+		Map<String, Object> engine = new HashMap<>();
+
 		if (coAppDetailedMap.containsKey(custId)) {
 			detailedMap = coAppDetailedMap.get(custId);
 			if (detailedMap != null) {
@@ -508,21 +512,14 @@ public class CreditReviewSummaryData {
 							if (itemTotCalMap.keySet().contains(subCategoryCode)) {
 								String value = "--";
 
-								try {
-									if (StringUtils.isBlank(itemTotCalMap.get(subCategoryCode))) {
-										value = String.valueOf(0);
-									} else {
-										value = engine.eval(
-												replaceYear(itemTotCalMap.get(subCategoryCode), years, noOfYearsToShow))
-												.toString();
-										if ("NaN".equals(value) || value.contains("Infinity")) {
-											value = "--";
-										}
-									}
-								} catch (Exception e) {
+								value = (String) RuleExecutionUtil.executeRule(
+										replaceYear(itemTotCalMap.get(subCategoryCode), years, noOfYearsToShow), engine,
+										RuleReturnType.STRING);
+
+								if (StringUtils.isEmpty(value)) {
 									value = "--";
-									logger.error("Exception: ", e);
 								}
+
 								engine.put("Y" + (years) + subCategoryCode,
 										!value.contains("--") ? new BigDecimal(value) : BigDecimal.ZERO);
 								dataMap.put("Y" + (years) + "_" + subCategoryCode, String
@@ -541,19 +538,15 @@ public class CreditReviewSummaryData {
 							String subCategoryCode = finCreditRevSubCategory.getSubCategoryCode();
 							if (itemRuleMap.keySet().contains(subCategoryCode)) {
 								String value = "--";
-								try {
-									if (StringUtils.isNotEmpty(itemRuleMap.get(subCategoryCode))) {
-										value = engine.eval(
-												replaceYear(itemRuleMap.get(subCategoryCode), years, noOfYearsToShow))
-												.toString();
-										if ("NaN".equals(value) || value.contains("Infinity")) {
-											value = "--";
-										}
-									}
-								} catch (Exception e) {
-									logger.error("Exception: ", e);
+
+								value = (String) RuleExecutionUtil.executeRule(
+										replaceYear(itemRuleMap.get(subCategoryCode), years, noOfYearsToShow), engine,
+										RuleReturnType.STRING);
+
+								if (StringUtils.isEmpty(value)) {
 									value = "--";
 								}
+
 								if (this.ratioFlag) {
 									engine.put("Y" + (years) + subCategoryCode,
 											!value.contains("--") ? new BigDecimal(value) : BigDecimal.ZERO);
@@ -589,9 +582,12 @@ public class CreditReviewSummaryData {
 									}
 									engine.put("ratioCalValPrev", ratioCalValPrev);
 									engine.put("ratioCalValCurr", ratioCalValCurr);
-									value = engine.eval("((ratioCalValCurr-ratioCalValPrev)/ratioCalValPrev)*100")
-											.toString();
-									if ("NaN".equals(value) || value.contains("Infinity")) {
+
+									value = (String) RuleExecutionUtil.executeRule(
+											"((ratioCalValCurr-ratioCalValPrev)/ratioCalValPrev)*100", engine,
+											RuleReturnType.STRING);
+
+									if (StringUtils.isEmpty(value)) {
 										value = "--";
 									}
 								} catch (Exception e) {
@@ -610,10 +606,6 @@ public class CreditReviewSummaryData {
 		}
 		logger.debug("Leaving");
 		return dataMap;
-	}
-
-	public void setScriptEngine(ScriptEngine scriptEngine) {
-		this.scriptEngine = scriptEngine;
 	}
 
 }

@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,8 +34,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RuleFactorry/Rule/RuleResultSimulation.zul file.
@@ -207,10 +203,8 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 
 		boolean splRule = false;
 		if (splRule) {
-			// create a script engine manager
-			ScriptEngineManager factory = new ScriptEngineManager();
 			// create a JavaScript engine
-			ScriptEngine engine = factory.getEngineByName("JavaScript");
+			Map<String, Object> engine = new HashMap<>();
 			// evaluate JavaScript code from String
 			try {
 				for (int i = 0; i < variables.size(); i++) {
@@ -244,48 +238,18 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 				BigDecimal tempResult = BigDecimal.ZERO;
 				String result = "0";
 
-				if (engine.eval(rule) != null) {
-					tempResult = new BigDecimal(engine.eval(rule).toString());
+				Object object = RuleExecutionUtil.executeRule(amountRule, engine, returnType);
+
+				if (returnType.value().equalsIgnoreCase("Decimal")) {
+					tempResult = new BigDecimal(object == null ? "0" : object.toString());
+					tempResult = tempResult.setScale(2, RoundingMode.UP);
 					result = tempResult.toString();
+				} else if (returnType.value().equalsIgnoreCase("String")) {
+					result = (object == null ? "" : object.toString());
 				} else {
-					if (engine.get("Result") != null) {
-						if (engine.get("Result") instanceof ScriptObjectMirror) {
-							ScriptObjectMirror nav = (ScriptObjectMirror) engine.get("Result");
-							if (nav != null) {
-								Map<String, String> map = new HashMap<String, String>();
-								for (String resultKey : nav.keySet()) {
-									String key = resultKey;
-									String value = String.valueOf(nav.get(resultKey));
-									map.put(key, value);
-								}
-								result = "";
-								for (String key : map.keySet()) {
-									result = result.concat(key + " : " + map.get(key) + " ,");
-								}
-							}
-						} else {
-							result = engine.get("Result").toString();
-							try {
-
-								if (returnType.value().equalsIgnoreCase("Decimal")) {
-									tempResult = new BigDecimal(result);
-									tempResult = tempResult.setScale(2, RoundingMode.UP);
-									result = tempResult.toString();
-								} else if (returnType.value().equalsIgnoreCase("String")) {
-									result = result.trim().toString();
-								} else {
-									tempResult = new BigDecimal(result);
-									tempResult = tempResult.setScale(0, RoundingMode.FLOOR);
-									result = tempResult.toString();
-								}
-
-							} catch (Exception e) {
-								//do Nothing-- if return type is not a decimal
-								result = engine.get("Result").toString();
-							}
-						}
-
-					}
+					tempResult = new BigDecimal((object == null ? "" : object.toString()));
+					tempResult = tempResult.setScale(0, RoundingMode.FLOOR);
+					result = tempResult.toString();
 				}
 
 				// make result row visible and set value
