@@ -152,7 +152,7 @@ public class PostingsPreparationUtil implements Serializable {
 		List<ReturnDataSet> returnDatasetList = aeEvent.getReturnDataSet();
 		// FIXME: PV: Prepare Return Data Set
 
-		postingsDAO.saveBatch(returnDatasetList, true);
+		postingsDAO.saveBatch(returnDatasetList);
 		accountProcessUtil.procAccountUpdate(returnDatasetList);
 
 		return aeEvent;
@@ -289,7 +289,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		if (!list.isEmpty()) {
 			if (aeEvent.isPostingSucess()) {
-				postingsDAO.saveBatch(list, true);
+				postingsDAO.saveBatch(list);
 				// getAccountProcessUtil().updateAccountInfo(list);
 			}
 		}
@@ -489,10 +489,8 @@ public class PostingsPreparationUtil implements Serializable {
 	public AEEvent postAccounting(AEEvent aeEvent) {
 		logger.debug(Literal.ENTERING);
 
-		boolean isNewTranID = false;
 		if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(postingsDAO.getLinkedTransId());
-			isNewTranID = true;
 		}
 
 		engineExecution.getAccEngineExecResults(aeEvent);
@@ -516,7 +514,7 @@ public class PostingsPreparationUtil implements Serializable {
 			r.setEntityCode(entityCode);
 		});
 
-		postingsDAO.saveBatch(returnDatasetList, isNewTranID);
+		postingsDAO.saveBatch(returnDatasetList);
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent;
@@ -558,7 +556,7 @@ public class PostingsPreparationUtil implements Serializable {
 		if (CollectionUtils.isEmpty(returnDatasetList)) {
 			return;
 		}
-		postingsDAO.saveBatch(returnDatasetList, false);
+		postingsDAO.saveBatch(returnDatasetList);
 	}
 
 	/**
@@ -575,7 +573,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		postingsDAO.updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
 
-		postingsDAO.saveBatch(returnDataSets, true);
+		postingsDAO.saveBatch(returnDataSets);
 
 		accountProcessUtil.procAccountUpdate(returnDataSets);
 
@@ -598,7 +596,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		postingsDAO.updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
 
-		postingsDAO.saveBatch(returnDataSets, true);
+		postingsDAO.saveBatch(returnDataSets);
 
 		accountProcessUtil.procAccountUpdate(returnDataSets);
 
@@ -634,7 +632,7 @@ public class PostingsPreparationUtil implements Serializable {
 
 		postingsDAO.updateStatusByPostRef(postRef, AccountConstants.POSTINGS_REVERSE);
 
-		postingsDAO.saveBatch(returnDataSets, true);
+		postingsDAO.saveBatch(returnDataSets);
 
 		accountProcessUtil.procAccountUpdate(returnDataSets);
 
@@ -756,7 +754,7 @@ public class PostingsPreparationUtil implements Serializable {
 			postingsDAO.updateStatusByLinkedTranId(linkedTranId, AccountConstants.POSTINGS_REVERSE);
 		}
 
-		postingsDAO.saveBatch(returnDataSets, true);
+		postingsDAO.saveBatch(returnDataSets);
 
 		accountProcessUtil.procAccountUpdate(returnDataSets);
 

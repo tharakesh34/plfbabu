@@ -504,10 +504,8 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	public AEEvent postAccounting(AEEvent aeEvent) {
 		logger.debug("Entering");
 
-		boolean isNewTranID = false;
 		if (aeEvent.getLinkedTranId() <= 0) {
 			aeEvent.setLinkedTranId(postingsDAO.getLinkedTransId());
-			isNewTranID = true;
 		}
 
 		postingsPreparationUtil.getEngineExecution().getAccEngineExecResults(aeEvent);
@@ -523,7 +521,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 			return aeEvent;
 		}
 
-		postingsDAO.saveBatch(returnDatasetList, isNewTranID);
+		postingsDAO.saveBatch(returnDatasetList);
 
 		accountProcessUtil.procAccountUpdate(returnDatasetList);
 

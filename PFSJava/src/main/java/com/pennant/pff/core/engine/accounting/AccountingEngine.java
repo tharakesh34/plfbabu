@@ -53,7 +53,7 @@ public class AccountingEngine {
 		PostingEvent postingEvent = getPostingEvent(event);
 		postingEvent.setEventDetails(events, fd);
 
-		postingsDAO.saveBatch(transactions, true);
+		postingsDAO.saveBatch(transactions);
 
 		logger.info("Posting accounting tranactions for {} event completed.", eventName);
 		return transactions;

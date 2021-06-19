@@ -385,7 +385,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						}
 					}
 
-					getPostingsDAO().saveBatch(list, true);
+					getPostingsDAO().saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
 				}
 			} catch (Exception e) {
@@ -1409,7 +1409,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					}
 				}
 
-				getPostingsDAO().saveBatch(list, true);
+				getPostingsDAO().saveBatch(list);
 				auditHeader.setErrorList(errorDetails);
 			}
 		} catch (InterfaceException e) {

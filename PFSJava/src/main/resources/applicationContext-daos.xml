@@ -65,28 +65,8 @@
 	<!-- ============================================================ -->
 	<!-- Required configuration to use Email Engine -->
 	<!-- ============================================================== -->
-	<bean id="outgoingMailProperties" class="com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties">
-		<property name="servreId" value="${notification.email.out.server.id}" />
-		<property name="user" value="${notification.email.out.user}" />
-		<property name="password" value="${notification.email.out.password}" />
-		<property name="host" value="${notification.email.out.host}" />
-		<property name="port" value="${notification.email.out.port}" />
-		<property name="encryptionType" value="${notification.email.out.encryptionType}" />
-		<property name="cronExpression" value="${notification.email.out.cronExpression}" />
-		<property name="from" value="${notification.email.out.from}" />
-		<property name="personal" value="${notification.email.out.personal}" />
-		<property name="returnMail" value="${notification.email.out.returnMail}" />
-		<property name="auth" value="${notification.email.out.auth}" />
-		<property name="retrycount" value="${notification.email.out.retrycount}" />
-	</bean>
-
 	<bean id="emailEngine" class="com.pennanttech.pennapps.notification.email.EmailEngine">
 		<constructor-arg ref="dataSource" />
-		<constructor-arg ref="outgoingMailProperties" />
-	</bean>
-
-	<bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.notification.email.EmailEngineJobScheduler">
-		<constructor-arg ref="outgoingMailProperties" />
 	</bean>
 
 	<bean id="presentmentDetailExtract" class="com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract">
@@ -96,15 +76,8 @@
 	</bean>
 
 	<!-- ============================================================ -->
-	<!-- Required configuration to use SMS Engine -->
-	<!-- ============================================================== -->
 	<bean id="smsEngine" class="com.pennanttech.pennapps.notification.sms.SmsEngine">
 		<constructor-arg ref="dataSource" />
-		<constructor-arg value="${notification.sms.retrycount}" />
-	</bean>
-	<bean id="smsEngineJobScheduler" class="com.pennanttech.pennapps.notification.sms.SmsEngineJobScheduler">
-		<constructor-arg value="${notification.sms.cronExpression}" />
-		<constructor-arg ref="smsEngine" />
 	</bean>
 
 	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService">
