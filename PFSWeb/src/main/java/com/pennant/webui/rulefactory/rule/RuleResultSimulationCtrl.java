@@ -233,8 +233,6 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 
 				String amountRule = ruleResult;
 
-				// Execute the engine
-				String rule = "function Rule(){" + amountRule + "}Rule();";
 				BigDecimal tempResult = BigDecimal.ZERO;
 				String result = "0";
 
@@ -262,7 +260,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 
 		} else {
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			// evaluate JavaScript code from String
 			try {
 				for (int i = 0; i < variables.size(); i++) {
@@ -347,6 +345,8 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 				} else {
 					resultValue = "FALSE";
 				}
+				break;
+			default:
 				break;
 			}
 		}
